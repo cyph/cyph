@@ -44,17 +44,47 @@ fail () {
 	exit 1
 }
 
+temporalCloudToken=""
+
 ipfsAdd () {
+	f="${PWD}/${1}"
+
 	export ipfsAddOutput="$(
 		curl -s https://api.pinata.cloud/pinning/pinFileToIPFS \
 			-H "pinata_api_key: $(head -n1 ~/.cyph/pinata.key)" \
 			-H "pinata_secret_api_key: $(tail -n1 ~/.cyph/pinata.key)" \
-			-F "file=@${PWD}/${1}"
+			-F "file=@${f}"
 	)"
 
 	hash="$(node -e 'console.log(JSON.parse(process.env.ipfsAddOutput).IpfsHash)')"
 
+	if [ "${temporalCloudToken}" == "" ] ; then
+		export temporalCloudAuth="$(
+			curl -s https://api.temporal.cloud/v2/auth/login -d "{\"username\": \"$(
+				head -n1 ~/.cyph/temporal.cloud.key
+			)\", \"password\": \"$(
+				tail -n1 ~/.cyph/temporal.cloud.key
+			)\"}" 2> /dev/null
+		)"
+
+		temporalCloudToken="$(node -e 'console.log(
+			JSON.parse(process.env.temporalCloudAuth || '{}').token || ''
+		)')"
+	fi
+
 	if [ "${hash}" ] ; then
+		curl -s -X POST https://api.temporal.cloud/v2/ipfs/public/file/add \
+			-H "Authorization: Bearer ${temporalCloudToken}" \
+			-F 'hold_time=12' \
+			-F "file=@${f}" \
+		&> /dev/null
+
+		curl -i -s -X POST https://www.eternum.io/api/pin/ \
+			-H "Authorization: Bearer $(cat ~/.cyph/eternum.key)" \
+			-H 'Content-Type: application/json' \
+			-d "{\"hash\": \"${hash}\"}" \
+		&> /dev/null
+
 		echo "${hash}"
 	else
 		sleep 5
