@@ -116,41 +116,42 @@ type RedoxRequestLog struct {
 var empty = struct{}{}
 
 var config = struct {
-	AllowedCyphIDs             *regexp.Regexp
-	AllowedCyphIDLength        int
-	AllowedHeaders             string
-	AllowedMethods             string
-	AllowedHosts               map[string]none
-	AnalID                     string
-	APIKeyByteLength           int
-	BitPayToken                string
-	BurnerChannelExpiration    int64
-	CacheControlHeader         string
-	CloudFunctionRoutes        []string
-	Continents                 map[string]none
-	DefaultContinent           string
-	DefaultContinentCode       string
-	DefaultLanguageCode        string
-	DummyAnalID                string
-	DummyCity                  string
-	DummyContinent             string
-	DummyContinentCode         string
-	DummyCountry               string
-	DummyCountryCode           string
-	DummyPostalCode            string
-	DummyOrg                   string
-	EmailAddress               string
-	HPKPHeader                 string
-	HSTSHeader                 string
-	IPFSGatewayUptimeCheckTTL  int64
-	MaxChannelDescriptorLength int
-	MaxSignupValueLength       int
-	NewCyphTimeout             int64
-	PartnerConversionURL       string
-	PartnerDiscountRate        int64
-	PlanAppleIDs               map[string]string
-	Plans                      map[string]Plan
-	RootURL                    string
+	AllowedCyphIDs                *regexp.Regexp
+	AllowedCyphIDLength           int
+	AllowedHeaders                string
+	AllowedMethods                string
+	AllowedHosts                  map[string]none
+	AnalID                        string
+	APIKeyByteLength              int
+	BitPayToken                   string
+	BurnerChannelExpiration       int64
+	CacheControlHeader            string
+	CloudFunctionRoutes           []string
+	Continents                    map[string]none
+	DefaultContinent              string
+	DefaultContinentCode          string
+	DefaultLanguageCode           string
+	DummyAnalID                   string
+	DummyCity                     string
+	DummyContinent                string
+	DummyContinentCode            string
+	DummyCountry                  string
+	DummyCountryCode              string
+	DummyPostalCode               string
+	DummyOrg                      string
+	EmailAddress                  string
+	HPKPHeader                    string
+	HSTSHeader                    string
+	IPFSGatewayUptimeCheckTimeout int
+	IPFSGatewayUptimeCheckTTL     int64
+	MaxChannelDescriptorLength    int
+	MaxSignupValueLength          int
+	NewCyphTimeout                int64
+	PartnerConversionURL          string
+	PartnerDiscountRate           int64
+	PlanAppleIDs                  map[string]string
+	Plans                         map[string]Plan
+	RootURL                       string
 }{
 	regexp.MustCompile("[A-Za-z0-9]{7}"),
 
@@ -272,6 +273,8 @@ var config = struct {
 	"max-age=5184000; pin-sha256=\"unPe8YYMLOhkaAWcjfFF1q571QqcrI5NUfP+0eBT/po=\"; pin-sha256=\"Hw4WoLZDs5AprzDc7tUWz8FDbWw/luIQq+FL03zozsw=\"; preload",
 
 	"max-age=31536000; includeSubdomains; preload",
+
+	5000,
 
 	int64(1800),
 

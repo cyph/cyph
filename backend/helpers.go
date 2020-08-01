@@ -417,7 +417,9 @@ func checkIPFSGateway(gateway string, packageData PackageData) bool {
 
 	result := false
 
-	client := &http.Client{}
+	client := &http.Client{
+		Timeout: time.Millisecond * config.IPFSGatewayUptimeCheckTimeout,
+	}
 
 	req, err := http.NewRequest(
 		methods.GET,
