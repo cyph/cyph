@@ -44,10 +44,6 @@ fail () {
 	exit 1
 }
 
-ipfsAddInternal () {
-	ipfs add -q --chunker=size-2048 "${@}"
-}
-
 ipfsAdd () {
 	if ! ps ux | grep 'ipfs daemon' | grep -v grep &> /dev/null ; then
 		bash -c 'ipfs daemon &' &> /dev/null
@@ -56,6 +52,10 @@ ipfsAdd () {
 	fi
 
 	ipfsAddInternal "${1}"
+}
+
+ipfsAddInternal () {
+	ipfs add -q --chunker=size-2048 "${@}"
 }
 
 ipfsGatewaysCache=""
@@ -153,6 +153,7 @@ export -f download
 export -f easyoptions
 export -f fail
 export -f ipfsAdd
+export -f ipfsAddInternal
 export -f ipfsGateways
 export -f ipfsHash
 export -f ipfsVerify
