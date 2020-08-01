@@ -43,88 +43,41 @@ if (packageNameSplit.length === 2 && packageNameSplit[0] === 'cyph') {
 	document.getElementById('websign-load').className	= 'cyph-branded';
 }
 
-/* Get user's current location to choose optimal CDN node */
+/* Get package */
 Promise.resolve().then(function () {
-	if (isHiddenService) {
-		return null;
-	}
-
-	return fetchRetry(config.continentUrl).then(function (response) {
-		return response.text();
-	}).then(function (s) {
-		return s.trim();
-	});
-}).
-
-/* Get current package timestamp from CDN, with fallback logic
-	in case node for current continent is offline */
-then(function (continent) {
-	function getCurrent (newContinent, cdnUrlBase) {
-		var cdnUrl	=
-			'https://' +
-			newContinent +
-			cdnUrlBase +
-			packageName +
-			'/'
-		;
-
+	function getPackage () {
 		return Promise.race([
 			new Promise(function (_, reject) { setTimeout(reject, 30000); }),
-			fetchRetry(
-				cdnUrl + 'current?' + Date.now()
-			).then(function (response) {
+			fetchRetry(config.packageUrl + packageName).then(function (response) {
 				return response.text();
 			}).then(function (s) {
-				var newTimestamp	= parseInt(s.trim(), 10);
+				var packageMetadata	= JSON.parse(s);
 				var oldTimestamp	= parseInt(storage.webSignPackageTimestamp, 10);
 
-				if (oldTimestamp > newTimestamp) {
+				if (
+					isNaN(packageMetadata.timestamp) ||
+					oldTimestamp > packageMetadata.timestamp
+				) {
 					throw new Error('Outdated package.');
 				}
 
-				return {
-					cdnUrl: cdnUrl,
-					packageTimestamp: newTimestamp
-				};
+				return packageMetadata;
 			})
 		]);
 	}
 
-	if (continent) {
-		return getCurrent(continent, config.cdnUrlBase).catch(function () {
-			return getCurrent(config.defaultContinent, config.cdnUrlBase);
-		});
-	}
-	else {
-		return getCurrent('', config.cdnUrlBaseOnion);
-	}
+	return getPackage().catch(function () {
+		return getPackage();
+	});
 }).catch(function () {
-	return {
-		cdnUrl: storage.webSignCdnUrl,
-		packageTimestamp: parseInt(storage.webSignPackageTimestamp, 10)
-	};
-}).
-
-/* Get package */
-then(function (downloadMetadata) {
-	if (!downloadMetadata.cdnUrl || isNaN(downloadMetadata.packageTimestamp)) {
-		throw new Error('Could not get a valid package URL.');
-	}
-
-	return Promise.all([
-		downloadMetadata,
-		cachingFetch(
-			downloadMetadata.cdnUrl + 'pkg?' + downloadMetadata.packageTimestamp
-		)
-	]);
+	return JSON.parse(storage.webSignPackageMetadata || '{}');
 }).
 
 /* Open package */
-then(function (results) {
-	var downloadMetadata	= results[0];
-	var packageLines		= results[1].trim().split('\n');
+then(function (packageMetadata) {
+	var packageLines	= packageMetadata.package.root.trim().split('\n');
 
-	var packageData	= {
+	var packageData		= {
 		signed: packageLines[0],
 		rsaKey: config.publicKeys.rsa[
 			parseInt(packageLines[1], 10)
@@ -139,7 +92,7 @@ then(function (results) {
 	}
 
 	return Promise.all([
-		downloadMetadata,
+		packageMetadata,
 		packageData.signed,
 		superSphincs.importKeys({
 			public: {
@@ -149,12 +102,12 @@ then(function (results) {
 		})
 	]);
 }).then(function (results) {
-	var downloadMetadata	= results[0];
-	var signed				= results[1];
-	var publicKey			= results[2].publicKey;
+	var packageMetadata	= results[0];
+	var signed			= results[1];
+	var publicKey		= results[2].publicKey;
 
 	return Promise.all([
-		downloadMetadata,
+		packageMetadata,
 		/* Temporary transitionary step */
 		superSphincs.openString(
 			signed,
@@ -168,13 +121,13 @@ then(function (results) {
 		})
 	]);
 }).then(function (results) {
-	var downloadMetadata	= results[0];
-	var opened				= JSON.parse(results[1]);
+	var packageMetadata	= results[0];
+	var opened			= JSON.parse(results[1]);
 
 	/* Reject if expired or has invalid timestamp */
 	if (
 		Date.now() > opened.expires ||
-		downloadMetadata.packageTimestamp !== opened.timestamp ||
+		packageMetadata.timestamp !== opened.timestamp ||
 		(
 			packageName !== opened.packageName &&
 			packageName !== opened.packageName.replace(/\.(app|ws)$/, '')
@@ -185,19 +138,23 @@ then(function (results) {
 
 	storage.webSignExpires			= opened.expires;
 	storage.webSignHashWhitelist	= JSON.stringify(opened.hashWhitelist);
+	storage.webSignPackageMetadata	= JSON.stringify(packageMetadata);
+	storage.webSignPackageName		= opened.packageName;
 	storage.webSignPackageTimestamp	= opened.timestamp;
-	storage.webSignCdnUrl			= downloadMetadata.cdnUrl;
 
-	return opened.package;
+	return {
+		package: opened.package,
+		packageMetadata: packageMetadata
+	};
 }).
 
 /* Before finishing, perform self-administered
 	integrity check on WebSign bootstrap */
 catch(function () {
 	return null;
-}).then(function (package) {
+}).then(function (o) {
 	return Promise.all([
-		package,
+		o,
 		Promise.all(config.files.map(function (file) {
 			return fetchRetry(file).then(function (response) {
 				return response.text();
@@ -205,7 +162,7 @@ catch(function () {
 		}))
 	]);
 }).then(function (results) {
-	var package			= results[0];
+	var o				= results[0];
 	var fileContents	= results[1];
 
 	var bootstrapText	= config.files.
@@ -216,12 +173,12 @@ catch(function () {
 	;
 
 	return Promise.all([
-		package,
+		o,
 		bootstrapText,
 		superSphincs.hash(bootstrapText)
 	]);
 }).then(function (results) {
-	var package			= results[0];
+	var o				= results[0];
 	var bootstrapText	= results[1];
 	var hash			= results[2].hex;
 
@@ -236,19 +193,19 @@ catch(function () {
 			bootstrapText: bootstrapText
 		};
 	}
-	else if (package) {
-		return package;
+	else if (o) {
+		return o;
 	}
 
 	throw null;
 }).
 
 /* Successfully execute package */
-then(function (package) {
-	document.head.innerHTML	= package.split('<head>')[1].split('</head>')[0];
-	document.body.innerHTML	= package.split('<body>')[1].split('</body>')[0];
+then(function (o) {
+	document.head.innerHTML	= o.package.split('<head>')[1].split('</head>')[0];
+	document.body.innerHTML	= o.package.split('<body>')[1].split('</body>')[0];
 
-	webSignSRI(storage.webSignCdnUrl).catch(function (err) {
+	webSignSRI(o.packageMetadata).catch(function (err) {
 		document.head.innerHTML		= '';
 		document.body.textContent	= err;
 	});
@@ -286,7 +243,6 @@ catch(function (err) {
 						navigator.language + '\n\n' +
 						navigator.userAgent + '\n\n' +
 						locationString.replace(/\/#.*/g, '') + '\n\n' +
-						'\n\ncdn url: ' + storage.webSignCdnUrl +
 						'\n\ncurrent bootstrap hash: ' + storage.webSignHash +
 						'\n\nprevious bootstrap hash: ' + storage.webSignHashOld +
 						'\n\npackage hash: ' + storage.webSignPackageHash +

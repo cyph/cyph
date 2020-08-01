@@ -573,16 +573,20 @@ export class AccountService extends BaseProvider {
 							throw new Error();
 						}
 
-						/* eslint-disable-next-line @typescript-eslint/tslint/config */
-						const webSignCdnURL = localStorage.getItem(
-							'webSignCdnUrl'
-						);
-						if (!webSignCdnURL) {
+						const webSignPackageName =
+							/* eslint-disable-next-line @typescript-eslint/tslint/config */
+							localStorage.getItem('webSignPackageName') ||
+							/* eslint-disable-next-line @typescript-eslint/tslint/config */
+							(localStorage.getItem('webSignCdnUrl') || '')
+								.split('/')
+								.slice(-2)[0];
+
+						if (!webSignPackageName) {
 							throw new Error();
 						}
 
 						const currentPackageTimestamp = await request({
-							url: `${webSignCdnURL}current?${(await getTimestamp()).toString()}`
+							url: `${this.envService.baseUrl}packagetimestamp/${webSignPackageName}`
 						});
 
 						if (

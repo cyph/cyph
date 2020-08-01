@@ -3,9 +3,9 @@
  * the upcoming Subresource Integrity standard.
  */
 
-function webSignSRI (baseUrl) {
+function webSignSRI (packageMetadata) {
 	new MutationObserver(function () {
-		webSignSRI_Process(baseUrl);
+		webSignSRI_Process(packageMetadata);
 	}).observe(document, {
 		childList: true,
 		attributes: false,
@@ -13,10 +13,10 @@ function webSignSRI (baseUrl) {
 		subtree: true
 	});
 
-	return webSignSRI_Process(baseUrl);
+	return webSignSRI_Process(packageMetadata);
 }
 
-function webSignSRI_Process (baseUrl) {
+function webSignSRI_Process (packageMetadata) {
 	var outputIndex		= 0;
 	var outputElements	= [];
 
@@ -57,8 +57,14 @@ function webSignSRI_Process (baseUrl) {
 
 				return content;
 			}).catch(function () {
+				var ipfsHash	= packageMetadata.package.subresources[path.replace(/^\//, '')];
+
+				if (!ipfsHash) {
+					throw new Error('IPFS hash not found.');
+				}
+
 				return fetchRetry(
-					baseUrl + path.replace(/^\//, '') + '?' + expectedHash
+					packageMetadata.gateway.replace(':hash', ipfsHash)
 				).then(function (response) {
 					return response.text();
 				}).then(function (s) {
