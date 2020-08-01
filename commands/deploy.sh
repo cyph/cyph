@@ -922,9 +922,8 @@ if [ "${websign}" ] ; then
 fi
 
 if [ ! "${site}" ] || [ "${site}" == 'backend' ] ; then
+	./commands/ipfsgateways.js backend/ipfs-gateways.json
 	./commands/packagedatabase.js backend/packages.json
-
-	ipfsGateways | xargs -I% node -e "(async () => console.log('% ' + (new (require('maxmind').Reader)(fs.readFileSync(os.homedir() + '/.cyph/GeoIP2-City.mmdb')).get((await dns.promises.resolve(new URL('%'.replace(':hash.ipfs.', '')).host))[0]) || {continent: {code: 'na'}}).continent.code.toLowerCase()))()" > backend/ipfs-gateways.txt
 fi
 
 

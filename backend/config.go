@@ -48,6 +48,12 @@ type CustomerEmail struct {
 	Email  string
 }
 
+// IPFSGatewayData : Data on an IPFS gateway
+type IPFSGatewayData struct {
+	ContinentCode string
+	URL           string
+}
+
 // PackageData : Data for an application package
 type PackageData struct {
 	Package     interface{}

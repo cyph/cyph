@@ -549,6 +549,11 @@ rm -rf shared/lib
 mv ~/lib shared/
 rm -rf ~/tmplib
 
+wget \
+	https://github.com/ipfs/public-gateway-checker/raw/master/gateways.json \
+	-O shared/lib/ipfs-gateways.json
+
 ./commands/getlibs.sh
+cyph-prettier --write shared/lib/ipfs-gateways.json
 cyph-prettier --write shared/lib/js/package.json
 ./commands/commit.sh --gc "${@}" updatelibs

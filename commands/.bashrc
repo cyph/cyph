@@ -65,20 +65,11 @@ ipfsAdd () {
 ipfsGatewaysCache=""
 
 ipfsGateways () {
-	while [ ! "${ipfsGatewaysCache}" ] ; do
-		for gateway in $(
-			curl -sL https://github.com/ipfs/public-gateway-checker/raw/master/gateways.json |
-				grep -oP 'https://[^"]+' |
-			grep -v 'https://:hash'
-		) ; do
-			if [ "$(curl -m 5 "$(
-				echo "${gateway}" |
-					sed 's|:hash|QmcBBMQx8truxJZTZayMHS2sCDwzXfaRUCFyjgJKnHNrkx|g'
-			)" 2> /dev/null)" == "balls" ] ; then
-				ipfsGatewaysCache="${ipfsGatewaysCache}${gateway}${NEWLINE}"
-			fi
-		done
-	done
+	if [ ! "${ipfsGatewaysCache}" ] ; then
+		ipfsGatewaysCache="$(node -e "console.log(
+			$(/cyph/commands/ipfsgateways.js).map(o => o.url).join('\\n')
+		)")"
+	fi
 
 	echo -n "${ipfsGatewaysCache}"
 }

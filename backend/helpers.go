@@ -158,17 +158,20 @@ var ipfsGateways = func() map[string][]string {
 		return gateways
 	}
 
-	b, err := ioutil.ReadFile("ipfs-gateways.txt")
+	b, err := ioutil.ReadFile("ipfs-gateways.json")
 	if err != nil {
 		panic(err)
 	}
 
-	urls := strings.Split(strings.TrimSpace(string(b)), "\n")
+	var gatewayURLs []IPFSGatewayData
+	err = json.Unmarshal(b, &gatewayURLs)
+	if err != nil {
+		panic(err)
+	}
 
-	for i := range urls {
-		urlSplit := strings.Split(urls[i], " ")
-		url := urlSplit[0]
-		continentCode := urlSplit[1]
+	for k := range gatewayURLs {
+		continentCode := gatewayURLs[k].ContinentCode
+		url := gatewayURLs[k].URL
 
 		gateways[continentCode] = append(gateways[continentCode], url)
 	}
