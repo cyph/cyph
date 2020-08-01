@@ -142,6 +142,7 @@ var config = struct {
 	EmailAddress               string
 	HPKPHeader                 string
 	HSTSHeader                 string
+	IPFSGatewayUptimeCheckTTL  int64
 	MaxChannelDescriptorLength int
 	MaxSignupValueLength       int
 	NewCyphTimeout             int64
@@ -271,6 +272,8 @@ var config = struct {
 	"max-age=5184000; pin-sha256=\"unPe8YYMLOhkaAWcjfFF1q571QqcrI5NUfP+0eBT/po=\"; pin-sha256=\"Hw4WoLZDs5AprzDc7tUWz8FDbWw/luIQq+FL03zozsw=\"; preload",
 
 	"max-age=31536000; includeSubdomains; preload",
+
+	int64(1800),
 
 	150,
 

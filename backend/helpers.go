@@ -143,8 +143,6 @@ var ipfsGatewayIndices = map[string]int{
 	"sa": 0,
 }
 
-var ipfsGatewayUptimeCheckTTL = int64(1800)
-
 var ipfsGatewayUptimeChecks = map[string]IPFSGatewayUptimeCheckData{}
 
 var ipfsGateways = func() map[string][]string {
@@ -413,7 +411,7 @@ func checkIPFSGateway(gateway string, packageData PackageData) bool {
 
 	now := time.Now().Unix()
 
-	if uptimeCheck, ok := ipfsGatewayUptimeChecks[gateway]; ok && ipfsGatewayUptimeCheckTTL > (now-uptimeCheck.Timestamp) {
+	if uptimeCheck, ok := ipfsGatewayUptimeChecks[gateway]; ok && config.IPFSGatewayUptimeCheckTTL > (now-uptimeCheck.Timestamp) {
 		return uptimeCheck.Result
 	}
 
