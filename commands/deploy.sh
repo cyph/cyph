@@ -165,7 +165,12 @@ then
 	pack=true
 fi
 
-if [ "${websign}" ] || [ "${site}" == 'backend' ] || [ "${site}" == 'firebase' ] ; then
+if \
+	[ "${websign}" ] || \
+	[ "${site}" == 'backend' ] || \
+	[ "${site}" == 'firebase' ] || \
+	[ "${site}" == 'websign' ] \
+; then
 	./commands/keycache.sh
 fi
 
@@ -285,7 +290,12 @@ fi
 ./commands/copyworkspace.sh ~/.build
 cd ~/.build
 
-if [ ! "${site}" ] || [ "${site}" == 'backend' ] ; then
+if \
+	[ "${websign}" ] || \
+	[ ! "${site}" ] || \
+	[ "${site}" == 'backend' ] || \
+	[ "${site}" == 'websign' ] \
+; then
 	./commands/updaterepos.js
 	cp ~/.cyph/repos/chat-widget/dist/index.js backend/chat-widget.js
 fi
@@ -921,7 +931,12 @@ if [ "${websign}" ] ; then
 	fi
 fi
 
-if [ ! "${site}" ] || [ "${site}" == 'backend' ] ; then
+if \
+	[ "${websign}" ] || \
+	[ ! "${site}" ] || \
+	[ "${site}" == 'backend' ] || \
+	[ "${site}" == 'websign' ] \
+; then
 	./commands/ipfsgateways.js backend/ipfs-gateways.json
 	./commands/packagedatabase.js backend/packages.json
 fi
@@ -1161,6 +1176,10 @@ if [ "${site}" != 'firebase' ] ; then
 
 	gcloudDeploy $(
 		if [ "${site}" ] ; then
+			if [ "${websign}" ] || [ "${site}" == 'websign' ] ; then
+				ls backend/*.yaml
+			fi
+
 			ls ${site}/*.yaml 2> /dev/null
 
 			if [ "${websign}" ] && [ -d websign ] ; then
