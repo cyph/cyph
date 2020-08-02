@@ -375,7 +375,7 @@ func getIPString(h HandlerArgs) string {
 	return ip
 }
 
-func getIPFSGatewayIndex(continentCode string, packageData PackageData) int {
+func getIPFSGatewayIndex(continentCode string) int {
 	gateways := ipfsGateways[continentCode]
 
 	if len(gateways) == 1 {
@@ -386,7 +386,7 @@ func getIPFSGatewayIndex(continentCode string, packageData PackageData) int {
 	initialIndex := index
 
 	for ok := true; ok; ok = index == initialIndex {
-		if checkIPFSGateway(gateways[index], packageData) {
+		if checkIPFSGateway(gateways[index]) {
 			return index
 		}
 
@@ -399,24 +399,37 @@ func getIPFSGatewayIndex(continentCode string, packageData PackageData) int {
 	return initialIndex
 }
 
-func getIPFSGateways(continentCode string, packageData PackageData) []string {
-	gateways := ipfsGateways[continentCode]
-	index := getIPFSGatewayIndex(continentCode, packageData)
+func getIPFSGateways(continentCode string) []string {
+	checkAllIPFSGateways()
 
-	return append(
-		append([]string{gateways[index]}, gateways[:index]...),
-		gateways[index+1:]...,
-	)
+	allGateways := ipfsGateways[continentCode]
+	index := getIPFSGatewayIndex(continentCode)
+
+	gateways := []string{allGateways[index]}
+
+	for i := range allGateways {
+		if i == index {
+			continue
+		}
+
+		gateway := allGateways[i]
+
+		if uptimeCheck, ok := ipfsGatewayUptimeChecks[gateway]; ok && uptimeCheck.Result {
+			gateways = append(gateways, gateway)
+		}
+	}
+
+	return gateways
 }
 
 func checkAllIPFSGateways() {
-	packageData := packages[config.DefaultPackage]
-
 	uptimeResults := make(chan bool, len(ipfsGatewayURLs))
 
 	for i := range ipfsGatewayURLs {
+		gateway := ipfsGatewayURLs[i].URL
+
 		go func() {
-			uptimeResults <- checkIPFSGateway(ipfsGatewayURLs[i].URL, packageData)
+			uptimeResults <- checkIPFSGateway(gateway)
 		}()
 	}
 
@@ -425,7 +438,9 @@ func checkAllIPFSGateways() {
 	}
 }
 
-func checkIPFSGateway(gateway string, packageData PackageData) bool {
+func checkIPFSGateway(gateway string) bool {
+	packageData := packages[config.DefaultPackage]
+
 	if packageData.Uptime.IPFSHash == "" {
 		return true
 	}

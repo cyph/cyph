@@ -280,7 +280,7 @@ var config = struct {
 
 	time.Duration(2000),
 
-	int64(7200),
+	int64(3600),
 
 	150,
 
