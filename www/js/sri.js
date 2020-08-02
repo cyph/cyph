@@ -3,9 +3,30 @@
  * the upcoming Subresource Integrity standard.
  */
 
-function webSignSRI (baseUrl) {
+/* From PotassiumUtil */
+function fromBlob (blob) {
+	return new Promise(function (resolve, reject) {
+		var reader	= new FileReader();
+		if (reader._realReader) {
+			reader	= reader._realReader;
+		}
+
+		reader.onerror	= reject;
+		reader.onload	= function () {
+			resolve(
+				reader.result instanceof ArrayBuffer ?
+					new Uint8Array(reader.result) :
+					new Uint8Array(0)
+			);
+		};
+
+		reader.readAsArrayBuffer(blob);
+	});
+}
+
+function webSignSRI (packageMetadata) {
 	new MutationObserver(function () {
-		webSignSRI_Process(baseUrl);
+		webSignSRI_Process(packageMetadata);
 	}).observe(document, {
 		childList: true,
 		attributes: false,
@@ -13,10 +34,10 @@ function webSignSRI (baseUrl) {
 		subtree: true
 	});
 
-	return webSignSRI_Process(baseUrl);
+	return webSignSRI_Process(packageMetadata);
 }
 
-function webSignSRI_Process (baseUrl) {
+function webSignSRI_Process (packageMetadata) {
 	var outputIndex		= 0;
 	var outputElements	= [];
 
@@ -57,12 +78,22 @@ function webSignSRI_Process (baseUrl) {
 
 				return content;
 			}).catch(function () {
+				var ipfsHash	= packageMetadata.package.subresources[path.replace(/^\//, '')];
+
+				if (!ipfsHash) {
+					throw new Error('IPFS hash not found.');
+				}
+
 				return fetchRetry(
-					baseUrl + path.replace(/^\//, '') + '?' + expectedHash
+					packageMetadata.gateway.replace(':hash', ipfsHash)
 				).then(function (response) {
-					return response.text();
-				}).then(function (s) {
-					var content	= s.trim();
+					return response.blob();
+				}).then(fromBlob).then(function (bytes) {
+					var content	=
+						superSphincs._sodiumUtil.to_string(
+							BrotliDecode(bytes)
+						).trim()
+					;
 
 					return Promise.all([
 						content,
