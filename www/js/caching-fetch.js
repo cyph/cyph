@@ -1,4 +1,4 @@
-function fetchRetry (url, options, retries, retryDelay) {
+function fetchRetry (url, options, timeout, retries, retryDelay) {
 	if (retries === undefined) {
 		retries		= 5;
 	}
@@ -6,7 +6,7 @@ function fetchRetry (url, options, retries, retryDelay) {
 		retryDelay	= 500;
 	}
 
-	return fetch(url, options).catch(function (err) {
+	return fetchWithTimeout(url, options, timeout).catch(function (err) {
 		if (retries < 1) {
 			return Promise.reject(err);
 		}
@@ -14,9 +14,21 @@ function fetchRetry (url, options, retries, retryDelay) {
 		return new Promise(function (resolve) {
 			setTimeout(resolve, retryDelay);
 		}).then(function () {
-			return fetchRetry(url, options, retries - 1, retryDelay);
+			return fetchRetry(url, options, timeout, retries - 1, retryDelay);
 		});
 	});
+}
+
+function fetchWithTimeout (url, options, timeout) {
+	var request	= fetch(url, options);
+
+	return timeout ?
+		Promise.race([
+			request,
+			new Promise(function (_, reject) { setTimeout(reject, timeout); })
+		]) :
+		request
+	;
 }
 
 function cachingFetch (url) {
