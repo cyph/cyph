@@ -11,6 +11,7 @@ import (
 	"io/ioutil"
 	"log"
 	"math"
+	nonSecureRandom "math/rand"
 	"net"
 	"net/http"
 	"net/smtp"
@@ -132,16 +133,6 @@ var analIDs = func() map[string]string {
 
 	return o
 }()
-
-var ipfsGatewayIndices = map[string]int{
-	"af": 0,
-	"an": 0,
-	"as": 0,
-	"eu": 0,
-	"na": 0,
-	"oc": 0,
-	"sa": 0,
-}
 
 var ipfsGatewayUptimeChecks = map[string]IPFSGatewayUptimeCheckData{}
 
@@ -391,21 +382,17 @@ func getIPFSGatewayIndex(continentCode string, packageData PackageData) int {
 		return 0
 	}
 
-	index := ipfsGatewayIndices[continentCode]
+	index := nonSecureRandom.Intn(len(gateways))
 	initialIndex := index
 
 	for ok := true; ok; ok = index == initialIndex {
-		gateway := gateways[index]
+		if checkIPFSGateway(gateways[index], packageData) {
+			return index
+		}
 
 		index++
 		if index >= len(gateways) {
 			index = 0
-		}
-
-		ipfsGatewayIndices[continentCode] = index
-
-		if checkIPFSGateway(gateway, packageData) {
-			return index
 		}
 	}
 
