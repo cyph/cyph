@@ -95,7 +95,7 @@ function webSignSRI_Process (packageMetadata) {
 							ipfsHash
 						),
 						undefined,
-						30000
+						15000
 					).then(function (response) {
 						return response.blob();
 					}).then(fromBlob).then(function (bytes) {
