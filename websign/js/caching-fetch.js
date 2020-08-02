@@ -20,15 +20,38 @@ function fetchRetry (url, options, timeout, retries, retryDelay) {
 }
 
 function fetchWithTimeout (url, options, timeout) {
-	var request	= fetch(url, options);
+	if (!timeout) {
+		return fetch(url, options);
+	}
 
-	return timeout ?
-		Promise.race([
-			request,
-			new Promise(function (_, reject) { setTimeout(reject, timeout); })
-		]) :
-		request
+	var abortController	= typeof AbortController !== 'undefined' ?
+		new AbortController() :
+		undefined
 	;
+
+	if (abortController) {
+		if (!options) {
+			options	= {};
+		}
+
+		options.signal	= abortController.signal;
+	}
+
+	return Promise.race([
+		fetch(url, options),
+		new Promise(function (_, reject) {
+			setTimeout(
+				function () {
+					reject('Request timeout exceeded.');
+
+					if (abortController) {
+						abortController.abort();
+					}
+				},
+				timeout
+			);
+		})
+	]);
 }
 
 function cachingFetch (url) {
