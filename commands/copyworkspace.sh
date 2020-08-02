@@ -14,7 +14,7 @@ cd "${source}"
 cp -a $(ls | grep -vP '^shared$') "${dir}/"
 cd shared
 cp -a $(ls | grep -vP '^(lib|node_modules)$') "${dir}/shared/"
-cp -a lib/js "${dir}/shared/lib/"
+cp -a lib/js lib/ipfs-gateways.json "${dir}/shared/lib/"
 
 for d in cyph.app cyph.com ; do
 	cd "${dir}/${d}"
