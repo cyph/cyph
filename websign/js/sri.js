@@ -24,8 +24,6 @@ function fromBlob (blob) {
 	});
 }
 
-var packageGatewayIndex	= 0;
-
 function webSignSRI (packageMetadata) {
 	new MutationObserver(function () {
 		webSignSRI_Process(packageMetadata);
@@ -87,6 +85,8 @@ function webSignSRI_Process (packageMetadata) {
 				if (!ipfsHash) {
 					throw new Error('IPFS hash not found.');
 				}
+
+				var packageGatewayIndex	= 0;
 
 				function fetchIPFSResource () {
 					return fetch(
