@@ -24,6 +24,8 @@ function fromBlob (blob) {
 	});
 }
 
+var packageGatewayIndex	= 0;
+
 function webSignSRI (packageMetadata) {
 	new MutationObserver(function () {
 		webSignSRI_Process(packageMetadata);
@@ -78,42 +80,63 @@ function webSignSRI_Process (packageMetadata) {
 
 				return content;
 			}).catch(function () {
-				var ipfsHash	= packageMetadata.package.subresources[path.replace(/^\//, '')];
+				var ipfsHash	= packageMetadata.package.subresources[
+					path.replace(/^\//, '')
+				];
 
 				if (!ipfsHash) {
 					throw new Error('IPFS hash not found.');
 				}
 
-				return fetchRetry(
-					packageMetadata.gateway.replace(':hash', ipfsHash)
-				).then(function (response) {
-					return response.blob();
-				}).then(fromBlob).then(function (bytes) {
-					var content	=
-						superSphincs._sodiumUtil.to_string(
-							BrotliDecode(bytes)
-						).trim()
-					;
+				function fetchIPFSResource () {
+					return fetch(
+						packageMetadata.gateways[packageGatewayIndex].replace(
+							':hash',
+							ipfsHash
+						)
+					).then(function (response) {
+						return response.blob();
+					}).then(fromBlob).then(function (bytes) {
+						var content	=
+							superSphincs._sodiumUtil.to_string(
+								BrotliDecode(bytes)
+							).trim()
+						;
 
-					return Promise.all([
-						content,
-						superSphincs.hash(content)
-					])
-				}).then(function (results) {
-					var content		= results[0];
-					var actualHash	= results[1].hex;
+						return Promise.all([
+							content,
+							superSphincs.hash(content)
+						])
+					}).then(function (results) {
+						var content		= results[0];
+						var actualHash	= results[1].hex;
 
-					if (actualHash !== expectedHash) {
-						throw new Error(
-							'Invalid subresource ' + path + '.\n\n' +
-							'Expected: ' +  expectedHash + '.\n\n' +
-							'Received: ' + actualHash + '.'
-						);
+						if (actualHash !== expectedHash) {
+							throw new Error(
+								'Invalid subresource ' + path + '.\n\n' +
+								'Expected: ' +  expectedHash + '.\n\n' +
+								'Received: ' + actualHash + '.'
+							);
+						}
+
+						localforage.setItem(
+							localStorageKey,
+							content
+						).catch(function () {});
+
+						return content;
+					});
+				}
+
+				return fetchIPFSResource().catch(function (err) {
+					++packageGatewayIndex;
+
+					if (packageMetadata.gateways.length > packageGatewayIndex) {
+						return fetchIPFSResource();
 					}
-
-					localforage.setItem(localStorageKey, content).catch(function () {});
-
-					return content;
+					else {
+						throw err;
+					}
 				});
 			}).then(function (content) {
 				if (isDataResource) {

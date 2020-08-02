@@ -384,11 +384,11 @@ func getIPString(h HandlerArgs) string {
 	return ip
 }
 
-func getIPFSGateway(continentCode string, packageData PackageData) string {
+func getIPFSGatewayIndex(continentCode string, packageData PackageData) int {
 	gateways := ipfsGateways[continentCode]
 
 	if len(gateways) == 1 {
-		return gateways[0]
+		return 0
 	}
 
 	index := ipfsGatewayIndices[continentCode]
@@ -405,11 +405,21 @@ func getIPFSGateway(continentCode string, packageData PackageData) string {
 		ipfsGatewayIndices[continentCode] = index
 
 		if checkIPFSGateway(gateway, packageData) {
-			return gateway
+			return index
 		}
 	}
 
-	return gateways[initialIndex]
+	return initialIndex
+}
+
+func getIPFSGateways(continentCode string, packageData PackageData) []string {
+	gateways := ipfsGateways[continentCode]
+	index := getIPFSGatewayIndex(continentCode, packageData)
+
+	return append(
+		append([]string{gateways[index]}, gateways[:index]...),
+		gateways[index+1:]...,
+	)
 }
 
 func checkAllIPFSGateways() {
