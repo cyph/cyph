@@ -10,11 +10,12 @@ const {updateRepos} = require('./updaterepos');
 const repoPath = `${os.homedir()}/.cyph/repos/cdn`;
 
 const options = {cwd: repoPath};
+const globOptions = {cwd: repoPath, symlinks: true};
 
 const packageDatabase = () => {
 	updateRepos();
 
-	return glob('**/pkg.gz', options)
+	return glob('**/pkg.gz', globOptions)
 		.map(pkg => [
 			pkg
 				.split('/')
@@ -60,7 +61,10 @@ const packageDatabase = () => {
 				[packageName]: {
 					package: {
 						root,
-						subresources: glob(`${packageName}/**/*.ipfs`, options)
+						subresources: glob(
+							`${packageName}/**/*.ipfs`,
+							globOptions
+						)
 							.map(ipfs => [
 								ipfs.slice(packageName.length + 1, -5),
 								fs
