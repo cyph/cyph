@@ -1225,3 +1225,12 @@ elif [ "${saveBuildArtifacts}" ] && [ -d ~/.build.original ] ; then
 elif [ "${saveBuildArtifacts}" ] ; then
 	cp -rf ~/.build ./
 fi
+
+# Push out latest package data
+if [ "${websign}" ] && ( [ "${test}" ] || [ "${debug}" ] || [ "${betaProd}" ] ) ; then
+	mv ~/.build ~/.build.test
+	cd ~/.cyph/repos/internal
+	git checkout prod
+	git pull
+	./commands/deploy.sh --prod --fast --site backend
+fi
