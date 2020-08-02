@@ -1,6 +1,7 @@
 var config	= {
 	abortText: 'Loading Cyph failed. Please try again later.',
-	packageUrl: 'https://api.cyph.com/package/',
+	packageTimestampURL: 'https://api.cyph.com/packagetimestamp/',
+	packageURL: 'https://api.cyph.com/package/',
 
 	cyphBranches: [
 		'beta',

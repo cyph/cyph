@@ -43,34 +43,51 @@ if (packageNameSplit.length === 2 && packageNameSplit[0] === 'cyph') {
 	document.getElementById('websign-load').className	= 'cyph-branded';
 }
 
+var oldPackageMetadata	= JSON.parse(storage.webSignPackageMetadata || '{}');
+
 /* Get package */
 Promise.resolve().then(function () {
 	function getPackage () {
-		return Promise.race([
-			new Promise(function (_, reject) { setTimeout(reject, 30000); }),
-			fetchRetry(config.packageUrl + packageName).then(function (response) {
-				return response.text();
-			}).then(function (s) {
-				var packageMetadata	= JSON.parse(s);
-				var oldTimestamp	= parseInt(storage.webSignPackageTimestamp, 10);
+		return fetchRetry(
+			config.packageURL + packageName,
+			undefined,
+			10000
+		).then(function (response) {
+			return response.text();
+		}).then(function (s) {
+			var packageMetadata	= JSON.parse(s);
 
-				if (
-					isNaN(packageMetadata.timestamp) ||
-					oldTimestamp > packageMetadata.timestamp
-				) {
-					throw new Error('Outdated package.');
-				}
+			if (
+				isNaN(packageMetadata.timestamp) ||
+				oldPackageMetadata.timestamp > packageMetadata.timestamp
+			) {
+				throw new Error('Outdated package.');
+			}
 
-				return packageMetadata;
-			})
-		]);
+			return packageMetadata;
+		});
 	}
 
-	return getPackage().catch(function () {
+	if (isNaN(oldPackageMetadata.timestamp)) {
 		return getPackage();
+	}
+
+	return fetchRetry(
+		config.packageTimestampURL + packageName,
+		undefined,
+		10000
+	).then(function (response) {
+		return response.text();
+	}).then(function (s) {
+		var timestamp	= parseInt(s, 10);
+
+		return timestamp > oldPackageMetadata.timestamp ?
+			getPackage() :
+			oldPackageMetadata
+		;
 	});
 }).catch(function () {
-	return JSON.parse(storage.webSignPackageMetadata || '{}');
+	return oldPackageMetadata;
 }).
 
 /* Open package */
@@ -158,6 +175,8 @@ catch(function () {
 		Promise.all(config.files.map(function (file) {
 			return fetchRetry(file).then(function (response) {
 				return response.text();
+			}).catch(function () {
+				return '';
 			});
 		}))
 	]);

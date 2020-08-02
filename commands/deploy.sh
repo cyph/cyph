@@ -676,7 +676,8 @@ if [ ! "${site}" ] || ( [ "${site}" == websign ] || [ "${site}" == "${webSignedP
 
 		sed -i "s|location\.host\s*= .*;||g" js/main.js
 		sed -i "s|location\.host|'${simpleWebSignPackageName}'|g" js/main.js
-		sed -i "s|config.packageUrl +|config.packageUrl + 'websign/test/' +|" js/main.js
+		sed -i "s|config.packageTimestampURL +|config.packageTimestampURL + 'websign/test/' +|" js/main.js
+		sed -i "s|config.packageURL +|config.packageURL + 'websign/test/' +|" js/main.js
 		sed -i "s|localStorage\.webSignWWWPinned|true|g" js/main.js
 		sed -i "s|true\s*= true;||g" js/main.js
 

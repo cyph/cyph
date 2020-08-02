@@ -89,11 +89,13 @@ function webSignSRI_Process (packageMetadata) {
 				var packageGatewayIndex	= 0;
 
 				function fetchIPFSResource () {
-					return fetch(
+					return fetchWithTimeout(
 						packageMetadata.gateways[packageGatewayIndex].replace(
 							':hash',
 							ipfsHash
-						)
+						),
+						undefined,
+						30000
 					).then(function (response) {
 						return response.blob();
 					}).then(fromBlob).then(function (bytes) {
