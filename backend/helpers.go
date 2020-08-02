@@ -423,7 +423,7 @@ func getIPFSGateways(continentCode string, packageData PackageData) []string {
 }
 
 func checkAllIPFSGateways() {
-	packageData := packages["cyph.app"]
+	packageData := packages[config.DefaultPackage]
 
 	uptimeResults := make(chan bool, len(ipfsGatewayURLs))
 

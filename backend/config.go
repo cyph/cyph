@@ -132,6 +132,7 @@ var config = struct {
 	DefaultContinent              string
 	DefaultContinentCode          string
 	DefaultLanguageCode           string
+	DefaultPackage                string
 	DummyAnalID                   string
 	DummyCity                     string
 	DummyContinent                string
@@ -252,6 +253,8 @@ var config = struct {
 	"eu",
 
 	"en",
+
+	"cyph.app",
 
 	"1027213",
 
