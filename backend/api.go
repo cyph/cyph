@@ -50,6 +50,8 @@ func main() {
 		port = "443"
 	}
 	log.Fatal(http.ListenAndServe(fmt.Sprintf(":%s", port), nil))
+
+	checkAllIPFSGateways()
 }
 
 func analytics(h HandlerArgs) (interface{}, int) {

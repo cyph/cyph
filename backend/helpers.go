@@ -145,6 +145,25 @@ var ipfsGatewayIndices = map[string]int{
 
 var ipfsGatewayUptimeChecks = map[string]IPFSGatewayUptimeCheckData{}
 
+var ipfsGatewayURLs = func() []IPFSGatewayData {
+	if appengine.IsDevAppServer() {
+		return []IPFSGatewayData{}
+	}
+
+	b, err := ioutil.ReadFile("ipfs-gateways.json")
+	if err != nil {
+		panic(err)
+	}
+
+	var gatewayURLs []IPFSGatewayData
+	err = json.Unmarshal(b, &gatewayURLs)
+	if err != nil {
+		panic(err)
+	}
+
+	return gatewayURLs
+}()
+
 var ipfsGateways = func() map[string][]string {
 	gateways := map[string][]string{
 		"af": []string{},
@@ -160,20 +179,9 @@ var ipfsGateways = func() map[string][]string {
 		return gateways
 	}
 
-	b, err := ioutil.ReadFile("ipfs-gateways.json")
-	if err != nil {
-		panic(err)
-	}
-
-	var gatewayURLs []IPFSGatewayData
-	err = json.Unmarshal(b, &gatewayURLs)
-	if err != nil {
-		panic(err)
-	}
-
-	for k := range gatewayURLs {
-		continentCode := gatewayURLs[k].ContinentCode
-		url := gatewayURLs[k].URL
+	for i := range ipfsGatewayURLs {
+		continentCode := ipfsGatewayURLs[i].ContinentCode
+		url := ipfsGatewayURLs[i].URL
 
 		gateways[continentCode] = append(gateways[continentCode], url)
 	}
@@ -402,6 +410,22 @@ func getIPFSGateway(continentCode string, packageData PackageData) string {
 	}
 
 	return gateways[initialIndex]
+}
+
+func checkAllIPFSGateways() {
+	packageData := packages["cyph.app"]
+
+	uptimeResults := make(chan bool, len(ipfsGatewayURLs))
+
+	for i := range ipfsGatewayURLs {
+		go func() {
+			uptimeResults <- checkIPFSGateway(ipfsGatewayURLs[i].URL, packageData)
+		}()
+	}
+
+	for range ipfsGatewayURLs {
+		<-uptimeResults
+	}
 }
 
 func checkIPFSGateway(gateway string, packageData PackageData) bool {
