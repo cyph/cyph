@@ -1,4 +1,4 @@
-if (!storage.webSignCdnUrl) {
+if (!storage.webSignPackageTimestamp) {
 	Object.keys(defaultCacheValues.localforage).forEach(function (k) {
 		localforage.setItem(k, defaultCacheValues.localforage[k]).catch(function () {});
 	});

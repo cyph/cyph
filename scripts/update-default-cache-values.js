@@ -58,7 +58,6 @@ const defaultCacheValuesPath = path.join(
 				)
 				.reduce((o, [k, v]) => ({...o, [k]: v}), {}),
 			localStorage: {
-				webSignCdnUrl: 'https://eu.cdn.cyph.com/cyph.app/',
 				webSignExpires: localStorage.webSignExpires,
 				webSignHashWhitelist: localStorage.webSignHashWhitelist,
 				webSignPackageTimestamp: localStorage.webSignPackageTimestamp

@@ -38,9 +38,10 @@ if (storage.betaTestUser) {
 	if (!storage.betaTestInitialized) {
 		storage.betaTestInitialized	= true;
 
-		delete storage.webSignCdnUrl;
 		delete storage.webSignExpires;
 		delete storage.webSignHashWhitelist;
+		delete storage.webSignPackageMetadata;
+		delete storage.webSignPackageName;
 		delete storage.webSignPackageTimestamp;
 	}
 }
