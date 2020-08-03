@@ -54,7 +54,7 @@ Promise.resolve().then(function () {
 		return fetchRetry(
 			config.packageURL + packageName,
 			undefined,
-			10000
+			45000
 		).then(function (response) {
 			return response.text();
 		}).then(function (s) {
@@ -78,7 +78,7 @@ Promise.resolve().then(function () {
 	return fetchRetry(
 		config.packageTimestampURL + packageName,
 		undefined,
-		10000
+		15000
 	).then(function (response) {
 		return response.text();
 	}).then(function (s) {

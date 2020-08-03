@@ -95,7 +95,7 @@ function webSignSRI_Process (packageMetadata) {
 							ipfsHash
 						),
 						undefined,
-						30000
+						60000
 					).then(function (response) {
 						return response.blob();
 					}).then(fromBlob).then(function (bytes) {
@@ -127,19 +127,19 @@ function webSignSRI_Process (packageMetadata) {
 						).catch(function () {});
 
 						return content;
+					}).catch(function (err) {
+						++packageGatewayIndex;
+
+						if (packageMetadata.gateways.length > packageGatewayIndex) {
+							return fetchIPFSResource();
+						}
+						else {
+							throw err;
+						}
 					});
 				}
 
-				return fetchIPFSResource().catch(function (err) {
-					++packageGatewayIndex;
-
-					if (packageMetadata.gateways.length > packageGatewayIndex) {
-						return fetchIPFSResource();
-					}
-					else {
-						throw err;
-					}
-				});
+				return fetchIPFSResource();
 			}).then(function (content) {
 				if (isDataResource) {
 					elem.setAttribute(
