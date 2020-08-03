@@ -37,10 +37,15 @@ function fetchWithTimeout (url, options, timeout) {
 		options.signal	= abortController.signal;
 	}
 
+	var timeoutID;
+
 	return Promise.race([
-		fetch(url, options),
+		fetch(url, options).then(function (o) {
+			clearTimeout(timeoutID);
+			return o;
+		}),
 		new Promise(function (_, reject) {
-			setTimeout(
+			timeoutID	= setTimeout(
 				function () {
 					reject('Request timeout exceeded.');
 
