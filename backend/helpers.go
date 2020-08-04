@@ -376,8 +376,20 @@ func getIPString(h HandlerArgs) string {
 }
 
 func getIPFSGateways(continentCode string) []string {
+	backupContinentCode := config.DefaultContinentCode
+	if backupContinentCode == continentCode {
+		backupContinentCode = config.DefaultContinentCodeBackup
+	}
+
 	checkAllIPFSGateways()
 
+	return append(
+		getIPFSGatewaysInternal(continentCode),
+		getIPFSGatewaysInternal(backupContinentCode)...,
+	)
+}
+
+func getIPFSGatewaysInternal(continentCode string) []string {
 	now := time.Now().Unix()
 
 	allGateways := ipfsGateways[continentCode]

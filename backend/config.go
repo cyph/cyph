@@ -131,6 +131,7 @@ var config = struct {
 	Continents                    map[string]none
 	DefaultContinent              string
 	DefaultContinentCode          string
+	DefaultContinentCodeBackup    string
 	DefaultLanguageCode           string
 	DefaultPackage                string
 	DummyAnalID                   string
@@ -251,6 +252,8 @@ var config = struct {
 	"Europe",
 
 	"eu",
+
+	"na",
 
 	"en",
 
