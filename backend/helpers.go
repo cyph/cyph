@@ -375,51 +375,32 @@ func getIPString(h HandlerArgs) string {
 	return ip
 }
 
-func getIPFSGatewayIndex(continentCode string) int {
-	gateways := ipfsGateways[continentCode]
-
-	if len(gateways) == 1 {
-		return 0
-	}
-
-	index := nonSecureRandom.Intn(len(gateways))
-	initialIndex := index
-
-	for ok := true; ok; ok = index == initialIndex {
-		if checkIPFSGateway(gateways[index]) {
-			return index
-		}
-
-		index++
-		if index >= len(gateways) {
-			index = 0
-		}
-	}
-
-	return initialIndex
-}
-
 func getIPFSGateways(continentCode string) []string {
 	checkAllIPFSGateways()
 
-	allGateways := ipfsGateways[continentCode]
-	index := getIPFSGatewayIndex(continentCode)
+	now := time.Now().Unix()
 
-	gateways := []string{allGateways[index]}
+	allGateways := ipfsGateways[continentCode]
+	gateways := []string{}
 
 	for i := range allGateways {
-		if i == index {
-			continue
-		}
-
 		gateway := allGateways[i]
 
-		if uptimeCheck, ok := ipfsGatewayUptimeChecks[gateway]; ok && uptimeCheck.Result {
+		if uptimeCheck, ok := ipfsGatewayUptimeChecks[gateway]; ok && uptimeCheck.Result && config.IPFSGatewayUptimeCheckTTL > (now-uptimeCheck.Timestamp) {
 			gateways = append(gateways, gateway)
 		}
 	}
 
-	return gateways
+	if len(gateways) < 1 {
+		return gateways
+	}
+
+	index := nonSecureRandom.Intn(len(gateways))
+
+	return append(
+		append([]string{gateways[index]}, gateways[:index]...),
+		gateways[index+1:]...,
+	)
 }
 
 func checkAllIPFSGateways() {
@@ -445,19 +426,17 @@ func checkIPFSGateway(gateway string) bool {
 		return true
 	}
 
-	now := time.Now().Unix()
-
-	if uptimeCheck, ok := ipfsGatewayUptimeChecks[gateway]; ok && config.IPFSGatewayUptimeCheckTTL > (now-uptimeCheck.Timestamp) {
+	if uptimeCheck, ok := ipfsGatewayUptimeChecks[gateway]; ok && config.IPFSGatewayUptimeCheckTTL > (time.Now().Unix()-uptimeCheck.Timestamp) {
 		return uptimeCheck.Result
 	}
 
 	result := true
 
 	client := &http.Client{
-		Timeout: time.Millisecond * config.IPFSGatewayUptimeCheckTimeout,
+		Timeout: config.IPFSGatewayUptimeCheckTimeout,
 	}
 
-	for i := 0; i < 5; i++ {
+	for i := 0; result && i < 5; i++ {
 		req, err := http.NewRequest(
 			methods.GET,
 			strings.Replace(gateway, ":hash", packageData.Uptime.IPFSHash, 1),
@@ -470,7 +449,6 @@ func checkIPFSGateway(gateway string) bool {
 				responseBodyBytes, err := ioutil.ReadAll(resp.Body)
 				if err == nil {
 					response := hex.EncodeToString(responseBodyBytes)
-
 					if response == packageData.Uptime.IntegrityHash {
 						continue
 					}
@@ -479,12 +457,11 @@ func checkIPFSGateway(gateway string) bool {
 		}
 
 		result = false
-		break
 	}
 
 	ipfsGatewayUptimeChecks[gateway] = IPFSGatewayUptimeCheckData{
 		Result:    result,
-		Timestamp: now,
+		Timestamp: time.Now().Unix(),
 	}
 
 	return result
