@@ -451,27 +451,35 @@ func checkIPFSGateway(gateway string) bool {
 		return uptimeCheck.Result
 	}
 
-	result := false
+	result := true
 
 	client := &http.Client{
 		Timeout: time.Millisecond * config.IPFSGatewayUptimeCheckTimeout,
 	}
 
-	req, err := http.NewRequest(
-		methods.GET,
-		strings.Replace(gateway, ":hash", packageData.Uptime.IPFSHash, 1),
-		nil,
-	)
+	for i := 0; i < 5; i++ {
+		req, err := http.NewRequest(
+			methods.GET,
+			strings.Replace(gateway, ":hash", packageData.Uptime.IPFSHash, 1),
+			nil,
+		)
 
-	if err == nil {
-		resp, err := client.Do(req)
 		if err == nil {
-			responseBodyBytes, err := ioutil.ReadAll(resp.Body)
+			resp, err := client.Do(req)
 			if err == nil {
-				response := hex.EncodeToString(responseBodyBytes)
-				result = response == packageData.Uptime.IntegrityHash
+				responseBodyBytes, err := ioutil.ReadAll(resp.Body)
+				if err == nil {
+					response := hex.EncodeToString(responseBodyBytes)
+
+					if response == packageData.Uptime.IntegrityHash {
+						continue
+					}
+				}
 			}
 		}
+
+		result = false
+		break
 	}
 
 	ipfsGatewayUptimeChecks[gateway] = IPFSGatewayUptimeCheckData{
