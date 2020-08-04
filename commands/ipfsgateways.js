@@ -16,18 +16,28 @@ const ipfsGateways = memoize(async () => {
 			.toString()
 	).filter(s => !s.startsWith('https://:hash'));
 
-	return Promise.all(
-		gatewayURLs.map(async url => ({
-			continentCode: (
-				(await lookup).get(
-					(await dns.promises.resolve(
-						new URL(url.replace(':hash.ipfs.', '')).host
-					))[0]
-				) || {continent: {code: 'na'}}
-			).continent.code.toLowerCase(),
-			url
-		}))
-	);
+	return (await Promise.all(
+		gatewayURLs.map(async url =>
+			Array.from(
+				new Set(
+					await Promise.all(
+						(await dns.promises.resolve(
+							new URL(url.replace(':hash.ipfs.', '')).host
+						)).map(async ip =>
+							(
+								(await lookup).get(ip) || {
+									continent: {code: 'na'}
+								}
+							).continent.code.toLowerCase()
+						)
+					)
+				)
+			).map(continentCode => ({
+				continentCode,
+				url
+			}))
+		)
+	)).reduce((a, b) => a.concat(b), []);
 });
 
 if (require.main === module) {
