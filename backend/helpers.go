@@ -457,7 +457,7 @@ func checkIPFSGateway(gateway string) bool {
 		Timeout: time.Millisecond * config.IPFSGatewayUptimeCheckTimeout,
 	}
 
-	for i := 0; i < 5; i++ {
+	for i := 0; i < 3; i++ {
 		req, err := http.NewRequest(
 			methods.GET,
 			strings.Replace(gateway, ":hash", packageData.Uptime.IPFSHash, 1),

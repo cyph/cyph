@@ -278,7 +278,7 @@ var config = struct {
 
 	"max-age=31536000; includeSubdomains; preload",
 
-	time.Duration(1500),
+	time.Duration(3000),
 
 	int64(600),
 
