@@ -34,16 +34,21 @@ const packageDatabase = () => {
 					)
 					.stdout.toString()
 			) || 0,
-			fs.existsSync(path.join(repoPath, pkg.slice(0, -6) + 'pkg.ipfs')) ?
+			fs.existsSync(
+				path.join(repoPath, pkg.slice(0, -6) + 'current.ipfs')
+			) ?
 				{
 					integrityHash: fs
 						.readFileSync(
-							path.join(repoPath, pkg.slice(0, -6) + 'pkg.br')
+							path.join(repoPath, pkg.slice(0, -6) + 'current.br')
 						)
 						.toString('hex'),
 					ipfsHash: fs
 						.readFileSync(
-							path.join(repoPath, pkg.slice(0, -6) + 'pkg.ipfs')
+							path.join(
+								repoPath,
+								pkg.slice(0, -6) + 'current.ipfs'
+							)
 						)
 						.toString()
 						.trim()
