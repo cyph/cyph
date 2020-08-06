@@ -303,8 +303,10 @@ export class CheckoutComponent extends BaseProvider
 				applePay: {
 					displayName: 'Cyph',
 					paymentRequest: {
-						amount: amountString,
-						label: 'Cyph'
+						total: {
+							amount: amountString,
+							label: 'Cyph'
+						}
 					}
 				},
 				authorization: await this.authorization(),
