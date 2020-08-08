@@ -7,6 +7,12 @@ handlers:
   secure: always
   # default_headers Cache-Control X-Frame-Options Content-Security-Policy
 
+- url: /icon.svg
+  static_files: icon.svg
+  upload: icon.svg
+  secure: always
+  # default_headers Cache-Control X-Frame-Options Content-Security-Policy
+
 - url: .*
   script: auto
   secure: always
