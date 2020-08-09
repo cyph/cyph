@@ -44,7 +44,7 @@ import {trackBySelf} from '../../track-by/track-by-self';
 import {safeStringCompare} from '../../util/compare';
 import {toBehaviorSubject} from '../../util/flatten-observable';
 import {formControlMatch, watchFormControl} from '../../util/form-controls';
-import {toInt} from '../../util/formatting';
+import {normalize, toInt} from '../../util/formatting';
 import {observableAll} from '../../util/observable-all';
 import {random} from '../../util/random';
 import {titleize} from '../../util/titleize';
@@ -287,7 +287,12 @@ export class AccountRegisterComponent extends BaseProvider
 				value.length <
 					this.configService.planConfig[
 						this.inviteCodeData.value.plan
-					].usernameMinLength ?
+					].usernameMinLength &&
+				!(
+					this.inviteCodeData.value.reservedUsername &&
+					value ===
+						normalize(this.inviteCodeData.value.reservedUsername)
+				) ?
 				{usernameTooShort: true} :
 			(await this.accountUserLookupService.usernameBlacklisted(
 					value,

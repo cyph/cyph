@@ -1084,7 +1084,8 @@ exports.register = onCall(async (data, namespace, getUsername, testEnvName) => {
 	}
 
 	if (
-		username.length < config.planConfig[plan].usernameMinLength ||
+		(username.length < config.planConfig[plan].usernameMinLength &&
+			!(reservedUsername && username === normalize(reservedUsername))) ||
 		(await usernameBlacklisted(namespace, username, reservedUsername))
 	) {
 		throw new Error('Blacklisted username.');
