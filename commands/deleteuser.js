@@ -4,7 +4,12 @@ const read = require('read');
 const databaseService = require('../modules/database-service');
 const {normalize} = require('../modules/util');
 
-const deleteUser = async (projectId, namespace, username) => {
+const deleteUser = async (
+	projectId,
+	namespace,
+	username,
+	blockOffUsername = true
+) => {
 	username = normalize(username);
 
 	if (typeof projectId !== 'string' || projectId.indexOf('cyph') !== 0) {
@@ -40,7 +45,15 @@ const deleteUser = async (projectId, namespace, username) => {
 		);
 	});
 
-	const {auth, removeItem} = databaseService(projectId);
+	const namespacePath = namespace.replace(/\./g, '_');
+
+	const {auth, database, removeItem} = databaseService(projectId);
+
+	if (blockOffUsername) {
+		await database
+			.ref(`${namespacePath}/reservedUsernames/${username}`)
+			.set('.');
+	}
 
 	await auth.deleteUser(
 		(await auth.getUserByEmail(`${username}@${namespace}`)).uid

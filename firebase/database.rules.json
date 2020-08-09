@@ -329,7 +329,7 @@
 
 			"reservedUsernames": {
 				"$reservedUsername": {
-					".validate": "newData.val() === ''"
+					".validate": "newData.val() === '' || newData.val() === '.'"
 				}
 			},
 

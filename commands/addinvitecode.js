@@ -32,6 +32,12 @@ const addInviteCode = async (
 		trialMonths = 1;
 	}
 
+	let permanentReservedUsername = false;
+	if (typeof reservedUsername === 'object' && reservedUsername.permanent) {
+		permanentReservedUsername = true;
+		reservedUsername = reservedUsername.permanent;
+	}
+
 	reservedUsername = reservedUsername ?
 		normalize(reservedUsername) :
 		undefined;
@@ -116,7 +122,7 @@ const addInviteCode = async (
 								.ref(
 									`${namespacePath}/reservedUsernames/${reservedUsername}`
 								)
-								.set('') :
+								.set(permanentReservedUsername ? '.' : '') :
 							undefined
 					])
 				)

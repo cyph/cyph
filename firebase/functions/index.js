@@ -1116,6 +1116,12 @@ exports.register = onCall(async (data, namespace, getUsername, testEnvName) => {
 			)
 		);
 
+	const permanentReservedUsername = reservedUsername ?
+		(await database
+			.ref(`${namespace}/reservedUsernames/${username}`)
+			.once('value')).val() === '.' :
+		false;
+
 	await Promise.all([
 		setRegisterItems([
 			['altMasterKey', altMasterKey],
@@ -1186,15 +1192,16 @@ exports.register = onCall(async (data, namespace, getUsername, testEnvName) => {
 			database
 				.ref(`${namespace}/users/${username}/internal/planTrialEnd`)
 				.set(planTrialEnd),
-		!reservedUsername ?
-			undefined :
+		reservedUsername &&
+		(!permanentReservedUsername || reservedUsername === username) ?
 			database
 				.ref(
 					`${namespace}/reservedUsernames/${normalize(
 						reservedUsername
 					)}`
 				)
-				.remove(),
+				.remove() :
+			undefined,
 		pendingInviteRef
 			.once('value')
 			.then(

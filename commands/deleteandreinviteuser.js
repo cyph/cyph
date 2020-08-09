@@ -61,14 +61,14 @@ const deleteAndReinviteUser = async (projectId, username) => {
 		});
 	}
 
-	await deleteUser(projectId, namespace, username);
+	await deleteUser(projectId, namespace, username, false);
 
 	const [inviteCode] = await inviteUser(
 		projectId,
 		metadata.internal.email,
 		metadata.internal.name,
 		metadata.plan,
-		username,
+		{permanent: username},
 		0,
 		1,
 		{
