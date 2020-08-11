@@ -7,7 +7,6 @@ import {BaseProvider} from '../../base-provider';
 import {IProto} from '../../iproto';
 import {IResolvable} from '../../iresolvable';
 import {
-	AccountContactState,
 	AccountLoginData,
 	AccountUserProfile,
 	AccountUserProfileExtra,
@@ -15,7 +14,6 @@ import {
 	AGSEPKICSR,
 	BinaryProto,
 	BooleanProto,
-	IAccountContactState,
 	IAccountLoginData,
 	IAccountUserProfile,
 	IAccountUserProfileExtra,
@@ -1098,6 +1096,8 @@ export class AccountAuthService extends BaseProvider {
 				}
 			);
 
+			const loginSuccess = await this.login(username, masterKeyHash);
+
 			if (inviteCode) {
 				const inviterUsername = await this.databaseService
 					.getItem(
@@ -1114,19 +1114,15 @@ export class AccountAuthService extends BaseProvider {
 						loginData.symmetricKey
 					),
 					inviterUsername && inviterUsername !== username ?
-						this.databaseService.setItem<IAccountContactState>(
-							`users/${username}/contacts/${inviterUsername}`,
-							AccountContactState,
-							{
-								state:
-									AccountContactState.States.OutgoingRequest
-							}
-						) :
+						this.databaseService.callFunction('setContact', {
+							add: true,
+							username: inviterUsername
+						}) :
 						Promise.resolve()
 				]);
 			}
 
-			return this.login(username, masterKeyHash);
+			return loginSuccess;
 		}
 		catch {
 			return false;
