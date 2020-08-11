@@ -3,11 +3,17 @@
 const firebase = require('firebase-admin');
 const fs = require('fs');
 const os = require('os');
+const read = require('read');
 const {config} = require('../modules/config');
 const databaseService = require('../modules/database-service');
 const potassium = require('../modules/potassium');
 const {CyphPlan, CyphPlans} = require('../modules/proto');
-const {deserialize, serialize, sleep} = require('../modules/util');
+const {
+	deserialize,
+	lockFunction,
+	serialize,
+	sleep
+} = require('../modules/util');
 const {addInviteCode} = require('./addinvitecode');
 const {getPublicKeys, sign} = require('./sign');
 
@@ -18,6 +24,33 @@ const {
 	BinaryProto,
 	StringProto
 } = require('../modules/proto');
+
+const duplicateCSRLock = lockFunction();
+
+const duplicateCSR = async (issuanceHistory, csr, publicSigningKeyHash) =>
+	issuanceHistory.publicSigningKeyHashes[publicSigningKeyHash] ||
+	(issuanceHistory.usernames[csr.username] &&
+		(await duplicateCSRLock(async () => {
+			while (true) {
+				const response = await new Promise(resolve => {
+					read(
+						{
+							prompt: `Reissue certificate for @${csr.username}? [y/n]`
+						},
+						(err, s) => {
+							resolve(err ? undefined : s);
+						}
+					);
+				});
+
+				if (response === 'y') {
+					return false;
+				}
+				else if (response === 'n') {
+					return true;
+				}
+			}
+		})));
 
 const certSign = async (projectId, standalone, namespace) => {
 	try {
@@ -187,11 +220,15 @@ const certSign = async (projectId, standalone, namespace) => {
 
 					/* Validate that CSR data doesn't already belong to an existing user. */
 					if (
-						issuanceHistory.publicSigningKeyHashes[
+						await duplicateCSR(
+							issuanceHistory,
+							csr,
 							publicSigningKeyHash
-						] ||
-						issuanceHistory.usernames[csr.username]
+						)
 					) {
+						console.log(
+							`Ignoring duplicate CSR for ${csr.username}.`
+						);
 						return;
 					}
 
