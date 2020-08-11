@@ -1060,7 +1060,7 @@ export class AccountFilesService extends BaseProvider {
 				switchMap(async fingerprint =>
 					!fingerprint ?
 						undefined :
-						this.downloadPGPKey(fingerprint).result.catch(
+						this.downloadPGPKey({fingerprint}).catch(
 							() => undefined
 						)
 				)
@@ -1072,7 +1072,7 @@ export class AccountFilesService extends BaseProvider {
 			pgpKey: IPGPKey | string | undefined
 		) => {
 			if (typeof pgpKey === 'string') {
-				pgpKey = await this.downloadPGPKey(pgpKey).result;
+				pgpKey = await this.downloadPGPKey(pgpKey);
 			}
 
 			const publicKey = getPublicKey(pgpKey);
@@ -1663,17 +1663,19 @@ export class AccountFilesService extends BaseProvider {
 	}
 
 	/** Downloads file and returns PGP key. */
-	public downloadPGPKey (
-		id: string | IAccountFileRecord
-	) : {
-		progress: Observable<number>;
-		result: Promise<IPGPKey>;
-	} {
-		/* Handle formatted fingerprints that double as file IDs */
-		return this.downloadItem(
-			typeof id === 'string' ? normalize(id) : id,
-			PGPKey
-		);
+	public async downloadPGPKey (
+		id: string | IAccountFileRecord | {fingerprint: string}
+	) : Promise<IPGPKey> {
+		const fileID =
+			typeof id === 'string' || !('fingerprint' in id) ?
+				id :
+				await this.getPGPKeyID(id.fingerprint);
+
+		if (fileID === undefined) {
+			throw new Error('No PGP key with the specified fingerprint found.');
+		}
+
+		return this.downloadItem(fileID, PGPKey).result;
 	}
 
 	/** Downloads file and returns as data URI. */
@@ -1930,6 +1932,44 @@ export class AccountFilesService extends BaseProvider {
 		throw new Error('Cannot detect record type.');
 	}
 
+	/**
+	 * Gets file ID of PGP key based on fingerprint.
+	 * TODO: Handle this more efficiently.
+	 */
+	public async getPGPKeyID (
+		fingerprint: string
+	) : Promise<string | undefined> {
+		this.showSpinner.next(0);
+
+		fingerprint = normalize(fingerprint);
+
+		try {
+			return (await Promise.all(
+				(await Promise.all(
+					(await this.accountDatabaseService.getListKeys(
+						'fileReferences'
+					)).map(async id => this.getFile(id))
+				))
+					.filter(
+						o =>
+							o.recordType ===
+							AccountFileRecord.RecordTypes.PGPKey
+					)
+					.map(async o => ({
+						id: o.id,
+						pgpKey: await this.downloadPGPKey(o)
+					}))
+			)).find(
+				({pgpKey}) =>
+					fingerprint ===
+					normalize(pgpKey.pgpMetadata.fingerprint || '')
+			)?.id;
+		}
+		finally {
+			this.showSpinner.next(undefined);
+		}
+	}
+
 	/** Gets the Material icon name for the file default thumbnail. */
 	public getThumbnail (
 		mediaType: string = '',
@@ -2087,9 +2127,7 @@ export class AccountFilesService extends BaseProvider {
 
 		if (file.recordType === AccountFileRecord.RecordTypes.PGPKey) {
 			try {
-				await this.pgp.removePrimaryKey(
-					await this.downloadPGPKey(id).result
-				);
+				await this.pgp.removePrimaryKey(await this.downloadPGPKey(id));
 			}
 			catch (err) {
 				debugLogError(() => ({pgpRemovePrimaryKeyError: err}));
@@ -2641,13 +2679,13 @@ export class AccountFilesService extends BaseProvider {
 			throw new Error('Invalid PGP key.');
 		}
 
-		const id = normalize(pgpKey.pgpMetadata.fingerprint);
-		const oldPGPKey = await this.downloadPGPKey(id).result.catch(
-			() => undefined
-		);
+		const fingerprint = normalize(pgpKey.pgpMetadata.fingerprint);
+		const oldPGPKeyID = await this.getPGPKeyID(fingerprint);
 		let reSetPrimaryKey = false;
 
-		if (oldPGPKey !== undefined) {
+		if (oldPGPKeyID !== undefined) {
+			const oldPGPKey = await this.downloadPGPKey(oldPGPKeyID);
+
 			const hasPrivateKey = !this.potassiumService.isEmpty(
 				pgpKey.keyPair?.privateKey
 			);
@@ -2672,25 +2710,19 @@ export class AccountFilesService extends BaseProvider {
 						title: this.stringsService.pgpKeyReplaceConfirm
 					})))
 			) {
-				return id;
+				return oldPGPKeyID;
 			}
 
 			reSetPrimaryKey =
 				normalize((await this.pgp.getPrimaryKeyFingerprint()) || '') ===
-				id;
+				fingerprint;
 		}
 
-		await this.upload(
+		const id = await this.upload(
 			pgpKey.pgpMetadata.userID ?
 				`${pgpKey.pgpMetadata.userID} : ${pgpKey.pgpMetadata.keyID}` :
 				pgpKey.pgpMetadata.keyID,
-			pgpKey,
-			undefined,
-			undefined,
-			undefined,
-			undefined,
-			undefined,
-			id
+			pgpKey
 		).result;
 
 		if (reSetPrimaryKey) {

@@ -130,8 +130,9 @@ export class AccountBaseFileListComponent extends BaseProvider
 				return;
 			}
 
-			const pgpKey = await this.accountFilesService.downloadPGPKey(record)
-				.result;
+			const pgpKey = await this.accountFilesService.downloadPGPKey(
+				record
+			);
 
 			const pgpKeyFingerprint = !!pgpKey.pgpMetadata.fingerprint ?
 				normalize(pgpKey.pgpMetadata.fingerprint) :
