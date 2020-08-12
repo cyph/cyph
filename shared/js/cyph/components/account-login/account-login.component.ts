@@ -116,9 +116,11 @@ export class AccountLoginComponent extends BaseProvider implements OnInit {
 					this.activatedRoute.snapshot.url.length > 0 ?
 						[
 							'',
-							...(this.activatedRoute.snapshot.url.slice(-1)[0]
-								?.path === 'login' ?
-								/* Trim unwanted /login from the end */
+							...(new Set(['activate', 'login']).has(
+								this.activatedRoute.snapshot.url.slice(-1)[0]
+									?.path
+							) ?
+								/* Trim unwanted /login sub-route from the end */
 								this.activatedRoute.snapshot.url.slice(0, -1) :
 								this.activatedRoute.snapshot.url
 							).map(o => o.path)
