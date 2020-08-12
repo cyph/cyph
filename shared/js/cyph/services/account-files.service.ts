@@ -1945,11 +1945,15 @@ export class AccountFilesService extends BaseProvider {
 
 		try {
 			return (await Promise.all(
-				(await Promise.all(
-					(await this.accountDatabaseService.getListKeys(
-						'fileReferences'
-					)).map(async id => this.getFile(id))
-				))
+				filterUndefined(
+					await Promise.all(
+						(await this.accountDatabaseService.getListKeys(
+							'fileReferences'
+						)).map(async id =>
+							this.getFile(id).catch(() => undefined)
+						)
+					)
+				)
 					.filter(
 						o =>
 							o.recordType ===
@@ -2716,6 +2720,8 @@ export class AccountFilesService extends BaseProvider {
 			reSetPrimaryKey =
 				normalize((await this.pgp.getPrimaryKeyFingerprint()) || '') ===
 				fingerprint;
+
+			await this.remove(oldPGPKeyID);
 		}
 
 		const id = await this.upload(
