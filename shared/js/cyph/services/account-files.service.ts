@@ -1932,13 +1932,18 @@ export class AccountFilesService extends BaseProvider {
 		throw new Error('Cannot detect record type.');
 	}
 
-	/**
-	 * Gets file ID of PGP key based on fingerprint.
-	 * TODO: Handle this more efficiently.
-	 */
+	/** Gets file ID of PGP key based on fingerprint. */
 	public async getPGPKeyID (
 		fingerprint: string
 	) : Promise<string | undefined> {
+		return (await this.getPGPKeyIDs(fingerprint))[0];
+	}
+
+	/**
+	 * Gets file ID(s) of PGP key based on fingerprint.
+	 * TODO: Handle this more efficiently.
+	 */
+	public async getPGPKeyIDs (fingerprint: string) : Promise<string[]> {
 		this.showSpinner.next(0);
 
 		fingerprint = normalize(fingerprint);
@@ -1963,11 +1968,13 @@ export class AccountFilesService extends BaseProvider {
 						id: o.id,
 						pgpKey: await this.downloadPGPKey(o)
 					}))
-			)).find(
-				({pgpKey}) =>
-					fingerprint ===
-					normalize(pgpKey.pgpMetadata.fingerprint || '')
-			)?.id;
+			))
+				.filter(
+					({pgpKey}) =>
+						fingerprint ===
+						normalize(pgpKey.pgpMetadata.fingerprint || '')
+				)
+				.map(o => o.id);
 		}
 		finally {
 			this.showSpinner.next(undefined);
@@ -2684,7 +2691,8 @@ export class AccountFilesService extends BaseProvider {
 		}
 
 		const fingerprint = normalize(pgpKey.pgpMetadata.fingerprint);
-		const oldPGPKeyID = await this.getPGPKeyID(fingerprint);
+		const oldPGPKeyIDs = await this.getPGPKeyIDs(fingerprint);
+		const oldPGPKeyID = oldPGPKeyIDs[0];
 		let reSetPrimaryKey = false;
 
 		if (oldPGPKeyID !== undefined) {
@@ -2698,21 +2706,20 @@ export class AccountFilesService extends BaseProvider {
 			);
 
 			if (
-				hasPrivateKey === hadPrivateKey ||
-				(confirmIfReplacing &&
-					!(await this.dialogService.confirm({
-						content: this.stringsService.setParameters(
-							hadPrivateKey ?
-								this.stringsService
-									.pgpKeyReplacePrivateToPublic :
-								this.stringsService
-									.pgpKeyReplacePublicToPrivate,
-							{
-								fingerprint: pgpKey.pgpMetadata.fingerprint
-							}
-						),
-						title: this.stringsService.pgpKeyReplaceConfirm
-					})))
+				confirmIfReplacing &&
+				!(await this.dialogService.confirm({
+					content: this.stringsService.setParameters(
+						hasPrivateKey === hadPrivateKey ?
+							this.stringsService.pgpKeyReplaceNoChange :
+						hadPrivateKey ?
+							this.stringsService.pgpKeyReplacePrivateToPublic :
+							this.stringsService.pgpKeyReplacePublicToPrivate,
+						{
+							fingerprint: pgpKey.pgpMetadata.fingerprint
+						}
+					),
+					title: this.stringsService.pgpKeyReplaceConfirm
+				}))
 			) {
 				return oldPGPKeyID;
 			}
@@ -2721,7 +2728,7 @@ export class AccountFilesService extends BaseProvider {
 				normalize((await this.pgp.getPrimaryKeyFingerprint()) || '') ===
 				fingerprint;
 
-			await this.remove(oldPGPKeyID);
+			await Promise.all(oldPGPKeyIDs.map(async s => this.remove(s)));
 		}
 
 		const id = await this.upload(

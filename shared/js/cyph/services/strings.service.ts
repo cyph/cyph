@@ -1118,6 +1118,9 @@ export class StringsService extends BaseProvider {
 	public readonly pgpKeyReplaceConfirm = `Confirm PGP Key Replacement`;
 
 	/** @see StringsService */
+	public readonly pgpKeyReplaceNoChange = `Replace existing key pair \${FINGERPRINT}?`;
+
+	/** @see StringsService */
 	public readonly pgpKeyReplacePrivateToPublic = `Remove private key from existing key pair \${FINGERPRINT}?`;
 
 	/** @see StringsService */
