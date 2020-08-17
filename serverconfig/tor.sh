@@ -115,6 +115,11 @@ read -r -d '' nginxconf <<- EOM
 	}
 	server {
 		\${sslconf}
+		server_name download.${onionaddress};
+		\$(proxysite https://prod-dot-cyph-download-dot-cyphme.appspot.com)
+	}
+	server {
+		\${sslconf}
 		server_name im.${onionaddress};
 		\$(proxysite https://prod-dot-cyph-im-dot-cyphme.appspot.com)
 	}

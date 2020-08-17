@@ -1187,7 +1187,8 @@ export class AccountFilesService extends BaseProvider {
 		id:
 			| string
 			| IAccountFileRecord
-			| (IAccountFileRecord & IAccountFileReference),
+			| (IAccountFileRecord & IAccountFileReference)
+			| Promise<IAccountFileRecord & IAccountFileReference>,
 		proto: IProto<T>,
 		securityModel?: SecurityModels
 	) : {
@@ -1196,7 +1197,7 @@ export class AccountFilesService extends BaseProvider {
 	} {
 		this.showSpinner.next(0);
 
-		const filePromise = this.getFile(id);
+		const filePromise = !(id instanceof Promise) ? this.getFile(id) : id;
 
 		filePromise.catch(() => {});
 
@@ -1212,7 +1213,8 @@ export class AccountFilesService extends BaseProvider {
 				) :
 				proto,
 			securityModel,
-			filePromise.then(file => file.key)
+			filePromise.then(file => file.key),
+			true
 		);
 
 		alreadyCached.catch(() => {});
@@ -1534,6 +1536,8 @@ export class AccountFilesService extends BaseProvider {
 	public downloadAndSave (
 		id:
 			| string
+			| IAccountFileRecord
+			| Promise<IAccountFileRecord & IAccountFileReference>
 			| {
 					id: string;
 					progress: Observable<number>;
@@ -1544,14 +1548,20 @@ export class AccountFilesService extends BaseProvider {
 		result: Promise<void>;
 	} {
 		const {progress, result} =
-			typeof id === 'string' ? this.downloadItem(id, BinaryProto) : id;
+			id instanceof Promise ||
+			typeof id === 'string' ||
+			!('progress' in id) ?
+				this.downloadItem(id, BinaryProto) :
+				id;
 
 		return {
 			progress,
 			result: (async () => {
-				const file = await this.getFile(
-					typeof id === 'string' ? id : id.id
-				);
+				const file =
+					id instanceof Promise ||
+					(typeof id === 'object' && !('progress' in id)) ?
+						await id :
+						await this.getFile(typeof id === 'string' ? id : id.id);
 
 				await saveFile(await result, file.name, file.mediaType);
 			})()

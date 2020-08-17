@@ -14,6 +14,7 @@ defaultHost='${locationData.protocol}//${locationData.hostname}:'
 homeURL='https://www.cyph.com'
 sed -i "s|${defaultHost}42002|https://cyph.app|g" shared/js/cyph/env-deploy.ts
 sed -i "s|CYPH-AUDIO|https://cyph.audio|g" shared/js/cyph/env-deploy.ts
+sed -i "s|CYPH-DOWNLOAD|https://cyph.download|g" shared/js/cyph/env-deploy.ts
 sed -i "s|CYPH-IM|https://cyph.im|g" shared/js/cyph/env-deploy.ts
 sed -i "s|CYPH-IO|https://cyph.io|g" shared/js/cyph/env-deploy.ts
 sed -i "s|CYPH-ME|https://cyph.me|g" shared/js/cyph/env-deploy.ts

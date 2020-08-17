@@ -1,1 +1,79 @@
-<div>AccountDownload</div>
+<div fxFlexFill fxLayout="column" fxLayoutAlign="stretch" fxLayoutGap="16px">
+	<div></div>
+	<cyph-footer class="visibility-hidden"></cyph-footer>
+	<div fxFlex></div>
+
+	<ng-container *ngIf="(file | await) === undefined; else downloadUI">
+		<div fxLayoutAlign="center">
+			<h3
+				cyphTranslate
+				class="cyph-banner dark warn"
+				*ngIf="(error | await) === true"
+			>
+				File not found. It may have been un-shared or deleted.
+			</h3>
+		</div>
+
+		<mat-progress-spinner
+			class="global"
+			mode="indeterminate"
+			*ngIf="(error | await) !== true"
+		></mat-progress-spinner>
+	</ng-container>
+
+	<ng-template #downloadUI>
+		<ng-container *ngIf="file | await as o">
+			<div fxLayoutAlign="center">
+				<h3
+					cyphTranslate
+					class="cyph-banner dark warn"
+					*ngIf="(error | await) === true"
+				>
+					Failed to download file.
+				</h3>
+			</div>
+
+			<div fxLayoutAlign="center">
+				<button
+					mat-raised-button
+					color="primary"
+					[disabled]="(downloadProgress | await) !== undefined"
+					(click)="startDownload()"
+				>
+					<mat-icon>get_app</mat-icon>
+					&ngsp;
+					<span>
+						{{
+							((downloadProgress | await) === undefined ?
+								stringsService.download +
+								' ' +
+								(o?.name || '') :
+								stringsService.downloading +
+								' ' +
+								(o?.name || '') +
+								'...') +
+								'  (' +
+								readableByteLength(o?.size || 0) +
+								')'
+						}}
+					</span>
+				</button>
+			</div>
+
+			<div></div>
+
+			<div fxLayoutGap="8px">
+				<div></div>
+				<mat-progress-bar
+					fxFlex
+					[value]="(downloadProgress | await) || 0"
+				></mat-progress-bar>
+				<div></div>
+			</div>
+		</ng-container>
+	</ng-template>
+
+	<div fxFlex></div>
+	<cyph-footer></cyph-footer>
+	<div></div>
+</div>

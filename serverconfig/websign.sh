@@ -38,6 +38,7 @@ while true ; do
 	node -e "console.log([
 		'burner.cyph.app',
 		'cyph.audio',
+		'cyph.download',
 		'cyph.im',
 		'cyph.io',
 		'cyph.me',
@@ -76,6 +77,11 @@ read -r -d '' nginxconf <<- EOM
 		\${sslconf}
 		server_name cyph.audio www.cyph.audio;
 		\$(proxysite https://prod-dot-cyph-audio-dot-cyphme.appspot.com)
+	}
+	server {
+		\${sslconf}
+		server_name cyph.download www.cyph.download;
+		\$(proxysite https://prod-dot-cyph-download-dot-cyphme.appspot.com)
 	}
 	server {
 		\${sslconf}

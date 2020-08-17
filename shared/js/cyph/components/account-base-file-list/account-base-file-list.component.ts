@@ -23,6 +23,7 @@ import {
 	IPassword
 } from '../../proto';
 import {AccountContactsService} from '../../services/account-contacts.service';
+import {AccountDownloadService} from '../../services/account-download.service';
 import {AccountFilesService} from '../../services/account-files.service';
 import {AccountService} from '../../services/account.service';
 import {AccountAuthService} from '../../services/crypto/account-auth.service';
@@ -410,6 +411,29 @@ export class AccountBaseFileListComponent extends BaseProvider
 		]);
 	}
 
+	/** Revoke public file download link. */
+	public async revokeDownloadLink (o: {
+		record: IAccountFileRecord & IAccountFileReference;
+	}) : Promise<void> {
+		await this.accountDownloadService.revoke(o.record.id);
+		await this.dialogService.toast(
+			this.stringsService.downloadRevokeSuccess
+		);
+	}
+
+	/** Shares file publicly and copies link to clipboard. */
+	public async shareDownloadLink (o: {
+		record: IAccountFileRecord & IAccountFileReference;
+	}) : Promise<void> {
+		await copyToClipboard(
+			`${this.envService.cyphDownloadUrl}${
+				(await this.accountDatabaseService.getCurrentUser()).user
+					.username
+			}/${await this.accountDownloadService.share(o.record.id)}`,
+			this.stringsService.downloadShareSuccess
+		);
+	}
+
 	/** Creates and shares new EHR API key. */
 	public async shareEhrApiKey (o: {
 		data: IEhrApiKey;
@@ -443,6 +467,9 @@ export class AccountBaseFileListComponent extends BaseProvider
 
 		/** @see AccountDatabaseService */
 		public readonly accountDatabaseService: AccountDatabaseService,
+
+		/** @see AccountDownloadService */
+		public readonly accountDownloadService: AccountDownloadService,
 
 		/** @see AccountFilesService */
 		public readonly accountFilesService: AccountFilesService,

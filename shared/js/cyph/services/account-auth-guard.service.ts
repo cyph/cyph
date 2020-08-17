@@ -19,6 +19,7 @@ export class AccountAuthGuardService extends BaseProvider
 	private readonly anonymouslyAccessibleRoutes: string[] = [
 		'404',
 		'compose',
+		'download',
 		'logout',
 		'post',
 		'profile',

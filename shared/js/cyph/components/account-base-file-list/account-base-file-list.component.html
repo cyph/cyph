@@ -237,11 +237,11 @@
 			>
 				<ng-container matColumnDef="actions">
 					<mat-header-cell
-						fxFlex="144px"
+						fxFlex="224px"
 						*matHeaderCellDef
 					></mat-header-cell>
 					<mat-cell
-						fxFlex="144px"
+						fxFlex="224px"
 						fxLayoutAlign="end center"
 						*matCellDef="let o"
 					>
@@ -780,12 +780,18 @@
 					</mat-card-subtitle>
 
 					<div fxFlex fxLayoutAlign="end center">
-						<ng-container
-							*ngTemplateOutlet="
-								actionButtons;
-								context: {currentUser: currentUser, o: o}
-							"
-						></ng-container>
+						<div
+							fxFlex="144px"
+							fxLayout="row wrap"
+							fxLayoutAlign="end center"
+						>
+							<ng-container
+								*ngTemplateOutlet="
+									actionButtons;
+									context: {currentUser: currentUser, o: o}
+								"
+							></ng-container>
+						</div>
 					</div>
 				</mat-card-header>
 			</mat-card>
@@ -1068,6 +1074,35 @@
 	>
 		<mat-icon>share</mat-icon>
 	</button>
+
+	<ng-container
+		*ngIf="
+			o.record.mediaType !== 'cyph/folder' &&
+			recordType === recordTypes.File
+		"
+	>
+		<button
+			mat-icon-button
+			cyphTranslate
+			matTooltip="Copy public download link"
+			(click)="shareDownloadLink(o); $event.stopPropagation()"
+		>
+			<mat-icon>link</mat-icon>
+		</button>
+		<button
+			mat-icon-button
+			cyphTranslate
+			[disabled]="
+				(accountDownloadService.watchIfShared(o.record.id) | await) !==
+				true
+			"
+			matTooltip="Revoke public download link"
+			(click)="revokeDownloadLink(o); $event.stopPropagation()"
+		>
+			<mat-icon>link_off</mat-icon>
+		</button>
+	</ng-container>
+
 	<button
 		mat-icon-button
 		cyphTranslate

@@ -57,6 +57,12 @@ export class Env extends EnvDeploy {
 	public readonly cyphAudioUrl: string;
 
 	/** @inheritDoc */
+	public readonly cyphDownloadUrl: string =
+		!environment.local && this.appUrl === envDeploy.appUrl ?
+			envDeploy.cyphDownloadUrl :
+			`${this.appUrl}download/`;
+
+	/** @inheritDoc */
 	public readonly cyphImUrl: string;
 
 	/** Base URL for a new io cyph link ("https://cyph.app/#burner/io/" or equivalent). */

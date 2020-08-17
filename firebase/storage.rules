@@ -182,6 +182,19 @@ service firebase.storage {
 
 				// match /fileDirectories/{hash} {}
 
+				// match /fileDownloadKeys/{fileDownloadKey}/{hash} {}
+
+				match /fileDownloads/{fileDownload}/{hash} {
+					allow read;
+					allow write: if
+						(
+							request.auth != null &&
+							(user + '@' + DOMAIN) == request.auth.token.email
+						) ||
+						resource == null
+					;
+				}
+
 				match /fileRecords/{fileRecord}/{hash} {
 					allow read;
 				}

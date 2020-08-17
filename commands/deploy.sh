@@ -544,6 +544,7 @@ if [ "${test}" ] ; then
 	sed -i "s|${defaultHost}43000|https://${version}-dot-cyph-com-dot-cyphme.appspot.com|g" shared/js/cyph/env-deploy.ts
 	sed -i "s|${defaultHost}42002|${appURL}|g" shared/js/cyph/env-deploy.ts
 	sed -i "s|CYPH-AUDIO|https://${version}-dot-cyph-audio-dot-cyphme.appspot.com|g" shared/js/cyph/env-deploy.ts
+	sed -i "s|CYPH-DOWNLOAD|https://${version}-dot-cyph-download-dot-cyphme.appspot.com|g" shared/js/cyph/env-deploy.ts
 	sed -i "s|CYPH-IM|https://${version}-dot-cyph-im-dot-cyphme.appspot.com|g" shared/js/cyph/env-deploy.ts
 	sed -i "s|CYPH-IO|https://${version}-dot-cyph-io-dot-cyphme.appspot.com|g" shared/js/cyph/env-deploy.ts
 	sed -i "s|CYPH-ME|https://${version}-dot-cyph-me-dot-cyphme.appspot.com|g" shared/js/cyph/env-deploy.ts
@@ -567,6 +568,7 @@ else
 
 		sed -i "s|${defaultHost}42002|https://debug.cyph.app|g" shared/js/cyph/env-deploy.ts
 		sed -i "s|CYPH-AUDIO|https://debug.cyph.app/#burner/audio|g" shared/js/cyph/env-deploy.ts
+		sed -i "s|CYPH-DOWNLOAD|https://debug.cyph.app/#download|g" shared/js/cyph/env-deploy.ts
 		sed -i "s|CYPH-IM|https://debug.cyph.app/#burner|g" shared/js/cyph/env-deploy.ts
 		sed -i "s|CYPH-IO|https://debug.cyph.app/#burner/io|g" shared/js/cyph/env-deploy.ts
 		sed -i "s|CYPH-ME|https://debug.cyph.app|g" shared/js/cyph/env-deploy.ts
@@ -574,6 +576,7 @@ else
 	# elif [ "${betaProd}" ] ; then
 	# 	sed -i "s|${defaultHost}42002|https://beta.cyph.app|g" shared/js/cyph/env-deploy.ts
 	# 	sed -i "s|CYPH-AUDIO|https://beta.cyph.app/#burner/audio|g" shared/js/cyph/env-deploy.ts
+	# 	sed -i "s|CYPH-DOWNLOAD|https://beta.cyph.app/#download|g" shared/js/cyph/env-deploy.ts
 	# 	sed -i "s|CYPH-IM|https://beta.cyph.app/#burner|g" shared/js/cyph/env-deploy.ts
 	# 	sed -i "s|CYPH-IO|https://beta.cyph.app/#burner/io|g" shared/js/cyph/env-deploy.ts
 	# 	sed -i "s|CYPH-ME|https://beta.cyph.app|g" shared/js/cyph/env-deploy.ts
@@ -581,6 +584,7 @@ else
 	else
 		sed -i "s|${defaultHost}42002|https://cyph.app|g" shared/js/cyph/env-deploy.ts
 		sed -i "s|CYPH-AUDIO|https://cyph.audio|g" shared/js/cyph/env-deploy.ts
+		sed -i "s|CYPH-DOWNLOAD|https://cyph.download|g" shared/js/cyph/env-deploy.ts
 		sed -i "s|CYPH-IM|https://cyph.im|g" shared/js/cyph/env-deploy.ts
 		sed -i "s|CYPH-IO|https://cyph.io|g" shared/js/cyph/env-deploy.ts
 		sed -i "s|CYPH-ME|https://cyph.me|g" shared/js/cyph/env-deploy.ts
@@ -961,20 +965,24 @@ cd ${branchDir}
 
 # WebSign redirects
 if [ ! "${simple}" ] ; then
-	createRedirect () {
-		domain="${1}"
-		path="${2}"
+	export branchPackage
+	export test
 
-		./commands/websign/createredirect.sh "${path}" "${domain}" "${branchPackage}" "${test}"
-	}
+	node -e '
+		const branchPackage = process.env.branchPackage;
+		const test = process.env.test;
 
-	createRedirect 'burner.cyph.app' 'burner'
-	createRedirect 'cyph.audio' 'burner/audio'
-	createRedirect 'cyph.im' 'burner'
-	createRedirect 'cyph.io' 'burner/io'
-	createRedirect 'cyph.me' 'profile'
-	createRedirect 'cyph.video' 'burner/video'
-	createRedirect 'cyph.ws' 'burner'
+		for (const [domain, path] of Object.entries(
+			require("./modules/config").webSignRedirects
+		).map(([k, v]) =>
+			[k, v.join("/")]
+		)) {
+			child_process.spawnSync("bash", ["-c", `
+				./commands/websign/createredirect.sh
+					"${path}" "${domain}" "${branchPackage}" "${test}"
+			`], {stdio: "inherit"});
+		}
+	'
 fi
 
 

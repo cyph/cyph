@@ -12,6 +12,7 @@ import {AccountComposeNoProvidersComponent} from '../components/account-compose-
 import {AccountContactComponent} from '../components/account-contact';
 import {AccountContactsComponent} from '../components/account-contacts';
 import {AccountContactsSearchComponent} from '../components/account-contacts-search';
+import {AccountDownloadComponent} from '../components/account-download';
 import {AccountEhrAccessComponent} from '../components/account-ehr-access';
 import {AccountFileSharingComponent} from '../components/account-file-sharing';
 import {AccountFilesComponent} from '../components/account-files';
@@ -57,6 +58,7 @@ import {env} from '../env';
 import {AccountAppointmentsService} from '../services/account-appointments.service';
 import {AccountAuthGuardService} from '../services/account-auth-guard.service';
 import {AccountContactsService} from '../services/account-contacts.service';
+import {AccountDownloadService} from '../services/account-download.service';
 import {AccountFilesService} from '../services/account-files.service';
 import {AccountInviteService} from '../services/account-invite.service';
 import {AccountNotificationsService} from '../services/account-notifications.service';
@@ -97,6 +99,7 @@ import {CyphWebModule} from './cyph-web.module';
 		AccountContactComponent,
 		AccountContactsComponent,
 		AccountContactsSearchComponent,
+		AccountDownloadComponent,
 		AccountEhrAccessComponent,
 		AccountFilesComponent,
 		AccountFileSharingComponent,
@@ -153,6 +156,7 @@ import {CyphWebModule} from './cyph-web.module';
 		AccountContactComponent,
 		AccountContactsComponent,
 		AccountContactsSearchComponent,
+		AccountDownloadComponent,
 		AccountEhrAccessComponent,
 		AccountFilesComponent,
 		AccountFileSharingComponent,
@@ -202,6 +206,7 @@ import {CyphWebModule} from './cyph-web.module';
 		AccountAuthService,
 		AccountContactsService,
 		AccountDatabaseService,
+		AccountDownloadService,
 		AccountFilesService,
 		AccountInviteService,
 		AccountNotificationsService,
@@ -229,6 +234,7 @@ export class CyphAppModule {
 		accountAuthService: AccountAuthService,
 		accountContactsService: AccountContactsService,
 		accountDatabaseService: AccountDatabaseService,
+		accountDownloadService: AccountDownloadService,
 		accountFilesService: AccountFilesService,
 		accountPostsService: AccountPostsService,
 		databaseService: DatabaseService,
@@ -252,6 +258,7 @@ export class CyphAppModule {
 		(<any> self).accountAuthService = accountAuthService;
 		(<any> self).accountContactsService = accountContactsService;
 		(<any> self).accountDatabaseService = accountDatabaseService;
+		(<any> self).accountDownloadService = accountDownloadService;
 		(<any> self).accountFilesService = accountFilesService;
 		(<any> self).accountPostsService = accountPostsService;
 		(<any> self).databaseService = databaseService;

@@ -238,9 +238,9 @@ export class AccountDatabaseService extends BaseProvider {
 		anonymous: boolean = false,
 		moreAdditionalData?: string
 	) : Promise<{
-		alreadyCached: boolean;
+		alreadyCached: Promise<boolean>;
 		progress: Observable<number>;
-		result: ITimedValue<T>;
+		result: Promise<ITimedValue<T>>;
 	}> {
 		url = await url;
 
@@ -253,11 +253,12 @@ export class AccountDatabaseService extends BaseProvider {
 			BinaryProto
 		);
 
-		const [alreadyCached, timestamp, value] = await Promise.all([
-			downloadTask.alreadyCached,
-			downloadTask.result.then(o => o.timestamp),
-			downloadTask.result.then(async o =>
-				this.open(
+		return {
+			alreadyCached: downloadTask.alreadyCached,
+			progress: downloadTask.progress,
+			result: downloadTask.result.then(async o => ({
+				timestamp: o.timestamp,
+				value: await this.open(
 					url,
 					proto,
 					securityModel,
@@ -266,16 +267,7 @@ export class AccountDatabaseService extends BaseProvider {
 					anonymous,
 					moreAdditionalData
 				)
-			)
-		]);
-
-		return {
-			alreadyCached,
-			progress: downloadTask.progress,
-			result: {
-				timestamp,
-				value
-			}
+			}))
 		};
 	}
 
@@ -367,7 +359,7 @@ export class AccountDatabaseService extends BaseProvider {
 					return data;
 				}
 
-				if (!currentUser) {
+				if (!currentUser && customKey === undefined) {
 					throw new Error('Cannot anonymously open private data.');
 				}
 
@@ -522,9 +514,9 @@ export class AccountDatabaseService extends BaseProvider {
 		})();
 
 		return {
-			alreadyCached: downloadTaskResult.then(o => o.alreadyCached),
+			alreadyCached: downloadTaskResult.then(async o => o.alreadyCached),
 			progress,
-			result: downloadTaskResult.then(o => o.result)
+			result: downloadTaskResult.then(async o => o.result)
 		};
 	}
 
@@ -685,13 +677,13 @@ export class AccountDatabaseService extends BaseProvider {
 
 			const getItemInternal = async (key: string) => {
 				const f = async () =>
-					(await this.getItemInternal(
+					(await (await this.getItemInternal(
 						`${await url}/${key}`,
 						proto,
 						securityModel,
 						customKey,
 						anonymous
-					)).result.value;
+					)).result).value;
 
 				if (!staticValues) {
 					return f();
@@ -967,13 +959,13 @@ export class AccountDatabaseService extends BaseProvider {
 		customKey?: MaybePromise<Uint8Array>,
 		anonymous: boolean = false
 	) : Promise<T> {
-		return (await this.getItemInternal(
+		return (await (await this.getItemInternal(
 			url,
 			proto,
 			securityModel,
 			customKey,
 			anonymous
-		)).result.value;
+		)).result).value;
 	}
 
 	/** @see DatabaseService.getLatestKey */
@@ -1035,7 +1027,7 @@ export class AccountDatabaseService extends BaseProvider {
 					customKey,
 					anonymous
 				)
-					.then(({result}) => result.value)
+					.then(async ({result}) => (await result).value)
 					.catch(() => undefined)
 		]);
 

@@ -595,6 +595,7 @@ export class Config {
 	public readonly webSignRedirects: Record<string, string[]> = {
 		'burner.cyph.app': ['burner'],
 		'cyph.audio': ['burner', 'audio'],
+		'cyph.download': ['download'],
 		'cyph.im': ['burner'],
 		'cyph.io': ['burner', 'io'],
 		'cyph.me': ['profile'],

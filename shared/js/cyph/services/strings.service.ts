@@ -383,6 +383,18 @@ export class StringsService extends BaseProvider {
 	public readonly downgradeAccountTitle = `Downgrade Account`;
 
 	/** @see StringsService */
+	public readonly download = `Download`;
+
+	/** @see StringsService */
+	public readonly downloading = `Downloading`;
+
+	/** @see StringsService */
+	public readonly downloadRevokeSuccess = `Download link revoked. File is no longer public.`;
+
+	/** @see StringsService */
+	public readonly downloadShareSuccess = `Download link copied to clipboard.`;
+
+	/** @see StringsService */
 	public readonly dr = `Dr.`;
 
 	/** @see StringsService */

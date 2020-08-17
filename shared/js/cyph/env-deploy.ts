@@ -59,6 +59,11 @@ export class EnvDeploy {
 		`https://audio.${config.onionRoot}/` :
 		`CYPH-AUDIO/`;
 
+	/** URL for an accounts download link ("https://cyph.download/" or equivalent). */
+	public readonly cyphDownloadUrl: string = this.isOnion ?
+		`https://download.${config.onionRoot}/` :
+		`CYPH-DOWNLOAD/`;
+
 	/** URL for starting a new cyph ("https://cyph.im/" or equivalent). */
 	public readonly cyphImUrl: string = this.isOnion ?
 		`https://im.${config.onionRoot}/` :

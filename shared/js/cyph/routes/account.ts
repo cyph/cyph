@@ -8,6 +8,7 @@ import {AccountAppointmentAgendaComponent} from '../components/account-appointme
 import {AccountChatComponent} from '../components/account-chat';
 import {AccountComposeComponent} from '../components/account-compose';
 import {AccountContactsComponent} from '../components/account-contacts';
+import {AccountDownloadComponent} from '../components/account-download';
 import {AccountEhrAccessComponent} from '../components/account-ehr-access';
 import {AccountFilesComponent} from '../components/account-files';
 import {AccountFormComponent} from '../components/account-form';
@@ -206,6 +207,7 @@ export const account: Route = {
 					AccountContactsComponent,
 			data: {doctorListOnly: true}
 		},
+		{path: 'download/:username/:id', component: AccountDownloadComponent},
 		{path: 'ehr-access', component: AccountEhrAccessComponent},
 		{path: 'feed', component: AccountPostFeedPageComponent},
 		{path: 'files', component: AccountFilesComponent},

@@ -86,6 +86,7 @@ const baseRequest = <R, T>(
 									{}),
 								...headers
 							}),
+							reportProgress: true,
 							responseType
 						})
 					);

@@ -909,6 +909,37 @@
 						}
 					},
 
+					"fileDownloadKeys": {
+						"$fileDownloadKey": {
+							"data": {
+								".validate": "newData.isString()"
+							},
+							"hash": {
+								".validate": "newData.isString()"
+							},
+							"timestamp": {
+								".validate": "newData.val() === now"
+							}
+						}
+					},
+
+					"fileDownloads": {
+						"$fileDownload": {
+							".read": true,
+							".write": "($user + '@' + $DOMAIN) === auth.token.email || (!data.exists() && newData.exists())",
+
+							"data": {
+								".validate": "newData.isString()"
+							},
+							"hash": {
+								".validate": "newData.isString()"
+							},
+							"timestamp": {
+								".validate": "newData.val() === now"
+							}
+						}
+					},
+
 					"fileRecords": {
 						"$fileRecord": {
 							".read": true,
