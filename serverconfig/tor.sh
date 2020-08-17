@@ -12,7 +12,7 @@ PROMPT cert
 PROMPT key
 
 onionaddress='cyphdbyhiddenbhs.onion'
-csrSubject="/C=US/ST=Delaware/L=Wilmington/O=Cyph, Inc./CN=${onionaddress}"
+csrSubject="/C=US/ST=Delaware/L=Claymont/O=Cyph, Inc./CN=${onionaddress}"
 
 
 cd $(cd "$(dirname "$0")"; pwd)

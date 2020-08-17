@@ -95,7 +95,7 @@ cat > server.js <<- EOM
 
 		await util.promisify(fs.writeFile)('sans.txt', (
 			'[req]\nreq_extensions=req_ext\ndistinguished_name=dn\n\n' +
-			'[dn]\nC=US\nST=Delaware\nL=Wilmington\nO=Cyph, Inc.\nCN=' + domains[0] + '\n\n' +
+			'[dn]\nC=US\nST=Delaware\nL=Claymont\nO=Cyph, Inc.\nCN=' + domains[0] + '\n\n' +
 			'[req_ext]\nsubjectAltName=@alt_names\n\n' +
 			'[alt_names]\n' +
 			domains.map((d, i) => 'DNS.' + (i + 1).toString() + '=' + d).join('\n')
@@ -109,7 +109,7 @@ cat > server.js <<- EOM
 			'-key',
 			keyPath,
 			'-subj',
-			'/C=US/ST=Delaware/L=Wilmington/O=Cyph, Inc./CN=' + domains[0],
+			'/C=US/ST=Delaware/L=Claymont/O=Cyph, Inc./CN=' + domains[0],
 			'-config',
 			'sans.txt'
 		]);

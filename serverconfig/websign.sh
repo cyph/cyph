@@ -8,7 +8,7 @@ rekeyscript='BASE64 hpkpsuicide.sh'
 PROMPT apikey
 PROMPT orderid
 PROMPT githubToken
-csrSubject='/C=US/ST=Delaware/L=Wilmington/O=Cyph, Inc./CN=cyph.app'
+csrSubject='/C=US/ST=Delaware/L=Claymont/O=Cyph, Inc./CN=cyph.app'
 
 
 mkdir /etc/nginx/ssl
