@@ -978,7 +978,7 @@ if [ ! "${simple}" ] ; then
 			[k, v.join("/")]
 		)) {
 			child_process.spawnSync("bash", ["-c", `
-				./commands/websign/createredirect.sh
+				./commands/websign/createredirect.sh \\
 					"${path}" "${domain}" "${branchPackage}" "${test}"
 			`], {stdio: "inherit"});
 		}
