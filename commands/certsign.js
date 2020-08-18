@@ -349,7 +349,7 @@ const certSign = async (projectId, standalone, namespace) => {
 				),
 				namespace
 			),
-			...usernames.map(async username => {
+			...csrs.map(async ({username}) => {
 				const url = `users/${username}/certificateRequest`;
 
 				await removeItem(namespace, url);
