@@ -13,7 +13,6 @@ import {MatMenuModule} from '@angular/material/menu';
 import {MatPaginatorModule} from '@angular/material/paginator';
 import {MatProgressBarModule} from '@angular/material/progress-bar';
 import {MatSidenavModule} from '@angular/material/sidenav';
-import {MatSlideToggleModule} from '@angular/material/slide-toggle';
 import {MatSnackBarModule} from '@angular/material/snack-bar';
 import {MatSortModule} from '@angular/material/sort';
 import {MatTableModule} from '@angular/material/table';
@@ -94,7 +93,6 @@ import {CyphSharedModule} from './cyph-shared.module';
 		MatPaginatorModule,
 		MatProgressBarModule,
 		MatSidenavModule,
-		MatSlideToggleModule,
 		MatSnackBarModule,
 		MatSortModule,
 		MatTableModule,
@@ -128,7 +126,6 @@ import {CyphSharedModule} from './cyph-shared.module';
 		MatPaginatorModule,
 		MatProgressBarModule,
 		MatSidenavModule,
-		MatSlideToggleModule,
 		MatSnackBarModule,
 		MatSortModule,
 		MatTableModule,

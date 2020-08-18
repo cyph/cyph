@@ -14,6 +14,7 @@ import {MatListModule} from '@angular/material/list';
 import {MatProgressSpinnerModule} from '@angular/material/progress-spinner';
 import {MatRadioModule} from '@angular/material/radio';
 import {MatSelectModule} from '@angular/material/select';
+import {MatSlideToggleModule} from '@angular/material/slide-toggle';
 import {MatSliderModule} from '@angular/material/slider';
 import {MatTooltipModule} from '@angular/material/tooltip';
 import {BrowserModule} from '@angular/platform-browser';
@@ -104,6 +105,7 @@ import {StringsService} from '../services/strings.service';
 		MatRadioModule,
 		MatSelectModule,
 		MatSliderModule,
+		MatSlideToggleModule,
 		MatTooltipModule,
 		NanoScrollerDirective,
 		NgxCaptchaModule,
@@ -131,6 +133,7 @@ import {StringsService} from '../services/strings.service';
 		MatRadioModule,
 		MatSelectModule,
 		MatSliderModule,
+		MatSlideToggleModule,
 		MatTooltipModule,
 		NgxCaptchaModule,
 		TextMaskModule
