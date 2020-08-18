@@ -1,3 +1,5 @@
+/* eslint-disable max-lines */
+
 import {Injectable} from '@angular/core';
 import memoize from 'lodash-es/memoize';
 import throttle from 'lodash-es/throttle';
