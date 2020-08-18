@@ -90,14 +90,23 @@
 						<mat-chip-list ngClass.lt-md="lt-md">
 							<mat-chip
 								class="mat-raised"
-								*ngIf="
-									wallet.data.cryptocurrency ===
-									cryptocurrencies.BTC
+								[ngClass]="
+									cryptocurrencies[wallet.data.cryptocurrency]
 								"
 							>
-								<mat-icon svgIcon="bitcoin"></mat-icon>
+								<mat-icon
+									[svgIcon]="
+										cryptocurrencyService.icons[
+											wallet.data.cryptocurrency
+										]
+									"
+								></mat-icon>
 								&nbsp;
-								<span cyphTranslate>Bitcoin</span>
+								<span>{{
+									cryptocurrencyService.names[
+										wallet.data.cryptocurrency
+									]
+								}}</span>
 							</mat-chip>
 							<button
 								mat-icon-button
@@ -136,7 +145,7 @@
 									cryptocurrencyService.blockchainFetchError
 										| await
 								"
-								[matTooltip]="stringsService.bitcoinSendTitle"
+								[matTooltip]="stringsService.walletSendTitle"
 								(click)="send(wallet.data)"
 								*ngIf="!wallet.data.address"
 							>
@@ -207,7 +216,8 @@
 													) | await) || 0,
 													{
 														cryptocurrency:
-															cryptocurrencies.BTC
+															wallet.data
+																.cryptocurrency
 													},
 													{currency: currencies.USD}
 												) | await) || 0

@@ -87,8 +87,7 @@ export class AccountWalletsComponent extends BaseProvider implements OnInit {
 	/** Generates and uploads a new wallet. */
 	/* eslint-disable-next-line complexity */
 	public async generate (
-		newWalletOptions: NewWalletOptions = NewWalletOptions.generate,
-		cryptocurrency: Cryptocurrencies = Cryptocurrencies.BTC
+		newWalletOptions: NewWalletOptions = NewWalletOptions.generate
 	) : Promise<void> {
 		const subtitle =
 			newWalletOptions === NewWalletOptions.generate ?
@@ -111,6 +110,16 @@ export class AccountWalletsComponent extends BaseProvider implements OnInit {
 		if (!subtitle || !title) {
 			return;
 		}
+
+		const cryptocurrency = await this.dialogService.prompt({
+			multipleChoiceOptions: this.cryptocurrencyService.supportedCryptocurrencies.map(
+				value => ({
+					title: this.cryptocurrencyService.names[value],
+					value
+				})
+			),
+			title: 'Cryptocurrency:'
+		});
 
 		const generateForm = await this.dialogService.prompt({
 			content: '',
@@ -257,12 +266,16 @@ export class AccountWalletsComponent extends BaseProvider implements OnInit {
 				this.accountFilesService.showSpinner.next(undefined);
 			}
 
+			const transactionFee = this.cryptocurrencyService.getTransactionFee(
+				wallet
+			);
+
 			const step = 0.00000001;
 
 			const max = Math.min(
 				20999999.9769,
 				Math.max(
-					balance - this.cryptocurrencyService.transactionFee,
+					balance - transactionFee,
 					this.cryptocurrencyService.minimumTransactionAmount
 				)
 			);
@@ -279,9 +292,13 @@ export class AccountWalletsComponent extends BaseProvider implements OnInit {
 						newFormContainer([
 							text({
 								label: this.stringsService.setParameters(
-									this.stringsService.bitcoinTransactionFee,
+									this.stringsService.walletTransactionFee,
 									{
-										1: this.cryptocurrencyService.transactionFee.toString()
+										amount: transactionFee.toString(),
+										cryptocurrency:
+											Cryptocurrencies[
+												wallet.cryptocurrency
+											]
 									}
 								)
 							})
@@ -290,8 +307,7 @@ export class AccountWalletsComponent extends BaseProvider implements OnInit {
 					newFormComponent([
 						newFormContainer([
 							input({
-								label: this.stringsService
-									.bitcoinRecipientLabel,
+								label: this.stringsService.walletRecipientLabel,
 								value: recipient
 							})
 						])
@@ -299,7 +315,15 @@ export class AccountWalletsComponent extends BaseProvider implements OnInit {
 					newFormComponent([
 						newFormContainer([
 							numberInput({
-								label: this.stringsService.bitcoinAmountLabel,
+								label: this.stringsService.setParameters(
+									this.stringsService.walletAmountLabel,
+									{
+										cryptocurrency:
+											Cryptocurrencies[
+												wallet.cryptocurrency
+											]
+									}
+								),
 								max,
 								min,
 								step,
@@ -308,7 +332,7 @@ export class AccountWalletsComponent extends BaseProvider implements OnInit {
 						])
 					])
 				]),
-				title: this.stringsService.bitcoinSendTitle
+				title: this.stringsService.walletSendTitle
 			});
 
 			recipient = getFormValue(sendForm, 'string', 1, 0, 0);
@@ -322,13 +346,14 @@ export class AccountWalletsComponent extends BaseProvider implements OnInit {
 		if (
 			!(await this.dialogService.confirm({
 				content: this.stringsService.setParameters(
-					this.stringsService.bitcoinConfirmationPrompt,
+					this.stringsService.walletConfirmationPrompt,
 					{
-						1: amount.toFixed(8),
-						2: recipient
+						amount: amount.toFixed(8),
+						cryptocurrency: Cryptocurrencies[wallet.cryptocurrency],
+						recipient
 					}
 				),
-				title: this.stringsService.bitcoinSendTitle
+				title: this.stringsService.walletSendTitle
 			}))
 		) {
 			return;
@@ -341,19 +366,21 @@ export class AccountWalletsComponent extends BaseProvider implements OnInit {
 
 			return this.dialogService.alert({
 				content: `${
-					this.stringsService.bitcoinSuccessText
-				} ${amount.toFixed(8)} ${this.stringsService.bitcoinShort}.`,
-				title: this.stringsService.bitcoinSuccessTitle
+					this.stringsService.walletSuccessText
+				} ${amount.toFixed(8)} ${
+					Cryptocurrencies[wallet.cryptocurrency]
+				}.`,
+				title: this.stringsService.walletSuccessTitle
 			});
 		}
 		catch (err) {
 			return this.dialogService.alert({
 				content: `${
-					this.stringsService.bitcoinErrorText
-				} ${amount.toFixed(8)} ${this.stringsService.bitcoinShort}${
-					err instanceof Error ? `: ${err.message}` : '.'
-				}`,
-				title: this.stringsService.bitcoinErrorTitle
+					this.stringsService.walletErrorText
+				} ${amount.toFixed(8)} ${
+					Cryptocurrencies[wallet.cryptocurrency]
+				}${err instanceof Error ? `: ${err.message}` : '.'}`,
+				title: this.stringsService.walletErrorTitle
 			});
 		}
 		finally {

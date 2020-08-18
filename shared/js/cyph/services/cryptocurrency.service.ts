@@ -1,5 +1,6 @@
 import {Injectable} from '@angular/core';
 import memoize from 'lodash-es/memoize';
+import throttle from 'lodash-es/throttle';
 import * as msgpack from 'msgpack-lite';
 import {BehaviorSubject, Observable, Subject, timer} from 'rxjs';
 import {catchError, switchMap} from 'rxjs/operators';
@@ -8,7 +9,7 @@ import {
 	minimumTransactionAmount,
 	setBlockchainAPIKey,
 	Transaction,
-	transactionFee,
+	transactionFees,
 	Wallet as SimpleBTCWallet
 } from 'simplebtc';
 import {BaseProvider} from '../base-provider';
@@ -59,29 +60,8 @@ export class CryptocurrencyService extends BaseProvider {
 			}
 		},
 		exchangeRates: {
-			_key: 'CryptocurrencyService/exchangeRates/BTC',
-			getItem: async () : Promise<Record<string, number>> => {
-				try {
-					return msgpack.decode(
-						await this.localStorageService.getItem(
-							this.cache.exchangeRates._key,
-							BinaryProto
-						)
-					);
-				}
-				catch {
-					return {};
-				}
-			},
-			setItem: (exchangeRates: Record<string, number>) => {
-				this.localStorageService.setItem(
-					this.cache.exchangeRates._key,
-					BinaryProto,
-					msgpack.encode(exchangeRates)
-				);
-
-				return exchangeRates;
-			}
+			bitcoin: this.getExchangeRatesCache(false),
+			bitcoinCash: this.getExchangeRatesCache(true)
 		},
 		transactionHistory: {
 			_getKey: (simpleBTCWallet: SimpleBTCWallet) =>
@@ -134,21 +114,67 @@ export class CryptocurrencyService extends BaseProvider {
 	/** Indicates whether this client is having trouble fetching data from the Blockchain API. */
 	public readonly blockchainFetchError = new BehaviorSubject(false);
 
-	/** @see minimumTransactionAmount */
-	public readonly minimumTransactionAmount = minimumTransactionAmount;
-
-	/** @see transactionFee */
-	public readonly transactionFee = transactionFee;
-
 	/** Gets address of a wallet. */
 	public readonly getAddress = memoize(
 		async (wallet: IWallet) : Promise<string> => {
-			if (wallet.cryptocurrency !== Cryptocurrencies.BTC) {
+			if (!this.supportedCryptocurrenciesSet.has(wallet.cryptocurrency)) {
 				throw new Error('Unsupported cryptocurrency.');
 			}
 
 			return this.getSimpleBTCWallet(wallet).address;
 		}
+	);
+
+	/** Cryptocurrency icons. */
+	public readonly icons: Record<Cryptocurrencies, string> = {
+		[Cryptocurrencies.BTC]: 'bitcoin',
+		[Cryptocurrencies.BCH]: 'bitcoin',
+		[Cryptocurrencies.CYPH]: 'bitcoin',
+		[Cryptocurrencies.DASH]: 'bitcoin',
+		[Cryptocurrencies.DOGE]: 'bitcoin',
+		[Cryptocurrencies.ETH]: 'bitcoin',
+		[Cryptocurrencies.FIL]: 'bitcoin',
+		[Cryptocurrencies.LTC]: 'bitcoin',
+		[Cryptocurrencies.NEO]: 'bitcoin',
+		[Cryptocurrencies.XLM]: 'bitcoin',
+		[Cryptocurrencies.XMR]: 'bitcoin',
+		[Cryptocurrencies.XRB]: 'bitcoin',
+		[Cryptocurrencies.XRP]: 'bitcoin',
+		[Cryptocurrencies.WTC]: 'bitcoin',
+		[Cryptocurrencies.ZEC]: 'bitcoin'
+	};
+
+	/** @see minimumTransactionAmount */
+	public readonly minimumTransactionAmount = minimumTransactionAmount;
+
+	/** Cryptocurrency names. */
+	public readonly names: Record<Cryptocurrencies, string> = {
+		[Cryptocurrencies.BTC]: 'Bitcoin',
+		[Cryptocurrencies.BCH]: 'Bitcoin Cash',
+		[Cryptocurrencies.CYPH]: 'Cyphcoin',
+		[Cryptocurrencies.DASH]: 'Dash',
+		[Cryptocurrencies.DOGE]: 'Dogecoin',
+		[Cryptocurrencies.ETH]: 'Ethereum',
+		[Cryptocurrencies.FIL]: 'Filecoin',
+		[Cryptocurrencies.LTC]: 'Litecoin',
+		[Cryptocurrencies.NEO]: 'Neo',
+		[Cryptocurrencies.XLM]: 'Stellar',
+		[Cryptocurrencies.XMR]: 'Monero',
+		[Cryptocurrencies.XRB]: 'Nano',
+		[Cryptocurrencies.XRP]: 'Ripple',
+		[Cryptocurrencies.WTC]: 'Waltonchain',
+		[Cryptocurrencies.ZEC]: 'Zcash'
+	};
+
+	/** Currently supported cryptocurrencies. */
+	public readonly supportedCryptocurrencies = [
+		Cryptocurrencies.BTC,
+		Cryptocurrencies.BCH
+	];
+
+	/** Currently supported cryptocurrencies (set). */
+	public readonly supportedCryptocurrenciesSet = new Set(
+		this.supportedCryptocurrencies
 	);
 
 	/** Watches conversion value on a 15-minute interval. */
@@ -166,7 +192,7 @@ export class CryptocurrencyService extends BaseProvider {
 	/** Watches new transactions as they occur. */
 	public readonly watchNewTransactions = memoize(
 		(wallet: IWallet) : Observable<Transaction> => {
-			if (wallet.cryptocurrency !== Cryptocurrencies.BTC) {
+			if (!this.supportedCryptocurrenciesSet.has(wallet.cryptocurrency)) {
 				throw new Error('Unsupported cryptocurrency.');
 			}
 
@@ -184,7 +210,7 @@ export class CryptocurrencyService extends BaseProvider {
 	/** Watches full transaction history sorted in descending order by timestamp. */
 	public readonly watchTransactionHistory = memoize(
 		(wallet: IWallet) : Observable<Transaction[]> => {
-			if (wallet.cryptocurrency !== Cryptocurrencies.BTC) {
+			if (!this.supportedCryptocurrenciesSet.has(wallet.cryptocurrency)) {
 				throw new Error('Unsupported cryptocurrency.');
 			}
 
@@ -217,18 +243,74 @@ export class CryptocurrencyService extends BaseProvider {
 	);
 
 	/** @ignore */
+	private getExchangeRatesCache (
+		bitcoinCash: boolean
+	) : {
+		getExchangeRates: () => Promise<{
+			[currencyCode: string]: number;
+		}>;
+		getItem: () => Promise<Record<string, number>>;
+		setItem: (
+			exchangeRates: Record<string, number>
+		) => Record<string, number>;
+	} {
+		const key = bitcoinCash ?
+			'CryptocurrencyService/exchangeRates/BCH' :
+			'CryptocurrencyService/exchangeRates/BTC';
+
+		return {
+			getExchangeRates: throttle(
+				async () => getExchangeRates(bitcoinCash),
+				600000
+			),
+			getItem: async () : Promise<Record<string, number>> => {
+				try {
+					return msgpack.decode(
+						await this.localStorageService.getItem(key, BinaryProto)
+					);
+				}
+				catch {
+					return {};
+				}
+			},
+			setItem: (exchangeRates: Record<string, number>) => {
+				this.localStorageService.setItem(
+					key,
+					BinaryProto,
+					msgpack.encode(exchangeRates)
+				);
+
+				return exchangeRates;
+			}
+		};
+	}
+
+	/** @ignore */
 	private getSimpleBTCWallet (wallet: IWallet) : SimpleBTCWallet {
+		if (!this.supportedCryptocurrenciesSet.has(wallet.cryptocurrency)) {
+			throw new Error('Unsupported cryptocurrency.');
+		}
+
+		const bitcoinCash = wallet.cryptocurrency === Cryptocurrencies.BCH;
+
 		return new SimpleBTCWallet(
 			wallet.key && wallet.key.length > 0 ?
 				{
+					bitcoinCash,
 					key: wallet.key,
 					uncompressedPublicKey: wallet.uncompressedPublicKey
 				} :
-				{address: wallet.address}
+				{
+					address: wallet.address,
+					bitcoinCash
+				}
 		);
 	}
 
-	/** Converts between currency amounts. */
+	/**
+	 * Converts between currency amounts.
+	 * TODO: Rewrite this to be more flexible and/or remove simplebtc dependency.
+	 */
 	public async convert (
 		amount: number,
 		input: GenericCurrency,
@@ -236,22 +318,40 @@ export class CryptocurrencyService extends BaseProvider {
 	) : Promise<number> {
 		if (
 			(input.cryptocurrency !== undefined &&
-				input.cryptocurrency !== Cryptocurrencies.BTC) ||
+				!this.supportedCryptocurrenciesSet.has(input.cryptocurrency)) ||
 			(output.cryptocurrency !== undefined &&
-				output.cryptocurrency !== Cryptocurrencies.BTC)
+				!this.supportedCryptocurrenciesSet.has(output.cryptocurrency))
 		) {
 			throw new Error('Unsupported cryptocurrency.');
 		}
 
+		if (
+			input.cryptocurrency !== undefined &&
+			output.cryptocurrency !== undefined &&
+			input.cryptocurrency !== output.cryptocurrency
+		) {
+			throw new Error(
+				'Converting between two cryptocurrencies is currently unsupported.'
+			);
+		}
+
+		const bitcoinCash =
+			input.cryptocurrency === Cryptocurrencies.BCH ||
+			output.cryptocurrency === Cryptocurrencies.BCH;
+
+		const exchangeRates = bitcoinCash ?
+			this.cache.exchangeRates.bitcoinCash :
+			this.cache.exchangeRates.bitcoin;
+
 		const cacheExchangeRates = async () => {
 			try {
-				return this.cache.exchangeRates.setItem(
-					await getExchangeRates()
+				return exchangeRates.setItem(
+					await exchangeRates.getExchangeRates()
 				);
 			}
 			catch {
 				this.blockchainFetchError.next(true);
-				return this.cache.exchangeRates.getItem();
+				return exchangeRates.getItem();
 			}
 		};
 
@@ -291,7 +391,7 @@ export class CryptocurrencyService extends BaseProvider {
 		}
 
 		throw new Error(
-			'Converting between non-Bitcoin currencies is currently unsupported.'
+			'Converting between non-crypto-currencies is currently unsupported.'
 		);
 	}
 
@@ -317,12 +417,13 @@ export class CryptocurrencyService extends BaseProvider {
 		key?: Uint8Array | string;
 		uncompressedPublicKey?: boolean;
 	} = {}) : Promise<IWallet> {
-		if (cryptocurrency !== Cryptocurrencies.BTC) {
+		if (!this.supportedCryptocurrenciesSet.has(cryptocurrency)) {
 			throw new Error('Unsupported cryptocurrency.');
 		}
 
 		const wallet = new SimpleBTCWallet({
 			address,
+			bitcoinCash: cryptocurrency === Cryptocurrencies.BCH,
 			key,
 			uncompressedPublicKey
 		});
@@ -358,9 +459,9 @@ export class CryptocurrencyService extends BaseProvider {
 		}
 
 		if (
-			wallet.cryptocurrency !== Cryptocurrencies.BTC ||
+			!this.supportedCryptocurrenciesSet.has(wallet.cryptocurrency) ||
 			(convert?.cryptocurrency !== undefined &&
-				convert.cryptocurrency !== Cryptocurrencies.BTC)
+				!this.supportedCryptocurrenciesSet.has(convert.cryptocurrency))
 		) {
 			throw new Error('Unsupported cryptocurrency.');
 		}
@@ -382,11 +483,16 @@ export class CryptocurrencyService extends BaseProvider {
 		return convert ? this.convert(balance, wallet, convert) : balance;
 	}
 
+	/** Returns transaction fee for wallet's currency. */
+	public getTransactionFee (_WALLET: IWallet) : number {
+		return transactionFees.bitcoin;
+	}
+
 	/** Returns full transaction history sorted in descending order by timestamp. */
 	public async getTransactionHistory (
 		wallet: IWallet
 	) : Promise<Transaction[]> {
-		if (wallet.cryptocurrency !== Cryptocurrencies.BTC) {
+		if (!this.supportedCryptocurrenciesSet.has(wallet.cryptocurrency)) {
 			throw new Error('Unsupported cryptocurrency.');
 		}
 
@@ -410,7 +516,7 @@ export class CryptocurrencyService extends BaseProvider {
 		recipient: IWallet | string,
 		amount: number
 	) : Promise<void> {
-		if (wallet.cryptocurrency !== Cryptocurrencies.BTC) {
+		if (!this.supportedCryptocurrenciesSet.has(wallet.cryptocurrency)) {
 			throw new Error('Unsupported cryptocurrency.');
 		}
 

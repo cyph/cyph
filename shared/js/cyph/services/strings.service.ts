@@ -125,36 +125,6 @@ export class StringsService extends BaseProvider {
 	public readonly bannerTextAlt = `Help Defend Internet Privacy: Donate to ${this.internalCompany}`;
 
 	/** @see StringsService */
-	public readonly bitcoinAmountLabel = `Amount (BTC)`;
-
-	/** @see StringsService */
-	public readonly bitcoinConfirmationPrompt = `Send \${1} BTC to \${2}?`;
-
-	/** @see StringsService */
-	public readonly bitcoinErrorText = `Failed to send`;
-
-	/** @see StringsService */
-	public readonly bitcoinErrorTitle = `Send Error`;
-
-	/** @see StringsService */
-	public readonly bitcoinRecipientLabel = `Recipient Address`;
-
-	/** @see StringsService */
-	public readonly bitcoinSendTitle = `Send Bitcoin`;
-
-	/** @see StringsService */
-	public readonly bitcoinShort = `BTC`;
-
-	/** @see StringsService */
-	public readonly bitcoinSuccessText = `Sent`;
-
-	/** @see StringsService */
-	public readonly bitcoinSuccessTitle = `Send Success`;
-
-	/** @see StringsService */
-	public readonly bitcoinTransactionFee = `Transaction fee: \${1} BTC`;
-
-	/** @see StringsService */
 	public readonly bitPayAriaLabel = `Paying with Cryptocurrency via BitPay`;
 
 	/** @see StringsService */
@@ -1516,6 +1486,33 @@ export class StringsService extends BaseProvider {
 
 	/** @see StringsService */
 	public readonly waitlistSignupTitle = `${this.internalProductShort} Waitlist Signup`;
+
+	/** @see StringsService */
+	public readonly walletAmountLabel = `Amount (\${CRYPTOCURRENCY})`;
+
+	/** @see StringsService */
+	public readonly walletConfirmationPrompt = `Send \${AMOUNT} \${CRYPTOCURRENCY} to \${RECIPIENT}?`;
+
+	/** @see StringsService */
+	public readonly walletErrorText = `Failed to send`;
+
+	/** @see StringsService */
+	public readonly walletErrorTitle = `Send Error`;
+
+	/** @see StringsService */
+	public readonly walletRecipientLabel = `Recipient Address`;
+
+	/** @see StringsService */
+	public readonly walletSendTitle = `Send Money`;
+
+	/** @see StringsService */
+	public readonly walletSuccessText = `Sent`;
+
+	/** @see StringsService */
+	public readonly walletSuccessTitle = `Send Success`;
+
+	/** @see StringsService */
+	public readonly walletTransactionFee = `Transaction fee: \${AMOUNT} \${CRYPTOCURRENCY}`;
 
 	/** @see StringsService */
 	public readonly warningTitle = `Warning`;
