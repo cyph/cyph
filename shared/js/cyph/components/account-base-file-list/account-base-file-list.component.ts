@@ -426,7 +426,7 @@ export class AccountBaseFileListComponent extends BaseProvider
 		record: IAccountFileRecord & IAccountFileReference;
 	}) : Promise<void> {
 		await copyToClipboard(
-			`${this.envService.cyphDownloadUrl}${
+			`${this.envService.cyphDownloadUrl}#${
 				(await this.accountDatabaseService.getCurrentUser()).user
 					.username
 			}/${await this.accountDownloadService.share(o.record.id)}`,
