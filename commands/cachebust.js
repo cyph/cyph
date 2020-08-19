@@ -10,7 +10,10 @@ const superSphincs = require('supersphincs');
 		...glob.sync('!(node_modules)/**', {nodir: true})
 	];
 
-	const filesToCacheBust = files.filter(path => !path.endsWith('index.html'));
+	const filesToCacheBust = files.filter(
+		path => !path.endsWith('index.html') && !path.endsWith('apple-pay')
+	);
+
 	const filesToModify = files.filter(
 		path => path.endsWith('.html') || path.endsWith('.js')
 	);
@@ -42,6 +45,7 @@ const superSphincs = require('supersphincs');
 
 			const hash = (await superSphincs.hash(fs.readFileSync(subresource)))
 				.hex;
+
 			content = content.replace(
 				new RegExp(subresource + '(?!.map)', 'g'),
 				(s, i) =>
