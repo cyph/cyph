@@ -13,7 +13,6 @@ import {
 	Output
 } from '@angular/core';
 import * as bitPay from 'bitpay.js';
-import * as braintreeDataCollector from 'braintree-web/data-collector';
 import * as braintreeDropIn from 'braintree-web-drop-in';
 import memoize from 'lodash-es/memoize';
 import {BehaviorSubject, of} from 'rxjs';
@@ -42,8 +41,6 @@ const EF: any | undefined =
 	typeof (<any> self).EF?.conversion === 'function' ?
 		(<any> self).EF :
 		undefined;
-
-(<any> self).braintree = {dataCollector: braintreeDataCollector};
 
 /**
  * Angular component for Braintree payment checkout UI.
