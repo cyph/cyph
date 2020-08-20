@@ -1,4 +1,4 @@
-MICROSOFT REFERENCE SOURCE LICENSE (MS-RSL)
+CYPH REFERENCE SOURCE LICENSE (CYPH-RSL)
 
 This license governs use of the accompanying software. If you use the software, you accept this license. If you do not accept the license, do not use the software.
 
@@ -8,9 +8,11 @@ The terms "reproduce," "reproduction" and "distribution" have the same meaning h
 
 "You" means the licensee of the software.
 
-"Your company" means the company you worked for when you downloaded the software.
+"Your organization" means the company or individual on whose behalf you downloaded the software.
 
-"Reference use" means use of the software within your company as a reference, in read only form, for the sole purposes of debugging your products, maintaining your products, or enhancing the interoperability of your products with the software, and specifically excludes the right to distribute the software outside of your company.
+"Reference use" means use of the software as a reference, in read only form, for the sole purposes of archival, debugging your products, maintaining your products, enhancing the interoperability of your products with the software, or performing deterministic compilation for verification of the Licensor's production release of the packaged software.
+
+"Reference use" further includes use of the software within your organization, in writable form, for the sole purpose of developing and testing changes to the software that are intended to be transferred to the Licensor for consideration of inclusion within the software, and specifically excludes the right to distribute the software outside of your organization except as necessary for transference to the Licensor.
 
 "Licensed patents" means any Licensor patent claims which read directly on the software as distributed by the Licensor under this license.
 
