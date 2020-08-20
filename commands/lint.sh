@@ -1,23 +1,22 @@
 #!/bin/bash
 
 
+eval "$(parseArgs \
+	--opt-bool fast \
+	--opt-bool fix \
+	--opt-bool html-only \
+)"
+
+
 cd $(cd "$(dirname "$0")" ; pwd)/..
 dir="$PWD"
 
-fast=''
-fix=''
-htmlOnly=''
-if [ "${1}" == '--fast' ] ; then
-	fast=true
-	shift
-elif [ "${1}" == '--html-only' ] ; then
-	htmlOnly=true
-	shift
-fi
+fast="$(getBoolArg ${_arg_fast})"
+fix="$(getBoolArg ${_arg_fix})"
 
-if [ "${1}" == '--fix' ] ; then
-	fix=true
-	shift
+htmlOnly=''
+if [ ! "${fast}" ] ; then
+	htmlOnly="$(getBoolArg ${_arg_html_only})"
 fi
 
 log 'Starting lint'

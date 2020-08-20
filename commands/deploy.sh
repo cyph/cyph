@@ -1,6 +1,29 @@
 #!/bin/bash
 
 
+eval "$(parseArgs \
+	--opt-bool all-branches \
+	--opt-bool and-simple \
+	--opt-bool debug-prod \
+	--opt-bool debug-prod-prod-build \
+	--opt-bool fast \
+	--opt-bool firebase-backup \
+	--opt-bool firebase-local \
+	--opt-bool pack \
+	--opt-bool prod \
+	--opt-bool save-build-artifacts \
+	--opt-bool simple \
+	--opt simple-custom-build \
+	--opt-bool simple-prod-build \
+	--opt-bool simple-websign-build \
+	--opt-bool simple-websign-prod-build \
+	--opt site \
+	--opt-bool skip-beta \
+	--opt-bool skip-website \
+	--opt-bool wp-promote \
+)"
+
+
 cd $(cd "$(dirname "$0")" ; pwd)/..
 dir="$PWD"
 originalArgs="${*}"
@@ -24,7 +47,7 @@ customBuild=''
 saveBuildArtifacts=''
 wpPromote=''
 betaProd=''
-noBeta=''
+skipBeta=''
 prodAndBeta=''
 debug=''
 debugProdBuild=''
@@ -32,97 +55,76 @@ skipWebsite=''
 test=true
 websign=true
 
-if [ "${1}" == '--simple' ] ; then
+if [ "${_arg_simple}" == 'on' ] ; then
 	simple=true
-	shift
 fi
 
-if [ "${1}" == '--all-branches' ] ; then
+if [ "${_arg_all_branches}" == 'on' ] ; then
 	allBranches=true
-	shift
 fi
 
-if [ "${1}" == '--firebase-backup' ] ; then
+if [ "${_arg_firebase_backup}" == 'on' ] ; then
 	firebaseBackup=true
-	shift
 fi
 
-if [ "${1}" == '--firebase-local' ] ; then
+if [ "${_arg_firebase_local}" == 'on' ] ; then
 	firebaseLocal=true
 	site='firebase'
 	fast=true
-	shift
 fi
 
-if [ "${1}" == '--prod' ] ; then
+if [ "${_arg_prod}" == 'on' ] ; then
 	test=''
-	shift
-elif [ "${1}" == '--debug-prod' ] ; then
+elif [ "${_arg_debug_prod}" == 'on' ] ; then
 	test=''
 	debug=true
-	noBeta=true
-	shift
-elif [ "${1}" == '--debug-prod-prod-build' ] ; then
+	skipBeta=true
+elif [ "${_arg_debug_prod_prod_build}" == 'on' ] ; then
 	test=''
 	debug=true
 	debugProdBuild=true
-	shift
-elif [ "${1}" == '--simple-custom-build' ] ; then
-	shift
+elif [ "${_arg_simple_custom_build}" ] ; then
 	simple=true
-	customBuild="${1}"
-	shift
-elif [ "${1}" == '--simple-prod-build' ] ; then
+	customBuild="${_arg_simple_custom_build}"
+elif [ "${_arg_simple_prod_build}" == 'on' ] ; then
 	simple=true
 	simpleProdBuild=true
-	shift
-elif [ "${1}" == '--simple-websign-build' ] ; then
+elif [ "${_arg_simple_websign_build}" == 'on' ] ; then
 	simpleWebSignBuild=true
-	shift
-elif [ "${1}" == '--simple-websign-prod-build' ] ; then
+elif [ "${_arg_simple_websign_prod_build}" == 'on' ] ; then
 	simpleProdBuild=true
 	simpleWebSignBuild=true
-	shift
-elif [ "${1}" == '--and-simple' ] ; then
+elif [ "${_arg_and_simple}" == 'on' ] ; then
 	noSimple=''
-	shift
 fi
 
-if [ "${1}" == '--save-build-artifacts' ] ; then
+if [ "${_arg_save_build_artifacts}" == 'on' ] ; then
 	saveBuildArtifacts=true
-	shift
 fi
 
-if [ "${1}" == '--pack' ] ; then
+if [ "${_arg_pack}" == 'on' ] ; then
 	pack=true
-	shift
 fi
 
-if [ "${1}" == '--fast' ] ; then
+if [ "${_arg_fast}" == 'on' ] ; then
 	fast=true
-	shift
 fi
 
-if [ "${1}" == '--wp-promote' ] ; then
+if [ "${_arg_wp_promote}" == 'on' ] ; then
 	wpPromote=true
-	shift
 fi
 
-if [ "${1}" == '--site' ] ; then
-	shift
-	site="${1}"
-	shift
+if [ "${_arg_site}" ] ; then
+	site="${_arg_site}"
 fi
 
-if [ "${1}" == '--skip-website' ] ; then
+if [ "${_arg_skip-website}" == 'on' ] ; then
 	skipWebsite=true
 	site="${webSignedProject}"
-	shift
 fi
 
-if [ "${1}" == '--no-beta' ] ; then
-	noBeta=true
-	shift
+if [ "${_arg_skip_beta}" == 'on' ] ; then
+	skipBeta=true
 fi
 
 if [ "${site}" ] ; then
@@ -233,7 +235,7 @@ fi
 
 if [ "${betaProd}" ] ; then
 	site="${webSignedProject}"
-elif [ ! "${test}" ] && [ ! "${noBeta}" ] && [ "${websign}" ] ; then
+elif [ ! "${test}" ] && [ ! "${skipBeta}" ] && [ "${websign}" ] ; then
 	prodAndBeta=true
 fi
 

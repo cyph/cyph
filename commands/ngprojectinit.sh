@@ -1,10 +1,14 @@
 #!/bin/bash
 
 
+eval "$(parseArgs \
+	--opt-bool deinit \
+)"
+
+
 init=true
-if [ "${1}" == '--deinit' ] ; then
+if [ "${_arg_deinit}" == 'on' ] ; then
 	init=''
-	shift
 fi
 
 if [ "${init}" ] && [ "$(ls -A node_modules 2> /dev/null)" ] ; then

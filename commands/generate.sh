@@ -1,18 +1,24 @@
 #!/bin/bash
 
 
+eval "$(parseArgs \
+	--opt-bool ng-model \
+	--pos type \
+	--pos name \
+)"
+
+
 cd $(cd "$(dirname "$0")" ; pwd)/..
 
 
-type="${1}"
+type="${_arg_type}"
 
 ngModel=''
-if [ "${type}" == 'component' ] && [ "${2}" == '--ng-model' ] ; then
+if [ "${type}" == 'component' ] && [ "${_arg_ng_model}" == 'on' ] ; then
 	ngModel=true
-	shift
 fi
 
-name="${2}"
+name="${_arg_name}"
 
 
 if \

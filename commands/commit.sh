@@ -1,26 +1,26 @@
 #!/bin/bash
 
 
+eval "$(parseArgs \
+	--opt-bool block-failing-build \
+	--opt-bool cleanup \
+	--opt-bool gc \
+	--pos comment \
+)"
+
+
 cd $(cd "$(dirname "$0")" ; pwd)/..
 
 
-blockFailingBuild=''
-gc=''
+blockFailingBuild="$(getBoolArg ${_arg_block_failing_build})"
+gc="$(getBoolArg ${_arg_gc})"
+
 noCleanup=''
-if [ "${1}" == '--block-failing-build' ] ; then
-	blockFailingBuild=true
-	shift
-fi
-if [ "${1}" == '--gc' ] ; then
-	gc=true
-	shift
-fi
-if [ "${1}" == '--no-cleanup' ] ; then
+if [ "${_arg_cleanup}" == 'off' ] ; then
 	noCleanup=true
-	shift
 fi
 
-comment="${*}"
+comment="${_arg_comment}"
 if [ ! "${comment}" ] ; then
 	comment='commit.sh'
 fi

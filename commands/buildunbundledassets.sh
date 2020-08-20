@@ -1,6 +1,13 @@
 #!/bin/bash
 
 
+eval "$(parseArgs \
+	--opt-bool prod-test \
+	--opt-bool service-worker \
+	--opt-bool test \
+)"
+
+
 cd $(cd "$(dirname "$0")" ; pwd)/..
 
 
@@ -9,23 +16,9 @@ if [ "${CIRCLECI}" ] ; then
 	parallelProcesses=2
 fi
 
-prodTest=''
-if [ "${1}" == '--prod-test' ] ; then
-	prodTest=true
-	shift
-fi
-
-serviceWorker=''
-if [ "${1}" == '--service-worker' ] ; then
-	serviceWorker=true
-	shift
-fi
-
-test=''
-if [ "${1}" == '--test' ] ; then
-	test=true
-	shift
-fi
+prodTest="$(getBoolArg ${_arg_prod_test})"
+serviceWorker="$(getBoolArg ${_arg_service_worker})"
+test="$(getBoolArg ${_arg_test})"
 
 
 getmodulename () {

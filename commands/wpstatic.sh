@@ -1,6 +1,12 @@
 #!/bin/bash
 
 
+eval "$(parseArgs \
+	--opt-bool prod \
+	--pos root-url \
+)"
+
+
 cd $(cd "$(dirname "$0")" ; pwd)/..
 dir="$PWD"
 cd -
@@ -8,14 +14,12 @@ cd -
 prod=true
 sshServer='wordpress.internal.cyph.com'
 
-if [ "${1}" != '--prod' ] ; then
+if [ "${_arg_prod}" == 'off' ] ; then
 	prod=''
 	sshServer="staging.${sshServer}"
-else
-	shift
 fi
 
-rootURL="${1}"
+rootURL="${_arg_root_url}"
 fullDestinationURL="${rootURL}/static_wordpress"
 destinationProtocol="$(echo "${fullDestinationURL}" | perl -pe 's/(.*?:\/\/).*/\1/')"
 destinationURL="$(echo "${fullDestinationURL}" | perl -pe 's/.*?:\/\/(.*)/\1/')"
