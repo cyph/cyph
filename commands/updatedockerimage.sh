@@ -16,12 +16,13 @@ make clean
 make brotli
 sudo mv bin/brotli /usr/bin/
 
-while [ ! -d ~/easyoptions ] ; do
-	git clone https://github.com/renatosilva/easyoptions.git ~/easyoptions
+while [ ! -d ~/argbash ] ; do
+	git clone https://github.com/matejak/argbash.git ~/argbash
 done
-cd ~/easyoptions
+cd ~/argbash
 git pull
-chmod -R 777 .
+cd resources
+sudo make install PREFIX=/usr
 
 source ~/emsdk/emsdk_env.sh &> /dev/null
 bash -c 'cd ~/emsdk ; git pull'
