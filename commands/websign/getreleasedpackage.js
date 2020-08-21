@@ -4,9 +4,6 @@ const fs = require('fs');
 const fetch = require('node-fetch');
 const superSphincs = require('/home/gibson/oldsupersphincs/node_modules/supersphincs');
 
-const packageName = 'cyph.app';
-const packageURL = `https://api.cyph.com/package/${packageName}`;
-
 const publicKeys = (() => {
 	const publicKeysJS = fs
 		.readFileSync(`${__dirname}/../../websign/js/keys.js`)
@@ -21,7 +18,9 @@ const publicKeys = (() => {
 	);
 })();
 
-const getProdPackage = async () => {
+const getReleasedPackage = async (packageName = 'cyph.app') => {
+	const packageURL = `https://api.cyph.com/package/${packageName}`;
+
 	const packageMetadata = await fetch(packageURL).then(async o => o.json());
 
 	const packageLines = packageMetadata.package.root.trim().split('\n');
@@ -70,9 +69,10 @@ const getProdPackage = async () => {
 };
 
 if (require.main === module) {
-	const output = process.argv[2];
+	const packageName = process.argv[2];
+	const output = process.argv[3];
 
-	getProdPackage()
+	getReleasedPackage(packageName)
 		.then(s => {
 			if (output) {
 				fs.writeFileSync(output, s);
@@ -89,5 +89,5 @@ if (require.main === module) {
 		});
 }
 else {
-	module.exports = {getProdPackage};
+	module.exports = {getReleasedPackage};
 }
