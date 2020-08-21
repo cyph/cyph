@@ -7,6 +7,7 @@ eval "$(parseArgs \
 	--opt-bool debug \
 	--opt-bool debug-prod-build \
 	--opt environment \
+	--opt main-version \
 	--opt-bool pack \
 	--opt-bool prod-and-beta \
 	--opt-bool simple \
@@ -32,6 +33,7 @@ branchDir="${_arg_branch_dir}"
 debug="$(getBoolArg ${_arg_debug})"
 debugProdBuild="$(getBoolArg ${_arg_debug_prod_build})"
 environment="${_arg_environment}"
+mainVersion="${_arg_main_version}"
 pack="$(getBoolArg ${_arg_pack})"
 prodAndBeta="$(getBoolArg ${_arg_prod_and_beta})"
 simple="$(getBoolArg ${_arg_simple})"
@@ -43,6 +45,10 @@ test="$(getBoolArg ${_arg_test})"
 version="${_arg_version}"
 websign="$(getBoolArg ${_arg_websign})"
 wpPromote="$(getBoolArg ${_arg_wp_promote})"
+
+if [ ! "${mainVersion}" ] ; then
+	mainVersion="${version}"
+fi
 
 
 # TODO: Factor out from here and deploy.sh

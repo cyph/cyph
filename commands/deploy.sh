@@ -436,6 +436,7 @@ for branchDir in ~/.build ${branchDirs} ; do
 		$(test "${debug}" && echo '--debug') \
 		$(test "${debugProdBuild}" && echo '--debug-prod-build') \
 		--environment "$(getEnvironment ${branchDir})" \
+		--main-version "${mainVersion}" \
 		$(test "${pack}" && echo '--pack') \
 		$(test "${prodAndBeta}" && echo '--prod-and-beta') \
 		$(test "${simple}" && echo '--simple') \
