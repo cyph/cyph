@@ -433,6 +433,10 @@ for branchDir in ~/.build ${branchDirs} ; do
 	./commands/buildpackage.sh \
 		$(test "${betaProd}" && echo '--beta-prod') \
 		--branch-dir "${branchDir}" \
+		--cache-busted-projects "${cacheBustedProjects}" \
+		--cache-busted-projects-override \
+		--compiled-projects "${compiledProjects}" \
+		--compiled-projects-override \
 		$(test "${debug}" && echo '--debug') \
 		$(test "${debugProdBuild}" && echo '--debug-prod-build') \
 		--environment "$(getEnvironment ${branchDir})" \

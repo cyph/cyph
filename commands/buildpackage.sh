@@ -4,6 +4,10 @@
 eval "$(parseArgs \
 	--opt-bool beta-prod \
 	--opt branch-dir \
+	--opt cache-busted-projects \
+	--opt-bool cache-busted-projects-override \
+	--opt compiled-projects \
+	--opt-bool compiled-projects-override \
 	--opt-bool debug \
 	--opt-bool debug-prod-build \
 	--opt environment \
@@ -45,6 +49,14 @@ test="$(getBoolArg ${_arg_test})"
 version="${_arg_version}"
 websign="$(getBoolArg ${_arg_websign})"
 wpPromote="$(getBoolArg ${_arg_wp_promote})"
+
+if [ "$(getBoolArg ${_arg_cache_busted_projects_override})" ] ; then
+	cacheBustedProjects="${_arg_cache_busted_projects}"
+fi
+
+if [ "$(getBoolArg ${_arg_compiled_projects_override})" ] ; then
+	compiledProjects="${_arg_compiled_projects}"
+fi
 
 if [ ! "${mainVersion}" ] ; then
 	mainVersion="${version}"
