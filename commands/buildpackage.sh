@@ -358,9 +358,6 @@ fi
 ) || fail
 
 ./commands/ngassets.sh
-
-rm -rf "${dir}/shared/assets"
-cp -a shared/assets "${dir}/shared/"
 touch shared/assets/frozen
 
 for d in ${compiledProjects} ; do

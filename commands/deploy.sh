@@ -52,6 +52,7 @@ debugProdBuild=''
 skipWebsite=''
 test=true
 websign=true
+assetsFrozen=''
 
 if [ "${_arg_simple}" == 'on' ] ; then
 	simple=true
@@ -279,7 +280,11 @@ if [ "${customBuild}" ] ; then
 fi
 
 
-if [ ! "${simple}" ] && [ -f shared/assets/frozen ] ; then
+if [ -f shared/assets/frozen ] ; then
+	assetsFrozen=true
+fi
+
+if [ ! "${simple}" ] && [ "${assetsFrozen}" ] ; then
 	if [ "${fast}" ] ; then
 		log "WARNING: Assets frozen. Make sure you know what you're doing."
 	else
@@ -445,6 +450,11 @@ for branchDir in ~/.build ${branchDirs} ; do
 done
 cd ~/.build
 
+rm -rf "${dir}/shared/assets"
+cp -a shared/assets "${dir}/shared/"
+if [ "${assetsFrozen}" ] ; then
+	touch "${dir}/shared/assets/frozen"
+fi
 
 
 if [ "${websign}" ] ; then
