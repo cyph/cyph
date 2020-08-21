@@ -56,14 +56,14 @@ getVersion () {
 }
 
 projectname () {
-	version="$(getVersion ${2})"
+	projectnameVersion="$(getVersion ${2})"
 
-	if [ "${prodAndBeta}" ] && [ "${version}" == 'beta' ] ; then
+	if [ "${prodAndBeta}" ] && [ "${projectnameVersion}" == 'beta' ] ; then
 		echo "beta.${1}"
 	elif [ "${simple}" ] || [ "${1}" == 'cyph.com' ] ; then
-		echo "${version}-dot-$(echo "${1}" | tr '.' '-')-dot-cyphme.appspot.com"
+		echo "${projectnameVersion}-dot-$(echo "${1}" | tr '.' '-')-dot-cyphme.appspot.com"
 	elif [ "${test}" ] || [ "${betaProd}" ] || [ "${debug}" ] ; then
-		echo "${version}.${1}"
+		echo "${projectnameVersion}.${1}"
 	else
 		echo "${1}"
 	fi
@@ -317,7 +317,6 @@ if [ ! "${site}" ] || ( [ "${site}" == websign ] || [ "${site}" == "${webSignedP
 
 	if [ ! "${simple}" ] ; then
 		rm js/keys.test.js
-		websignHashWhitelist="$(cat hashwhitelist.json)"
 	else
 		mv js/keys.test.js js/keys.js
 
@@ -327,8 +326,6 @@ if [ ! "${site}" ] || ( [ "${site}" == websign ] || [ "${site}" == "${webSignedP
 		sed -i "s|config.packageURL +|config.packageURL + 'websign/test/' +|" js/main.js
 		sed -i "s|localStorage\.webSignWWWPinned|true|g" js/main.js
 		sed -i "s|true\s*= true;||g" js/main.js
-
-		websignHashWhitelist="{\"$(../commands/websign/bootstraphash.sh)\": true}"
 	fi
 
 	cp -rf ../shared/favicon.ico ../shared/assets/img ./

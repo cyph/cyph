@@ -462,6 +462,13 @@ if [ "${websign}" ] ; then
 
 	log "WebSign ${package}"
 
+	websignHashWhitelist=''
+	if [ "${simple}" ] ; then
+		websignHashWhitelist="{\"$(./commands/websign/bootstraphash.sh)\": true}"
+	else
+		websignHashWhitelist="$(cat websign/hashwhitelist.json)"
+	fi
+
 	./commands/updaterepos.js
 	cp -rf ~/.cyph/repos/cdn ./
 
