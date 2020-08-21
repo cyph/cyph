@@ -587,8 +587,6 @@ if [ "${websign}" ] ; then
 		fi
 	done
 
-	git push
-
 	for p in ${packages} ; do
 		if [ "${simple}" ] ; then
 			cd websign/test
@@ -600,17 +598,6 @@ if [ "${websign}" ] ; then
 			cd ../..
 		fi
 	done
-
-	cd ..
-
-	# Publish internal prod branch to public repo
-	if [ ! "${test}" ] && [ ! "${betaProd}" ] && [ ! "${debug}" ] ; then
-		cd "${dir}"
-		git remote add public git@github.com:cyph/cyph.git 2> /dev/null
-		git push public HEAD:master
-		git push origin HEAD:public
-		cd -
-	fi
 fi
 
 if \
@@ -889,6 +876,25 @@ fi
 
 done
 cd ~/.build
+
+
+
+if [ "${websign}" ] ; then
+	cd cdn
+
+	git push
+
+	cd ..
+
+	# Publish internal prod branch to public repo
+	if [ ! "${test}" ] && [ ! "${betaProd}" ] && [ ! "${debug}" ] ; then
+		cd "${dir}"
+		git remote add public git@github.com:cyph/cyph.git 2> /dev/null
+		git push public HEAD:master
+		git push origin HEAD:public
+		cd -
+	fi
+fi
 
 
 
