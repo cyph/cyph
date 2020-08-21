@@ -50,6 +50,14 @@ expectedHash="$(sha released.pkg)"
 if [ "${actualHash}" == "${expectedHash}" ] ; then
 	echo "Expected and actual hashes match: ${actualHash}"
 else
+	echo "Local package:"
+	cat local.pkg
+	echo -e '\n\n\n'
+
+	echo "${versionString} package:"
+	cat released.pkg
+	echo -e '\n\n\n'
+
 	echo 'WARNING: Package hash mismatch!'
 	echo
 	echo "Expected package hash (local): ${actualHash}"
