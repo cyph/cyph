@@ -834,7 +834,8 @@ initPromise.then(() => {
 	pullUpdates(
 		isProdAGSEDeploy ||
 			args.command === 'getlibs' ||
-			args.command === 'updatelibs'
+			args.command === 'updatelibs' ||
+			args.command === 'verify'
 	)
 		.then(() => {
 			if (args.command === 'getlibs') {
