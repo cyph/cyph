@@ -11,6 +11,7 @@ import {
 	ICastleRatchetUpdate
 } from '../../proto';
 import {DataManagerService} from '../../service-interfaces/data-manager.service';
+import {debugLog} from '../../util/log';
 import {lockFunction} from '../../util/lock';
 import {resolvable, retryUntilSuccessful} from '../../util/wait';
 import {IPotassium} from '../potassium/ipotassium';
@@ -219,5 +220,13 @@ export class PairwiseSessionLite implements IPairwiseSession {
 				this.ready.resolve();
 			})
 			.catch(async () => this.transport.abort());
+
+		debugLog(async () => ({
+			pairwiseSessionLiteInit: {
+				key: this.potassium.toHex(await this.key),
+				remoteUser: remoteUser.username,
+				secretCacheKey
+			}
+		}));
 	}
 }
