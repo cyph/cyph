@@ -35,6 +35,7 @@ fi
 
 ./commands/buildpackage.sh \
 	--branch-dir ~/.build \
+	--cache-busted-projects-override \
 	--environment "${version}" \
 	--pack \
 	--site "${package}" \
