@@ -8,7 +8,12 @@ export class PotassiumUtil {
 	public chunkBytes (a: ArrayBufferView, chunkSize?: number) : Uint8Array[] {
 		const bytes = this.toBytes(a);
 
-		if (chunkSize === undefined || isNaN(chunkSize) || chunkSize < 1) {
+		if (
+			bytes.length < 1 ||
+			chunkSize === undefined ||
+			isNaN(chunkSize) ||
+			chunkSize < 1
+		) {
 			return [bytes];
 		}
 
