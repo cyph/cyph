@@ -29,9 +29,13 @@ cd ~/.build
 ./commands/websign/getreleasedpackage.js "${packageName}" released.pkg
 
 if [ ! -f released.pkg ] ; then
-	echo "Failed to fetch ${versionString} package"
+	echo "Failed to fetch ${versionString} package."
 	exit 1
 fi
+
+echo "Fetched ${versionString} package."
+echo
+echo 'Building package locally...'
 
 ./commands/buildpackage.sh \
 	--branch-dir ~/.build \
@@ -41,15 +45,23 @@ fi
 	--site "${package}" \
 	$(test "${test}" && echo '--test') \
 	--version "${version}" \
-	--websign
+	--websign \
+&> /dev/null
 
-mv pkg/cyph.app local.pkg
+mv pkg/cyph.app local.pkg &> /dev/null
+
+if [ ! -f local.pkg ] ; then
+	echo "Failed to build local package."
+	exit 1
+fi
 
 actualHash="$(sha local.pkg)"
 expectedHash="$(sha released.pkg)"
 
 if [ "${actualHash}" == "${expectedHash}" ] ; then
-	echo "Expected and actual hashes match: ${actualHash}"
+	echo "Expected and actual package hashes match: ${actualHash}"
+	echo
+	echo 'VERIFICATION SUCCESS'
 else
 	echo "Local package:"
 	cat local.pkg
