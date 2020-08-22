@@ -1,6 +1,7 @@
 import {Injectable} from '@angular/core';
 import {BehaviorSubject, Subscription} from 'rxjs';
 import {BaseProvider} from '../base-provider';
+import {potassiumUtil} from '../crypto/potassium/potassium-util';
 import {IAsyncValue} from '../iasync-value';
 import {IProto} from '../iproto';
 import {LockFunction} from '../lock-function-type';
@@ -195,7 +196,15 @@ export class ChannelService extends BaseProvider implements IChannelService {
 						}
 						catch (err) {
 							debugLogError(() => ({
-								channelOnMessageDecryptFailure: err
+								channelOnMessageDecryptFailure: {
+									cyphertext: potassiumUtil.toHex(
+										message.value.cyphertext
+									),
+									destroyed: this.destroyed.value,
+									err,
+									message,
+									userID
+								}
 							}));
 							return;
 						}

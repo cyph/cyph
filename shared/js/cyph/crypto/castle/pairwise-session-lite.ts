@@ -11,7 +11,7 @@ import {
 	ICastleRatchetUpdate
 } from '../../proto';
 import {DataManagerService} from '../../service-interfaces/data-manager.service';
-import {debugLog} from '../../util/log';
+import {debugLog, debugLogError} from '../../util/log';
 import {lockFunction} from '../../util/lock';
 import {resolvable, retryUntilSuccessful} from '../../util/wait';
 import {IPotassium} from '../potassium/ipotassium';
@@ -120,12 +120,24 @@ export class PairwiseSessionLite implements IPairwiseSession {
 		cyphertext: Uint8Array,
 		initial: boolean
 	) : Promise<void> {
-		await this.transport.process(this.remoteUser.username, initial, {
-			plaintext: await this.potassium.secretBox.open(
-				cyphertext,
-				await this.key
-			)
-		});
+		try {
+			await this.transport.process(this.remoteUser.username, initial, {
+				plaintext: await this.potassium.secretBox.open(
+					cyphertext,
+					await this.key
+				)
+			});
+		}
+		catch (err) {
+			debugLogError(async () => ({
+				pairwiseSessionLiteReceiveFailure: {
+					cyphertext: this.potassium.toHex(cyphertext),
+					key: this.potassium.toHex(await this.key)
+				}
+			}));
+
+			throw err;
+		}
 	}
 
 	/** @inheritDoc */
@@ -146,11 +158,19 @@ export class PairwiseSessionLite implements IPairwiseSession {
 		this.potassium.clearMemory(plaintextBytes);
 		this.potassium.clearMemory(timestampBytes);
 
+		const cyphertext = await this.potassium.secretBox.seal(
+			outgoingMessage,
+			await this.key
+		);
+
+		debugLog(async () => ({
+			pairwiseSessionLiteSend: {
+				cyphertext: this.potassium.toHex(cyphertext)
+			}
+		}));
+
 		await this.transport.process(this.remoteUser.username, false, {
-			cyphertext: await this.potassium.secretBox.seal(
-				outgoingMessage,
-				await this.key
-			)
+			cyphertext
 		});
 	}
 
