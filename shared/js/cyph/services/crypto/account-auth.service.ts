@@ -51,6 +51,9 @@ export class AccountAuthService extends BaseProvider {
 	/** @ignore */
 	private connectTrackerCleanup?: () => void;
 
+	/** @ignore */
+	private readonly defaultPinDuration = 3600000;
+
 	/** If true, the login prompt will be used to create a pseudo-account. */
 	public readonly pseudoAccountLogin = new BehaviorSubject<boolean>(false);
 
@@ -349,7 +352,9 @@ export class AccountAuthService extends BaseProvider {
 	public async getSavedPIN () : Promise<Uint8Array | undefined> {
 		const removePIN = async () =>
 			Promise.all([
-				this.localStorageService.removeItem('pinDuration'),
+				this.envService.environment.debug ?
+					this.localStorageService.removeItem('pinDuration') :
+					undefined,
 				this.localStorageService.removeItem('pinHash'),
 				this.localStorageService.removeItem('pinTimestamp')
 			]);
@@ -381,12 +386,14 @@ export class AccountAuthService extends BaseProvider {
 				timestamp
 			] = await Promise.all([
 				this.localStorageService.hasItem('unconfirmedMasterKey', true),
-				this.localStorageService.getItem(
-					'pinDuration',
-					NumberProto,
-					undefined,
-					true
-				),
+				this.envService.environment.debug ?
+					this.localStorageService.getItem(
+						'pinDuration',
+						NumberProto,
+						undefined,
+						true
+					) :
+					this.defaultPinDuration,
 				this.localStorageService.getItem(
 					'pinTimestamp',
 					NumberProto,
@@ -1164,7 +1171,7 @@ export class AccountAuthService extends BaseProvider {
 				);
 
 		await Promise.all<unknown>([
-			pin.length === 0 ?
+			!this.envService.environment.debug || pin.length === 0 ?
 				Promise.resolve() :
 				this.localStorageService.setItem(
 					'pinDuration',
@@ -1178,7 +1185,7 @@ export class AccountAuthService extends BaseProvider {
 								undefined,
 								true
 							)
-							.catch(() => 3600000),
+							.catch(() => this.defaultPinDuration),
 					undefined,
 					undefined,
 					true
