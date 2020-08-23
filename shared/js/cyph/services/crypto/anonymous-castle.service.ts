@@ -2,7 +2,7 @@ import {Injectable} from '@angular/core';
 import {
 	AnonymousLocalUser,
 	AnonymousRemoteUser,
-	PairwiseSession,
+	PairwiseSessionLite,
 	RegisteredRemoteUser,
 	Transport
 } from '../../crypto/castle';
@@ -46,7 +46,9 @@ export class AnonymousCastleService extends CastleService {
 			);
 
 		this.pairwiseSession.resolve(
-			new PairwiseSession(
+			new PairwiseSessionLite(
+				undefined,
+				undefined,
 				this.potassiumService,
 				transport,
 				localUser,

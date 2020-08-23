@@ -4,7 +4,6 @@ import {
 	AnonymousRemoteUser,
 	HandshakeSteps,
 	IPairwiseSession,
-	PairwiseSession,
 	PairwiseSessionLite,
 	RegisteredLocalUser,
 	RegisteredRemoteUser,
@@ -62,7 +61,9 @@ export class AccountCastleService extends CastleService {
 			);
 
 			this.pairwiseSession.resolve(
-				new PairwiseSession(
+				new PairwiseSessionLite(
+					undefined,
+					undefined,
 					this.potassiumService,
 					transport,
 					localUser,
@@ -117,7 +118,9 @@ export class AccountCastleService extends CastleService {
 					Castle logic just because the session is ephemeral.
 
 					if (accountSessionService.ephemeralSubSession) {
-						return new PairwiseSession(
+						return new PairwiseSessionLite(
+							undefined,
+							undefined,
 							this.potassiumService,
 							transport,
 							localUser,

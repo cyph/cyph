@@ -31,11 +31,14 @@ export class PairwiseSessionLite implements IPairwiseSession {
 	private readonly instanceID = this.potassium.randomBytes(16);
 
 	/** @ignore */
-	private readonly key = this.secretCache.getOrSetDefault(
-		`PairwiseSessionLite-secretCache:${this.secretCacheKey}`,
-		BinaryProto,
-		async () => retryUntilSuccessful(async () => this.getKey())
-	);
+	private readonly key =
+		this.secretCache !== undefined && this.secretCacheKey !== undefined ?
+			this.secretCache.getOrSetDefault(
+				`PairwiseSessionLite-secretCache:${this.secretCacheKey}`,
+				BinaryProto,
+				async () => retryUntilSuccessful(async () => this.getKey())
+			) :
+			this.getKey();
 
 	/** @inheritDoc */
 	public readonly ready = resolvable();
@@ -176,10 +179,10 @@ export class PairwiseSessionLite implements IPairwiseSession {
 
 	constructor (
 		/** @ignore */
-		private readonly secretCacheKey: string,
+		private readonly secretCacheKey: string | undefined,
 
 		/** @ignore */
-		private readonly secretCache: DataManagerService,
+		private readonly secretCache: DataManagerService | undefined,
 
 		/** @ignore */
 		private readonly potassium: IPotassium,
