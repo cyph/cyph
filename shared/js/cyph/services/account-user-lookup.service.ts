@@ -174,18 +174,26 @@ export class AccountUserLookupService extends BaseProvider {
 		preFetch: boolean = false,
 		skipExistsCheck: boolean = true
 	) : Promise<User | undefined> {
+		const returnUser = async (userValue?: User) => {
+			if (preFetch && userValue) {
+				await userValue.fetch();
+			}
+
+			return userValue;
+		};
+
 		if (!user) {
 			return;
 		}
 		if (user instanceof User) {
-			return user;
+			return returnUser(user);
 		}
 
 		const username = normalize(user);
 
 		user = this.userCache.get(username);
 		if (user instanceof User) {
-			return user;
+			return returnUser(user);
 		}
 
 		const url = `users/${username}`;
@@ -197,7 +205,7 @@ export class AccountUserLookupService extends BaseProvider {
 			blockUntilAlreadyCached = false;
 		}
 
-		return getOrSetDefaultAsync(
+		user = await getOrSetDefaultAsync(
 			this.userCache,
 			username,
 			async () => {
@@ -279,8 +287,7 @@ export class AccountUserLookupService extends BaseProvider {
 						undefined,
 						true
 					),
-					this.getUnreadMessageCount(username),
-					preFetch
+					this.getUnreadMessageCount(username)
 				);
 
 				const userTypeWhitelist = await this.userTypeWhitelist();
@@ -299,6 +306,8 @@ export class AccountUserLookupService extends BaseProvider {
 			undefined,
 			blockUntilAlreadyCached
 		).catch(() => undefined);
+
+		return returnUser(user);
 	}
 
 	constructor (
