@@ -67,6 +67,33 @@ export class AccountUserLookupService extends BaseProvider {
 				username
 	);
 
+	/** If applicable, a whitelist of acceptable user types for this user to interact with. */
+	public readonly userTypeWhitelist = memoize(
+		async () : Promise<AccountUserTypes[] | undefined> => {
+			if (!this.envService.isTelehealth) {
+				return [AccountUserTypes.Org, AccountUserTypes.Standard];
+			}
+
+			if (!this.accountDatabaseService.currentUser.value) {
+				return;
+			}
+
+			const {
+				userType
+			} = await this.accountDatabaseService.currentUser.value.user.accountUserProfile.getValue();
+
+			if (userType !== AccountUserTypes.Standard) {
+				return;
+			}
+
+			return [
+				AccountUserTypes.Org,
+				AccountUserTypes.TelehealthAdmin,
+				AccountUserTypes.TelehealthDoctor
+			];
+		}
+	);
+
 	/** @ignore */
 	private async isDeactivated (user: string | User) : Promise<boolean> {
 		const username = normalize(
@@ -147,164 +174,131 @@ export class AccountUserLookupService extends BaseProvider {
 		preFetch: boolean = false,
 		skipExistsCheck: boolean = true
 	) : Promise<User | undefined> {
-		if (user !== undefined && (await this.isDeactivated(user))) {
+		if (!user) {
 			return;
 		}
-
-		const userValue = await (async () => {
-			if (!user) {
-				return;
-			}
-			if (user instanceof User) {
-				return user;
-			}
-
-			const username = normalize(user);
-			const url = `users/${username}`;
-
-			if (
-				blockUntilAlreadyCached &&
-				(await this.accountDatabaseService.isCached(
-					`${url}/publicProfile`
-				))
-			) {
-				blockUntilAlreadyCached = false;
-			}
-
-			return getOrSetDefaultAsync(
-				this.userCache,
-				username,
-				async () => {
-					if (!skipExistsCheck && !(await this.exists(username))) {
-						throw new Error('User does not exist.');
-					}
-
-					return new User(
-						username,
-						this.accountContactsService.getContactID(username),
-						this.accountDatabaseService
-							.watch(
-								`${url}/avatar`,
-								DataURIProto,
-								SecurityModels.public,
-								undefined,
-								true
-							)
-							.pipe(
-								map(({value}) =>
-									/* eslint-disable-next-line @typescript-eslint/tslint/config */
-									typeof value === 'string' ||
-									Object.keys(value).length > 0 ?
-										value :
-										undefined
-								)
-							),
-						this.accountDatabaseService
-							.watch(
-								`${url}/coverImage`,
-								DataURIProto,
-								SecurityModels.public,
-								undefined,
-								true
-							)
-							.pipe(
-								map(({value}) =>
-									/* eslint-disable-next-line @typescript-eslint/tslint/config */
-									typeof value === 'string' ||
-									Object.keys(value).length > 0 ?
-										value :
-										undefined
-								)
-							),
-						this.accountContactsService.contactState(username),
-						this.databaseService.getAsyncValue(
-							`${url}/presence`,
-							AccountUserPresence
-						),
-						this.accountDatabaseService.getAsyncValue(
-							`${url}/publicProfile`,
-							AccountUserProfile,
-							SecurityModels.public,
-							undefined,
-							true
-						),
-						this.accountDatabaseService.getAsyncValue(
-							`${url}/publicProfileExtra`,
-							AccountUserProfileExtra,
-							SecurityModels.public,
-							undefined,
-							true
-						),
-						this.databaseService.getAsyncValue(
-							`${url}/plan`,
-							CyphPlan
-						),
-						this.accountDatabaseService.getAsyncValue(
-							`${url}/organizationMembers`,
-							BooleanMapProto,
-							SecurityModels.public,
-							undefined,
-							true
-						),
-						this.accountDatabaseService.getAsyncMap(
-							`${url}/reviews`,
-							Review,
-							SecurityModels.publicFromOtherUsers,
-							undefined,
-							true
-						),
-						this.getUnreadMessageCount(username),
-						preFetch
-					);
-				},
-				undefined,
-				blockUntilAlreadyCached
-			).catch(() => undefined);
-		})();
-
-		if (!userValue) {
-			return;
+		if (user instanceof User) {
+			return user;
 		}
 
-		const userTypeWhitelist = await this.userTypeWhitelist();
+		const username = normalize(user);
+
+		user = this.userCache.get(username);
+		if (user instanceof User) {
+			return user;
+		}
+
+		const url = `users/${username}`;
 
 		if (
-			userTypeWhitelist !== undefined &&
-			userTypeWhitelist.indexOf(
-				(await userValue.accountUserProfile.getValue()).userType
-			) < 0
+			blockUntilAlreadyCached &&
+			(await this.accountDatabaseService.isCached(`${url}/publicProfile`))
 		) {
-			return;
+			blockUntilAlreadyCached = false;
 		}
 
-		return userValue;
-	}
+		return getOrSetDefaultAsync(
+			this.userCache,
+			username,
+			async () => {
+				if (
+					(!skipExistsCheck && !(await this.exists(username))) ||
+					(await this.isDeactivated(username))
+				) {
+					throw new Error('User does not exist.');
+				}
 
-	/** If applicable, a whitelist of acceptable user types for this user to interact with. */
-	public async userTypeWhitelist () : Promise<
-		AccountUserTypes[] | undefined
-	> {
-		if (!this.envService.isTelehealth) {
-			return [AccountUserTypes.Org, AccountUserTypes.Standard];
-		}
+				const userValue = new User(
+					username,
+					this.accountContactsService.getContactID(username),
+					this.accountDatabaseService
+						.watch(
+							`${url}/avatar`,
+							DataURIProto,
+							SecurityModels.public,
+							undefined,
+							true
+						)
+						.pipe(
+							map(({value}) =>
+								/* eslint-disable-next-line @typescript-eslint/tslint/config */
+								typeof value === 'string' ||
+								Object.keys(value).length > 0 ?
+									value :
+									undefined
+							)
+						),
+					this.accountDatabaseService
+						.watch(
+							`${url}/coverImage`,
+							DataURIProto,
+							SecurityModels.public,
+							undefined,
+							true
+						)
+						.pipe(
+							map(({value}) =>
+								/* eslint-disable-next-line @typescript-eslint/tslint/config */
+								typeof value === 'string' ||
+								Object.keys(value).length > 0 ?
+									value :
+									undefined
+							)
+						),
+					this.accountContactsService.contactState(username),
+					this.databaseService.getAsyncValue(
+						`${url}/presence`,
+						AccountUserPresence
+					),
+					this.accountDatabaseService.getAsyncValue(
+						`${url}/publicProfile`,
+						AccountUserProfile,
+						SecurityModels.public,
+						undefined,
+						true
+					),
+					this.accountDatabaseService.getAsyncValue(
+						`${url}/publicProfileExtra`,
+						AccountUserProfileExtra,
+						SecurityModels.public,
+						undefined,
+						true
+					),
+					this.databaseService.getAsyncValue(`${url}/plan`, CyphPlan),
+					this.accountDatabaseService.getAsyncValue(
+						`${url}/organizationMembers`,
+						BooleanMapProto,
+						SecurityModels.public,
+						undefined,
+						true
+					),
+					this.accountDatabaseService.getAsyncMap(
+						`${url}/reviews`,
+						Review,
+						SecurityModels.publicFromOtherUsers,
+						undefined,
+						true
+					),
+					this.getUnreadMessageCount(username),
+					preFetch
+				);
 
-		if (!this.accountDatabaseService.currentUser.value) {
-			return;
-		}
+				const userTypeWhitelist = await this.userTypeWhitelist();
 
-		const {
-			userType
-		} = await this.accountDatabaseService.currentUser.value.user.accountUserProfile.getValue();
+				if (
+					userTypeWhitelist !== undefined &&
+					userTypeWhitelist.indexOf(
+						(await userValue.accountUserProfile.getValue()).userType
+					) < 0
+				) {
+					return;
+				}
 
-		if (userType !== AccountUserTypes.Standard) {
-			return;
-		}
-
-		return [
-			AccountUserTypes.Org,
-			AccountUserTypes.TelehealthAdmin,
-			AccountUserTypes.TelehealthDoctor
-		];
+				return userValue;
+			},
+			undefined,
+			blockUntilAlreadyCached
+		).catch(() => undefined);
 	}
 
 	constructor (
