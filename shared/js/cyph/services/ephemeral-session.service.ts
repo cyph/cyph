@@ -33,6 +33,9 @@ export class EphemeralSessionService extends SessionService {
 	private readonly chatRequestRingTimeout: number = 15000;
 
 	/** @ignore */
+	private readonly chatRequestRingTimeoutGracePeriod: number = 30000;
+
+	/** @ignore */
 	private readonly localStorageKey = 'BurnerChannelID';
 
 	/** @ignore */
@@ -249,7 +252,8 @@ export class EphemeralSessionService extends SessionService {
 							async () => this.channelConnected.then(() => true),
 							true,
 							undefined,
-							this.chatRequestRingTimeout
+							this.chatRequestRingTimeout +
+								this.chatRequestRingTimeoutGracePeriod
 						);
 
 						if (answered) {
