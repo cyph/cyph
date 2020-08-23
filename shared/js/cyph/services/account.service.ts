@@ -26,6 +26,7 @@ import {toBehaviorSubject} from '../util/flatten-observable';
 import {normalize, normalizeArray, toInt} from '../util/formatting';
 import {getOrSetDefault} from '../util/get-or-set-default';
 import {lockFunction} from '../util/lock';
+import {debugLog} from '../util/log';
 import {observableAll} from '../util/observable-all';
 import {arraySum} from '../util/reducers';
 import {request} from '../util/request';
@@ -665,6 +666,8 @@ export class AccountService extends BaseProvider {
 
 		this.subscriptions.push(
 			incomingCalls.watchKeys().subscribe(async keys => {
+				debugLog(() => ({incomingCalls: keys}));
+
 				for (const k of keys) {
 					if (this.respondedCallRequests.has(k)) {
 						continue;
