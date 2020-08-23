@@ -191,7 +191,8 @@ export class AccountChatService extends ChatService {
 		keepCurrentMessage: boolean = false,
 		callType: 'audio' | 'video' | undefined = this.envService.callType,
 		sessionSubID?: string,
-		ephemeralSubSession: boolean = false
+		ephemeralSubSession: boolean = false,
+		answering: boolean = true
 	) : Promise<void> {
 		this.accountSessionInitService.callType = callType;
 
@@ -211,7 +212,7 @@ export class AccountChatService extends ChatService {
 				await this.p2pWebRTCService.accept(callType, true);
 				return true;
 			})().then(async requestCall =>
-				requestCall ?
+				requestCall && !answering ?
 					this.p2pWebRTCService.request(
 						callType,
 						undefined,

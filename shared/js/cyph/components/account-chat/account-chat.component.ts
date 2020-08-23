@@ -45,6 +45,7 @@ import {debugLogError} from '../../util/log';
 import {observableAll} from '../../util/observable-all';
 import {getDateTimeString, getTimestamp} from '../../util/time';
 import {readableID, uuid} from '../../util/uuid';
+import {sleep} from '../../util/wait';
 
 /**
  * Angular component for account chat UI.
@@ -135,10 +136,14 @@ export class AccountChatComponent extends BaseProvider
 	public readonly userPresence = UserPresence;
 
 	/** @ignore */
-	private async navigate (...url: string[]) : Promise<void> {
+	private async navigate (
+		replaceUrl: boolean,
+		...url: string[]
+	) : Promise<void> {
 		this.destroyed.next(true);
 		await this.router.navigate(['transition'], {skipLocationChange: true});
-		await this.router.navigate(['', ...url]);
+		await sleep(0);
+		await this.router.navigate(['', ...url], {replaceUrl});
 	}
 
 	/** @inheritDoc */
@@ -227,14 +232,12 @@ export class AccountChatComponent extends BaseProvider
 
 							try {
 								if (username) {
-									this.router.navigate(
-										[
-											path,
-											await this.accountContactsService.getContactID(
-												username
-											)
-										],
-										{replaceUrl: true}
+									await this.navigate(
+										true,
+										path,
+										await this.accountContactsService.getContactID(
+											username
+										)
 									);
 									return;
 								}
@@ -243,13 +246,11 @@ export class AccountChatComponent extends BaseProvider
 									contactID &&
 									defaultMessageBottomOffset !== undefined
 								) {
-									this.router.navigate(
-										[
-											path,
-											contactID,
-											defaultMessageBottomOffset
-										],
-										{replaceUrl: true}
+									await this.navigate(
+										true,
+										path,
+										contactID,
+										defaultMessageBottomOffset.toString()
 									);
 									return;
 								}
@@ -287,6 +288,7 @@ export class AccountChatComponent extends BaseProvider
 											appointmentID
 									) {
 										await this.navigate(
+											false,
 											'appointments',
 											path,
 											appointmentID
@@ -301,7 +303,11 @@ export class AccountChatComponent extends BaseProvider
 										contactID &&
 										this.initiatedContactID !== contactID
 									) {
-										await this.navigate(path, contactID);
+										await this.navigate(
+											false,
+											path,
+											contactID
+										);
 									}
 
 									return;
@@ -353,6 +359,10 @@ export class AccountChatComponent extends BaseProvider
 									this.appointment.next(appointment);
 								}
 
+								if (this.destroyed.value) {
+									return;
+								}
+
 								this.initiatedAppointmentID = appointmentID;
 								this.initiatedContactID = contactID;
 
@@ -363,7 +373,7 @@ export class AccountChatComponent extends BaseProvider
 								const callEndRoute = appointmentID ?
 									['appointments', appointmentID, 'end'] :
 								!this.cancelRedirectsHome.value ?
-									['messages', contactID] :
+									['messages', contactID || ''] :
 									[''];
 
 								if (
@@ -391,6 +401,10 @@ export class AccountChatComponent extends BaseProvider
 										contactID
 									);
 
+								if (this.destroyed.value) {
+									return;
+								}
+
 								this.messageType.next(
 									sessionSubID === 'mail' ||
 										this.envService.isTelehealth ||
@@ -402,6 +416,10 @@ export class AccountChatComponent extends BaseProvider
 										ChatMessageValue.Types.Quill :
 										ChatMessageValue.Types.Text
 								);
+
+								if (this.destroyed.value) {
+									return;
+								}
 
 								this.sessionSubID.next(sessionSubID);
 
@@ -450,10 +468,15 @@ export class AccountChatComponent extends BaseProvider
 									undefined,
 									callType,
 									sessionSubID,
-									ephemeralSubSession
+									ephemeralSubSession,
+									this.answering.value
 								);
 
 								if (callType === undefined) {
+									return;
+								}
+
+								if (this.destroyed.value) {
 									return;
 								}
 

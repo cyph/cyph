@@ -116,11 +116,14 @@ export interface IP2PWebRTCService {
 	) : Promise<MediaStream | undefined>;
 
 	/** Sets up a new P2P session. */
-	join (p2pSessionData: {
-		callType: 'audio' | 'video';
-		iceServers: string;
-		id: string;
-	}) : Promise<void>;
+	join (
+		p2pSessionData: {
+			callType: 'audio' | 'video';
+			iceServers: string;
+			id: string;
+		},
+		initiator: boolean
+	) : Promise<void>;
 
 	/**
 	 * Sends a new call request to the other party.

@@ -470,6 +470,10 @@ export abstract class SessionService extends BaseProvider
 					break;
 				}
 
+				debugLog(() => ({
+					sessionCastleSendMessage: {data}
+				}));
+
 				await this.cyphertextSendHandler(data);
 		}
 	}

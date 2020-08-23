@@ -562,18 +562,21 @@ export class P2PWebRTCService extends BaseProvider
 	}
 
 	/** @inheritDoc */
-	public async join (p2pSessionData: {
-		callType: 'audio' | 'video';
-		iceServers: string;
-		id: string;
-	}) : Promise<void> {
+	public async join (
+		p2pSessionData: {
+			callType: 'audio' | 'video';
+			iceServers: string;
+			id: string;
+		},
+		answering: boolean
+	) : Promise<void> {
 		if (!P2PWebRTCService.isSupported) {
 			await this.close();
 			await (await this.handlers).failed();
 			return;
 		}
 
-		return this.joinAndToggleLock(async () => {
+		await this.joinAndToggleLock(async () => {
 			if (this.webRTC.value) {
 				return;
 			}
@@ -684,7 +687,7 @@ export class P2PWebRTCService extends BaseProvider
 						config: !this.sessionService.apiFlags.disableP2P ?
 							{iceServers} :
 							{iceServers, iceTransportPolicy: 'relay'},
-						initiator: sessionService.state.isAlice.value,
+						initiator: answering,
 						sdpTransform: (sdp: any) : any =>
 							/* http://www.kapejod.org/en/2014/05/28 */
 							typeof sdp === 'string' ?
@@ -910,6 +913,8 @@ export class P2PWebRTCService extends BaseProvider
 
 			this.initialCallPending.next(false);
 		});
+
+		debugLog(() => 'p2pWebRTCJoinComplete');
 	}
 
 	/** @inheritDoc */
@@ -951,7 +956,7 @@ export class P2PWebRTCService extends BaseProvider
 					bytes: msgpack.encode(p2pSessionData)
 				}
 			]),
-			this.join(p2pSessionData)
+			this.join(p2pSessionData, false)
 		]);
 
 		this.analyticsService.sendEvent(
@@ -1218,7 +1223,7 @@ export class P2PWebRTCService extends BaseProvider
 					return;
 				}
 
-				await this.join(p2pSessionData);
+				await this.join(p2pSessionData, true);
 			});
 
 			for (let i = 0; i < sessionServices.length; ++i) {
