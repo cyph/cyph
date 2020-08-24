@@ -14,7 +14,7 @@ const {
 } = require('../modules/util');
 const {sendMail} = require('./email');
 
-const changeUserPlan = async (projectId, username, plan, namespace) => {
+const changeUserPlan = async (projectId, username, plan, trialMonths, namespace) => {
 	if (typeof projectId !== 'string' || projectId.indexOf('cyph') !== 0) {
 		throw new Error('Invalid Firebase project ID.');
 	}
@@ -76,6 +76,9 @@ const changeUserPlan = async (projectId, username, plan, namespace) => {
 	const oldPlanConfig = config.planConfig[oldPlan];
 	const isUpgrade = planConfig.rank > oldPlanConfig.rank;
 
+	const planTrialEndRef = database
+		.ref(`${namespacePath}/users/${username}/internal/planTrialEnd`);
+
 	await Promise.all([
 		setItem(namespace, `users/${username}/plan`, CyphPlan, {
 			plan: cyphPlan
@@ -91,6 +94,14 @@ const changeUserPlan = async (projectId, username, plan, namespace) => {
 		database
 			.ref(`${namespacePath}/users/${username}/internal/planTrialEnd`)
 			.remove(),
+		trialMonths ?
+			planTrialEndRef.set(
+				new Date().setMonth(
+					new Date().getMonth() +
+						parseInt(trialMonths, 10)
+				)
+			) :
+			planTrialEndRef.remove()
 		(async () => {
 			if (planConfig.initialInvites === undefined) {
 				return;
@@ -132,7 +143,11 @@ const changeUserPlan = async (projectId, username, plan, namespace) => {
 	if (email) {
 		await sendMail(
 			!email ? undefined : !name ? email : `${name} <${email}>`,
-			isUpgrade ? 'Cyph Status Upgrade!' : 'Your Cyph Status',
+			!isUpgrade ?
+				'Your Cyph Status' :
+				'Cyph Status Upgrade!' + (
+					!trialMonths ? '' : ` (${trialMonths.toString()}-month trial)`
+				),
 			{
 				data: {
 					...planConfig,
@@ -179,18 +194,20 @@ if (require.main === module) {
 	(async () => {
 		const projectId = process.argv[2];
 
-		for (const {username, plan, namespace} of process.argv[3] ===
+		for (const {username, plan, trialMonths, namespace} of process.argv[3] ===
 		'--users' ?
 			JSON.parse(process.argv[4]).map(username => ({
 				username,
 				plan: process.argv[5],
-				namespace: process.argv[6]
+				trialMonths: process.argv[6],
+				namespace: process.argv[7]
 			})) :
 			[
 				{
 					username: process.argv[3],
 					plan: process.argv[4],
-					namespace: process.argv[5]
+					trialMonths: process.argv[5],
+					namespace: process.argv[6]
 				}
 			]) {
 			console.log(
@@ -198,6 +215,7 @@ if (require.main === module) {
 					projectId,
 					username,
 					plan,
+					trialMonths,
 					namespace
 				)}`
 			);
