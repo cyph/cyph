@@ -1854,17 +1854,6 @@ export class ChatService extends BaseProvider {
 			}
 		);
 
-		/* For automated tests */
-
-		if (!this.envService.isWeb) {
-			return;
-		}
-
-		(<any> self).sendMessage = async (
-			message?: string,
-			selfDestructTimeout?: number
-		) => this.send(undefined, {text: message}, selfDestructTimeout);
-
 		/* For debugging */
 
 		if (!this.envService.debug) {
@@ -1880,5 +1869,10 @@ export class ChatService extends BaseProvider {
 			this.chat.state = States.chat;
 			this.updateChat();
 		};
+
+		(<any> self).sendMessage = async (
+			message?: string,
+			selfDestructTimeout?: number
+		) => this.send(undefined, {text: message}, selfDestructTimeout);
 	}
 }
