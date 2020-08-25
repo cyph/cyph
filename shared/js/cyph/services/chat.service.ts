@@ -79,7 +79,7 @@ import {StringsService} from './strings.service';
 @Injectable()
 export class ChatService extends BaseProvider {
 	/** @ignore */
-	private static readonly approximateKeyExchangeTime: number = 9000;
+	private static readonly approximateKeyExchangeTime: number = 15000;
 
 	/** @ignore */
 	private readonly fullyLoadedMessages = new Map<string, IResolvable<void>>();
