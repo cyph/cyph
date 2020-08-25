@@ -544,22 +544,23 @@ export abstract class SessionService extends BaseProvider
 		channelSubID?: string,
 		userID?: string
 	) : Promise<void> {
-		await this.channelService.init(
-			channelID,
-			channelSubID,
-			userID,
-			this.state.startingNewCyph.value === undefined,
-			this.account,
-			{
-				onClose: async () => this.channelOnClose(),
-				onConnect: async () => this.channelOnConnect(),
-				onMessage: async (message, initial) =>
-					this.channelOnMessage(message, initial),
-				onOpen: async isAlice => this.channelOnOpen(isAlice)
-			}
-		);
-
-		await this.castleService.init(this);
+		await Promise.all([
+			this.castleService.init(this),
+			this.channelService.init(
+				channelID,
+				channelSubID,
+				userID,
+				this.state.startingNewCyph.value === undefined,
+				this.account,
+				{
+					onClose: async () => this.channelOnClose(),
+					onConnect: async () => this.channelOnConnect(),
+					onMessage: async (message, initial) =>
+						this.channelOnMessage(message, initial),
+					onOpen: async isAlice => this.channelOnOpen(isAlice)
+				}
+			)
+		]);
 
 		let lockClaimed = false;
 
