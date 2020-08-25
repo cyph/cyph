@@ -997,7 +997,7 @@ export class AccountDatabaseService extends BaseProvider {
 	/** @see DatabaseService.getListKeys */
 	public async getListKeys (
 		url: MaybePromise<string>,
-		noFilter: boolean = false
+		noFilter: boolean = true
 	) : Promise<string[]> {
 		return this.databaseService.getListKeys(
 			await this.normalizeURL(url),
@@ -1646,7 +1646,7 @@ export class AccountDatabaseService extends BaseProvider {
 	public watchListKeys (
 		url: MaybePromise<string>,
 		subscriptions?: Subscription[],
-		noFilter: boolean = false
+		noFilter: boolean = true
 	) : Observable<string[]> {
 		return cacheObservable(
 			this.currentUser.pipe(

@@ -257,7 +257,7 @@ export class FirebaseDatabaseService extends DatabaseService {
 	/** @ignore */
 	private getListKeysInternal (
 		value: Map<string, any> | Record<string, any>,
-		noFilter: boolean = false
+		noFilter: boolean = true
 	) : string[] {
 		if (!value) {
 			return [];
@@ -625,7 +625,7 @@ export class FirebaseDatabaseService extends DatabaseService {
 	/** @inheritDoc */
 	public async getListKeys (
 		urlPromise: MaybePromise<string>,
-		noFilter: boolean = false
+		noFilter: boolean = true
 	) : Promise<string[]> {
 		return this.ngZone.runOutsideAngular(async () => {
 			const url = await urlPromise;
@@ -2013,7 +2013,7 @@ export class FirebaseDatabaseService extends DatabaseService {
 	public watchListKeys (
 		urlPromise: MaybePromise<string>,
 		subscriptions?: Subscription[],
-		noFilter: boolean = false
+		noFilter: boolean = true
 	) : Observable<string[]> {
 		return getOrSetDefaultObservable(
 			this.observableCaches.watchListKeys,
