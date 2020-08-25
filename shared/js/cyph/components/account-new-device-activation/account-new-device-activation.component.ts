@@ -109,6 +109,12 @@ export class AccountNewDeviceActivationComponent extends BaseProvider
 			return;
 		}
 
+		this.basicSessionInitService.setID(
+			this.sessionData.bobSessionID ? this.sessionData.bobSessionID : '',
+			undefined,
+			true
+		);
+
 		const masterKeyConfirmationCodePromise = this.sessionData.bobSessionID ?
 			(async () =>
 				((await this.sessionService.one(
@@ -129,12 +135,6 @@ export class AccountNewDeviceActivationComponent extends BaseProvider
 		const usernamePromise = credentialsPromise ?
 			credentialsPromise.then(o => o?.method) :
 			undefined;
-
-		this.basicSessionInitService.setID(
-			this.sessionData.bobSessionID ? this.sessionData.bobSessionID : '',
-			undefined,
-			true
-		);
 
 		if (this.sessionData.aliceMasterKey && this.sessionData.aliceUsername) {
 			const masterKeyConfirmationCode = readableID(
