@@ -136,8 +136,6 @@ export class AccountNewDeviceActivationComponent extends BaseProvider
 			true
 		);
 
-		await this.sessionService.connected;
-
 		if (this.sessionData.aliceMasterKey && this.sessionData.aliceUsername) {
 			const masterKeyConfirmationCode = readableID(
 				this.configService.cyphIDLength

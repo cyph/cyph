@@ -1667,7 +1667,7 @@ export class ChatService extends BaseProvider {
 				});
 			}
 
-			this.sessionService.connected.then(async () => {
+			this.sessionService.channelConnected.then(async () => {
 				this.sessionCapabilitiesService.resolveWalkieTalkieMode(
 					this.walkieTalkieMode.value
 				);

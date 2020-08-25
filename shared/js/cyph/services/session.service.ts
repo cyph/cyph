@@ -201,10 +201,6 @@ export abstract class SessionService extends BaseProvider
 			return;
 		}
 
-		if (this.sessionInitService.ephemeral) {
-			await this.connected;
-		}
-
 		await this.castleService.send(
 			await serialize<ISessionMessageList>(SessionMessageList, {
 				messages
