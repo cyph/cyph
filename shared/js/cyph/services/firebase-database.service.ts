@@ -2127,6 +2127,7 @@ export class FirebaseDatabaseService extends DatabaseService {
 							).subscribe(async keys =>
 								keySubscriptionLock(async () => {
 									const url = await urlPromise;
+									const emitLock = lockFunction();
 
 									for (let i = 0; i < keys.length; ++i) {
 										const key = keys[i];
@@ -2140,30 +2141,38 @@ export class FirebaseDatabaseService extends DatabaseService {
 											keys[i - 1];
 										const itemURL = `${url}/${key}`;
 
-										try {
-											const {
-												timestamp,
-												value
-											} = await this.downloadItem(
-												itemURL,
-												proto
-											).result;
-											this.ngZone.run(() => {
-												observer.next({
-													key,
-													previousKey,
-													timestamp,
-													url: itemURL,
-													value
-												});
-											});
-										}
-										catch {
-											continue;
-										}
-										if (noCache) {
-											this.cache.removeItem(itemURL);
-										}
+										const {result} = this.downloadItem(
+											itemURL,
+											proto
+										);
+
+										emitLock(async () =>
+											this.ngZone.run(async () => {
+												try {
+													const {
+														timestamp,
+														value
+													} = await result;
+
+													observer.next({
+														key,
+														previousKey,
+														timestamp,
+														url: itemURL,
+														value
+													});
+												}
+												catch {
+												}
+												finally {
+													if (noCache) {
+														this.cache
+															.removeItem(itemURL)
+															.catch(() => {});
+													}
+												}
+											})
+										);
 									}
 
 									if (
