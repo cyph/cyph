@@ -544,28 +544,53 @@ export abstract class SessionService extends BaseProvider
 		channelSubID?: string,
 		userID?: string
 	) : Promise<void> {
-		/*
-			Honeybadger workaround: see comment on the equivalent logic in the
-			PairwiseSession constructor
-		*/
-		let lockClaimed = false;
-		sleep(2500).then(() => {
-			if (!lockClaimed) {
-				this.initialMessagesProcessed.resolve();
+		await this.channelService.init(
+			channelID,
+			channelSubID,
+			userID,
+			this.state.startingNewCyph.value === undefined,
+			this.account,
+			{
+				onClose: async () => this.channelOnClose(),
+				onConnect: async () => this.channelOnConnect(),
+				onMessage: async (message, initial) =>
+					this.channelOnMessage(message, initial),
+				onOpen: async isAlice => this.channelOnOpen(isAlice)
 			}
-		});
+		);
+
+		await this.castleService.init(this);
+
+		let lockClaimed = false;
+
+		if (this.sessionInitService.ephemeral) {
+			this.initialMessagesProcessed.resolve();
+		}
+		else {
+			/*
+				Honeybadger workaround: see comment on the equivalent logic in the
+				PairwiseSession constructor
+			*/
+			sleep(2500).then(() => {
+				if (!lockClaimed) {
+					this.initialMessagesProcessed.resolve();
+				}
+			});
+		}
 
 		this.incomingMessageQueueLock(async o => {
 			lockClaimed = true;
 
-			await this.cyphertextReceiveHandler(
-				(await this.incomingMessageQueue.getValue())
-					.flatMap(({messages}) => messages || [])
-					.filter(this.correctSubSession),
-				true
-			);
+			if (!this.sessionInitService.ephemeral) {
+				await this.cyphertextReceiveHandler(
+					(await this.incomingMessageQueue.getValue())
+						.flatMap(({messages}) => messages || [])
+						.filter(this.correctSubSession),
+					true
+				);
 
-			this.initialMessagesProcessed.resolve();
+				this.initialMessagesProcessed.resolve();
+			}
 
 			const sub = this.incomingMessageQueue.subscribeAndPop(
 				async ({messages}) => {
@@ -584,24 +609,6 @@ export abstract class SessionService extends BaseProvider
 			await Promise.race([this.closed, o.stillOwner.toPromise()]);
 			sub.unsubscribe();
 		});
-
-		await Promise.all([
-			this.castleService.init(this),
-			this.channelService.init(
-				channelID,
-				channelSubID,
-				userID,
-				this.state.startingNewCyph.value === undefined,
-				this.account,
-				{
-					onClose: async () => this.channelOnClose(),
-					onConnect: async () => this.channelOnConnect(),
-					onMessage: async (message, initial) =>
-						this.channelOnMessage(message, initial),
-					onOpen: async isAlice => this.channelOnOpen(isAlice)
-				}
-			)
-		]);
 	}
 
 	/** @inheritDoc */
