@@ -129,7 +129,7 @@ export class AccountContactsService extends BaseProvider {
 						{username}
 					)
 				};
-			}, 600000)
+			}, 86400000)
 	);
 
 	/** @see AccountPostsService */
