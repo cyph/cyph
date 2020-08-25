@@ -336,14 +336,22 @@ export class FirebaseDatabaseService extends DatabaseService {
 		url: string
 	) : Promise<firebase.database.DataSnapshot> {
 		return new Promise<firebase.database.DataSnapshot>(async resolve => {
-			(await this.getDatabaseRef(url)).on('value', snapshot => {
+			const ref = await this.getDatabaseRef(url);
+
+			const onValue = (
+				/* eslint-disable-next-line no-null/no-null */
+				snapshot: firebase.database.DataSnapshot | null
+			) => {
 				if (
 					snapshot?.exists() &&
 					typeof snapshot.val().hash === 'string'
 				) {
+					ref.off('value', onValue);
 					resolve(snapshot);
 				}
-			});
+			};
+
+			ref.on('value', onValue);
 		});
 	}
 
@@ -451,7 +459,7 @@ export class FirebaseDatabaseService extends DatabaseService {
 							'.info/connected'
 						);
 
-						const onValue = async (
+						const onValue = (
 							/* eslint-disable-next-line no-null/no-null */
 							snapshot: firebase.database.DataSnapshot | null
 						) => {
@@ -661,7 +669,7 @@ export class FirebaseDatabaseService extends DatabaseService {
 
 			if (waitUntilExists) {
 				val = await new Promise<any>(resolve => {
-					const onValue = async (
+					const onValue = (
 						/* eslint-disable-next-line no-null/no-null */
 						snapshot: firebase.database.DataSnapshot | null
 					) => {
@@ -1567,59 +1575,63 @@ export class FirebaseDatabaseService extends DatabaseService {
 					let reason: string | undefined;
 					let wasLocked = false;
 
+					const localLock = lockFunction();
+
 					(await this.getDatabaseRef(url)).on(
 						'value',
-						async snapshot => {
-							const value: {
-								[key: string]: {
-									claimTimestamp?: number;
-									id?: string;
-									reason?: string;
-									timestamp?: number;
-								};
-							} = snapshot?.val() || {};
+						async snapshot =>
+							localLock(async () => {
+								const value: {
+									[key: string]: {
+										claimTimestamp?: number;
+										id?: string;
+										reason?: string;
+										timestamp?: number;
+									};
+								} = snapshot?.val() || {};
 
-							const keys = Object.keys(value);
+								const keys = Object.keys(value);
 
-							if (keys.length < 1) {
+								if (keys.length < 1) {
+									resolve({reason, wasLocked});
+									return;
+								}
+
+								const timestamp = await getTimestamp();
+
+								const contenders = keys
+									.map(k => value[k])
+									.filter(
+										contender =>
+											typeof contender.claimTimestamp ===
+												'number' &&
+											!isNaN(contender.claimTimestamp) &&
+											typeof contender.id === 'string' &&
+											typeof contender.timestamp ===
+												'number' &&
+											!isNaN(contender.timestamp) &&
+											timestamp - contender.timestamp <
+												this.lockLeaseConfig
+													.expirationLimit
+									)
+									.sort(
+										(a, b) =>
+											<number> a.claimTimestamp -
+											<number> b.claimTimestamp
+									);
+
+								if (contenders.length > 0) {
+									reason = contenders[0].reason;
+									reason =
+										typeof reason === 'string' ?
+											reason :
+											undefined;
+									wasLocked = true;
+									return;
+								}
+
 								resolve({reason, wasLocked});
-								return;
-							}
-
-							const timestamp = await getTimestamp();
-
-							const contenders = keys
-								.map(k => value[k])
-								.filter(
-									contender =>
-										typeof contender.claimTimestamp ===
-											'number' &&
-										!isNaN(contender.claimTimestamp) &&
-										typeof contender.id === 'string' &&
-										typeof contender.timestamp ===
-											'number' &&
-										!isNaN(contender.timestamp) &&
-										timestamp - contender.timestamp <
-											this.lockLeaseConfig.expirationLimit
-								)
-								.sort(
-									(a, b) =>
-										<number> a.claimTimestamp -
-										<number> b.claimTimestamp
-								);
-
-							if (contenders.length > 0) {
-								reason = contenders[0].reason;
-								reason =
-									typeof reason === 'string' ?
-										reason :
-										undefined;
-								wasLocked = true;
-								return;
-							}
-
-							resolve({reason, wasLocked});
-						}
+							})
 					);
 				})
 		);
@@ -1641,51 +1653,56 @@ export class FirebaseDatabaseService extends DatabaseService {
 							let cleanup: () => void;
 							let lastValue: T | undefined;
 
+							const localLock = lockFunction();
+
 							const onValue = async (
 								/* eslint-disable-next-line no-null/no-null */
 								snapshot: firebase.database.DataSnapshot | null
-							) => {
-								const url = await urlPromise;
+							) =>
+								localLock(async () => {
+									const url = await urlPromise;
 
-								try {
-									if (!snapshot || !snapshot.exists()) {
-										throw new Error('Data not found.');
-									}
+									try {
+										if (!snapshot || !snapshot.exists()) {
+											throw new Error('Data not found.');
+										}
 
-									const result = await this.downloadItem(
-										url,
-										proto
-									).result;
+										const result = await this.downloadItem(
+											url,
+											proto
+										).result;
 
-									if (
-										result.value !== lastValue &&
-										!(
-											ArrayBuffer.isView(result.value) &&
-											ArrayBuffer.isView(lastValue) &&
-											this.potassiumService.compareMemory(
-												result.value,
-												lastValue
+										if (
+											result.value !== lastValue &&
+											!(
+												ArrayBuffer.isView(
+													result.value
+												) &&
+												ArrayBuffer.isView(lastValue) &&
+												this.potassiumService.compareMemory(
+													result.value,
+													lastValue
+												)
 											)
-										)
-									) {
+										) {
+											this.ngZone.run(() => {
+												observer.next(result);
+											});
+										}
+
+										lastValue = result.value;
+									}
+									catch {
+										lastValue = undefined;
+										const timestamp = await getTimestamp();
 										this.ngZone.run(() => {
-											observer.next(result);
+											observer.next({
+												timestamp,
+												value: proto.create()
+											});
 										});
 									}
-
-									lastValue = result.value;
-								}
-								catch {
-									lastValue = undefined;
-									const timestamp = await getTimestamp();
-									this.ngZone.run(() => {
-										observer.next({
-											timestamp,
-											value: proto.create()
-										});
-									});
-								}
-							};
+								});
 
 							(async () => {
 								const url = await urlPromise;
@@ -1833,73 +1850,79 @@ export class FirebaseDatabaseService extends DatabaseService {
 									});
 								};
 
+								const localLock = lockFunction();
+
 								const onChildAdded = async (
 									/* eslint-disable-next-line no-null/no-null */
 									snapshot: firebase.database.DataSnapshot | null
-								) : Promise<void> => {
-									if (
-										snapshot?.key &&
-										typeof (snapshot.val() || {}).hash !==
-											'string'
-									) {
-										return onChildAdded(
-											await this.waitForValue(
-												`${url}/${snapshot.key}`
-											)
-										);
-									}
-									if (
-										!snapshot ||
-										!snapshot.key ||
-										data.has(snapshot.key) ||
-										!(await getValue(snapshot))
-									) {
-										return;
-									}
-									await publishList();
-								};
+								) : Promise<void> =>
+									localLock(async () => {
+										if (
+											snapshot?.key &&
+											typeof (snapshot.val() || {})
+												.hash !== 'string'
+										) {
+											return onChildAdded(
+												await this.waitForValue(
+													`${url}/${snapshot.key}`
+												)
+											);
+										}
+										if (
+											!snapshot ||
+											!snapshot.key ||
+											data.has(snapshot.key) ||
+											!(await getValue(snapshot))
+										) {
+											return;
+										}
+										await publishList();
+									});
 
 								const onChildChanged = async (
 									/* eslint-disable-next-line no-null/no-null */
 									snapshot: firebase.database.DataSnapshot | null
-								) => {
-									if (
-										!snapshot ||
-										!snapshot.key ||
-										!(await getValue(snapshot))
-									) {
-										return;
-									}
-									await publishList();
-								};
+								) =>
+									localLock(async () => {
+										if (
+											!snapshot ||
+											!snapshot.key ||
+											!(await getValue(snapshot))
+										) {
+											return;
+										}
+										await publishList();
+									});
 
 								const onChildRemoved = async (
 									/* eslint-disable-next-line no-null/no-null */
 									snapshot: firebase.database.DataSnapshot | null
-								) => {
-									if (!snapshot || !snapshot.key) {
-										return;
-									}
-									data.delete(snapshot.key);
-									await publishList();
-								};
+								) =>
+									localLock(async () => {
+										if (!snapshot || !snapshot.key) {
+											return;
+										}
+										data.delete(snapshot.key);
+										await publishList();
+									});
 
 								const onValue = async (
 									/* eslint-disable-next-line no-null/no-null */
 									snapshot: firebase.database.DataSnapshot | null
-								) => {
-									if (!initiated) {
-										initiated = true;
-										return;
-									}
-									if (!snapshot || snapshot.exists()) {
-										return;
-									}
+								) =>
+									localLock(async () => {
+										if (!initiated) {
+											initiated = true;
+											return;
+										}
+										if (!snapshot || snapshot.exists()) {
+											return;
+										}
 
-									this.ngZone.run(() => {
-										observer.complete();
+										this.ngZone.run(() => {
+											observer.complete();
+										});
 									});
-								};
 
 								for (const key of Object.keys(initialValues)) {
 									await getValue({
@@ -1970,40 +1993,45 @@ export class FirebaseDatabaseService extends DatabaseService {
 
 								const listRef = await this.getDatabaseRef(url);
 
+								const localLock = lockFunction();
+
 								const onChildAdded = async (
 									/* eslint-disable-next-line no-null/no-null */
 									snapshot: firebase.database.DataSnapshot | null,
 									/* eslint-disable-next-line no-null/no-null */
 									previousKey?: string | null
 								) =>
-									this.ngZone.run(
-										async () : Promise<void> => {
-											if (
-												snapshot?.key &&
-												typeof (snapshot.val() || {})
-													.hash !== 'string'
-											) {
-												return onChildAdded(
-													await this.waitForValue(
-														`${url}/${snapshot.key}`
-													),
-													previousKey
-												);
-											}
-											if (
-												!snapshot ||
-												!snapshot.exists() ||
-												!snapshot.key
-											) {
-												return;
-											}
+									localLock(async () =>
+										this.ngZone.run(
+											async () : Promise<void> => {
+												if (
+													snapshot?.key &&
+													typeof (
+														snapshot.val() || {}
+													).hash !== 'string'
+												) {
+													return onChildAdded(
+														await this.waitForValue(
+															`${url}/${snapshot.key}`
+														),
+														previousKey
+													);
+												}
+												if (
+													!snapshot ||
+													!snapshot.exists() ||
+													!snapshot.key
+												) {
+													return;
+												}
 
-											observer.next({
-												key: snapshot.key,
-												previousKey:
-													previousKey || undefined
-											});
-										}
+												observer.next({
+													key: snapshot.key,
+													previousKey:
+														previousKey || undefined
+												});
+											}
+										)
 									);
 
 								listRef.on('child_added', onChildAdded);
@@ -2044,13 +2072,13 @@ export class FirebaseDatabaseService extends DatabaseService {
 
 								let keys: string[] | undefined;
 
-								const emitLock = lockFunction();
+								const localLock = lockFunction();
 
 								const onValue = async (
 									/* eslint-disable-next-line no-null/no-null */
 									snapshot: firebase.database.DataSnapshot | null
 								) =>
-									emitLock(async () => {
+									localLock(async () => {
 										if (!snapshot) {
 											keys = undefined;
 											this.ngZone.run(() => {
