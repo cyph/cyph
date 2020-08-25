@@ -995,14 +995,8 @@ export class AccountDatabaseService extends BaseProvider {
 	}
 
 	/** @see DatabaseService.getListKeys */
-	public async getListKeys (
-		url: MaybePromise<string>,
-		noFilter: boolean = true
-	) : Promise<string[]> {
-		return this.databaseService.getListKeys(
-			await this.normalizeURL(url),
-			noFilter
-		);
+	public async getListKeys (url: MaybePromise<string>) : Promise<string[]> {
+		return this.databaseService.getListKeys(await this.normalizeURL(url));
 	}
 
 	/** Gets list of ITimedValues. */
@@ -1645,16 +1639,14 @@ export class AccountDatabaseService extends BaseProvider {
 	/** @see DatabaseService.watchListKeys */
 	public watchListKeys (
 		url: MaybePromise<string>,
-		subscriptions?: Subscription[],
-		noFilter: boolean = true
+		subscriptions?: Subscription[]
 	) : Observable<string[]> {
 		return cacheObservable(
 			this.currentUser.pipe(
 				switchMap(async () =>
 					this.databaseService.watchListKeys(
 						await this.normalizeURL(url),
-						subscriptions,
-						noFilter
+						subscriptions
 					)
 				),
 				switchMap(o => o)

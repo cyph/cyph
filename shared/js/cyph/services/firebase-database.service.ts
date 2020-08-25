@@ -244,6 +244,9 @@ export class FirebaseDatabaseService extends DatabaseService {
 	private readonly pushItemLocks = new Map<string, LockFunction>();
 
 	/** @ignore */
+	private readonly pushItemTimeout = 10800000;
+
+	/** @ignore */
 	private async getDatabaseRef (
 		url: string
 	) : Promise<firebase.database.Reference> {
@@ -255,23 +258,32 @@ export class FirebaseDatabaseService extends DatabaseService {
 	}
 
 	/** @ignore */
-	private getListKeysInternal (
-		value: Map<string, any> | Record<string, any>,
-		noFilter: boolean = true
-	) : string[] {
+	private async getListKeysInternal (
+		value: Map<string, any> | Record<string, any>
+	) : Promise<string[]> {
 		if (!value) {
 			return [];
 		}
 
-		const getKeyTimestamp =
+		const getValue =
 			value instanceof Map ?
-				(k: string) => value.get(k).timestamp :
-				(k: string) => value[k].timestamp;
+				(k: string) => value.get(k) :
+				(k: string) => value[k];
+
+		const getKeyTimestamp = (k: string) => getValue(k).timestamp;
+
+		const now = await getTimestamp();
 
 		let keys =
 			value instanceof Map ?
 				Array.from(value.keys()) :
 				Object.keys(value);
+
+		keys = keys.filter(
+			k =>
+				typeof getValue(k).hash === 'string' ||
+				this.pushItemTimeout > now - getKeyTimestamp(k)
+		);
 
 		if (keys.length > 0 && typeof getKeyTimestamp(keys[0]) === 'number') {
 			keys = keys.sort((a, b) =>
@@ -282,13 +294,9 @@ export class FirebaseDatabaseService extends DatabaseService {
 			keys = keys.sort();
 		}
 
-		const endIndex = noFilter ?
-			-1 :
-			keys.findIndex(
-				value instanceof Map ?
-					k => typeof value.get(k).hash !== 'string' :
-					k => typeof value[k].hash !== 'string'
-			);
+		const endIndex = keys.findIndex(
+			k => typeof getValue(k).hash !== 'string'
+		);
 
 		return endIndex >= 0 ? keys.slice(0, endIndex) : keys;
 	}
@@ -589,7 +597,7 @@ export class FirebaseDatabaseService extends DatabaseService {
 				const value = (await (await this.getDatabaseRef(url)).once(
 					'value'
 				)).val();
-				const keys = this.getListKeysInternal(value);
+				const keys = await this.getListKeysInternal(value);
 
 				return keys
 					.filter(k => !isNaN(value[k].timestamp))
@@ -624,18 +632,14 @@ export class FirebaseDatabaseService extends DatabaseService {
 
 	/** @inheritDoc */
 	public async getListKeys (
-		urlPromise: MaybePromise<string>,
-		noFilter: boolean = true
+		urlPromise: MaybePromise<string>
 	) : Promise<string[]> {
 		return this.ngZone.runOutsideAngular(async () => {
 			const url = await urlPromise;
 
 			try {
-				return this.getListKeysInternal(
-					(await (await this.getDatabaseRef(url)).once(
-						'value'
-					)).val(),
-					noFilter
+				return await this.getListKeysInternal(
+					(await (await this.getDatabaseRef(url)).once('value')).val()
 				);
 			}
 			catch {
@@ -1128,7 +1132,17 @@ export class FirebaseDatabaseService extends DatabaseService {
 		};
 
 		const pushItemWithKeyCallback = async () =>
-			this.lock(`pushLocks/${url}`, pushItemWithKeyCallbackInternal);
+			retryUntilSuccessful(async () =>
+				Promise.race([
+					this.lock(
+						`pushLocks/${url}`,
+						pushItemWithKeyCallbackInternal
+					),
+					sleep(this.pushItemTimeout).then(async () => {
+						throw new Error('PushItem timeout.');
+					})
+				])
+			);
 
 		return this.ngZone.runOutsideAngular(async () =>
 			getOrSetDefault(
@@ -1798,23 +1812,23 @@ export class FirebaseDatabaseService extends DatabaseService {
 									return true;
 								};
 
-								const publishList = () => {
-									this.ngZone.run(() => {
+								const publishList = async () => {
+									this.ngZone.run(async () => {
 										observer.next(
-											this.getListKeysInternal(data).map(
-												k => {
-													const o = data.get(k);
-													if (!o) {
-														throw new Error(
-															'Corrupt Map.'
-														);
-													}
-													return {
-														timestamp: o.timestamp,
-														value: o.value
-													};
+											(await this.getListKeysInternal(
+												data
+											)).map(k => {
+												const o = data.get(k);
+												if (!o) {
+													throw new Error(
+														'Corrupt Map.'
+													);
 												}
-											)
+												return {
+													timestamp: o.timestamp,
+													value: o.value
+												};
+											})
 										);
 									});
 								};
@@ -1842,7 +1856,7 @@ export class FirebaseDatabaseService extends DatabaseService {
 									) {
 										return;
 									}
-									publishList();
+									await publishList();
 								};
 
 								const onChildChanged = async (
@@ -1856,7 +1870,7 @@ export class FirebaseDatabaseService extends DatabaseService {
 									) {
 										return;
 									}
-									publishList();
+									await publishList();
 								};
 
 								const onChildRemoved = async (
@@ -1867,7 +1881,7 @@ export class FirebaseDatabaseService extends DatabaseService {
 										return;
 									}
 									data.delete(snapshot.key);
-									publishList();
+									await publishList();
 								};
 
 								const onValue = async (
@@ -1893,7 +1907,7 @@ export class FirebaseDatabaseService extends DatabaseService {
 										val: () => initialValues[key]
 									});
 								}
-								publishList();
+								await publishList();
 
 								listRef.on('child_added', onChildAdded);
 								listRef.on('child_changed', onChildChanged);
@@ -2012,8 +2026,7 @@ export class FirebaseDatabaseService extends DatabaseService {
 	/** @inheritDoc */
 	public watchListKeys (
 		urlPromise: MaybePromise<string>,
-		subscriptions?: Subscription[],
-		noFilter: boolean = true
+		subscriptions?: Subscription[]
 	) : Observable<string[]> {
 		return getOrSetDefaultObservable(
 			this.observableCaches.watchListKeys,
@@ -2031,49 +2044,38 @@ export class FirebaseDatabaseService extends DatabaseService {
 
 								let keys: string[] | undefined;
 
-								const onValue = (
+								const emitLock = lockFunction();
+
+								const onValue = async (
 									/* eslint-disable-next-line no-null/no-null */
 									snapshot: firebase.database.DataSnapshot | null
-								) => {
-									if (!snapshot) {
-										keys = undefined;
-										this.ngZone.run(() => {
-											observer.next([]);
-										});
-										return;
-									}
-
-									const val = snapshot.val() || {};
-									const newKeys = this.getListKeysInternal(
-										val,
-										noFilter
-									);
-
-									if (!noFilter) {
-										for (
-											let i = newKeys.length - 1;
-											i >= 0;
-											--i
-										) {
-											const o = val[newKeys[i]];
-											if (
-												!o ||
-												typeof o.hash !== 'string'
-											) {
-												return;
-											}
+								) =>
+									emitLock(async () => {
+										if (!snapshot) {
+											keys = undefined;
+											this.ngZone.run(() => {
+												observer.next([]);
+											});
+											return;
 										}
-									}
 
-									if (keys && compareArrays(keys, newKeys)) {
-										return;
-									}
+										const val = snapshot.val() || {};
+										const newKeys = await this.getListKeysInternal(
+											val
+										);
 
-									keys = Array.from(newKeys);
-									this.ngZone.run(() => {
-										observer.next(newKeys);
+										if (
+											keys &&
+											compareArrays(keys, newKeys)
+										) {
+											return;
+										}
+
+										keys = Array.from(newKeys);
+										this.ngZone.run(() => {
+											observer.next(newKeys);
+										});
 									});
-								};
 
 								listRef.on('value', onValue);
 								cleanup = () => {
