@@ -20,6 +20,11 @@ const updateRepos = async () => {
 
 	for (const repo of ['cdn', 'chat-widget', 'custom-builds', 'internal']) {
 		const path = `${repoRoot}/${repo}`;
+		const gitIndexLockPath = `${path}/.git/index.lock`;
+
+		if (fs.existsSync(gitIndexLockPath)) {
+			fs.unlinkSync(gitIndexLockPath);
+		}
 
 		if (fs.existsSync(path)) {
 			for (const args of [
