@@ -36,6 +36,7 @@ fi
 echo "Fetched ${versionString} package."
 echo
 echo 'Building package locally...'
+echo
 
 ./commands/buildpackage.sh \
 	--branch-dir ~/.build \
