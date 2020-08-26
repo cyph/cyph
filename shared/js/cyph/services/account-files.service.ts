@@ -22,6 +22,7 @@ import {IProto} from '../iproto';
 import {IQuillDelta} from '../iquill-delta';
 import {IQuillRange} from '../iquill-range';
 import {IResolvable} from '../iresolvable';
+import {ListHoleError} from '../list-hole-error';
 import {
 	AccountFileDirectory,
 	AccountFileRecord,
@@ -55,7 +56,7 @@ import {
 	RedoxPatient,
 	Wallet
 } from '../proto';
-import {filterUndefined} from '../util/filter';
+import {filterUndefined, filterUndefinedOperator} from '../util/filter';
 import {flattenObservable, toBehaviorSubject} from '../util/flatten-observable';
 import {
 	convertStorageUnitsToBytes,
@@ -490,14 +491,16 @@ export class AccountFilesService extends BaseProvider {
 	public readonly filesList: Observable<
 		(IAccountFileRecord & {owner: string})[]
 	> = this.accountDatabaseService
-		.watchList(
-			'fileReferences',
-			AccountFileReference,
-			undefined,
-			undefined,
-			undefined,
-			false,
-			this.subscriptions
+		.filterListHoles<IAccountFileReference>(
+			this.accountDatabaseService.watchList(
+				'fileReferences',
+				AccountFileReference,
+				undefined,
+				undefined,
+				undefined,
+				false,
+				this.subscriptions
+			)
 		)
 		.pipe(
 			switchMap(references =>
@@ -747,14 +750,16 @@ export class AccountFilesService extends BaseProvider {
 		(IAccountFileRecord & IAccountFileReference)[]
 	>(
 		this.accountDatabaseService
-			.watchList(
-				'incomingFiles',
-				BinaryProto,
-				SecurityModels.unprotected,
-				undefined,
-				undefined,
-				false,
-				this.subscriptions
+			.filterListHoles<Uint8Array>(
+				this.accountDatabaseService.watchList(
+					'incomingFiles',
+					BinaryProto,
+					SecurityModels.unprotected,
+					undefined,
+					undefined,
+					false,
+					this.subscriptions
+				)
 			)
 			.pipe(
 				switchMap(async arr =>
@@ -1738,10 +1743,14 @@ export class AccountFilesService extends BaseProvider {
 			clear: async () => asyncList.clear(),
 			getFlatValue: async () => docAsyncList.getValue(),
 			getTimedValue: async () =>
-				(await asyncList.getTimedValue()).map(o => ({
-					timestamp: o.timestamp,
-					value: this.decodeQuill(o.value)
-				})),
+				this.accountDatabaseService
+					.filterListHoles<Uint8Array>(
+						await asyncList.getTimedValue()
+					)
+					.map(o => ({
+						timestamp: o.timestamp,
+						value: this.decodeQuill(o.value)
+					})),
 			getValue: async () =>
 				(await docAsyncList.getTimedValue()).map(o => o.value),
 			lock: async (f, reason) => asyncList.lock(f, reason),
@@ -1752,11 +1761,17 @@ export class AccountFilesService extends BaseProvider {
 					deltas.map(delta => this.encodeQuill(delta))
 				),
 			subscribeAndPop: f =>
-				asyncList.subscribeAndPop(bytes => f(this.decodeQuill(bytes))),
+				asyncList.subscribeAndPop(bytes =>
+					!(bytes instanceof ListHoleError) ?
+						f(this.decodeQuill(bytes)) :
+						undefined
+				),
 			updateValue: async f =>
 				asyncList.updateValue(async bytesArray =>
 					(await f(
-						bytesArray.map(bytes => this.decodeQuill(bytes))
+						this.accountDatabaseService
+							.filterListHoles(bytesArray)
+							.map(bytes => this.decodeQuill(bytes))
 					)).map(delta => this.encodeQuill(delta))
 				),
 			watch: memoize(() =>
@@ -1764,7 +1779,9 @@ export class AccountFilesService extends BaseProvider {
 					.watch()
 					.pipe(
 						map(deltas =>
-							deltas.map(delta => this.decodeQuill(delta))
+							this.accountDatabaseService
+								.filterListHoles(deltas)
+								.map(delta => this.decodeQuill(delta))
 						)
 					)
 			),
@@ -1772,7 +1789,12 @@ export class AccountFilesService extends BaseProvider {
 			watchPushes: memoize(() =>
 				asyncList.watchPushes().pipe(
 					skip(1),
-					map(delta => this.decodeQuill(delta))
+					map(delta =>
+						!(delta instanceof ListHoleError) ?
+							this.decodeQuill(delta) :
+							undefined
+					),
+					filterUndefinedOperator()
 				)
 			)
 		};

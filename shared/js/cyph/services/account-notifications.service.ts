@@ -68,13 +68,17 @@ export class AccountNotificationsService extends BaseProvider {
 	/** Notification history. */
 	public readonly notifications = toBehaviorSubject(
 		this.accountDatabaseService
-			.watchListWithKeys<IAccountNotification>(
-				'notifications',
-				AccountNotification,
-				SecurityModels.unprotected,
-				undefined,
-				undefined,
-				this.subscriptions
+			.filterListHoles<IAccountNotification>(
+				this.accountDatabaseService.watchListWithKeys<
+					IAccountNotification
+				>(
+					'notifications',
+					AccountNotification,
+					SecurityModels.unprotected,
+					undefined,
+					undefined,
+					this.subscriptions
+				)
 			)
 			/* TODO: Better / less arbitrary solution, such as virtual or infinite scrolling */
 			.pipe(

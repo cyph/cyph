@@ -28,6 +28,7 @@ import {ChannelService} from './channel.service';
 import {AccountDatabaseService} from './crypto/account-database.service';
 import {CastleService} from './crypto/castle.service';
 import {PotassiumService} from './crypto/potassium.service';
+import {DatabaseService} from './database.service';
 import {DialogService} from './dialog.service';
 import {EnvService} from './env.service';
 import {ErrorService} from './error.service';
@@ -586,6 +587,7 @@ export class AccountSessionService extends SessionService {
 			this.analyticsService,
 			this.castleService.spawn(),
 			this.channelService.spawn(),
+			this.databaseService,
 			this.dialogService,
 			this.envService,
 			this.errorService,
@@ -636,6 +638,7 @@ export class AccountSessionService extends SessionService {
 		analyticsService: AnalyticsService,
 		castleService: CastleService,
 		channelService: ChannelService,
+		databaseService: DatabaseService,
 		dialogService: DialogService,
 		envService: EnvService,
 		errorService: ErrorService,
@@ -665,6 +668,7 @@ export class AccountSessionService extends SessionService {
 			analyticsService,
 			castleService,
 			channelService,
+			databaseService,
 			dialogService,
 			envService,
 			errorService,

@@ -11,6 +11,7 @@ import {IAsyncMap} from '../../iasync-map';
 import {IAsyncValue} from '../../iasync-value';
 import {IProto} from '../../iproto';
 import {ITimedValue} from '../../itimed-value';
+import {ListHoleError} from '../../list-hole-error';
 import {LockFunction} from '../../lock-function-type';
 import {MaybePromise} from '../../maybe-promise-type';
 import {
@@ -18,9 +19,10 @@ import {
 	AGSEPKICert,
 	BinaryProto,
 	IAccountUserPublicKeys,
+	IDatabaseItem,
+	MaybeTimedArrayProto,
 	NotificationTypes,
-	StringProto,
-	TimedArrayProto
+	StringProto
 } from '../../proto';
 import {filterUndefinedOperator} from '../../util/filter';
 import {
@@ -67,13 +69,20 @@ export class AccountDatabaseService extends BaseProvider {
 				url: MaybePromise<string>,
 				proto: IProto<T>,
 				immutable: boolean
-			) : Promise<ITimedValue<T>[] | undefined> => {
+			) : Promise<ITimedValue<T | ListHoleError>[] | undefined> => {
 				try {
-					return await this.localStorageService.getItem(
-						`AccountDatabaseService/listCache${
+					return (await this.localStorageService.getItem(
+						`AccountDatabaseService/cache.list${
 							immutable ? '-immutable' : ''
 						}/${await this.normalizeURL(url, true)}`,
-						new TimedArrayProto(proto)
+						new MaybeTimedArrayProto(proto)
+					)).map(o =>
+						!('empty' in o && o.empty) ?
+							<ITimedValue<T>> o :
+							{
+								timestamp: o.timestamp || 0,
+								value: new ListHoleError()
+							}
 					);
 				}
 				catch {
@@ -84,14 +93,20 @@ export class AccountDatabaseService extends BaseProvider {
 				url: MaybePromise<string>,
 				proto: IProto<T>,
 				immutable: boolean,
-				list: ITimedValue<T>[]
+				list: ITimedValue<T | ListHoleError>[]
 			) =>
 				this.localStorageService.setItem(
-					`AccountDatabaseService/listCache${
+					`AccountDatabaseService/cache.list${
 						immutable ? '-immutable' : ''
 					}/${await this.normalizeURL(url, true)}`,
-					new TimedArrayProto(proto),
-					list
+					new MaybeTimedArrayProto(proto),
+					<(ITimedValue<T> | {empty: true; timestamp?: number})[]> (
+						list.map(o =>
+							!(o.value instanceof ListHoleError) ?
+								o :
+								{empty: true, timestamp: o.timestamp}
+						)
+					)
 				)
 		}
 	};
@@ -239,6 +254,7 @@ export class AccountDatabaseService extends BaseProvider {
 		moreAdditionalData?: string
 	) : Promise<{
 		alreadyCached: Promise<boolean>;
+		metadata: Promise<IDatabaseItem>;
 		progress: Observable<number>;
 		result: Promise<ITimedValue<T>>;
 	}> {
@@ -255,6 +271,7 @@ export class AccountDatabaseService extends BaseProvider {
 
 		return {
 			alreadyCached: downloadTask.alreadyCached,
+			metadata: downloadTask.metadata,
 			progress: downloadTask.progress,
 			result: downloadTask.result.then(async o => ({
 				timestamp: o.timestamp,
@@ -281,7 +298,7 @@ export class AccountDatabaseService extends BaseProvider {
 		customKey?: MaybePromise<Uint8Array>,
 		anonymous: boolean = false,
 		immutable: boolean = true
-	) : Promise<ITimedValue<T>[]> {
+	) : Promise<ITimedValue<T | ListHoleError>[]> {
 		if (head !== undefined) {
 			keys = keys.slice(0, keys.lastIndexOf(head) + 1);
 		}
@@ -297,18 +314,34 @@ export class AccountDatabaseService extends BaseProvider {
 		}
 
 		const list = await Promise.all(
-			keys.map(
-				async (k, i) =>
-					lastValue[i] ||
-					(await this.getItemInternal(
-						`${url}/${k}`,
-						proto,
-						securityModel,
-						customKey,
-						anonymous,
-						!immutable ? undefined : i > 0 ? keys[i - 1] : ''
-					)).result
-			)
+			keys.map<Promise<ITimedValue<T | ListHoleError>>>(async (k, i) => {
+				if (lastValue[i]) {
+					return lastValue[i];
+				}
+
+				const {metadata, result} = await this.getItemInternal(
+					`${url}/${k}`,
+					proto,
+					securityModel,
+					customKey,
+					anonymous,
+					!immutable ? undefined : i > 0 ? keys[i - 1] : ''
+				);
+
+				try {
+					return await result;
+				}
+				catch {
+					const {timestamp} = await metadata.catch(() => ({
+						timestamp: 0
+					}));
+
+					return {
+						timestamp,
+						value: new ListHoleError()
+					};
+				}
+			})
 		);
 
 		await this.cache.list.setItem(url, proto, immutable, list);
@@ -520,6 +553,36 @@ export class AccountDatabaseService extends BaseProvider {
 		};
 	}
 
+	/** @see DatabaseService.filterListHoles */
+	public filterListHoles<T> (list: (T | ListHoleError)[]) : T[];
+	public filterListHoles<T> (
+		list: Observable<(T | ListHoleError)[]>
+	) : Observable<T[]>;
+	public filterListHoles<T> (
+		list: Promise<(T | ListHoleError)[]>
+	) : Promise<T[]>;
+	public filterListHoles<T> (
+		list: ITimedValue<T | ListHoleError>[]
+	) : ITimedValue<T>[];
+	public filterListHoles<T> (
+		list: Observable<ITimedValue<T | ListHoleError>[]>
+	) : Observable<ITimedValue<T>[]>;
+	public filterListHoles<T> (
+		list: Promise<ITimedValue<T | ListHoleError>[]>
+	) : Promise<ITimedValue<T>[]>;
+	public filterListHoles<T> (
+		list: {id: string; value: T | ListHoleError}[]
+	) : {id: string; value: T}[];
+	public filterListHoles<T> (
+		list: Observable<{id: string; value: T | ListHoleError}[]>
+	) : Observable<{id: string; value: T}[]>;
+	public filterListHoles<T> (
+		list: Promise<{id: string; value: T | ListHoleError}[]>
+	) : Promise<{id: string; value: T}[]>;
+	public filterListHoles (list: any) : any {
+		return this.databaseService.filterListHoles(list);
+	}
+
 	/** @see DatabaseService.getAsyncList */
 	public getAsyncList<T> (
 		url: MaybePromise<string>,
@@ -529,13 +592,13 @@ export class AccountDatabaseService extends BaseProvider {
 		anonymous: boolean = false,
 		immutable: boolean = true,
 		subscriptions?: Subscription[]
-	) : IAsyncList<T> {
-		const getAsyncList = () : IAsyncList<T> => {
+	) : IAsyncList<T | ListHoleError> {
+		const getAsyncList = () : IAsyncList<T | ListHoleError> => {
 			const localLock = lockFunction();
 
 			/* See https://github.com/Microsoft/tslint-microsoft-contrib/issues/381 */
 			/* eslint-disable-next-line @typescript-eslint/tslint/config */
-			const asyncList: IAsyncList<T> = {
+			const asyncList: IAsyncList<T | ListHoleError> = {
 				clear: async () => localLock(async () => this.removeItem(url)),
 				getFlatValue: async () =>
 					<any> (await asyncList.getValue()).flat(),
@@ -563,22 +626,26 @@ export class AccountDatabaseService extends BaseProvider {
 					),
 				lock: async (f, reason) => this.lock(url, f, reason),
 				pushItem: async value =>
-					localLock(async () => {
-						await this.pushItem(
-							url,
-							proto,
-							value,
-							securityModel,
-							customKey,
-							immutable
-						);
-					}),
+					!(value instanceof ListHoleError) ?
+						localLock(async () => {
+							await this.pushItem(
+								url,
+								proto,
+								value,
+								securityModel,
+								customKey,
+								immutable
+							);
+						}) :
+						undefined,
 				setValue: async value =>
 					localLock(async () =>
 						this.setList(
 							url,
 							proto,
-							value,
+							<T[]> (
+								value.filter(o => !(o instanceof ListHoleError))
+							),
 							securityModel,
 							customKey,
 							immutable
@@ -613,7 +680,10 @@ export class AccountDatabaseService extends BaseProvider {
 						immutable,
 						subscriptions
 					).pipe(
-						map<ITimedValue<T>[], T[]>(arr => arr.map(o => o.value))
+						map<
+							ITimedValue<T | ListHoleError>[],
+							(T | ListHoleError)[]
+						>(arr => arr.map(o => o.value))
 					)
 				),
 				watchFlat: memoize((omitDuplicates?: boolean) =>
@@ -636,7 +706,11 @@ export class AccountDatabaseService extends BaseProvider {
 						anonymous,
 						immutable,
 						subscriptions
-					).pipe(map<ITimedValue<T>, T>(o => o.value))
+					).pipe(
+						map<ITimedValue<T | ListHoleError>, T | ListHoleError>(
+							o => o.value
+						)
+					)
 				)
 			};
 
@@ -983,7 +1057,7 @@ export class AccountDatabaseService extends BaseProvider {
 		customKey?: MaybePromise<Uint8Array>,
 		anonymous?: boolean,
 		immutable?: boolean
-	) : Promise<T[]> {
+	) : Promise<(T | ListHoleError)[]> {
 		return (await this.getListWithTimestamps(
 			url,
 			proto,
@@ -1007,7 +1081,7 @@ export class AccountDatabaseService extends BaseProvider {
 		customKey?: MaybePromise<Uint8Array>,
 		anonymous: boolean = false,
 		immutable: boolean = true
-	) : Promise<ITimedValue<T>[]> {
+	) : Promise<ITimedValue<T | ListHoleError>[]> {
 		url = await this.normalizeURL(url);
 
 		const [keys, head] = await Promise.all([
@@ -1486,7 +1560,8 @@ export class AccountDatabaseService extends BaseProvider {
 		securityModel: SecurityModels = SecurityModels.private,
 		customKey?: MaybePromise<Uint8Array>,
 		anonymous: boolean = false,
-		subscriptions?: Subscription[]
+		subscriptions?: Subscription[],
+		defaultValue: () => T = () => proto.create()
 	) : Observable<ITimedValue<T>> {
 		return cacheObservable(
 			this.watchCurrentUser(anonymous).pipe(
@@ -1505,7 +1580,7 @@ export class AccountDatabaseService extends BaseProvider {
 									data.value,
 									customKey,
 									anonymous
-								).catch(() => proto.create())
+								).catch(() => defaultValue())
 							}))
 						);
 				}),
@@ -1542,10 +1617,14 @@ export class AccountDatabaseService extends BaseProvider {
 		anonymous: boolean = false,
 		immutable: boolean = true,
 		subscriptions?: Subscription[]
-	) : Observable<ITimedValue<T>[]> {
+	) : Observable<ITimedValue<T | ListHoleError>[]> {
 		const lastValue = this.cache.list.getItem(url, proto, immutable);
 
-		const cache: {head?: string; keys: number; value: ITimedValue<T>[]} = {
+		const cache: {
+			head?: string;
+			keys: number;
+			value: ITimedValue<T | ListHoleError>[];
+		} = {
 			keys: 0,
 			value: []
 		};
@@ -1664,7 +1743,7 @@ export class AccountDatabaseService extends BaseProvider {
 		anonymous: boolean = false,
 		immutable: boolean = true,
 		subscriptions?: Subscription[]
-	) : Observable<ITimedValue<T>> {
+	) : Observable<ITimedValue<T | ListHoleError>> {
 		return cacheObservable(
 			this.watchCurrentUser(anonymous).pipe(
 				switchMap(async () => {
@@ -1681,17 +1760,19 @@ export class AccountDatabaseService extends BaseProvider {
 						.pipe(
 							switchMap(async data => ({
 								timestamp: data.timestamp,
-								value: await this.open(
-									`${processedURL}/${data.key}`,
-									proto,
-									securityModel,
-									data.value,
-									customKey,
-									anonymous,
-									immutable ?
-										data.previousKey || '' :
-										undefined
-								)
+								value: !(data.value instanceof ListHoleError) ?
+									await this.open(
+										`${processedURL}/${data.key}`,
+										proto,
+										securityModel,
+										data.value,
+										customKey,
+										anonymous,
+										immutable ?
+											data.previousKey || '' :
+											undefined
+									) :
+									data.value
 							}))
 						);
 				}),
@@ -1709,7 +1790,7 @@ export class AccountDatabaseService extends BaseProvider {
 		customKey?: MaybePromise<Uint8Array>,
 		anonymous: boolean = false,
 		subscriptions?: Subscription[]
-	) : Observable<{id: string; value: T}[]> {
+	) : Observable<{id: string; value: T | ListHoleError}[]> {
 		return this.watchListKeys(url, subscriptions).pipe(
 			switchMap(keys =>
 				observableAll(
@@ -1720,7 +1801,8 @@ export class AccountDatabaseService extends BaseProvider {
 							securityModel,
 							customKey,
 							anonymous,
-							subscriptions
+							subscriptions,
+							() => <any> new ListHoleError()
 						).pipe(map(o => ({id, value: o.value})))
 					)
 				)

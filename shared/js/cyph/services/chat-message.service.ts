@@ -7,16 +7,19 @@ import {switchMap} from 'rxjs/operators';
 import {User, UserLike} from '../account';
 import {BaseProvider} from '../base-provider';
 import {ChatMessage, IChatData} from '../chat';
+import {ListHoleError} from '../list-hole-error';
 import {MaybePromise} from '../maybe-promise-type';
 import {IChatMessage} from '../proto';
 import {getOrSetDefault} from '../util/get-or-set-default';
 import {observableAll} from '../util/observable-all';
 import {compareDates, relativeDateString, watchDateChange} from '../util/time';
+import {uuid} from '../util/uuid';
 import {AccountSessionService} from './account-session.service';
 import {AccountUserLookupService} from './account-user-lookup.service';
 import {AccountDatabaseService} from './crypto/account-database.service';
 import {EnvService} from './env.service';
 import {SessionService} from './session.service';
+import {StringsService} from './strings.service';
 
 const messageTimestamps = new Map<
 	string,
@@ -31,12 +34,12 @@ const getMessageTimestampSubject = (message: IChatMessage | string) =>
 	);
 
 const getDateChangeInternal = (
-	message: IChatMessage | string | undefined,
-	last: IChatMessage | string | undefined
+	message: IChatMessage | string | ListHoleError | undefined,
+	last: IChatMessage | string | ListHoleError | undefined
 ) =>
-	message === undefined ?
+	message === undefined || message instanceof ListHoleError ?
 		of(undefined) :
-	last === undefined ?
+	last === undefined || last instanceof ListHoleError ?
 		observableAll([
 			getMessageTimestampSubject(message),
 			watchDateChange(true)
@@ -62,34 +65,67 @@ const getDateChangeInternal = (
 		);
 
 const getDateChangeInternalWrapper = memoize(
-	(message: IChatMessage | string | undefined) =>
+	(message: IChatMessage | string | ListHoleError | undefined) =>
 		memoize(
-			(last: IChatMessage | string | undefined) =>
+			(last: IChatMessage | string | ListHoleError | undefined) =>
 				getDateChangeInternal(message, last),
-			(last: IChatMessage | string | undefined) =>
+			(last: IChatMessage | string | ListHoleError | undefined) =>
 				typeof last === 'string' ?
 					last :
-				last !== undefined ?
+				last !== undefined && !(last instanceof ListHoleError) ?
 					last.id :
 					''
 		),
-	(message: IChatMessage | string | undefined) =>
+	(message: IChatMessage | string | ListHoleError | undefined) =>
 		typeof message === 'string' ?
 			message :
-		message !== undefined ?
+		message !== undefined && !(message instanceof ListHoleError) ?
 			message.id :
 			''
 );
 
 const getMetadataInternal = async (
-	id: string | IChatMessage | (IChatMessage & {pending: true}),
+	id:
+		| string
+		| IChatMessage
+		| (IChatMessage & {pending: true})
+		| ListHoleError,
 	chat: IChatData,
 	sessionService: SessionService,
 	accountDatabaseService: AccountDatabaseService | undefined,
 	accountSessionService: AccountSessionService | undefined,
 	accountUserLookupService: AccountUserLookupService | undefined,
-	envService: EnvService
+	envService: EnvService,
+	stringsService: StringsService
 ) => {
+	const emptyMessage = {
+		authorType: ChatMessage.AuthorTypes.App,
+		hash: new Uint8Array(1),
+		id: '',
+		key: new Uint8Array(1),
+		predecessors: [],
+		timestamp: NaN
+	};
+
+	if (id instanceof ListHoleError) {
+		const listHoleMessage = new ChatMessage(
+			{
+				...emptyMessage,
+				id: `list-hole-${uuid(true)}`
+			},
+			sessionService.appUsername
+		);
+
+		listHoleMessage.value = {
+			failure: true,
+			text: stringsService.getMessageIDFailure
+		};
+
+		listHoleMessage.valueWatcher.next(listHoleMessage.value);
+
+		return {message: listHoleMessage, pending: false};
+	}
+
 	const pending =
 		typeof id !== 'string' && 'pending' in id ? id.pending : false;
 
@@ -104,14 +140,7 @@ const getMetadataInternal = async (
 	) {
 		return {
 			message: new ChatMessage(
-				{
-					authorType: ChatMessage.AuthorTypes.App,
-					hash: new Uint8Array(1),
-					id: '',
-					key: new Uint8Array(1),
-					predecessors: [],
-					timestamp: NaN
-				},
+				emptyMessage,
 				sessionService.appUsername,
 				undefined,
 				true
@@ -183,7 +212,13 @@ const getMetadataInternal = async (
 };
 
 const getMetadataInternalWrapper = memoize(
-	(id: string | IChatMessage | (IChatMessage & {pending: true})) =>
+	(
+		id:
+			| string
+			| IChatMessage
+			| (IChatMessage & {pending: true})
+			| ListHoleError
+	) =>
 		memoize(
 			(chat: IChatData) =>
 				memoize(
@@ -198,7 +233,8 @@ const getMetadataInternalWrapper = memoize(
 						accountUserLookupService:
 							| AccountUserLookupService
 							| undefined,
-						envService: EnvService
+						envService: EnvService,
+						stringsService: StringsService
 					) =>
 						getMetadataInternal(
 							id,
@@ -207,15 +243,22 @@ const getMetadataInternalWrapper = memoize(
 							accountDatabaseService,
 							accountSessionService,
 							accountUserLookupService,
-							envService
+							envService,
+							stringsService
 						),
 					(sessionService: SessionService) =>
 						sessionService.sessionSubID
 				),
 			(chat: IChatData) => chat.pendingMessageRoot || ''
 		),
-	(id: string | IChatMessage | (IChatMessage & {pending: true})) =>
-		typeof id === 'string' ? id : id.id
+	(
+		id:
+			| string
+			| IChatMessage
+			| (IChatMessage & {pending: true})
+			| ListHoleError
+	) =>
+		id instanceof ListHoleError ? id : typeof id === 'string' ? id : id.id
 );
 
 /**
@@ -225,15 +268,19 @@ const getMetadataInternalWrapper = memoize(
 export class ChatMessageService extends BaseProvider {
 	/** Gets date change observable value. */
 	public getDateChange (
-		message: IChatMessage | string | undefined,
-		last: IChatMessage | string | undefined
+		message: IChatMessage | string | ListHoleError | undefined,
+		last: IChatMessage | string | ListHoleError | undefined
 	) : Observable<string | undefined> {
 		return getDateChangeInternalWrapper(message)(last);
 	}
 
 	/** Gets message metadata based on ID. */
 	public async getMetadata (
-		id: string | IChatMessage | (IChatMessage & {pending: true}),
+		id:
+			| string
+			| IChatMessage
+			| (IChatMessage & {pending: true})
+			| ListHoleError,
 		chat: IChatData
 	) : Promise<{message: ChatMessage; pending: boolean}> {
 		const {message, pending: wasPending} = await getMetadataInternalWrapper(
@@ -243,7 +290,8 @@ export class ChatMessageService extends BaseProvider {
 			this.accountDatabaseService,
 			this.accountSessionService,
 			this.accountUserLookupService,
-			this.envService
+			this.envService,
+			this.stringsService
 		);
 
 		const pending =
@@ -289,7 +337,10 @@ export class ChatMessageService extends BaseProvider {
 		private readonly envService: EnvService,
 
 		/** @ignore */
-		private readonly sessionService: SessionService
+		private readonly sessionService: SessionService,
+
+		/** @ignore */
+		private readonly stringsService: StringsService
 	) {
 		super();
 	}

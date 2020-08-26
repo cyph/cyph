@@ -8,6 +8,7 @@ import {
 	Input,
 	OnChanges,
 	OnDestroy,
+	OnInit,
 	Optional,
 	Output,
 	SimpleChanges,
@@ -22,6 +23,7 @@ import {filter, take} from 'rxjs/operators';
 import {BaseProvider} from '../../base-provider';
 import {ChatMessage, UiStyles} from '../../chat';
 import {IQuillDelta} from '../../iquill-delta';
+import {ListHoleError} from '../../list-hole-error';
 import {IChatMessage} from '../../proto';
 import {AccountService} from '../../services/account.service';
 import {ChatService} from '../../services/chat.service';
@@ -49,7 +51,7 @@ import {sleep} from '../../util/wait';
 	templateUrl: './chat-message.component.html'
 })
 export class ChatMessageComponent extends BaseProvider
-	implements AfterViewInit, OnChanges, OnDestroy {
+	implements AfterViewInit, OnChanges, OnDestroy, OnInit {
 	/** @ignore */
 	private static readonly appeared: BehaviorSubject<Set<string>> = (() => {
 		const ids = new Set<string>();
@@ -145,7 +147,7 @@ export class ChatMessageComponent extends BaseProvider
 	> = new BehaviorSubject<boolean>(true);
 
 	/** @see ChatMessage */
-	@Input() public message?: IChatMessage | string;
+	@Input() public message?: IChatMessage | string | ListHoleError;
 
 	/** Indicates whether mobile version should be displayed. */
 	@Input() public mobile: boolean = false;
@@ -238,8 +240,32 @@ export class ChatMessageComponent extends BaseProvider
 	}
 
 	/** @inheritDoc */
-	/* eslint-disable-next-line complexity */
 	public async ngOnChanges (changes: SimpleChanges) : Promise<void> {
+		await this.updateState(changes);
+	}
+
+	/** @inheritDoc */
+	public ngOnDestroy () : void {
+		super.ngOnDestroy();
+
+		this.viewReady.next(false);
+	}
+
+	/** @inheritDoc */
+	public async ngOnInit () : Promise<void> {
+		super.ngOnInit();
+
+		await this.updateState();
+	}
+
+	/** Resolves viewReady. */
+	public resolveViewReady () : void {
+		this.viewReady.next(true);
+	}
+
+	/** Updates component state. */
+	/* eslint-disable-next-line complexity */
+	public async updateState (changes?: SimpleChanges) : Promise<void> {
 		if (!ChatMessageComponent.services) {
 			ChatMessageComponent.services = {
 				p2pService: this.p2pService,
@@ -247,7 +273,7 @@ export class ChatMessageComponent extends BaseProvider
 			};
 		}
 
-		if (!changes.message || this.message === undefined) {
+		if ((changes && !changes.message) || this.message === undefined) {
 			if (this.message === undefined) {
 				this.chatMessage.next(undefined);
 			}
@@ -259,6 +285,7 @@ export class ChatMessageComponent extends BaseProvider
 		this.message = undefined;
 
 		const metadata = await this.chatService.getMessageMetadata(baseMessage);
+
 		this.chatMessage.next(metadata.message);
 
 		const initiatedPromise = this.waitUntilInitiated();
@@ -365,18 +392,6 @@ export class ChatMessageComponent extends BaseProvider
 		) {
 			await this.scrollService.setRead(id);
 		}
-	}
-
-	/** @inheritDoc */
-	public ngOnDestroy () : void {
-		super.ngOnDestroy();
-
-		this.viewReady.next(false);
-	}
-
-	/** Resolves viewReady. */
-	public resolveViewReady () : void {
-		this.viewReady.next(true);
 	}
 
 	/** Resolves after view init. */

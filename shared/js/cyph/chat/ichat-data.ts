@@ -2,6 +2,7 @@ import {BehaviorSubject} from 'rxjs';
 import {IAsyncList} from '../iasync-list';
 import {IAsyncMap} from '../iasync-map';
 import {IAsyncValue} from '../iasync-value';
+import {ListHoleError} from '../list-hole-error';
 import {LocalAsyncList} from '../local-async-list';
 import {LockFunction} from '../lock-function-type';
 import {
@@ -47,7 +48,7 @@ export interface IChatData {
 	lastUnreadMessage: Promise<string | undefined>;
 
 	/** Ordered message list of messge IDs. */
-	messageList: IAsyncList<string[]>;
+	messageList: IAsyncList<string[] | ListHoleError>;
 
 	/** Messages. Map keys are message IDs. */
 	messages: IAsyncMap<string, IChatMessage>;

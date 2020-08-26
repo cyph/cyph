@@ -13,6 +13,7 @@ export * from './blob-proto';
 export * from './channel-incoming-messages-proto';
 export * from './data-uri-proto';
 export * from './maybe-binary-proto';
+export * from './maybe-timed-array-proto';
 export * from './never-proto';
 export * from './timed-array-proto';
 

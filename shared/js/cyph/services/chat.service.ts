@@ -20,6 +20,7 @@ import {EncryptedAsyncMap} from '../crypto/encrypted-async-map';
 import {IAsyncSet} from '../iasync-set';
 import {IProto} from '../iproto';
 import {IResolvable} from '../iresolvable';
+import {ListHoleError} from '../list-hole-error';
 import {LocalAsyncList} from '../local-async-list';
 import {LocalAsyncMap} from '../local-async-map';
 import {LocalAsyncSet} from '../local-async-set';
@@ -299,6 +300,7 @@ export class ChatService extends BaseProvider {
 							return (
 								messageIDs.length === 0 ||
 								(messageIDs.length === 1 &&
+									typeof messageIDs[0] === 'string' &&
 									(await this.chat.messages.getItem(
 										messageIDs[0]
 									)).authorType ===
@@ -933,15 +935,15 @@ export class ChatService extends BaseProvider {
 
 	/** @see ChatMessageService.getDateChange */
 	public getDateChange (
-		message: IChatMessage | string | undefined,
-		last: IChatMessage | string | undefined
+		message: IChatMessage | string | ListHoleError | undefined,
+		last: IChatMessage | string | ListHoleError | undefined
 	) : Observable<string | undefined> {
 		return this.chatMessageService.getDateChange(message, last);
 	}
 
 	/** @see ChatMessageService.getMetadata */
 	public async getMessageMetadata (
-		id: string | IChatMessage | (IChatMessage & {pending: true})
+		id: string | IChatMessage | (IChatMessage & {pending: true}) | ListHoleError
 	) : Promise<{message: ChatMessage; pending: boolean}> {
 		return this.chatMessageService.getMetadata(id, this.chat);
 	}
@@ -1536,6 +1538,10 @@ export class ChatService extends BaseProvider {
 							for (let i = messageIDs.length - 1; i >= 0; --i) {
 								const id = messageIDs[i];
 
+								if (id instanceof ListHoleError) {
+									continue;
+								}
+
 								if (id === lastConfirmedMessage.id) {
 									break;
 								}
@@ -1744,7 +1750,7 @@ export class ChatService extends BaseProvider {
 						const id = o.textConfirmation.id;
 
 						const getNewLastConfirmedMesssage = (
-							messageIDs: string[]
+							messageIDs: (string|ListHoleError)[]
 						) : IChatLastConfirmedMessage | undefined => {
 							for (let i = messageIDs.length - 1; i >= 0; --i) {
 								if (messageIDs[i] === id) {

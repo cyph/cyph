@@ -4,6 +4,7 @@ import {BaseProvider} from '../base-provider';
 import {potassiumUtil} from '../crypto/potassium/potassium-util';
 import {IAsyncValue} from '../iasync-value';
 import {IProto} from '../iproto';
+import {ListHoleError} from '../list-hole-error';
 import {LockFunction} from '../lock-function-type';
 import {ChannelMessage, IChannelMessage, StringProto} from '../proto';
 import {IChannelService} from '../service-interfaces/ichannel.service';
@@ -183,6 +184,7 @@ export class ChannelService extends BaseProvider implements IChannelService {
 							}));
 
 							if (
+								message.value instanceof ListHoleError ||
 								message.value.author === userID ||
 								this.destroyed.value
 							) {
@@ -197,9 +199,13 @@ export class ChannelService extends BaseProvider implements IChannelService {
 						catch (err) {
 							debugLogError(() => ({
 								channelOnMessageDecryptFailure: {
-									cyphertext: potassiumUtil.toHex(
-										message.value.cyphertext
-									),
+									cyphertext: !(
+										message.value instanceof ListHoleError
+									) ?
+										potassiumUtil.toHex(
+											message.value.cyphertext
+										) :
+										undefined,
 									destroyed: this.destroyed.value,
 									err,
 									message,

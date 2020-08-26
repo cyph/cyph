@@ -133,13 +133,15 @@ export class AccountPostsService extends BaseProvider {
 			const urlPrefix = !username ? '' : `users/${username}/`;
 
 			const getCommentReferences = async (id: string) =>
-				this.accountDatabaseService.getList(
-					`${urlPrefix}postReplies/${id}`,
-					AccountPostCommentReference,
-					SecurityModels.unprotected,
-					undefined,
-					true,
-					false
+				this.accountDatabaseService.filterListHoles(
+					this.accountDatabaseService.getList(
+						`${urlPrefix}postReplies/${id}`,
+						AccountPostCommentReference,
+						SecurityModels.unprotected,
+						undefined,
+						true,
+						false
+					)
 				);
 
 			const watchCommentReferences = (id: string) =>
@@ -153,7 +155,15 @@ export class AccountPostsService extends BaseProvider {
 						false,
 						this.subscriptions
 					)
-					.pipe(map(arr => arr.map(o => o.value)));
+					.pipe(
+						map(arr =>
+							this.accountDatabaseService
+								.filterListHoles<IAccountPostCommentReference>(
+									arr
+								)
+								.map(o => o.value)
+						)
+					);
 
 			const pushCommentID = async (postID: string, commentID: string) => {
 				await this.accountDatabaseService.pushItem<
@@ -245,12 +255,18 @@ export class AccountPostsService extends BaseProvider {
 						(await Promise.all(
 							(await getCommentReferences(id)).map(getComment)
 						)).filter(o => o.comment.postID === id),
-					getIDs: async () => ids.getValue(),
+					getIDs: async () =>
+						this.accountDatabaseService.filterListHoles(
+							ids.getValue()
+						),
 					getPost: async id => ({
 						...(await posts.getItem(id)),
 						id
 					}),
-					getTimedIDs: async () => ids.getTimedValue(),
+					getTimedIDs: async () =>
+						this.accountDatabaseService.filterListHoles<string>(
+							ids.getTimedValue()
+						),
 					hasPost: async id => posts.hasItem(id),
 					pushCommentID,
 					pushID: async id => ids.pushItem(id),
@@ -271,7 +287,12 @@ export class AccountPostsService extends BaseProvider {
 							)
 						)
 					),
-					watchIDs: memoize(() : Observable<string[]> => ids.watch()),
+					watchIDs: memoize(
+						() : Observable<string[]> =>
+							this.accountDatabaseService.filterListHoles(
+								ids.watch()
+							)
+					),
 					watchPost: memoize(id =>
 						posts.watchItem(id).pipe(
 							map(
@@ -443,13 +464,20 @@ export class AccountPostsService extends BaseProvider {
 
 					const oldIDData = (await Promise.all(
 						oldCircleWrappers.map(async o =>
-							(await o.ids.getTimedValue()).map((id) : [
-								string,
-								{
-									circleWrapper: typeof o;
-									timedValue: ITimedValue<string>;
-								}
-							] => [id.value, {circleWrapper: o, timedValue: id}])
+							this.accountDatabaseService
+								.filterListHoles<string>(
+									await o.ids.getTimedValue()
+								)
+								.map((id) : [
+									string,
+									{
+										circleWrapper: typeof o;
+										timedValue: ITimedValue<string>;
+									}
+								] => [
+									id.value,
+									{circleWrapper: o, timedValue: id}
+								])
 						)
 					)).flat();
 
@@ -475,7 +503,9 @@ export class AccountPostsService extends BaseProvider {
 						getTimedIDs: async () =>
 							(await Promise.all([
 								oldTimedIDs,
-								currentCircleWrapper.ids.getTimedValue(),
+								this.accountDatabaseService.filterListHoles<
+									string
+								>(currentCircleWrapper.ids.getTimedValue()),
 								publicPostDataPart.getTimedIDs()
 							]))
 								.flat()
@@ -968,9 +998,9 @@ export class AccountPostsService extends BaseProvider {
 	/** Gets circle members. */
 	public async getCircleMembers () : Promise<string[]> {
 		/* TODO: Handle case of multiple circles per user */
-		return this.circleMembers(
-			(await this.getInnerCircle()).id
-		).getFlatValue();
+		return this.accountDatabaseService.filterListHoles(
+			this.circleMembers((await this.getInnerCircle()).id).getFlatValue()
+		);
 	}
 
 	/** Gets comments on a post. */
@@ -1165,9 +1195,9 @@ export class AccountPostsService extends BaseProvider {
 		/* TODO: Handle case of multiple circles per user */
 		const circle = await this.getInnerCircle();
 
-		const circleMembers = await this.circleMembers(
-			circle.id
-		).getFlatValue();
+		const circleMembers = await this.accountDatabaseService.filterListHoles(
+			this.circleMembers(circle.id).getFlatValue()
+		);
 		const circleMembersSet = new Set(circleMembers);
 
 		const usersToRevoke = new Set(
@@ -1208,9 +1238,9 @@ export class AccountPostsService extends BaseProvider {
 			/* TODO: Handle case of multiple circles per user */
 			const circle = await this.getInnerCircle();
 
-			const circleMembers = await this.circleMembers(
-				circle.id
-			).getFlatValue();
+			const circleMembers = await this.accountDatabaseService.filterListHoles(
+				this.circleMembers(circle.id).getFlatValue()
+			);
 			const circleMembersSet = new Set(circleMembers);
 
 			const usersToAdd = usernames.filter(

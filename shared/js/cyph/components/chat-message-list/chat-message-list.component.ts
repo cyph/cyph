@@ -23,6 +23,7 @@ import {map, skip, take} from 'rxjs/operators';
 import {fadeInOut} from '../../animations';
 import {BaseProvider} from '../../base-provider';
 import {IChatData, IMessageListItem, UiStyles} from '../../chat';
+import {ListHoleError} from '../../list-hole-error';
 import {IChatMessage} from '../../proto/types';
 import {AccountService} from '../../services/account.service';
 import {ChatService} from '../../services/chat.service';
@@ -57,7 +58,9 @@ export class ChatMessageListComponent extends BaseProvider
 	private static readonly observableCache = new Map<
 		IChatData,
 		{
-			messages: Observable<(string | (IChatMessage & {pending: true}))[]>;
+			messages: Observable<
+				(string | (IChatMessage & {pending: true}) | ListHoleError)[]
+			>;
 			unconfirmedMessages: Observable<
 				{[id: string]: boolean | undefined} | undefined
 			>;
@@ -211,7 +214,7 @@ export class ChatMessageListComponent extends BaseProvider
 		const observables = getOrSetDefault(observableCache, chat, () => ({
 			messages: observableAll([
 				this.chatService.messages.pipe(
-					filterUndefinedOperator<string[]>()
+					filterUndefinedOperator<(string | ListHoleError)[]>()
 				),
 				chat.pendingMessages.watch()
 			]).pipe(
@@ -236,6 +239,7 @@ export class ChatMessageListComponent extends BaseProvider
 						| (IChatMessage & {
 								pending: true;
 						  })
+						| ListHoleError
 					)[] = [...onlineMessages, ...pendingMessages];
 
 					if (this.chatService.messageBottomOffset.value > 1) {
@@ -262,6 +266,7 @@ export class ChatMessageListComponent extends BaseProvider
 										  })
 										| undefined
 								  )
+								| ListHoleError
 							)[]
 						> (messages.length < 1 ? [undefined] : messages)).map(
 							(message, i, arr) : IMessageListItem => {
@@ -370,6 +375,10 @@ export class ChatMessageListComponent extends BaseProvider
 
 		const atStartOfMessageHistory = () =>
 			this.infiniteScrollingData.items[0]?.message !== undefined &&
+			!(
+				this.infiniteScrollingData.items[0]?.message instanceof
+				ListHoleError
+			) &&
 			(typeof this.infiniteScrollingData.items[0].message === 'string' ?
 				this.infiniteScrollingData.items[0].message :
 				this.infiniteScrollingData.items[0].message?.id) ===
@@ -377,6 +386,9 @@ export class ChatMessageListComponent extends BaseProvider
 					undefined :
 				typeof this.allMessageListItems.value[0].message === 'string' ?
 					this.allMessageListItems.value[0].message :
+				this.allMessageListItems.value[0].message instanceof
+					ListHoleError ?
+					undefined :
 					this.allMessageListItems.value[0]?.message?.id);
 
 		if (!(bottom || top) || (top && atStartOfMessageHistory())) {

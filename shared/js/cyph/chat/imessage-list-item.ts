@@ -1,4 +1,5 @@
 import {Observable} from 'rxjs';
+import {ListHoleError} from '../list-hole-error';
 import {IChatMessage} from '../proto';
 import {UiStyles} from './enums';
 
@@ -20,7 +21,7 @@ export interface IMessageListItem {
 	isStart: boolean;
 
 	/** @see IChatMessage */
-	message?: IChatMessage | string;
+	message?: IChatMessage | ListHoleError | string;
 
 	/** @see ChatMessageListComponent.mobile */
 	mobile: boolean;

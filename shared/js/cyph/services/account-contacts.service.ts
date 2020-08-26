@@ -334,14 +334,18 @@ export class AccountContactsService extends BaseProvider {
 		];
 
 		if (typeof planConfig.innerCircleLimit === 'number') {
-			const innerCircleCount = (await this.accountDatabaseService.getList(
-				'contactsInnerCircle',
-				AccountContactState,
-				SecurityModels.unprotected,
-				undefined,
-				undefined,
-				false
-			)).filter(o => o.state === AccountContactState.States.Confirmed)
+			const innerCircleCount = this.accountDatabaseService
+				.filterListHoles(
+					await this.accountDatabaseService.getList(
+						'contactsInnerCircle',
+						AccountContactState,
+						SecurityModels.unprotected,
+						undefined,
+						undefined,
+						false
+					)
+				)
+				.filter(o => o.state === AccountContactState.States.Confirmed)
 				.length;
 
 			if (innerCircleCount >= planConfig.innerCircleLimit) {

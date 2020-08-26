@@ -2229,6 +2229,16 @@ message Internal {
 		repeated bytes data = 1;
 	}
 
+	message MaybeTimedValue {
+		bool empty = 1;
+		double timestamp = 2;
+		bytes value = 3;
+	}
+
+	message MaybeTimedValueArray {
+		repeated MaybeTimedValue data = 1;
+	}
+
 	message NumberArray {
 		repeated double data = 1;
 	}

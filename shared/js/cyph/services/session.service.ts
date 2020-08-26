@@ -7,6 +7,7 @@ import {BaseProvider} from '../base-provider';
 import {HandshakeSteps, IHandshakeState} from '../crypto/castle';
 import {IAsyncList} from '../iasync-list';
 import {IAsyncValue} from '../iasync-value';
+import {ListHoleError} from '../list-hole-error';
 import {LocalAsyncList} from '../local-async-list';
 import {LocalAsyncValue} from '../local-async-value';
 import {LockFunction} from '../lock-function-type';
@@ -41,6 +42,7 @@ import {AnalyticsService} from './analytics.service';
 import {ChannelService} from './channel.service';
 import {CastleService} from './crypto/castle.service';
 import {PotassiumService} from './crypto/potassium.service';
+import {DatabaseService} from './database.service';
 import {DialogService} from './dialog.service';
 import {EnvService} from './env.service';
 import {ErrorService} from './error.service';
@@ -61,8 +63,8 @@ export abstract class SessionService extends BaseProvider
 
 	/** @ignore */
 	protected incomingMessageQueue: IAsyncList<
-		ISessionMessageList
-	> = new LocalAsyncList<ISessionMessageList>();
+		ISessionMessageList | ListHoleError
+	> = new LocalAsyncList<ISessionMessageList | ListHoleError>();
 
 	/** @ignore */
 	protected incomingMessageQueueLock: LockFunction = lockFunction();
@@ -584,7 +586,10 @@ export abstract class SessionService extends BaseProvider
 
 			if (!this.sessionInitService.ephemeral) {
 				await this.cyphertextReceiveHandler(
-					(await this.incomingMessageQueue.getValue())
+					this.databaseService
+						.filterListHoles(
+							await this.incomingMessageQueue.getValue()
+						)
 						.flatMap(({messages}) => messages || [])
 						.filter(this.correctSubSession),
 					true
@@ -594,7 +599,13 @@ export abstract class SessionService extends BaseProvider
 			}
 
 			const sub = this.incomingMessageQueue.subscribeAndPop(
-				async ({messages}) => {
+				async sessionMessageList => {
+					if (sessionMessageList instanceof ListHoleError) {
+						return;
+					}
+
+					const {messages} = sessionMessageList;
+
 					if (!messages || messages.length < 1) {
 						return;
 					}
@@ -804,6 +815,9 @@ export abstract class SessionService extends BaseProvider
 
 		/** @ignore */
 		protected readonly channelService: ChannelService,
+
+		/** @ignore */
+		protected readonly databaseService: DatabaseService,
 
 		/** @ignore */
 		protected readonly dialogService: DialogService,

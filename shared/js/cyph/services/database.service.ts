@@ -10,6 +10,7 @@ import {IAsyncMap} from '../iasync-map';
 import {IAsyncValue} from '../iasync-value';
 import {IProto} from '../iproto';
 import {ITimedValue} from '../itimed-value';
+import {ListHoleError} from '../list-hole-error';
 import {LockFunction} from '../lock-function-type';
 import {MaybePromise} from '../maybe-promise-type';
 import {BinaryProto, DatabaseItem, IDatabaseItem} from '../proto';
@@ -265,6 +266,7 @@ export class DatabaseService extends DataManagerService {
 		_WAIT_UNTIL_EXISTS?: boolean
 	) : {
 		alreadyCached: Promise<boolean>;
+		metadata: Promise<IDatabaseItem>;
 		progress: Observable<number>;
 		result: Promise<ITimedValue<T>>;
 	} {
@@ -273,19 +275,59 @@ export class DatabaseService extends DataManagerService {
 		);
 	}
 
+	/** Filters out ListHoleError values. */
+	public filterListHoles<T> (list: (T | ListHoleError)[]) : T[];
+	public filterListHoles<T> (
+		list: Observable<(T | ListHoleError)[]>
+	) : Observable<T[]>;
+	public filterListHoles<T> (
+		list: Promise<(T | ListHoleError)[]>
+	) : Promise<T[]>;
+	public filterListHoles<T> (
+		list: ITimedValue<T | ListHoleError>[]
+	) : ITimedValue<T>[];
+	public filterListHoles<T> (
+		list: Observable<ITimedValue<T | ListHoleError>[]>
+	) : Observable<ITimedValue<T>[]>;
+	public filterListHoles<T> (
+		list: Promise<ITimedValue<T | ListHoleError>[]>
+	) : Promise<ITimedValue<T>[]>;
+	public filterListHoles<T> (
+		list: {id: string; value: T | ListHoleError}[]
+	) : {id: string; value: T}[];
+	public filterListHoles<T> (
+		list: Observable<{id: string; value: T | ListHoleError}[]>
+	) : Observable<{id: string; value: T}[]>;
+	public filterListHoles<T> (
+		list: Promise<{id: string; value: T | ListHoleError}[]>
+	) : Promise<{id: string; value: T}[]>;
+	public filterListHoles (list: any) : any {
+		return list instanceof Array ?
+			list.filter(
+				o =>
+					!(
+						o instanceof ListHoleError ||
+						('value' in o && o.value instanceof ListHoleError)
+					)
+			) :
+		list instanceof Promise ?
+			list.then(arr => this.filterListHoles(arr)) :
+			list.pipe(map((arr: any[]) => this.filterListHoles(arr)));
+	}
+
 	/** Gets an IAsyncList wrapper for a list. */
 	public getAsyncList<T> (
 		url: string,
 		proto: IProto<T>,
 		lockFactory: (url: string) => LockFunction = k => this.lockFunction(k),
 		subscriptions?: Subscription[]
-	) : IAsyncList<T> {
+	) : IAsyncList<T | ListHoleError> {
 		const lock = lockFactory(url);
 		const localLock = lockFunction();
 
 		/* See https://github.com/Microsoft/tslint-microsoft-contrib/issues/381 */
 		/* eslint-disable-next-line @typescript-eslint/tslint/config */
-		const asyncList: IAsyncList<T> = {
+		const asyncList: IAsyncList<T | ListHoleError> = {
 			clear: async () => this.removeItem(url),
 			getFlatValue: async () => <any> (await asyncList.getValue()).flat(),
 			getTimedValue: async () => {
@@ -297,17 +339,28 @@ export class DatabaseService extends DataManagerService {
 				localLock(async () => this.getList(url, proto)),
 			lock,
 			pushItem: async value =>
-				localLock(async () => {
-					await this.pushItem(url, proto, value);
-				}),
+				!(value instanceof ListHoleError) ?
+					localLock(async () => {
+						await this.pushItem(url, proto, value);
+					}) :
+					undefined,
 			setValue: async value =>
-				localLock(async () => this.setList(url, proto, value)),
+				localLock(async () =>
+					this.setList(
+						url,
+						proto,
+						<T[]> value.filter(o => !(o instanceof ListHoleError))
+					)
+				),
 			subscribeAndPop: f => this.subscribeAndPop(url, proto, f),
 			updateValue: async f =>
 				asyncList.setValue(await f(await asyncList.getValue())),
 			watch: memoize(() =>
 				this.watchList(url, proto, undefined, subscriptions).pipe(
-					map<ITimedValue<T>[], T[]>(arr => arr.map(o => o.value))
+					map<
+						ITimedValue<T | ListHoleError>[],
+						(T | ListHoleError)[]
+					>(arr => arr.map(o => o.value))
 				)
 			),
 			watchFlat: memoize((omitDuplicates?: boolean) =>
@@ -328,7 +381,11 @@ export class DatabaseService extends DataManagerService {
 					undefined,
 					undefined,
 					subscriptions
-				).pipe(map<ITimedValue<T>, T>(o => o.value))
+				).pipe(
+					map<ITimedValue<T | ListHoleError>, T | ListHoleError>(
+						o => o.value
+					)
+				)
 			)
 		};
 
@@ -577,7 +634,7 @@ export class DatabaseService extends DataManagerService {
 	public async getList<T> (
 		_URL: MaybePromise<string>,
 		_PROTO: IProto<T>
-	) : Promise<T[]> {
+	) : Promise<(T | ListHoleError)[]> {
 		throw new Error(
 			'Must provide an implementation of DatabaseService.getList.'
 		);
@@ -775,7 +832,7 @@ export class DatabaseService extends DataManagerService {
 	public subscribeAndPop<T> (
 		url: string,
 		proto: IProto<T>,
-		f: (value: T) => MaybePromise<void>,
+		f: (value: T | ListHoleError) => MaybePromise<void>,
 		subscriptions?: Subscription[]
 	) : Subscription {
 		const lock = lockFunction();
@@ -786,6 +843,7 @@ export class DatabaseService extends DataManagerService {
 
 				const promise = fullURL
 					.then(async s => this.getItem(s, proto))
+					.catch(() => new ListHoleError())
 					.then(f);
 
 				await lock(async () => {
@@ -863,7 +921,7 @@ export class DatabaseService extends DataManagerService {
 		_PROTO: IProto<T>,
 		_COMPLETE_ON_EMPTY: boolean = false,
 		_SUBSCRIPTIONS?: Subscription[]
-	) : Observable<ITimedValue<T>[]> {
+	) : Observable<ITimedValue<T | ListHoleError>[]> {
 		throw new Error(
 			'Must provide an implementation of DatabaseService.watchList.'
 		);
@@ -900,7 +958,11 @@ export class DatabaseService extends DataManagerService {
 		_NO_CACHE: boolean = false,
 		_SUBSCRIPTIONS?: Subscription[]
 	) : Observable<
-		ITimedValue<T> & {key: string; previousKey?: string; url: string}
+		ITimedValue<T | ListHoleError> & {
+			key: string;
+			previousKey?: string;
+			url: string;
+		}
 	> {
 		throw new Error(
 			'Must provide an implementation of DatabaseService.watchListPushes.'
