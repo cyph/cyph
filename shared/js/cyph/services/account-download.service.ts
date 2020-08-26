@@ -88,7 +88,7 @@ export class AccountDownloadService extends BaseProvider {
 
 		const keyBytes = await this.potassiumService.secretBox.keyBytes;
 
-		const idBytes = this.potassiumService.fromHex(id);
+		const idBytes = this.potassiumService.fromBase64URL(id);
 
 		const key = idBytes.slice(0, keyBytes);
 		const downloadID = this.potassiumService.toHex(idBytes.slice(keyBytes));
@@ -150,7 +150,13 @@ export class AccountDownloadService extends BaseProvider {
 			key
 		);
 
-		return this.potassiumService.toHex(key) + downloadID;
+		return this.potassiumService.toBase64URL(
+			this.potassiumService.concatMemory(
+				true,
+				key,
+				this.potassiumService.fromHex(downloadID)
+			)
+		);
 	}
 
 	constructor (

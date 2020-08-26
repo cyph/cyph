@@ -80,6 +80,13 @@ export class PotassiumUtil {
 			this.toBytes(s);
 	}
 
+	/** Converts base64url string into binary byte array. */
+	public fromBase64URL (s: string | ArrayBufferView) : Uint8Array {
+		return typeof s === 'string' ?
+			this.fromBase64(s.replace(/-/g, '+').replace(/_/g, '/')) :
+			this.toBytes(s);
+	}
+
 	/** Converts Blob into binary byte array. */
 	public async fromBlob (b: Blob | ArrayBufferView) : Promise<Uint8Array> {
 		if (ArrayBuffer.isView(b)) {
@@ -162,6 +169,13 @@ export class PotassiumUtil {
 		return typeof a === 'string' ?
 			a :
 			sodiumUtil.to_base64(this.toBytes(a)).replace(/\s+/g, '');
+	}
+
+	/** Converts binary into base64url string. */
+	public toBase64URL (a: ArrayBufferView | string) : string {
+		return this.toBase64(a)
+			.replace(/\+/g, '-')
+			.replace(/\//g, '_');
 	}
 
 	/** Normalizes any binary data as standard byte array format. */
