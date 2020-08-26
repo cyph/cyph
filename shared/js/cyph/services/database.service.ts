@@ -307,7 +307,10 @@ export class DatabaseService extends DataManagerService {
 				o =>
 					!(
 						o instanceof ListHoleError ||
-						('value' in o && o.value instanceof ListHoleError)
+						(typeof o === 'object' &&
+							!!o &&
+							'value' in o &&
+							o.value instanceof ListHoleError)
 					)
 			) :
 		list instanceof Promise ?
