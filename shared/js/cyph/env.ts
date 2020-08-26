@@ -60,7 +60,7 @@ export class Env extends EnvDeploy {
 	public readonly cyphDownloadUrl: string =
 		!environment.local && this.appUrl === envDeploy.appUrl ?
 			envDeploy.cyphDownloadUrl :
-			`${this.appUrl}download/`;
+			`${this.appUrl}#download/`;
 
 	/** @inheritDoc */
 	public readonly cyphImUrl: string;
