@@ -646,8 +646,7 @@ const updateCircleCI = () => {
 					.filter(s => s.indexOf('cyph/circleci') > -1)
 					.map(s => spawnAsync('docker', ['rmi', s.split(/\s+/)[0]]))
 			)
-		)
-		.then(() => spawnAsync('docker', ['system', 'prune', '-f']));
+		);
 };
 
 if (!isCyphInternal && needAGSE) {
