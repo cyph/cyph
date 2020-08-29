@@ -90,7 +90,6 @@ export class QRCodeScannerComponent extends BaseProvider
 	public async closeVideo () : Promise<void> {
 		this.isActive.next(false);
 
-		/* eslint-disable-next-line no-unused-expressions */
 		for (const track of (await this.videoStream)?.getTracks() || []) {
 			track.enabled = false;
 			track.stop();

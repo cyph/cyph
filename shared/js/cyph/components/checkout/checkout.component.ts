@@ -357,7 +357,6 @@ export class CheckoutComponent extends BaseProvider
 			return;
 		}
 
-		/* eslint-disable-next-line no-unused-expressions */
 		this.elementRef.nativeElement
 			.querySelector('.braintree-toggle')
 			?.addEventListener('click', () => {
@@ -477,7 +476,6 @@ export class CheckoutComponent extends BaseProvider
 			false
 		);
 
-		/* eslint-disable-next-line no-unused-expressions */
 		this.bitPayInvoiceID?.catch(bitPayError => {
 			optionsParent.removeChild(bitPayOption);
 			throw bitPayError;
@@ -658,7 +656,6 @@ export class CheckoutComponent extends BaseProvider
 				return;
 			}
 
-			/* eslint-disable-next-line no-unused-expressions */
 			this.spinner?.next(true);
 
 			const paymentMethod =
@@ -804,7 +801,6 @@ export class CheckoutComponent extends BaseProvider
 					}));
 				});
 
-			/* eslint-disable-next-line no-unused-expressions */
 			iOSInAppPaymentProduct?.finish();
 
 			const apiKey = welcomeLetter.startsWith('$APIKEY: ') ?
@@ -852,7 +848,6 @@ export class CheckoutComponent extends BaseProvider
 				.replace(/\.$/, '')}".`;
 		}
 		finally {
-			/* eslint-disable-next-line no-unused-expressions */
 			this.spinner?.next(false);
 
 			if (!errorMessage) {

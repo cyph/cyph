@@ -190,7 +190,6 @@ export class EphemeralChatRootComponent extends BaseProvider
 			return;
 		}
 
-		/* eslint-disable-next-line no-unused-expressions */
 		new Konami(async () => {
 			if (this.destroyed.value) {
 				return;

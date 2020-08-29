@@ -64,7 +64,6 @@ export class EventManager {
 		for (const f of handler ?
 			[handler] :
 			Array.from(subscriptions.keys())) {
-			/* eslint-disable-next-line no-unused-expressions */
 			subscriptions.get(f)?.unsubscribe();
 			subscriptions.delete(f);
 		}

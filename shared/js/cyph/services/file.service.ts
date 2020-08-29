@@ -18,7 +18,6 @@ export class FileService extends BaseProvider {
 		undefined;
 
 	/** @ignore */
-	/* eslint-disable-next-line no-unused-expressions */
 	private readonly canvasContext = this.canvas?.getContext('2d') || undefined;
 
 	/** Upper limit in bytes for a file to get the multimedia treatment. */

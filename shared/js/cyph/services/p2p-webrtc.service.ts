@@ -336,7 +336,6 @@ export class P2PWebRTCService extends BaseProvider
 			return;
 		}
 
-		/* eslint-disable-next-line no-unused-expressions */
 		this.harkers.get(stream)?.stop();
 		this.harkers.delete(stream);
 
@@ -400,7 +399,6 @@ export class P2PWebRTCService extends BaseProvider
 					continue;
 				}
 				for (const {value: peer} of peerResolvers) {
-					/* eslint-disable-next-line no-unused-expressions */
 					peer?.destroy();
 				}
 			}
@@ -1100,11 +1098,9 @@ export class P2PWebRTCService extends BaseProvider
 					o => o.peerResolvers?.slice(-2)[0].value
 				)) {
 					if (stream) {
-						/* eslint-disable-next-line no-unused-expressions */
 						peer?.removeStream(stream);
 					}
 
-					/* eslint-disable-next-line no-unused-expressions */
 					peer?.addStream(newStream);
 				}
 
@@ -1120,7 +1116,6 @@ export class P2PWebRTCService extends BaseProvider
 					o => o.peerResolvers?.slice(-2)[0].value
 				)) {
 					for (let i = 0; i < oldTracks.length; ++i) {
-						/* eslint-disable-next-line no-unused-expressions */
 						peer?.replaceTrack(oldTracks[i], newTracks[i], stream);
 					}
 				}
@@ -1143,7 +1138,6 @@ export class P2PWebRTCService extends BaseProvider
 					await connected;
 					const peer = peerResolvers?.slice(-2)[0].value;
 					await Promise.resolve(
-						/* eslint-disable-next-line no-unused-expressions */
 						peer?.send(
 							msgpack.encode({
 								audio: !!this.outgoingStream.value.constraints
@@ -1251,7 +1245,6 @@ export class P2PWebRTCService extends BaseProvider
 									undefined;
 							const peer = await peerResolver;
 
-							/* eslint-disable-next-line no-unused-expressions */
 							peer?.signal(message.data);
 						}
 					})

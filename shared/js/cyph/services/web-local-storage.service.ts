@@ -138,10 +138,7 @@ export class WebLocalStorageService extends LocalStorageService {
 		await Promise.all([
 			this.localforageLock(async () => localforage.clear()),
 			this.nativeKeystore
-				.then(async keystore =>
-					/* eslint-disable-next-line no-unused-expressions */
-					keystore?.clear()
-				)
+				.then(async keystore => keystore?.clear())
 				.catch(() => {})
 		]);
 	}
@@ -160,10 +157,7 @@ export class WebLocalStorageService extends LocalStorageService {
 			localforage.getItem<Uint8Array | undefined>(url),
 			getFromKeystore ?
 				this.nativeKeystore
-					.then(async keystore =>
-						/* eslint-disable-next-line no-unused-expressions */
-						keystore?.getItem(url)
-					)
+					.then(async keystore => keystore?.getItem(url))
 					.catch(() => undefined) :
 				undefined
 		]);
@@ -216,10 +210,7 @@ export class WebLocalStorageService extends LocalStorageService {
 		await Promise.all([
 			this.localforageLock(async () => localforage.removeItem(url)),
 			this.nativeKeystore
-				.then(async keystore =>
-					/* eslint-disable-next-line no-unused-expressions */
-					keystore?.removeItem(url)
-				)
+				.then(async keystore => keystore?.removeItem(url))
 				.catch(() => {})
 		]);
 	}
@@ -241,10 +232,7 @@ export class WebLocalStorageService extends LocalStorageService {
 			),
 			saveToKeystore ?
 				this.nativeKeystore
-					.then(async keystore =>
-						/* eslint-disable-next-line no-unused-expressions */
-						keystore?.setItem(url, value)
-					)
+					.then(async keystore => keystore?.setItem(url, value))
 					.catch(() => {}) :
 				undefined
 		]);

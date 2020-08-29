@@ -454,7 +454,6 @@ export class AccountService extends BaseProvider {
 			spinner = undefined;
 		}
 
-		/* eslint-disable-next-line no-unused-expressions */
 		spinner?.next(true);
 
 		this.lastUserToken = await retryUntilSuccessful(
@@ -481,7 +480,6 @@ export class AccountService extends BaseProvider {
 			30000
 		).catch(() => undefined);
 
-		/* eslint-disable-next-line no-unused-expressions */
 		spinner?.next(false);
 
 		return this.lastUserToken?.token;

@@ -135,7 +135,6 @@ export class DialogMediaComponent extends BaseProvider implements OnInit {
 
 		const image = document.getElementById(this.imageID);
 		if (image instanceof HTMLImageElement) {
-			/* eslint-disable-next-line no-unused-expressions */
 			new PinchZoom(image);
 		}
 	}

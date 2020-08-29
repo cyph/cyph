@@ -438,7 +438,6 @@ export class AccountContactsService extends BaseProvider {
 					return;
 				}
 
-				/* eslint-disable-next-line no-unused-expressions */
 				this.interstitial?.next(true);
 
 				await Promise.all(
@@ -452,7 +451,6 @@ export class AccountContactsService extends BaseProvider {
 				);
 			}
 			finally {
-				/* eslint-disable-next-line no-unused-expressions */
 				this.interstitial?.next(false);
 			}
 
@@ -542,7 +540,6 @@ export class AccountContactsService extends BaseProvider {
 				return;
 			}
 
-			/* eslint-disable-next-line no-unused-expressions */
 			this.interstitial?.next(true);
 			close();
 
@@ -553,7 +550,6 @@ export class AccountContactsService extends BaseProvider {
 			await this.router.navigate(['messages', chat.id]);
 		}
 		finally {
-			/* eslint-disable-next-line no-unused-expressions */
 			this.interstitial?.next(false);
 		}
 	}
