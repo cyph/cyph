@@ -26,6 +26,10 @@
 				}
 			},
 
+			"certificateHistoryTimestamp": {
+				".validate": "newData.isNumber()"
+			},
+
 			"channels": {
 				"$channel": {
 					".read": true,

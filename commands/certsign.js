@@ -25,6 +25,18 @@ const {
 	StringProto
 } = require('../modules/proto');
 
+const readInput = async prompt =>
+	new Promise(resolve => {
+		read(
+			{
+				prompt
+			},
+			(err, s) => {
+				resolve(err ? undefined : s);
+			}
+		);
+	});
+
 const duplicateCSRLock = lockFunction();
 
 const duplicateCSR = async (issuanceHistory, csr, publicSigningKeyHash) =>
@@ -32,16 +44,9 @@ const duplicateCSR = async (issuanceHistory, csr, publicSigningKeyHash) =>
 	(issuanceHistory.usernames[csr.username] &&
 		(await duplicateCSRLock(async () => {
 			while (true) {
-				const response = await new Promise(resolve => {
-					read(
-						{
-							prompt: `Reissue certificate for @${csr.username}? [y/n]`
-						},
-						(err, s) => {
-							resolve(err ? undefined : s);
-						}
-					);
-				});
+				const response = await readInput(
+					`Reissue certificate for @${csr.username}? [y/n]`
+				);
 
 				if (response === 'y') {
 					return false;
@@ -66,7 +71,10 @@ const certSign = async (projectId, standalone, namespace) => {
 
 		const testSign = projectId !== 'cyphme';
 		const configDir = `${os.homedir()}/.cyph`;
-		const lastIssuanceTimestampPath = `${configDir}/certsign-timestamps/${projectId}.${namespace}`;
+		const issuanceHistoryParentPath = `${configDir}/certsign-history`;
+		const issuanceHistoryPath = `${issuanceHistoryParentPath}/${projectId}.${namespace}`;
+		const lastIssuanceTimestampParentPath = `${configDir}/certsign-timestamps`;
+		const lastIssuanceTimestampPath = `${lastIssuanceTimestampParentPath}/${projectId}.${namespace}`;
 
 		/* Will remain hardcoded as true for the duration of the private beta */
 		const requireInvite = true;
@@ -84,10 +92,13 @@ const certSign = async (projectId, standalone, namespace) => {
 			storage
 		} = databaseService(projectId);
 
-		const pendingSignupsURL = `${namespace.replace(
-			/\./g,
-			'_'
-		)}/pendingSignups`;
+		const namespacePath = namespace.replace(/\./g, '_');
+
+		const lastIssuanceTimestampRef = database.ref(
+			`${namespacePath}/certificateHistoryTimestamp`
+		);
+
+		const pendingSignupsURL = `${namespacePath}/pendingSignups`;
 		const pendingSignups =
 			(await database.ref(pendingSignupsURL).once('value')).val() || {};
 		const usernames = [];
@@ -133,11 +144,46 @@ const certSign = async (projectId, standalone, namespace) => {
 		const agsePublicSigningKeys = getPublicKeys();
 
 		const issuanceHistory = await (async () => {
-			const bytes = await getItem(
-				namespace,
-				'certificateHistory',
-				BinaryProto
+			const lastIssuanceTimestampLocal = parseFloat(
+				fs.readFileSync(lastIssuanceTimestampPath).toString()
 			);
+
+			const lastIssuanceTimestampRemote = (await lastIssuanceTimestampRef.once(
+				'value'
+			)).val();
+
+			if (
+				isNaN(lastIssuanceTimestampLocal) &&
+				isNaN(lastIssuanceTimestampRemote)
+			) {
+				throw new Error(
+					'Invalid AGSE-PKI history: timestamp not found.'
+				);
+			}
+
+			const lastIssuanceTimestamp =
+				isNaN(lastIssuanceTimestampRemote) ||
+				lastIssuanceTimestampLocal >= lastIssuanceTimestampRemote ?
+					lastIssuanceTimestampLocal :
+				(await readInput(
+						`Trust AGSE-PKI history from server with timestamp ${new Date(
+							lastIssuanceTimestampRemote
+						).toLocaleString()}? [y/N]`
+					)) === 'y' ?
+					lastIssuanceTimestampRemote :
+					undefined;
+			if (lastIssuanceTimestamp === undefined) {
+				throw new Error(
+					'Invalid AGSE-PKI history: timestamp not accepted.'
+				);
+			}
+
+			const bytes =
+				lastIssuanceTimestamp === lastIssuanceTimestampLocal &&
+				fs.existsSync(issuanceHistoryPath) ?
+					fs.readFileSync(issuanceHistoryPath) :
+					await getItem(namespace, 'certificateHistory', BinaryProto);
+
 			const dataView = potassium.toDataView(bytes);
 			const rsaKeyIndex = dataView.getUint32(0, true);
 			const sphincsKeyIndex = dataView.getUint32(4, true);
@@ -162,11 +208,7 @@ const certSign = async (projectId, standalone, namespace) => {
 				)
 			);
 
-			if (
-				parseFloat(
-					fs.readFileSync(lastIssuanceTimestampPath).toString()
-				) > o.timestamp
-			) {
+			if (o.timestamp !== lastIssuanceTimestamp) {
 				throw new Error('Invalid AGSE-PKI history: bad timestamp.');
 			}
 
@@ -176,6 +218,15 @@ const certSign = async (projectId, standalone, namespace) => {
 			timestamp: 0,
 			usernames: {}
 		}));
+
+		if (
+			Object.keys(issuanceHistory.usernames).length < 1 &&
+			(await readInput(
+				`Init AGSE-PKI issuance history from scratch? [y/N]`
+			)) !== 'y'
+		) {
+			throw new Error('Failed to get AGSE-PKI history.');
+		}
 
 		const csrs = (await Promise.all(
 			usernames.map(async username => {
@@ -285,6 +336,24 @@ const certSign = async (projectId, standalone, namespace) => {
 			testSign
 		);
 
+		const signedIssuanceHistory = potassium.concatMemory(
+			false,
+			new Uint32Array([rsaIndex]),
+			new Uint32Array([sphincsIndex]),
+			signedInputs[0]
+		);
+
+		for (const parentPath of [
+			issuanceHistoryParentPath,
+			lastIssuanceTimestampParentPath
+		]) {
+			if (!fs.existsSync(parentPath)) {
+				fs.mkdirSync(parentPath);
+			}
+		}
+
+		fs.writeFileSync(issuanceHistoryPath, signedIssuanceHistory);
+
 		fs.writeFileSync(
 			lastIssuanceTimestampPath,
 			issuanceHistory.timestamp.toString()
@@ -294,13 +363,10 @@ const certSign = async (projectId, standalone, namespace) => {
 			namespace,
 			'certificateHistory',
 			BinaryProto,
-			potassium.concatMemory(
-				false,
-				new Uint32Array([rsaIndex]),
-				new Uint32Array([sphincsIndex]),
-				signedInputs[0]
-			)
+			signedIssuanceHistory
 		);
+
+		await lastIssuanceTimestampRef.set(issuanceHistory.timestamp);
 
 		const plans = await Promise.all(
 			signedInputs.slice(1).map(async (cert, i) => {
