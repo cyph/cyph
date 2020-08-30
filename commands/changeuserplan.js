@@ -14,7 +14,13 @@ const {
 } = require('../modules/util');
 const {sendMail} = require('./email');
 
-const changeUserPlan = async (projectId, username, plan, trialMonths, namespace) => {
+const changeUserPlan = async (
+	projectId,
+	username,
+	plan,
+	trialMonths,
+	namespace
+) => {
 	if (typeof projectId !== 'string' || projectId.indexOf('cyph') !== 0) {
 		throw new Error('Invalid Firebase project ID.');
 	}
@@ -76,8 +82,9 @@ const changeUserPlan = async (projectId, username, plan, trialMonths, namespace)
 	const oldPlanConfig = config.planConfig[oldPlan];
 	const isUpgrade = planConfig.rank > oldPlanConfig.rank;
 
-	const planTrialEndRef = database
-		.ref(`${namespacePath}/users/${username}/internal/planTrialEnd`);
+	const planTrialEndRef = database.ref(
+		`${namespacePath}/users/${username}/internal/planTrialEnd`
+	);
 
 	await Promise.all([
 		setItem(namespace, `users/${username}/plan`, CyphPlan, {
@@ -97,11 +104,10 @@ const changeUserPlan = async (projectId, username, plan, trialMonths, namespace)
 		trialMonths ?
 			planTrialEndRef.set(
 				new Date().setMonth(
-					new Date().getMonth() +
-						parseInt(trialMonths, 10)
+					new Date().getMonth() + parseInt(trialMonths, 10)
 				)
 			) :
-			planTrialEndRef.remove()
+			planTrialEndRef.remove(),
 		(async () => {
 			if (planConfig.initialInvites === undefined) {
 				return;
@@ -145,9 +151,10 @@ const changeUserPlan = async (projectId, username, plan, trialMonths, namespace)
 			!email ? undefined : !name ? email : `${name} <${email}>`,
 			!isUpgrade ?
 				'Your Cyph Status' :
-				'Cyph Status Upgrade!' + (
-					!trialMonths ? '' : ` (${trialMonths.toString()}-month trial)`
-				),
+				'Cyph Status Upgrade!' +
+					(!trialMonths ?
+						'' :
+						` (${trialMonths.toString()}-month trial)`),
 			{
 				data: {
 					...planConfig,
@@ -194,8 +201,8 @@ if (require.main === module) {
 	(async () => {
 		const projectId = process.argv[2];
 
-		for (const {username, plan, trialMonths, namespace} of process.argv[3] ===
-		'--users' ?
+		for (const {username, plan, trialMonths, namespace} of process
+			.argv[3] === '--users' ?
 			JSON.parse(process.argv[4]).map(username => ({
 				username,
 				plan: process.argv[5],
