@@ -251,3 +251,4 @@ fi
 git add ${files}
 chmod -R 777 ${files}
 git commit -S -m "generate ${class}" ${files}
+git add ${files}
