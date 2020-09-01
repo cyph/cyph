@@ -25,7 +25,8 @@ export class AccountAuthGuardService extends BaseProvider
 		'profile',
 		'reject',
 		'request-appointment',
-		'upload-ehr-credentials'
+		'upload-ehr-credentials',
+		'warrant-canary'
 	];
 
 	/** @ignore */

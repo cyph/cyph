@@ -30,6 +30,8 @@
 			</span>
 		</div>
 
+		<div *ngIf="!envService.isAccounts">&nbsp;&nbsp;</div>
+
 		<div fxFlex="nogrow" fxLayoutAlign="center center">
 			<a href="https://github.com/cyph/cyph" cyphTranslate>
 				Source Code
@@ -128,12 +130,15 @@
 					'terms-of-service' +
 					(envService.isCordova ? '?hideHeaderAndFooter=true' : '')
 				"
-				[style.margin-right]="
-					!limited && !envService.isAccounts ? '89px' : undefined
-				"
 				cyphTranslate
 			>
 				Terms of Service
+			</a>
+		</div>
+
+		<div fxFlex="nogrow" fxLayoutAlign="center center">
+			<a routerLink="/warrant-canary" cyphTranslate>
+				Warrant Canary
 			</a>
 		</div>
 	</ng-container>

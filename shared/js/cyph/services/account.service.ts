@@ -1093,6 +1093,7 @@ export class AccountService extends BaseProvider {
 						'staff',
 						'vault',
 						'wallets',
+						'warrant-canary',
 						'welcome'
 					].indexOf(route) < 0 ||
 					([

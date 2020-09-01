@@ -34,6 +34,7 @@ import {AccountWalletsComponent} from '../components/account-wallets';
 import {BlankComponent} from '../components/blank';
 import {NotFoundComponent} from '../components/not-found';
 import {UploadEhrCredentialsComponent} from '../components/upload-ehr-credentials';
+import {WarrantCanaryComponent} from '../components/warrant-canary';
 import {env} from '../env';
 import {newPatient} from '../forms';
 import {AccountUserTypes, ChatMessageValue} from '../proto';
@@ -422,6 +423,10 @@ export const account: Route = {
 			}
 		},
 		{path: 'wallets', component: AccountWalletsComponent},
+		{
+			path: 'warrant-canary',
+			component: WarrantCanaryComponent
+		},
 		{path: 'welcome', component: AccountAfterRegisterComponent},
 		{path: '**', component: NotFoundComponent}
 	]

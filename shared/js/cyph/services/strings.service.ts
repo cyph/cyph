@@ -1521,6 +1521,9 @@ export class StringsService extends BaseProvider {
 	public readonly warningTitle = `Warning`;
 
 	/** @see StringsService */
+	public readonly warrantCanary = `Warrant Canary`;
+
+	/** @see StringsService */
 	public readonly welcomeComma = `Welcome,`;
 
 	/** @see StringsService */

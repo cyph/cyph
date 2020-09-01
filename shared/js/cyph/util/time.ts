@@ -281,6 +281,15 @@ export const getStartPadding = (
 	startTime?: Date | number
 ) : number => getStartPaddingInternal(timeRange)(now)(startTime);
 
+/** Returns a human-readable representation of the date (e.g. "January 1st, 2018"). */
+export const getDateString = memoize((timestamp?: number | Date) : string => {
+	const date = timestampToDate(timestamp);
+
+	return `${date.toLocaleDateString(undefined, {
+		month: 'long'
+	})} ${getOrdinal(date.getDate())}, ${date.getFullYear()}`;
+});
+
 /** Returns a human-readable representation of the date and time (e.g. "Jan 1, 2018, 3:37pm"). */
 export const getDateTimeString = memoize((timestamp: number) : string =>
 	getTimeStringInternal(timestamp, true, false)
@@ -301,7 +310,7 @@ export const getDurationString = memoize((time: number) : string => {
 
 /** Returns an ISO 8601 representation of the date (e.g. "2018-01-01"). */
 export const getISODateString = memoize(
-	(timestamp?: number) : string =>
+	(timestamp?: number | Date) : string =>
 		timestampToDate(timestamp)
 			.toISOString()
 			.split('T')[0]
@@ -575,9 +584,7 @@ const relativeDateStringInternal = memoize((now: number) =>
 				})}, ${date.toLocaleDateString(undefined, {
 					month: 'long'
 				})} ${getOrdinal(date.getDate())}` :
-				`${date.toLocaleDateString(undefined, {
-					month: 'long'
-				})} ${getOrdinal(date.getDate())}, ${date.getFullYear()}`;
+				getDateString(date);
 		})
 	)
 );

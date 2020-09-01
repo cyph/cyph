@@ -1,1 +1,17 @@
 @import '../../../../css/mixins';
+@import '../../../../css/theme.scss';
+
+:host {
+	height: 100%;
+
+	> div {
+		font-size: 1.15em;
+		font-weight: normal;
+		line-height: 125%;
+		padding: 0 2em;
+	}
+}
+
+a {
+	color: $cyph-hyperlinks;
+}

@@ -54,6 +54,7 @@ import {NotFoundComponent} from '../components/not-found';
 import {PGPPublicKeyComponent} from '../components/pgp-public-key';
 import {QRCodeScannerComponent} from '../components/qr-code-scanner';
 import {UploadEhrCredentialsComponent} from '../components/upload-ehr-credentials';
+import {WarrantCanaryComponent} from '../components/warrant-canary';
 import {env} from '../env';
 import {AccountAppointmentsService} from '../services/account-appointments.service';
 import {AccountAuthGuardService} from '../services/account-auth-guard.service';
@@ -140,7 +141,8 @@ import {CyphWebModule} from './cyph-web.module';
 		NotFoundComponent,
 		PGPPublicKeyComponent,
 		QRCodeScannerComponent,
-		UploadEhrCredentialsComponent
+		UploadEhrCredentialsComponent,
+		WarrantCanaryComponent
 	],
 	exports: [
 		AccountAfterRegisterComponent,
@@ -197,7 +199,8 @@ import {CyphWebModule} from './cyph-web.module';
 		NotFoundComponent,
 		PGPPublicKeyComponent,
 		QRCodeScannerComponent,
-		UploadEhrCredentialsComponent
+		UploadEhrCredentialsComponent,
+		WarrantCanaryComponent
 	],
 	imports: [CyphCommonModule, CyphWebModule],
 	providers: [

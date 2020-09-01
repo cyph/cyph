@@ -216,6 +216,7 @@ export class AccountComponent extends BaseProvider
 					'vault',
 					'video',
 					'wallets',
+					'warrant-canary',
 					'welcome'
 				].indexOf(route) > -1
 			);
