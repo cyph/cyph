@@ -30,7 +30,11 @@
 			</span>
 		</div>
 
-		<div *ngIf="!envService.isAccounts">&nbsp;&nbsp;</div>
+		<div fxFlex="nogrow" fxLayoutAlign="center center">
+			<a href="https://github.com/cyph/cyph" cyphTranslate>
+				Source Code
+			</a>
+		</div>
 
 		<div fxFlex="nogrow" fxLayoutAlign="center center">
 			<a
@@ -125,7 +129,7 @@
 					(envService.isCordova ? '?hideHeaderAndFooter=true' : '')
 				"
 				[style.margin-right]="
-					!limited && !envService.isAccounts ? '20px' : undefined
+					!limited && !envService.isAccounts ? '89px' : undefined
 				"
 				cyphTranslate
 			>
