@@ -1,7 +1,7 @@
 <mat-progress-spinner
 	[color]="color"
 	[diameter]="diameter"
-	[mode]="mode"
+	mode="determinate"
 	[strokeWidth]="strokeWidth"
-	[value]="value"
+	[value]="indeterminate ? (indeterminateValue | await) || 0 : value"
 ></mat-progress-spinner>
