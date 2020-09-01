@@ -28,6 +28,7 @@ import {DialogConfirmComponent} from '../components/dialog-confirm';
 import {DialogMediaComponent} from '../components/dialog-media';
 import {DynamicFormComponent} from '../components/dynamic-form';
 import {MarkdownComponent} from '../components/markdown';
+import {SpinnerComponent} from '../components/spinner';
 import {AnchorDirective} from '../directives/anchor.directive';
 import {AutofocusDirective} from '../directives/autofocus.directive';
 import {DropZoneDirective} from '../directives/drop-zone.directive';
@@ -70,6 +71,7 @@ import {StringsService} from '../services/strings.service';
 		MarkdownComponent,
 		NanoScrollerDirective,
 		RouterLinkDirective,
+		SpinnerComponent,
 		TranslateDirective
 	],
 	exports: [
@@ -110,6 +112,7 @@ import {StringsService} from '../services/strings.service';
 		NanoScrollerDirective,
 		NgxCaptchaModule,
 		RouterLinkDirective,
+		SpinnerComponent,
 		TextMaskModule,
 		TranslateDirective
 	],

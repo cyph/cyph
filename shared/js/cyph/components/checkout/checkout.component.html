@@ -1,7 +1,7 @@
-<mat-progress-spinner
+<cyph-spinner
 	mode="indeterminate"
 	*ngIf="!inAppPurchase && pending | await"
-></mat-progress-spinner>
+></cyph-spinner>
 <form ngNativeValidate (submit)="submit()" *ngIf="!inAppPurchase">
 	<div
 		fxLayout="column"

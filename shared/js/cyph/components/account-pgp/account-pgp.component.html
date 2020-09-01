@@ -169,10 +169,10 @@
 				</div>
 			</mat-card>
 
-			<mat-progress-spinner
+			<cyph-spinner
 				mode="indeterminate"
 				*ngIf="outgoingMessage.spinner | await; else defaultFileSpinner"
-			></mat-progress-spinner>
+			></cyph-spinner>
 		</div>
 	</mat-tab>
 
@@ -340,10 +340,10 @@
 				</div>
 			</mat-card>
 
-			<mat-progress-spinner
+			<cyph-spinner
 				mode="indeterminate"
 				*ngIf="incomingMessage.spinner | await; else defaultFileSpinner"
-			></mat-progress-spinner>
+			></cyph-spinner>
 		</div>
 	</mat-tab>
 </mat-tab-group>
@@ -352,18 +352,18 @@
 	<ng-container
 		*ngIf="(accountFilesService.showSpinner | await) !== undefined"
 	>
-		<mat-progress-spinner
+		<cyph-spinner
 			mode="indeterminate"
 			*ngIf="
 				((accountFilesService.showSpinner | await) || 0) < 1;
 				else determinateFileSpinner
 			"
-		></mat-progress-spinner>
+		></cyph-spinner>
 		<ng-template #determinateFileSpinner>
-			<mat-progress-spinner
+			<cyph-spinner
 				mode="determinate"
 				[value]="(accountFilesService.showSpinner | await) || 1"
-			></mat-progress-spinner>
+			></cyph-spinner>
 		</ng-template>
 	</ng-container>
 </ng-template>

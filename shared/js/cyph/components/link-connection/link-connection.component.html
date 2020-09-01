@@ -163,7 +163,7 @@
 			fxLayoutAlign="center center"
 			*ngIf="(isPassive | await) === undefined"
 		>
-			<mat-progress-spinner mode="indeterminate"></mat-progress-spinner>
+			<cyph-spinner mode="indeterminate"></cyph-spinner>
 		</div>
 
 		<br />
@@ -439,9 +439,7 @@
 		</ng-container>
 		<ng-template #newDeviceActivationSpinner>
 			<div fxFlex fxLayoutAlign="center center">
-				<mat-progress-spinner
-					mode="indeterminate"
-				></mat-progress-spinner>
+				<cyph-spinner mode="indeterminate"></cyph-spinner>
 			</div>
 		</ng-template>
 	</div>

@@ -1,4 +1,4 @@
-<mat-progress-spinner
+<cyph-spinner
 	class="global"
 	mode="indeterminate"
 	*ngIf="
@@ -6,7 +6,7 @@
 			((userProfile | await)?.userType | await) === undefined;
 		else profile
 	"
-></mat-progress-spinner>
+></cyph-spinner>
 
 <ng-template #profile>
 	<ng-container *ngIf="userProfile | await as user">
@@ -569,20 +569,20 @@
 					(accountFilesService.uploadSpinner | await) !== undefined
 				"
 			>
-				<mat-progress-spinner
+				<cyph-spinner
 					mode="indeterminate"
 					*ngIf="
 						((accountFilesService.uploadSpinner | await) || 0) < 1;
 						else determinateFileSpinner
 					"
-				></mat-progress-spinner>
+				></cyph-spinner>
 				<ng-template #determinateFileSpinner>
-					<mat-progress-spinner
+					<cyph-spinner
 						mode="determinate"
 						[value]="
 							(accountFilesService.uploadSpinner | await) || 1
 						"
-					></mat-progress-spinner>
+					></cyph-spinner>
 				</ng-template>
 			</ng-container>
 		</ng-template>

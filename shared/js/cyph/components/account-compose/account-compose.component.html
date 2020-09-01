@@ -426,10 +426,10 @@
 		</mat-card>
 	</div>
 
-	<mat-progress-spinner
+	<cyph-spinner
 		mode="indeterminate"
 		*ngIf="(sent | await) === undefined"
-	></mat-progress-spinner>
+	></cyph-spinner>
 </div>
 
 <mat-autocomplete #fromEmailAutocomplete="matAutocomplete">

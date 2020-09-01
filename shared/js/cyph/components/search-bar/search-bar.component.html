@@ -95,14 +95,14 @@
 		*ngIf="!chipInput"
 	/>
 
-	<mat-progress-spinner
+	<cyph-spinner
 		matSuffix
 		class="custom"
 		diameter="20"
-		strokeWidth="2"
 		mode="indeterminate"
+		strokeWidth="2"
 		*ngIf="spinner | await"
-	></mat-progress-spinner>
+	></cyph-spinner>
 	<mat-icon
 		matSuffix
 		class="suffix-button"

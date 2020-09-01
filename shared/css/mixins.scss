@@ -40,14 +40,9 @@ $default-white: map-get($mat-grey, 100);
 	@include filter(drop-shadow((-2px) 2px 2px rgba(0, 0, 0, 0.15)));
 }
 
-/* Centers mat-progress-spinner */
+/* Centers cyph-spinner */
 @mixin spinner-center {
 	@include center;
-
-	&[mode='indeterminate'] {
-		top: calc(50% - 50px);
-		left: calc(50% - 50px);
-	}
 }
 
 @mixin vertical-align {

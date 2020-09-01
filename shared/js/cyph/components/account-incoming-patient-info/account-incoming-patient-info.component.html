@@ -81,18 +81,18 @@
 	<ng-container
 		*ngIf="(accountFilesService.showSpinner | await) !== undefined"
 	>
-		<mat-progress-spinner
+		<cyph-spinner
 			mode="indeterminate"
 			*ngIf="
 				((accountFilesService.showSpinner | await) || 0) < 1;
 				else determinateFileSpinner
 			"
-		></mat-progress-spinner>
+		></cyph-spinner>
 		<ng-template #determinateFileSpinner>
-			<mat-progress-spinner
+			<cyph-spinner
 				mode="determinate"
 				[value]="(accountFilesService.showSpinner | await) || 1"
-			></mat-progress-spinner>
+			></cyph-spinner>
 		</ng-template>
 	</ng-container>
 </div>

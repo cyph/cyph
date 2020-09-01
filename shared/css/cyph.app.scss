@@ -68,7 +68,7 @@ cyph-chat-message-box smd-fab-speed-dial:not(.smd-opened) smd-fab-actions {
 }
 
 .login-form {
-	mat-progress-spinner.global {
+	cyph-spinner.global {
 		display: none;
 	}
 
@@ -79,11 +79,11 @@ cyph-chat-message-box smd-fab-speed-dial:not(.smd-opened) smd-fab-actions {
 	&.checking {
 		pointer-events: none;
 
-		mat-progress-spinner.global {
+		cyph-spinner.global {
 			display: block;
 		}
 
-		> * > :not(mat-progress-spinner):not(.global),
+		> * > :not(cyph-spinner):not(.global),
 		+ cyph-footer {
 			opacity: 0.15;
 		}

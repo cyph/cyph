@@ -221,12 +221,12 @@
 
 	<cyph-chat-cyphertext></cyph-chat-cyphertext>
 
-	<mat-progress-spinner
+	<cyph-spinner
 		mode="indeterminate"
 		*ngIf="
 			(appService.chatRootState | await) === chatRootStates.chat &&
 			chat?.state === chatStates.chat &&
 			(chatService.uiReady | await) !== true
 		"
-	></mat-progress-spinner>
+	></cyph-spinner>
 </span>

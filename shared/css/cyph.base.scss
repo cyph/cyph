@@ -211,7 +211,7 @@ body.mobile .card-list {
 .initiating {
 	overflow-y: hidden !important;
 
-	> :first-child:not(mat-progress-spinner) {
+	> :first-child:not(cyph-spinner) {
 		opacity: 0.5 !important;
 
 		&,
@@ -220,7 +220,7 @@ body.mobile .card-list {
 		}
 	}
 
-	> mat-progress-spinner:not(.custom) {
+	> cyph-spinner:not(.custom) {
 		z-index: 10;
 
 		@include spinner-center;
@@ -348,7 +348,7 @@ mat-option img {
 	vertical-align: middle;
 }
 
-mat-progress-spinner.global {
+cyph-spinner.global {
 	@include spinner-center;
 }
 

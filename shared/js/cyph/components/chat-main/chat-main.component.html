@@ -281,10 +281,10 @@
 			[src]="(p2pWebRTCService.outgoingStream | await)?.stream"
 		></cyph-video>
 
-		<mat-progress-spinner
+		<cyph-spinner
 			mode="indeterminate"
 			*ngIf="p2pWebRTCService.loading | await"
-		></mat-progress-spinner>
+		></cyph-spinner>
 
 		<button
 			fxHide

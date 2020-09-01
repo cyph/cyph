@@ -46,9 +46,7 @@ export class AccountsPage {
 					.root()
 					.element(by.css('mat-row:first-of-type')),
 			spinner: () =>
-				this.elements.files
-					.root()
-					.element(by.css('mat-progress-spinner')),
+				this.elements.files.root().element(by.css('cyph-spinner')),
 			upload: () =>
 				element(
 					by.js(
@@ -80,9 +78,7 @@ export class AccountsPage {
 						)
 					),
 			spinner: () =>
-				this.elements.login
-					.root()
-					.element(by.css('mat-progress-spinner')),
+				this.elements.login.root().element(by.css('cyph-spinner')),
 			submit: () =>
 				this.elements.login
 					.root()

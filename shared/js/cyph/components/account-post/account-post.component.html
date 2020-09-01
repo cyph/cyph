@@ -2,9 +2,7 @@
 	<mat-card fxFlex>
 		<ng-container *ngIf="!post; else deletedPost">
 			<mat-card-content fxLayoutAlign="center center">
-				<mat-progress-spinner
-					mode="indeterminate"
-				></mat-progress-spinner>
+				<cyph-spinner mode="indeterminate"></cyph-spinner>
 			</mat-card-content>
 		</ng-container>
 
@@ -131,9 +129,7 @@
 					</ng-template>
 					<ng-template #embeddedPostSpinner>
 						<p fxLayoutAlign="center center">
-							<mat-progress-spinner
-								mode="indeterminate"
-							></mat-progress-spinner>
+							<cyph-spinner mode="indeterminate"></cyph-spinner>
 						</p>
 					</ng-template>
 				</ng-container>
@@ -369,9 +365,9 @@
 							</mat-list>
 							<ng-template #commentsSpinner>
 								<span fxLayoutAlign="center center">
-									<mat-progress-spinner
+									<cyph-spinner
 										mode="indeterminate"
-									></mat-progress-spinner>
+									></cyph-spinner>
 								</span>
 							</ng-template>
 
