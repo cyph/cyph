@@ -6,6 +6,14 @@ Cyph’s patented technology — built by former SpaceX engineers, audited by Cu
 
 ---
 
+Commands available to run locally (Node.js and Docker required):
+
+* `npm run serve`: Serves a local instance at http://localhost:42002
+
+* `npm run verify`: Verifies that the signed production build is reproducible against the local copy of the code
+
+---
+
 Cyph is run by founders [Ryan Lester](http://github.com/buu700) and [Josh Boehm](https://github.com/JoshBoehm), former SpaceX engineers and best friends of over 20 years who had spent many all-nighters working closely together on various software projects. Cyph was initially started through the [Mach37 Cyber Accelerator](https://www.mach37.com), and is currently backed by the [Goel Fund](https://www.goelfund.com) and [Center for Innovative Technology](https://www.cit.org).
 
 Cyph was a natural project for us to start together, as we’ve always shared an interest in cypherpunk efforts to enhance individual freedom and privacy.
