@@ -2,7 +2,6 @@
 
 import {Injectable} from '@angular/core';
 import {Observable, of} from 'rxjs';
-import {filter, take} from 'rxjs/operators';
 import {IContactListItem, UserLike} from '../account';
 import {AccountContactsComponent} from '../components/account-contacts';
 import {
@@ -603,37 +602,6 @@ export class AccountSessionService extends SessionService {
 		);
 	}
 
-	/** @inheritDoc */
-	public async yt () : Promise<void> {
-		if (this.sessionInitService.ephemeral) {
-			return;
-		}
-
-		if (this.group) {
-			await Promise.all(this.group.map(async session => session.yt()));
-			return;
-		}
-
-		return new Promise<void>(resolve => {
-			const id = uuid();
-
-			const f = (newEvents: ISessionMessageData[]) => {
-				for (const o of newEvents) {
-					if (!(o.command && o.command.method === id)) {
-						continue;
-					}
-
-					this.off(RpcEvents.pong, f);
-					resolve();
-					return;
-				}
-			};
-
-			this.on(RpcEvents.pong, f);
-			this.send([RpcEvents.ping, {command: {method: id}}]);
-		});
-	}
-
 	constructor (
 		analyticsService: AnalyticsService,
 		castleService: CastleService,
@@ -676,25 +644,5 @@ export class AccountSessionService extends SessionService {
 			sessionInitService,
 			stringsService
 		);
-
-		this.on(RpcEvents.ping, async newEvents => {
-			for (const o of newEvents) {
-				if (!o.command || !o.command.method) {
-					continue;
-				}
-
-				await this.freezePong
-					.pipe(
-						filter(b => !b),
-						take(1)
-					)
-					.toPromise();
-
-				this.send([
-					RpcEvents.pong,
-					{command: {method: o.command.method}}
-				]);
-			}
-		});
 	}
 }

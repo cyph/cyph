@@ -9,8 +9,6 @@ export enum RpcEvents {
 	p2p = 'p2p',
 	p2pKill = 'p2pKill',
 	p2pRequest = 'p2pRequest',
-	ping = 'ping',
-	pong = 'pong',
 	text = 'text',
 	typing = 'typing'
 }

@@ -193,7 +193,4 @@ export interface ISessionService {
 
 	/** Creates and returns a new instance. */
 	spawn () : ISessionService;
-
-	/** Resolves when other user is online. */
-	yt () : Promise<void>;
 }

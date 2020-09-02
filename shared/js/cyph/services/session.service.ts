@@ -799,10 +799,6 @@ export abstract class SessionService extends BaseProvider
 		);
 	}
 
-	/** @inheritDoc */
-	/* eslint-disable-next-line @typescript-eslint/require-await */
-	public async yt () : Promise<void> {}
-
 	constructor (
 		/** @ignore */
 		protected readonly analyticsService: AnalyticsService,
