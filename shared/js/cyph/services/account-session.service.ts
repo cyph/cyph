@@ -6,7 +6,6 @@ import {IContactListItem, UserLike} from '../account';
 import {AccountContactsComponent} from '../components/account-contacts';
 import {
 	IAccountMessagingGroup,
-	ISessionMessage,
 	SessionMessageList,
 	StringProto
 } from '../proto';
@@ -89,26 +88,9 @@ export class AccountSessionService extends SessionService {
 
 	/** @inheritDoc */
 	protected async channelOnClose () : Promise<void> {
-		if (this.group) {
-			throw new Error(
-				'Master channelOnClose should not be used in a group session.'
-			);
-		}
-
 		if (this.ephemeralSubSession) {
 			await super.channelOnClose();
 		}
-	}
-
-	/** @inheritDoc */
-	protected async channelOnOpen (isAlice: boolean) : Promise<void> {
-		if (this.group) {
-			throw new Error(
-				'Master channelOnOpen should not be used in a group session.'
-			);
-		}
-
-		await super.channelOnOpen(isAlice);
 	}
 
 	/** @inheritDoc */
@@ -131,30 +113,7 @@ export class AccountSessionService extends SessionService {
 	}
 
 	/** @inheritDoc */
-	protected async plaintextSendHandler (
-		messages: ISessionMessage[]
-	) : Promise<void> {
-		if (this.group) {
-			await Promise.all(
-				this.group.map(async session =>
-					session.plaintextSendHandler(messages)
-				)
-			);
-			return;
-		}
-
-		await super.plaintextSendHandler(messages);
-	}
-
-	/** @inheritDoc */
 	public close () : void {
-		if (this.group) {
-			for (const session of this.group) {
-				session.close();
-			}
-			return;
-		}
-
 		if (this.ephemeralSubSession) {
 			super.close();
 		}

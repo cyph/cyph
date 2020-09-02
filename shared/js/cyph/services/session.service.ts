@@ -213,6 +213,12 @@ export abstract class SessionService extends BaseProvider
 
 	/** @see IChannelHandlers.onClose */
 	protected async channelOnClose () : Promise<void> {
+		if (this.group) {
+			throw new Error(
+				'Master channelOnClose should not be used in a group session.'
+			);
+		}
+
 		await this.destroy();
 	}
 
@@ -240,6 +246,12 @@ export abstract class SessionService extends BaseProvider
 	/** @see IChannelHandlers.onOpen */
 	/* eslint-disable-next-line @typescript-eslint/require-await */
 	protected async channelOnOpen (isAlice: boolean) : Promise<void> {
+		if (this.group) {
+			throw new Error(
+				'Master channelOnOpen should not be used in a group session.'
+			);
+		}
+
 		this.state.isAlice.next(isAlice);
 		this.opened.resolve();
 	}
@@ -372,6 +384,16 @@ export abstract class SessionService extends BaseProvider
 	protected async plaintextSendHandler (
 		messages: ISessionMessage[]
 	) : Promise<void> {
+		if (this.group) {
+			await Promise.all(
+				this.group.map(async session =>
+					session.plaintextSendHandler(messages)
+				)
+			);
+
+			return;
+		}
+
 		await this.castleSendMessages(messages);
 	}
 
@@ -478,6 +500,14 @@ export abstract class SessionService extends BaseProvider
 
 	/** @inheritDoc */
 	public close () : void {
+		if (this.group) {
+			for (const session of this.group) {
+				session.close();
+			}
+
+			return;
+		}
+
 		this.channelService.close();
 	}
 
