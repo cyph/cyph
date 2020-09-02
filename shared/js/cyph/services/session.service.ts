@@ -507,12 +507,9 @@ export abstract class SessionService extends BaseProvider
 	) : Promise<IHandshakeState> {
 		await this.opened;
 
-		/* First person to join ephemeral session is "Bob" as optimization for Castle handshake */
 		const isAlice =
 			typeof forceAlice === 'boolean' ?
 				forceAlice :
-			this.sessionInitService.ephemeral ?
-				!this.state.isAlice.value :
 				this.state.isAlice.value;
 
 		return {
