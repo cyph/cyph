@@ -38,7 +38,7 @@ import {cacheObservable, toBehaviorSubject} from '../util/flatten-observable';
 import {normalize, normalizeArray} from '../util/formatting';
 import {observableAll} from '../util/observable-all';
 import {uuid} from '../util/uuid';
-import {resolvable} from '../util/wait';
+import {resolvable, retryUntilSuccessful} from '../util/wait';
 import {AccountFilesService} from './account-files.service';
 import {AccountInviteService} from './account-invite.service';
 import {AccountPostsService} from './account-posts.service';
@@ -123,11 +123,17 @@ export class AccountContactsService extends BaseProvider {
 					};
 				}
 
+				const castleSessionID = await this.accountDatabaseService.callFunction(
+					'getCastleSessionID',
+					{username}
+				);
+
+				if (typeof castleSessionID !== 'string') {
+					throw new Error('Invalid Castle session ID.');
+				}
+
 				return {
-					castleSessionID: await this.accountDatabaseService.callFunction(
-						'getCastleSessionID',
-						{username}
-					)
+					castleSessionID
 				};
 			}, 86400000)
 	);
@@ -558,7 +564,17 @@ export class AccountContactsService extends BaseProvider {
 	public async getCastleSessionData (
 		username: string
 	) : Promise<{castleSessionID: string}> {
-		return this.getCastleSessionDataInternal(username)();
+		return retryUntilSuccessful(async () => {
+			const castleSessionData = await this.getCastleSessionDataInternal(
+				username
+			)();
+
+			if (castleSessionData === undefined) {
+				throw new Error('Failed to fetch Castle session data.');
+			}
+
+			return castleSessionData;
+		});
 	}
 
 	/** Indicates whether the user is already a contact. */

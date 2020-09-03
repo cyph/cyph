@@ -261,10 +261,11 @@ export class CryptocurrencyService extends BaseProvider {
 			'CryptocurrencyService/exchangeRates/BTC';
 
 		return {
-			getExchangeRates: throttle(
-				async () => getExchangeRates(bitcoinCash),
-				600000
-			),
+			getExchangeRates: <
+				() => Promise<{
+					[currencyCode: string]: number;
+				}>
+			> throttle(async () => getExchangeRates(bitcoinCash), 600000),
 			getItem: async () : Promise<Record<string, number>> => {
 				try {
 					return msgpack.decode(

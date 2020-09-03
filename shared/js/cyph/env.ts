@@ -21,6 +21,22 @@ export class Env extends EnvDeploy {
 	private readonly useBaseUrl: boolean =
 		!!environment.customBuild || environment.local;
 
+	/** @inheritDoc */
+	protected readonly _cyphImUrl: string =
+		environment.local || !environment.customBuild ?
+			envDeploy.newCyphBaseUrl :
+			`https://${environment.customBuild.id}/${
+				environment.customBuild.config.burnerOnly ? '' : '#burner/'
+			}`;
+
+	/** @inheritDoc */
+	protected readonly _newCyphBaseUrl: string =
+		environment.local || !environment.customBuild ?
+			envDeploy.newCyphBaseUrl :
+			`https://${environment.customBuild.id}/${
+				environment.customBuild.config.burnerOnly ? '' : '#burner/'
+			}`;
+
 	/** Unique string representing the current package. */
 	public readonly appName: string = `com.cyph.app-${environment.customBuild
 		?.namespace || 'cyph.ws'}-${environment.envName}`;
@@ -61,9 +77,6 @@ export class Env extends EnvDeploy {
 		!environment.local && this.appUrl === envDeploy.appUrl ?
 			envDeploy.cyphDownloadUrl :
 			`${this.appUrl}#download/`;
-
-	/** @inheritDoc */
-	public readonly cyphImUrl: string;
 
 	/** Base URL for a new io cyph link ("https://cyph.app/#burner/io/" or equivalent). */
 	public readonly cyphIoBaseUrl: string;
@@ -241,15 +254,7 @@ export class Env extends EnvDeploy {
 		!!(<any> self).isReflectTest || !!environment.test;
 
 	/** Indicates whether this is a WebKit/Blink browser. */
-	public readonly isWebKit: boolean =
-		!(this.isEdge || this.isFirefox) &&
-		(this.isChrome ||
-			this.isSafari ||
-			!!(
-				this.isWeb &&
-				document.documentElement &&
-				'WebkitAppearance' in document.documentElement.style
-			));
+	public readonly isWebKit: boolean;
 
 	/** Normalized language code, used for translations. */
 	public readonly language: string = (() => {
@@ -264,14 +269,6 @@ export class Env extends EnvDeploy {
 			'zh-chs' :
 			language;
 	})();
-
-	/** @inheritDoc */
-	public readonly newCyphBaseUrl: string =
-		environment.local || !environment.customBuild ?
-			envDeploy.newCyphBaseUrl :
-			`https://${environment.customBuild.id}/${
-				environment.customBuild.config.burnerOnly ? '' : '#burner/'
-			}`;
 
 	/** Indicates whether in-app purchases are blocked. */
 	public readonly noInAppPurchasesAllowed: boolean;
@@ -352,6 +349,16 @@ export class Env extends EnvDeploy {
 
 		this.isEdge = this.isOldEdge || this.isNewEdge;
 
+		this.isWebKit =
+			!(this.isEdge || this.isFirefox) &&
+			(this.isChrome ||
+				this.isSafari ||
+				!!(
+					this.isWeb &&
+					document.documentElement &&
+					'WebkitAppearance' in document.documentElement.style
+				));
+
 		const filesConfigMaxSizeDesktop = 536870912;
 		const filesConfigMaxSizeMobile = 20971520;
 
@@ -420,7 +427,7 @@ export class Env extends EnvDeploy {
 		this.cyphAudioUrl = this.useBaseUrl ?
 			this.cyphAudioBaseUrl :
 			envDeploy.cyphAudioUrl;
-		this.cyphImUrl = this.useBaseUrl ?
+		this._cyphImUrl = this.useBaseUrl ?
 			this.newCyphBaseUrl :
 			envDeploy.cyphImUrl;
 		this.cyphIoUrl = this.useBaseUrl ?

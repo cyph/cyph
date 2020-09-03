@@ -15,6 +15,12 @@ export class EnvDeploy {
 		(<any> navigatorData).systemLanguage ||
 		config.defaultLanguage;
 
+	/** @see EnvDeploy.cyphImUrl */
+	protected readonly _cyphImUrl: string;
+
+	/** @see EnvDeploy.newCyphBaseUrl */
+	protected readonly _newCyphBaseUrl: string;
+
 	/** Current URL host (with www subdomain removed). */
 	public readonly host: string = locationData.host.replace('www.', '');
 
@@ -52,7 +58,9 @@ export class EnvDeploy {
 		`${locationData.protocol}//${locationData.hostname}:42001/`;
 
 	/** Base URL for a new cyph link ("https://cyph.app/#burner/" or equivalent). */
-	public readonly newCyphBaseUrl: string = `${this.appUrl}#burner/`;
+	public get newCyphBaseUrl () : string {
+		return this._newCyphBaseUrl;
+	}
 
 	/** URL for starting a new audio cyph ("https://cyph.audio/" or equivalent). */
 	public readonly cyphAudioUrl: string = this.isOnion ?
@@ -65,9 +73,9 @@ export class EnvDeploy {
 		`CYPH-DOWNLOAD/`;
 
 	/** URL for starting a new cyph ("https://cyph.im/" or equivalent). */
-	public readonly cyphImUrl: string = this.isOnion ?
-		`https://im.${config.onionRoot}/` :
-		`CYPH-IM/`;
+	public get cyphImUrl () : string {
+		return this._cyphImUrl;
+	}
 
 	/** URL for starting a new file transfer cyph ("https://cyph.io/" or equivalent). */
 	public readonly cyphIoUrl: string = this.isOnion ?
@@ -90,7 +98,13 @@ export class EnvDeploy {
 	/** Firebase-related config. */
 	// public readonly localFirebaseDatabaseURL: string = `ws://${`${locationData.hostname}.`.replace(/(localhost|127\.0\.0\.1|0\.0\.0\.0)\.$/, '127.0.1')}:44000`;
 
-	constructor () {}
+	constructor () {
+		this._cyphImUrl = this.isOnion ?
+			`https://im.${config.onionRoot}/` :
+			`CYPH-IM/`;
+
+		this._newCyphBaseUrl = `${this.appUrl}#burner/`;
+	}
 }
 
 /** @see EnvDeploy */
