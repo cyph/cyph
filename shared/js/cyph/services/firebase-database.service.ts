@@ -170,7 +170,7 @@ export class FirebaseDatabaseService extends DatabaseService {
 			await this.workerService.registerServiceWorkerFunction(
 				'FCM',
 				this.envService.firebaseConfig,
-				/* eslint-disable-next-line no-shadow */
+				/* eslint-disable-next-line @typescript-eslint/no-shadow */
 				config => {
 					importScripts(
 						'/assets/node_modules/firebase/firebase-app.js'

@@ -111,7 +111,14 @@
 		"@typescript-eslint/no-namespace": "error",
 		"@typescript-eslint/no-non-null-assertion": "error",
 		"@typescript-eslint/no-parameter-properties": "off",
+		"@typescript-eslint/no-redeclare": "error",
 		"@typescript-eslint/no-require-imports": "error",
+		"@typescript-eslint/no-shadow": [
+			"error",
+			{
+				"hoist": "all"
+			}
+		],
 		"@typescript-eslint/no-this-alias": "error",
 		"@typescript-eslint/no-unnecessary-qualifier": "error",
 		"@typescript-eslint/no-unnecessary-type-arguments": "error",
@@ -233,16 +240,11 @@
 		"no-octal-escape": "error",
 		"no-param-reassign": "off",
 		"no-plusplus": "off",
-		"no-redeclare": "error",
+		"no-redeclare": "off",
 		"no-restricted-syntax": ["error", "ForInStatement"],
 		"no-return-await": "error",
 		"no-sequences": "error",
-		"no-shadow": [
-			"error",
-			{
-				"hoist": "all"
-			}
-		],
+		"no-shadow": "off",
 		"no-sparse-arrays": "error",
 		"no-template-curly-in-string": "error",
 		"no-throw-literal": "error",

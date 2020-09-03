@@ -2724,7 +2724,8 @@ export class AccountFilesService extends BaseProvider {
 
 		const fingerprint = normalize(pgpKey.pgpMetadata.fingerprint);
 		const oldPGPKeyIDs = await this.getPGPKeyIDs(fingerprint);
-		const oldPGPKeyID = oldPGPKeyIDs[0];
+		const oldPGPKeyID =
+			oldPGPKeyIDs.length > 0 ? oldPGPKeyIDs[0] : undefined;
 		let reSetPrimaryKey = false;
 
 		if (oldPGPKeyID !== undefined) {

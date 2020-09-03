@@ -555,30 +555,39 @@ export class AccountDatabaseService extends BaseProvider {
 
 	/** @see DatabaseService.filterListHoles */
 	public filterListHoles<T> (list: (T | ListHoleError)[]) : T[];
+	/** @see filterListHoles */
 	public filterListHoles<T> (
 		list: Observable<(T | ListHoleError)[]>
 	) : Observable<T[]>;
+	/** @see filterListHoles */
 	public filterListHoles<T> (
 		list: Promise<(T | ListHoleError)[]>
 	) : Promise<T[]>;
+	/** @see filterListHoles */
 	public filterListHoles<T> (
 		list: ITimedValue<T | ListHoleError>[]
 	) : ITimedValue<T>[];
+	/** @see filterListHoles */
 	public filterListHoles<T> (
 		list: Observable<ITimedValue<T | ListHoleError>[]>
 	) : Observable<ITimedValue<T>[]>;
+	/** @see filterListHoles */
 	public filterListHoles<T> (
 		list: Promise<ITimedValue<T | ListHoleError>[]>
 	) : Promise<ITimedValue<T>[]>;
+	/** @see filterListHoles */
 	public filterListHoles<T> (
 		list: {id: string; value: T | ListHoleError}[]
 	) : {id: string; value: T}[];
+	/** @see filterListHoles */
 	public filterListHoles<T> (
 		list: Observable<{id: string; value: T | ListHoleError}[]>
 	) : Observable<{id: string; value: T}[]>;
+	/** @see filterListHoles */
 	public filterListHoles<T> (
 		list: Promise<{id: string; value: T | ListHoleError}[]>
 	) : Promise<{id: string; value: T}[]>;
+	/** @see filterListHoles */
 	public filterListHoles (list: any) : any {
 		return this.databaseService.filterListHoles(list);
 	}
@@ -1580,7 +1589,7 @@ export class AccountDatabaseService extends BaseProvider {
 									data.value,
 									customKey,
 									anonymous
-								).catch(() => defaultValue())
+								).catch(defaultValue)
 							}))
 						);
 				}),
