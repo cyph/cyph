@@ -320,8 +320,8 @@ read -r -d '' modules <<- EOM
 	moment
 	msgpack-lite
 	mustache
-	nativescript
-	nativescript-angular
+	nativescript@^6
+	nativescript-angular@^10
 	nativescript-css-loader
 	nativescript-dev-typescript
 	nativescript-dev-webpack
