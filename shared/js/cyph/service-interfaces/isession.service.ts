@@ -6,6 +6,7 @@ import {
 	ISessionMessage,
 	ISessionMessageData as ISessionMessageDataInternal
 } from '../proto/types';
+import {SessionInitService} from '../services/session-init.service';
 import {
 	CastleEvents,
 	ISessionMessageAdditionalData,
@@ -192,5 +193,5 @@ export interface ISessionService {
 	}>;
 
 	/** Creates and returns a new instance. */
-	spawn (child?: boolean) : ISessionService;
+	spawn (sessionInitService?: SessionInitService) : ISessionService;
 }

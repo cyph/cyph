@@ -152,7 +152,9 @@ export class EphemeralSessionService extends SessionService {
 	}
 
 	/** @inheritDoc */
-	public spawn (child?: boolean) : EphemeralSessionService {
+	public spawn (
+		sessionInitService: SessionInitService = this.sessionInitService.spawn()
+	) : EphemeralSessionService {
 		return new EphemeralSessionService(
 			this.analyticsService,
 			this.castleService.spawn(),
@@ -162,7 +164,7 @@ export class EphemeralSessionService extends SessionService {
 			this.envService,
 			this.errorService,
 			this.potassiumService,
-			this.sessionInitService.spawn(child),
+			sessionInitService,
 			this.sessionWrapperService.spawn(),
 			this.stringsService,
 			this.router,
