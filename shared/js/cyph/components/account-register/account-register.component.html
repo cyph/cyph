@@ -622,9 +622,10 @@
 													fxFlex.sm="80"
 													fxFlex.gt-sm="60"
 													[matTooltip]="
-														!currentInviteCode.enabled ?
-															stringsService.registerConfirmedInviteCode :
-															undefined
+														stringsService.registerConfirmedInviteCode
+													"
+													[matTooltipDisabled]="
+														currentInviteCode.enabled
 													"
 													*ngIf="
 														inviteCodeWatcher

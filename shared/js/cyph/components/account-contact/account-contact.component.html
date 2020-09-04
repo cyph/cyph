@@ -108,7 +108,8 @@
 		[class.mobile]="envService.isMobileOS"
 		[class.non-clickable]="!clickable || groupData?.incoming"
 		[class.telehealth]="envService.isTelehealthFull"
-		[matTooltip]="groupUsernames"
+		[matTooltip]="groupUsernames || ''"
+		[matTooltipDisabled]="!groupUsernames"
 		[matTooltipPosition]="envService.isMobileOS ? 'below' : 'left'"
 		[routerLink]="
 			!clickable || groupData?.incoming ?

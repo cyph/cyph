@@ -109,7 +109,8 @@
 	</button>
 	<button
 		mat-fab
-		[matTooltip]="cancel"
+		[matTooltip]="cancel || ''"
+		[matTooltipDisabled]="!cancel"
 		(click)="close(false)"
 		*ngIf="!!cancelFAB"
 	>
@@ -125,7 +126,8 @@
 	</button>
 	<button
 		mat-fab
-		[matTooltip]="ok"
+		[matTooltip]="ok || ''"
+		[matTooltipDisabled]="!ok"
 		(click)="dynamicForm ? dynamicForm.onSubmit() : close(true)"
 		*ngIf="!!okFAB"
 	>
@@ -135,7 +137,12 @@
 
 <ng-template #dialogActionsFab>
 	<div fxFlex fxLayoutAlign="center center" class="red-button">
-		<button mat-fab [matTooltip]="cancel" (click)="close(false)">
+		<button
+			mat-fab
+			[matTooltip]="cancel || ''"
+			[matTooltipDisabled]="!cancel"
+			(click)="close(false)"
+		>
 			<mat-icon>{{ cancelFAB }}</mat-icon>
 		</button>
 	</div>
@@ -152,7 +159,8 @@
 	<div fxFlex fxLayoutAlign="center center" class="green-button">
 		<button
 			mat-fab
-			[matTooltip]="ok"
+			[matTooltip]="ok || ''"
+			[matTooltipDisabled]="!ok"
 			(click)="dynamicForm ? dynamicForm.onSubmit() : close(true)"
 		>
 			<mat-icon>{{ okFAB }}</mat-icon>

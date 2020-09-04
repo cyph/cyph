@@ -118,7 +118,7 @@
 								matInput
 								[matAutosizeMinRows]="4"
 								[matTextareaAutosize]="
-									envService.isMobile | await
+									(envService.isMobile | await) === true
 								"
 								[ngModel]="''"
 								(ngModelChange)="
@@ -145,7 +145,7 @@
 								[matAutosizeMaxRows]="8"
 								[matAutosizeMinRows]="4"
 								[matTextareaAutosize]="
-									envService.isMobile | await
+									(envService.isMobile | await) === true
 								"
 								[ngModel]="outgoingMessage.cyphertext | await"
 								placeholder="ASCII Armor Cyphertext"
@@ -291,7 +291,7 @@
 								[matAutosizeMaxRows]="8"
 								[matAutosizeMinRows]="4"
 								[matTextareaAutosize]="
-									envService.isMobile | await
+									(envService.isMobile | await) === true
 								"
 								[ngModel]="''"
 								(ngModelChange)="
@@ -316,7 +316,7 @@
 								cyphTranslate
 								matInput
 								[matTextareaAutosize]="
-									envService.isMobile | await
+									(envService.isMobile | await) === true
 								"
 								[ngModel]="incomingMessage.plaintext | await"
 								placeholder="Opened Message"
