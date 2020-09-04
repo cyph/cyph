@@ -192,5 +192,5 @@ export interface ISessionService {
 	}>;
 
 	/** Creates and returns a new instance. */
-	spawn () : ISessionService;
+	spawn (child?: boolean) : ISessionService;
 }

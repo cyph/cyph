@@ -823,7 +823,7 @@ export abstract class SessionService extends BaseProvider
 	}
 
 	/** @inheritDoc */
-	public spawn () : SessionService {
+	public spawn (_CHILD?: boolean) : SessionService {
 		throw new Error(
 			'Must provide an implementation of SessionService.spawn.'
 		);

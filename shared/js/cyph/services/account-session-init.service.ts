@@ -15,6 +15,9 @@ export class AccountSessionInitService extends BaseProvider
 	public callType?: 'audio' | 'video';
 
 	/** @inheritDoc */
+	public child: boolean = false;
+
+	/** @inheritDoc */
 	public ephemeral: boolean = false;
 
 	/** @inheritDoc */
@@ -32,8 +35,10 @@ export class AccountSessionInitService extends BaseProvider
 	public readonly sessionService: IResolvable<ISessionService> = resolvable();
 
 	/** @inheritDoc */
-	public spawn () : AccountSessionInitService {
-		return new AccountSessionInitService();
+	public spawn (child: boolean = true) : AccountSessionInitService {
+		const sessionInitService = new AccountSessionInitService();
+		sessionInitService.child = child;
+		return sessionInitService;
 	}
 
 	constructor () {

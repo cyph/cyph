@@ -306,7 +306,7 @@ export class AccountSessionService extends SessionService {
 
 			const group = await Promise.all(
 				usernames.map(async username => {
-					const session = this.spawn();
+					const session = this.spawn(true);
 					await session.setUser(
 						{username},
 						this.sessionSubID,
@@ -540,7 +540,7 @@ export class AccountSessionService extends SessionService {
 	}
 
 	/** @inheritDoc */
-	public spawn () : AccountSessionService {
+	public spawn (child?: boolean) : AccountSessionService {
 		return new AccountSessionService(
 			this.analyticsService,
 			this.castleService.spawn(),
@@ -550,7 +550,7 @@ export class AccountSessionService extends SessionService {
 			this.envService,
 			this.errorService,
 			this.potassiumService,
-			this.sessionInitService.spawn(),
+			this.sessionInitService.spawn(child),
 			this.stringsService,
 			this.accountService,
 			this.accountContactsService,

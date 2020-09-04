@@ -17,6 +17,9 @@ export class UrlSessionInitService extends BaseProvider
 	public readonly callType?: 'audio' | 'video';
 
 	/** @inheritDoc */
+	public child: boolean = false;
+
+	/** @inheritDoc */
 	public readonly ephemeral: boolean = true;
 
 	/** @inheritDoc */
@@ -34,8 +37,10 @@ export class UrlSessionInitService extends BaseProvider
 	public readonly sessionService: IResolvable<ISessionService> = resolvable();
 
 	/** @inheritDoc */
-	public spawn () : UrlSessionInitService {
-		return new UrlSessionInitService(this.router);
+	public spawn (child: boolean = true) : UrlSessionInitService {
+		const sessionInitService = new UrlSessionInitService(this.router);
+		sessionInitService.child = child;
+		return sessionInitService;
 	}
 
 	constructor (

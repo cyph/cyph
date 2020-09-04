@@ -24,7 +24,10 @@ export class BasicSessionInitService extends BaseProvider
 	public callType?: 'audio' | 'video';
 
 	/** @inheritDoc */
-	public ephemeral: boolean = true;
+	public child: boolean = false;
+
+	/** @inheritDoc */
+	public readonly ephemeral: boolean = true;
 
 	/** @inheritDoc */
 	public readonly headless: Promise<boolean> = this._HEADLESS;
@@ -46,8 +49,10 @@ export class BasicSessionInitService extends BaseProvider
 	}
 
 	/** @inheritDoc */
-	public spawn () : BasicSessionInitService {
-		return new BasicSessionInitService();
+	public spawn (child: boolean = true) : BasicSessionInitService {
+		const sessionInitService = new BasicSessionInitService();
+		sessionInitService.child = child;
+		return sessionInitService;
 	}
 
 	constructor () {

@@ -12,6 +12,9 @@ export class SessionInitService extends BaseProvider {
 	/** If set, indicates an initial call type for the session. */
 	public readonly callType?: 'audio' | 'video';
 
+	/** Indicates whether or not this is a child of another session (i.e. a group member). */
+	public child: boolean = false;
+
 	/** Indicates whether or not this is an ephemeral session. */
 	public readonly ephemeral: boolean = true;
 
@@ -30,8 +33,10 @@ export class SessionInitService extends BaseProvider {
 	public readonly sessionService: IResolvable<ISessionService> = resolvable();
 
 	/** Creates and returns a new instance. */
-	public spawn () : SessionInitService {
-		return new SessionInitService();
+	public spawn (child: boolean = false) : SessionInitService {
+		const sessionInitService = new SessionInitService();
+		sessionInitService.child = child;
+		return sessionInitService;
 	}
 
 	constructor () {
