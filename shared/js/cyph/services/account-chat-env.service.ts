@@ -4,6 +4,7 @@ import {ChatEnvService} from './chat-env.service';
 import {ConfigService} from './config.service';
 import {LocalStorageService} from './local-storage.service';
 import {SessionInitService} from './session-init.service';
+import {SessionWrapperService} from './session-wrapper.service';
 
 /**
  * Replaces a subset of the chat env service for the accounts UI.
@@ -22,8 +23,14 @@ export class AccountChatEnvService extends ChatEnvService {
 	constructor (
 		localStorageService: LocalStorageService,
 		configService: ConfigService,
-		sessionInitService: SessionInitService
+		sessionInitService: SessionInitService,
+		sessionWrapperService: SessionWrapperService
 	) {
-		super(localStorageService, configService, sessionInitService);
+		super(
+			localStorageService,
+			configService,
+			sessionInitService,
+			sessionWrapperService
+		);
 	}
 }

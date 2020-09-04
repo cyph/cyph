@@ -1,7 +1,5 @@
 import {Injectable} from '@angular/core';
 import {BaseProvider} from '../base-provider';
-import {IResolvable} from '../iresolvable';
-import {ISessionService} from '../service-interfaces/isession.service';
 import {resolvable} from '../util/wait';
 import {SessionInitService} from './session-init.service';
 
@@ -37,9 +35,6 @@ export class BasicSessionInitService extends BaseProvider
 
 	/** @inheritDoc */
 	public readonly salt: Promise<string | undefined> = this._SALT;
-
-	/** @inheritDoc */
-	public readonly sessionService: IResolvable<ISessionService> = resolvable();
 
 	/** Sets ID. */
 	public setID (id: string, salt?: string, headless: boolean = false) : void {

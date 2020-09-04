@@ -6,6 +6,7 @@ import {ConfigService} from './config.service';
 import {EnvService} from './env.service';
 import {LocalStorageService} from './local-storage.service';
 import {SessionInitService} from './session-init.service';
+import {SessionWrapperService} from './session-wrapper.service';
 
 /**
  * Replaces a subset of the env service for the chat UI in certain cases.
@@ -79,11 +80,14 @@ export class ChatEnvService extends EnvService {
 		private readonly configService: ConfigService,
 
 		/** @ignore */
-		private readonly sessionInitService: SessionInitService
+		private readonly sessionInitService: SessionInitService,
+
+		/** @ignore */
+		private readonly sessionWrapperService: SessionWrapperService
 	) {
 		super(localStorageService);
 
-		this.sessionInitService.sessionService.then(sessionService => {
+		this.sessionWrapperService.sessionService.then(sessionService => {
 			this.sessionService = sessionService;
 		});
 	}

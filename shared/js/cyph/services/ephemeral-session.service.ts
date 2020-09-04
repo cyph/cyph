@@ -22,6 +22,7 @@ import {ErrorService} from './error.service';
 import {LocalStorageService} from './local-storage.service';
 import {NotificationService} from './notification.service';
 import {SessionInitService} from './session-init.service';
+import {SessionWrapperService} from './session-wrapper.service';
 import {SessionService} from './session.service';
 import {StringsService} from './strings.service';
 
@@ -162,6 +163,7 @@ export class EphemeralSessionService extends SessionService {
 			this.errorService,
 			this.potassiumService,
 			this.sessionInitService.spawn(child),
+			this.sessionWrapperService.spawn(),
 			this.stringsService,
 			this.router,
 			this.accountService,
@@ -182,6 +184,7 @@ export class EphemeralSessionService extends SessionService {
 		errorService: ErrorService,
 		potassiumService: PotassiumService,
 		sessionInitService: SessionInitService,
+		sessionWrapperService: SessionWrapperService,
 		stringsService: StringsService,
 
 		/** @ignore */
@@ -212,6 +215,7 @@ export class EphemeralSessionService extends SessionService {
 			errorService,
 			potassiumService,
 			sessionInitService,
+			sessionWrapperService,
 			stringsService
 		);
 

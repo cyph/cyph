@@ -1,8 +1,5 @@
 import {Injectable} from '@angular/core';
 import {BaseProvider} from '../base-provider';
-import {IResolvable} from '../iresolvable';
-import {ISessionService} from '../service-interfaces/isession.service';
-import {resolvable} from '../util/wait';
 
 /**
  * Provides ID for initiating new Session.
@@ -28,9 +25,6 @@ export class SessionInitService extends BaseProvider {
 	public readonly salt: Promise<string | undefined> = Promise.resolve(
 		undefined
 	);
-
-	/** @see ISessionService */
-	public readonly sessionService: IResolvable<ISessionService> = resolvable();
 
 	/** Creates and returns a new instance. */
 	public spawn (child: boolean = false) : SessionInitService {

@@ -2,9 +2,6 @@ import {Injectable} from '@angular/core';
 import {Router} from '@angular/router';
 import {BaseProvider} from '../base-provider';
 import {env} from '../env';
-import {IResolvable} from '../iresolvable';
-import {ISessionService} from '../service-interfaces/isession.service';
-import {resolvable} from '../util/wait';
 import {SessionInitService} from './session-init.service';
 
 /**
@@ -32,9 +29,6 @@ export class UrlSessionInitService extends BaseProvider
 	public readonly salt: Promise<string | undefined> = Promise.resolve(
 		undefined
 	);
-
-	/** @inheritDoc */
-	public readonly sessionService: IResolvable<ISessionService> = resolvable();
 
 	/** @inheritDoc */
 	public spawn (child: boolean = true) : UrlSessionInitService {

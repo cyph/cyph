@@ -16,6 +16,7 @@ import {P2PWebRTCService} from '../services/p2p-webrtc.service';
 import {P2PService} from '../services/p2p.service';
 import {ScrollService} from '../services/scroll.service';
 import {SessionCapabilitiesService} from '../services/session-capabilities.service';
+import {SessionWrapperService} from '../services/session-wrapper.service';
 import {SessionInitService} from '../services/session-init.service';
 import {SessionService} from '../services/session.service';
 
@@ -32,6 +33,7 @@ export const accountChatProviders = [
 	FileTransferService,
 	P2PWebRTCService,
 	ScrollService,
+	SessionWrapperService,
 	{
 		provide: CastleService,
 		useClass: AccountCastleService

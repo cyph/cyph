@@ -47,6 +47,7 @@ import {DialogService} from './dialog.service';
 import {EnvService} from './env.service';
 import {ErrorService} from './error.service';
 import {SessionInitService} from './session-init.service';
+import {SessionWrapperService} from './session-wrapper.service';
 import {StringsService} from './strings.service';
 
 /**
@@ -858,10 +859,13 @@ export abstract class SessionService extends BaseProvider
 		protected readonly sessionInitService: SessionInitService,
 
 		/** @ignore */
+		protected readonly sessionWrapperService: SessionWrapperService,
+
+		/** @ignore */
 		protected readonly stringsService: StringsService
 	) {
 		super();
 
-		this.sessionInitService.sessionService.resolve(this);
+		this.sessionWrapperService.sessionService.resolve(this);
 	}
 }
