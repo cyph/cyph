@@ -238,7 +238,8 @@ export class PairwiseSessionLite implements IPairwiseSession {
 		> = new LocalAsyncList([])
 	) {
 		this.key
-			.then(async () => {
+			.then(async key => {
+				this.transport.setSymmetricKey(key);
 				await this.transport.connect();
 				this.ready.resolve();
 			})

@@ -4,6 +4,7 @@
 export enum RpcEvents {
 	accountMasterKey = 'accountMasterKey',
 	accountMasterKeyConfirmation = 'accountMasterKeyConfirmation',
+	burnerGroup = 'burnerGroup',
 	capabilities = 'capabilities',
 	confirm = 'confirm',
 	p2p = 'p2p',

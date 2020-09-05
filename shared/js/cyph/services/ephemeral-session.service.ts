@@ -1,18 +1,28 @@
 import {Injectable} from '@angular/core';
 import {Router} from '@angular/router';
 import {env} from '../env';
-import {NotificationTypes, StringProto} from '../proto';
-import {ProFeatures} from '../session';
+import {
+	BurnerGroup,
+	IBurnerGroup,
+	IBurnerGroupMember,
+	NotificationTypes,
+	StringProto
+} from '../proto';
+import {ProFeatures, RpcEvents} from '../session';
+import {getOrSetDefault} from '../util/get-or-set-default';
 import {random} from '../util/random';
 import {request} from '../util/request';
+import {deserialize, serialize} from '../util/serialization';
 import {getTimestamp} from '../util/time';
 import {readableID, uuid} from '../util/uuid';
 import {sleep} from '../util/wait';
 import {AccountService} from './account.service';
 import {AnalyticsService} from './analytics.service';
+import {BasicSessionInitService} from './basic-session-init.service';
 import {ChannelService} from './channel.service';
 import {ConfigService} from './config.service';
 import {AccountDatabaseService} from './crypto/account-database.service';
+import {BasicCastleService} from './crypto/basic-castle.service';
 import {CastleService} from './crypto/castle.service';
 import {PotassiumService} from './crypto/potassium.service';
 import {DatabaseService} from './database.service';
@@ -42,6 +52,164 @@ export class EphemeralSessionService extends SessionService {
 
 	/** @ignore */
 	private pingPongTimeouts: number = 0;
+
+	/** @ignore */
+	private createBurnerGroups (
+		members: IBurnerGroupMember[]
+	) : Map<IBurnerGroupMember, IBurnerGroup> {
+		const fullBurnerGroup = new Map<
+			IBurnerGroupMember,
+			Map<IBurnerGroupMember, IBurnerGroupMember>
+		>();
+
+		for (const alice of members) {
+			for (const bob of members) {
+				if (alice === bob || fullBurnerGroup.get(alice)?.has(bob)) {
+					continue;
+				}
+
+				const aliceGroup = getOrSetDefault(
+					fullBurnerGroup,
+					alice,
+					() => new Map<IBurnerGroupMember, IBurnerGroupMember>()
+				);
+
+				const bobGroup = getOrSetDefault(
+					fullBurnerGroup,
+					bob,
+					() => new Map<IBurnerGroupMember, IBurnerGroupMember>()
+				);
+
+				const id = `${readableID(
+					this.configService.cyphIDLength
+				)}${uuid(true, false)}`;
+
+				aliceGroup.set(bob, {
+					id,
+					name: bob.name
+				});
+
+				bobGroup.set(alice, {
+					id,
+					name: alice.name
+				});
+			}
+		}
+
+		return new Map<IBurnerGroupMember, IBurnerGroup>(
+			members.map(o => [
+				o,
+				{
+					members: [
+						{
+							id: readableID(this.configService.cyphIDLength),
+							isHost: true
+						},
+						...Array.from(fullBurnerGroup.get(o)?.values() || [])
+					]
+				}
+			])
+		);
+	}
+
+	/** @ignore */
+	private async initGroup (groupMemberNames: string[]) : Promise<void> {
+		const members: IBurnerGroupMember[] = groupMemberNames.map(name => ({
+			id: readableID(this.configService.secretLength),
+			name
+		}));
+
+		const burnerGroups = this.createBurnerGroups(members);
+
+		const sessionServices = members.map((member, i) => {
+			const burnerGroup = burnerGroups.get(member);
+
+			if (
+				!burnerGroup ||
+				!burnerGroup.members ||
+				burnerGroup.members.length < 1
+			) {
+				throw new Error('Burner group init failure.');
+			}
+
+			const masterSessionInit = new BasicSessionInitService();
+			masterSessionInit.child = true;
+			masterSessionInit.setID(member.id, undefined, true);
+
+			const masterSession = this.spawn(masterSessionInit);
+
+			const childSessionInit = new BasicSessionInitService();
+			childSessionInit.callType = this.sessionInitService.callType;
+			childSessionInit.child = true;
+			childSessionInit.setID(burnerGroup.members[0].id);
+
+			const childCastleService = new BasicCastleService(
+				this.accountDatabaseService,
+				this.potassiumService
+			);
+
+			const childSession = this.spawn(
+				childSessionInit,
+				childCastleService
+			);
+
+			childSession.remoteUsername.next(
+				member.name ||
+					this.stringsService.setParameters(
+						this.stringsService.burnerGroupDefaultMemberName,
+						{i: (i + 1).toString()}
+					)
+			);
+
+			const childSessionHandshake = childCastleService.setKey(
+				masterSession.getSymmetricKey()
+			);
+
+			return {
+				burnerGroup,
+				member,
+				childSession,
+				childSessionHandshake,
+				masterSession
+			};
+		});
+
+		this.setGroup(sessionServices.map(o => o.childSession));
+
+		/* TODO: Make configurable / support multiple members/links */
+		this.setID(sessionServices[0]?.member.id || '', undefined, true);
+
+		this.state.ephemeralStateInitialized.next(true);
+
+		await Promise.all<unknown>([
+			/* TODO: Properly handle channel events */
+			this.channelOnOpen(true),
+			Promise.resolve(
+				sessionServices[0]?.masterSession.channelConnected
+			).then(() => {
+				this.channelConnected.resolve();
+			}),
+			Promise.resolve(sessionServices[0]?.masterSession.connected).then(
+				() => {
+					this.state.isConnected.next(true);
+					this.connected.resolve();
+				}
+			),
+			...sessionServices.map(async o =>
+				Promise.all([
+					serialize(BurnerGroup, o.burnerGroup).then(async bytes =>
+						o.masterSession.send([
+							RpcEvents.burnerGroup,
+							{
+								bytes
+							}
+						])
+					),
+					o.childSessionHandshake
+				])
+			)
+		]);
+	}
 
 	/**
 	 * @ignore
@@ -105,6 +273,10 @@ export class EphemeralSessionService extends SessionService {
 
 	/** @inheritDoc */
 	protected async channelOnClose () : Promise<void> {
+		if (this.group && this.group.length > 1) {
+			return;
+		}
+
 		await Promise.all([
 			super.channelOnClose(),
 			/* If aborting before the cyph begins, block friend from trying to join */
@@ -129,7 +301,12 @@ export class EphemeralSessionService extends SessionService {
 			return;
 		}
 
-		this.pingPong();
+		if (
+			this.sessionInitService.child &&
+			!(await this.sessionInitService.headless)
+		) {
+			this.pingPong();
+		}
 
 		this.analyticsService.sendEvent('cyph', 'started');
 
@@ -153,11 +330,12 @@ export class EphemeralSessionService extends SessionService {
 
 	/** @inheritDoc */
 	public spawn (
-		sessionInitService: SessionInitService = this.sessionInitService.spawn()
+		sessionInitService: SessionInitService = this.sessionInitService.spawn(),
+		castleService: CastleService = this.castleService.spawn()
 	) : EphemeralSessionService {
 		return new EphemeralSessionService(
 			this.analyticsService,
-			this.castleService.spawn(),
+			castleService,
 			this.channelService.spawn(),
 			this.databaseService,
 			this.dialogService,
@@ -319,12 +497,26 @@ export class EphemeralSessionService extends SessionService {
 
 			/* true = yes; false = no; undefined = maybe */
 			this.state.startingNewCyph.next(
-				this.state.wasInitiatedByAPI.value || username ?
+				this.sessionInitService.child ||
+					this.state.wasInitiatedByAPI.value ||
+					username ?
 					undefined :
 				id.length < 1 ?
 					true :
 					false
 			);
+
+			if (
+				this.state.startingNewCyph.value &&
+				!this.sessionInitService.child
+			) {
+				await this.initGroup(
+					/* TODO: Make configurable */
+					[this.remoteUsername.value]
+				);
+
+				return;
+			}
 
 			if (username) {
 				this.remoteUsername.next(username);
@@ -337,33 +529,101 @@ export class EphemeralSessionService extends SessionService {
 
 			this.state.ephemeralStateInitialized.next(true);
 
-			const channelID =
+			const maybeChannelID =
 				this.state.startingNewCyph.value === false ? '' : uuid(true);
 
 			const getChannelID = async () =>
 				request({
-					data: {channelID, proFeatures: this.proFeatures},
+					data: {
+						channelID: maybeChannelID,
+						proFeatures: this.proFeatures
+					},
 					method: 'POST',
 					retries: 5,
 					url: `${env.baseUrl}channels/${this.state.cyphID.value}`
 				});
 
+			let channelID: string | undefined;
+
 			try {
 				await this.prepareForCallType();
 
-				this.init(
-					await (this.state.startingNewCyph.value === undefined ?
-						this.localStorageService.getOrSetDefault(
-							`${this.localStorageKey}:${this.state.cyphID.value}`,
-							StringProto,
-							getChannelID
-						) :
-						getChannelID())
+				channelID = await (this.state.startingNewCyph.value ===
+				undefined ?
+					this.localStorageService.getOrSetDefault(
+						`${this.localStorageKey}:${this.state.cyphID.value}`,
+						StringProto,
+						getChannelID
+					) :
+					getChannelID());
+			}
+			catch {}
+
+			if (channelID === undefined) {
+				this.cyphNotFound.resolve();
+				return;
+			}
+
+			await this.init(channelID);
+
+			if (this.sessionInitService.child) {
+				return;
+			}
+
+			let burnerGroup: IBurnerGroup | undefined;
+
+			try {
+				burnerGroup = await deserialize(
+					BurnerGroup,
+					(await this.one(RpcEvents.burnerGroup))[0]?.bytes ||
+						new Uint8Array(0)
 				);
 			}
-			catch {
-				this.cyphNotFound.resolve();
+			catch {}
+
+			if (
+				!burnerGroup ||
+				!burnerGroup.members ||
+				burnerGroup.members.length < 1
+			) {
+				await this.abortSetup();
+				return;
 			}
+
+			this.setGroup(
+				burnerGroup.members.map((member, i) => {
+					const sessionInit = new BasicSessionInitService();
+					sessionInit.callType = this.sessionInitService.callType;
+					sessionInit.child = true;
+					sessionInit.setID(member.id);
+
+					if (i === 0) {
+						const castleService = new BasicCastleService(
+							this.accountDatabaseService,
+							this.potassiumService
+						);
+
+						castleService
+							.setKey(this.getSymmetricKey())
+							.catch(() => {});
+
+						return this.spawn(sessionInit, castleService);
+					}
+
+					const session = this.spawn(sessionInit);
+
+					session.remoteUsername.next(
+						member.name ||
+							this.stringsService.setParameters(
+								this.stringsService
+									.burnerGroupDefaultMemberName,
+								{i: i.toString()}
+							)
+					);
+
+					return session;
+				})
+			);
 		})();
 	}
 }

@@ -20,7 +20,7 @@ export class UrlSessionInitService extends BaseProvider
 	public readonly ephemeral: boolean = true;
 
 	/** @inheritDoc */
-	public readonly headless: Promise<boolean> = Promise.resolve(false);
+	public readonly headless: Promise<boolean> = Promise.resolve(true);
 
 	/** @inheritDoc */
 	public readonly id: Promise<string>;

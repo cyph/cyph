@@ -554,6 +554,24 @@ message Appointment {
 	required string rsvpSessionSubID = 7;
 }
 
+/** Burner group initialization data. */
+message BurnerGroup {
+	/** @see BurnerGroupMember */
+	repeated BurnerGroupMember members = 1;
+}
+
+/** Burner group member. */
+message BurnerGroupMember {
+	/** ID. */
+	required string id = 1;
+
+	/** Indicates whether this is the group host. */
+	bool isHost = 2;
+
+	/** Name. */
+	string name = 3;
+}
+
 /** Calendar invite. */
 message CalendarInvite {
 	/** Days of the week for appointments. */

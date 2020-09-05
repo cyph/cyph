@@ -214,12 +214,6 @@ export abstract class SessionService extends BaseProvider
 
 	/** @see IChannelHandlers.onClose */
 	protected async channelOnClose () : Promise<void> {
-		if (this.group) {
-			throw new Error(
-				'Master channelOnClose should not be used in a group session.'
-			);
-		}
-
 		await this.destroy();
 	}
 
@@ -247,12 +241,6 @@ export abstract class SessionService extends BaseProvider
 	/** @see IChannelHandlers.onOpen */
 	/* eslint-disable-next-line @typescript-eslint/require-await */
 	protected async channelOnOpen (isAlice: boolean) : Promise<void> {
-		if (this.group) {
-			throw new Error(
-				'Master channelOnOpen should not be used in a group session.'
-			);
-		}
-
 		this.state.isAlice.next(isAlice);
 		this.opened.resolve();
 	}
@@ -396,6 +384,103 @@ export abstract class SessionService extends BaseProvider
 		}
 
 		await this.castleSendMessages(messages);
+	}
+
+	/**
+	 * Sets group, handling events on individual pairwise sessions
+	 * and performing equivalent behavior.
+	 */
+	protected setGroup (group: SessionService[]) : void {
+		if (group.length < 1) {
+			throw new Error('Cannot create empty group.');
+		}
+
+		this.group = group;
+
+		const confirmations = new Map<string, Set<SessionService>>();
+
+		for (const session of group) {
+			if (this.sessionInitService.ephemeral) {
+				session.on(RpcEvents.typing, newEvents => {
+					this.trigger(RpcEvents.typing, newEvents);
+				});
+			}
+
+			session.on(RpcEvents.text, newEvents => {
+				this.trigger(RpcEvents.text, newEvents);
+			});
+
+			session.on(RpcEvents.confirm, newEvents => {
+				this.trigger(
+					RpcEvents.confirm,
+					filterUndefined(
+						newEvents.map(o => {
+							if (!o.textConfirmation || !o.textConfirmation.id) {
+								return;
+							}
+
+							const confirmedSessions = getOrSetDefault(
+								confirmations,
+								o.textConfirmation.id,
+								() => new Set<SessionService>()
+							);
+
+							confirmedSessions.add(session);
+
+							if (confirmedSessions.size === group.length) {
+								confirmations.delete(o.textConfirmation.id);
+								return o;
+							}
+
+							return;
+						})
+					)
+				);
+			});
+		}
+
+		for (const {all, always, event} of <
+			{
+				all?: boolean;
+				always?: boolean;
+				event:
+					| 'beginChat'
+					| 'closed'
+					| 'connected'
+					| 'channelConnected'
+					| 'connectFailure'
+					| 'cyphNotFound'
+					| 'initialMessagesProcessed'
+					| 'opened'
+					| 'ready';
+			}[]
+		> [
+			{event: 'beginChat'},
+			{all: true, event: 'closed'},
+			{event: 'connected'},
+			{event: 'channelConnected'},
+			{event: 'connectFailure'},
+			{event: 'cyphNotFound'},
+			{all: true, event: 'initialMessagesProcessed'},
+			{all: true, event: 'opened'},
+			{all: true, event: 'ready'}
+		]) {
+			const callback = async () => this[event].resolve();
+
+			if (always) {
+				callback();
+				continue;
+			}
+
+			const promises = group.map(async session => session[event]);
+
+			if (all) {
+				Promise.all(promises).then(callback);
+			}
+			else {
+				Promise.race(promises).then(callback);
+			}
+		}
 	}
 
 	/** Trigger event. */
@@ -824,7 +909,10 @@ export abstract class SessionService extends BaseProvider
 	}
 
 	/** @inheritDoc */
-	public spawn (_SESSION_INIT_SERVICE?: SessionInitService) : SessionService {
+	public spawn (
+		_SESSION_INIT_SERVICE?: SessionInitService,
+		_CASTLE_SERVICE?: CastleService
+	) : SessionService {
 		throw new Error(
 			'Must provide an implementation of SessionService.spawn.'
 		);

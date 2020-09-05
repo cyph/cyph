@@ -9,10 +9,8 @@ import {
 	SessionMessageList,
 	StringProto
 } from '../proto';
-import {ISessionMessageData, RpcEvents} from '../session';
-import {filterUndefined} from '../util/filter';
+import {ISessionMessageData} from '../session';
 import {normalizeArray} from '../util/formatting';
-import {getOrSetDefault} from '../util/get-or-set-default';
 import {debugLog} from '../util/log';
 import {request} from '../util/request';
 import {uuid} from '../util/uuid';
@@ -89,9 +87,26 @@ export class AccountSessionService extends SessionService {
 
 	/** @inheritDoc */
 	protected async channelOnClose () : Promise<void> {
+		if (this.group) {
+			throw new Error(
+				'Master channelOnClose should not be used in a group session.'
+			);
+		}
+
 		if (this.ephemeralSubSession) {
 			await super.channelOnClose();
 		}
+	}
+
+	/** @inheritDoc */
+	protected async channelOnOpen (isAlice: boolean) : Promise<void> {
+		if (this.group) {
+			throw new Error(
+				'Master channelOnOpen should not be used in a group session.'
+			);
+		}
+
+		await super.channelOnOpen(isAlice);
 	}
 
 	/** @inheritDoc */
@@ -320,99 +335,9 @@ export class AccountSessionService extends SessionService {
 				})
 			);
 
-			if (group.length < 1) {
-				throw new Error('Cannot create empty group.');
-			}
-
-			this.group = group;
 			this.groupMetadata = {id: chat.id, usernames};
 
-			/*
-				Handle events on individual pairwise sessions and perform equivalent behavior.
-				Note: RpcEvents.typing is ignored because it's unsupported in accounts.
-			*/
-
-			const confirmations = new Map<string, Set<AccountSessionService>>();
-
-			for (const session of group) {
-				session.on(RpcEvents.text, newEvents => {
-					this.trigger(RpcEvents.text, newEvents);
-				});
-
-				session.on(RpcEvents.confirm, newEvents => {
-					this.trigger(
-						RpcEvents.confirm,
-						filterUndefined(
-							newEvents.map(o => {
-								if (
-									!o.textConfirmation ||
-									!o.textConfirmation.id
-								) {
-									return;
-								}
-
-								const confirmedSessions = getOrSetDefault(
-									confirmations,
-									o.textConfirmation.id,
-									() => new Set<AccountSessionService>()
-								);
-
-								confirmedSessions.add(session);
-
-								if (confirmedSessions.size === group.length) {
-									confirmations.delete(o.textConfirmation.id);
-									return o;
-								}
-
-								return;
-							})
-						)
-					);
-				});
-			}
-
-			for (const {all, always, event} of <
-				{
-					all?: boolean;
-					always?: boolean;
-					event:
-						| 'beginChat'
-						| 'closed'
-						| 'connected'
-						| 'channelConnected'
-						| 'connectFailure'
-						| 'cyphNotFound'
-						| 'initialMessagesProcessed'
-						| 'opened'
-						| 'ready';
-				}[]
-			> [
-				{event: 'beginChat'},
-				{all: true, event: 'closed'},
-				{event: 'connected'},
-				{event: 'channelConnected'},
-				{event: 'connectFailure'},
-				{event: 'cyphNotFound'},
-				{all: true, event: 'initialMessagesProcessed'},
-				{all: true, event: 'opened'},
-				{all: true, event: 'ready'}
-			]) {
-				const callback = async () => this[event].resolve();
-
-				if (always) {
-					callback();
-					continue;
-				}
-
-				const promises = group.map(async session => session[event]);
-
-				if (all) {
-					Promise.all(promises).then(callback);
-				}
-				else {
-					Promise.race(promises).then(callback);
-				}
-			}
+			this.setGroup(group);
 
 			this.remoteUser.resolve(undefined);
 			return;
@@ -544,11 +469,12 @@ export class AccountSessionService extends SessionService {
 
 	/** @inheritDoc */
 	public spawn (
-		sessionInitService: SessionInitService = this.sessionInitService.spawn()
+		sessionInitService: SessionInitService = this.sessionInitService.spawn(),
+		castleService: CastleService = this.castleService.spawn()
 	) : AccountSessionService {
 		return new AccountSessionService(
 			this.analyticsService,
-			this.castleService.spawn(),
+			castleService,
 			this.channelService.spawn(),
 			this.databaseService,
 			this.dialogService,
