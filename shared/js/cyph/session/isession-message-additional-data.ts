@@ -1,5 +1,4 @@
 import {
-	ISessionCapabilities,
 	ISessionChatState,
 	ISessionCommand,
 	ISessionText,
@@ -10,9 +9,6 @@ import {
 export interface ISessionMessageAdditionalData {
 	/** @see ISessionMessageData.bytes */
 	bytes?: Uint8Array;
-
-	/** @see ISessionMessageData.capabilities */
-	capabilities?: ISessionCapabilities;
 
 	/** @see ISessionMessageData.chatState */
 	chatState?: ISessionChatState;

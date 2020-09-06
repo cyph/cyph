@@ -353,7 +353,6 @@ export abstract class SessionService extends BaseProvider
 					data: {
 						author: this.localUsername,
 						bytes: additionalData.bytes,
-						capabilities: additionalData.capabilities,
 						chatState: additionalData.chatState,
 						command: additionalData.command,
 						id: additionalData.id || uuid(),

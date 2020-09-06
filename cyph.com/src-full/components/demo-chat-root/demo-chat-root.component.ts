@@ -10,7 +10,6 @@ import {FileTransferService} from '../../../cyph/services/file-transfer.service'
 import {P2PWebRTCService} from '../../../cyph/services/p2p-webrtc.service';
 import {P2PService} from '../../../cyph/services/p2p.service';
 import {ScrollService} from '../../../cyph/services/scroll.service';
-import {SessionCapabilitiesService} from '../../../cyph/services/session-capabilities.service';
 import {SessionInitService} from '../../../cyph/services/session-init.service';
 import {SessionService} from '../../../cyph/services/session.service';
 import {sleep} from '../../../cyph/util/wait';
@@ -34,7 +33,6 @@ import {LocalSessionService} from '../../local-session.service';
 		P2PService,
 		P2PWebRTCService,
 		ScrollService,
-		SessionCapabilitiesService,
 		SessionInitService,
 		{
 			provide: EnvService,

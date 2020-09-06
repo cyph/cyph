@@ -12,7 +12,6 @@ import {DialogService} from './dialog.service';
 import {EnvService} from './env.service';
 import {LocalStorageService} from './local-storage.service';
 import {P2PWebRTCService} from './p2p-webrtc.service';
-import {SessionCapabilitiesService} from './session-capabilities.service';
 import {SessionInitService} from './session-init.service';
 import {StringsService} from './strings.service';
 
@@ -245,10 +244,7 @@ export class P2PService extends BaseProvider {
 	public async init (remoteVideos: () => JQuery) : Promise<void> {
 		this.p2pWebRTCService.resolveRemoteVideos(remoteVideos);
 
-		this.isEnabled.next(
-			P2PWebRTCService.isSupported &&
-				(await this.sessionCapabilitiesService.capabilities.p2p)
-		);
+		this.isEnabled.next(P2PWebRTCService.isSupported);
 
 		this.ioSwitcher.devices.next(await this.p2pWebRTCService.getDevices());
 		this.subscriptions.push(
@@ -347,9 +343,6 @@ export class P2PService extends BaseProvider {
 
 		/** @ignore */
 		protected readonly p2pWebRTCService: P2PWebRTCService,
-
-		/** @ignore */
-		protected readonly sessionCapabilitiesService: SessionCapabilitiesService,
 
 		/** @ignore */
 		protected readonly sessionInitService: SessionInitService,

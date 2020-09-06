@@ -23,7 +23,6 @@ import {getOrSetDefault} from '../util/get-or-set-default';
 import {observableAll} from '../util/observable-all';
 import {resolvable} from '../util/wait';
 import {AccountContactsService} from './account-contacts.service';
-import {AccountSessionCapabilitiesService} from './account-session-capabilities.service';
 import {AccountSessionInitService} from './account-session-init.service';
 import {AccountSessionService} from './account-session.service';
 import {AnalyticsService} from './analytics.service';
@@ -40,7 +39,6 @@ import {LocalStorageService} from './local-storage.service';
 import {NotificationService} from './notification.service';
 import {P2PWebRTCService} from './p2p-webrtc.service';
 import {ScrollService} from './scroll.service';
-import {SessionCapabilitiesService} from './session-capabilities.service';
 import {SessionInitService} from './session-init.service';
 import {SessionService} from './session.service';
 import {StringsService} from './strings.service';
@@ -223,7 +221,6 @@ export class AccountChatService extends ChatService {
 			Promise.resolve();
 
 		if ('anonymousChannelID' in chat) {
-			this.accountSessionCapabilitiesService.initEphemeral();
 			await this.accountSessionService.setUser(chat);
 			this.resolvers.chatConnected.resolve();
 			await callRequestPromise;
@@ -349,7 +346,6 @@ export class AccountChatService extends ChatService {
 		potassiumService: PotassiumService,
 		scrollService: ScrollService,
 		sessionService: SessionService,
-		sessionCapabilitiesService: SessionCapabilitiesService,
 		sessionInitService: SessionInitService,
 		stringsService: StringsService,
 
@@ -366,10 +362,7 @@ export class AccountChatService extends ChatService {
 		private readonly accountSessionService: AccountSessionService,
 
 		/** @ignore */
-		private readonly accountSessionInitService: AccountSessionInitService,
-
-		/** @ignore */
-		private readonly accountSessionCapabilitiesService: AccountSessionCapabilitiesService
+		private readonly accountSessionInitService: AccountSessionInitService
 	) {
 		super(
 			analyticsService,
@@ -385,7 +378,6 @@ export class AccountChatService extends ChatService {
 			potassiumService,
 			scrollService,
 			sessionService,
-			sessionCapabilitiesService,
 			sessionInitService,
 			stringsService
 		);

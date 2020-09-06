@@ -69,7 +69,6 @@ import {LocalStorageService} from './local-storage.service';
 import {NotificationService} from './notification.service';
 import {P2PWebRTCService} from './p2p-webrtc.service';
 import {ScrollService} from './scroll.service';
-import {SessionCapabilitiesService} from './session-capabilities.service';
 import {SessionInitService} from './session-init.service';
 import {SessionService} from './session.service';
 import {StringsService} from './strings.service';
@@ -1459,9 +1458,6 @@ export class ChatService extends BaseProvider {
 		protected readonly sessionService: SessionService,
 
 		/** @ignore */
-		protected readonly sessionCapabilitiesService: SessionCapabilitiesService,
-
-		/** @ignore */
 		protected readonly sessionInitService: SessionInitService,
 
 		/** @ignore */
@@ -1674,10 +1670,6 @@ export class ChatService extends BaseProvider {
 			}
 
 			this.sessionService.channelConnected.then(async () => {
-				this.sessionCapabilitiesService.resolveWalkieTalkieMode(
-					this.walkieTalkieMode.value
-				);
-
 				debugLog(async () => ({
 					chat: {
 						futureMessages: await this.chat.futureMessages.getValue(),
@@ -1853,12 +1845,6 @@ export class ChatService extends BaseProvider {
 				}
 			})();
 		});
-
-		this.sessionCapabilitiesService.capabilities.walkieTalkieMode.then(
-			walkieTalkieMode => {
-				this.walkieTalkieMode.next(walkieTalkieMode);
-			}
-		);
 
 		/* For debugging */
 

@@ -11,7 +11,6 @@ import {FileTransferService} from '../services/file-transfer.service';
 import {P2PWebRTCService} from '../services/p2p-webrtc.service';
 import {P2PService} from '../services/p2p.service';
 import {ScrollService} from '../services/scroll.service';
-import {SessionCapabilitiesService} from '../services/session-capabilities.service';
 import {SessionWrapperService} from '../services/session-wrapper.service';
 import {SessionService} from '../services/session.service';
 
@@ -25,7 +24,6 @@ export const burnerChatProviders = [
 	P2PService,
 	P2PWebRTCService,
 	ScrollService,
-	SessionCapabilitiesService,
 	SessionWrapperService,
 	{
 		provide: CastleService,

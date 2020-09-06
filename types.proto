@@ -2104,15 +2104,6 @@ message Review {
 	required double timestamp = 3;
 }
 
-/** A set of supported capabilities. */
-message SessionCapabilities {
-	/** P2P networking / WebRTC. */
-	required bool p2p = 1;
-
-	/** Walkie talkie mode active by default. */
-	required bool walkieTalkieMode = 2;
-}
-
 /** Misc information about the state of a chat. */
 message SessionChatState {
 	/** Indicates whether this party is actively typing. */
@@ -2153,9 +2144,6 @@ message SessionMessageData {
 
 	/** Arbitrary bytes. */
 	bytes bytes = 4;
-
-	/** @see SessionCapabilities */
-	SessionCapabilities capabilities = 5;
 
 	/** @see SessionChatState */
 	SessionChatState chatState = 6;

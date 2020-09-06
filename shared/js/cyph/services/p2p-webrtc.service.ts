@@ -24,7 +24,6 @@ import {parse} from '../util/serialization';
 import {uuid} from '../util/uuid';
 import {resolvable, retryUntilSuccessful} from '../util/wait';
 import {AnalyticsService} from './analytics.service';
-import {SessionCapabilitiesService} from './session-capabilities.service';
 import {SessionService} from './session.service';
 import {StringsService} from './strings.service';
 
@@ -1158,8 +1157,6 @@ export class P2PWebRTCService extends BaseProvider
 	}
 
 	constructor (
-		sessionCapabilitiesService: SessionCapabilitiesService,
-
 		/** @ignore */
 		private readonly analyticsService: AnalyticsService,
 
@@ -1176,10 +1173,6 @@ export class P2PWebRTCService extends BaseProvider
 		);
 
 		this.sessionServices.then(sessionServices => {
-			sessionCapabilitiesService.resolveP2PSupport(
-				P2PWebRTCService.isSupported
-			);
-
 			if (!this.sessionService.group) {
 				this.sessionService.on(RpcEvents.p2pKill, async () =>
 					this.close(true)

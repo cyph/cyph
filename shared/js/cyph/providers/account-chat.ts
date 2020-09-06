@@ -1,7 +1,6 @@
 import {AccountChatEnvService} from '../services/account-chat-env.service';
 import {AccountChatService} from '../services/account-chat.service';
 import {AccountP2PService} from '../services/account-p2p.service';
-import {AccountSessionCapabilitiesService} from '../services/account-session-capabilities.service';
 import {AccountSessionInitService} from '../services/account-session-init.service';
 import {AccountSessionService} from '../services/account-session.service';
 import {ChannelService} from '../services/channel.service';
@@ -15,7 +14,6 @@ import {FileTransferService} from '../services/file-transfer.service';
 import {P2PWebRTCService} from '../services/p2p-webrtc.service';
 import {P2PService} from '../services/p2p.service';
 import {ScrollService} from '../services/scroll.service';
-import {SessionCapabilitiesService} from '../services/session-capabilities.service';
 import {SessionWrapperService} from '../services/session-wrapper.service';
 import {SessionInitService} from '../services/session-init.service';
 import {SessionService} from '../services/session.service';
@@ -25,7 +23,6 @@ export const accountChatProviders = [
 	AccountChatService,
 	AccountP2PService,
 	AccountSessionService,
-	AccountSessionCapabilitiesService,
 	AccountSessionInitService,
 	ChannelService,
 	ChatMessageService,
@@ -53,10 +50,6 @@ export const accountChatProviders = [
 	{
 		provide: SessionService,
 		useExisting: AccountSessionService
-	},
-	{
-		provide: SessionCapabilitiesService,
-		useExisting: AccountSessionCapabilitiesService
 	},
 	{
 		provide: SessionInitService,

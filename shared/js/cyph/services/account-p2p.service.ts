@@ -21,7 +21,6 @@ import {LocalStorageService} from './local-storage.service';
 import {NotificationService} from './notification.service';
 import {P2PWebRTCService} from './p2p-webrtc.service';
 import {P2PService} from './p2p.service';
-import {SessionCapabilitiesService} from './session-capabilities.service';
 import {SessionInitService} from './session-init.service';
 import {StringsService} from './strings.service';
 
@@ -258,7 +257,6 @@ export class AccountP2PService extends P2PService {
 		envService: EnvService,
 		localStorageService: LocalStorageService,
 		p2pWebRTCService: P2PWebRTCService,
-		sessionCapabilitiesService: SessionCapabilitiesService,
 		sessionInitService: SessionInitService,
 		stringsService: StringsService,
 
@@ -295,7 +293,6 @@ export class AccountP2PService extends P2PService {
 			envService,
 			localStorageService,
 			p2pWebRTCService,
-			sessionCapabilitiesService,
 			sessionInitService,
 			stringsService
 		);
