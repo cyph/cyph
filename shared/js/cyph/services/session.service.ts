@@ -429,7 +429,9 @@ export abstract class SessionService extends BaseProvider
 
 			for (const rpcEvent of [
 				RpcEvents.text,
-				...(this.sessionInitService.ephemeral ? [RpcEvents.typing] : [])
+				...(this.sessionInitService.ephemeral ?
+					[RpcEvents.p2pRequest, RpcEvents.typing] :
+					[])
 			]) {
 				session.on(rpcEvent, newEvents => {
 					this.trigger(rpcEvent, newEvents);
