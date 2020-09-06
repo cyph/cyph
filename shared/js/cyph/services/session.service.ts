@@ -399,16 +399,6 @@ export abstract class SessionService extends BaseProvider
 		const confirmations = new Map<string, Set<SessionService>>();
 
 		for (const session of group) {
-			if (this.sessionInitService.ephemeral) {
-				session.on(RpcEvents.typing, newEvents => {
-					this.trigger(RpcEvents.typing, newEvents);
-				});
-			}
-
-			session.on(RpcEvents.text, newEvents => {
-				this.trigger(RpcEvents.text, newEvents);
-			});
-
 			session.on(RpcEvents.confirm, newEvents => {
 				this.trigger(
 					RpcEvents.confirm,
@@ -436,6 +426,15 @@ export abstract class SessionService extends BaseProvider
 					)
 				);
 			});
+
+			for (const rpcEvent of [
+				RpcEvents.text,
+				...(this.sessionInitService.ephemeral ? [RpcEvents.typing] : [])
+			]) {
+				session.on(rpcEvent, newEvents => {
+					this.trigger(rpcEvent, newEvents);
+				});
+			}
 		}
 
 		for (const {all, always, event} of <
