@@ -41,21 +41,22 @@ export class BasicCastleService extends CastleService {
 		const localUser = new AnonymousLocalUser(
 			this.potassiumService,
 			this.handshakeState,
-			sessionService.state.sharedSecret.value
+			sessionService.sharedSecret
 		);
 
-		const remoteUser = sessionService.state.sharedSecret.value ?
-			new AnonymousRemoteUser(
-				this.potassiumService,
-				this.handshakeState,
-				sessionService.state.sharedSecret.value,
-				sessionService.remoteUsername
-			) :
-			new RegisteredRemoteUser(
-				this.accountDatabaseService,
-				false,
-				sessionService.remoteUsername
-			);
+		const remoteUser =
+			sessionService.sharedSecret !== undefined ?
+				new AnonymousRemoteUser(
+					this.potassiumService,
+					this.handshakeState,
+					sessionService.sharedSecret,
+					sessionService.remoteUsername
+				) :
+				new RegisteredRemoteUser(
+					this.accountDatabaseService,
+					false,
+					sessionService.remoteUsername
+				);
 
 		await this.handshakeState.initialSecret
 			.watch()

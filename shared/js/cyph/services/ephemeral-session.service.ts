@@ -176,35 +176,41 @@ export class EphemeralSessionService extends SessionService {
 
 		this.setGroup(sessionServices.map(o => o.childSession));
 
-		/* TODO: Make configurable / support multiple members/links */
-		this.setID(sessionServices[0]?.member.id || '', undefined, true);
+		this.setIDs(
+			sessionServices.map(o => o.member.id),
+			undefined,
+			true
+		);
 
 		this.state.ephemeralStateInitialized.next(true);
 
 		await Promise.all<unknown>([
-			/* TODO: Properly handle channel events */
 			this.channelOnOpen(true).then(async () => {
 				this.channelService.initialMessagesProcessed.resolve();
-				await sessionServices[0]?.masterSession.channelConnected;
+				await Promise.all(
+					sessionServices.map(
+						async o => o.masterSession.channelConnected
+					)
+				);
 				await this.channelOnConnect();
 			}),
-			Promise.resolve(sessionServices[0]?.masterSession.connected).then(
-				async () => {
-					const castleService = new BasicCastleService(
-						this.accountDatabaseService,
-						this.potassiumService
-					);
+			Promise.race(
+				sessionServices.map(async o => o.masterSession.connected)
+			).then(async () => {
+				const castleService = new BasicCastleService(
+					this.accountDatabaseService,
+					this.potassiumService
+				);
 
-					await castleService.setKey(
-						new Uint8Array(
-							await this.potassiumService.secretBox.keyBytes
-						)
-					);
-					await castleService.init(this);
+				await castleService.setKey(
+					new Uint8Array(
+						await this.potassiumService.secretBox.keyBytes
+					)
+				);
+				await castleService.init(this);
 
-					await this.castleService.setPairwiseSession(castleService);
-				}
-			),
+				await this.castleService.setPairwiseSession(castleService);
+			}),
 			...sessionServices.map(async o =>
 				Promise.all([
 					serialize(BurnerGroup, o.burnerGroup).then(async bytes =>
@@ -246,39 +252,51 @@ export class EphemeralSessionService extends SessionService {
 	}
 
 	/** @ignore */
-	private setID (
-		id: string,
+	private setIDs (
+		ids: string[],
 		salt: string | undefined,
 		headless: boolean
 	) : void {
-		if (
-			/* Too short */
-			id.length < this.configService.secretLength ||
-			/* Contains invalid character(s) */
-			!id
-				.split('')
-				.reduce(
-					(isValid: boolean, c: string) : boolean =>
-						isValid &&
-						this.configService.readableIDCharacters.indexOf(c) > -1,
-					true
-				)
-		) {
-			id = headless ?
-				`${readableID(this.configService.cyphIDLength)}${uuid(
-					true,
-					false
-				)}` :
-				readableID(this.configService.secretLength);
+		const cyphIDs: string[] = [];
+		const sharedSecrets: string[] = [];
+
+		for (let i = 0; i < ids.length; ++i) {
+			let id = ids[i];
+			const oldSharedSecret: string | undefined = this.state.sharedSecrets
+				.value[i];
+
+			if (
+				/* Too short */
+				id.length < this.configService.secretLength ||
+				/* Contains invalid character(s) */
+				!id
+					.split('')
+					.reduce(
+						(isValid: boolean, c: string) : boolean =>
+							isValid &&
+							this.configService.readableIDCharacters.indexOf(c) >
+								-1,
+						true
+					)
+			) {
+				id = headless ?
+					`${readableID(this.configService.cyphIDLength)}${uuid(
+						true,
+						false
+					)}` :
+					readableID(this.configService.secretLength);
+			}
+
+			cyphIDs.push(id.substring(0, this.configService.cyphIDLength));
+
+			sharedSecrets.push(
+				(oldSharedSecret !== undefined ? oldSharedSecret : id) +
+					(salt ? ` ${salt}` : '')
+			);
 		}
 
-		this.state.cyphID.next(
-			id.substring(0, this.configService.cyphIDLength)
-		);
-
-		this.state.sharedSecret.next(
-			(this.state.sharedSecret.value || id) + (salt ? ` ${salt}` : '')
-		);
+		this.state.cyphIDs.next(cyphIDs);
+		this.state.sharedSecrets.next(sharedSecrets);
 	}
 
 	/** @inheritDoc */
@@ -290,15 +308,17 @@ export class EphemeralSessionService extends SessionService {
 		await Promise.all([
 			super.channelOnClose(),
 			/* If aborting before the cyph begins, block friend from trying to join */
-			request({
-				method: 'POST',
-				url: `${env.baseUrl}channels/${this.state.cyphID.value}`
-			}).catch(() => {}),
-			this.localStorageService
-				.removeItem(
-					`${this.localStorageKey}:${this.state.cyphID.value}`
-				)
-				.catch(() => {})
+			...(this.cyphID ?
+				[
+					request({
+						method: 'POST',
+						url: `${env.baseUrl}channels/${this.cyphID}`
+					}).catch(() => {}),
+					this.localStorageService
+						.removeItem(`${this.localStorageKey}:${this.cyphID}`)
+						.catch(() => {})
+				] :
+				[])
 		]);
 	}
 
@@ -530,11 +550,11 @@ export class EphemeralSessionService extends SessionService {
 
 			if (username) {
 				this.remoteUsername.next(username);
-				this.state.cyphID.next(id);
-				this.state.sharedSecret.next(undefined);
+				this.state.cyphIDs.next([id]);
+				this.state.sharedSecrets.next([]);
 			}
 			else {
-				this.setID(id, salt, headless);
+				this.setIDs([id], salt, headless);
 			}
 
 			this.state.ephemeralStateInitialized.next(true);
@@ -550,18 +570,22 @@ export class EphemeralSessionService extends SessionService {
 					},
 					method: 'POST',
 					retries: 5,
-					url: `${env.baseUrl}channels/${this.state.cyphID.value}`
+					url: `${env.baseUrl}channels/${this.cyphID}`
 				});
 
 			let channelID: string | undefined;
 
 			try {
+				if (!this.cyphID) {
+					throw new Error('No session ID.');
+				}
+
 				await this.prepareForCallType();
 
 				channelID = await (this.state.startingNewCyph.value ===
 				undefined ?
 					this.localStorageService.getOrSetDefault(
-						`${this.localStorageKey}:${this.state.cyphID.value}`,
+						`${this.localStorageKey}:${this.cyphID}`,
 						StringProto,
 						getChannelID
 					) :

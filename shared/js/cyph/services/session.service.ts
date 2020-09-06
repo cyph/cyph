@@ -173,12 +173,12 @@ export abstract class SessionService extends BaseProvider
 
 	/** @inheritDoc */
 	public readonly state = {
-		cyphID: new BehaviorSubject(''),
+		cyphIDs: new BehaviorSubject<string[]>([]),
 		ephemeralStateInitialized: new BehaviorSubject<boolean>(false),
 		isAlice: new BehaviorSubject<boolean>(false),
 		isAlive: new BehaviorSubject<boolean>(true),
 		isConnected: new BehaviorSubject<boolean>(false),
-		sharedSecret: new BehaviorSubject<string | undefined>(undefined),
+		sharedSecrets: new BehaviorSubject<string[]>([]),
 		startingNewCyph: new BehaviorSubject<boolean | undefined>(false),
 		wasInitiatedByAPI: new BehaviorSubject<boolean>(false)
 	};
@@ -194,7 +194,7 @@ export abstract class SessionService extends BaseProvider
 
 	/** Aborts session handshake. */
 	protected async abortSetup () : Promise<void> {
-		this.state.sharedSecret.next(undefined);
+		this.state.sharedSecrets.next([]);
 		this.errorService.log('CYPH AUTHENTICATION FAILURE');
 		this.connectFailure.resolve();
 	}
@@ -517,7 +517,7 @@ export abstract class SessionService extends BaseProvider
 
 			case CastleEvents.connect:
 				this.connected.then(async () => {
-					this.state.sharedSecret.next(undefined);
+					this.state.sharedSecrets.next([]);
 
 					if (await this.sessionInitService.headless) {
 						return;
@@ -604,6 +604,13 @@ export abstract class SessionService extends BaseProvider
 		}
 
 		this.channelService.close();
+	}
+
+	/** @inheritDoc */
+	public get cyphID () : string {
+		return this.state.cyphIDs.value.length === 1 ?
+			this.state.cyphIDs.value[0] || '' :
+			'';
 	}
 
 	/** @inheritDoc */
@@ -915,6 +922,13 @@ export abstract class SessionService extends BaseProvider
 			confirmPromise: this.plaintextSendHandler(newMessages),
 			newMessages
 		};
+	}
+
+	/** @inheritDoc */
+	public get sharedSecret () : string | undefined {
+		return this.state.sharedSecrets.value.length === 1 ?
+			this.state.sharedSecrets.value[0] :
+			undefined;
 	}
 
 	/** @inheritDoc */

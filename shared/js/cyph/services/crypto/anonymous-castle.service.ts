@@ -23,27 +23,28 @@ export class AnonymousCastleService extends CastleService {
 		const handshakeState = await sessionService.handshakeState(
 			undefined,
 			undefined,
-			sessionService.state.sharedSecret.value ? undefined : true
+			sessionService.sharedSecret !== undefined ? undefined : true
 		);
 
 		const localUser = new AnonymousLocalUser(
 			this.potassiumService,
 			handshakeState,
-			sessionService.state.sharedSecret.value
+			sessionService.sharedSecret
 		);
 
-		const remoteUser = sessionService.state.sharedSecret.value ?
-			new AnonymousRemoteUser(
-				this.potassiumService,
-				handshakeState,
-				sessionService.state.sharedSecret.value,
-				sessionService.remoteUsername
-			) :
-			new RegisteredRemoteUser(
-				this.accountDatabaseService,
-				false,
-				sessionService.remoteUsername
-			);
+		const remoteUser =
+			sessionService.sharedSecret !== undefined ?
+				new AnonymousRemoteUser(
+					this.potassiumService,
+					handshakeState,
+					sessionService.sharedSecret,
+					sessionService.remoteUsername
+				) :
+				new RegisteredRemoteUser(
+					this.accountDatabaseService,
+					false,
+					sessionService.remoteUsername
+				);
 
 		this.pairwiseSession.resolve(
 			new PairwiseSessionLite(

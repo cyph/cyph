@@ -22,7 +22,6 @@ import {SessionService} from '../../services/session.service';
 import {StringsService} from '../../services/strings.service';
 import {Timer} from '../../timer';
 import {copyToClipboard} from '../../util/clipboard';
-import {filterUndefinedOperator} from '../../util/filter';
 import {lockTryOnce} from '../../util/lock';
 import {sleep, waitForIterable} from '../../util/wait';
 import {LinkConnectionEmailComponent} from '../link-connection-email';
@@ -149,13 +148,12 @@ export class LinkConnectionComponent extends BaseProvider
 
 		let isWaiting = true;
 
-		const sharedSecret = (await this.sessionService.state.sharedSecret
+		const sharedSecret = (await this.sessionService.state.sharedSecrets
 			.pipe(
-				filterUndefinedOperator(),
-				filter(s => s.length > 0),
+				filter(arr => arr.length > 0 && arr[0].length > 0),
 				take(1)
 			)
-			.toPromise()).split(' ')[0];
+			.toPromise())[0].split(' ')[0];
 
 		this.linkConstant = this.newDeviceActivation ?
 			sharedSecret :

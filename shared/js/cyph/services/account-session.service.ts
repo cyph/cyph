@@ -203,9 +203,9 @@ export class AccountSessionService extends SessionService {
 				pseudoAccount: false,
 				username: undefined
 			});
-			this.state.sharedSecret.next(
+			this.state.sharedSecrets.next([
 				`${this.accountDatabaseService.currentUser.value.user.username}/${chat.anonymousChannelID}`
-			);
+			]);
 			this.state.startingNewCyph.next(chat.passive ? undefined : true);
 			this.state.ephemeralStateInitialized.next(true);
 

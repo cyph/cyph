@@ -64,6 +64,9 @@ export interface ISessionService {
 	/** Resolves when this session's connection fails. */
 	readonly connectFailure: IResolvable<true>;
 
+	/** Returns session ID, if only one is set; otherwise returns empty string. */
+	readonly cyphID: string;
+
 	/** Resolves when this session 404s. */
 	readonly cyphNotFound: IResolvable<true>;
 
@@ -106,14 +109,17 @@ export interface ISessionService {
 	/** Remote username (e.g. "friend" or "alice"). */
 	readonly remoteUsername: BehaviorSubject<string>;
 
+	/** Returns session shared secret, if only one is set. */
+	readonly sharedSecret: string | undefined;
+
 	/** State of the cyph (referenced by UI). */
 	readonly state: {
-		cyphID: BehaviorSubject<string>;
+		cyphIDs: BehaviorSubject<string[]>;
 		ephemeralStateInitialized: BehaviorSubject<boolean>;
 		isAlice: BehaviorSubject<boolean>;
 		isAlive: BehaviorSubject<boolean>;
 		isConnected: BehaviorSubject<boolean>;
-		sharedSecret: BehaviorSubject<string | undefined>;
+		sharedSecrets: BehaviorSubject<string[]>;
 		startingNewCyph: BehaviorSubject<boolean | undefined>;
 		wasInitiatedByAPI: BehaviorSubject<boolean>;
 	};
