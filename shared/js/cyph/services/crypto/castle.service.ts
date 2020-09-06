@@ -40,6 +40,17 @@ export class CastleService extends BaseProvider implements ICastle {
 		return (await this.pairwiseSession).send(plaintext, timestamp);
 	}
 
+	/** Forcibly sets PairwiseSession, rather than allowing init to handle that. */
+	public async setPairwiseSession (
+		pairwiseSession: CastleService | IPairwiseSession
+	) : Promise<void> {
+		this.pairwiseSession.resolve(
+			pairwiseSession instanceof CastleService ?
+				await pairwiseSession.pairwiseSession :
+				pairwiseSession
+		);
+	}
+
 	/** Creates and returns a new instance. */
 	public spawn () : CastleService {
 		return new CastleService();

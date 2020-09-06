@@ -183,16 +183,26 @@ export class EphemeralSessionService extends SessionService {
 
 		await Promise.all<unknown>([
 			/* TODO: Properly handle channel events */
-			this.channelOnOpen(true),
-			Promise.resolve(
-				sessionServices[0]?.masterSession.channelConnected
-			).then(() => {
-				this.channelConnected.resolve();
+			this.channelOnOpen(true).then(async () => {
+				this.channelService.initialMessagesProcessed.resolve();
+				await sessionServices[0]?.masterSession.channelConnected;
+				await this.channelOnConnect();
 			}),
 			Promise.resolve(sessionServices[0]?.masterSession.connected).then(
-				() => {
-					this.state.isConnected.next(true);
-					this.connected.resolve();
+				async () => {
+					const castleService = new BasicCastleService(
+						this.accountDatabaseService,
+						this.potassiumService
+					);
+
+					await castleService.setKey(
+						new Uint8Array(
+							await this.potassiumService.secretBox.keyBytes
+						)
+					);
+					await castleService.init(this);
+
+					await this.castleService.setPairwiseSession(castleService);
 				}
 			),
 			...sessionServices.map(async o =>
@@ -605,6 +615,7 @@ export class EphemeralSessionService extends SessionService {
 
 						castleService
 							.setKey(this.getSymmetricKey())
+							.then(async () => castleService.init(this))
 							.catch(() => {});
 
 						return this.spawn(sessionInit, castleService);
