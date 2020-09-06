@@ -364,7 +364,7 @@ export class P2PWebRTCService extends BaseProvider
 	/** @inheritDoc */
 	public async close (incomingP2PKill: boolean = false) : Promise<void> {
 		const p2pKillPromise = Promise.all([
-			incomingP2PKill ?
+			incomingP2PKill || this.sessionService.group ?
 				Promise.resolve() :
 				this.sessionService
 					.send([RpcEvents.p2pKill, {}])
