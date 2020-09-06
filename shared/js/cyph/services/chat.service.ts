@@ -1669,7 +1669,7 @@ export class ChatService extends BaseProvider {
 				});
 			}
 
-			this.sessionService.channelConnected.then(async () => {
+			this.sessionService.childChannelsConnected.then(async () => {
 				debugLog(async () => ({
 					chat: {
 						futureMessages: await this.chat.futureMessages.getValue(),

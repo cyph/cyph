@@ -345,6 +345,12 @@ export class AccountSessionService extends SessionService {
 
 		/* Pairwise session init */
 
+		this.channelConnected
+			.then(() => {
+				this.childChannelsConnected.resolve();
+			})
+			.catch(() => {});
+
 		(async () => {
 			const {
 				castleSessionID

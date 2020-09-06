@@ -110,6 +110,9 @@ export abstract class SessionService extends BaseProvider
 	> = new BehaviorSubject<string | undefined>(undefined);
 
 	/** @inheritDoc */
+	public readonly childChannelsConnected = resolvable<true>(true);
+
+	/** @inheritDoc */
 	public readonly closed = resolvable<true>(true);
 
 	/** @inheritDoc */
@@ -481,6 +484,12 @@ export abstract class SessionService extends BaseProvider
 				Promise.race(promises).then(callback);
 			}
 		}
+
+		Promise.all(group.map(async o => o.channelConnected))
+			.then(() => {
+				this.childChannelsConnected.resolve();
+			})
+			.catch(() => {});
 	}
 
 	/** Trigger event. */

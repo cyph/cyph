@@ -49,6 +49,12 @@ export interface ISessionService {
 	/** Target username of outgoing Burner chat request, if applicable. */
 	readonly chatRequestUsername: BehaviorSubject<string | undefined>;
 
+	/**
+	 * Resolves when this session's channel is connected,
+	 * as well as any child channels if applicable.
+	 */
+	readonly childChannelsConnected: IResolvable<true>;
+
 	/** Resolves when this session is closed. */
 	readonly closed: IResolvable<true>;
 
