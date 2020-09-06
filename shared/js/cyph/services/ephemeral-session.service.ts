@@ -102,7 +102,7 @@ export class EphemeralSessionService extends SessionService {
 				{
 					members: [
 						{
-							id: readableID(this.configService.cyphIDLength),
+							id: readableID(this.configService.secretLength),
 							isHost: true
 						},
 						...Array.from(fullBurnerGroup.get(o)?.values() || [])
@@ -613,12 +613,17 @@ export class EphemeralSessionService extends SessionService {
 							this.potassiumService
 						);
 
+						const hostSession = this.spawn(
+							sessionInit,
+							castleService
+						);
+
 						castleService
 							.setKey(this.getSymmetricKey())
-							.then(async () => castleService.init(this))
+							.then(async () => castleService.init(hostSession))
 							.catch(() => {});
 
-						return this.spawn(sessionInit, castleService);
+						return hostSession;
 					}
 
 					const session = this.spawn(sessionInit);
