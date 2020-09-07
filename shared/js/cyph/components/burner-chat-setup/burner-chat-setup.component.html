@@ -1,1 +1,88 @@
-<div>BurnerChatSetup</div>
+<div
+	fxFlex
+	fxFlexFill
+	fxLayout="column"
+	fxLayoutAlign="center center"
+	fxLayoutGap="32px"
+>
+	<ng-container [ngSwitch]="state | await">
+		<ng-container *ngSwitchCase="states.initial">
+			<h1 cyphTranslate>How many others will join this session?</h1>
+
+			<div fxLayout="row" fxLayoutGap="16px">
+				<button
+					mat-raised-button
+					color="accent"
+					(click)="setGroupMemberNames(false)"
+				>
+					<mat-icon>person</mat-icon>
+					&nbsp;
+					<span cyphTranslate>
+						Just One
+					</span>
+				</button>
+
+				<button
+					mat-raised-button
+					color="primary"
+					(click)="state.next(this.states.selectingGroupMembers)"
+				>
+					<mat-icon>group</mat-icon>
+					&nbsp;
+					<span cyphTranslate>
+						More than One
+					</span>
+				</button>
+			</div>
+		</ng-container>
+
+		<ng-container *ngSwitchCase="states.selectingGroupMembers">
+			<h1 cyphTranslate>Enter the names of your group members:</h1>
+
+			<div>
+				<mat-form-field fxFlex="300px">
+					<mat-chip-list
+						#chipList
+						cyphTranslate
+						aria-label="Group Members"
+					>
+						<mat-chip
+							[removable]="true"
+							[selectable]="true"
+							[value]="groupMemberName"
+							(removed)="removeFromGroup($event.chip.value)"
+							*ngFor="
+								let groupMemberName of groupMemberNames | await;
+								trackBy: trackByIndex
+							"
+						>
+							{{ groupMemberName }}
+							<mat-icon matChipRemove>cancel</mat-icon>
+						</mat-chip>
+						<input
+							#chipListInput
+							cyphTranslate
+							placeholder="Add group member..."
+							[matChipInputFor]="chipList"
+							(matChipInputTokenEnd)="
+								addToGroup($event.value);
+								chipListInput.value = ''
+							"
+						/>
+					</mat-chip-list>
+				</mat-form-field>
+			</div>
+
+			<div fxLayout="row" fxLayoutGap="16px">
+				<button mat-button (click)="state.next(this.states.initial)">
+					{{ stringsService.cancel }}
+				</button>
+				<button mat-button (click)="setGroupMemberNames()">
+					{{ stringsService.ok }}
+				</button>
+			</div>
+		</ng-container>
+
+		<ng-container *ngSwitchCase="states.complete"></ng-container>
+	</ng-container>
+</div>

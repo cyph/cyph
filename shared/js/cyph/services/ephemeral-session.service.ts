@@ -429,11 +429,6 @@ export class EphemeralSessionService extends SessionService {
 			stringsService
 		);
 
-		/* TODO: Get this information in UI, rather than hardcoding it */
-		this.sessionInitService.ephemeralGroupMemberNames.resolve([
-			this.remoteUsername.value
-		]);
-
 		(async () => {
 			this.accountService.autoUpdate.next(false);
 
