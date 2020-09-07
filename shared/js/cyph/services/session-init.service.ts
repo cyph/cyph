@@ -15,12 +15,15 @@ export class SessionInitService extends BaseProvider {
 	public child: boolean = false;
 
 	/** Indicates whether or not this is an ephemeral session. */
-	public readonly ephemeral: boolean = true;
+	public readonly ephemeral: boolean = false;
 
 	/** Names of all members of the ephemeral group (if applicable). */
 	public readonly ephemeralGroupMemberNames: IResolvable<
 		string[]
 	> = resolvable();
+
+	/** Indicates whether or not ephemeral groups are allowed. */
+	public readonly ephemeralGroupsAllowed: boolean = false;
 
 	/** Indicates whether or not this is a headless/automated session. */
 	public readonly headless: Promise<boolean> = Promise.resolve(false);

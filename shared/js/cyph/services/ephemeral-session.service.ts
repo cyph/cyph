@@ -545,7 +545,7 @@ export class EphemeralSessionService extends SessionService {
 				this.state.startingNewCyph.value &&
 				!this.sessionInitService.child;
 
-			if (isAliceRoot) {
+			if (isAliceRoot && this.sessionInitService.ephemeralGroupsAllowed) {
 				const groupMemberNames = await this.sessionInitService
 					.ephemeralGroupMemberNames;
 
@@ -607,13 +607,17 @@ export class EphemeralSessionService extends SessionService {
 
 			await this.init(channelID);
 
-			if (isAliceRoot) {
+			if (
+				isAliceRoot ||
+				!this.sessionInitService.ephemeralGroupsAllowed ||
+				this.sessionInitService.child
+			) {
 				this.childChannelsConnected.resolve();
-				await this.send([RpcEvents.burnerGroup, {}]);
-				return;
-			}
 
-			if (this.sessionInitService.child) {
+				if (isAliceRoot) {
+					await this.send([RpcEvents.burnerGroup, {}]);
+				}
+
 				return;
 			}
 

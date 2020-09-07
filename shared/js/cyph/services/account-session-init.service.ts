@@ -25,6 +25,9 @@ export class AccountSessionInitService extends BaseProvider
 	> = resolvable();
 
 	/** @inheritDoc */
+	public readonly ephemeralGroupsAllowed: boolean = true;
+
+	/** @inheritDoc */
 	public readonly headless: Promise<boolean> = Promise.resolve(false);
 
 	/** @inheritDoc */
