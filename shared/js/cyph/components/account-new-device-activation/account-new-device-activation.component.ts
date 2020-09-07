@@ -109,6 +109,8 @@ export class AccountNewDeviceActivationComponent extends BaseProvider
 			return;
 		}
 
+		this.basicSessionInitService.ephemeralGroupsAllowed = false;
+
 		this.basicSessionInitService.setID(
 			this.sessionData.bobSessionID ? this.sessionData.bobSessionID : '',
 			undefined,

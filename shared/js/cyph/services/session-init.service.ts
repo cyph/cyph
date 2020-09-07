@@ -23,7 +23,7 @@ export class SessionInitService extends BaseProvider {
 	> = resolvable();
 
 	/** Indicates whether or not ephemeral groups are allowed. */
-	public readonly ephemeralGroupsAllowed: boolean = false;
+	public ephemeralGroupsAllowed: boolean = true;
 
 	/** Indicates whether or not this is a headless/automated session. */
 	public readonly headless: Promise<boolean> = Promise.resolve(false);

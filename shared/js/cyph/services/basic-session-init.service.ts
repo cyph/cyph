@@ -34,7 +34,7 @@ export class BasicSessionInitService extends BaseProvider
 	> = resolvable();
 
 	/** @inheritDoc */
-	public readonly ephemeralGroupsAllowed: boolean = false;
+	public ephemeralGroupsAllowed: boolean = true;
 
 	/** @inheritDoc */
 	public readonly headless: Promise<boolean> = this._HEADLESS;
