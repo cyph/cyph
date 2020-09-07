@@ -304,7 +304,6 @@ var config = struct {
 	map[string]Plan{
 		"0-0": Plan{
 			ProFeatures: map[string]bool{
-				"api":            true,
 				"disableP2P":     true,
 				"modestBranding": true,
 				"nativeCrypto":   true,
@@ -317,7 +316,6 @@ var config = struct {
 		"3-3": Plan{
 			AccountsPlan: "MonthlyTelehealth",
 			ProFeatures: map[string]bool{
-				"api":            false,
 				"disableP2P":     false,
 				"modestBranding": false,
 				"nativeCrypto":   false,
@@ -330,7 +328,6 @@ var config = struct {
 		"3-4": Plan{
 			AccountsPlan: "AnnualTelehealth",
 			ProFeatures: map[string]bool{
-				"api":            false,
 				"disableP2P":     false,
 				"modestBranding": false,
 				"nativeCrypto":   false,
@@ -343,7 +340,6 @@ var config = struct {
 		"3-5": Plan{
 			AccountsPlan: "MonthlyTelehealth",
 			ProFeatures: map[string]bool{
-				"api":            false,
 				"disableP2P":     false,
 				"modestBranding": false,
 				"nativeCrypto":   false,
@@ -356,7 +352,6 @@ var config = struct {
 		"3-6": Plan{
 			AccountsPlan: "AnnualTelehealth",
 			ProFeatures: map[string]bool{
-				"api":            false,
 				"disableP2P":     false,
 				"modestBranding": false,
 				"nativeCrypto":   false,
@@ -369,7 +364,6 @@ var config = struct {
 		"3-7": Plan{
 			AccountsPlan: "MonthlyTelehealth",
 			ProFeatures: map[string]bool{
-				"api":            false,
 				"disableP2P":     false,
 				"modestBranding": false,
 				"nativeCrypto":   false,
@@ -382,7 +376,6 @@ var config = struct {
 		"3-8": Plan{
 			AccountsPlan: "AnnualTelehealth",
 			ProFeatures: map[string]bool{
-				"api":            false,
 				"disableP2P":     false,
 				"modestBranding": false,
 				"nativeCrypto":   false,
@@ -395,7 +388,6 @@ var config = struct {
 		"3-9": Plan{
 			AccountsPlan: "MonthlyTelehealth",
 			ProFeatures: map[string]bool{
-				"api":            false,
 				"disableP2P":     false,
 				"modestBranding": false,
 				"nativeCrypto":   false,
@@ -408,7 +400,6 @@ var config = struct {
 		"3-10": Plan{
 			AccountsPlan: "AnnualTelehealth",
 			ProFeatures: map[string]bool{
-				"api":            false,
 				"disableP2P":     false,
 				"modestBranding": false,
 				"nativeCrypto":   false,
@@ -420,7 +411,6 @@ var config = struct {
 		},
 		"4-1": Plan{
 			ProFeatures: map[string]bool{
-				"api":            true,
 				"disableP2P":     false,
 				"modestBranding": false,
 				"nativeCrypto":   false,
@@ -432,7 +422,6 @@ var config = struct {
 		},
 		"4-2": Plan{
 			ProFeatures: map[string]bool{
-				"api":            true,
 				"disableP2P":     false,
 				"modestBranding": false,
 				"nativeCrypto":   false,
@@ -444,7 +433,6 @@ var config = struct {
 		},
 		"4-3": Plan{
 			ProFeatures: map[string]bool{
-				"api":            true,
 				"disableP2P":     false,
 				"modestBranding": false,
 				"nativeCrypto":   false,
@@ -456,7 +444,6 @@ var config = struct {
 		},
 		"4-4": Plan{
 			ProFeatures: map[string]bool{
-				"api":            true,
 				"disableP2P":     false,
 				"modestBranding": false,
 				"nativeCrypto":   false,
@@ -468,7 +455,6 @@ var config = struct {
 		},
 		"5-1": Plan{
 			ProFeatures: map[string]bool{
-				"api":            true,
 				"disableP2P":     false,
 				"modestBranding": true,
 				"nativeCrypto":   false,
@@ -480,7 +466,6 @@ var config = struct {
 		},
 		"5-2": Plan{
 			ProFeatures: map[string]bool{
-				"api":            true,
 				"disableP2P":     false,
 				"modestBranding": true,
 				"nativeCrypto":   false,
@@ -493,7 +478,6 @@ var config = struct {
 		"8-0": Plan{
 			AccountsPlan: "MonthlyPremium",
 			ProFeatures: map[string]bool{
-				"api":            false,
 				"disableP2P":     false,
 				"modestBranding": false,
 				"nativeCrypto":   false,
@@ -506,7 +490,6 @@ var config = struct {
 		"8-1": Plan{
 			AccountsPlan: "AnnualPremium",
 			ProFeatures: map[string]bool{
-				"api":            false,
 				"disableP2P":     false,
 				"modestBranding": false,
 				"nativeCrypto":   false,
@@ -519,7 +502,6 @@ var config = struct {
 		"8-2": Plan{
 			AccountsPlan: "MonthlyTelehealth",
 			ProFeatures: map[string]bool{
-				"api":            false,
 				"disableP2P":     false,
 				"modestBranding": false,
 				"nativeCrypto":   false,
@@ -532,7 +514,6 @@ var config = struct {
 		"8-3": Plan{
 			AccountsPlan: "AnnualTelehealth",
 			ProFeatures: map[string]bool{
-				"api":            false,
 				"disableP2P":     false,
 				"modestBranding": false,
 				"nativeCrypto":   false,
@@ -545,7 +526,6 @@ var config = struct {
 		"8-4": Plan{
 			AccountsPlan: "MonthlyPlatinum",
 			ProFeatures: map[string]bool{
-				"api":            false,
 				"disableP2P":     false,
 				"modestBranding": false,
 				"nativeCrypto":   false,
@@ -558,7 +538,6 @@ var config = struct {
 		"8-5": Plan{
 			AccountsPlan: "AnnualPlatinum",
 			ProFeatures: map[string]bool{
-				"api":            false,
 				"disableP2P":     false,
 				"modestBranding": false,
 				"nativeCrypto":   false,
@@ -571,7 +550,6 @@ var config = struct {
 		"8-6": Plan{
 			AccountsPlan: "MonthlySupporter",
 			ProFeatures: map[string]bool{
-				"api":            false,
 				"disableP2P":     false,
 				"modestBranding": false,
 				"nativeCrypto":   false,
@@ -584,7 +562,6 @@ var config = struct {
 		"8-7": Plan{
 			AccountsPlan: "AnnualSupporter",
 			ProFeatures: map[string]bool{
-				"api":            false,
 				"disableP2P":     false,
 				"modestBranding": false,
 				"nativeCrypto":   false,
@@ -597,7 +574,6 @@ var config = struct {
 		"8-8": Plan{
 			AccountsPlan: "MonthlyBusiness",
 			ProFeatures: map[string]bool{
-				"api":            false,
 				"disableP2P":     false,
 				"modestBranding": false,
 				"nativeCrypto":   false,
@@ -610,7 +586,6 @@ var config = struct {
 		"8-9": Plan{
 			AccountsPlan: "AnnualBusiness",
 			ProFeatures: map[string]bool{
-				"api":            false,
 				"disableP2P":     false,
 				"modestBranding": false,
 				"nativeCrypto":   false,
@@ -624,7 +599,6 @@ var config = struct {
 			AccountsPlan: "LifetimePlatinum",
 			Price:        10000,
 			ProFeatures: map[string]bool{
-				"api":            false,
 				"disableP2P":     false,
 				"modestBranding": false,
 				"nativeCrypto":   false,
@@ -637,7 +611,6 @@ var config = struct {
 		"11-1": Plan{
 			AccountsPlan: "MonthlyBusiness",
 			ProFeatures: map[string]bool{
-				"api":            false,
 				"disableP2P":     false,
 				"modestBranding": false,
 				"nativeCrypto":   false,
@@ -650,7 +623,6 @@ var config = struct {
 		"11-2": Plan{
 			AccountsPlan: "AnnualBusiness",
 			ProFeatures: map[string]bool{
-				"api":            false,
 				"disableP2P":     false,
 				"modestBranding": false,
 				"nativeCrypto":   false,
@@ -663,7 +635,6 @@ var config = struct {
 		"11-3": Plan{
 			AccountsPlan: "MonthlyBusiness",
 			ProFeatures: map[string]bool{
-				"api":            false,
 				"disableP2P":     false,
 				"modestBranding": false,
 				"nativeCrypto":   false,
@@ -676,7 +647,6 @@ var config = struct {
 		"11-4": Plan{
 			AccountsPlan: "AnnualBusiness",
 			ProFeatures: map[string]bool{
-				"api":            false,
 				"disableP2P":     false,
 				"modestBranding": false,
 				"nativeCrypto":   false,
@@ -689,7 +659,6 @@ var config = struct {
 		"11-5": Plan{
 			AccountsPlan: "MonthlyBusiness",
 			ProFeatures: map[string]bool{
-				"api":            false,
 				"disableP2P":     false,
 				"modestBranding": false,
 				"nativeCrypto":   false,
@@ -702,7 +671,6 @@ var config = struct {
 		"11-6": Plan{
 			AccountsPlan: "AnnualBusiness",
 			ProFeatures: map[string]bool{
-				"api":            false,
 				"disableP2P":     false,
 				"modestBranding": false,
 				"nativeCrypto":   false,
@@ -715,7 +683,6 @@ var config = struct {
 		"11-7": Plan{
 			AccountsPlan: "MonthlyBusiness",
 			ProFeatures: map[string]bool{
-				"api":            false,
 				"disableP2P":     false,
 				"modestBranding": false,
 				"nativeCrypto":   false,
@@ -728,7 +695,6 @@ var config = struct {
 		"11-8": Plan{
 			AccountsPlan: "AnnualBusiness",
 			ProFeatures: map[string]bool{
-				"api":            false,
 				"disableP2P":     false,
 				"modestBranding": false,
 				"nativeCrypto":   false,
@@ -741,7 +707,6 @@ var config = struct {
 		"12-0": Plan{
 			AccountsPlan: "AnnualSupporter",
 			ProFeatures: map[string]bool{
-				"api":            false,
 				"disableP2P":     false,
 				"modestBranding": false,
 				"nativeCrypto":   false,
@@ -754,7 +719,6 @@ var config = struct {
 		"12-1": Plan{
 			AccountsPlan: "MonthlyPlatinum",
 			ProFeatures: map[string]bool{
-				"api":            false,
 				"disableP2P":     false,
 				"modestBranding": false,
 				"nativeCrypto":   false,

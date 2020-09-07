@@ -689,8 +689,8 @@ func channelSetup(h HandlerArgs) (interface{}, int) {
 	var preAuthorizedProFeatures map[string]bool
 	json.Unmarshal(preAuthorizedCyph.ProFeatures, &preAuthorizedProFeatures)
 
-	/* For now, disable pro feature check for non-API usage. */
-	if proFeatures["api"] {
+	/* For now, disable pro feature check */
+	if false {
 		for feature, isRequired := range proFeatures {
 			if isRequired && !preAuthorizedProFeatures[feature] {
 				return "pro feature " + feature + " not available", http.StatusForbidden
@@ -955,13 +955,9 @@ func proUnlock(h HandlerArgs) (interface{}, int) {
 		return err.Error(), http.StatusNotFound
 	}
 
-	proFeatures, _, err := getPlanData(h, customer)
+	_, _, err = getPlanData(h, customer)
 	if err != nil {
 		return err.Error(), http.StatusInternalServerError
-	}
-
-	if !proFeatures["api"] {
-		return "invalid or expired API key", http.StatusForbidden
 	}
 
 	json, err := json.Marshal(map[string]string{

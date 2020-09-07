@@ -4,9 +4,6 @@
  */
 export class ProFeatures {
 	constructor (
-		/** @see ISession.state.wasInitiatedByAPI */
-		public readonly api: boolean = false,
-
 		/** @see ISessionService.apiFlags.disableP2P */
 		public readonly disableP2P: boolean = false,
 

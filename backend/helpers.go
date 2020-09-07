@@ -305,7 +305,6 @@ func geolocate(h HandlerArgs) (string, string, string, string, string, string, s
 
 func getProFeaturesFromRequest(h HandlerArgs) map[string]bool {
 	return map[string]bool{
-		"api":            sanitize(h.Request.PostFormValue("proFeatures[api]")) == "true",
 		"disableP2P":     sanitize(h.Request.PostFormValue("proFeatures[disableP2P]")) == "true",
 		"modestBranding": sanitize(h.Request.PostFormValue("proFeatures[modestBranding]")) == "true",
 		"nativeCrypto":   sanitize(h.Request.PostFormValue("proFeatures[nativeCrypto]")) == "true",

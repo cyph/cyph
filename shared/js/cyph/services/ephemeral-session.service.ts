@@ -354,7 +354,6 @@ export class EphemeralSessionService extends SessionService {
 	/** @inheritDoc */
 	public get proFeatures () : ProFeatures {
 		return new ProFeatures(
-			this.state.wasInitiatedByAPI.value,
 			this.apiFlags.disableP2P,
 			this.apiFlags.modestBranding,
 			this.sessionInitService.callType === 'video',
