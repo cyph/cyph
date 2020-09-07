@@ -57,7 +57,7 @@ export class EphemeralChatRootComponent extends BaseProvider
 	public async ngAfterViewInit () : Promise<void> {
 		await sleep(0);
 
-		this.appService.chatRootState.next(ChatRootStates.blank);
+		this.appService.chatRootState.next(ChatRootStates.initializing);
 
 		const granimStates = {
 			'default-state': !this.envService.telehealthTheme.value ?

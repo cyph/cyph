@@ -8,7 +8,7 @@ import {
 } from '@angular/router';
 import * as $ from 'jquery';
 import {BehaviorSubject} from 'rxjs';
-import {filter, first, take} from 'rxjs/operators';
+import {first} from 'rxjs/operators';
 import {BaseProvider} from '../cyph/base-provider';
 import {config} from '../cyph/config';
 import {BooleanProto} from '../cyph/proto';
@@ -38,7 +38,7 @@ export class AppService extends BaseProvider implements CanActivate {
 
 	/** @see ChatRootStates */
 	public readonly chatRootState = new BehaviorSubject<ChatRootStates>(
-		ChatRootStates.blank
+		ChatRootStates.initializing
 	);
 
 	/** If true, app is locked down. */
@@ -238,16 +238,6 @@ export class AppService extends BaseProvider implements CanActivate {
 
 			if (burnerRoot !== '' && urlSegmentPaths[0] !== burnerRoot) {
 				await this.accountService.uiReady;
-			}
-			else {
-				await this.chatRootState
-					.pipe(
-						filter(state => state !== ChatRootStates.blank),
-						take(1)
-					)
-					.toPromise();
-
-				await sleep();
 			}
 
 			await this.loadComplete();
