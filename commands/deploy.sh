@@ -604,6 +604,8 @@ if [ "${websign}" ] ; then
 			cd ../..
 		fi
 	done
+
+	cd ..
 fi
 
 if \
