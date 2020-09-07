@@ -1,5 +1,7 @@
 import {Injectable} from '@angular/core';
 import {BaseProvider} from '../base-provider';
+import {IResolvable} from '../iresolvable';
+import {resolvable} from '../util/wait';
 
 /**
  * Provides ID for initiating new Session.
@@ -14,6 +16,11 @@ export class SessionInitService extends BaseProvider {
 
 	/** Indicates whether or not this is an ephemeral session. */
 	public readonly ephemeral: boolean = true;
+
+	/** Names of all members of the ephemeral group (if applicable). */
+	public readonly ephemeralGroupMemberNames: IResolvable<
+		string[]
+	> = resolvable();
 
 	/** Indicates whether or not this is a headless/automated session. */
 	public readonly headless: Promise<boolean> = Promise.resolve(false);

@@ -1,5 +1,6 @@
 import {Injectable} from '@angular/core';
 import {BaseProvider} from '../base-provider';
+import {IResolvable} from '../iresolvable';
 import {resolvable} from '../util/wait';
 import {SessionInitService} from './session-init.service';
 
@@ -26,6 +27,11 @@ export class BasicSessionInitService extends BaseProvider
 
 	/** @inheritDoc */
 	public readonly ephemeral: boolean = true;
+
+	/** @inheritDoc */
+	public readonly ephemeralGroupMemberNames: IResolvable<
+		string[]
+	> = resolvable();
 
 	/** @inheritDoc */
 	public readonly headless: Promise<boolean> = this._HEADLESS;

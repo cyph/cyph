@@ -429,6 +429,11 @@ export class EphemeralSessionService extends SessionService {
 			stringsService
 		);
 
+		/* TODO: Get this information in UI, rather than hardcoding it */
+		this.sessionInitService.ephemeralGroupMemberNames.resolve([
+			this.remoteUsername.value
+		]);
+
 		(async () => {
 			this.accountService.autoUpdate.next(false);
 
@@ -536,16 +541,18 @@ export class EphemeralSessionService extends SessionService {
 					false
 			);
 
-			if (
+			const isAliceRoot =
 				this.state.startingNewCyph.value &&
-				!this.sessionInitService.child
-			) {
-				await this.initGroup(
-					/* TODO: Make configurable */
-					[this.remoteUsername.value]
-				);
+				!this.sessionInitService.child;
 
-				return;
+			if (isAliceRoot) {
+				const groupMemberNames = await this.sessionInitService
+					.ephemeralGroupMemberNames;
+
+				if (groupMemberNames.length > 0) {
+					await this.initGroup(groupMemberNames);
+					return;
+				}
 			}
 
 			if (username) {
@@ -600,6 +607,12 @@ export class EphemeralSessionService extends SessionService {
 
 			await this.init(channelID);
 
+			if (isAliceRoot) {
+				this.childChannelsConnected.resolve();
+				await this.send([RpcEvents.burnerGroup, {}]);
+				return;
+			}
+
 			if (this.sessionInitService.child) {
 				return;
 			}
@@ -620,7 +633,7 @@ export class EphemeralSessionService extends SessionService {
 				!burnerGroup.members ||
 				burnerGroup.members.length < 1
 			) {
-				await this.abortSetup();
+				this.childChannelsConnected.resolve();
 				return;
 			}
 
