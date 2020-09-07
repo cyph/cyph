@@ -189,7 +189,7 @@ export class EphemeralSessionService extends SessionService {
 		await Promise.all<unknown>([
 			this.channelOnOpen(true).then(async () => {
 				this.channelService.initialMessagesProcessed.resolve();
-				await Promise.all(
+				await Promise.race(
 					sessionServices.map(
 						async o => o.masterSession.channelConnected
 					)
