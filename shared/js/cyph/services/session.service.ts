@@ -681,6 +681,7 @@ export abstract class SessionService extends BaseProvider
 				channelID,
 				channelSubID,
 				userID,
+				this.sessionInitService.parentID,
 				this.state.startingNewCyph.value === undefined,
 				this.account,
 				{

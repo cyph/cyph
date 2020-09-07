@@ -43,6 +43,9 @@ export class BasicSessionInitService extends BaseProvider
 	public readonly id: Promise<string> = this._ID;
 
 	/** @inheritDoc */
+	public parentID?: string;
+
+	/** @inheritDoc */
 	public readonly salt: Promise<string | undefined> = this._SALT;
 
 	/** Sets ID. */

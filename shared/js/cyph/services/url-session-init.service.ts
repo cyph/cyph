@@ -36,6 +36,9 @@ export class UrlSessionInitService extends BaseProvider
 	public readonly id: Promise<string>;
 
 	/** @inheritDoc */
+	public parentID?: string;
+
+	/** @inheritDoc */
 	public readonly salt: Promise<string | undefined> = Promise.resolve(
 		undefined
 	);

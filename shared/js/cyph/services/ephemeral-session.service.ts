@@ -116,6 +116,8 @@ export class EphemeralSessionService extends SessionService {
 
 	/** @ignore */
 	private async initGroup (groupMemberNames: string[]) : Promise<void> {
+		const parentID = await this.sessionInitService.id;
+
 		const members: IBurnerGroupMember[] = groupMemberNames.map(name => ({
 			id: readableID(this.configService.secretLength),
 			name
@@ -136,6 +138,7 @@ export class EphemeralSessionService extends SessionService {
 
 			const masterSessionInit = new BasicSessionInitService();
 			masterSessionInit.child = true;
+			masterSessionInit.parentID = parentID;
 			masterSessionInit.setID(member.id, undefined, true);
 
 			const masterSession = this.spawn(masterSessionInit);
@@ -143,6 +146,7 @@ export class EphemeralSessionService extends SessionService {
 			const childSessionInit = new BasicSessionInitService();
 			childSessionInit.callType = this.sessionInitService.callType;
 			childSessionInit.child = true;
+			childSessionInit.parentID = parentID;
 			childSessionInit.setID(burnerGroup.members[0].id);
 
 			const childCastleService = new BasicCastleService(
@@ -438,7 +442,8 @@ export class EphemeralSessionService extends SessionService {
 
 			let username: string | undefined;
 
-			let id = await this.sessionInitService.id;
+			const fullID = await this.sessionInitService.id;
+			let id = fullID;
 			const salt = await this.sessionInitService.salt;
 			const headless = await this.sessionInitService.headless;
 
@@ -645,6 +650,7 @@ export class EphemeralSessionService extends SessionService {
 					const sessionInit = new BasicSessionInitService();
 					sessionInit.callType = this.sessionInitService.callType;
 					sessionInit.child = true;
+					sessionInit.parentID = fullID;
 					sessionInit.setID(member.id);
 
 					if (i === 0) {

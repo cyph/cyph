@@ -36,6 +36,9 @@ export class ChannelService extends BaseProvider implements IChannelService {
 	private isClosed: boolean = false;
 
 	/** @ignore */
+	private parentID?: string;
+
+	/** @ignore */
 	private readonly receiveLock = lockFunction();
 
 	/** @ignore */
@@ -63,7 +66,9 @@ export class ChannelService extends BaseProvider implements IChannelService {
 
 	/** @ignore */
 	private get localStorageKey () : string {
-		return `${this.account ? 'Account' : ''}ChannelUserID`;
+		return `${this.account ? 'Account' : ''}ChannelUserID${
+			this.parentID ? `-${this.parentID}` : ''
+		}`;
 	}
 
 	/** @inheritDoc */
@@ -111,6 +116,7 @@ export class ChannelService extends BaseProvider implements IChannelService {
 		channelID: string | undefined,
 		channelSubID: string | undefined,
 		userID: string | undefined,
+		parentID: string | undefined,
 		possibleChannelRejoin: boolean,
 		account: boolean,
 		handlers: IChannelHandlers
@@ -120,6 +126,7 @@ export class ChannelService extends BaseProvider implements IChannelService {
 		}
 
 		this.account = account;
+		this.parentID = parentID;
 
 		const url = `channels/${channelID}`;
 		const messagesURL = `channels/${channelSubID || channelID}/messages`;

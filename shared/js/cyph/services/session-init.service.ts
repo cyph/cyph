@@ -31,6 +31,9 @@ export class SessionInitService extends BaseProvider {
 	/** ID for initiating new Session. */
 	public readonly id: Promise<string> = Promise.resolve('');
 
+	/** ID of parent session (if applicable). */
+	public parentID?: string;
+
 	/** Appended to ID as part of the shared secret. */
 	public readonly salt: Promise<string | undefined> = Promise.resolve(
 		undefined

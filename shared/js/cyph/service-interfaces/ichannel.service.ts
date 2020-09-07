@@ -28,6 +28,7 @@ export interface IChannelService {
 		channelID: string | undefined,
 		channelSubID: string | undefined,
 		userID: string | undefined,
+		parentID: string | undefined,
 		possibleChannelRejoin: boolean,
 		account: boolean,
 		handlers: IChannelHandlers
