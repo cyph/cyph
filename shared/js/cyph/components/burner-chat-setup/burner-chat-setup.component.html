@@ -77,7 +77,11 @@
 				<button mat-button (click)="state.next(this.states.initial)">
 					{{ stringsService.cancel }}
 				</button>
-				<button mat-button (click)="setGroupMemberNames()">
+				<button
+					mat-button
+					[disabled]="((groupMemberNames | await) || []).length < 1"
+					(click)="setGroupMemberNames()"
+				>
 					{{ stringsService.ok }}
 				</button>
 			</div>
