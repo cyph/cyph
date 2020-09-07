@@ -1,3 +1,5 @@
+/* eslint-disable max-lines */
+
 import {Injectable} from '@angular/core';
 import {Router} from '@angular/router';
 import {env} from '../env';
@@ -167,10 +169,10 @@ export class EphemeralSessionService extends SessionService {
 
 			return {
 				burnerGroup,
-				member,
 				childSession,
 				childSessionHandshake,
-				masterSession
+				masterSession,
+				member
 			};
 		});
 
@@ -262,8 +264,10 @@ export class EphemeralSessionService extends SessionService {
 
 		for (let i = 0; i < ids.length; ++i) {
 			let id = ids[i];
-			const oldSharedSecret: string | undefined = this.state.sharedSecrets
-				.value[i];
+			const oldSharedSecret =
+				this.state.sharedSecrets.value.length > i ?
+					this.state.sharedSecrets.value[i] :
+					undefined;
 
 			if (
 				/* Too short */
@@ -429,6 +433,7 @@ export class EphemeralSessionService extends SessionService {
 			stringsService
 		);
 
+		/* eslint-disable-next-line complexity */
 		(async () => {
 			this.accountService.autoUpdate.next(false);
 
