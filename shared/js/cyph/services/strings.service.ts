@@ -998,7 +998,7 @@ export class StringsService extends BaseProvider {
 	public readonly p2pDeny = `Your "${this.internalFriend}" has rejected your call.`;
 
 	/** @see StringsService */
-	public readonly p2pDisabled = `Your or your ${this.internalFriend}'s browser may lack support for video calling. Try again with the latest Chrome or Firefox.`;
+	public readonly p2pDisabled = `Your browser may lack support for video calling. Try again with the latest Chrome or Firefox.`;
 
 	/** @see StringsService */
 	public readonly p2pDisabledLocal = `Your browser does not support voice or video calling. Try again with the latest Chrome or Firefox.`;

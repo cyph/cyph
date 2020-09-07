@@ -23,6 +23,10 @@ export class P2PService extends BaseProvider {
 	/** @see IP2PHandlers */
 	public readonly handlers: IP2PHandlers = {
 		acceptConfirm: async (callType, timeout, isAccepted = false) => {
+			if (!P2PWebRTCService.isSupported) {
+				return false;
+			}
+
 			if (isAccepted) {
 				return true;
 			}
