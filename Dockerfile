@@ -33,6 +33,7 @@ RUN apt-get -y --allow-downgrades install \
 	git \
 	golang-go \
 	haxe \
+	htop \
 	imagemagick \
 	inotify-tools \
 	lib32ncurses6 \
