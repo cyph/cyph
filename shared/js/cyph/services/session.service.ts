@@ -454,6 +454,7 @@ export abstract class SessionService extends BaseProvider
 				always?: boolean;
 				event:
 					| 'beginChat'
+					| 'childChannelsConnected'
 					| 'closed'
 					| 'connected'
 					| 'channelConnected'
@@ -465,6 +466,7 @@ export abstract class SessionService extends BaseProvider
 			}[]
 		> [
 			{event: 'beginChat'},
+			{all: true, event: 'childChannelsConnected'},
 			{all: true, event: 'closed'},
 			{event: 'connected'},
 			{event: 'channelConnected'},
@@ -490,12 +492,6 @@ export abstract class SessionService extends BaseProvider
 				Promise.race(promises).then(callback);
 			}
 		}
-
-		Promise.all(group.map(async o => o.channelConnected))
-			.then(() => {
-				this.childChannelsConnected.resolve();
-			})
-			.catch(() => {});
 	}
 
 	/** Trigger event. */
