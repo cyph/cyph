@@ -204,6 +204,14 @@ export class ChatService extends BaseProvider {
 	/** Indicates whether an infinite scroll transition is in progress. */
 	public readonly scrollTransition = new BehaviorSubject<boolean>(false);
 
+	/** Indicates whether typing indicators are enabled. */
+	public readonly typingIndicators = (async () =>
+		this.sessionInitService.ephemeral &&
+		!(await this.sessionService.childChannelsConnected.then(() =>
+			this.sessionService.group
+		))
+	)();
+
 	/** Resolves when UI is ready to be displayed. */
 	public readonly uiReady: Promise<true> = Promise.all([
 		this.resolvers.chatConnected,
@@ -1155,7 +1163,7 @@ export class ChatService extends BaseProvider {
 				);
 			}
 
-			if (!this.sessionInitService.ephemeral || !isText) {
+			if (!isText || !(await this.typingIndicators)) {
 				return;
 			}
 
