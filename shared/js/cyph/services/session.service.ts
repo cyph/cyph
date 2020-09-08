@@ -466,13 +466,16 @@ export abstract class SessionService extends BaseProvider
 			}[]
 		> [
 			{event: 'beginChat'},
-			{all: true, event: 'childChannelsConnected'},
+			{event: 'childChannelsConnected'},
 			{all: true, event: 'closed'},
 			{event: 'connected'},
 			{event: 'channelConnected'},
 			{event: 'connectFailure'},
 			{event: 'cyphNotFound'},
-			{all: true, event: 'initialMessagesProcessed'},
+			{
+				all: !this.sessionInitService.ephemeral,
+				event: 'initialMessagesProcessed'
+			},
 			{all: true, event: 'opened'},
 			{all: true, event: 'ready'}
 		]) {
