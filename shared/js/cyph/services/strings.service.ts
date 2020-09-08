@@ -131,6 +131,9 @@ export class StringsService extends BaseProvider {
 	public readonly burner = `Burner`;
 
 	/** @see StringsService */
+	public readonly burnerGroupDefaultHostName = `Group Host`;
+
+	/** @see StringsService */
 	public readonly burnerGroupDefaultMemberName = `Guest #\${I}`;
 
 	/** @see StringsService */

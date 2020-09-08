@@ -10,6 +10,7 @@ import {ChatMessage, IChatData} from '../chat';
 import {ListHoleError} from '../list-hole-error';
 import {MaybePromise} from '../maybe-promise-type';
 import {IChatMessage} from '../proto';
+import {toInt} from '../util/formatting';
 import {getOrSetDefault} from '../util/get-or-set-default';
 import {observableAll} from '../util/observable-all';
 import {compareDates, relativeDateString, watchDateChange} from '../util/time';
@@ -20,6 +21,8 @@ import {AccountDatabaseService} from './crypto/account-database.service';
 import {EnvService} from './env.service';
 import {SessionService} from './session.service';
 import {StringsService} from './strings.service';
+
+const groupSessionIndexPrefix = ' GROUP SESSION INDEX: ';
 
 const messageTimestamps = new Map<
 	string,
@@ -190,10 +193,20 @@ const getMetadataInternal = async (
 			}
 			catch {}
 
+			const groupIndex = message.authorID?.startsWith(
+				groupSessionIndexPrefix
+			) ?
+				toInt(message.authorID.slice(groupSessionIndexPrefix.length)) :
+				NaN;
+
 			(user?.pseudoAccount ?
 				user.name :
 			user instanceof User ?
 				user.realUsername :
+			!isNaN(groupIndex) &&
+				sessionService.group &&
+				sessionService.group[groupIndex] ?
+				sessionService.group[groupIndex].remoteUsername :
 				sessionService.remoteUsername
 			)
 				/* eslint-disable-next-line @typescript-eslint/tslint/config */
@@ -266,6 +279,9 @@ const getMetadataInternalWrapper = memoize(
  */
 @Injectable()
 export class ChatMessageService extends BaseProvider {
+	/** Author ID prefix used for identifying an index into sessionService.groups. */
+	public static readonly groupSessionIndexPrefix = groupSessionIndexPrefix;
+
 	/** Gets date change observable value. */
 	public getDateChange (
 		message: IChatMessage | string | ListHoleError | undefined,

@@ -574,12 +574,23 @@ export class ChatService extends BaseProvider {
 	protected async getAuthorID (
 		author: Observable<string>
 	) : Promise<string | undefined> {
-		return author === this.sessionService.remoteUsername ?
-			author
+		if (author === this.sessionService.remoteUsername) {
+			return author
 				.pipe(take(1))
 				.toPromise()
 				.then(normalize)
-				.catch(() => undefined) :
+				.catch(() => undefined);
+		}
+
+		const groupIndex =
+			this.sessionService.group && author instanceof BehaviorSubject ?
+				this.sessionService.group.map(o =>
+					o.remoteUsername
+				).indexOf(author) :
+				-1;
+
+		return groupIndex > -1 ?
+			`${ChatMessageService.groupSessionIndexPrefix}${groupIndex.toString()}` :
 			undefined;
 	}
 

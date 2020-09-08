@@ -664,6 +664,11 @@ export class EphemeralSessionService extends SessionService {
 							castleService
 						);
 
+						hostSession.remoteUsername.next(
+							username ||
+								this.stringsService.burnerGroupDefaultHostName
+						);
+
 						castleService
 							.setKey(this.getSymmetricKey())
 							.then(async () => castleService.init(hostSession))
