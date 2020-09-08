@@ -159,12 +159,7 @@ export class ChatService extends BaseProvider {
 	>(undefined);
 
 	/** Indicates whether delivery receipts are enabled. */
-	public readonly deliveryReceipts = (async () =>
-		this.sessionInitService.ephemeral &&
-		!(await this.sessionService.childChannelsConnected.then(() =>
-			this.sessionService.group
-		))
-	)();
+	public readonly deliveryReceipts = this.sessionInitService.ephemeral;
 
 	/** Used for initial scroll down on load. */
 	public initialScrollDown: boolean = true;
@@ -285,7 +280,7 @@ export class ChatService extends BaseProvider {
 							);
 						}
 
-						if (await this.deliveryReceipts) {
+						if (this.deliveryReceipts) {
 							this.lastConfirmedMessageID = o.id;
 
 							this.messageConfirmLock(async () => {
@@ -1756,7 +1751,7 @@ export class ChatService extends BaseProvider {
 				this.abortSetup()
 			);
 
-			const setOnConfirmEvent = () => {
+			if (this.deliveryReceipts) {
 				this.sessionService.on(RpcEvents.confirm, async newEvents => {
 					for (const o of newEvents) {
 						if (!o.textConfirmation || !o.textConfirmation.id) {
@@ -1822,12 +1817,6 @@ export class ChatService extends BaseProvider {
 					}
 				});
 			}
-
-			this.deliveryReceipts.then(deliveryReceipts => {
-				if (deliveryReceipts) {
-					setOnConfirmEvent();
-				}
-			});
 
 			this.sessionService.on(RpcEvents.typing, newEvents => {
 				for (const o of newEvents) {
