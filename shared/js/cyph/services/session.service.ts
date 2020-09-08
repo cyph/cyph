@@ -399,9 +399,14 @@ export abstract class SessionService extends BaseProvider
 
 		this.group = group;
 
+		/*
+		Commenting these out until we re-enable delivery receipts for groups:
+
 		const confirmations = new Map<string, Set<SessionService>>();
+		*/
 
 		for (const session of group) {
+			/*
 			session.on(RpcEvents.confirm, newEvents => {
 				this.trigger(
 					RpcEvents.confirm,
@@ -429,6 +434,7 @@ export abstract class SessionService extends BaseProvider
 					)
 				);
 			});
+			*/
 
 			for (const rpcEvent of [
 				RpcEvents.text,
