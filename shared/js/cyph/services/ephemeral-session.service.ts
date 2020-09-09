@@ -188,17 +188,14 @@ export class EphemeralSessionService extends SessionService {
 			true
 		);
 
+		this.channelService.initialMessagesProcessed.resolve();
 		this.state.ephemeralStateInitialized.next(true);
+		this.state.isAlice.next(true);
 
 		await Promise.all<unknown>([
-			this.channelOnOpen(true).then(async () => {
-				this.channelService.initialMessagesProcessed.resolve();
-				await Promise.race(
-					sessionServices.map(
-						async o => o.masterSession.channelConnected
-					)
-				);
-				await this.channelOnConnect();
+			this.opened.then(async () => this.channelOnOpen(true)),
+			this.connected.then(() => {
+				this.state.isConnected.next(true);
 			}),
 			Promise.race(
 				sessionServices.map(async o => o.masterSession.connected)
@@ -339,11 +336,12 @@ export class EphemeralSessionService extends SessionService {
 			return;
 		}
 
-		if (
-			this.sessionInitService.child &&
-			!(await this.sessionInitService.headless)
-		) {
+		if (!this.group && !(await this.sessionInitService.headless)) {
 			this.pingPong();
+		}
+
+		if (this.sessionInitService.child) {
+			return;
 		}
 
 		this.analyticsService.sendEvent('cyph', 'started');
