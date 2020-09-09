@@ -377,9 +377,22 @@ export abstract class SessionService extends BaseProvider
 	) : Promise<void> {
 		if (this.group) {
 			await Promise.all(
-				this.group.map(async session =>
-					session.plaintextSendHandler(messages)
-				)
+				this.group.map(async session => {
+					const confirmPromise = session.plaintextSendHandler(
+						messages
+					);
+
+					/* Don't block confirmation on a send that may never complete */
+					if (
+						this.sessionInitService.ephemeral &&
+						!session.channelConnected.value
+					) {
+						confirmPromise.catch(() => {});
+						return;
+					}
+
+					return confirmPromise;
+				})
 			);
 
 			return;
