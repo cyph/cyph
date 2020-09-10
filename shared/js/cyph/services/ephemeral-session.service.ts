@@ -47,7 +47,7 @@ export class EphemeralSessionService extends SessionService {
 	private readonly chatRequestRingTimeout: number = 15000;
 
 	/** @ignore */
-	private readonly chatRequestRingTimeoutGracePeriod: number = 30000;
+	private readonly chatRequestRingTimeoutGracePeriod: number = 60000;
 
 	/** @ignore */
 	private readonly localStorageKey = 'BurnerChannelID';

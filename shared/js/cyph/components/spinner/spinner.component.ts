@@ -25,6 +25,9 @@ export class SpinnerComponent extends BaseProvider
 	/** @ignore */
 	private indeterminateValueLoopInProgress: boolean = false;
 
+	/** Indicates whether the default Material indeterminate spinner will be used. */
+	public readonly classicIndeterminateSpinner: boolean = true;
+
 	/** @see MatProgressSpinner.color */
 	@Input() public color: ThemePalette;
 
@@ -50,7 +53,10 @@ export class SpinnerComponent extends BaseProvider
 
 	/** @ignore */
 	private async onChanges () : Promise<void> {
-		if (this.indeterminateValueLoopInProgress) {
+		if (
+			this.classicIndeterminateSpinner ||
+			this.indeterminateValueLoopInProgress
+		) {
 			return;
 		}
 
