@@ -369,6 +369,7 @@ exports.acceptPseudoRelationship = onCall(
 
 exports.appointmentInvite = onCall(async (data, namespace, getUsername) => {
 	const id = (data.id || '').trim();
+	const accountBurnerID = (data.accountBurnerID || '').trim();
 	const inviterUsername = await getUsername();
 	const telehealth = !!data.telehealth;
 
@@ -388,8 +389,9 @@ exports.appointmentInvite = onCall(async (data, namespace, getUsername) => {
 		telehealth
 	)}${inviterUsername}/${id}`;
 
-	const inviterLink = `${accountsURL}account-burner/${data.callType ||
-		'chat'}/${id}`;
+	const inviterLink = `${accountsURL}account-burner/${
+		accountBurnerID ? accountBurnerID : `${data.callType || 'chat'}/${id}`
+	}`;
 
 	const [smsCredentials, timeZone] = await Promise.all([
 		(async () =>

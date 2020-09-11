@@ -92,6 +92,8 @@ service firebase.storage {
 					allow read;
 				}
 
+				// match /burnerSessions/{burnerSessionID}/{hash} {}
+
 				// match /castleSessions/{contact} {
 				// 	match /futureMessages/{messageID}/{hash} {}
 				// 	match /lastConfirmedMessage/{hash} {}

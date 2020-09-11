@@ -17,8 +17,10 @@ import {emailPattern} from '../../email-pattern';
 import {
 	AccountFileRecord,
 	AccountUserTypes,
+	BurnerSession,
 	CallTypes,
 	ChatMessageValue,
+	IBurnerSession,
 	IForm
 } from '../../proto';
 import {accountChatProviders} from '../../providers';
@@ -299,11 +301,19 @@ export class AccountComposeComponent extends BaseProvider
 						'video' :
 						undefined;
 
+				const accountBurnerID = uuid();
 				const id = readableID(this.configService.cyphIDLength);
 
-				calendarInvite.url = `${
-					this.envService.appUrl
-				}account-burner/${callType || 'chat'}/${id}`;
+				calendarInvite.url = `${this.envService.appUrl}account-burner/${accountBurnerID}`;
+
+				await this.accountDatabaseService.setItem<IBurnerSession>(
+					`burnerSessions/${accountBurnerID}`,
+					BurnerSession,
+					{
+						callType: calendarInvite.callType,
+						id
+					}
+				);
 
 				const [sentFileID] = await Promise.all([
 					this.accountFilesService.upload(
@@ -345,6 +355,7 @@ export class AccountComposeComponent extends BaseProvider
 								this.databaseService.callFunction(
 									'appointmentInvite',
 									{
+										accountBurnerID,
 										callType,
 										eventDetails: {
 											endTime: calendarInvite.endTime,

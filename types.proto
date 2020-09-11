@@ -560,12 +560,6 @@ message BurnerGroup {
 	repeated BurnerGroupMember members = 1;
 }
 
-/** Burner group init data. */
-message BurnerGroupInitiator {
-	/** @see BurnerGroupMemberInitiator */
-	repeated BurnerGroupMemberInitiator members = 1;
-}
-
 /** Burner group member. */
 message BurnerGroupMember {
 	/** ID. */
@@ -585,6 +579,18 @@ message BurnerGroupMemberInitiator {
 
 	/** Name. */
 	string name = 2;
+}
+
+/** Burner session init data. */
+message BurnerSession {
+	/** @see CallTypes */
+	CallTypes callType = 1;
+
+	/** ID. */
+	required string id = 2;
+
+	/** @see BurnerGroupMemberInitiator */
+	repeated BurnerGroupMemberInitiator members = 3;
 }
 
 /** Calendar invite. */

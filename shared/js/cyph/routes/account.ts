@@ -89,6 +89,10 @@ export const account: Route = {
 			data: {callType: 'video'}
 		},
 		{
+			path: 'account-burner/:accountBurnerID',
+			component: AccountChatComponent
+		},
+		{
 			path: 'accept/:id',
 			component: AccountPseudoRelationshipResponseComponent,
 			data: {accept: true}

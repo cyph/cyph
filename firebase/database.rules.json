@@ -376,6 +376,20 @@
 						}
 					},
 
+					"burnerSessions": {
+						"$burnerSessionID": {
+							"data": {
+								".validate": "newData.isString()"
+							},
+							"hash": {
+								".validate": "newData.isString()"
+							},
+							"timestamp": {
+								".validate": "newData.val() === now"
+							}
+						}
+					},
+
 					"castleSessions": {
 						"$contact": {
 							"futureMessages": {
