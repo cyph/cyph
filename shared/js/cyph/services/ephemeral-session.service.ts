@@ -7,6 +7,7 @@ import {
 	BurnerGroup,
 	IBurnerGroup,
 	IBurnerGroupMember,
+	IBurnerGroupMemberInitiator,
 	NotificationTypes,
 	StringProto
 } from '../proto';
@@ -115,13 +116,20 @@ export class EphemeralSessionService extends SessionService {
 	}
 
 	/** @ignore */
-	private async initGroup (groupMemberNames: string[]) : Promise<void> {
+	private async initGroup (
+		groupMembers: IBurnerGroupMemberInitiator[]
+	) : Promise<void> {
 		const parentID = await this.sessionInitService.id;
 
-		const members: IBurnerGroupMember[] = groupMemberNames.map(name => ({
-			id: readableID(this.configService.secretLength),
-			name
-		}));
+		const members: IBurnerGroupMember[] = groupMembers.map(
+			({id, name}) => ({
+				id:
+					id === undefined ?
+						readableID(this.configService.secretLength) :
+						id,
+				name
+			})
+		);
 
 		const burnerGroups = this.createBurnerGroups(members);
 
@@ -548,11 +556,11 @@ export class EphemeralSessionService extends SessionService {
 				!this.sessionInitService.child;
 
 			if (isAliceRoot && this.sessionInitService.ephemeralGroupsAllowed) {
-				const groupMemberNames = await this.sessionInitService
-					.ephemeralGroupMemberNames;
+				const groupMembers = await this.sessionInitService
+					.ephemeralGroupMembers;
 
-				if (groupMemberNames.length > 0) {
-					await this.initGroup(groupMemberNames);
+				if (groupMembers.length > 0) {
+					await this.initGroup(groupMembers);
 					return;
 				}
 			}

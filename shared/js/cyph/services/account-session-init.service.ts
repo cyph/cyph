@@ -1,6 +1,7 @@
 import {Injectable} from '@angular/core';
 import {BaseProvider} from '../base-provider';
 import {IResolvable} from '../iresolvable';
+import {IBurnerGroupMemberInitiator} from '../proto';
 import {resolvable} from '../util/wait';
 import {SessionInitService} from './session-init.service';
 
@@ -20,8 +21,8 @@ export class AccountSessionInitService extends BaseProvider
 	public ephemeral: boolean = false;
 
 	/** @inheritDoc */
-	public readonly ephemeralGroupMemberNames: IResolvable<
-		string[]
+	public readonly ephemeralGroupMembers: IResolvable<
+		IBurnerGroupMemberInitiator[]
 	> = resolvable();
 
 	/** @inheritDoc */

@@ -1,6 +1,7 @@
 import {Injectable} from '@angular/core';
 import {BaseProvider} from '../base-provider';
 import {IResolvable} from '../iresolvable';
+import {IBurnerGroupMemberInitiator} from '../proto';
 import {resolvable} from '../util/wait';
 
 /**
@@ -18,8 +19,8 @@ export class SessionInitService extends BaseProvider {
 	public readonly ephemeral: boolean = false;
 
 	/** Names of all members of the ephemeral group (if applicable). */
-	public readonly ephemeralGroupMemberNames: IResolvable<
-		string[]
+	public readonly ephemeralGroupMembers: IResolvable<
+		IBurnerGroupMemberInitiator[]
 	> = resolvable();
 
 	/** Indicates whether or not ephemeral groups are allowed. */

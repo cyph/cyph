@@ -3,6 +3,7 @@ import {Router} from '@angular/router';
 import {BaseProvider} from '../base-provider';
 import {env} from '../env';
 import {IResolvable} from '../iresolvable';
+import {IBurnerGroupMemberInitiator} from '../proto';
 import {resolvable} from '../util/wait';
 import {SessionInitService} from './session-init.service';
 
@@ -22,8 +23,8 @@ export class UrlSessionInitService extends BaseProvider
 	public readonly ephemeral: boolean = true;
 
 	/** @inheritDoc */
-	public readonly ephemeralGroupMemberNames: IResolvable<
-		string[]
+	public readonly ephemeralGroupMembers: IResolvable<
+		IBurnerGroupMemberInitiator[]
 	> = resolvable();
 
 	/** @inheritDoc */

@@ -20,7 +20,7 @@ import {trackByIndex} from '../../track-by/track-by-index';
 	templateUrl: './burner-chat-setup.component.html'
 })
 export class BurnerChatSetupComponent extends BaseProvider {
-	/** @see SessionInitService.ephemeralGroupMemberNames */
+	/** @see SessionInitService.ephemeralGroupMembers */
 	public readonly groupMemberNames = new BehaviorSubject<string[]>([]);
 
 	/** Emits when setup is complete. */
@@ -61,8 +61,8 @@ export class BurnerChatSetupComponent extends BaseProvider {
 
 	/** Sets group member names (if applicable) and completes setup. */
 	public setGroupMemberNames (useGroup: boolean = true) : void {
-		this.sessionInitService.ephemeralGroupMemberNames.resolve(
-			useGroup ? this.groupMemberNames.value : []
+		this.sessionInitService.ephemeralGroupMembers.resolve(
+			useGroup ? this.groupMemberNames.value.map(name => ({name})) : []
 		);
 
 		this.state.next(this.states.complete);
