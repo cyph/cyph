@@ -582,7 +582,8 @@ export class EphemeralSessionService extends SessionService {
 			);
 
 			const isAliceRoot =
-				this.state.startingNewCyph.value &&
+				(!!this.sessionInitService.accountsBurnerAliceData ||
+					this.state.startingNewCyph.value === true) &&
 				!this.sessionInitService.child;
 
 			if (isAliceRoot && this.sessionInitService.ephemeralGroupsAllowed) {
