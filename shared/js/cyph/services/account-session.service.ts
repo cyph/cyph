@@ -1,18 +1,20 @@
 /* eslint-disable max-lines */
 
 import {Injectable} from '@angular/core';
+import {Router} from '@angular/router';
 import {Observable, of} from 'rxjs';
 import {IContactListItem, UserLike} from '../account';
 import {AccountContactsComponent} from '../components/account-contacts';
+import {MaybePromise} from '../maybe-promise-type';
 import {
 	IAccountMessagingGroup,
+	ISessionMessage,
 	SessionMessageList,
 	StringProto
 } from '../proto';
-import {ISessionMessageData} from '../session';
+import {ISessionMessageAdditionalData, ISessionMessageData} from '../session';
 import {normalizeArray} from '../util/formatting';
 import {debugLog} from '../util/log';
-import {request} from '../util/request';
 import {uuid} from '../util/uuid';
 import {resolvable} from '../util/wait';
 import {AccountContactsService} from './account-contacts.service';
@@ -20,15 +22,19 @@ import {AccountSessionInitService} from './account-session-init.service';
 import {AccountUserLookupService} from './account-user-lookup.service';
 import {AccountService} from './account.service';
 import {AnalyticsService} from './analytics.service';
+import {BasicSessionInitService} from './basic-session-init.service';
 import {ChannelService} from './channel.service';
+import {ConfigService} from './config.service';
 import {AccountDatabaseService} from './crypto/account-database.service';
 import {CastleService} from './crypto/castle.service';
 import {PotassiumService} from './crypto/potassium.service';
 import {DatabaseService} from './database.service';
 import {DialogService} from './dialog.service';
 import {EnvService} from './env.service';
+import {EphemeralSessionService} from './ephemeral-session.service';
 import {ErrorService} from './error.service';
 import {LocalStorageService} from './local-storage.service';
+import {NotificationService} from './notification.service';
 import {SessionInitService} from './session-init.service';
 import {SessionWrapperService} from './session-wrapper.service';
 import {SessionService} from './session.service';
@@ -39,11 +45,14 @@ import {StringsService} from './strings.service';
  */
 @Injectable()
 export class AccountSessionService extends SessionService {
+	/** If set, use this for sending instead. */
+	private ephemeralSessionService?: EphemeralSessionService;
+
 	/** @ignore */
 	private initiated: boolean = false;
 
 	/** @ignore */
-	private readonly localStorageKey = 'AccountBurnerChannelID';
+	private readonly localStorageKeyPrefix = 'AccountBurnerChannelID';
 
 	/** @inheritDoc */
 	protected readonly account: boolean = true;
@@ -130,6 +139,11 @@ export class AccountSessionService extends SessionService {
 
 	/** @inheritDoc */
 	public close () : void {
+		if (this.ephemeralSessionService) {
+			this.ephemeralSessionService.close();
+			return;
+		}
+
 		if (this.ephemeralSubSession) {
 			super.close();
 		}
@@ -154,6 +168,29 @@ export class AccountSessionService extends SessionService {
 		}
 
 		return username;
+	}
+
+	/** @inheritDoc */
+	public async send (
+		...messages: [
+			string,
+
+			(
+				| ISessionMessageAdditionalData
+				| ((
+						timestamp: number
+				  ) => MaybePromise<ISessionMessageAdditionalData>)
+			)
+		][]
+	) : Promise<{
+		confirmPromise: Promise<void>;
+		newMessages: (ISessionMessage & {data: ISessionMessageData})[];
+	}> {
+		if (this.ephemeralSessionService) {
+			return this.ephemeralSessionService.send(...messages);
+		}
+
+		return super.send(...messages);
 	}
 
 	/** Sets the remote user we're chatting with. */
@@ -203,36 +240,99 @@ export class AccountSessionService extends SessionService {
 				pseudoAccount: false,
 				username: undefined
 			});
-			this.state.sharedSecrets.next([
-				`${this.accountDatabaseService.currentUser.value.user.username}/${chat.anonymousChannelID}`
-			]);
-			this.state.startingNewCyph.next(chat.passive ? undefined : true);
-			this.state.ephemeralStateInitialized.next(true);
 
-			try {
-				await this.prepareForCallType();
-			}
-			catch {
-				return;
-			}
+			const sessionInit = new BasicSessionInitService();
 
-			const channelID = await this.localStorageService.getOrSetDefault(
-				`${this.localStorageKey}:${chat.anonymousChannelID}`,
-				StringProto,
-				async () =>
-					request({
-						data: {
-							channelID: uuid(true),
-							proFeatures: this.proFeatures
-						},
-						method: 'POST',
-						retries: 5,
-						url: `${this.envService.baseUrl}channels/${chat.anonymousChannelID}`
-					})
+			sessionInit.accountsBurnerAliceData = {
+				passive: !!chat.passive,
+				username: this.accountDatabaseService.currentUser.value.user
+					.username
+			};
+
+			sessionInit.localStorageKeyPrefix = this.localStorageKeyPrefix;
+
+			sessionInit.ephemeralGroupMembers.resolve([]);
+			sessionInit.setID(chat.anonymousChannelID);
+
+			const ephemeralSessionService = new EphemeralSessionService(
+				this.analyticsService,
+				this.castleService,
+				this.channelService,
+				this.databaseService,
+				this.dialogService,
+				this.envService,
+				this.errorService,
+				this.potassiumService,
+				sessionInit,
+				this.sessionWrapperService,
+				this.stringsService,
+				this.router,
+				this.accountService,
+				this.accountDatabaseService,
+				this.configService,
+				this.localStorageService,
+				this.notificationService
 			);
 
+			this.p2pWebRTCService.then(p2pWebRTCService => {
+				ephemeralSessionService.p2pWebRTCService.resolve(
+					p2pWebRTCService
+				);
+			});
+
+			ephemeralSessionService.state.cyphIDs.subscribe(this.state.cyphIDs);
+			ephemeralSessionService.state.ephemeralStateInitialized.subscribe(
+				this.state.ephemeralStateInitialized
+			);
+			ephemeralSessionService.state.isAlice.subscribe(this.state.isAlice);
+			ephemeralSessionService.state.isAlive.subscribe(this.state.isAlive);
+			ephemeralSessionService.state.isConnected.subscribe(
+				this.state.isConnected
+			);
+			ephemeralSessionService.state.sharedSecrets.subscribe(
+				this.state.sharedSecrets
+			);
+			ephemeralSessionService.state.startingNewCyph.subscribe(
+				this.state.startingNewCyph
+			);
+			ephemeralSessionService.state.wasInitiatedByAPI.subscribe(
+				this.state.wasInitiatedByAPI
+			);
+
+			for (const event of <
+				(
+					| 'beginChat'
+					| 'childChannelsConnected'
+					| 'closed'
+					| 'connected'
+					| 'channelConnected'
+					| 'connectFailure'
+					| 'cyphNotFound'
+					| 'initialMessagesProcessed'
+					| 'opened'
+					| 'ready'
+				)[]
+			> [
+				'beginChat',
+				'childChannelsConnected',
+				'closed',
+				'connected',
+				'channelConnected',
+				'connectFailure',
+				'cyphNotFound',
+				'initialMessagesProcessed',
+				'opened',
+				'ready'
+			]) {
+				ephemeralSessionService[event].then(() => {
+					this[event].resolve();
+				});
+			}
+
+			this.ephemeralSessionService = ephemeralSessionService;
+
 			this.ready.resolve();
-			return this.init(channelID);
+			return this.castleService.init(this);
 		}
 
 		if ('username' in chat) {
@@ -490,12 +590,15 @@ export class AccountSessionService extends SessionService {
 			sessionInitService,
 			this.sessionWrapperService.spawn(),
 			this.stringsService,
+			this.router,
 			this.accountService,
 			this.accountContactsService,
 			this.accountDatabaseService,
 			this.accountSessionInitService,
 			this.accountUserLookupService,
-			this.localStorageService
+			this.configService,
+			this.localStorageService,
+			this.notificationService
 		);
 	}
 
@@ -513,6 +616,9 @@ export class AccountSessionService extends SessionService {
 		stringsService: StringsService,
 
 		/** @ignore */
+		private readonly router: Router,
+
+		/** @ignore */
 		private readonly accountService: AccountService,
 
 		/** @ignore */
@@ -528,7 +634,13 @@ export class AccountSessionService extends SessionService {
 		private readonly accountUserLookupService: AccountUserLookupService,
 
 		/** @ignore */
-		private readonly localStorageService: LocalStorageService
+		private readonly configService: ConfigService,
+
+		/** @ignore */
+		private readonly localStorageService: LocalStorageService,
+
+		/** @ignore */
+		private readonly notificationService: NotificationService
 	) {
 		super(
 			analyticsService,

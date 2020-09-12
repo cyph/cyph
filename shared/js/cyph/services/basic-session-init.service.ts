@@ -21,6 +21,12 @@ export class BasicSessionInitService extends BaseProvider
 	private readonly _SALT = resolvable<string>();
 
 	/** @inheritDoc */
+	public accountsBurnerAliceData?: {
+		passive: boolean;
+		username: string;
+	};
+
+	/** @inheritDoc */
 	public callType?: 'audio' | 'video';
 
 	/** @inheritDoc */
@@ -42,6 +48,9 @@ export class BasicSessionInitService extends BaseProvider
 
 	/** @inheritDoc */
 	public readonly id: Promise<string> = this._ID;
+
+	/** @inheritDoc */
+	public localStorageKeyPrefix?: string;
 
 	/** @inheritDoc */
 	public parentID?: string;

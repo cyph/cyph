@@ -25,6 +25,9 @@ import {PotassiumService} from './potassium.service';
 @Injectable()
 export class AccountCastleService extends CastleService {
 	/** @ignore */
+	private initiated: boolean = false;
+
+	/** @ignore */
 	private readonly pairwiseSessions: Map<string, IPairwiseSession> = new Map<
 		string,
 		IPairwiseSession
@@ -34,6 +37,12 @@ export class AccountCastleService extends CastleService {
 	public async init (
 		accountSessionService: AccountSessionService
 	) : Promise<void> {
+		if (this.initiated) {
+			return this.pairwiseSession.then(() => {});
+		}
+
+		this.initiated = true;
+
 		const user = await accountSessionService.remoteUser;
 
 		debugLog(() => ({startingAccountCastleSession: {user}}));

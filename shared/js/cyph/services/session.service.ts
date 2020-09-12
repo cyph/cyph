@@ -703,7 +703,8 @@ export abstract class SessionService extends BaseProvider
 				userID,
 				this.sessionInitService.parentID,
 				this.state.startingNewCyph.value === undefined,
-				this.account,
+				this.account ||
+					!!this.sessionInitService.accountsBurnerAliceData,
 				{
 					onClose: async () => this.channelOnClose(),
 					onConnect: async () => this.channelOnConnect(),

@@ -9,6 +9,12 @@ import {resolvable} from '../util/wait';
  */
 @Injectable()
 export class SessionInitService extends BaseProvider {
+	/** Data used if this is the registered user's end of an Accounts-Burner session. */
+	public accountsBurnerAliceData?: {
+		passive: boolean;
+		username: string;
+	};
+
 	/** If set, indicates an initial call type for the session. */
 	public readonly callType?: 'audio' | 'video';
 
@@ -31,6 +37,9 @@ export class SessionInitService extends BaseProvider {
 
 	/** ID for initiating new Session. */
 	public readonly id: Promise<string> = Promise.resolve('');
+
+	/** Prefix for any local storage keys. */
+	public localStorageKeyPrefix?: string;
 
 	/** ID of parent session (if applicable). */
 	public parentID?: string;

@@ -12,6 +12,12 @@ import {SessionInitService} from './session-init.service';
 export class AccountSessionInitService extends BaseProvider
 	implements SessionInitService {
 	/** @inheritDoc */
+	public accountsBurnerAliceData?: {
+		passive: boolean;
+		username: string;
+	};
+
+	/** @inheritDoc */
 	public callType?: 'audio' | 'video';
 
 	/** @inheritDoc */
@@ -33,6 +39,9 @@ export class AccountSessionInitService extends BaseProvider
 
 	/** @inheritDoc */
 	public readonly id: Promise<string> = Promise.resolve('');
+
+	/** @inheritDoc */
+	public localStorageKeyPrefix?: string;
 
 	/** @inheritDoc */
 	public readonly salt: Promise<string | undefined> = Promise.resolve(

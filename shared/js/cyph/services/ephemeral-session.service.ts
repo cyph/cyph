@@ -51,7 +51,7 @@ export class EphemeralSessionService extends SessionService {
 	private readonly chatRequestRingTimeoutGracePeriod: number = 60000;
 
 	/** @ignore */
-	private readonly localStorageKey = 'BurnerChannelID';
+	private readonly localStorageKeyPrefixInternal = 'BurnerChannelID';
 
 	/** @ignore */
 	private pingPongTimeouts: number = 0;
@@ -238,6 +238,14 @@ export class EphemeralSessionService extends SessionService {
 		]);
 	}
 
+	/** @ignore */
+	private get localStorageKeyPrefix () : string {
+		return (
+			this.sessionInitService.localStorageKeyPrefix ||
+			this.localStorageKeyPrefixInternal
+		);
+	}
+
 	/**
 	 * @ignore
 	 * Intermittent check to verify chat is still alive and send fake encrypted chatter.
@@ -273,6 +281,18 @@ export class EphemeralSessionService extends SessionService {
 
 		for (let i = 0; i < ids.length; ++i) {
 			let id = ids[i];
+
+			if (
+				this.sessionInitService.accountsBurnerAliceData &&
+				id.length > 0
+			) {
+				cyphIDs.push(id);
+				sharedSecrets.push(
+					`${this.sessionInitService.accountsBurnerAliceData.username}/${id}`
+				);
+				continue;
+			}
+
 			const oldSharedSecret =
 				this.state.sharedSecrets.value.length > i ?
 					this.state.sharedSecrets.value[i] :
@@ -328,7 +348,9 @@ export class EphemeralSessionService extends SessionService {
 						url: `${env.baseUrl}channels/${this.cyphID}`
 					}).catch(() => {}),
 					this.localStorageService
-						.removeItem(`${this.localStorageKey}:${this.cyphID}`)
+						.removeItem(
+							`${this.localStorageKeyPrefix}:${this.cyphID}`
+						)
 						.catch(() => {})
 				] :
 				[])
@@ -537,14 +559,22 @@ export class EphemeralSessionService extends SessionService {
 			}
 
 			this.state.wasInitiatedByAPI.next(
-				!headless && id.length > this.configService.secretLength
+				!this.sessionInitService.accountsBurnerAliceData &&
+					!headless &&
+					id.length > this.configService.secretLength
 			);
 
 			/* true = yes; false = no; undefined = maybe */
 			this.state.startingNewCyph.next(
+				this.sessionInitService.accountsBurnerAliceData?.passive ===
+					true ?
+					undefined :
+				this.sessionInitService.accountsBurnerAliceData?.passive ===
+				false ?
+					true :
 				this.sessionInitService.child ||
-					this.state.wasInitiatedByAPI.value ||
-					username ?
+				this.state.wasInitiatedByAPI.value ||
+				username ?
 					undefined :
 				id.length < 1 ?
 					true :
@@ -602,7 +632,7 @@ export class EphemeralSessionService extends SessionService {
 				channelID = await (this.state.startingNewCyph.value ===
 				undefined ?
 					this.localStorageService.getOrSetDefault(
-						`${this.localStorageKey}:${this.cyphID}`,
+						`${this.localStorageKeyPrefix}:${this.cyphID}`,
 						StringProto,
 						getChannelID
 					) :
