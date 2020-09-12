@@ -3,14 +3,12 @@ import {of} from 'rxjs';
 import {
 	AnonymousRemoteUser,
 	HandshakeSteps,
-	IPairwiseSession,
 	PairwiseSessionLite,
 	RegisteredLocalUser,
 	RegisteredRemoteUser,
 	Transport
 } from '../../crypto/castle';
 import {MaybeBinaryProto, Uint32Proto} from '../../proto';
-import {getOrSetDefaultAsync} from '../../util/get-or-set-default';
 import {debugLog} from '../../util/log';
 import {AccountContactsService} from '../account-contacts.service';
 import {AccountSessionService} from '../account-session.service';
@@ -26,12 +24,6 @@ import {PotassiumService} from './potassium.service';
 export class AccountCastleService extends CastleService {
 	/** @ignore */
 	private initiated: boolean = false;
-
-	/** @ignore */
-	private readonly pairwiseSessions: Map<string, IPairwiseSession> = new Map<
-		string,
-		IPairwiseSession
-	>();
 
 	/** @inheritDoc */
 	public async init (
@@ -96,107 +88,91 @@ export class AccountCastleService extends CastleService {
 			return;
 		}
 
+		debugLog(() => ({
+			startingAccountCastleSessionNow: {
+				castleSessionID,
+				user
+			}
+		}));
+
+		const sessionURL = `castleSessions/${castleSessionID}/session`;
+
+		const remoteUser = new RegisteredRemoteUser(
+			this.accountDatabaseService,
+			user.pseudoAccount,
+			'realUsername' in user ? user.realUsername : of(user.username)
+		);
+
+		/*
+		Not necessary to reset the handshake and use the more complex
+		Castle logic just because the session is ephemeral.
+
+		if (accountSessionService.ephemeralSubSession) {
+			return new PairwiseSessionLite(
+				undefined,
+				undefined,
+				this.potassiumService,
+				transport,
+				localUser,
+				remoteUser,
+				await accountSessionService.handshakeState()
+			);
+		}
+		*/
+
+		const handshakeState = await accountSessionService.handshakeState(
+			this.accountDatabaseService.getAsyncValue<HandshakeSteps>(
+				`${sessionURL}/handshakeState/currentStep`,
+				Uint32Proto
+			),
+			this.accountDatabaseService.getAsyncValue(
+				`${sessionURL}/handshakeState/initialSecret`,
+				MaybeBinaryProto
+			),
+			(await localUser.getSigningKeyPair()) === undefined ||
+				(await remoteUser.getPublicSigningKey()) === undefined ?
+				this.accountDatabaseService.currentUser.value?.pseudoAccount :
+				undefined
+		);
+
 		this.pairwiseSession.resolve(
-			await getOrSetDefaultAsync(
-				this.pairwiseSessions,
+			new PairwiseSessionLite(
+				sessionURL,
+				this.localStorageService,
+				this.potassiumService,
+				transport,
+				localUser,
+				remoteUser,
+				handshakeState
 				/*
-				accountSessionService.ephemeralSubSession ?
-					undefined :
+				this.accountDatabaseService.getAsyncValue(
+					`${sessionURL}/incomingMessages`,
+					CastleIncomingMessagesProto
+				),
+				this.accountDatabaseService.getAsyncList(
+					`${sessionURL}/outgoingMessageQueue`,
+					BinaryProto,
+					undefined,
+					undefined,
+					undefined,
+					false
+				),
+				this.accountDatabaseService.lockFunction(
+					`${sessionURL}/lock`
+				),
+				this.accountDatabaseService.getAsyncValue(
+					`${sessionURL}/ratchetState`,
+					CastleRatchetState
+				),
+				this.accountDatabaseService.getAsyncList(
+					`${sessionURL}/ratchetUpdateQueue`,
+					CastleRatchetUpdate,
+					undefined,
+					undefined,
+					undefined,
+					false
+				)
 				*/
-				user.username,
-				async () => {
-					debugLog(() => ({
-						startingAccountCastleSessionNow: {
-							castleSessionID,
-							user
-						}
-					}));
-
-					const sessionURL = `castleSessions/${castleSessionID}/session`;
-
-					const remoteUser = new RegisteredRemoteUser(
-						this.accountDatabaseService,
-						user.pseudoAccount,
-						'realUsername' in user ?
-							user.realUsername :
-							of(user.username)
-					);
-
-					/*
-					Not necessary to reset the handshake and use the more complex
-					Castle logic just because the session is ephemeral.
-
-					if (accountSessionService.ephemeralSubSession) {
-						return new PairwiseSessionLite(
-							undefined,
-							undefined,
-							this.potassiumService,
-							transport,
-							localUser,
-							remoteUser,
-							await accountSessionService.handshakeState()
-						);
-					}
-					*/
-
-					const handshakeState = await accountSessionService.handshakeState(
-						this.accountDatabaseService.getAsyncValue<
-							HandshakeSteps
-						>(
-							`${sessionURL}/handshakeState/currentStep`,
-							Uint32Proto
-						),
-						this.accountDatabaseService.getAsyncValue(
-							`${sessionURL}/handshakeState/initialSecret`,
-							MaybeBinaryProto
-						),
-						(await localUser.getSigningKeyPair()) === undefined ||
-							(await remoteUser.getPublicSigningKey()) ===
-								undefined ?
-							this.accountDatabaseService.currentUser.value
-								?.pseudoAccount :
-							undefined
-					);
-
-					return new PairwiseSessionLite(
-						sessionURL,
-						this.localStorageService,
-						this.potassiumService,
-						transport,
-						localUser,
-						remoteUser,
-						handshakeState
-						/*
-						this.accountDatabaseService.getAsyncValue(
-							`${sessionURL}/incomingMessages`,
-							CastleIncomingMessagesProto
-						),
-						this.accountDatabaseService.getAsyncList(
-							`${sessionURL}/outgoingMessageQueue`,
-							BinaryProto,
-							undefined,
-							undefined,
-							undefined,
-							false
-						),
-						this.accountDatabaseService.lockFunction(
-							`${sessionURL}/lock`
-						),
-						this.accountDatabaseService.getAsyncValue(
-							`${sessionURL}/ratchetState`,
-							CastleRatchetState
-						),
-						this.accountDatabaseService.getAsyncList(
-							`${sessionURL}/ratchetUpdateQueue`,
-							CastleRatchetUpdate,
-							undefined,
-							undefined,
-							undefined,
-							false
-						)
-						*/
-					);
-				}
 			)
 		);
 	}
