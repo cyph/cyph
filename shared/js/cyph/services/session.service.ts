@@ -492,7 +492,9 @@ export abstract class SessionService extends BaseProvider
 			{all: true, event: 'opened'},
 			{all: true, event: 'ready'}
 		]) {
-			const callback = async () => this[event].resolve();
+			const callback = () => {
+				this[event].resolve();
+			};
 
 			if (always) {
 				callback();
