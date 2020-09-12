@@ -218,8 +218,7 @@ export class AccountChatService extends ChatService {
 						callType === 'video' ?
 						CallTypes.Video :
 						CallTypes.None,
-				id: chat.burnerSession.anonymousChannelID,
-				members: []
+				members: [{id: chat.burnerSession.anonymousChannelID}]
 			} :
 			undefined;
 

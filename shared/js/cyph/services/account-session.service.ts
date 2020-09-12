@@ -223,6 +223,13 @@ export class AccountSessionService extends SessionService {
 				throw new Error('No user signed in.');
 			}
 
+			if (
+				!chat.burnerSession.members ||
+				chat.burnerSession.members.length < 1
+			) {
+				throw new Error('No session members.');
+			}
+
 			this.accountService.autoUpdate.next(false);
 
 			this.accountService.setHeader({
@@ -254,9 +261,8 @@ export class AccountSessionService extends SessionService {
 			sessionInit.localStorageKeyPrefix = this.localStorageKeyPrefix;
 
 			sessionInit.ephemeralGroupMembers.resolve(
-				chat.burnerSession.members || []
+				chat.burnerSession.members
 			);
-			sessionInit.setID(chat.burnerSession.id);
 
 			const ephemeralSessionService = new EphemeralSessionService(
 				this.analyticsService,

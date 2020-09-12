@@ -137,9 +137,11 @@ export class AccountAppointmentsComponent extends BaseProvider
 							.pipe(take(1))
 							.toPromise()
 					].telehealth,
-					to: friend || {
-						email: appointment.fromEmail,
-						name: appointment.fromName
+					to: {
+						members: [friend || {
+								email: appointment.fromEmail,
+								name: appointment.fromName
+							}]
 					}
 				})
 		]);

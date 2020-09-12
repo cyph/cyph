@@ -302,16 +302,34 @@ export class AccountComposeComponent extends BaseProvider
 						undefined;
 
 				const accountBurnerID = uuid();
-				const id = readableID(this.configService.cyphIDLength);
 
 				calendarInvite.url = `${this.envService.appUrl}account-burner/${accountBurnerID}`;
+
+				/* TODO: Clean up data model to better support multiple recipients */
+
+				const emails = this.accountService.fromEmail.value
+					.split(',')
+					.map(s => s.trim());
+				const names = this.accountService.fromName.value
+					.split(',')
+					.map(s => s.trim());
+				const phoneNumbers = this.appointmentSMS.value
+					.split(',')
+					.map(s => s.trim());
+
+				const members = emails.map((email, i) => ({
+					email,
+					id: readableID(this.configService.cyphIDLength),
+					name: names[i] || undefined,
+					phoneNumber: phoneNumbers[i] || undefined
+				}));
 
 				await this.accountDatabaseService.setItem<IBurnerSession>(
 					`burnerSessions/${accountBurnerID}`,
 					BurnerSession,
 					{
 						callType: calendarInvite.callType,
-						id
+						members
 					}
 				);
 
@@ -361,7 +379,6 @@ export class AccountComposeComponent extends BaseProvider
 											endTime: calendarInvite.endTime,
 											startTime: calendarInvite.startTime
 										},
-										id,
 										inviterTimeZone: this
 											.appointmentShareTimeZone.value ?
 											Intl.DateTimeFormat().resolvedOptions()
@@ -374,12 +391,8 @@ export class AccountComposeComponent extends BaseProvider
 												.toPromise()
 										].telehealth,
 										to: {
-											email: this.accountService.fromEmail
-												.value,
-											name: this.accountService.fromName
-												.value
-										},
-										toSMS: this.appointmentSMS.value
+											members
+										}
 									}
 								) :
 								undefined

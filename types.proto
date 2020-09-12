@@ -586,11 +586,8 @@ message BurnerSession {
 	/** @see CallTypes */
 	CallTypes callType = 1;
 
-	/** ID. */
-	required string id = 2;
-
 	/** @see BurnerGroupMemberInitiator */
-	repeated BurnerGroupMemberInitiator members = 3;
+	repeated BurnerGroupMemberInitiator members = 2;
 }
 
 /** Calendar invite. */

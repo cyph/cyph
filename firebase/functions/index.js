@@ -368,44 +368,32 @@ exports.acceptPseudoRelationship = onCall(
 );
 
 exports.appointmentInvite = onCall(async (data, namespace, getUsername) => {
-	const id = (data.id || '').trim();
+	const {accountsURL} = namespaces[namespace];
+
 	const accountBurnerID = (data.accountBurnerID || '').trim();
 	const inviterUsername = await getUsername();
 	const telehealth = !!data.telehealth;
 
-	const {accountsURL} = namespaces[namespace];
+	const members = ((data.to || {}).members || [])
+		.map(o => ({
+			email: (o.email || '').trim(),
+			id: (o.id || '').trim(),
+			name: (o.name || '').trim(),
+			phoneNumber: (o.phoneNumber || '').trim()
+		}))
+		.filter(
+			o =>
+				o.id.length === config.cyphIDLength &&
+				(o.email || o.phoneNumber)
+		);
 
-	if (
-		id.length !== config.cyphIDLength ||
-		!data.to ||
-		(!data.to.email && !data.toSMS)
-	) {
-		throw new Error('No recipient specified.');
+	if (members.length < 1) {
+		throw new Error('No recipients specified.');
 	}
 
-	const inviteeLink = `${getFullBurnerURL(
-		namespace,
-		data.callType,
-		telehealth
-	)}${inviterUsername}/${id}`;
+	const singleRecipient = members.length === 1 ? members[0] : undefined;
 
-	const inviterLink = `${accountsURL}account-burner/${
-		accountBurnerID ? accountBurnerID : `${data.callType || 'chat'}/${id}`
-	}`;
-
-	const [smsCredentials, timeZone] = await Promise.all([
-		(async () =>
-			data.toSMS ?
-				(await database
-					.ref(
-						`${namespace}/users/${inviterUsername}/internal/smsCredentials`
-					)
-					.once('value')).val() :
-				undefined)().catch(() => undefined),
-		(async () =>
-			(data.toSMS ? await phoneNumberTimezone(data.toSMS) : undefined) ||
-			data.inviterTimeZone)()
-	]);
+	const inviterLink = `${accountsURL}account-burner/${accountBurnerID}`;
 
 	const startTimeString = new Intl.DateTimeFormat('en-US', {
 		day: 'numeric',
@@ -425,55 +413,46 @@ exports.appointmentInvite = onCall(async (data, namespace, getUsername) => {
 
 	const messageAddendumEmail = `You may also add the attached invitation to your calendar.`;
 
-	await Promise.all([
-		data.to.email &&
-			sendMail(
-				database,
-				namespace,
-				data.to,
-				`Cyph Appointment with @${inviterUsername}`,
-				{
-					markdown: `${messagePart1.replace(
-						'${PARTY}',
-						`@${inviterUsername}`
-					)}.\n\n${messagePart2.replace(
-						'${LINK}',
-						inviteeLink
-					)}\n\n${messageAddendumEmail}`,
-					noUnsubscribe: true
-				},
-				{
-					endTime: data.eventDetails.endTime,
-					inviterUsername: data.to,
-					location: inviteeLink,
-					startTime: data.eventDetails.startTime
-				}
-			),
-		data.toSMS &&
-			sendSMS(
-				data.toSMS,
-				messagePart1.replace('${PARTY}', `@${inviterUsername}`),
-				smsCredentials
-			).then(async () =>
-				sendSMS(
-					data.toSMS,
-					messagePart2.replace('${LINK}', inviteeLink),
-					smsCredentials
+	const messageAddendumMembers = `The following parties are invited to join:\n\n${members
+		.map(o =>
+			!o.name ?
+				o.email || o.phoneNumber :
+				`${o.name} <${o.email || o.phoneNumber}>`
+		)
+		.join('\n')}`;
+
+	const smsCredentials = await (async () =>
+		members.find(o => o.phoneNumber) ?
+			(await database
+				.ref(
+					`${namespace}/users/${inviterUsername}/internal/smsCredentials`
 				)
-			),
+				.once('value')).val() :
+			undefined)().catch(() => undefined);
+
+	await Promise.all([
 		sendMail(
 			database,
 			namespace,
 			inviterUsername,
-			`Cyph Appointment with ${data.to.name} <${data.to.email ||
-				data.toSMS}>`,
+			`Cyph Appointment${
+				!singleRecipient ?
+					'' :
+					` with ${
+						!singleRecipient.name ?
+							singleRecipient.email ||
+							singleRecipient.phoneNumber :
+							`${singleRecipient.name} <${singleRecipient.email ||
+								singleRecipient.phoneNumber}>`
+					}`
+			}`,
 			`${messagePart1.replace(
-				'${PARTY}',
-				data.to.name
+				' with ${PARTY}',
+				''
 			)}.\n\n${messagePart2.replace(
 				'${LINK}',
 				inviterLink
-			)}\n\n${messageAddendumEmail}`,
+			)}\n\n${messageAddendumEmail}\n\n${messageAddendumMembers}`,
 			{
 				endTime: data.eventDetails.endTime,
 				inviterUsername: {
@@ -483,6 +462,63 @@ exports.appointmentInvite = onCall(async (data, namespace, getUsername) => {
 				location: inviterLink,
 				startTime: data.eventDetails.startTime
 			}
+		),
+		Promise.all(
+			members.map(async o => {
+				const emailTo = {email: o.email, name: o.name};
+
+				const inviteeLink = `${getFullBurnerURL(
+					namespace,
+					data.callType,
+					telehealth
+				)}${inviterUsername}/${o.id}`;
+
+				const timeZone =
+					(o.phoneNumber ?
+						await phoneNumberTimezone(o.phoneNumber) :
+						undefined) || data.inviterTimeZone;
+
+				return Promise.all([
+					o.email &&
+						sendMail(
+							database,
+							namespace,
+							emailTo,
+							`Cyph Appointment with @${inviterUsername}`,
+							{
+								markdown: `${messagePart1.replace(
+									'${PARTY}',
+									`@${inviterUsername}`
+								)}.\n\n${messagePart2.replace(
+									'${LINK}',
+									inviteeLink
+								)}\n\n${messageAddendumEmail}`,
+								noUnsubscribe: true
+							},
+							{
+								endTime: data.eventDetails.endTime,
+								inviterUsername: emailTo,
+								location: inviteeLink,
+								startTime: data.eventDetails.startTime
+							}
+						),
+					o.phoneNumber &&
+						sendSMS(
+							o.phoneNumber,
+							messagePart1.replace(
+								'${PARTY}',
+								`@${inviterUsername}`
+							),
+							smsCredentials
+						).then(async () =>
+							sendSMS(
+								o.phoneNumber,
+								messagePart2.replace('${LINK}', inviteeLink),
+								smsCredentials
+							)
+						)
+				]);
+			})
 		)
 	]);
 });
