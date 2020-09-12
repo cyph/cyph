@@ -395,19 +395,20 @@ exports.appointmentInvite = onCall(async (data, namespace, getUsername) => {
 
 	const inviterLink = `${accountsURL}account-burner/${accountBurnerID}`;
 
-	const startTimeString = new Intl.DateTimeFormat('en-US', {
-		day: 'numeric',
-		hour: 'numeric',
-		minute: '2-digit',
-		month: 'long',
-		timeZone,
-		timeZoneName: 'long',
-		year: 'numeric'
-	}).format(new Date(data.eventDetails.startTime));
+	const startTimeString = (timeZone = data.inviterTimeZone) =>
+		new Intl.DateTimeFormat('en-US', {
+			day: 'numeric',
+			hour: 'numeric',
+			minute: '2-digit',
+			month: 'long',
+			timeZone,
+			timeZoneName: 'long',
+			year: 'numeric'
+		}).format(new Date(data.eventDetails.startTime));
 
 	const messagePart1 = `Cyph appointment with \${PARTY} is scheduled for ${Math.floor(
 		(data.eventDetails.endTime - data.eventDetails.startTime) / 60000
-	)} minutes at ${startTimeString}`;
+	)} minutes at \${START_TIME}`;
 
 	const messagePart2 = `At the scheduled time, join here: \${LINK}`;
 
@@ -446,10 +447,12 @@ exports.appointmentInvite = onCall(async (data, namespace, getUsername) => {
 								singleRecipient.phoneNumber}>`
 					}`
 			}`,
-			`${messagePart1.replace(
-				' with ${PARTY}',
-				''
-			)}.\n\n${messagePart2.replace(
+			`${messagePart1
+				.replace(' with ${PARTY}', '')
+				.replace(
+					'${START_TIME}',
+					startTimeString()
+				)}.\n\n${messagePart2.replace(
 				'${LINK}',
 				inviterLink
 			)}\n\n${messageAddendumEmail}\n\n${messageAddendumMembers}`,
@@ -473,10 +476,21 @@ exports.appointmentInvite = onCall(async (data, namespace, getUsername) => {
 					telehealth
 				)}${inviterUsername}/${o.id}`;
 
-				const timeZone =
-					(o.phoneNumber ?
-						await phoneNumberTimezone(o.phoneNumber) :
-						undefined) || data.inviterTimeZone;
+				const inviteeMessagePart1 = messagePart1
+					.replace('${PARTY}', `@${inviterUsername}`)
+					.replace(
+						'${START_TIME}',
+						startTimeString(
+							o.phoneNumber ?
+								await phoneNumberTimezone(o.phoneNumber) :
+								undefined
+						)
+					);
+
+				const inviteeMessagePart2 = messagePart2.replace(
+					'${LINK}',
+					inviteeLink
+				);
 
 				return Promise.all([
 					o.email &&
@@ -486,13 +500,7 @@ exports.appointmentInvite = onCall(async (data, namespace, getUsername) => {
 							emailTo,
 							`Cyph Appointment with @${inviterUsername}`,
 							{
-								markdown: `${messagePart1.replace(
-									'${PARTY}',
-									`@${inviterUsername}`
-								)}.\n\n${messagePart2.replace(
-									'${LINK}',
-									inviteeLink
-								)}\n\n${messageAddendumEmail}`,
+								markdown: `${inviteeMessagePart1}.\n\n${inviteeMessagePart2}\n\n${messageAddendumEmail}\n\n${messageAddendumMembers}`,
 								noUnsubscribe: true
 							},
 							{
@@ -505,15 +513,12 @@ exports.appointmentInvite = onCall(async (data, namespace, getUsername) => {
 					o.phoneNumber &&
 						sendSMS(
 							o.phoneNumber,
-							messagePart1.replace(
-								'${PARTY}',
-								`@${inviterUsername}`
-							),
+							inviteeMessagePart1,
 							smsCredentials
 						).then(async () =>
 							sendSMS(
 								o.phoneNumber,
-								messagePart2.replace('${LINK}', inviteeLink),
+								inviteeMessagePart2,
 								smsCredentials
 							)
 						)
