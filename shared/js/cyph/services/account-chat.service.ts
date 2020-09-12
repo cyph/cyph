@@ -8,10 +8,13 @@ import {IChatData, IChatMessageLiveValue, States} from '../chat';
 import {IAsyncSet} from '../iasync-set';
 import {LocalAsyncList} from '../local-async-list';
 import {
+	BurnerSession,
+	CallTypes,
 	ChatLastConfirmedMessage,
 	ChatMessage,
 	ChatMessageValue,
 	IAccountMessagingGroup,
+	IBurnerSession,
 	IChatMessage,
 	NeverProto,
 	NotificationTypes,
@@ -183,7 +186,13 @@ export class AccountChatService extends ChatService {
 	/** Sets the remote user we're chatting with. */
 	public async setUser (
 		chat:
-			| {anonymousChannelID: string; passive?: boolean}
+			| {
+					burnerSession: {
+						accountBurnerID?: string;
+						anonymousChannelID?: string;
+					};
+					passive?: boolean;
+			  }
 			| {group: IAccountMessagingGroup; id: string}
 			| {username: string},
 		keepCurrentMessage: boolean = false,
@@ -192,11 +201,42 @@ export class AccountChatService extends ChatService {
 		ephemeralSubSession: boolean = false,
 		answering: boolean = true
 	) : Promise<void> {
+		const burnerSession: IBurnerSession | undefined = !(
+			'burnerSession' in chat
+		) ?
+			undefined :
+		chat.burnerSession.accountBurnerID ?
+			await this.accountDatabaseService.getItem(
+				`burnerSessions/${chat.burnerSession.accountBurnerID}`,
+				BurnerSession
+			) :
+		chat.burnerSession.anonymousChannelID ?
+			{
+				callType:
+					callType === 'audio' ?
+						CallTypes.Audio :
+						callType === 'video' ?
+						CallTypes.Video :
+						CallTypes.None,
+				id: chat.burnerSession.anonymousChannelID,
+				members: []
+			} :
+			undefined;
+
+		if (burnerSession) {
+			callType =
+				burnerSession.callType === CallTypes.Audio ?
+					'audio' :
+				burnerSession.callType === CallTypes.Video ?
+					'video' :
+					undefined;
+		}
+
 		this.accountSessionInitService.callType = callType;
 
 		const callRequestPromise = callType ?
 			(async () => {
-				if (!('anonymousChannelID' in chat)) {
+				if (!burnerSession) {
 					return true;
 				}
 
@@ -210,7 +250,7 @@ export class AccountChatService extends ChatService {
 				await this.p2pWebRTCService.accept(callType, true);
 				return true;
 			})().then(async requestCall =>
-				requestCall && !answering ?
+				requestCall && !answering && callType ?
 					this.p2pWebRTCService.request(
 						callType,
 						undefined,
@@ -220,10 +260,14 @@ export class AccountChatService extends ChatService {
 			) :
 			Promise.resolve();
 
-		if ('anonymousChannelID' in chat) {
-			await this.accountSessionService.setUser(chat);
+		if (burnerSession) {
+			await this.accountSessionService.setUser({...chat, burnerSession});
 			this.resolvers.chatConnected.resolve();
 			await callRequestPromise;
+			return;
+		}
+
+		if ('burnerSession' in chat) {
 			return;
 		}
 

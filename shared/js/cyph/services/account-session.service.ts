@@ -8,6 +8,7 @@ import {AccountContactsComponent} from '../components/account-contacts';
 import {MaybePromise} from '../maybe-promise-type';
 import {
 	IAccountMessagingGroup,
+	IBurnerSession,
 	ISessionMessage,
 	SessionMessageList,
 	StringProto
@@ -197,7 +198,7 @@ export class AccountSessionService extends SessionService {
 	/* eslint-disable-next-line complexity */
 	public async setUser (
 		chat:
-			| {anonymousChannelID: string; passive?: boolean}
+			| {burnerSession: IBurnerSession; passive?: boolean}
 			| {group: IAccountMessagingGroup; id: string}
 			| {username: string},
 		sessionSubID?: string,
@@ -217,7 +218,7 @@ export class AccountSessionService extends SessionService {
 			}
 		}));
 
-		if ('anonymousChannelID' in chat) {
+		if ('burnerSession' in chat) {
 			if (!this.accountDatabaseService.currentUser.value) {
 				throw new Error('No user signed in.');
 			}
@@ -249,10 +250,13 @@ export class AccountSessionService extends SessionService {
 					.username
 			};
 
+			sessionInit.callType = this.sessionInitService.callType;
 			sessionInit.localStorageKeyPrefix = this.localStorageKeyPrefix;
 
-			sessionInit.ephemeralGroupMembers.resolve([]);
-			sessionInit.setID(chat.anonymousChannelID);
+			sessionInit.ephemeralGroupMembers.resolve(
+				chat.burnerSession.members || []
+			);
+			sessionInit.setID(chat.burnerSession.id);
 
 			const ephemeralSessionService = new EphemeralSessionService(
 				this.analyticsService,
