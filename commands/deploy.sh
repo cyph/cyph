@@ -715,38 +715,6 @@ then
 
 	cd functions
 
-	node -e 'fs.writeFileSync("namespaces.js", `module.exports = ${JSON.stringify(
-		require("glob").sync(`${os.homedir()}/.cyph/repos/custom-builds/*/config.json`).
-			map(path => ({
-				domain: path.split("/").slice(-2)[0],
-				...JSON.parse(fs.readFileSync(path).toString())
-			})).
-			filter(o => !o.useNamespace).
-			reduce(
-				(namespaces, {burnerOnly, domain}) => {
-					namespaces[domain] = {
-						accountsURL: `https://${domain}/`,
-						burnerURL: `https://${domain}/${burnerOnly ? "" : "#burner/"}`,
-						domain
-					};
-					namespaces[domain.replace(/\./g, "_")] = namespaces[domain];
-					return namespaces;
-				},
-				{
-					"cyph.ws": {
-						accountsURL: "https://cyph.app/",
-						burnerURL: "https://cyph.im/#",
-						domain: "cyph.app"
-					},
-					"cyph_ws": {
-						accountsURL: "https://cyph.app/",
-						burnerURL: "https://cyph.im/#",
-						domain: "cyph.app"
-					}
-				}
-			)
-	)};`)'
-
 	npm install
 	cp ../../modules/database-service.js ~/.cyph/email-credentials.js ./
 	html-minifier --collapse-whitespace --minify-css --remove-comments email.html -o email.html
@@ -783,6 +751,118 @@ then
 				}
 			};
 EOM
+
+		firebaseDomain='master.cyph.app'
+		firebaseCustomBuildPrefix='master.'
+		firebaseAccountsURL="https://${firebaseDomain}/"
+		firebaseBurnerURL="${firebaseAccountsURL}#burner/"
+		firebaseBurnerAudioURL="${firebaseBurnerURL}audio/"
+		firebaseBurnerVideoURL="${firebaseBurnerURL}video/"
+		firebaseTelehealthBurnerURL="${firebaseBurnerURL}"
+		firebaseTelehealthBurnerAudioURL="${firebaseBurnerAudioURL}"
+		firebaseTelehealthBurnerVideoURL="${firebaseBurnerVideoURL}"
+
+		case "${firebaseProject}" in
+			cyph-test-local | cyph-test-e2e)
+				firebaseDomain='localhost:42002'
+				firebaseCustomBuildPrefix='master.'
+				firebaseAccountsURL="http://${firebaseDomain}/"
+				firebaseBurnerURL="${firebaseAccountsURL}#burner/"
+				firebaseBurnerAudioURL="${firebaseBurnerURL}audio/"
+				firebaseBurnerVideoURL="${firebaseBurnerURL}video/"
+				firebaseTelehealthBurnerURL="${firebaseBurnerURL}"
+				firebaseTelehealthBurnerAudioURL="${firebaseBurnerAudioURL}"
+				firebaseTelehealthBurnerVideoURL="${firebaseBurnerVideoURL}"
+				;;
+
+			cyph-test-staging)
+				firebaseDomain='staging.cyph.app'
+				firebaseCustomBuildPrefix='staging.'
+				firebaseAccountsURL="https://${firebaseDomain}/"
+				firebaseBurnerURL="${firebaseAccountsURL}#burner/"
+				firebaseBurnerAudioURL="${firebaseBurnerURL}audio/"
+				firebaseBurnerVideoURL="${firebaseBurnerURL}video/"
+				firebaseTelehealthBurnerURL='https://staging.chat.cyph.healthcare/#'
+				firebaseTelehealthBurnerAudioURL='https://staging.audio.cyph.healthcare/#'
+				firebaseTelehealthBurnerVideoURL='https://staging.video.cyph.healthcare/#'
+				;;
+
+			cyph-test-beta)
+				firebaseDomain='beta-staging.cyph.app'
+				firebaseCustomBuildPrefix='beta-staging.'
+				firebaseAccountsURL="https://${firebaseDomain}/"
+				firebaseBurnerURL="${firebaseAccountsURL}#burner/"
+				firebaseBurnerAudioURL="${firebaseBurnerURL}audio/"
+				firebaseBurnerVideoURL="${firebaseBurnerURL}video/"
+				firebaseTelehealthBurnerURL="${firebaseBurnerURL}"
+				firebaseTelehealthBurnerAudioURL="${firebaseBurnerAudioURL}"
+				firebaseTelehealthBurnerVideoURL="${firebaseBurnerVideoURL}"
+				;;
+
+			cyphme)
+				firebaseDomain='cyph.app'
+				firebaseCustomBuildPrefix=''
+				firebaseAccountsURL="https://${firebaseDomain}/"
+				firebaseBurnerURL='https://cyph.im/#'
+				firebaseBurnerAudioURL='https://cyph.audio/#'
+				firebaseBurnerVideoURL='https://cyph.video/#'
+				firebaseTelehealthBurnerURL='https://chat.cyph.healthcare/#'
+				firebaseTelehealthBurnerAudioURL='https://audio.cyph.healthcare/#'
+				firebaseTelehealthBurnerVideoURL='https://video.cyph.healthcare/#'
+				;;
+		esac
+
+		node -e "fs.writeFileSync('functions/namespaces.js', \`module.exports = \${JSON.stringify(
+			require('glob').sync(\`\${os.homedir()}/.cyph/repos/custom-builds/*/config.json\`).
+				map(path => ({
+					domain: path.split('/').slice(-2)[0],
+					...JSON.parse(fs.readFileSync(path).toString())
+				})).
+				filter(o => !o.useNamespace).
+				reduce(
+					(namespaces, {burnerOnly, domain}) => {
+						const accountsURL = \`https://${firebaseCustomBuildPrefix}\${domain}/\`;
+						const burnerURL = \`${accountsURL}/#\${burnerOnly ? '' : 'burner/'}\`;
+						const burnerAudioURL = \`\${burnerURL}audio/\`;
+						const burnerVideoURL = \`\${burnerURL}video/\`;
+
+						namespaces[domain] = {
+							accountsURL,
+							burnerURL,
+							burnerAudioURL,
+							burnerVideoURL,
+							domain,
+							telehealthBurnerURL: burnerURL,
+							telehealthBurnerAudioURL: burnerAudioURL,
+							telehealthBurnerVideoURL: burnerVideoURL
+						};
+						namespaces[domain.replace(/\\./g, '_')] = namespaces[domain];
+						return namespaces;
+					},
+					{
+						'cyph.ws': {
+							accountsURL: '${firebaseAccountsURL}',
+							burnerURL: '${firebaseBurnerURL}',
+							burnerAudioURL: '${firebaseBurnerAudioURL}',
+							burnerVideoURL: '${firebaseBurnerVideoURL}',
+							domain: '${firebaseDomain}',
+							telehealthBurnerURL: '${firebaseTelehealthBurnerURL}',
+							telehealthBurnerAudioURL: '${firebaseTelehealthBurnerAudioURL}',
+							telehealthBurnerVideoURL: '${firebaseTelehealthBurnerVideoURL}'
+						},
+						'cyph_ws': {
+							accountsURL: '${firebaseAccountsURL}',
+							burnerURL: '${firebaseBurnerURL}',
+							burnerAudioURL: '${firebaseBurnerAudioURL}',
+							burnerVideoURL: '${firebaseBurnerVideoURL}',
+							domain: '${firebaseDomain}',
+							telehealthBurnerURL: '${firebaseTelehealthBurnerURL}',
+							telehealthBurnerAudioURL: '${firebaseTelehealthBurnerAudioURL}',
+							telehealthBurnerVideoURL: '${firebaseTelehealthBurnerVideoURL}'
+						}
+					}
+				)
+		)};\`)"
 
 		firebaseCLI () {
 			./functions/node_modules/node/bin/node functions/node_modules/.bin/firebase "${@}"

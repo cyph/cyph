@@ -82,26 +82,34 @@ const {notify} = require('./notify')(database, messaging);
 
 const channelDisconnectTimeout = 30000;
 
-const getFullBurnerURL = (namespace, callType, telehealth) => {
-	const {burnerURL} = namespaces[namespace];
+const getFullBurnerURL = (
+	namespace,
+	callType,
+	telehealth,
+	removeHash = false
+) => {
+	const {
+		burnerURL,
+		burnerAudioURL,
+		burnerVideoURL,
+		telehealthBurnerURL,
+		telehealthBurnerAudioURL,
+		telehealthBurnerVideoURL
+	} = namespaces[namespace];
 
-	return namespace === 'cyph_ws' && telehealth ?
+	const fullBurnerURL = telehealth ?
 		callType === 'audio' ?
-			'https://audio.cyph.healthcare/' :
+			telehealthBurnerAudioURL :
 		callType === 'video' ?
-			'https://video.cyph.healthcare/' :
-			'https://chat.cyph.healthcare/' :
-	namespace === 'cyph_ws' ?
-		callType === 'audio' ?
-			'https://cyph.audio/' :
-		callType === 'video' ?
-			'https://cyph.video/' :
-			'https://cyph.im/' :
+			telehealthBurnerVideoURL :
+			telehealthBurnerURL :
 	callType === 'audio' ?
-		`${burnerURL}audio/` :
+		burnerAudioURL :
 	callType === 'video' ?
-		`${burnerURL}video/` :
+		burnerVideoURL :
 		burnerURL;
+
+	return removeHash ? fullBurnerURL.replace('#', '') : fullBurnerURL;
 };
 
 const getRealUsername = async (namespace, username) => {
@@ -473,7 +481,8 @@ exports.appointmentInvite = onCall(async (data, namespace, getUsername) => {
 				const inviteeLink = `${getFullBurnerURL(
 					namespace,
 					data.callType,
-					telehealth
+					telehealth,
+					true
 				)}${inviterUsername}/${o.id}`;
 
 				const inviteeMessagePart1 = messagePart1
