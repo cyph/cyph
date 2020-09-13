@@ -179,24 +179,32 @@ const getMetadataInternal = async (
 		authorUser = (async () => {
 			let user: UserLike | undefined;
 
-			try {
-				const remoteUser = await accountSessionService?.remoteUser;
+			const hasGroupIndex = !!message.authorID?.startsWith(
+				groupSessionIndexPrefix
+			);
 
-				user =
-					envService.isAccounts && accountUserLookupService ?
-						remoteUser?.username === message.authorID ?
-							remoteUser :
-							await accountUserLookupService.getUser(
-								message.authorID
-							) :
-						undefined;
+			try {
+				if (!hasGroupIndex) {
+					const remoteUser = await accountSessionService?.remoteUser;
+
+					user =
+						envService.isAccounts && accountUserLookupService ?
+							remoteUser?.username === message.authorID ?
+								remoteUser :
+								await accountUserLookupService.getUser(
+									message.authorID
+								) :
+							undefined;
+				}
 			}
 			catch {}
 
-			const groupIndex = message.authorID?.startsWith(
-				groupSessionIndexPrefix
-			) ?
-				toInt(message.authorID.slice(groupSessionIndexPrefix.length)) :
+			const groupIndex = hasGroupIndex ?
+				toInt(
+					(message.authorID || '').slice(
+						groupSessionIndexPrefix.length
+					)
+				) :
 				NaN;
 
 			(user?.pseudoAccount ?
