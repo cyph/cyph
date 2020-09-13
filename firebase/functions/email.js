@@ -112,11 +112,25 @@ const sendMailInternal = async (
 					content: ical({
 						domain: 'cyph.com',
 						events: [{
-								attendees: [to, eventInviter],
+								attendees: Object.values(
+									[
+										to,
+										...(eventInviter ? [eventInviter] : []),
+										...(eventDetails.attendees || [])
+									].reduce(
+										(attendees, o) => ({
+											[typeof o === 'string' ?
+												o :
+												o.email]: o,
+											...attendees
+										}),
+										{}
+									)
+								),
 								description: eventDetails.description,
 								end: new Date(eventDetails.endTime),
 								location: eventDetails.location,
-								organizer: eventInviter,
+								organizer: eventInviter || to,
 								start: new Date(eventDetails.startTime),
 								summary: eventDetails.summary || subject
 							}],

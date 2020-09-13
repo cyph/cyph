@@ -465,11 +465,8 @@ exports.appointmentInvite = onCall(async (data, namespace, getUsername) => {
 				inviterLink
 			)}\n\n${messageAddendumEmail}\n\n${messageAddendumMembers}`,
 			{
+				attendees: members,
 				endTime: data.eventDetails.endTime,
-				inviterUsername: {
-					...data.to,
-					email: data.to.email || cyphFromEmail
-				},
 				location: inviterLink,
 				startTime: data.eventDetails.startTime
 			}
@@ -513,6 +510,7 @@ exports.appointmentInvite = onCall(async (data, namespace, getUsername) => {
 								noUnsubscribe: true
 							},
 							{
+								attendees: members,
 								endTime: data.eventDetails.endTime,
 								inviterUsername: emailTo,
 								location: inviteeLink,
