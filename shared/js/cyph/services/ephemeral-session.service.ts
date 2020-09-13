@@ -160,7 +160,6 @@ export class EphemeralSessionService extends SessionService {
 
 			const childSessionInit = new BasicSessionInitService();
 			childSessionInit.accountsBurnerAliceData = this.sessionInitService.accountsBurnerAliceData;
-			childSessionInit.callType = this.sessionInitService.callType;
 			childSessionInit.child = true;
 			childSessionInit.localStorageKeyPrefix = this.sessionInitService.localStorageKeyPrefix;
 			childSessionInit.parentID = parentID;
@@ -701,7 +700,6 @@ export class EphemeralSessionService extends SessionService {
 				burnerGroup.members.map((member, i) => {
 					const sessionInit = new BasicSessionInitService();
 					sessionInit.accountsBurnerAliceData = this.sessionInitService.accountsBurnerAliceData;
-					sessionInit.callType = this.sessionInitService.callType;
 					sessionInit.child = true;
 					sessionInit.localStorageKeyPrefix = this.sessionInitService.localStorageKeyPrefix;
 					sessionInit.parentID = fullID;
