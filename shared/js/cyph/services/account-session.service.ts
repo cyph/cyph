@@ -13,7 +13,11 @@ import {
 	SessionMessageList,
 	StringProto
 } from '../proto';
-import {ISessionMessageAdditionalData, ISessionMessageData} from '../session';
+import {
+	ISessionMessageAdditionalData,
+	ISessionMessageData,
+	RpcEvents
+} from '../session';
 import {normalizeArray} from '../util/formatting';
 import {debugLog} from '../util/log';
 import {uuid} from '../util/uuid';
@@ -61,9 +65,6 @@ export class AccountSessionService extends SessionService {
 	/** If true, this is an ephemeral sub-session. */
 	public ephemeralSubSession: boolean = false;
 
-	/** @inheritDoc */
-	public group?: AccountSessionService[];
-
 	/** Metadata of current group, if applicable. */
 	public groupMetadata?: {
 		id: string;
@@ -78,9 +79,6 @@ export class AccountSessionService extends SessionService {
 
 	/** @inheritDoc */
 	public readonly ready = resolvable<true>(true);
-
-	/** Remote user. */
-	public readonly remoteUser = resolvable<UserLike | undefined>();
 
 	/** @inheritDoc */
 	protected async abortSetup () : Promise<void> {
@@ -239,7 +237,7 @@ export class AccountSessionService extends SessionService {
 			this.accountSessionInitService.ephemeral = true;
 			this.ephemeralSubSession = true;
 
-			this.remoteUser.resolve({
+			const remoteUser: UserLike = {
 				anonymous: true,
 				avatar: undefined,
 				contactID: undefined,
@@ -247,12 +245,15 @@ export class AccountSessionService extends SessionService {
 				name: undefined,
 				pseudoAccount: false,
 				username: undefined
-			});
+			};
+
+			this.remoteUser.resolve(remoteUser);
 
 			const sessionInit = new BasicSessionInitService();
 
 			sessionInit.accountsBurnerAliceData = {
 				passive: !!chat.passive,
+				remoteUser,
 				username: this.accountDatabaseService.currentUser.value.user
 					.username
 			};
@@ -263,6 +264,7 @@ export class AccountSessionService extends SessionService {
 			sessionInit.ephemeralGroupMembers.resolve(
 				chat.burnerSession.members
 			);
+			sessionInit.setID('');
 
 			const ephemeralSessionService = new EphemeralSessionService(
 				this.analyticsService,
@@ -309,6 +311,14 @@ export class AccountSessionService extends SessionService {
 				this.state.wasInitiatedByAPI
 			);
 
+			/* TODO: Factor out shared logic here and in SessionService.setGroup */
+
+			for (const rpcEvent of [RpcEvents.text, RpcEvents.p2pRequest]) {
+				ephemeralSessionService.on(rpcEvent, newEvents => {
+					this.trigger(rpcEvent, newEvents);
+				});
+			}
+
 			for (const event of <
 				(
 					| 'beginChat'
@@ -341,8 +351,12 @@ export class AccountSessionService extends SessionService {
 
 			this.ephemeralSessionService = ephemeralSessionService;
 
+			await ephemeralSessionService.opened;
+
+			this.group = ephemeralSessionService.group;
+
 			this.ready.resolve();
-			return this.castleService.init(this);
+			return;
 		}
 
 		if ('username' in chat) {

@@ -105,7 +105,12 @@ export class EphemeralSessionService extends SessionService {
 				{
 					members: [
 						{
-							id: readableID(this.configService.secretLength),
+							id: readableID(
+								this.sessionInitService
+									.accountsBurnerAliceData ?
+									this.configService.cyphIDLength :
+									this.configService.secretLength
+							),
 							isHost: true
 						},
 						...Array.from(fullBurnerGroup.get(o)?.values() || [])
@@ -145,15 +150,19 @@ export class EphemeralSessionService extends SessionService {
 			}
 
 			const masterSessionInit = new BasicSessionInitService();
+			masterSessionInit.accountsBurnerAliceData = this.sessionInitService.accountsBurnerAliceData;
 			masterSessionInit.child = true;
+			masterSessionInit.localStorageKeyPrefix = this.sessionInitService.localStorageKeyPrefix;
 			masterSessionInit.parentID = parentID;
 			masterSessionInit.setID(member.id, undefined, true);
 
 			const masterSession = this.spawn(masterSessionInit);
 
 			const childSessionInit = new BasicSessionInitService();
+			childSessionInit.accountsBurnerAliceData = this.sessionInitService.accountsBurnerAliceData;
 			childSessionInit.callType = this.sessionInitService.callType;
 			childSessionInit.child = true;
+			childSessionInit.localStorageKeyPrefix = this.sessionInitService.localStorageKeyPrefix;
 			childSessionInit.parentID = parentID;
 			childSessionInit.setID(burnerGroup.members[0].id);
 
@@ -468,6 +477,12 @@ export class EphemeralSessionService extends SessionService {
 		(async () => {
 			this.accountService.autoUpdate.next(false);
 
+			if (this.sessionInitService.accountsBurnerAliceData?.remoteUser) {
+				this.remoteUser.resolve(
+					this.sessionInitService.accountsBurnerAliceData.remoteUser
+				);
+			}
+
 			let username: string | undefined;
 
 			const fullID = await this.sessionInitService.id;
@@ -685,12 +700,17 @@ export class EphemeralSessionService extends SessionService {
 			this.setGroup(
 				burnerGroup.members.map((member, i) => {
 					const sessionInit = new BasicSessionInitService();
+					sessionInit.accountsBurnerAliceData = this.sessionInitService.accountsBurnerAliceData;
 					sessionInit.callType = this.sessionInitService.callType;
 					sessionInit.child = true;
+					sessionInit.localStorageKeyPrefix = this.sessionInitService.localStorageKeyPrefix;
 					sessionInit.parentID = fullID;
-					sessionInit.setID(member.id);
 
 					if (i === 0) {
+						sessionInit.setID(
+							username ? `${username}/${member.id}` : member.id
+						);
+
 						const castleService = new BasicCastleService(
 							this.accountDatabaseService,
 							this.potassiumService
@@ -713,6 +733,8 @@ export class EphemeralSessionService extends SessionService {
 
 						return hostSession;
 					}
+
+					sessionInit.setID(member.id);
 
 					const session = this.spawn(sessionInit);
 

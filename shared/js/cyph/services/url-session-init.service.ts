@@ -1,5 +1,6 @@
 import {Injectable} from '@angular/core';
 import {Router} from '@angular/router';
+import {UserLike} from '../account';
 import {BaseProvider} from '../base-provider';
 import {env} from '../env';
 import {IResolvable} from '../iresolvable';
@@ -16,6 +17,7 @@ export class UrlSessionInitService extends BaseProvider
 	/** @inheritDoc */
 	public accountsBurnerAliceData?: {
 		passive: boolean;
+		remoteUser?: UserLike;
 		username: string;
 	};
 

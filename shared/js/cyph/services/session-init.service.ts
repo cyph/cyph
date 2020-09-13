@@ -1,4 +1,5 @@
 import {Injectable} from '@angular/core';
+import {UserLike} from '../account';
 import {BaseProvider} from '../base-provider';
 import {IResolvable} from '../iresolvable';
 import {IBurnerGroupMemberInitiator} from '../proto';
@@ -12,6 +13,7 @@ export class SessionInitService extends BaseProvider {
 	/** Data used if this is the registered user's end of an Accounts-Burner session. */
 	public accountsBurnerAliceData?: {
 		passive: boolean;
+		remoteUser?: UserLike;
 		username: string;
 	};
 

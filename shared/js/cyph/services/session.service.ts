@@ -3,6 +3,7 @@
 import {Injectable} from '@angular/core';
 import {BehaviorSubject, Observable, of, ReplaySubject} from 'rxjs';
 import {take} from 'rxjs/operators';
+import {UserLike} from '../account';
 import {BaseProvider} from '../base-provider';
 import {HandshakeSteps, IHandshakeState} from '../crypto/castle';
 import {IAsyncList} from '../iasync-list';
@@ -72,9 +73,6 @@ export abstract class SessionService extends BaseProvider
 
 	/** @ignore */
 	protected lastIncomingMessageTimestamp: number = 0;
-
-	/** @ignore */
-	protected readonly opened = resolvable<true>(true);
 
 	/** @ignore */
 	protected readonly receivedMessages: Set<string> = new Set<string>();
@@ -147,6 +145,9 @@ export abstract class SessionService extends BaseProvider
 	>(this.stringsService.me);
 
 	/** @inheritDoc */
+	public readonly opened = resolvable<true>(true);
+
+	/** @inheritDoc */
 	public readonly p2pWebRTCService = resolvable<IP2PWebRTCService>();
 
 	/** @inheritDoc */
@@ -162,6 +163,9 @@ export abstract class SessionService extends BaseProvider
 
 	/** @inheritDoc */
 	public readonly ready = resolvedResolvable<true>(true);
+
+	/** @inheritDoc */
+	public readonly remoteUser = resolvable<UserLike | undefined>();
 
 	/** @inheritDoc */
 	public readonly remoteUsername: BehaviorSubject<

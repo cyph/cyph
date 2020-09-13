@@ -1,4 +1,5 @@
 import {BehaviorSubject, Observable, Subject} from 'rxjs';
+import {UserLike} from '../account';
 import {IHandshakeState} from '../crypto/castle/ihandshake-state';
 import {IResolvable} from '../iresolvable';
 import {MaybePromise} from '../maybe-promise-type';
@@ -88,6 +89,9 @@ export interface ISessionService {
 	/** Local username (e.g. "me"). */
 	readonly localUsername: Observable<string>;
 
+	/** Resolves when channel is open. */
+	readonly opened: IResolvable<true>;
+
 	/** @see IP2PWebRTCService */
 	readonly p2pWebRTCService: IResolvable<IP2PWebRTCService>;
 
@@ -105,6 +109,9 @@ export interface ISessionService {
 
 	/** Resolves when service is ready. */
 	readonly ready: IResolvable<true>;
+
+	/** Remote user, if applicable. */
+	readonly remoteUser: IResolvable<UserLike | undefined>;
 
 	/** Remote username (e.g. "friend" or "alice"). */
 	readonly remoteUsername: BehaviorSubject<string>;

@@ -11,7 +11,7 @@ import {
 import {MaybeBinaryProto, Uint32Proto} from '../../proto';
 import {debugLog} from '../../util/log';
 import {AccountContactsService} from '../account-contacts.service';
-import {AccountSessionService} from '../account-session.service';
+import {SessionService} from '../session.service';
 import {LocalStorageService} from '../local-storage.service';
 import {AccountDatabaseService} from './account-database.service';
 import {CastleService} from './castle.service';
@@ -26,16 +26,14 @@ export class AccountCastleService extends CastleService {
 	private initiated: boolean = false;
 
 	/** @inheritDoc */
-	public async init (
-		accountSessionService: AccountSessionService
-	) : Promise<void> {
+	public async init (sessionService: SessionService) : Promise<void> {
 		if (this.initiated) {
 			return this.pairwiseSession.then(() => {});
 		}
 
 		this.initiated = true;
 
-		const user = await accountSessionService.remoteUser;
+		const user = await sessionService.remoteUser;
 
 		debugLog(() => ({startingAccountCastleSession: {user}}));
 
@@ -43,12 +41,12 @@ export class AccountCastleService extends CastleService {
 			return;
 		}
 
-		const transport = new Transport(accountSessionService);
+		const transport = new Transport(sessionService);
 
 		const localUser = new RegisteredLocalUser(this.accountDatabaseService);
 
 		if (user.anonymous) {
-			const anonymousHandshakeState = await accountSessionService.handshakeState(
+			const anonymousHandshakeState = await sessionService.handshakeState(
 				undefined,
 				undefined,
 				false
@@ -58,7 +56,7 @@ export class AccountCastleService extends CastleService {
 				this.potassiumService,
 				anonymousHandshakeState,
 				undefined,
-				accountSessionService.remoteUsername
+				sessionService.remoteUsername
 			);
 
 			this.pairwiseSession.resolve(
@@ -107,7 +105,7 @@ export class AccountCastleService extends CastleService {
 		Not necessary to reset the handshake and use the more complex
 		Castle logic just because the session is ephemeral.
 
-		if (accountSessionService.ephemeralSubSession) {
+		if (sessionService.ephemeralSubSession) {
 			return new PairwiseSessionLite(
 				undefined,
 				undefined,
@@ -115,12 +113,12 @@ export class AccountCastleService extends CastleService {
 				transport,
 				localUser,
 				remoteUser,
-				await accountSessionService.handshakeState()
+				await sessionService.handshakeState()
 			);
 		}
 		*/
 
-		const handshakeState = await accountSessionService.handshakeState(
+		const handshakeState = await sessionService.handshakeState(
 			this.accountDatabaseService.getAsyncValue<HandshakeSteps>(
 				`${sessionURL}/handshakeState/currentStep`,
 				Uint32Proto
