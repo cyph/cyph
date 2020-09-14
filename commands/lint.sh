@@ -116,6 +116,7 @@ output="${output}$({
 		-type f \
 		-name '*.html' \
 		-not -name '*.native.html' \
+		-not -name account-compose.component.html \
 		-not -name dynamic-form.html \
 		-exec node -e '(async () => {
 			const result = await require("htmllint")(
