@@ -5,6 +5,7 @@ import {map, take} from 'rxjs/operators';
 import {IContactListItem, User} from '../account';
 import {AccountContactsComponent} from '../components/account-contacts';
 import {BooleanProto, CyphPlans, NotificationTypes} from '../proto';
+import {filterUndefined} from '../util/filter';
 import {getTimestamp} from '../util/time';
 import {sleep} from '../util/wait';
 import {AccountContactsService} from './account-contacts.service';
@@ -30,9 +31,9 @@ import {StringsService} from './strings.service';
 @Injectable()
 export class AccountP2PService extends P2PService {
 	/** @ignore */
-	private readonly incomingStreamUsers = this.p2pWebRTCService.incomingStreamUsernames.pipe(
-		map(usernames =>
-			usernames.map(
+	private readonly incomingStreamUsers = this.p2pWebRTCService.incomingStreamUsers.pipe(
+		map(users =>
+			filterUndefined(users.map(o => o.username)).map(
 				(username) : IContactListItem => ({
 					unreadMessageCount: of(0),
 					user: this.accountUserLookupService

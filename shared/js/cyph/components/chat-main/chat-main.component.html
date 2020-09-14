@@ -179,8 +179,10 @@
 					[playsinline]="true"
 					[src]="incomingStream.stream"
 					[title]="
-						incomingStream.username ?
-							'@' + (incomingStream.username || '') :
+						incomingStream.user.username ?
+							'@' + (incomingStream.user.username || '') :
+						incomingStream.user.name ?
+							incomingStream.user.name :
 							undefined
 					"
 					*ngIf="!!incomingStream.stream"
@@ -528,8 +530,7 @@
 					cyphTranslate
 					[matBadge]="
 						(
-							(p2pWebRTCService.incomingStreamUsernames
-								| await) || []
+							(p2pWebRTCService.incomingStreamUsers | await) || []
 						).length.toString()
 					"
 					matBadgePosition="above after"
@@ -537,10 +538,8 @@
 					matTooltipPosition="above"
 					(click)="p2pService.viewCallParticipants()"
 					*ngIf="
-						(
-							(p2pWebRTCService.incomingStreamUsernames
-								| await) || []
-						).length > 0
+						((p2pWebRTCService.incomingStreamUsers | await) || [])
+							.length > 0
 					"
 				>
 					<mat-icon>group</mat-icon>

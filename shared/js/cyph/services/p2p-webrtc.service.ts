@@ -103,17 +103,20 @@ export class P2PWebRTCService extends BaseProvider
 			activeVideo: boolean;
 			constraints: MediaStreamConstraints;
 			stream?: MediaStream;
-			username?: string;
+			user: {
+				name?: string;
+				username?: string;
+			};
 		}[]
 	>([]);
 
 	/** @inheritDoc */
-	public readonly incomingStreamUsernames = this.incomingStreams.pipe(
+	public readonly incomingStreamUsers = this.incomingStreams.pipe(
 		map(incomingStreams =>
 			filterUndefined(
 				incomingStreams
 					.filter(o => o.stream !== undefined)
-					.map(o => o.username)
+					.map(o => o.user)
 			)
 		)
 	);
@@ -126,6 +129,10 @@ export class P2PWebRTCService extends BaseProvider
 						activeVideo: boolean;
 						constraints: MediaStreamConstraints;
 						stream: MediaStream;
+						user: {
+							name?: string;
+							username?: string;
+						};
 					}[]
 				> incomingStreams.filter(o => !!o.constraints.video && !!o.stream)
 		)
@@ -660,7 +667,15 @@ export class P2PWebRTCService extends BaseProvider
 				sessionServices.map(sessionService => ({
 					activeVideo: false,
 					constraints: this.outgoingStream.value.constraints,
-					username: sessionService.pairwiseSessionData?.remoteUsername
+					user: sessionService.pairwiseSessionData?.remoteUsername ?
+						{
+							username:
+								sessionService.pairwiseSessionData
+									.remoteUsername
+						} :
+						{
+							name: sessionService.remoteUsername.value
+						}
 				}))
 			);
 
