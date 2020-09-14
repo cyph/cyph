@@ -374,7 +374,11 @@ export class EphemeralSessionService extends SessionService {
 			return;
 		}
 
-		if (!this.group && !(await this.sessionInitService.headless)) {
+		if (
+			!this.group &&
+			!this.sessionInitService.child &&
+			!(await this.sessionInitService.headless)
+		) {
 			this.pingPong();
 		}
 
