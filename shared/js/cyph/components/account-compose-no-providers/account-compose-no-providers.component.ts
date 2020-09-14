@@ -9,6 +9,7 @@ import {ConfigService} from '../../services/config.service';
 import {AccountAuthService} from '../../services/crypto/account-auth.service';
 import {AccountDatabaseService} from '../../services/crypto/account-database.service';
 import {DatabaseService} from '../../services/database.service';
+import {DialogService} from '../../services/dialog.service';
 import {EnvService} from '../../services/env.service';
 import {ScrollService} from '../../services/scroll.service';
 import {SessionService} from '../../services/session.service';
@@ -36,6 +37,7 @@ export class AccountComposeNoProvidersComponent extends AccountComposeComponent 
 		accountFilesService: AccountFilesService,
 		configService: ConfigService,
 		databaseService: DatabaseService,
+		dialogService: DialogService,
 		scrollService: ScrollService,
 		sessionService: SessionService,
 		activatedRoute: ActivatedRoute,
@@ -52,6 +54,7 @@ export class AccountComposeNoProvidersComponent extends AccountComposeComponent 
 			accountFilesService,
 			configService,
 			databaseService,
+			dialogService,
 			scrollService,
 			sessionService,
 			activatedRoute,

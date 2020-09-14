@@ -722,6 +722,12 @@ export class StringsService extends BaseProvider {
 	public readonly me = `me`;
 
 	/** @see StringsService */
+	public readonly meetingGuestContactInfoSubtitle = `At least one required:`;
+
+	/** @see StringsService */
+	public readonly meetingGuestContactInfoTitle = `Contact Information for \${NAME}`;
+
+	/** @see StringsService */
 	public readonly meetingHost = `Host a Meeting`;
 
 	/** @see StringsService */

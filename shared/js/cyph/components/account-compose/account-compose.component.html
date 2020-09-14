@@ -74,100 +74,16 @@
 							(fromDataPreSet | await) === false
 						"
 					>
-						<mat-form-field
-							fxFlex
-							*ngIf="((recipients | await)?.size || 0) === 1"
+						<ng-container
+							*ngIf="
+								((recipients | await)?.size || 0) === 1;
+								else groupAppointmentMessageUI
+							"
 						>
-							<input
-								matInput
-								disabled
-								[ngModel]="
-									((recipients | await)?.values()?.next()
-										?.value?.name | await) || ''
-								"
-								name="to"
-								[placeholder]="stringsService.to"
-							/>
-						</mat-form-field>
-
-						<div>
-							{{
-								((recipients | await)?.size || 0) === 1 ?
-									stringsService.from :
-									stringsService.to
-							}}
-						</div>
-
-						<div
-							class="from-details"
-							ngClass.lt-sm="column"
-							fxFlex
-							fxLayout="row"
-							fxLayoutGap="40px"
-						>
-							<div></div>
-							<div fxFlex fxLayout="column">
-								<div>
-									<mat-form-field fxFlex>
-										<input
-											matInput
-											[ngModel]="
-												accountService.fromName | await
-											"
-											(ngModelChange)="
-												accountService.fromName.next(
-													$event
-												)
-											"
-											name="name"
-											[placeholder]="
-												stringsService.nameOptional
-											"
-										/>
-									</mat-form-field>
-								</div>
-
-								<div
-									fxFlex
-									fxLayout="column"
-									fxLayout.gt-xs="row"
-									fxLayoutGap="8px"
-									fxLayoutGap.lt-sm="0"
-								>
-									<mat-form-field fxFlex>
-										<input
-											matInput
-											cyphTranslate
-											[ngModel]="
-												accountService.fromEmail | await
-											"
-											(ngModelChange)="
-												accountService.fromEmail.next(
-													$event
-												)
-											"
-											name="email"
-											type="email"
-											placeholder="Email (optional)"
-										/>
-									</mat-form-field>
-
-									<mat-form-field fxFlex>
-										<input
-											matInput
-											cyphTranslate
-											[ngModel]="appointmentSMS | await"
-											(ngModelChange)="
-												appointmentSMS.next($event)
-											"
-											name="sms"
-											type="tel"
-											placeholder="Phone Number (optional)"
-										/>
-									</mat-form-field>
-								</div>
-							</div>
-						</div>
+							<ng-container
+								*ngTemplateOutlet="defaultMessageUI"
+							></ng-container>
+						</ng-container>
 
 						<mat-form-field
 							fxFlex
@@ -220,12 +136,12 @@
 						"
 						[disableSend]="
 							(((recipients | await)?.size || 0) < 1 &&
-								((((accountService.fromEmail | await) || '')
+								((appointmentGroupMembers | await) || [])
 									.length < 1 &&
-									((appointmentSMS | await) || '').length <
-										1) ||
-									((accountService.fromName | await) || '')
-										.length < 1)) ||
+								((accountService.fromEmail | await) || '')
+									.length < 1 &&
+								((accountService.fromName | await) || '')
+									.length < 1) ||
 							((messageType | await) ===
 								chatMessageValueTypes.CalendarInvite &&
 								!(accountChatService.chatSubject | await)
@@ -465,4 +381,113 @@
 		&ngsp;
 		<small>&lt;{{ option.email }}&gt;</small>
 	</mat-option>
+</ng-template>
+
+<ng-template #defaultMessageUI>
+	<mat-form-field fxFlex>
+		<input
+			matInput
+			disabled
+			[ngModel]="
+				((recipients | await)?.values()?.next()?.value?.name | await) ||
+				''
+			"
+			name="to"
+			[placeholder]="stringsService.to"
+		/>
+	</mat-form-field>
+
+	<div>
+		{{ stringsService.from }}
+	</div>
+
+	<div
+		class="from-details"
+		ngClass.lt-sm="column"
+		fxFlex
+		fxLayout="row"
+		fxLayoutGap="40px"
+	>
+		<div></div>
+		<div fxFlex fxLayout="column">
+			<div>
+				<mat-form-field fxFlex>
+					<input
+						matInput
+						[ngModel]="accountService.fromName | await"
+						(ngModelChange)="accountService.fromName.next($event)"
+						name="name"
+						[placeholder]="stringsService.nameOptional"
+					/>
+				</mat-form-field>
+			</div>
+
+			<div
+				fxFlex
+				fxLayout="column"
+				fxLayout.gt-xs="row"
+				fxLayoutGap="8px"
+				fxLayoutGap.lt-sm="0"
+			>
+				<mat-form-field fxFlex>
+					<input
+						matInput
+						cyphTranslate
+						[ngModel]="accountService.fromEmail | await"
+						(ngModelChange)="accountService.fromEmail.next($event)"
+						name="email"
+						type="email"
+						placeholder="Email (optional)"
+					/>
+				</mat-form-field>
+			</div>
+		</div>
+	</div>
+</ng-template>
+
+<ng-template #groupAppointmentMessageUI>
+	<div fxFlex fxLayout="column" fxLayoutGap="32px">
+		<mat-form-field fxFlex>
+			<mat-chip-list #chipList cyphTranslate aria-label="Guests">
+				<mat-chip
+					[removable]="true"
+					[selectable]="true"
+					[value]="o"
+					(removed)="removeFromGroup($event.chip.value)"
+					*ngFor="
+						let o of appointmentGroupMembers | await;
+						trackBy: trackBySelf
+					"
+				>
+					{{
+						o.name +
+							' <' +
+							(o.email && o.phoneNumber ?
+								o.email + ', ' + o.phoneNumber :
+								o.email || o.phoneNumber) +
+							'>'
+					}}
+					<mat-icon matChipRemove>cancel</mat-icon>
+				</mat-chip>
+				<input
+					#chipListInput
+					cyphTranslate
+					placeholder="Add guests (enter name or alias)"
+					[matChipInputFor]="chipList"
+					(matChipInputTokenEnd)="addToGroup()"
+					[ngModel]="appointmentGroupMemberDraft | await"
+					(ngModelChange)="appointmentGroupMemberDraft.next($event)"
+				/>
+				<mat-icon
+					matSuffix
+					class="suffix-button"
+					(click)="addToGroup()"
+				>
+					add
+				</mat-icon>
+			</mat-chip-list>
+		</mat-form-field>
+
+		<div></div>
+	</div>
 </ng-template>

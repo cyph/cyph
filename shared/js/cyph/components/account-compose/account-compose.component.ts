@@ -13,7 +13,16 @@ import {User} from '../../account';
 import {slideInOutTop} from '../../animations';
 import {BaseProvider} from '../../base-provider';
 import {States} from '../../chat/enums';
-import {emailPattern} from '../../email-pattern';
+import {emailPattern, isValidEmail} from '../../email-pattern';
+import {
+	email as emailElement,
+	getFormValue,
+	newForm,
+	newFormComponent,
+	newFormContainer,
+	phone as phoneElement,
+	text
+} from '../../forms';
 import {
 	AccountFileRecord,
 	AccountUserTypes,
@@ -33,6 +42,7 @@ import {ConfigService} from '../../services/config.service';
 import {AccountAuthService} from '../../services/crypto/account-auth.service';
 import {AccountDatabaseService} from '../../services/crypto/account-database.service';
 import {DatabaseService} from '../../services/database.service';
+import {DialogService} from '../../services/dialog.service';
 import {EnvService} from '../../services/env.service';
 import {ScrollService} from '../../services/scroll.service';
 import {SessionService} from '../../services/session.service';
@@ -68,13 +78,24 @@ export class AccountComposeComponent extends BaseProvider
 		{id: string; form: IForm} | undefined
 	>(undefined);
 
+	/** Current draft for new appointment group member. */
+	public readonly appointmentGroupMemberDraft = new BehaviorSubject<string>(
+		''
+	);
+
+	/** Appointment group members. */
+	public readonly appointmentGroupMembers = new BehaviorSubject<
+		{
+			email?: string;
+			name: string;
+			phoneNumber?: string;
+		}[]
+	>([]);
+
 	/** Indicates whether current user's time zone can be shared with recipient. */
 	public readonly appointmentShareTimeZone = new BehaviorSubject<boolean>(
 		true
 	);
-
-	/** Phone number for sending appointment detail over SMS. */
-	public readonly appointmentSMS = new BehaviorSubject<string>('');
 
 	/** @see ChatMessageValue.Types */
 	public readonly chatMessageValueTypes = ChatMessageValue.Types;
@@ -172,6 +193,63 @@ export class AccountComposeComponent extends BaseProvider
 	/** @see trackBySelf */
 	public readonly trackBySelf = trackBySelf;
 
+	/** Adds a value to the group. */
+	public async addToGroup () : Promise<void> {
+		const name = this.appointmentGroupMemberDraft.value;
+
+		if (!name) {
+			return;
+		}
+
+		const contactInfoForm = await this.dialogService.prompt({
+			bottomSheet: true,
+			content: '',
+			form: newForm([
+				newFormComponent([
+					newFormContainer([
+						text({
+							label: this.stringsService
+								.meetingGuestContactInfoSubtitle
+						})
+					]),
+					newFormContainer([
+						emailElement(undefined, undefined, undefined, false)
+					]),
+					newFormContainer([phoneElement(undefined, undefined, 100)])
+				])
+			]),
+			title: this.stringsService.setParameters(
+				this.stringsService.meetingGuestContactInfoTitle,
+				{name}
+			)
+		});
+
+		if (contactInfoForm === undefined) {
+			return;
+		}
+
+		const email = (
+			getFormValue(contactInfoForm, 'string', 0, 1, 0) || ''
+		).trim();
+		const phoneNumber = (
+			getFormValue(contactInfoForm, 'string', 0, 2, 0) || ''
+		).trim();
+
+		if ((!email && !phoneNumber) || (email && !isValidEmail(email))) {
+			return;
+		}
+
+		this.appointmentGroupMemberDraft.next('');
+
+		this.appointmentGroupMembers.next(
+			this.appointmentGroupMembers.value.concat({
+				email,
+				name,
+				phoneNumber
+			})
+		);
+	}
+
 	/** @inheritDoc */
 	public async ngOnDestroy () : Promise<void> {
 		super.ngOnDestroy();
@@ -215,6 +293,25 @@ export class AccountComposeComponent extends BaseProvider
 		this.scrollService.init();
 		this.accountService.transitionEnd();
 		this.accountService.resolveUiReady();
+	}
+
+	/** Removes a value from the group. */
+	public removeFromGroup (value: {
+		email?: string;
+		name: string;
+		phoneNumber?: string;
+	}) : void {
+		const i = this.appointmentGroupMembers.value.indexOf(value);
+
+		if (i < 0) {
+			return;
+		}
+
+		this.appointmentGroupMembers.next(
+			this.appointmentGroupMembers.value
+				.slice(0, i)
+				.concat(this.appointmentGroupMembers.value.slice(i + 1))
+		);
 	}
 
 	/** Sends message. */
@@ -270,7 +367,7 @@ export class AccountComposeComponent extends BaseProvider
 				!(
 					this.accountDatabaseService.currentUser.value &&
 					(this.accountService.fromEmail.value ||
-						this.appointmentSMS.value)
+						this.appointmentGroupMembers.value.length > 0)
 				)
 			) {
 				this.sent.next(false);
@@ -305,23 +402,9 @@ export class AccountComposeComponent extends BaseProvider
 
 				calendarInvite.url = `${this.envService.appUrl}account-burner/${accountBurnerID}`;
 
-				/* TODO: Clean up data model to better support multiple recipients */
-
-				const emails = this.accountService.fromEmail.value
-					.split(',')
-					.map(s => s.trim());
-				const names = this.accountService.fromName.value
-					.split(',')
-					.map(s => s.trim());
-				const phoneNumbers = this.appointmentSMS.value
-					.split(',')
-					.map(s => s.trim());
-
-				const members = emails.map((email, i) => ({
-					email,
-					id: readableID(this.configService.cyphIDLength),
-					name: names[i] || undefined,
-					phoneNumber: phoneNumbers[i] || undefined
+				const members = this.appointmentGroupMembers.value.map(o => ({
+					...o,
+					id: readableID(this.configService.cyphIDLength)
 				}));
 
 				await this.accountDatabaseService.setItem<IBurnerSession>(
@@ -347,10 +430,6 @@ export class AccountComposeComponent extends BaseProvider
 										.form
 								] :
 								undefined,
-							fromEmail:
-								this.accountService.fromEmail.value ||
-								undefined,
-							fromName,
 							participants: [
 								...recipients,
 								...(this.accountDatabaseService.currentUser
@@ -495,7 +574,7 @@ export class AccountComposeComponent extends BaseProvider
 		this.accountChatService.chat.currentMessage.text = '';
 		this.accountService.fromEmail.next('');
 		this.accountService.fromName.next('');
-		this.appointmentSMS.next('');
+		this.appointmentGroupMembers.next([]);
 		this.messageSubject.next('');
 
 		this.accountChatService.updateChat();
@@ -518,6 +597,9 @@ export class AccountComposeComponent extends BaseProvider
 
 		/** @ignore */
 		private readonly databaseService: DatabaseService,
+
+		/** @ignore */
+		private readonly dialogService: DialogService,
 
 		/** @ignore */
 		private readonly scrollService: ScrollService,

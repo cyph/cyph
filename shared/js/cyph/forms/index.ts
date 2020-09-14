@@ -358,10 +358,14 @@ export const title = (titleText: string) : Form.IElementContainer => {
 };
 
 /** Phone number element row. */
-export const phone = (id: string = 'PhoneNumber.Home') : Form.IElement => {
+export const phone = (
+	id: string = 'PhoneNumber.Home',
+	label: string = 'Phone Number',
+	width: number = 20
+) : Form.IElement => {
 	return input({
 		id,
-		label: 'Phone Number',
+		label,
 		mask: {
 			mask: [
 				'(',
@@ -381,16 +385,17 @@ export const phone = (id: string = 'PhoneNumber.Home') : Form.IElement => {
 			],
 			showMask: true
 		},
-		width: 20
+		width
 	});
 };
 
 /** Email address element row. */
 export const email = (
 	id: string = 'EmailAddresses[0]',
-	data?: Record<string, string>
-) : Form.IElement =>
-	emailInput({id, label: 'Email', required: true, value: data?.email});
+	data?: Record<string, string>,
+	label: string = 'Email',
+	required: boolean = true
+) : Form.IElement => emailInput({id, label, required, value: data?.email});
 
 /** Name element row. */
 export const name = (
