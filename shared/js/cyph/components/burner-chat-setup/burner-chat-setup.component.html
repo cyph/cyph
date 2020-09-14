@@ -12,6 +12,7 @@
 			<div fxLayout="row" fxLayoutGap="16px">
 				<button
 					mat-raised-button
+					class="pairwise-burner-button"
 					color="accent"
 					(click)="setGroupMemberNames(false)"
 				>
@@ -24,6 +25,7 @@
 
 				<button
 					mat-raised-button
+					class="group-burner-button"
 					color="primary"
 					(click)="state.next(this.states.selectingGroupMembers)"
 				>
@@ -62,6 +64,7 @@
 						<input
 							#chipListInput
 							cyphTranslate
+							class="group-burner-input"
 							placeholder="Add group member..."
 							[matChipInputFor]="chipList"
 							(matChipInputTokenEnd)="
@@ -74,11 +77,16 @@
 			</div>
 
 			<div fxLayout="row" fxLayoutGap="16px">
-				<button mat-button (click)="state.next(this.states.initial)">
+				<button
+					mat-button
+					class="cancel-button"
+					(click)="state.next(this.states.initial)"
+				>
 					{{ stringsService.cancel }}
 				</button>
 				<button
 					mat-button
+					class="ok-button"
 					[disabled]="((groupMemberNames | await) || []).length < 1"
 					(click)="setGroupMemberNames()"
 				>
