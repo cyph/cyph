@@ -4,6 +4,11 @@ import {User} from './user';
 
 /** A contact list item. */
 export interface IContactListItem {
+	/** Anonymous user data. */
+	anonymousUser?: {
+		name: string;
+	};
+
 	/** Group messaging session data. */
 	groupData?: {
 		group: IAccountMessagingGroup;

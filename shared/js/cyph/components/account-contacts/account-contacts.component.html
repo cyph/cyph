@@ -112,7 +112,10 @@
 					<ng-template #mainContactListView>
 						<ng-container
 							*ngFor="
-								let item of filteredContactList | await;
+								let item of (filterContactList ?
+									filteredContactList :
+									contactList
+								) | await;
 								trackBy: trackByUser
 							"
 						>

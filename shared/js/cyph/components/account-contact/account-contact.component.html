@@ -81,7 +81,7 @@
 </ng-container>
 
 <ng-template #startGroupButton>
-	<ng-container *ngIf="startGroup; else groupContact">
+	<ng-container *ngIf="startGroup; else anonymousUserContact">
 		<mat-card
 			fxFlex
 			class="contact animated button-card"
@@ -99,6 +99,26 @@
 			</mat-card-header>
 		</mat-card>
 	</ng-container>
+</ng-template>
+
+<ng-template #anonymousUserContact>
+	<mat-card
+		fxFlex
+		class="contact non-clickable animated anonymous-user"
+		[class.mobile]="envService.isMobileOS"
+		[class.telehealth]="envService.isTelehealthFull"
+		*ngIf="anonymousUser !== undefined; else groupContact"
+	>
+		<mat-card-header fxLayout="row">
+			<button mat-card-avatar mat-icon-button>
+				<mat-icon>person</mat-icon>
+			</button>
+
+			<mat-card-title class="truncate">
+				{{ anonymousUser?.name || '' }}
+			</mat-card-title>
+		</mat-card-header>
+	</mat-card>
 </ng-template>
 
 <ng-template #groupContact>

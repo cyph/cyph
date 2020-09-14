@@ -78,6 +78,13 @@ export class AccountContactComponent extends BaseProvider implements OnChanges {
 	/** @see UserPresence */
 	public readonly userPresence = UserPresence;
 
+	/** @see IContactListItem.anonymousUser */
+	public get anonymousUser () : {name: string} | undefined {
+		return this.contact && 'anonymousUser' in this.contact ?
+			this.contact.anonymousUser :
+			undefined;
+	}
+
 	/** @see IContactListItem.groupData */
 	public get groupData () :
 		| {

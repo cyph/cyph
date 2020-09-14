@@ -4,7 +4,6 @@ import {BehaviorSubject, of} from 'rxjs';
 import {map} from 'rxjs/operators';
 import {IContactListItem} from '../account';
 import {AccountContactsComponent} from '../components/account-contacts';
-import {filterUndefined} from '../util/filter';
 import {BaseProvider} from '../base-provider';
 import {IP2PHandlers} from '../p2p/ip2p-handlers';
 import {IAppointment} from '../proto';
@@ -27,14 +26,24 @@ export class P2PService extends BaseProvider {
 	/** @ignore */
 	private readonly incomingStreamUsers = this.p2pWebRTCService.incomingStreamUsers.pipe(
 		map(users =>
-			filterUndefined(users.map(o => o.username)).map(
-				(username) : IContactListItem => ({
-					unreadMessageCount: of(0),
-					user: this.accountUserLookupService
-						.getUser(username)
-						.catch(() => undefined),
-					username
-				})
+			users.map(
+				({name, username}) : IContactListItem =>
+					username ?
+						{
+							unreadMessageCount: of(0),
+							user: this.accountUserLookupService
+								.getUser(username)
+								.catch(() => undefined),
+							username
+						} :
+						{
+							anonymousUser: {
+								name: name || this.stringsService.anonymous
+							},
+							unreadMessageCount: of(0),
+							user: Promise.resolve(undefined),
+							username: ''
+						}
 			)
 		)
 	);
@@ -342,7 +351,9 @@ export class P2PService extends BaseProvider {
 				};
 
 				o.contactList = this.incomingStreamUsers;
+				o.filterContactList = false;
 				o.readOnly = true;
+				o.showSpinner = of(false);
 
 				/* eslint-disable-next-line @typescript-eslint/tslint/config */
 				o.ngOnChanges({

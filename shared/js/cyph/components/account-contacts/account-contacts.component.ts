@@ -81,6 +81,9 @@ export class AccountContactsComponent extends BaseProvider
 	@Input() public contactList: Observable<(IContactListItem | User)[]> = this
 		.accountContactsService.contactList;
 
+	/** Indicates whether contact list should be sorted and filtered. */
+	@Input() public filterContactList: boolean = true;
+
 	/**
 	 * Full contact list with active contact removed and users with unread messages on top.
 	 */
@@ -113,7 +116,7 @@ export class AccountContactsComponent extends BaseProvider
 	@Input() public searchProfileExtra: boolean = false;
 
 	/** Indicates whether spinner should be displayed. */
-	public readonly showSpinner = this.innerCircleTab.pipe(
+	@Input() public showSpinner = this.innerCircleTab.pipe(
 		switchMap(innerCircleTab =>
 			innerCircleTab ?
 				this.accountContactsService.spinners.contactsInnerCircle :
