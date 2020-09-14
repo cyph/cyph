@@ -474,7 +474,7 @@
 					cyphTranslate
 					placeholder="Add Guests (enter name or alias)"
 					[matChipInputFor]="chipList"
-					(matChipInputTokenEnd)="addToGroup()"
+					(matChipInputTokenEnd)="addToGroup(false)"
 					[ngModel]="appointmentGroupMemberDraft | await"
 					(ngModelChange)="appointmentGroupMemberDraft.next($event)"
 				/>

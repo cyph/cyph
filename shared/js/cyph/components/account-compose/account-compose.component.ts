@@ -17,6 +17,7 @@ import {emailPattern, isValidEmail} from '../../email-pattern';
 import {
 	email as emailElement,
 	getFormValue,
+	input,
 	newForm,
 	newFormComponent,
 	newFormContainer,
@@ -194,10 +195,10 @@ export class AccountComposeComponent extends BaseProvider
 	public readonly trackBySelf = trackBySelf;
 
 	/** Adds a value to the group. */
-	public async addToGroup () : Promise<void> {
-		const name = this.appointmentGroupMemberDraft.value;
+	public async addToGroup (allowEmptyName: boolean = true) : Promise<void> {
+		let name = this.appointmentGroupMemberDraft.value;
 
-		if (!name) {
+		if (!name && !allowEmptyName) {
 			return;
 		}
 
@@ -205,6 +206,15 @@ export class AccountComposeComponent extends BaseProvider
 			bottomSheet: true,
 			content: '',
 			form: newForm([
+				newFormComponent([
+					newFormContainer([
+						input({
+							label: this.stringsService.name,
+							required: true,
+							value: name
+						})
+					])
+				]),
 				newFormComponent([
 					newFormContainer([
 						text({
@@ -218,24 +228,28 @@ export class AccountComposeComponent extends BaseProvider
 					newFormContainer([phoneElement(undefined, undefined, 100)])
 				])
 			]),
-			title: this.stringsService.setParameters(
-				this.stringsService.meetingGuestContactInfoTitle,
-				{name}
-			)
+			title: this.stringsService.meetingGuestContactInfoTitle
 		});
 
 		if (contactInfoForm === undefined) {
 			return;
 		}
 
+		name = (getFormValue(contactInfoForm, 'string', 0, 0, 0) || '').trim();
+
 		const email = (
-			getFormValue(contactInfoForm, 'string', 0, 1, 0) || ''
-		).trim();
-		const phoneNumber = (
-			getFormValue(contactInfoForm, 'string', 0, 2, 0) || ''
+			getFormValue(contactInfoForm, 'string', 1, 1, 0) || ''
 		).trim();
 
-		if ((!email && !phoneNumber) || (email && !isValidEmail(email))) {
+		const phoneNumber = (
+			getFormValue(contactInfoForm, 'string', 1, 2, 0) || ''
+		).trim();
+
+		if (
+			!name ||
+			(!email && !phoneNumber) ||
+			(email && !isValidEmail(email))
+		) {
 			return;
 		}
 
