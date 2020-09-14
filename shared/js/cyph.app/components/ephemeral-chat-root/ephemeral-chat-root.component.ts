@@ -1,5 +1,5 @@
 import {AfterViewInit, ChangeDetectionStrategy, Component} from '@angular/core';
-import {Router} from '@angular/router';
+import {ActivatedRoute, Router} from '@angular/router';
 import * as $ from 'jquery';
 import * as Konami from 'konami';
 import {fadeIn} from '../../../cyph/animations';
@@ -57,7 +57,14 @@ export class EphemeralChatRootComponent extends BaseProvider
 	public async ngAfterViewInit () : Promise<void> {
 		await sleep(0);
 
-		this.appService.chatRootState.next(ChatRootStates.initializing);
+		if (this.activatedRoute.snapshot.data.groupTest === true) {
+			this.appService.chatRootState.next(
+				ChatRootStates.initializingGroup
+			);
+		}
+		else {
+			this.sessionInitService.ephemeralGroupMembers.resolve([]);
+		}
 
 		const granimStates = {
 			'default-state': !this.envService.telehealthTheme.value ?
@@ -205,10 +212,13 @@ export class EphemeralChatRootComponent extends BaseProvider
 
 	constructor (
 		/** @ignore */
-		private readonly dialogService: DialogService,
+		private readonly activatedRoute: ActivatedRoute,
 
 		/** @ignore */
 		private readonly router: Router,
+
+		/** @ignore */
+		private readonly dialogService: DialogService,
 
 		/** @ignore */
 		private readonly sessionInitService: SessionInitService,

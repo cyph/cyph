@@ -192,10 +192,18 @@
 			fxLayout="column"
 			*ngIf="
 				(appService.chatRootState | await) ===
-				chatRootStates.initializing
+				chatRootStates.initializingGroup
 			"
 			[@fadeIn]="'in'"
 		></cyph-burner-chat-setup>
+
+		<div
+			fxFlex
+			fxFlexFill
+			fxLayout="column"
+			id="blank"
+			*ngIf="(appService.chatRootState | await) === chatRootStates.blank"
+		></div>
 
 		<footer
 			*ngIf="

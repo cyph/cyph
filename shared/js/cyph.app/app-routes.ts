@@ -10,13 +10,11 @@ import {SignupConfirmComponent} from './components/signup-confirm';
 
 account.canActivate = [AppService];
 
-const burner = [
-	{
-		path: '**',
-		canActivate: [AppService],
-		component: EphemeralChatRootComponent
-	}
-];
+const burner = {
+	path: '**',
+	canActivate: [AppService],
+	component: EphemeralChatRootComponent
+};
 
 /** @see Routes */
 export const appRoutes = <Routes> [
@@ -28,6 +26,19 @@ export const appRoutes = <Routes> [
 		]),
 	retry,
 	...(burnerRoot === '' ?
-		burner :
-		[{path: burnerRoot, children: burner}, login, account])
+		[burner] :
+		[
+			{path: burnerRoot, children: [burner]},
+			{
+				path: `${burnerRoot}-group-test`,
+				children: [
+					{
+						...burner,
+						data: {groupTest: true}
+					}
+				]
+			},
+			login,
+			account
+		])
 ];
