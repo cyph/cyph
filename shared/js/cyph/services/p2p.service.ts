@@ -1,12 +1,16 @@
 import {Injectable} from '@angular/core';
 import {memoize} from 'lodash-es';
-import {BehaviorSubject} from 'rxjs';
+import {BehaviorSubject, of} from 'rxjs';
 import {map} from 'rxjs/operators';
+import {IContactListItem} from '../account';
+import {AccountContactsComponent} from '../components/account-contacts';
+import {filterUndefined} from '../util/filter';
 import {BaseProvider} from '../base-provider';
 import {IP2PHandlers} from '../p2p/ip2p-handlers';
 import {IAppointment} from '../proto';
 import {filterUndefinedOperator} from '../util/filter';
 import {prettyPrint} from '../util/serialization';
+import {AccountUserLookupService} from './account-user-lookup.service';
 import {ChatService} from './chat.service';
 import {DialogService} from './dialog.service';
 import {EnvService} from './env.service';
@@ -20,6 +24,21 @@ import {StringsService} from './strings.service';
  */
 @Injectable()
 export class P2PService extends BaseProvider {
+	/** @ignore */
+	private readonly incomingStreamUsers = this.p2pWebRTCService.incomingStreamUsers.pipe(
+		map(users =>
+			filterUndefined(users.map(o => o.username)).map(
+				(username) : IContactListItem => ({
+					unreadMessageCount: of(0),
+					user: this.accountUserLookupService
+						.getUser(username)
+						.catch(() => undefined),
+					username
+				})
+			)
+		)
+	);
+
 	/** @see IP2PHandlers */
 	public readonly handlers: IP2PHandlers = {
 		acceptConfirm: async (callType, timeout, isAccepted = false) => {
@@ -313,7 +332,38 @@ export class P2PService extends BaseProvider {
 	}
 
 	/** If applicable, displays list of current participants in call. */
-	public async viewCallParticipants () : Promise<void> {}
+	public async viewCallParticipants () : Promise<void> {
+		await this.dialogService.baseDialog(
+			AccountContactsComponent,
+			o => {
+				const previousValues = {
+					contactList: o.contactList,
+					readOnly: o.readOnly
+				};
+
+				o.contactList = this.incomingStreamUsers;
+				o.readOnly = true;
+
+				/* eslint-disable-next-line @typescript-eslint/tslint/config */
+				o.ngOnChanges({
+					contactList: {
+						currentValue: o.contactList,
+						firstChange: false,
+						isFirstChange: () => false,
+						previousValue: previousValues.contactList
+					},
+					readOnly: {
+						currentValue: o.readOnly,
+						firstChange: false,
+						isFirstChange: () => false,
+						previousValue: previousValues.readOnly
+					}
+				});
+			},
+			undefined,
+			true
+		);
+	}
 
 	/**
 	 * Attempt to toggle outgoing audio stream,
@@ -333,6 +383,9 @@ export class P2PService extends BaseProvider {
 	}
 
 	constructor (
+		/** @ignore */
+		protected readonly accountUserLookupService: AccountUserLookupService,
+
 		/** @ignore */
 		protected readonly chatService: ChatService,
 
