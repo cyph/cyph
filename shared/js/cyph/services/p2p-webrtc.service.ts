@@ -696,7 +696,7 @@ export class P2PWebRTCService extends BaseProvider
 									.join('\n') :
 								sdp,
 						stream: localStream,
-						trickle: true
+						trickle: false
 					});
 
 					peer.on('close', async () => {
