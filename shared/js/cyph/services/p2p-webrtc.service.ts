@@ -15,7 +15,6 @@ import {IP2PWebRTCService} from '../service-interfaces/ip2p-webrtc.service';
 import {RpcEvents} from '../session';
 import {Timer} from '../timer';
 import {filterUndefined, filterUndefinedOperator} from '../util/filter';
-import {normalizeArray} from '../util/formatting';
 import {lockFunction} from '../util/lock';
 import {debugLog, debugLogError} from '../util/log';
 import {requestPermissions} from '../util/permissions';
@@ -929,8 +928,7 @@ export class P2PWebRTCService extends BaseProvider
 	/** @inheritDoc */
 	public async request (
 		callType: 'audio' | 'video',
-		isPassive: boolean = false,
-		usernames: string[] = []
+		isPassive: boolean = false
 	) : Promise<void> {
 		if (!P2PWebRTCService.isSupported || (isPassive && !this.isAccepted)) {
 			return;
@@ -949,8 +947,6 @@ export class P2PWebRTCService extends BaseProvider
 		if (!ok) {
 			return;
 		}
-
-		usernames = normalizeArray(usernames);
 
 		const p2pSessionData = {
 			callType,

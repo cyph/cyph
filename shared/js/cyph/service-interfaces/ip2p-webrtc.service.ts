@@ -129,11 +129,7 @@ export interface IP2PWebRTCService {
 	 * Sends a new call request to the other party.
 	 * @param callType Requested session type.
 	 */
-	request (
-		callType: 'audio' | 'video',
-		isPassive?: boolean,
-		usernames?: string[]
-	) : Promise<void>;
+	request (callType: 'audio' | 'video', isPassive?: boolean) : Promise<void>;
 
 	/** Resolves handlers. */
 	resolveHandlers (handlers: IP2PHandlers) : void;

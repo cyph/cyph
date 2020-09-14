@@ -247,11 +247,7 @@ export class AccountChatService extends ChatService {
 				return true;
 			})().then(async requestCall =>
 				requestCall && !answering && callType ?
-					this.p2pWebRTCService.request(
-						callType,
-						undefined,
-						'group' in chat ? chat.group.usernames : undefined
-					) :
+					this.p2pWebRTCService.request(callType) :
 					undefined
 			) :
 			Promise.resolve();
