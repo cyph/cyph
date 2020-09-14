@@ -701,7 +701,9 @@ export class P2PWebRTCService extends BaseProvider
 
 					peer.on('close', async () => {
 						if (this.isActive.value) {
-							debugLog(() => ({webRTC: {close: 'retrying'}}));
+							debugLog(() => ({
+								webRTC: {close: 'retrying', peerIndex: i}
+							}));
 
 							this.incomingStreams.next([
 								...this.incomingStreams.value.slice(0, i),
@@ -719,7 +721,9 @@ export class P2PWebRTCService extends BaseProvider
 							return;
 						}
 
-						debugLog(() => ({webRTC: {close: 'closing'}}));
+						debugLog(() => ({
+							webRTC: {close: 'closing', peerIndex: i}
+						}));
 
 						peers[i].peerResolvers = undefined;
 						connected.reject();
@@ -758,7 +762,9 @@ export class P2PWebRTCService extends BaseProvider
 					});
 
 					peer.on('connect', () => {
-						debugLog(() => ({webRTC: {connect: true}}));
+						debugLog(() => ({
+							webRTC: {connect: true, peerIndex: i}
+						}));
 
 						if (generation !== 0) {
 							return;
@@ -771,7 +777,7 @@ export class P2PWebRTCService extends BaseProvider
 						try {
 							const o = msgpack.decode(data);
 
-							debugLog(() => ({webRTC: {data: o}}));
+							debugLog(() => ({webRTC: {data: o, peerIndex: i}}));
 
 							this.incomingStreams.next([
 								...this.incomingStreams.value.slice(0, i),
@@ -787,13 +793,15 @@ export class P2PWebRTCService extends BaseProvider
 						}
 						catch (err) {
 							debugLogError(() => ({
-								webRTC: {dataFail: {data, err}}
+								webRTC: {dataFail: {data, err, peerIndex: i}}
 							}));
 						}
 					});
 
 					peer.on('error', err => {
-						debugLogError(() => ({webRTC: {error: err}}));
+						debugLogError(() => ({
+							webRTC: {error: err, peerIndex: i}
+						}));
 
 						if (!this.sessionService.group && generation === 0) {
 							connected.reject();
@@ -807,7 +815,9 @@ export class P2PWebRTCService extends BaseProvider
 							generation
 						};
 
-						debugLog(() => ({webRTC: {outgoingSignal: message}}));
+						debugLog(() => ({
+							webRTC: {outgoingSignal: message, peerIndex: i}
+						}));
 
 						sessionService.send([
 							RpcEvents.p2p,
@@ -820,6 +830,7 @@ export class P2PWebRTCService extends BaseProvider
 					peer.on('stream', async (remoteStream: MediaStream) => {
 						debugLog(() => ({
 							webRTC: {
+								peerIndex: i,
 								remoteStream: {
 									audio:
 										remoteStream.getAudioTracks().length >
@@ -866,6 +877,7 @@ export class P2PWebRTCService extends BaseProvider
 						) => {
 							debugLog(() => ({
 								webRTC: {
+									peerIndex: i,
 									track: {
 										remoteStream: {
 											audio:
@@ -1132,7 +1144,7 @@ export class P2PWebRTCService extends BaseProvider
 		});
 
 		await Promise.all(
-			webRTC.peers.map(async ({connected, peerResolvers}) => {
+			webRTC.peers.map(async ({connected, peerResolvers}, i) => {
 				try {
 					await connected;
 					const peer = peerResolvers?.slice(-2)[0].value;
@@ -1149,7 +1161,7 @@ export class P2PWebRTCService extends BaseProvider
 				}
 				catch (err) {
 					debugLogError(() => ({
-						webRTC: {peerSendError: err}
+						webRTC: {peerIndex: i, peerSendError: err}
 					}));
 				}
 			})
@@ -1227,7 +1239,7 @@ export class P2PWebRTCService extends BaseProvider
 							}
 
 							debugLog(() => ({
-								webRTC: {incomingSignal: message}
+								webRTC: {incomingSignal: message, peerIndex: i}
 							}));
 
 							const {peerResolvers} = webRTC.peers[i];
