@@ -292,23 +292,31 @@ export class AccountSessionService extends SessionService {
 				);
 			});
 
-			ephemeralSessionService.state.cyphIDs.subscribe(this.state.cyphIDs);
-			ephemeralSessionService.state.ephemeralStateInitialized.subscribe(
-				this.state.ephemeralStateInitialized
-			);
-			ephemeralSessionService.state.isAlice.subscribe(this.state.isAlice);
-			ephemeralSessionService.state.isAlive.subscribe(this.state.isAlive);
-			ephemeralSessionService.state.isConnected.subscribe(
-				this.state.isConnected
-			);
-			ephemeralSessionService.state.sharedSecrets.subscribe(
-				this.state.sharedSecrets
-			);
-			ephemeralSessionService.state.startingNewCyph.subscribe(
-				this.state.startingNewCyph
-			);
-			ephemeralSessionService.state.wasInitiatedByAPI.subscribe(
-				this.state.wasInitiatedByAPI
+			this.subscriptions.push(
+				ephemeralSessionService.state.cyphIDs.subscribe(
+					this.state.cyphIDs
+				),
+				ephemeralSessionService.state.ephemeralStateInitialized.subscribe(
+					this.state.ephemeralStateInitialized
+				),
+				ephemeralSessionService.state.isAlice.subscribe(
+					this.state.isAlice
+				),
+				ephemeralSessionService.state.isAlive.subscribe(
+					this.state.isAlive
+				),
+				ephemeralSessionService.state.isConnected.subscribe(
+					this.state.isConnected
+				),
+				ephemeralSessionService.state.sharedSecrets.subscribe(
+					this.state.sharedSecrets
+				),
+				ephemeralSessionService.state.startingNewCyph.subscribe(
+					this.state.startingNewCyph
+				),
+				ephemeralSessionService.state.wasInitiatedByAPI.subscribe(
+					this.state.wasInitiatedByAPI
+				)
 			);
 
 			/* TODO: Factor out shared logic here and in SessionService.setGroup */
