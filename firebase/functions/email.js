@@ -126,7 +126,7 @@ const sendMailInternal = async (
 										}),
 										{}
 									)
-								),
+								).filter(o => o.email),
 								description: eventDetails.description,
 								end: new Date(eventDetails.endTime),
 								location: eventDetails.location,
