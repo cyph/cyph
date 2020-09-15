@@ -24,20 +24,26 @@ git pull
 cd resources
 sudo make install PREFIX=/usr
 
+while [ ! -d ~/emsdk ] ; do
+	git clone https://github.com/emscripten-core/emsdk.git ~/emsdk
+done
+cd ~/emsdk
+git pull
 source ~/emsdk/emsdk_env.sh &> /dev/null
-bash -c 'cd ~/emsdk ; git pull'
 emsdk install latest-upstream
 emsdk activate latest-upstream
 
 cd
 rm -rf go-ipfs go-ipfs.tar.gz 2> /dev/null
-wget "$(node -e "(async () => console.log(
-	(await require('node-fetch')(
-		'https://api.github.com/repos/ipfs/go-ipfs/releases/latest'
-	).then(o => o.json())).assets.find(o =>
-		o.browser_download_url.endsWith('_linux-amd64.tar.gz')
-	).browser_download_url
-))()")" -O go-ipfs.tar.gz
+wget "$(
+	curl -s https://api.github.com/repos/ipfs/go-ipfs/releases/latest | jq -r '
+		.assets |
+		map(
+			.browser_download_url |
+			select(endswith("linux-amd64.tar.gz"))
+		)[0]
+	'
+)" -O go-ipfs.tar.gz
 tar xvzf go-ipfs.tar.gz
 cd go-ipfs
 sudo bash install.sh

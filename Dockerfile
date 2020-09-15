@@ -36,6 +36,7 @@ RUN apt-get -y --allow-downgrades install \
 	htop \
 	imagemagick \
 	inotify-tools \
+	jq \
 	lib32ncurses6 \
 	lib32z1 \
 	libbz2-1.0:i386 \
@@ -53,6 +54,7 @@ RUN apt-get -y --allow-downgrades install \
 	pinentry-curses \
 	procps \
 	python \
+	python-docutils \
 	python-pip \
 	ripgrep \
 	rpm \
@@ -115,7 +117,6 @@ USER gibson
 ENV HOME /home/gibson
 
 
-RUN git clone https://github.com/emscripten-core/emsdk.git ~/emsdk
 RUN wget \
 	https://dl.google.com/dl/cloudsdk/channels/rapid/downloads/google-cloud-sdk-250.0.0-linux-x86_64.tar.gz \
 	-O ~/gcloud-sdk.tar.gz
