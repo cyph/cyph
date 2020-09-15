@@ -8,6 +8,9 @@ dir="$PWD"
 rm -rf ~/.cache/yarn 2> /dev/null
 rm ~/.yarnrc 2> /dev/null
 
+# https://github.com/yarnpkg/yarn/issues/7212#issuecomment-594889917
+cd ; yarn policies set-version 1.21.1 ; cd -
+
 
 installPackages () {
 	rm -rf node_modules 2> /dev/null
