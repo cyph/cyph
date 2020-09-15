@@ -49,7 +49,10 @@ RUN apt-get -y --allow-downgrades install \
 	nano \
 	nodejs \
 	openjdk-11-jdk \
+	openjdk-11-jre \
+	openjdk-11-jre-headless \
 	perl \
+	perl-modules-5.28 \
 	pinentry-curses \
 	procps \
 	python \
