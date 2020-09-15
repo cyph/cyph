@@ -7,7 +7,8 @@ dir="$PWD"
 
 ./commands/keycache.sh
 
-rm -rf ~/.cache
+rm -rf ~/.cache/yarn 2> /dev/null
+rm ~/.yarnrc 2> /dev/null
 
 # https://github.com/yarnpkg/yarn/issues/7212#issuecomment-672763981
 echo '--add.network-concurrency 1' >> ~/.yarnrc
