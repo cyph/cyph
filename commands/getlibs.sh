@@ -5,6 +5,10 @@ source ~/.bashrc
 cd $(cd "$(dirname "$0")" ; pwd)/..
 dir="$PWD"
 
+# https://github.com/yarnpkg/yarn/issues/7212#issuecomment-672763981
+echo '--add.network-concurrency 1' >> ~/.yarnrc
+echo '--install.network-concurrency 1' >> ~/.yarnrc
+
 
 installPackages () {
 	rm -rf node_modules 2> /dev/null

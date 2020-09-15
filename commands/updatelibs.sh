@@ -7,6 +7,11 @@ dir="$PWD"
 
 ./commands/keycache.sh
 
+# https://github.com/yarnpkg/yarn/issues/7212#issuecomment-672763981
+echo '--add.network-concurrency 1' >> ~/.yarnrc
+echo '--install.network-concurrency 1' >> ~/.yarnrc
+
+
 mkdir -p ~/lib/js ~/tmplib/js
 cd ~/tmplib/js
 
