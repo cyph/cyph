@@ -75,6 +75,7 @@ RUN pip install grpcio
 RUN echo '\
 	export GIT_EDITOR="vim"; \
 	export GOPATH="/home/gibson/go"; \
+	export GOPROXY="https://proxy.golang.org,direct"; \
 	export ANDROID_HOME="/home/gibson/androidsdk"; \
 	export JAVA_HOME="$( \
 		update-alternatives --query javac | sed -n -e "s/Best: *\(.*\)\/bin\/javac/\\1/p" \
