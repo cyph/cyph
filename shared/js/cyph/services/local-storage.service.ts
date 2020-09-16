@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/require-await, max-lines */
 
-import {Injectable, NgZone} from '@angular/core';
-import {BehaviorSubject, Observable, Subscription} from 'rxjs';
+import {Injectable} from '@angular/core';
+import {BehaviorSubject, Observable, ReplaySubject, Subscription} from 'rxjs';
 import {IProto} from '../iproto';
 import {ITimedValue} from '../itimed-value';
 import {
@@ -13,7 +13,7 @@ import {
 } from '../proto';
 import {DataManagerService} from '../service-interfaces/data-manager.service';
 import {filterUndefined} from '../util/filter';
-import {getOrSetDefaultObservable} from '../util/get-or-set-default';
+import {getOrSetDefault} from '../util/get-or-set-default';
 import {debugLog} from '../util/log';
 import {deserialize, serialize} from '../util/serialization';
 import {getTimestamp} from '../util/time';
@@ -487,87 +487,65 @@ export class LocalStorageService extends DataManagerService {
 	public watch<T> (
 		url: string,
 		proto: IProto<T>,
-		subscriptions?: Subscription[]
+		_SUBSCRIPTIONS?: Subscription[]
 	) : Observable<ITimedValue<T>> {
-		return getOrSetDefaultObservable(
-			this.observableCaches.watch,
-			url,
-			() =>
-				this.ngZone.runOutsideAngular(
-					() =>
-						new Observable<ITimedValue<T>>(observer => {
-							const channel =
-								/* eslint-disable-next-line @typescript-eslint/tslint/config */
-								typeof BroadcastChannel !== 'undefined' ?
-									new BroadcastChannel(
-										`${this.broadcastChannelKeys.item}:${url}`
-									) :
-									undefined;
+		return getOrSetDefault(this.observableCaches.watch, url, () => {
+			const subject = new ReplaySubject<ITimedValue<T>>();
 
-							const clearChannel =
-								/* eslint-disable-next-line @typescript-eslint/tslint/config */
-								typeof BroadcastChannel !== 'undefined' ?
-									new BroadcastChannel(
-										this.broadcastChannelKeys.clear
-									) :
-									undefined;
+			const channel =
+				/* eslint-disable-next-line @typescript-eslint/tslint/config */
+				typeof BroadcastChannel !== 'undefined' ?
+					new BroadcastChannel(
+						`${this.broadcastChannelKeys.item}:${url}`
+					) :
+					undefined;
 
-							let active = true;
-							let unlocked = resolvable();
+			const clearChannel =
+				/* eslint-disable-next-line @typescript-eslint/tslint/config */
+				typeof BroadcastChannel !== 'undefined' ?
+					new BroadcastChannel(this.broadcastChannelKeys.clear) :
+					undefined;
 
-							if (channel) {
-								channel.onmessage = () => {
-									unlocked.resolve();
-								};
-							}
-							if (clearChannel) {
-								clearChannel.onmessage = () => {
-									this.cache.clear();
-									unlocked.resolve();
-								};
-							}
+			let active = true;
+			let unlocked = resolvable();
 
-							(async () => {
-								while (active) {
-									observer.next({
-										timestamp: await getTimestamp(),
-										value: await this.getItem(
-											url,
-											proto
-										).catch(() => proto.create())
-									});
+			if (channel) {
+				channel.onmessage = () => {
+					unlocked.resolve();
+				};
+			}
+			if (clearChannel) {
+				clearChannel.onmessage = () => {
+					this.cache.clear();
+					unlocked.resolve();
+				};
+			}
 
-									if (!channel) {
-										await sleep(this.watchFallbackInterval);
-										continue;
-									}
+			(async () => {
+				while (active) {
+					subject.next({
+						timestamp: await getTimestamp(),
+						value: await this.getItem(url, proto).catch(() =>
+							proto.create()
+						)
+					});
 
-									unlocked = resolvable();
+					if (!channel) {
+						await sleep(this.watchFallbackInterval);
+						continue;
+					}
 
-									await unlocked;
-								}
-							})();
+					unlocked = resolvable();
 
-							return () => {
-								active = false;
-								unlocked.resolve();
-								if (channel) {
-									channel.close();
-								}
-								if (clearChannel) {
-									clearChannel.close();
-								}
-							};
-						})
-				),
-			subscriptions
-		);
+					await unlocked;
+				}
+			})();
+
+			return subject;
+		});
 	}
 
-	constructor (
-		/** @ignore */
-		private readonly ngZone: NgZone
-	) {
+	constructor () {
 		super();
 
 		/* eslint-disable-next-line @typescript-eslint/tslint/config */
