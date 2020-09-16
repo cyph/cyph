@@ -30,6 +30,7 @@ read -r -d '' modules <<- EOM
 	@angular/compiler-cli
 	@angular/core
 	@angular/elements
+	@angular/fire
 	@angular/flex-layout
 	@angular/forms
 	@angular/material
@@ -380,6 +381,7 @@ read -r -d '' modules <<- EOM
 	rlwe
 	rsvp
 	run-node
+	rxfire
 	rxjs
 	rxjs-tslint@0.1.5
 	rxjs-tslint-rules
