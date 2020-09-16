@@ -506,7 +506,6 @@ export class LocalStorageService extends DataManagerService {
 					new BroadcastChannel(this.broadcastChannelKeys.clear) :
 					undefined;
 
-			let active = true;
 			let unlocked = resolvable();
 
 			if (channel) {
@@ -522,7 +521,7 @@ export class LocalStorageService extends DataManagerService {
 			}
 
 			(async () => {
-				while (active) {
+				while (!this.destroyed.value) {
 					subject.next({
 						timestamp: await getTimestamp(),
 						value: await this.getItem(url, proto).catch(() =>

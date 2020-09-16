@@ -1,4 +1,4 @@
-import {Injectable, NgZone} from '@angular/core';
+import {Injectable} from '@angular/core';
 import * as localforage from 'localforage';
 import {potassiumUtil} from '../crypto/potassium/potassium-util';
 import {env} from '../env';
@@ -238,7 +238,7 @@ export class WebLocalStorageService extends LocalStorageService {
 		]);
 	}
 
-	constructor (ngZone: NgZone) {
-		super(ngZone);
+	constructor () {
+		super();
 	}
 }

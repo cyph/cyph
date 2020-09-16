@@ -39,8 +39,7 @@ import {
 	promiseTimeout,
 	resolvable,
 	retryUntilSuccessful,
-	sleep,
-	waitForValue
+	sleep
 } from '../util/wait';
 import {PotassiumService} from './crypto/potassium.service';
 import {DatabaseService} from './database.service';
