@@ -17,26 +17,31 @@ const ipfsGateways = memoize(async () => {
 	).filter(s => !s.startsWith('https://:hash'));
 
 	return (await Promise.all(
-		gatewayURLs.map(async url =>
-			Array.from(
-				new Set(
-					await Promise.all(
-						(await dns.promises.resolve(
-							new URL(url.replace(':hash.ipfs.', '')).host
-						)).map(async ip =>
-							(
-								(await lookup).get(ip) || {
-									continent: {code: 'na'}
-								}
-							).continent.code.toLowerCase()
+		gatewayURLs.map(async url => {
+			try {
+				return Array.from(
+					new Set(
+						await Promise.all(
+							(await dns.promises.resolve(
+								new URL(url.replace(':hash.ipfs.', '')).host
+							)).map(async ip =>
+								(
+									(await lookup).get(ip) || {
+										continent: {code: 'na'}
+									}
+								).continent.code.toLowerCase()
+							)
 						)
 					)
-				)
-			).map(continentCode => ({
-				continentCode,
-				url
-			}))
-		)
+				).map(continentCode => ({
+					continentCode,
+					url
+				}));
+			}
+			catch {
+				return [];
+			}
+		})
 	)).reduce((a, b) => a.concat(b), []);
 });
 
