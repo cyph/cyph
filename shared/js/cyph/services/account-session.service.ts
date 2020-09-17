@@ -518,8 +518,7 @@ export class AccountSessionService extends SessionService {
 
 				this.ephemeralSubSession = true;
 
-				this.init(sessionID);
-
+				await this.init(sessionID);
 				return;
 			}
 
@@ -541,7 +540,7 @@ export class AccountSessionService extends SessionService {
 				}`
 			);
 
-			this.init(
+			await this.init(
 				castleSessionID,
 				sessionID,
 				await this.accountDatabaseService.getOrSetDefault(
