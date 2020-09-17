@@ -241,9 +241,13 @@ export class AccountComposeComponent extends BaseProvider
 			getFormValue(contactInfoForm, 'string', 1, 1, 0) || ''
 		).trim();
 
-		const phoneNumber = (
+		let phoneNumber = (
 			getFormValue(contactInfoForm, 'string', 1, 2, 0) || ''
 		).trim();
+
+		if (phoneNumber.indexOf('_') > -1) {
+			phoneNumber = '';
+		}
 
 		if (
 			!name ||
