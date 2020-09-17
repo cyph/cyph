@@ -50,14 +50,15 @@ export class AccountHomeComponent extends BaseProvider implements OnInit {
 			return;
 		}
 
-		if (this.accountSettingsService.homePage.value) {
-			await this.router.navigate(
-				this.accountSettingsService.homePage.value
-			);
+		const homePage =
+			this.accountSettingsService.homePage.value ||
+			(await this.accountSettingsService.homePage);
+
+		if (this.destroyed.value) {
 			return;
 		}
 
-		await this.router.navigate(await this.accountSettingsService.homePage);
+		await this.router.navigate(homePage);
 	}
 
 	constructor (
