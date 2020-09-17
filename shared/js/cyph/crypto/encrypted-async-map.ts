@@ -110,15 +110,13 @@ export class EncryptedAsyncMap<T> {
 		hasher?: {proto: IProto<H>; transform: (value: T) => MaybePromise<H>}
 	) : Promise<Uint8Array> {
 		const plaintext = await this.getItemBytesUnsafe(key, encryptionKey);
+		const computedHash = await this.hash(undefined, plaintext, hasher);
 
-		if (
-			!this.potassium.compareMemory(
-				hash,
-				await this.hash(undefined, plaintext, hasher)
-			)
-		) {
+		if (!this.potassium.compareMemory(hash, computedHash)) {
 			debugLogError(async () => ({
 				encryptedAsyncMapInvalidHash: {
+					computedHash,
+					hash,
 					plaintext,
 					plaintextObject: await deserialize(
 						this.proto,
