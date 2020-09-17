@@ -447,6 +447,17 @@
 
 <ng-template #groupAppointmentMessageUI>
 	<div fxFlex fxLayout="column" fxLayoutGap="32px">
+		<h3
+			class="cyph-banner warn"
+			cyphTranslate
+			*ngIf="((appointmentGroupMembers | await)?.length || 0) > 4"
+		>
+			Groups larger than 5 are not recommended at this time. We're
+			currently investigating connection reliability issues with large
+			groups, and are still determining a recommended upper limit for
+			optimal performance.
+		</h3>
+
 		<mat-form-field fxFlex>
 			<mat-chip-list #chipList cyphTranslate aria-label="Guests">
 				<mat-chip
