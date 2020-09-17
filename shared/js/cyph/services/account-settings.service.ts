@@ -6,13 +6,19 @@ import {BaseProvider} from '../base-provider';
 import {IAsyncValue} from '../iasync-value';
 import {IFile} from '../ifile';
 import {CyphPlanConfig} from '../plan-config';
-import {BinaryProto, CyphPlans, InvertedBooleanProto} from '../proto';
+import {
+	BinaryProto,
+	CyphPlans,
+	InvertedBooleanProto,
+	StringArrayProto
+} from '../proto';
 import {cacheObservable} from '../util/flatten-observable';
 import {resolvedResolvable} from '../util/wait';
 import {ConfigService} from './config.service';
 import {AccountDatabaseService} from './crypto/account-database.service';
 import {EnvService} from './env.service';
 import {FileService} from './file.service';
+import {LocalStorageService} from './local-storage.service';
 import {StringsService} from './strings.service';
 
 /**
@@ -47,11 +53,28 @@ export class AccountSettingsService extends BaseProvider {
 
 	/** Home page for user's plan (only set on initial page load). */
 	public readonly homePage = resolvedResolvable(
-		(async () =>
-			this.configService.planConfig[
-				(await (await this.accountDatabaseService.getCurrentUser()).user.cyphPlan.getValue())
-					.plan
-			].homePage)()
+		(async () => {
+			const latestHomePage = (async () =>
+				this.configService.planConfig[
+					(await (await this.accountDatabaseService.getCurrentUser()).user.cyphPlan.getValue())
+						.plan
+				].homePage)();
+
+			const homePageKey = 'AccountSettingsService.homePage';
+
+			const lastHomePage = await this.localStorageService
+				.getItem(homePageKey, StringArrayProto)
+				.catch(() => undefined);
+
+			(async () =>
+				this.localStorageService.setItem(
+					homePageKey,
+					StringArrayProto,
+					await latestHomePage
+				))().catch(() => {});
+
+			return lastHomePage ? lastHomePage : latestHomePage;
+		})()
 	);
 
 	/** User's plan / premium status. */
@@ -182,6 +205,9 @@ export class AccountSettingsService extends BaseProvider {
 
 		/** @ignore */
 		private readonly fileService: FileService,
+
+		/** @ignore */
+		private readonly localStorageService: LocalStorageService,
 
 		/** @ignore */
 		private readonly stringsService: StringsService
