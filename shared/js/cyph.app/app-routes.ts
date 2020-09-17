@@ -28,16 +28,20 @@ export const appRoutes = <Routes> [
 	...(burnerRoot === '' ?
 		[burner] :
 		[
-			{path: burnerRoot, children: [burner]},
-			{
-				path: `${burnerRoot}-group-test`,
-				children: [
+			...(!env.environment.production ?
+				[
 					{
-						...burner,
-						data: {groupTest: true}
+						path: `${burnerRoot}-group-test`,
+						children: [
+							{
+								...burner,
+								data: {groupTest: true}
+							}
+						]
 					}
-				]
-			},
+				] :
+				[]),
+			{path: burnerRoot, children: [burner]},
 			login,
 			account
 		])
