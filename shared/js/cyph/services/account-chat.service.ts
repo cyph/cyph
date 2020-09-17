@@ -196,9 +196,9 @@ export class AccountChatService extends ChatService {
 		ephemeralSubSession: boolean = false,
 		answering: boolean = true
 	) : Promise<void> {
-		const burnerSession: IBurnerSession | undefined = !(
-			'burnerSession' in chat
-		) ?
+		const burnerSession:
+			| (IBurnerSession & {anonymousChannelID?: string})
+			| undefined = !('burnerSession' in chat) ?
 			undefined :
 		chat.burnerSession.accountBurnerID ?
 			await this.accountDatabaseService.getItem(
@@ -207,13 +207,13 @@ export class AccountChatService extends ChatService {
 			) :
 		chat.burnerSession.anonymousChannelID ?
 			{
+				anonymousChannelID: chat.burnerSession.anonymousChannelID,
 				callType:
 					callType === 'audio' ?
 						CallTypes.Audio :
 						callType === 'video' ?
 						CallTypes.Video :
-						CallTypes.None,
-				members: [{id: chat.burnerSession.anonymousChannelID}]
+						CallTypes.None
 			} :
 			undefined;
 

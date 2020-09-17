@@ -196,7 +196,12 @@ export class AccountSessionService extends SessionService {
 	/* eslint-disable-next-line complexity */
 	public async setUser (
 		chat:
-			| {burnerSession: IBurnerSession; passive?: boolean}
+			| {
+					burnerSession: IBurnerSession & {
+						anonymousChannelID?: string;
+					};
+					passive?: boolean;
+			  }
 			| {group: IAccountMessagingGroup; id: string}
 			| {username: string},
 		sessionSubID?: string,
@@ -221,9 +226,15 @@ export class AccountSessionService extends SessionService {
 				throw new Error('No user signed in.');
 			}
 
+			const anonymousChannelID =
+				'anonymousChannelID' in chat.burnerSession ?
+					chat.burnerSession.anonymousChannelID :
+					undefined;
+
 			if (
-				!chat.burnerSession.members ||
-				chat.burnerSession.members.length < 1
+				!anonymousChannelID &&
+				(!chat.burnerSession.members ||
+					chat.burnerSession.members.length < 1)
 			) {
 				throw new Error('No session members.');
 			}
@@ -262,9 +273,9 @@ export class AccountSessionService extends SessionService {
 			sessionInit.localStorageKeyPrefix = this.localStorageKeyPrefix;
 
 			sessionInit.ephemeralGroupMembers.resolve(
-				chat.burnerSession.members
+				chat.burnerSession.members || []
 			);
-			sessionInit.setID('');
+			sessionInit.setID(anonymousChannelID || '');
 
 			const ephemeralSessionService = new EphemeralSessionService(
 				this.analyticsService,
