@@ -84,6 +84,8 @@ export class AccountP2PService extends P2PService {
 
 	/** Initiates call. */
 	public async beginCall (callType: 'audio' | 'video') : Promise<void> {
+		this.accountService.autoUpdate.next(false);
+
 		const remoteUser = await this.accountSessionService.remoteUser;
 		const id = this.accountSessionService.sessionSubID;
 
@@ -144,10 +146,10 @@ export class AccountP2PService extends P2PService {
 			.catch(() => false);
 
 		if (!hasPermission) {
+			this.accountService.autoUpdate.next(true);
 			return;
 		}
 
-		this.accountService.autoUpdate.next(false);
 		this.p2pWebRTCService.disconnect
 			.pipe(take(1))
 			.toPromise()
