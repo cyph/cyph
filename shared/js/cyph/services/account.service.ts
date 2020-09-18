@@ -104,6 +104,9 @@ export class AccountService extends BaseProvider {
 	/** Indicates whether automatic updates should be applied. */
 	public readonly autoUpdate = new BehaviorSubject<boolean>(true);
 
+	/** Timeout before automatic update is applied. */
+	public readonly autoUpdateTimeout = 300000;
+
 	/** Email address to use for new pseudo-account. */
 	public readonly fromEmail = new BehaviorSubject<string>('');
 
@@ -593,7 +596,7 @@ export class AccountService extends BaseProvider {
 								toInt(packageTimestamp) &&
 							!(await this.dialogService.toast(
 								this.stringsService.applyUpdateRestart,
-								5000,
+								this.autoUpdateTimeout,
 								this.stringsService.cancel
 							))
 						) {
