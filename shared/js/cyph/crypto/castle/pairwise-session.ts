@@ -1,6 +1,5 @@
 /* eslint-disable max-lines */
 
-import {Observable} from 'rxjs';
 import {IAsyncList} from '../../iasync-list';
 import {IAsyncValue} from '../../iasync-value';
 import {IResolvable} from '../../iresolvable';
@@ -237,11 +236,6 @@ export class PairwiseSession implements IPairwiseSession {
 		});
 
 		return promise;
-	}
-
-	/** @inheritDoc */
-	public get remoteUsername () : Observable<string> {
-		return this.remoteUser.username;
 	}
 
 	/** @inheritDoc */

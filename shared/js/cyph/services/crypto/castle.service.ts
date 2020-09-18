@@ -1,5 +1,4 @@
 import {Injectable} from '@angular/core';
-import {Observable} from 'rxjs';
 import {BaseProvider} from '../../base-provider';
 import {IPairwiseSession} from '../../crypto/castle/ipairwise-session';
 import {ICastle} from '../../crypto/icastle';
@@ -31,11 +30,6 @@ export class CastleService extends BaseProvider implements ICastle {
 		initial: boolean
 	) : Promise<void> {
 		return (await this.pairwiseSession).receive(cyphertext, initial);
-	}
-
-	/** @inheritDoc */
-	public get remoteUsername () : Promise<Observable<string>> {
-		return this.pairwiseSession.then(o => o.remoteUsername);
 	}
 
 	/** @inheritDoc */

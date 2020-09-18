@@ -44,9 +44,6 @@ export interface ISessionService {
 	/** Resolves when we can begin waiting for Bob. */
 	readonly beginWaiting: IResolvable<true>;
 
-	/** @see CastleService.remoteUsername */
-	readonly castleRemoteUsername: Promise<Observable<string>>;
-
 	/** Resolves when this session's channel is connected. */
 	readonly channelConnected: IResolvable<true>;
 

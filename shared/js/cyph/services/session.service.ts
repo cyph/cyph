@@ -618,11 +618,6 @@ export abstract class SessionService extends BaseProvider
 	}
 
 	/** @inheritDoc */
-	public get castleRemoteUsername () : Promise<Observable<string>> {
-		return this.castleService.remoteUsername;
-	}
-
-	/** @inheritDoc */
 	public close () : void {
 		if (this.group) {
 			for (const session of this.group) {

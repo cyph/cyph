@@ -582,10 +582,7 @@ export class ChatService extends BaseProvider {
 	protected async getAuthorID (
 		author: Observable<string>
 	) : Promise<string | undefined> {
-		if (
-			author === this.sessionService.remoteUsername ||
-			author === (await this.sessionService.castleRemoteUsername)
-		) {
+		if (author === this.sessionService.remoteUsername) {
 			return author
 				.pipe(take(1))
 				.toPromise()
