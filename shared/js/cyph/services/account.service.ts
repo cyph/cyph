@@ -30,7 +30,7 @@ import {debugLog} from '../util/log';
 import {observableAll} from '../util/observable-all';
 import {arraySum} from '../util/reducers';
 import {request} from '../util/request';
-import {getTimestamp, watchDateChange} from '../util/time';
+import {getTimestamp, getTimeString, watchDateChange} from '../util/time';
 import {translate} from '../util/translate';
 import {resolvable, retryUntilSuccessful, sleep} from '../util/wait';
 import {openWindow, reloadWindow} from '../util/window';
@@ -594,11 +594,26 @@ export class AccountService extends BaseProvider {
 						if (
 							toInt(currentPackageTimestamp) >
 								toInt(packageTimestamp) &&
-							!(await this.dialogService.toast(
-								this.stringsService.applyUpdateRestart,
-								this.autoUpdateTimeout,
-								this.stringsService.cancel
-							))
+							(await this.dialogService.confirm({
+								bottomSheet: true,
+								cancel: this.stringsService
+									.applyUpdateRestartCancel,
+								content: this.stringsService.setParameters(
+									this.stringsService
+										.applyUpdateRestartContent,
+									{
+										time: getTimeString(
+											(await getTimestamp()) +
+												this.autoUpdateTimeout
+										)
+									}
+								),
+								ok: this.stringsService.applyUpdateRestartOK,
+								timeout: this.autoUpdateTimeout,
+								timeoutResponse: true,
+								title: this.stringsService
+									.applyUpdateRestartTitle
+							}))
 						) {
 							reloadWindow();
 							return;

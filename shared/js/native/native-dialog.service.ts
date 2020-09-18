@@ -119,6 +119,7 @@ export class NativeDialogService extends BaseProvider implements DialogService {
 	 * @param o.okFAB Currently unsupported (ignored).
 	 * @param o.timeout Currently unsupported (ignored).
 	 * @param o.timeoutMessage Currently unsupported (ignored).
+	 * @param o.timeoutResponse Currently unsupported (ignored).
 	 * @param closeFunction Currently unsupported (not implemented exception).
 	 */
 	public async confirm (
@@ -133,6 +134,7 @@ export class NativeDialogService extends BaseProvider implements DialogService {
 			okFAB?: string;
 			timeout?: number;
 			timeoutMessage?: string;
+			timeoutResponse?: boolean;
 			title: string;
 		},
 		closeFunction?: IResolvable<() => void>
@@ -207,6 +209,7 @@ export class NativeDialogService extends BaseProvider implements DialogService {
 	 * @param o.preFill Currently unsupported (ignored).
 	 * @param o.timeout Currently unsupported (ignored).
 	 * @param o.timeoutMessage Currently unsupported (ignored).
+	 * @param o.timeoutResponse Currently unsupported (ignored).
 	 * @param closeFunction Currently unsupported (not implemented exception).
 	 */
 	/* eslint-disable-next-line @typescript-eslint/require-await */
@@ -238,6 +241,7 @@ export class NativeDialogService extends BaseProvider implements DialogService {
 			}[];
 			timeout?: number;
 			timeoutMessage?: string;
+			timeoutResponse?: boolean;
 			title: string;
 		},
 		closeFunction?: IResolvable<() => void>
@@ -255,6 +259,7 @@ export class NativeDialogService extends BaseProvider implements DialogService {
 			preFill?: string;
 			timeout?: number;
 			timeoutMessage?: string;
+			timeoutResponse?: boolean;
 			title: string;
 		},
 		closeFunction?: IResolvable<() => void>
@@ -277,6 +282,7 @@ export class NativeDialogService extends BaseProvider implements DialogService {
 			preFill?: string;
 			timeout?: number;
 			timeoutMessage?: string;
+			timeoutResponse?: boolean;
 			title: string;
 		},
 		closeFunction?: IResolvable<() => void>

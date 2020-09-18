@@ -54,6 +54,7 @@ export class MaterialDialogService extends BaseProvider
 			preFill?: string;
 			timeout?: number;
 			timeoutMessage?: string;
+			timeoutResponse?: boolean;
 			title?: string;
 		},
 		closeFunction?: IResolvable<() => void>,
@@ -140,7 +141,7 @@ export class MaterialDialogService extends BaseProvider
 						return;
 					}
 
-					close(false);
+					close(!!o.timeoutResponse);
 
 					if (!o.timeoutMessage) {
 						return;
@@ -289,6 +290,7 @@ export class MaterialDialogService extends BaseProvider
 			okFAB?: string;
 			timeout?: number;
 			timeoutMessage?: string;
+			timeoutResponse?: boolean;
 			title: string;
 		},
 		closeFunction?: IResolvable<() => void>
@@ -369,6 +371,7 @@ export class MaterialDialogService extends BaseProvider
 			preFill?: string;
 			timeout?: number;
 			timeoutMessage?: string;
+			timeoutResponse?: boolean;
 			title: string;
 		},
 		closeFunction?: IResolvable<() => void>
@@ -385,6 +388,7 @@ export class MaterialDialogService extends BaseProvider
 			}[];
 			timeout?: number;
 			timeoutMessage?: string;
+			timeoutResponse?: boolean;
 			title: string;
 		},
 		closeFunction?: IResolvable<() => void>
@@ -402,6 +406,7 @@ export class MaterialDialogService extends BaseProvider
 			preFill?: string;
 			timeout?: number;
 			timeoutMessage?: string;
+			timeoutResponse?: boolean;
 			title: string;
 		},
 		closeFunction?: IResolvable<() => void>
@@ -424,6 +429,7 @@ export class MaterialDialogService extends BaseProvider
 			preFill?: string;
 			timeout?: number;
 			timeoutMessage?: string;
+			timeoutResponse?: boolean;
 			title: string;
 		},
 		closeFunction?: IResolvable<() => void>

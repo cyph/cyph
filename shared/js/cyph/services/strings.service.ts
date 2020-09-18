@@ -104,7 +104,16 @@ export class StringsService extends BaseProvider {
 	public readonly answer = `Answer`;
 
 	/** @see StringsService */
-	public readonly applyUpdateRestart = `Restarting and applying update.`;
+	public readonly applyUpdateRestartCancel = `Snooze`;
+
+	/** @see StringsService */
+	public readonly applyUpdateRestartContent = `Restarting and applying update at \${TIME}.`;
+
+	/** @see StringsService */
+	public readonly applyUpdateRestartOK = `Update Now`;
+
+	/** @see StringsService */
+	public readonly applyUpdateRestartTitle = `${this.internalProductShort} Update`;
 
 	/** @see StringsService */
 	public readonly appointmentCalendar = `Appointment Calendar`;
