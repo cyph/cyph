@@ -1732,7 +1732,7 @@ const userNotify = async (data, namespace, username, serverInitiated) => {
 	const userPath = `${namespace}/users/${notification.target}`;
 
 	const groupID =
-		notification.type === NotificationTypes.Message && metadata.messagesID ?
+		notification.type === NotificationTypes.Message && metadata.groupID ?
 			normalize(metadata.groupID) :
 			undefined;
 
