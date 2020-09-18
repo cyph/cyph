@@ -1,3 +1,5 @@
+import {Observable} from 'rxjs';
+
 /**
  * Represents a Castle encryption instance.
  */
@@ -8,6 +10,9 @@ export interface ICastle {
 	 * @param initial Indicates whether part of initial batch of messages.
 	 */
 	receive (cyphertext: Uint8Array, initial: boolean) : Promise<void>;
+
+	/** @see IPairwiseSession.remoteUsername */
+	readonly remoteUsername: Promise<Observable<string>>;
 
 	/**
 	 * Send outgoing text.

@@ -1,3 +1,4 @@
+import {Observable} from 'rxjs';
 import {IResolvable} from '../../iresolvable';
 
 /**
@@ -9,6 +10,9 @@ export interface IPairwiseSession {
 
 	/** Receive/decrypt incoming message. */
 	receive (cyphertext: Uint8Array, initial: boolean) : Promise<void>;
+
+	/** Remote user's username. */
+	readonly remoteUsername: Observable<string>;
 
 	/** Send/encrypt outgoing message. */
 	send (
