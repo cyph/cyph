@@ -1095,14 +1095,7 @@ export class ChatService extends BaseProvider {
 										}
 									}));
 
-									await Promise.all([
-										this.chat.messages.setItem(message.id, message),
-										messageValues.setItem(
-											message.id,
-											messageValue,
-											this.messageValueHasher(message)
-										)
-									]);
+									await this.chat.messages.setItem(message.id, message);
 
 									debugLog(() => ({
 										chatMessageValueBadDataRecoverySuccess: {
