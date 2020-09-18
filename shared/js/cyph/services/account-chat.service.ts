@@ -2,7 +2,7 @@ import {Injectable} from '@angular/core';
 import {Router} from '@angular/router';
 import memoize from 'lodash-es/memoize';
 import {BehaviorSubject, Observable} from 'rxjs';
-import {map} from 'rxjs/operators';
+import {map, take} from 'rxjs/operators';
 import {SecurityModels} from '../account';
 import {IChatData, IChatMessageLiveValue, States} from '../chat';
 import {IAsyncSet} from '../iasync-set';
@@ -21,6 +21,7 @@ import {
 	SessionMessageDataList,
 	StringArrayProto
 } from '../proto';
+import {normalize} from '../util/formatting';
 import {getOrSetDefault} from '../util/get-or-set-default';
 import {observableAll} from '../util/observable-all';
 import {resolvable} from '../util/wait';
@@ -75,6 +76,12 @@ export class AccountChatService extends ChatService {
 			undefined :
 		author === this.sessionService.localUsername ?
 			(await this.accountDatabaseService.getCurrentUser()).user.username :
+		!this.sessionInitService.ephemeral ?
+			author
+				.pipe(take(1))
+				.toPromise()
+				.then(normalize)
+				.catch(() => undefined) :
 			super.getAuthorID(author);
 	}
 
