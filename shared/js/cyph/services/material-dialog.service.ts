@@ -1,3 +1,5 @@
+/* eslint-disable max-lines */
+
 import {ComponentType} from '@angular/cdk/portal';
 import {ChangeDetectorRef, Injectable, Optional} from '@angular/core';
 import {MatBottomSheet} from '@angular/material/bottom-sheet';
