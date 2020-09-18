@@ -52,7 +52,7 @@ import {toBehaviorSubject} from '../util/flatten-observable';
 import {normalize} from '../util/formatting';
 import {getOrSetDefault} from '../util/get-or-set-default';
 import {lock, lockFunction} from '../util/lock';
-import {debugLog, debugLogTime} from '../util/log';
+import {debugLog, debugLogError, debugLogTime} from '../util/log';
 import {observableAll} from '../util/observable-all';
 import {getTimestamp} from '../util/time';
 import {uuid} from '../util/uuid';
@@ -1046,12 +1046,76 @@ export class ChatService extends BaseProvider {
 									);
 								}
 
-								return messageValues.getItem(
-									message.id,
-									message.key,
-									message.hash,
-									this.messageValueHasher(message)
-								);
+								try {
+									return await messageValues.getItem(
+										message.id,
+										message.key,
+										message.hash,
+										this.messageValueHasher(message)
+									);
+								}
+								/* Temporary workaround for bad author IDs */
+								catch (err) {
+									debugLogError(() => ({
+										chatMessageValueError: err
+									}));
+
+									if (
+										messageValues !== this.messageValues ||
+										message.authorID ||
+										this.sessionService.group
+									) {
+										throw err;
+									}
+
+									const remoteUser = await this.remoteUser;
+
+									if (!remoteUser || remoteUser.anonymous) {
+										throw err;
+									}
+
+									debugLog(() => ({
+										chatMessageValueBadDataRecoveryStart: {
+											message
+										}
+									}));
+
+									message.authorID = await this.getAuthorID(
+										this.sessionService.remoteUsername
+									);
+
+									const messageValue = await messageValues.getItem(
+										message.id,
+										message.key,
+										message.hash,
+										this.messageValueHasher(message)
+									);
+
+									debugLog(() => ({
+										chatMessageValueBadDataRecovery: {
+											message,
+											messageValue
+										}
+									}));
+
+									await Promise.all([
+										this.chat.messages.setItem(message.id, message),
+										messageValues.setItem(
+											message.id,
+											messageValue,
+											this.messageValueHasher(message)
+										)
+									]);
+
+									debugLog(() => ({
+										chatMessageValueBadDataRecoverySuccess: {
+											message,
+											messageValue
+										}
+									}));
+
+									return messageValue;
+								}
 							};
 
 							message.value = await (messageValues ===
