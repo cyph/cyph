@@ -291,7 +291,9 @@ var config = struct {
 	to seem like a sane limit for the other values */
 	256,
 
-	600000,
+	/* Reasonable threshold beyond which Alice is unlikely to
+	still be waiting for Bob */
+	2629800000,
 
 	"https://partner-api.cyph.com",
 
