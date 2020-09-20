@@ -117,7 +117,7 @@ if [ "${_arg_site}" ] ; then
 	site="${_arg_site}"
 fi
 
-if [ "${_arg_skip-website}" == 'on' ] ; then
+if [ "${_arg_skip_website}" == 'on' ] ; then
 	skipWebsite=true
 	site="${webSignedProject}"
 fi
