@@ -616,6 +616,12 @@ if \
 ; then
 	./commands/ipfsgateways.js backend/ipfs-gateways.json
 	./commands/packagedatabase.js backend/packages.json
+
+	if [ "${allBranches}" ] ; then
+		for branchDir in ${branchDirs} ; do
+			cp backend/ipfs-gateways.json backend/packages.json ${branchDir}/backend/
+		done
+	fi
 fi
 
 
