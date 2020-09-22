@@ -86,6 +86,9 @@ export interface ISessionService {
 	/** Resolves when first batch of incoming messages have been processed. */
 	readonly initialMessagesProcessed: IResolvable<true>;
 
+	/** Another session service that this one internally delegates to. */
+	internalSessionService?: ISessionService;
+
 	/** Local username (e.g. "me"). */
 	readonly localUsername: Observable<string>;
 

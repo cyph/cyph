@@ -1189,9 +1189,9 @@ export class P2PWebRTCService extends BaseProvider
 		super();
 
 		this.sessionServices = this.ready.then(async () => {
-			const sessionServices = this.sessionService.group || [
-				this.sessionService
-			];
+			const sessionServices = (
+				this.sessionService.group || [this.sessionService]
+			).map(o => o.internalSessionService || o);
 
 			await Promise.all(
 				sessionServices.map(

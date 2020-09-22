@@ -50,9 +50,6 @@ import {StringsService} from './strings.service';
  */
 @Injectable()
 export class AccountSessionService extends SessionService {
-	/** If set, use this for sending instead. */
-	private ephemeralSessionService?: EphemeralSessionService;
-
 	/** @ignore */
 	private initiated: boolean = false;
 
@@ -138,8 +135,8 @@ export class AccountSessionService extends SessionService {
 
 	/** @inheritDoc */
 	public close () : void {
-		if (this.ephemeralSessionService) {
-			this.ephemeralSessionService.close();
+		if (this.internalSessionService) {
+			this.internalSessionService.close();
 			return;
 		}
 
@@ -185,8 +182,8 @@ export class AccountSessionService extends SessionService {
 		confirmPromise: Promise<void>;
 		newMessages: (ISessionMessage & {data: ISessionMessageData})[];
 	}> {
-		if (this.ephemeralSessionService) {
-			return this.ephemeralSessionService.send(...messages);
+		if (this.internalSessionService) {
+			return this.internalSessionService.send(...messages);
 		}
 
 		return super.send(...messages);
@@ -368,7 +365,7 @@ export class AccountSessionService extends SessionService {
 				});
 			}
 
-			this.ephemeralSessionService = ephemeralSessionService;
+			this.internalSessionService = ephemeralSessionService;
 
 			await ephemeralSessionService.opened;
 

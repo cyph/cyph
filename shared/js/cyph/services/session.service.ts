@@ -137,6 +137,9 @@ export abstract class SessionService extends BaseProvider
 	public group?: SessionService[];
 
 	/** @inheritDoc */
+	public internalSessionService?: SessionService;
+
+	/** @inheritDoc */
 	public readonly initialMessagesProcessed = resolvable<true>(true);
 
 	/** @inheritDoc */
