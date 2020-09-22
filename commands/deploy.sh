@@ -938,6 +938,17 @@ gcloudDeploy () {
 	gcloud app deploy --quiet --no-promote --project cyphme --version "${version}" "${@}"
 }
 
+if \
+	[ "${websign}" ] || \
+	[ ! "${site}" ] || \
+	[ "${site}" == 'backend' ] || \
+	[ "${site}" == 'websign' ] \
+; then
+	cd backend
+	go build || exit 1
+	cd -
+fi
+
 if [ "${site}" != 'firebase' ] ; then
 	mv test .test 2> /dev/null
 
