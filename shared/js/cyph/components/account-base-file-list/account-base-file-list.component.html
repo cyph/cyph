@@ -206,7 +206,7 @@
 		<div
 			class="table-container"
 			*ngIf="
-				(envService.isMobile | await) === false &&
+				recordType !== recordTypes.File && (envService.isMobile | await) === false &&
 				((recordType === recordTypes.File &&
 					!!(currentDirectory | await)) ||
 					(
@@ -639,6 +639,25 @@
 				*ngTemplateOutlet="createDirectoryButton"
 			></ng-container>
 		</div>
+
+		<cyph-file-manager
+			*ngIf="recordType === recordTypes.File"
+			[dataSource]="
+				getMergedRowData(
+					(accountFilesService.config[recordType].list()
+						| await
+						| cyphFilter: (getFilterFunction() | await)) ||
+						[]
+				)(
+					recordType === recordTypes.File ?
+						(accountFilesService.directories.watch(
+							(currentDirectory | await) || ''
+						) | await) || [] :
+						[]
+				)
+			"
+			>
+		</cyph-file-manager>
 
 		<ng-container *ngIf="envService.isMobile | await">
 			<mat-card
