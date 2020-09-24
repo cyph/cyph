@@ -642,20 +642,10 @@
 
 		<cyph-file-manager
 			*ngIf="recordType === recordTypes.File"
-			[dataSource]="
-				getMergedRowData(
-					(accountFilesService.config[recordType].list()
-						| await
-						| cyphFilter: (getFilterFunction() | await)) ||
-						[]
-				)(
-					recordType === recordTypes.File ?
-						(accountFilesService.directories.watch(
-							(currentDirectory | await) || ''
-						) | await) || [] :
-						[]
-				)
-			"
+			[directories]="accountFilesService.directories"
+			[removeFile]="accountFilesService.remove.bind(accountFilesService)"
+			[files]="accountFilesService.config[recordTypes.File]"
+			[downloadAndSave]="accountFilesService.downloadAndSave.bind(accountFilesService)"
 			>
 		</cyph-file-manager>
 
