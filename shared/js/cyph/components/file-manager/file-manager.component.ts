@@ -4,9 +4,12 @@ import {StringsService} from '../../services/strings.service';
 import CustomFileSystemProvider from 'devextreme/file_management/custom_provider';
 import FileSystemItem from 'devextreme/file_management/file_system_item';
 import {DxFileManagerComponent} from 'devextreme-angular';
-import {IDirectories} from './interfaces/directories';
 import {IFilemanagerDirectory} from './interfaces/filemanagerDirectory';
-import {IFilemanagerFile} from './interfaces/filemanagerFile';
+import {IAccountFileDirectory, IAccountFileRecord, IAccountFileReference} from '../../proto/types';
+import {Async} from '../../async-type';
+import {Observable} from 'rxjs';
+import {IDatasourceFile} from './interfaces/datasourceFile';
+import FileManager from "devextreme/ui/file_manager";
 
 /**
  * Angular component for file manager UI.
@@ -18,16 +21,40 @@ import {IFilemanagerFile} from './interfaces/filemanagerFile';
 	templateUrl: './file-manager.component.html'
 })
 export class FileManagerComponent extends BaseProvider {
-	private allData: (IFilemanagerFile | IFilemanagerDirectory)[] = [];
+	private allData: (IDatasourceFile | IFilemanagerDirectory)[] = [];
 
+	@Input() directories?: IAccountFileDirectory[];
 	// @ts-ignore
-	@Input() directories: IDirectories;
-	@Input() removeFile: any;
-	@Input() files: any;
-	@Input() downloadAndSave: any;
+	@Input() createDirectory: (directory: string) => void;
+	// @ts-ignore
+	@Input() removeDirectory: (directory: string, confirm: boolean) => void;
+	// @ts-ignore
+	@Input() removeFile: (id: string | Async<IAccountFileRecord> | undefined, confirmAndRedirect: boolean) => any;
+	@Input() files?: IDatasourceFile[];
+	// @ts-ignore
+	@Input() downloadAndSave: (
+		id:
+			| string
+			| IAccountFileRecord
+			| Promise<IAccountFileRecord & IAccountFileReference>
+			| {
+					id: string;
+					progress: Observable<number>;
+					result: Promise<Uint8Array>;
+			}) => {
+				progress: Observable<number>;
+				result: Promise<void>;
+			};
 
+	@ViewChild(DxFileManagerComponent, {static: false}) fileManager?: DxFileManagerComponent;
 	// @ts-ignore
-	@ViewChild(DxFileManagerComponent, {static: false}) fileManager: DxFileManagerComponent;
+	@Input() changeDirectory: (directory: string) => void;
+
+	onCurrentDirectoryChanged(event: {component: FileManager, directory: FileSystemItem, element: HTMLElement}): void {
+		if(event) {
+			this.changeDirectory(event.directory.name);
+		}
+	}
 
 	customProvider: CustomFileSystemProvider;
 
@@ -40,7 +67,7 @@ export class FileManagerComponent extends BaseProvider {
 		const root: this = this;
 
 		this.customProvider = new CustomFileSystemProvider({
-			getItems(pathInfo: FileSystemItem): Promise<Array<IFilemanagerFile | IFilemanagerDirectory>> {
+			getItems(pathInfo: FileSystemItem): Promise<Array<IDatasourceFile | IFilemanagerDirectory>> {
 				if(!pathInfo.name) {
 					return new Promise((res) => res(root.allData));
 				}
@@ -49,11 +76,11 @@ export class FileManagerComponent extends BaseProvider {
 			},
 			// @ts-ignore
 			createDirectory(parentDir: FileSystemItem, name: string): void {
-				root.directories.create(name);
+				root.createDirectory(name);
 			},
 			deleteItem(item: FileSystemItem): void {
 				if(item.isDirectory) {
-					root.directories.delete(item.name, false);
+					root.removeDirectory(item.path, false);
 				} else {
 					root.removeFile(item.dataItem.originalConfig.id, false);
 				}
@@ -65,54 +92,67 @@ export class FileManagerComponent extends BaseProvider {
 	}
 
 	ngOnChanges(): void {
-		const root: this = this;
+		if(this.directories && this.files) {
+			this.allData = this.fillDirectories(this.files, this.transformDirectories(this.directories));
+			this.fileManager?.instance.refresh();
+		}
+	}
 
-		this.directories.watch().subscribe({
-			next(dirs: string[]): void {
-				root.files.list().subscribe({
-					next(files: any): void {
-						root.allData = root.generateFilemanagerData(dirs, files);
-						root.fileManager?.instance.refresh();
-					}
-				});
+	private fillDirectories(
+		files: IDatasourceFile[],
+		directories: IFilemanagerDirectory[]
+	): (IFilemanagerDirectory | IDatasourceFile)[] {
+		const rootFiles: (IFilemanagerDirectory | IDatasourceFile)[] = [];
+
+		files.forEach((file: IDatasourceFile) => {
+			if(!file.record.parentPath) {
+				rootFiles.push(file);
+			} else {
+				this
+					.findDirectory(this.getNameFromPath(file.record.parentPath), directories)
+					.items.push(file);
 			}
 		});
 
+		return [...directories, ...rootFiles];
 	}
 
-	private generateFilemanagerData(directories: string[], files: any): (IFilemanagerFile | IFilemanagerDirectory)[] {
-		const result: any[] = [];
-
-		directories.forEach((dir: string) => {
-			const dirItem: IFilemanagerDirectory = {
-				id: dir,
-				name: dir,
+	private transformDirectories(obj: any, resultStructure: any[] = []): IFilemanagerDirectory[] {
+		for(const [key, value] of Object.entries(obj.children)) {
+			const filemanagerDirObject: IFilemanagerDirectory = {
+				id: key,
+				name: key,
 				isDirectory: true,
 				items: []
 			};
 
-			result.push(dirItem);
-		});
+			resultStructure.push(filemanagerDirObject);
 
-		files.forEach((file: any) => {
-			const fileItem : IFilemanagerFile = {
-				key: file.record.name,
-				name: file.record.name,
-				size: file.record.size,
-				isDirectory: false,
-				originalConfig: file
-			};
-
-			if(file.parentPath) {
-				const dirItem: IFilemanagerDirectory = result.find((dir: IFilemanagerDirectory) => dir.name === file.parentPath);
-
-				dirItem.items.push(fileItem);
-			} else {
-				result.push(fileItem);
+			if(Object.keys((<{children?:any}>value).children).length) {
+				this.transformDirectories(value, filemanagerDirObject.items);
 			}
-		});
+		}
 
-		return result;
+		return resultStructure;
+	}
+	private findDirectory(name: string, dirArr: IFilemanagerDirectory[], res?: IFilemanagerDirectory): any {
+		if(!res) {
+			res = dirArr.find(el => el.name === name);
+			if(res) {
+				return res;
+			}
 
+			dirArr.filter(el => el.isDirectory).forEach(dir => {
+				res = this.findDirectory(name, dir.items, res);
+			});
+		}
+
+		return res;
+	}
+
+	private getNameFromPath(path: string): string {
+		const pathArr: string[] = path.split('/');
+
+		return pathArr[pathArr.length - 1];
 	}
 }
