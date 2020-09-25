@@ -484,7 +484,8 @@ export class AccountFilesService extends BaseProvider {
 					)
 				);
 			}
-		)
+		),
+		watchTree: () => this.directoriesAsyncValue.watch()
 	};
 
 	/** List of file records owned by current user, sorted by timestamp in descending order. */
