@@ -206,7 +206,8 @@
 		<div
 			class="table-container"
 			*ngIf="
-				recordType !== recordTypes.File && (envService.isMobile | await) === false &&
+				recordType !== recordTypes.File &&
+				(envService.isMobile | await) === false &&
 				((recordType === recordTypes.File &&
 					!!(currentDirectory | await)) ||
 					(
@@ -644,12 +645,18 @@
 			*ngIf="recordType === recordTypes.File"
 			[directories]="accountFilesService.directories.watchTree() | await"
 			[createDirectory]="createDirectory.bind(this)"
-			[removeDirectory]="accountFilesService.directories.delete.bind(accountFilesService)"
+			[removeDirectory]="
+				accountFilesService.directories.delete.bind(accountFilesService)
+			"
 			[removeFile]="accountFilesService.remove.bind(accountFilesService)"
-			[downloadAndSave]="accountFilesService.downloadAndSave.bind(accountFilesService)"
-			[files]="accountFilesService.config[recordTypes.File].list() | await"
+			[downloadAndSave]="
+				accountFilesService.downloadAndSave.bind(accountFilesService)
+			"
+			[files]="
+				accountFilesService.config[recordTypes.File].list() | await
+			"
 			[changeDirectory]="changeDirectory.bind(this)"
-			>
+		>
 		</cyph-file-manager>
 
 		<ng-container *ngIf="envService.isMobile | await">

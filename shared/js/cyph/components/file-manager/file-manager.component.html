@@ -1,20 +1,21 @@
-<dx-file-manager id="fileManager"
-    [fileSystemProvider]="customProvider"
-    currentPath="Widescreen"
+<dx-file-manager
+	id="fileManager"
+	[fileSystemProvider]="customProvider"
+	currentPath="Widescreen"
 	(onSelectedFileOpened)="displayImagePopup($event)"
 	(onCurrentDirectoryChanged)="onCurrentDirectoryChanged($event)"
 >
-
-    <dxo-permissions
-        create="true"
-        copy="true"
-        move="true"
-        delete="true"
-        rename="true"
-        upload="true"
-        download="true">
+	<dxo-permissions
+		create="true"
+		copy="true"
+		move="true"
+		delete="true"
+		rename="true"
+		upload="true"
+		download="true"
+	>
 	</dxo-permissions>
 	<dxo-toolbar>
 		<dxi-item name="create"></dxi-item>
-    </dxo-toolbar>
+	</dxo-toolbar>
 </dx-file-manager>
