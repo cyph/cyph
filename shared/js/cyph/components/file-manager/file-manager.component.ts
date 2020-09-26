@@ -2,23 +2,24 @@ import {
 	ChangeDetectionStrategy,
 	Component,
 	Input,
+	OnChanges,
 	ViewChild
 } from '@angular/core';
-import {BaseProvider} from '../../base-provider';
-import {StringsService} from '../../services/strings.service';
 import CustomFileSystemProvider from 'devextreme/file_management/custom_provider';
 import FileSystemItem from 'devextreme/file_management/file_system_item';
-import {DxFileManagerComponent} from 'devextreme-angular';
-import {IFilemanagerDirectory} from './interfaces/filemanagerDirectory';
+import FileManager from 'devextreme/ui/file_manager';
+import {DxFileManagerComponent} from 'devextreme-angular/ui/file-manager';
+import {Observable} from 'rxjs';
+import {Async} from '../../async-type';
+import {BaseProvider} from '../../base-provider';
 import {
 	IAccountFileDirectory,
 	IAccountFileRecord,
 	IAccountFileReference
-} from '../../proto/types';
-import {Async} from '../../async-type';
-import {Observable} from 'rxjs';
-import {IDatasourceFile} from './interfaces/datasourceFile';
-import FileManager from 'devextreme/ui/file_manager';
+} from '../../proto';
+import {StringsService} from '../../services/strings.service';
+import {IDataSourceFile} from './interfaces/idata-source-file';
+import {IFileManagerDirectory} from './interfaces/ifile-manager-directory';
 
 /**
  * Angular component for file manager UI.
@@ -29,22 +30,24 @@ import FileManager from 'devextreme/ui/file_manager';
 	styleUrls: ['./file-manager.component.scss'],
 	templateUrl: './file-manager.component.html'
 })
-export class FileManagerComponent extends BaseProvider {
-	private allData: (IDatasourceFile | IFilemanagerDirectory)[] = [];
+export class FileManagerComponent extends BaseProvider implements OnChanges {
+	/** @ignore */
+	private allData: (IDataSourceFile | IFileManagerDirectory)[] = [];
 
-	@Input() directories?: IAccountFileDirectory[];
-	// @ts-ignore
-	@Input() createDirectory: (directory: string) => void;
-	// @ts-ignore
-	@Input() removeDirectory: (directory: string, confirm: boolean) => void;
-	// @ts-ignore
-	@Input() removeFile: (
-		id: string | Async<IAccountFileRecord> | undefined,
-		confirmAndRedirect: boolean
-	) => any;
-	@Input() files?: IDatasourceFile[];
-	// @ts-ignore
-	@Input() downloadAndSave: (
+	/** Callback function to change directory. */
+	@Input() public changeDirectory?: (directory: string) => void;
+
+	/** Callback function to create directory. */
+	@Input() public createDirectory?: (directory: string) => void;
+
+	/** @see CustomFileSystemProvider */
+	public readonly customProvider: CustomFileSystemProvider;
+
+	/** Tree of directories. */
+	@Input() public directories?: IAccountFileDirectory;
+
+	/** Callback function to download file. */
+	@Input() public downloadAndSave?: (
 		id:
 			| string
 			| IAccountFileRecord
@@ -59,115 +62,52 @@ export class FileManagerComponent extends BaseProvider {
 		result: Promise<void>;
 	};
 
+	/** @see DxFileManagerComponent */
 	@ViewChild(DxFileManagerComponent, {static: false})
-	fileManager?: DxFileManagerComponent;
-	// @ts-ignore
-	@Input() changeDirectory: (directory: string) => void;
+	public fileManager?: DxFileManagerComponent;
 
-	onCurrentDirectoryChanged (event: {
-		component: FileManager;
-		directory: FileSystemItem;
-		element: HTMLElement;
-	}) : void {
-		if (event) {
-			this.changeDirectory(event.directory.name);
-		}
-	}
+	/** List of files. */
+	@Input() public files?: IDataSourceFile[];
 
-	customProvider: CustomFileSystemProvider;
+	/** Callback function to remove directory. */
+	@Input() public removeDirectory?: (
+		directory: string,
+		confirm: boolean
+	) => void;
 
-	constructor (
-		/** @see StringsService */
-		public readonly stringsService: StringsService
-	) {
-		super();
+	/** Callback function to remove file. */
+	@Input() public removeFile?: (
+		id: string | Async<IAccountFileRecord> | undefined,
+		confirmAndRedirect: boolean
+	) => any;
 
-		const root: this = this;
-
-		this.customProvider = new CustomFileSystemProvider({
-			getItems (
-				pathInfo: FileSystemItem
-			) : Promise<Array<IDatasourceFile | IFilemanagerDirectory>> {
-				if (!pathInfo.name) {
-					return new Promise(res => res(root.allData));
-				}
-
-				return new Promise(res => res(pathInfo.dataItem.items));
-			},
-			// @ts-ignore
-			createDirectory (parentDir: FileSystemItem, name: string) : void {
-				root.createDirectory(name);
-			},
-			deleteItem (item: FileSystemItem) : void {
-				if (item.isDirectory) {
-					root.removeDirectory(item.path, false);
-				}
-				else {
-					root.removeFile(item.dataItem.originalConfig.id, false);
-				}
-			},
-			downloadItems (items: Array<FileSystemItem>) : void {
-				root.downloadAndSave(items[0].dataItem.originalConfig.id);
-			}
-		});
-	}
-
-	ngOnChanges () : void {
-		if (this.directories && this.files) {
-			this.allData = this.fillDirectories(
-				this.files,
-				this.transformDirectories(this.directories)
-			);
-			this.fileManager?.instance.refresh();
-		}
-	}
-
+	/** @ignore */
 	private fillDirectories (
-		files: IDatasourceFile[],
-		directories: IFilemanagerDirectory[]
-	) : (IFilemanagerDirectory | IDatasourceFile)[] {
-		const rootFiles: (IFilemanagerDirectory | IDatasourceFile)[] = [];
+		files: IDataSourceFile[],
+		directories: IFileManagerDirectory[]
+	) : (IFileManagerDirectory | IDataSourceFile)[] {
+		const rootFiles: (IFileManagerDirectory | IDataSourceFile)[] = [];
 
-		files.forEach((file: IDatasourceFile) => {
+		files.forEach((file: IDataSourceFile) => {
 			if (!file.record.parentPath) {
 				rootFiles.push(file);
+				return;
 			}
-			else {
-				this.findDirectory(
-					this.getNameFromPath(file.record.parentPath),
-					directories
-				).items.push(file);
-			}
+
+			this.findDirectory(
+				this.getNameFromPath(file.record.parentPath),
+				directories
+			).items.push(file);
 		});
 
 		return [...directories, ...rootFiles];
 	}
 
-	private transformDirectories (
-		obj: any,
-		resultStructure: any[] = []
-	) : IFilemanagerDirectory[] {
-		for (const [key, value] of Object.entries(obj.children)) {
-			const filemanagerDirObject: IFilemanagerDirectory = {
-				id: key,
-				name: key,
-				isDirectory: true,
-				items: []
-			};
-
-			resultStructure.push(filemanagerDirObject);
-
-			if (Object.keys((<{children?: any}> value).children).length) {
-				this.transformDirectories(value, filemanagerDirObject.items);
-			}
-		}
-
-		return resultStructure;
-	}
+	/** @ignore */
 	private findDirectory (
 		name: string,
-		dirArr: IFilemanagerDirectory[],
-		res?: IFilemanagerDirectory
+		dirArr: IFileManagerDirectory[],
+		res?: IFileManagerDirectory
 	) : any {
 		if (!res) {
 			res = dirArr.find(el => el.name === name);
@@ -185,9 +125,106 @@ export class FileManagerComponent extends BaseProvider {
 		return res;
 	}
 
+	/** @ignore */
 	private getNameFromPath (path: string) : string {
 		const pathArr: string[] = path.split('/');
 
 		return pathArr[pathArr.length - 1];
+	}
+
+	/** @ignore */
+	private transformDirectories (
+		obj: any,
+		resultStructure: any[] = []
+	) : IFileManagerDirectory[] {
+		for (const [key, value] of Object.entries(obj.children)) {
+			const filemanagerDirObject: IFileManagerDirectory = {
+				id: key,
+				isDirectory: true,
+				items: [],
+				name: key
+			};
+
+			resultStructure.push(filemanagerDirObject);
+
+			if (Object.keys((<{children?: any}> value).children).length) {
+				this.transformDirectories(value, filemanagerDirObject.items);
+			}
+		}
+
+		return resultStructure;
+	}
+
+	/** @inheritDoc */
+	public ngOnChanges () : void {
+		if (!this.directories || !this.files) {
+			return;
+		}
+
+		this.allData = this.fillDirectories(
+			this.files,
+			this.transformDirectories(this.directories)
+		);
+
+		this.fileManager?.instance.refresh();
+	}
+
+	/** @see DxFileManagerComponent.onCurrentDirectoryChanged */
+	public onCurrentDirectoryChanged (event: {
+		component: FileManager;
+		directory: FileSystemItem;
+		element: HTMLElement;
+	}) : void {
+		if (event && this.changeDirectory) {
+			this.changeDirectory(event.directory.name);
+		}
+	}
+
+	constructor (
+		/** @see StringsService */
+		public readonly stringsService: StringsService
+	) {
+		super();
+
+		this.customProvider = new CustomFileSystemProvider({
+			createDirectory: (
+				_PARENT_DIR: FileSystemItem,
+				name: string
+			) : void => {
+				if (!this.createDirectory) {
+					return;
+				}
+
+				this.createDirectory(name);
+			},
+			deleteItem: (item: FileSystemItem) : void => {
+				if (!this.removeDirectory || !this.removeFile) {
+					return;
+				}
+
+				if (item.isDirectory) {
+					this.removeDirectory(item.path, false);
+				}
+				else {
+					this.removeFile(item.dataItem.originalConfig.id, false);
+				}
+			},
+			downloadItems: (items: FileSystemItem[]) : void => {
+				if (!this.downloadAndSave) {
+					return;
+				}
+
+				this.downloadAndSave(items[0].dataItem.originalConfig.id);
+			},
+			getItems: async (
+				pathInfo: FileSystemItem
+			) : Promise<(IDataSourceFile | IFileManagerDirectory)[]> => {
+				if (!pathInfo.name) {
+					return this.allData;
+				}
+
+				return pathInfo.dataItem.items;
+			}
+		});
 	}
 }

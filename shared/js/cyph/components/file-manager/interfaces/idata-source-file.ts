@@ -1,6 +1,7 @@
 import {IAccountFileRecord} from '../../../proto/types';
 
-export interface IDatasourceFile {
+/** Filesystem data for DevExtreme. */
+export interface IDataSourceFile {
 	data: any;
 	owner: string;
 	record: IAccountFileRecord;
