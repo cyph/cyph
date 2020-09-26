@@ -1,9 +1,9 @@
 <dx-file-manager
-	id="fileManager"
-	[fileSystemProvider]="customProvider"
+	#fileManager
 	currentPath="Widescreen"
-	(onSelectedFileOpened)="displayImagePopup($event)"
+	[fileSystemProvider]="customProvider"
 	(onCurrentDirectoryChanged)="onCurrentDirectoryChanged($event)"
+	(onSelectedFileOpened)="onSelectedFileOpened($event)"
 >
 	<dxo-permissions
 		create="true"
@@ -13,8 +13,7 @@
 		rename="true"
 		upload="true"
 		download="true"
-	>
-	</dxo-permissions>
+	></dxo-permissions>
 	<dxo-toolbar>
 		<dxi-item name="create"></dxi-item>
 	</dxo-toolbar>

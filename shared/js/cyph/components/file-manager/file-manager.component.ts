@@ -1,22 +1,18 @@
 import {
 	ChangeDetectionStrategy,
 	Component,
+	EventEmitter,
 	Input,
 	OnChanges,
+	Output,
 	ViewChild
 } from '@angular/core';
 import CustomFileSystemProvider from 'devextreme/file_management/custom_provider';
 import FileSystemItem from 'devextreme/file_management/file_system_item';
 import FileManager from 'devextreme/ui/file_manager';
 import {DxFileManagerComponent} from 'devextreme-angular/ui/file-manager';
-import {Observable} from 'rxjs';
-import {Async} from '../../async-type';
 import {BaseProvider} from '../../base-provider';
-import {
-	IAccountFileDirectory,
-	IAccountFileRecord,
-	IAccountFileReference
-} from '../../proto';
+import {IAccountFileDirectory} from '../../proto';
 import {StringsService} from '../../services/strings.service';
 import {IDataSourceFile} from './interfaces/idata-source-file';
 import {IFileManagerDirectory} from './interfaces/ifile-manager-directory';
@@ -34,11 +30,11 @@ export class FileManagerComponent extends BaseProvider implements OnChanges {
 	/** @ignore */
 	private allData: (IDataSourceFile | IFileManagerDirectory)[] = [];
 
-	/** Callback function to change directory. */
-	@Input() public changeDirectory?: (directory: string) => void;
+	/** Change directory event (emits directory name). */
+	@Output() public readonly changeDirectory = new EventEmitter<string>();
 
-	/** Callback function to create directory. */
-	@Input() public createDirectory?: (directory: string) => void;
+	/** Create directory event (emits directory name). */
+	@Output() public readonly createDirectory = new EventEmitter<string>();
 
 	/** @see CustomFileSystemProvider */
 	public readonly customProvider: CustomFileSystemProvider;
@@ -46,40 +42,23 @@ export class FileManagerComponent extends BaseProvider implements OnChanges {
 	/** Tree of directories. */
 	@Input() public directories?: IAccountFileDirectory;
 
-	/** Callback function to download file. */
-	@Input() public downloadAndSave?: (
-		id:
-			| string
-			| IAccountFileRecord
-			| Promise<IAccountFileRecord & IAccountFileReference>
-			| {
-					id: string;
-					progress: Observable<number>;
-					result: Promise<Uint8Array>;
-			  }
-	) => {
-		progress: Observable<number>;
-		result: Promise<void>;
-	};
+	/** Download file event. */
+	@Output() public readonly downloadAndSave = new EventEmitter<
+		FileSystemItem
+	>();
 
 	/** @see DxFileManagerComponent */
-	@ViewChild(DxFileManagerComponent, {static: false})
+	@ViewChild('fileManager', {read: DxFileManagerComponent})
 	public fileManager?: DxFileManagerComponent;
 
 	/** List of files. */
 	@Input() public files?: IDataSourceFile[];
 
-	/** Callback function to remove directory. */
-	@Input() public removeDirectory?: (
-		directory: string,
-		confirm: boolean
-	) => void;
+	/** Remove directory event (emits directory name). */
+	@Output() public readonly removeDirectory = new EventEmitter<string>();
 
-	/** Callback function to remove file. */
-	@Input() public removeFile?: (
-		id: string | Async<IAccountFileRecord> | undefined,
-		confirmAndRedirect: boolean
-	) => any;
+	/** Remove file event. */
+	@Output() public readonly removeFile = new EventEmitter<FileSystemItem>();
 
 	/** @ignore */
 	private fillDirectories (
@@ -88,17 +67,17 @@ export class FileManagerComponent extends BaseProvider implements OnChanges {
 	) : (IFileManagerDirectory | IDataSourceFile)[] {
 		const rootFiles: (IFileManagerDirectory | IDataSourceFile)[] = [];
 
-		files.forEach((file: IDataSourceFile) => {
+		for (const file of files) {
 			if (!file.record.parentPath) {
 				rootFiles.push(file);
-				return;
+				continue;
 			}
 
 			this.findDirectory(
 				this.getNameFromPath(file.record.parentPath),
 				directories
-			).items.push(file);
-		});
+			)?.items.push(file);
+		}
 
 		return [...directories, ...rootFiles];
 	}
@@ -108,18 +87,21 @@ export class FileManagerComponent extends BaseProvider implements OnChanges {
 		name: string,
 		dirArr: IFileManagerDirectory[],
 		res?: IFileManagerDirectory
-	) : any {
+	) : IFileManagerDirectory | undefined {
 		if (!res) {
 			res = dirArr.find(el => el.name === name);
+
 			if (res) {
 				return res;
 			}
 
-			dirArr
-				.filter(el => el.isDirectory)
-				.forEach(dir => {
-					res = this.findDirectory(name, dir.items, res);
-				});
+			for (const dir of dirArr.filter(el => el.isDirectory)) {
+				res = this.findDirectory(
+					name,
+					<IFileManagerDirectory[]> dir.items,
+					res
+				);
+			}
 		}
 
 		return res;
@@ -134,20 +116,20 @@ export class FileManagerComponent extends BaseProvider implements OnChanges {
 
 	/** @ignore */
 	private transformDirectories (
-		obj: any,
-		resultStructure: any[] = []
+		directories: IAccountFileDirectory,
+		resultStructure: IFileManagerDirectory[] = []
 	) : IFileManagerDirectory[] {
-		for (const [key, value] of Object.entries(obj.children)) {
-			const filemanagerDirObject: IFileManagerDirectory = {
+		for (const [key, value] of Object.entries(directories.children || {})) {
+			const filemanagerDirObject = {
 				id: key,
 				isDirectory: true,
-				items: [],
+				items: <IFileManagerDirectory[]> [],
 				name: key
 			};
 
 			resultStructure.push(filemanagerDirObject);
 
-			if (Object.keys((<{children?: any}> value).children).length) {
+			if (Object.keys(value.children || {}).length > 0) {
 				this.transformDirectories(value, filemanagerDirObject.items);
 			}
 		}
@@ -175,10 +157,13 @@ export class FileManagerComponent extends BaseProvider implements OnChanges {
 		directory: FileSystemItem;
 		element: HTMLElement;
 	}) : void {
-		if (event && this.changeDirectory) {
-			this.changeDirectory(event.directory.name);
+		if (event) {
+			this.changeDirectory.emit(event.directory.name);
 		}
 	}
+
+	/** @see DxFileManagerComponent.onSelectedFileOpened */
+	public onSelectedFileOpened (_EVENT: unknown) : void {}
 
 	constructor (
 		/** @see StringsService */
@@ -191,30 +176,20 @@ export class FileManagerComponent extends BaseProvider implements OnChanges {
 				_PARENT_DIR: FileSystemItem,
 				name: string
 			) : void => {
-				if (!this.createDirectory) {
-					return;
-				}
-
-				this.createDirectory(name);
+				this.createDirectory.emit(name);
 			},
 			deleteItem: (item: FileSystemItem) : void => {
-				if (!this.removeDirectory || !this.removeFile) {
-					return;
-				}
-
 				if (item.isDirectory) {
-					this.removeDirectory(item.path, false);
+					this.removeDirectory.emit(item.path);
 				}
 				else {
-					this.removeFile(item.dataItem.originalConfig.id, false);
+					this.removeFile.emit(item.dataItem.originalConfig.id);
 				}
 			},
 			downloadItems: (items: FileSystemItem[]) : void => {
-				if (!this.downloadAndSave) {
-					return;
+				for (const item of items) {
+					this.downloadAndSave.emit(item.dataItem.originalConfig.id);
 				}
-
-				this.downloadAndSave(items[0].dataItem.originalConfig.id);
 			},
 			getItems: async (
 				pathInfo: FileSystemItem
