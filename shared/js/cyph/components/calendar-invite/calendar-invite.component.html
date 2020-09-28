@@ -3,6 +3,7 @@
 		<div
 			fxFlexFill
 			fxLayout="column"
+			fxLayoutGap="8px"
 			(blur)="onTouched()"
 			*ngIf="
 				value?.alternateDays !== undefined &&
@@ -141,7 +142,13 @@
 				/>
 			</mat-form-field>
 
-			<div fxFlex fxLayoutGap="16px">
+			<div
+				fxFlex
+				fxLayout="column"
+				fxLayout.gt-sm="row"
+				fxLayoutAlign.gt-sm="start start"
+				fxLayoutGap="16px"
+			>
 				<mat-form-field>
 					<input
 						matInput
@@ -272,17 +279,76 @@
 					>Now</a
 				>
 
-				<mat-slide-toggle
-					cyphTranslate
-					name="appointment-share-time-zone"
-					[ngModel]="appointmentShareTimeZone"
-					(ngModelChange)="
-						appointmentShareTimeZoneChange.emit($event)
-					"
-					matTooltip="If selected, will reveal your local time zone to the recipient in the event details, except if their local time zone can be determined based on their phone number. If deselected, UTC will be used instead."
-				>
-					Share Local Time Zone
-				</mat-slide-toggle>
+				<div *ngIf="!mobile"></div>
+
+				<div fxLayout="column" fxLayoutGap="16px">
+					<h4
+						cyphTranslate
+						class="sharing-options text-center"
+						[class.mobile]="mobile"
+					>
+						Sharing Options
+					</h4>
+
+					<div fxLayout="row" fxLayoutGap="8px">
+						<mat-checkbox
+							cyphTranslate
+							name="appointment-sharing-inviter-time-zone"
+							matTooltip="If selected, will reveal your local time zone to the recipient in the event details, except if their local time zone can be determined based on their phone number. If deselected, UTC will be used instead."
+							[ngModel]="
+								(appointmentSharing.inviterTimeZone | await) ===
+								true
+							"
+							(ngModelChange)="
+								appointmentSharingChange.emit(
+									appointmentSharing.setInviterTimeZone(
+										$event
+									)
+								)
+							"
+						>
+							Local Time Zone
+						</mat-checkbox>
+
+						<mat-checkbox
+							cyphTranslate
+							name="appointment-sharing-member-list"
+							matTooltip="If selected, will share the full list of guest names with each guest."
+							[ngModel]="
+								(appointmentSharing.memberList | await) === true
+							"
+							(ngModelChange)="
+								appointmentSharingChange.emit(
+									appointmentSharing.setMemberList($event)
+								)
+							"
+						>
+							Guest List
+						</mat-checkbox>
+
+						<mat-checkbox
+							cyphTranslate
+							name="appointment-sharing-member-contact-info"
+							matTooltip="If selected, will share the contact details for every guest with each guest."
+							[disabled]="
+								(appointmentSharing.memberList | await) !== true
+							"
+							[ngModel]="
+								(appointmentSharing.memberContactInfo
+									| await) === true
+							"
+							(ngModelChange)="
+								appointmentSharingChange.emit(
+									appointmentSharing.setMemberContactInfo(
+										$event
+									)
+								)
+							"
+						>
+							Guest Contact Info
+						</mat-checkbox>
+					</div>
+				</div>
 			</div>
 
 			<!-- End time selection hidden in favor of appointment duration selection, for now -->

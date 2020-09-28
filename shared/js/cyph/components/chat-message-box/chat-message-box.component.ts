@@ -12,6 +12,7 @@ import {BehaviorSubject} from 'rxjs';
 import * as tabIndent from 'tab-indent';
 import {slideInOutBottom} from '../../animations';
 import {BaseProvider} from '../../base-provider';
+import {AppointmentSharing} from '../../calendar';
 import {States} from '../../chat/enums';
 import {IFile} from '../../ifile';
 import {ChatMessageValue} from '../../proto';
@@ -48,12 +49,12 @@ export class ChatMessageBoxComponent extends BaseProvider
 	/** @ignore */
 	private readonly mobileButtonLock = {};
 
-	/** @see AccountComposeComponent.appointmentShareTimeZone */
-	@Input() public appointmentShareTimeZone: boolean = true;
+	/** @see AppointmentSharing */
+	@Input() public appointmentSharing = new AppointmentSharing();
 
-	/** @see AccountComposeComponent.appointmentShareTimeZone */
-	@Output() public readonly appointmentShareTimeZoneChange = new EventEmitter<
-		boolean
+	/** @see AppointmentSharing */
+	@Output() public readonly appointmentSharingChange = new EventEmitter<
+		AppointmentSharing
 	>();
 
 	/** If true, autofocuses. */

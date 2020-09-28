@@ -7,6 +7,7 @@ import {
 	ViewChild
 } from '@angular/core';
 import {BaseProvider} from '../../base-provider';
+import {AppointmentSharing} from '../../calendar';
 import {ChatMessageValue} from '../../proto';
 import {AccountService} from '../../services/account.service';
 import {EnvService} from '../../services/env.service';
@@ -24,12 +25,12 @@ import {ChatMessageBoxInheritNgFormComponent} from '../chat-message-box-inherit-
 	templateUrl: './account-chat-message-box.component.html'
 })
 export class AccountChatMessageBoxComponent extends BaseProvider {
-	/** @see AccountComposeComponent.appointmentShareTimeZone */
-	@Input() public appointmentShareTimeZone: boolean = true;
+	/** @see AppointmentSharing */
+	@Input() public appointmentSharing = new AppointmentSharing();
 
-	/** @see AccountComposeComponent.appointmentShareTimeZone */
-	@Output() public readonly appointmentShareTimeZoneChange = new EventEmitter<
-		boolean
+	/** @see AppointmentSharing */
+	@Output() public readonly appointmentSharingChange = new EventEmitter<
+		AppointmentSharing
 	>();
 
 	/** @see ChatMessageBoxComponent.calendarInviteFollowUp */

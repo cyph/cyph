@@ -31,9 +31,9 @@
 					(chat?.currentMessage || {}).calendarInvite = $event;
 					chatService.messageChange()
 				"
-				[appointmentShareTimeZone]="appointmentShareTimeZone"
-				(appointmentShareTimeZoneChange)="
-					appointmentShareTimeZoneChange.emit($event)
+				[appointmentSharing]="appointmentSharing"
+				(appointmentSharingChange)="
+					appointmentSharingChange.emit($event)
 				"
 				[followUp]="calendarInviteFollowUp"
 				[reasons]="calendarInviteReasons"
@@ -47,9 +47,9 @@
 					(chat?.currentMessage || {}).calendarInvite = $event;
 					chatService.messageChange()
 				"
-				[appointmentShareTimeZone]="appointmentShareTimeZone"
-				(appointmentShareTimeZoneChange)="
-					appointmentShareTimeZoneChange.emit($event)
+				[appointmentSharing]="appointmentSharing"
+				(appointmentSharingChange)="
+					appointmentSharingChange.emit($event)
 				"
 				[followUp]="calendarInviteFollowUp"
 				[reasons]="calendarInviteReasons"

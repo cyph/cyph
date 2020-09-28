@@ -422,13 +422,24 @@ exports.appointmentInvite = onCall(async (data, namespace, getUsername) => {
 
 	const messageAddendumEmail = `You may also add the attached invitation to your calendar.`;
 
-	const messageAddendumMembers = `The following parties are invited to join:\n\n${members
-		.map(o =>
-			!o.name ?
-				o.email || o.phoneNumber :
-				`${o.name} <${o.email || o.phoneNumber}>`
-		)
-		.join('\n')}`;
+	const memberListToShare = data.shareMemberList ?
+		members
+			.map(o =>
+				!data.shareMemberContactInfo ?
+					o.name :
+				!o.name ?
+					o.email || o.phoneNumber :
+					`${o.name} <${o.email || o.phoneNumber}>`
+			)
+			.filter(s => s) :
+		[];
+
+	const messageAddendumMembers =
+		memberListToShare.length > 0 ?
+			`\n\nThe following parties are invited to join:\n\n${memberListToShare.join(
+				'\n'
+			)}` :
+			'';
 
 	const smsCredentials = await (async () =>
 		members.find(o => o.phoneNumber) ?
@@ -463,7 +474,7 @@ exports.appointmentInvite = onCall(async (data, namespace, getUsername) => {
 				)}.\n\n${messagePart2.replace(
 				'${LINK}',
 				inviterLink
-			)}\n\n${messageAddendumEmail}\n\n${messageAddendumMembers}`,
+			)}\n\n${messageAddendumEmail}${messageAddendumMembers}`,
 			{
 				attendees: members,
 				endTime: data.eventDetails.endTime,
@@ -506,7 +517,7 @@ exports.appointmentInvite = onCall(async (data, namespace, getUsername) => {
 							emailTo,
 							`Cyph Appointment with @${inviterUsername}`,
 							{
-								markdown: `${inviteeMessagePart1}.\n\n${inviteeMessagePart2}\n\n${messageAddendumEmail}\n\n${messageAddendumMembers}`,
+								markdown: `${inviteeMessagePart1}.\n\n${inviteeMessagePart2}\n\n${messageAddendumEmail}${messageAddendumMembers}`,
 								noUnsubscribe: true
 							},
 							{

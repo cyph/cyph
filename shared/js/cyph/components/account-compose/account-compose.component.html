@@ -124,11 +124,12 @@
 						*ngIf="(appointmentFormData | await) === undefined"
 					></cyph-account-contacts-search>
 					<cyph-account-chat-message-box
-						[appointmentShareTimeZone]="
-							(appointmentShareTimeZone | await) === true
+						[appointmentSharing]="
+							(appointmentSharing | await) ||
+							appointmentSharing.value
 						"
-						(appointmentShareTimeZoneChange)="
-							appointmentShareTimeZone.next($event)
+						(appointmentSharingChange)="
+							appointmentSharing.next($event)
 						"
 						[customSendFunction]="send"
 						[calendarInviteFollowUp]="

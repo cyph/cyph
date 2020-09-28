@@ -12,6 +12,7 @@ import {map, take} from 'rxjs/operators';
 import {User} from '../../account';
 import {slideInOutTop} from '../../animations';
 import {BaseProvider} from '../../base-provider';
+import {AppointmentSharing} from '../../calendar';
 import {States} from '../../chat/enums';
 import {emailPattern, isValidEmail} from '../../email-pattern';
 import {
@@ -93,10 +94,10 @@ export class AccountComposeComponent extends BaseProvider
 		}[]
 	>([]);
 
-	/** Indicates whether current user's time zone can be shared with recipient. */
-	public readonly appointmentShareTimeZone = new BehaviorSubject<boolean>(
-		true
-	);
+	/** @see AppointmentSharing */
+	public readonly appointmentSharing = new BehaviorSubject<
+		AppointmentSharing
+	>(new AppointmentSharing());
 
 	/** @see ChatMessageValue.Types */
 	public readonly chatMessageValueTypes = ChatMessageValue.Types;
@@ -476,11 +477,16 @@ export class AccountComposeComponent extends BaseProvider
 											endTime: calendarInvite.endTime,
 											startTime: calendarInvite.startTime
 										},
-										inviterTimeZone: this
-											.appointmentShareTimeZone.value ?
+										inviterTimeZone: this.appointmentSharing
+											.value.inviterTimeZone.value ?
 											Intl.DateTimeFormat().resolvedOptions()
 												.timeZone :
 											undefined,
+										shareMemberContactInfo: this
+											.appointmentSharing.value
+											.memberContactInfo.value,
+										shareMemberList: this.appointmentSharing
+											.value.memberList.value,
 										telehealth: this.configService
 											.planConfig[
 											await this.accountSettingsService.plan

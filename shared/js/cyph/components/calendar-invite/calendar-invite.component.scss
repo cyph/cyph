@@ -3,3 +3,11 @@
 .notes {
 	@include word-wrap;
 }
+
+h4.sharing-options {
+	margin-top: -4px;
+
+	&.mobile {
+		margin-top: 0;
+	}
+}

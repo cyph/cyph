@@ -12,6 +12,7 @@ import {ControlValueAccessor, NG_VALUE_ACCESSOR} from '@angular/forms';
 import memoize from 'lodash-es/memoize';
 import {BehaviorSubject} from 'rxjs';
 import {BaseProvider} from '../../base-provider';
+import {AppointmentSharing} from '../../calendar';
 import {ITimeRange} from '../../itime-range';
 import {CalendarInvite, CallTypes, ICalendarInvite} from '../../proto';
 import {EnvService} from '../../services/env.service';
@@ -49,12 +50,12 @@ import {translate} from '../../util/translate';
 })
 export class CalendarInviteComponent extends BaseProvider
 	implements ControlValueAccessor, OnChanges, OnInit {
-	/** @see AccountComposeComponent.appointmentShareTimeZone */
-	@Input() public appointmentShareTimeZone: boolean = true;
+	/** @see AppointmentSharing */
+	@Input() public appointmentSharing = new AppointmentSharing();
 
-	/** @see AccountComposeComponent.appointmentShareTimeZone */
-	@Output() public readonly appointmentShareTimeZoneChange = new EventEmitter<
-		boolean
+	/** @see AppointmentSharing */
+	@Output() public readonly appointmentSharingChange = new EventEmitter<
+		AppointmentSharing
 	>();
 
 	/** Value. */
