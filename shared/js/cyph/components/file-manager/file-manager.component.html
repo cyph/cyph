@@ -4,6 +4,7 @@
 	[fileSystemProvider]="customProvider"
 	(onCurrentDirectoryChanged)="onCurrentDirectoryChanged($event)"
 	(onSelectedFileOpened)="onSelectedFileOpened($event)"
+	(onSelectionChanged)="onSelectionChanged($event)"
 >
 	<dxo-permissions
 		create="true"
@@ -16,5 +17,22 @@
 	></dxo-permissions>
 	<dxo-toolbar>
 		<dxi-item name="create"></dxi-item>
+		<dxi-file-selection-item name="download"></dxi-file-selection-item>
+		<dxi-file-selection-item
+			location="before"
+			widget="dxButton"
+			[options]="{icon: 'share', onClick: shareFileClick}"
+		>
+		</dxi-file-selection-item>
+		<dxi-file-selection-item
+			location="before"
+			widget="dxButton"
+			[options]="{icon: 'link', onClick: shareDownloadLinkClick}"
+		></dxi-file-selection-item>
+		<dxi-file-selection-item
+			location="before"
+			widget="dxButton"
+			[options]="{icon: 'close', onClick: revokeLinkClick}"
+		></dxi-file-selection-item>
 	</dxo-toolbar>
 </dx-file-manager>

@@ -5,4 +5,6 @@ export interface IDataSourceFile {
 	data: any;
 	owner: string;
 	record: IAccountFileRecord;
+	isDirectory: boolean;
+	id: string;
 }

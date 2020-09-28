@@ -58,7 +58,71 @@ export class FileManagerComponent extends BaseProvider implements OnChanges {
 	@Output() public readonly removeDirectory = new EventEmitter<string>();
 
 	/** Remove file event. */
-	@Output() public readonly removeFile = new EventEmitter<FileSystemItem>();
+	@Output() public readonly removeFile = new EventEmitter<
+		FileSystemItem | string
+	>();
+
+	/** Upload file event. */
+	@Output() public readonly uploadFile = new EventEmitter<File>();
+
+	/** Share file event. */
+	@Output() public readonly shareFile = new EventEmitter<FileSystemItem>();
+
+	/** Share file button click handler */
+	public shareFileClick = () : void => {
+		const files = this.fileManager?.instance.getSelectedItems();
+
+		if (!files) {
+			return;
+		}
+
+		for (let file of files) {
+			if (file.isDirectory) {
+				continue;
+			}
+
+			this.shareFile.emit(file.dataItem);
+		}
+	};
+
+	/** Share file as public link event. */
+	@Output() shareDownloadLink = new EventEmitter<FileSystemItem>();
+
+	/** Share files as public link button click handler. */
+	public shareDownloadLinkClick = () : void => {
+		const files = this.fileManager?.instance.getSelectedItems();
+
+		if (!files) {
+			return;
+		}
+
+		for (let file of files) {
+			if (file.isDirectory) {
+				continue;
+			}
+
+			this.shareDownloadLink.emit(file);
+		}
+	};
+	/** Revoke publick link event. */
+	@Output() revokeDownloadLink = new EventEmitter<FileSystemItem>();
+
+	/** Revoke publick link button click handler. */
+	@Output() revokeLinkClick = () => {
+		const files = this.fileManager?.instance.getSelectedItems();
+
+		if (!files) {
+			return;
+		}
+
+		for (let file of files) {
+			if (file.isDirectory) {
+				continue;
+			}
+
+			this.revokeDownloadLink.emit(file);
+		}
+	};
 
 	/** @ignore */
 	private fillDirectories (
@@ -73,10 +137,9 @@ export class FileManagerComponent extends BaseProvider implements OnChanges {
 				continue;
 			}
 
-			this.findDirectory(
-				this.getNameFromPath(file.record.parentPath),
-				directories
-			)?.items.push(file);
+			this.findDirectory(file.record.parentPath, directories)?.items.push(
+				file
+			);
 		}
 
 		return [...directories, ...rootFiles];
@@ -85,33 +148,25 @@ export class FileManagerComponent extends BaseProvider implements OnChanges {
 	/** @ignore */
 	private findDirectory (
 		name: string,
-		dirArr: IFileManagerDirectory[],
-		res?: IFileManagerDirectory
+		dirArr: IFileManagerDirectory[]
 	) : IFileManagerDirectory | undefined {
-		if (!res) {
-			res = dirArr.find(el => el.name === name);
+		const nameArr: string[] = name.split('/');
+		let curDir: IFileManagerDirectory | undefined;
 
-			if (res) {
-				return res;
+		while (nameArr.length) {
+			const dirName: string | undefined = nameArr.shift();
+
+			if (!curDir) {
+				curDir = dirArr.find(el => el.isDirectory && el.id === dirName);
 			}
-
-			for (const dir of dirArr.filter(el => el.isDirectory)) {
-				res = this.findDirectory(
-					name,
-					<IFileManagerDirectory[]> dir.items,
-					res
+			else {
+				curDir = <IFileManagerDirectory | undefined> (
+					curDir.items.find(el => el.isDirectory && el.id === dirName)
 				);
 			}
 		}
 
-		return res;
-	}
-
-	/** @ignore */
-	private getNameFromPath (path: string) : string {
-		const pathArr: string[] = path.split('/');
-
-		return pathArr[pathArr.length - 1];
+		return curDir;
 	}
 
 	/** @ignore */
@@ -158,12 +213,15 @@ export class FileManagerComponent extends BaseProvider implements OnChanges {
 		element: HTMLElement;
 	}) : void {
 		if (event) {
-			this.changeDirectory.emit(event.directory.name);
+			this.changeDirectory.emit(event.directory.path);
 		}
 	}
 
 	/** @see DxFileManagerComponent.onSelectedFileOpened */
 	public onSelectedFileOpened (_EVENT: unknown) : void {}
+
+	/** @see DxFileManagerComponent.onSelectionChanged */
+	public onSelectionChanged (_EVENT: unknown) : void {}
 
 	constructor (
 		/** @see StringsService */
@@ -181,14 +239,22 @@ export class FileManagerComponent extends BaseProvider implements OnChanges {
 			deleteItem: (item: FileSystemItem) : void => {
 				if (item.isDirectory) {
 					this.removeDirectory.emit(item.path);
+					const relatedFiles =
+						this.files?.filter(
+							el => el.record.parentPath?.indexOf(item.path) === 0
+						) || [];
+
+					for (const file of relatedFiles) {
+						this.removeFile.emit(file.record.id);
+					}
 				}
 				else {
-					this.removeFile.emit(item.dataItem.originalConfig.id);
+					this.removeFile.emit(item.dataItem.id);
 				}
 			},
 			downloadItems: (items: FileSystemItem[]) : void => {
 				for (const item of items) {
-					this.downloadAndSave.emit(item.dataItem.originalConfig.id);
+					this.downloadAndSave.emit(item);
 				}
 			},
 			getItems: async (
@@ -199,6 +265,9 @@ export class FileManagerComponent extends BaseProvider implements OnChanges {
 				}
 
 				return pathInfo.dataItem.items;
+			},
+			uploadFileChunk: (fileData: File) => {
+				this.uploadFile.emit(fileData);
 			}
 		});
 	}

@@ -649,14 +649,34 @@
 			(changeDirectory)="changeDirectory($event)"
 			(createDirectory)="createDirectory($event)"
 			(downloadAndSave)="
-				accountFilesService.downloadAndSave(
-					$event.dataItem.originalConfig.id
-				)
+				accountFilesService.downloadAndSave($event.dataItem.id)
 			"
 			(removeDirectory)="
 				accountFilesService.directories.delete($event, false)
 			"
 			(removeFile)="accountFilesService.remove($event, false)"
+			(uploadFile)="
+				accountFilesService.upload(
+					$event.name,
+					$event,
+					undefined,
+					undefined,
+					undefined,
+					undefined,
+					undefined,
+					undefined,
+					recordType === recordTypes.File ?
+						currentDirectory.value :
+						undefined
+				)
+			"
+			(shareFile)="
+				recordType === recordTypes.EhrApiKey ?
+					shareEhrApiKey($event) :
+					accountFilesService.shareFilePrompt($event.record)
+			"
+			(shareDownloadLink)="shareDownloadLink($event.dataItem)"
+			(revokeDownloadLink)="revokeDownloadLink($event.dataItem)"
 			*ngIf="recordType === recordTypes.File"
 		>
 		</cyph-file-manager>
