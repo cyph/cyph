@@ -945,7 +945,16 @@ if \
 	[ "${site}" == 'websign' ] \
 ; then
 	cd backend
-	go build || exit 1
+	goBuildSuccess=''
+	for i in {1..5} ; do
+		if go build ; then
+			goBuildSuccess=true
+			break
+		fi
+	done
+	if [ ! "${goBuildSuccess}" ] ; then
+		exit 1
+	fi
 	cd -
 fi
 
