@@ -206,7 +206,10 @@
 		<div
 			class="table-container"
 			*ngIf="
-				recordType !== recordTypes.File &&
+				!(
+					configService.enableNewFileManager &&
+					recordType === recordTypes.File
+				) &&
 				(envService.isMobile | await) === false &&
 				((recordType === recordTypes.File &&
 					!!(currentDirectory | await)) ||
@@ -675,7 +678,10 @@
 					currentDirectory.value
 				)
 			"
-			*ngIf="recordType === recordTypes.File"
+			*ngIf="
+				configService.enableNewFileManager &&
+				recordType === recordTypes.File
+			"
 		>
 		</cyph-file-manager>
 

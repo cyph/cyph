@@ -68,9 +68,7 @@ export class FileManagerComponent extends BaseProvider implements OnChanges {
 	@Output() public readonly removeDirectory = new EventEmitter<string>();
 
 	/** Remove file event. */
-	@Output() public readonly removeFile = new EventEmitter<
-		FileSystemItem | string
-	>();
+	@Output() public readonly removeFile = new EventEmitter<string>();
 
 	/** Revoke publick link event. */
 	@Output() public readonly revokeDownloadLink = new EventEmitter<
@@ -139,7 +137,12 @@ export class FileManagerComponent extends BaseProvider implements OnChanges {
 			}
 
 			curDir = <IFileManagerDirectory | undefined> (
-				curDir.items.find(el => el.isDirectory && el.id === dirName)
+				curDir.items.find(
+					el =>
+						'isDirectory' in el &&
+						el.isDirectory &&
+						el.id === dirName
+				)
 			);
 		}
 

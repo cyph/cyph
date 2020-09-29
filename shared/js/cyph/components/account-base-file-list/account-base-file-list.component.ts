@@ -26,6 +26,7 @@ import {AccountContactsService} from '../../services/account-contacts.service';
 import {AccountDownloadService} from '../../services/account-download.service';
 import {AccountFilesService} from '../../services/account-files.service';
 import {AccountService} from '../../services/account.service';
+import {ConfigService} from '../../services/config.service';
 import {AccountAuthService} from '../../services/crypto/account-auth.service';
 import {AccountDatabaseService} from '../../services/crypto/account-database.service';
 import {PGPService} from '../../services/crypto/pgp.service';
@@ -478,6 +479,9 @@ export class AccountBaseFileListComponent extends BaseProvider
 
 		/** @see AccountFilesService */
 		public readonly accountFilesService: AccountFilesService,
+
+		/** @see ConfigService */
+		public readonly configService: ConfigService,
 
 		/** @see DialogService */
 		public readonly dialogService: DialogService,

@@ -73,6 +73,9 @@ export class Config {
 	/** Indicates the original language of any content to be translated. */
 	public readonly defaultLanguage: string = 'en';
 
+	/** Indicates whether the new Accounts file manager UI should be enabled. */
+	public readonly enableNewFileManager: boolean = true;
+
 	/**
 	 * Master key configuration.
 	 *
