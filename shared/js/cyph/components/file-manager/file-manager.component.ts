@@ -62,67 +62,21 @@ export class FileManagerComponent extends BaseProvider implements OnChanges {
 		FileSystemItem | string
 	>();
 
-	/** Upload file event. */
-	@Output() public readonly uploadFile = new EventEmitter<File>();
-
-	/** Share file event. */
-	@Output() public readonly shareFile = new EventEmitter<FileSystemItem>();
-
-	/** Share file button click handler */
-	public shareFileClick = () : void => {
-		const files = this.fileManager?.instance.getSelectedItems();
-
-		if (!files) {
-			return;
-		}
-
-		for (let file of files) {
-			if (file.isDirectory) {
-				continue;
-			}
-
-			this.shareFile.emit(file.dataItem);
-		}
-	};
+	/** Revoke publick link event. */
+	@Output() public readonly revokeDownloadLink = new EventEmitter<
+		FileSystemItem
+	>();
 
 	/** Share file as public link event. */
-	@Output() shareDownloadLink = new EventEmitter<FileSystemItem>();
+	@Output() public readonly shareDownloadLink = new EventEmitter<
+		FileSystemItem
+	>();
 
-	/** Share files as public link button click handler. */
-	public shareDownloadLinkClick = () : void => {
-		const files = this.fileManager?.instance.getSelectedItems();
+	/** Share file event. */
+	@Output() public readonly shareFile = new EventEmitter<IDataSourceFile>();
 
-		if (!files) {
-			return;
-		}
-
-		for (let file of files) {
-			if (file.isDirectory) {
-				continue;
-			}
-
-			this.shareDownloadLink.emit(file);
-		}
-	};
-	/** Revoke publick link event. */
-	@Output() revokeDownloadLink = new EventEmitter<FileSystemItem>();
-
-	/** Revoke publick link button click handler. */
-	@Output() revokeLinkClick = () => {
-		const files = this.fileManager?.instance.getSelectedItems();
-
-		if (!files) {
-			return;
-		}
-
-		for (let file of files) {
-			if (file.isDirectory) {
-				continue;
-			}
-
-			this.revokeDownloadLink.emit(file);
-		}
-	};
+	/** Upload file event. */
+	@Output() public readonly uploadFile = new EventEmitter<File>();
 
 	/** @ignore */
 	private fillDirectories (
@@ -158,12 +112,12 @@ export class FileManagerComponent extends BaseProvider implements OnChanges {
 
 			if (!curDir) {
 				curDir = dirArr.find(el => el.isDirectory && el.id === dirName);
+				continue;
 			}
-			else {
-				curDir = <IFileManagerDirectory | undefined> (
-					curDir.items.find(el => el.isDirectory && el.id === dirName)
-				);
-			}
+
+			curDir = <IFileManagerDirectory | undefined> (
+				curDir.items.find(el => el.isDirectory && el.id === dirName)
+			);
 		}
 
 		return curDir;
@@ -223,6 +177,57 @@ export class FileManagerComponent extends BaseProvider implements OnChanges {
 	/** @see DxFileManagerComponent.onSelectionChanged */
 	public onSelectionChanged (_EVENT: unknown) : void {}
 
+	/** Revoke publick link button click handler. */
+	public readonly revokeDownloadLinkClick = () => {
+		const files = this.fileManager?.instance.getSelectedItems();
+
+		if (!files) {
+			return;
+		}
+
+		for (const file of files) {
+			if (file.isDirectory) {
+				continue;
+			}
+
+			this.revokeDownloadLink.emit(file);
+		}
+	};
+
+	/** Share files as public link button click handler. */
+	public readonly shareDownloadLinkClick = () : void => {
+		const files = this.fileManager?.instance.getSelectedItems();
+
+		if (!files) {
+			return;
+		}
+
+		for (const file of files) {
+			if (file.isDirectory) {
+				continue;
+			}
+
+			this.shareDownloadLink.emit(file);
+		}
+	};
+
+	/** Share file button click handler. */
+	public readonly shareFileClick = () : void => {
+		const files = this.fileManager?.instance.getSelectedItems();
+
+		if (!files) {
+			return;
+		}
+
+		for (const file of files) {
+			if (file.isDirectory) {
+				continue;
+			}
+
+			this.shareFile.emit(file.dataItem);
+		}
+	};
+
 	constructor (
 		/** @see StringsService */
 		public readonly stringsService: StringsService
@@ -237,19 +242,20 @@ export class FileManagerComponent extends BaseProvider implements OnChanges {
 				this.createDirectory.emit(name);
 			},
 			deleteItem: (item: FileSystemItem) : void => {
-				if (item.isDirectory) {
-					this.removeDirectory.emit(item.path);
-					const relatedFiles =
-						this.files?.filter(
-							el => el.record.parentPath?.indexOf(item.path) === 0
-						) || [];
-
-					for (const file of relatedFiles) {
-						this.removeFile.emit(file.record.id);
-					}
-				}
-				else {
+				if (!item.isDirectory) {
 					this.removeFile.emit(item.dataItem.id);
+					return;
+				}
+
+				this.removeDirectory.emit(item.path);
+
+				const relatedFiles =
+					this.files?.filter(
+						el => el.record.parentPath?.indexOf(item.path) === 0
+					) || [];
+
+				for (const file of relatedFiles) {
+					this.removeFile.emit(file.record.id);
 				}
 			},
 			downloadItems: (items: FileSystemItem[]) : void => {

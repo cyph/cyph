@@ -655,6 +655,9 @@
 				accountFilesService.directories.delete($event, false)
 			"
 			(removeFile)="accountFilesService.remove($event, false)"
+			(revokeDownloadLink)="revokeDownloadLink($event.dataItem)"
+			(shareDownloadLink)="shareDownloadLink($event.dataItem)"
+			(shareFile)="accountFilesService.shareFilePrompt($event.record)"
 			(uploadFile)="
 				accountFilesService.upload(
 					$event.name,
@@ -665,18 +668,9 @@
 					undefined,
 					undefined,
 					undefined,
-					recordType === recordTypes.File ?
-						currentDirectory.value :
-						undefined
+					currentDirectory.value
 				)
 			"
-			(shareFile)="
-				recordType === recordTypes.EhrApiKey ?
-					shareEhrApiKey($event) :
-					accountFilesService.shareFilePrompt($event.record)
-			"
-			(shareDownloadLink)="shareDownloadLink($event.dataItem)"
-			(revokeDownloadLink)="revokeDownloadLink($event.dataItem)"
 			*ngIf="recordType === recordTypes.File"
 		>
 		</cyph-file-manager>
