@@ -33,11 +33,6 @@ export class FileManagerComponent extends BaseProvider implements OnChanges {
 	/** Change directory event (emits directory name). */
 	@Output() public readonly changeDirectory = new EventEmitter<string>();
 
-	/** Function to check if a file has a link shared. */
-	@Input() public checkIfLinkShared: (
-		downloadID: string
-	) => Observable<boolean> = _DOWNLOAD_ID => of(false);
-
 	/** Create directory event (emits directory name). */
 	@Output() public readonly createDirectory = new EventEmitter<string>();
 
@@ -171,6 +166,11 @@ export class FileManagerComponent extends BaseProvider implements OnChanges {
 
 		return resultStructure;
 	}
+
+	/** Function to check if a file has a link shared. */
+	@Input() public checkIfLinkShared: (
+		downloadID: string
+	) => Observable<boolean> = _DOWNLOAD_ID => of(false);
 
 	/** @inheritDoc */
 	public ngOnChanges () : void {
