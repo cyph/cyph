@@ -265,10 +265,13 @@ export class AccountBaseFileListComponent extends BaseProvider
 	}
 
 	/** Navigates to specified directory. */
-	public changeDirectory (directory: string) : void {
+	public changeDirectory (
+		directory: string,
+		absolutePath: boolean = false
+	) : void {
 		this.currentDirectory.next(
 			this.accountFilesService.directories.transform(
-				this.currentDirectory.value,
+				absolutePath ? '' : this.currentDirectory.value,
 				directory
 			)
 		);

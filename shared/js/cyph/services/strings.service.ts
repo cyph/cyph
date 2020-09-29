@@ -1347,6 +1347,12 @@ export class StringsService extends BaseProvider {
 	public readonly share = `Share`;
 
 	/** @see StringsService */
+	public readonly shareDownloadLink = `Copy public download link`;
+
+	/** @see StringsService */
+	public readonly shareDownloadLinkRevoke = `Revoke public download link`;
+
+	/** @see StringsService */
 	public readonly shareEhrData = `You are about to request data about this patient from your organization's EHR system and share it with this patient. If accepted, it will be used to auto-fill forms on their behalf. Continue?`;
 
 	/** @see StringsService */

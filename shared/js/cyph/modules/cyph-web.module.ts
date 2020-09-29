@@ -52,7 +52,9 @@ import {ShareButtonsModule} from '@ngx-share/buttons';
 import {ScheduleAllModule} from '@syncfusion/ej2-angular-schedule';
 import {SmdFabSpeedDialModule} from 'angular-speed-dial';
 import {AngularDraggableModule} from 'angular2-draggable';
+import {DxFileManagerModule} from 'devextreme-angular/ui/file-manager';
 import {FullCalendarModule} from 'ng-fullcalendar';
+import {FileManagerComponent} from '../components/file-manager';
 import {SidenavComponent} from '../components/sidenav';
 import {SimpleEmojiPickerComponent} from '../components/simple-emoji-picker';
 import {SocialShareComponent} from '../components/social-share';
@@ -69,6 +71,7 @@ import {CyphSharedModule} from './cyph-shared.module';
  */
 @NgModule({
 	declarations: [
+		FileManagerComponent,
 		InitDirective,
 		SidenavComponent,
 		SimpleEmojiPickerComponent,
@@ -78,7 +81,9 @@ import {CyphSharedModule} from './cyph-shared.module';
 	exports: [
 		AngularDraggableModule,
 		CyphSharedModule,
+		DxFileManagerModule,
 		EmojiModule,
+		FileManagerComponent,
 		FullCalendarModule,
 		InitDirective,
 		MatAutocompleteModule,
@@ -112,6 +117,7 @@ import {CyphSharedModule} from './cyph-shared.module';
 	imports: [
 		AngularDraggableModule,
 		CyphSharedModule,
+		DxFileManagerModule,
 		EmojiModule,
 		FontAwesomeModule,
 		FullCalendarModule,

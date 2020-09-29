@@ -206,6 +206,7 @@
 		<div
 			class="table-container"
 			*ngIf="
+				recordType !== recordTypes.File &&
 				(envService.isMobile | await) === false &&
 				((recordType === recordTypes.File &&
 					!!(currentDirectory | await)) ||
@@ -640,6 +641,44 @@
 			></ng-container>
 		</div>
 
+		<cyph-file-manager
+			[checkIfLinkShared]="accountDownloadService.watchIfShared"
+			[directories]="accountFilesService.directories.watchTree() | await"
+			[files]="
+				accountFilesService.config[recordTypes.File].list() | await
+			"
+			(changeDirectory)="changeDirectory($event, true)"
+			(createDirectory)="createDirectory($event)"
+			(downloadAndSave)="
+				accountFilesService.downloadAndSave($event.dataItem.id)
+			"
+			(removeDirectory)="
+				accountFilesService.directories.delete($event, false)
+			"
+			(removeFile)="accountFilesService.remove($event, false)"
+			(revokeDownloadLink)="revokeDownloadLink($event.dataItem)"
+			(selectedFileOpen)="
+				accountFilesService.openFile($event.dataItem.id)
+			"
+			(shareDownloadLink)="shareDownloadLink($event.dataItem)"
+			(shareFile)="accountFilesService.shareFilePrompt($event.record)"
+			(uploadFile)="
+				accountFilesService.upload(
+					$event.name,
+					$event,
+					undefined,
+					undefined,
+					undefined,
+					undefined,
+					undefined,
+					undefined,
+					currentDirectory.value
+				)
+			"
+			*ngIf="recordType === recordTypes.File"
+		>
+		</cyph-file-manager>
+
 		<ng-container *ngIf="envService.isMobile | await">
 			<mat-card
 				*ngFor="
@@ -1008,11 +1047,10 @@
 			</button>
 			<button
 				mat-menu-item
-				cyphTranslate
 				(click)="accountFilesService.shareFilePrompt(o.record)"
 				*ngIf="!!currentUser?.agseConfirmed && !anonymousMessages"
 			>
-				Share
+				{{ stringsService.share }}
 			</button>
 			<button
 				mat-menu-item
@@ -1083,20 +1121,18 @@
 	>
 		<button
 			mat-icon-button
-			cyphTranslate
-			matTooltip="Copy public download link"
+			[matTooltip]="stringsService.shareDownloadLink"
 			(click)="shareDownloadLink(o); $event.stopPropagation()"
 		>
 			<mat-icon>link</mat-icon>
 		</button>
 		<button
 			mat-icon-button
-			cyphTranslate
 			[disabled]="
 				(accountDownloadService.watchIfShared(o.record.id) | await) !==
 				true
 			"
-			matTooltip="Revoke public download link"
+			[matTooltip]="stringsService.shareDownloadLinkRevoke"
 			(click)="revokeDownloadLink(o); $event.stopPropagation()"
 		>
 			<mat-icon>link_off</mat-icon>
