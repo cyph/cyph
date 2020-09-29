@@ -9,8 +9,8 @@ import {
 } from '@angular/core';
 import CustomFileSystemProvider from 'devextreme/file_management/custom_provider';
 import FileSystemItem from 'devextreme/file_management/file_system_item';
-import FileManager from 'devextreme/ui/file_manager';
 import {DxFileManagerComponent} from 'devextreme-angular/ui/file-manager';
+import {BehaviorSubject, Observable, of} from 'rxjs';
 import {BaseProvider} from '../../base-provider';
 import {IAccountFileDirectory} from '../../proto';
 import {StringsService} from '../../services/strings.service';
@@ -33,8 +33,18 @@ export class FileManagerComponent extends BaseProvider implements OnChanges {
 	/** Change directory event (emits directory name). */
 	@Output() public readonly changeDirectory = new EventEmitter<string>();
 
+	/** Function to check if a file has a link shared. */
+	@Input() public checkIfLinkShared: (
+		downloadID: string
+	) => Observable<boolean> = _DOWNLOAD_ID => of(false);
+
 	/** Create directory event (emits directory name). */
 	@Output() public readonly createDirectory = new EventEmitter<string>();
+
+	/** Current selection. */
+	@Output() public readonly currentSelection = new BehaviorSubject<
+		FileSystemItem[]
+	>([]);
 
 	/** @see CustomFileSystemProvider */
 	public readonly customProvider: CustomFileSystemProvider;
@@ -67,6 +77,16 @@ export class FileManagerComponent extends BaseProvider implements OnChanges {
 		FileSystemItem
 	>();
 
+	/** Open selected file event. */
+	@Output() public readonly selectedFileOpen = new EventEmitter<
+		FileSystemItem
+	>();
+
+	/** Change selection event. */
+	@Output() public readonly selectionChange = new EventEmitter<
+		FileSystemItem[]
+	>();
+
 	/** Share file as public link event. */
 	@Output() public readonly shareDownloadLink = new EventEmitter<
 		FileSystemItem
@@ -85,7 +105,10 @@ export class FileManagerComponent extends BaseProvider implements OnChanges {
 	) : (IFileManagerDirectory | IDataSourceFile)[] {
 		const rootFiles: (IFileManagerDirectory | IDataSourceFile)[] = [];
 
-		for (const file of files) {
+		for (const file of files.map(o => ({
+			...o,
+			dateModified: new Date(o.record.timestamp)
+		}))) {
 			if (!file.record.parentPath) {
 				rootFiles.push(file);
 				continue;
@@ -161,21 +184,28 @@ export class FileManagerComponent extends BaseProvider implements OnChanges {
 	}
 
 	/** @see DxFileManagerComponent.onCurrentDirectoryChanged */
-	public onCurrentDirectoryChanged (event: {
-		component: FileManager;
-		directory: FileSystemItem;
-		element: HTMLElement;
+	public onCurrentDirectoryChanged (event?: {
+		directory?: FileSystemItem;
 	}) : void {
-		if (event) {
+		if (event?.directory) {
 			this.changeDirectory.emit(event.directory.path);
 		}
 	}
 
 	/** @see DxFileManagerComponent.onSelectedFileOpened */
-	public onSelectedFileOpened (_EVENT: unknown) : void {}
+	public onSelectedFileOpened (event?: {file?: FileSystemItem}) : void {
+		if (event?.file) {
+			this.selectedFileOpen.emit(event.file);
+		}
+	}
 
 	/** @see DxFileManagerComponent.onSelectionChanged */
-	public onSelectionChanged (_EVENT: unknown) : void {}
+	public onSelectionChanged (event?: {
+		selectedItems?: FileSystemItem[];
+	}) : void {
+		this.currentSelection.next(event?.selectedItems || []);
+		this.selectionChange.emit(this.currentSelection.value);
+	}
 
 	/** Revoke publick link button click handler. */
 	public readonly revokeDownloadLinkClick = () => {

@@ -1,1 +1,11 @@
 @import '../../../../css/mixins';
+
+:host ::ng-deep {
+	.dx-icon.dx-icon-link_off {
+		font-family: 'Material Icons';
+
+		&:before {
+			content: 'link_off';
+		}
+	}
+}

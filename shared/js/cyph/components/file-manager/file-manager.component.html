@@ -1,6 +1,5 @@
 <dx-file-manager
 	#fileManager
-	currentPath="Widescreen"
 	[fileSystemProvider]="customProvider"
 	(onCurrentDirectoryChanged)="onCurrentDirectoryChanged($event)"
 	(onSelectedFileOpened)="onSelectedFileOpened($event)"
@@ -21,17 +20,40 @@
 		<dxi-file-selection-item
 			location="before"
 			widget="dxButton"
-			[options]="{icon: 'share', onClick: shareFileClick}"
+			[options]="{
+				icon: 'share',
+				onClick: shareFileClick,
+				text: stringsService.share
+			}"
 		></dxi-file-selection-item>
 		<dxi-file-selection-item
 			location="before"
 			widget="dxButton"
-			[options]="{icon: 'link', onClick: shareDownloadLinkClick}"
+			[options]="{
+				disabled:
+					((currentSelection | await) || []).length !== 1 ||
+					((currentSelection | await) || [])[0]?.isDirectory === true,
+				icon: 'link',
+				onClick: shareDownloadLinkClick,
+				text: stringsService.shareDownloadLink
+			}"
 		></dxi-file-selection-item>
 		<dxi-file-selection-item
 			location="before"
 			widget="dxButton"
-			[options]="{icon: 'close', onClick: revokeDownloadLinkClick}"
+			[options]="{
+				disabled:
+					((currentSelection | await) || []).length !== 1 ||
+					((currentSelection | await) || [])[0]?.isDirectory ===
+						true ||
+					(checkIfLinkShared(
+						((currentSelection | await) || [])[0]?.dataItem?.id ||
+							''
+					) | await) !== true,
+				icon: 'link_off',
+				onClick: revokeDownloadLinkClick,
+				text: stringsService.shareDownloadLinkRevoke
+			}"
 		></dxi-file-selection-item>
 	</dxo-toolbar>
 </dx-file-manager>

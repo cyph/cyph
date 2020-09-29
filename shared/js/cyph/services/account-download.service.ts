@@ -1,6 +1,6 @@
 import {Injectable} from '@angular/core';
 import memoize from 'lodash-es/memoize';
-import {Observable} from 'rxjs';
+import {Observable, of} from 'rxjs';
 import {SecurityModels} from '../account';
 import {BaseProvider} from '../base-provider';
 import {MaybePromise} from '../maybe-promise-type';
@@ -24,16 +24,18 @@ export class AccountDownloadService extends BaseProvider {
 	/** Watches whether the file is publicly shared. */
 	public readonly watchIfShared = memoize(
 		(downloadID: string) : Observable<boolean> =>
-			this.accountDatabaseService.watchExists(
-				`fileDownloads/${downloadID}`
-			)
+			downloadID ?
+				this.accountDatabaseService.watchExists(
+					`fileDownloads/${downloadID}`
+				) :
+				of(false)
 	);
 
 	/** Checks whether the file is publicly shared. */
 	public async checkIfShared (downloadID: string) : Promise<boolean> {
-		return this.accountDatabaseService.hasItem(
-			`fileDownloads/${downloadID}`
-		);
+		return downloadID ?
+			this.accountDatabaseService.hasItem(`fileDownloads/${downloadID}`) :
+			false;
 	}
 
 	/** Downloads file. */
