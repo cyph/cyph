@@ -189,6 +189,37 @@ Since fonts are big, uncomment these as they actually get used.
 	font-feature-settings: 'liga';
 }
 
+/* For DevExtreme */
+
+@font-face {
+	font-family: DXIcons;
+	src: url(/assets/fonts/devextreme/dxiconsmaterial.woff) format('woff');
+	font-weight: 400;
+	font-style: normal;
+}
+
+/* For DevExtreme, from https://fonts.googleapis.com/earlyaccess/notokufiarabic.css */
+
+/*
+
+@font-face {
+	font-family: 'Noto Kufi Arabic';
+	font-style: normal;
+	font-weight: 400;
+	src: url(/assets/fonts/notokufiarabic/NotoKufiArabic-Bold.woff)
+		format('woff');
+}
+
+@font-face {
+	font-family: 'Noto Kufi Arabic';
+	font-style: normal;
+	font-weight: 700;
+	src: url(/assets/fonts/notokufiarabic/NotoKufiArabic-Regular.woff)
+		format('woff');
+}
+
+*/
+
 /* From https://github.com/noppa/text-security */
 
 @font-face {
