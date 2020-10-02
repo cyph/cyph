@@ -380,12 +380,19 @@ func getIPFSGateways(continentCode string) []string {
 		backupContinentCode = config.DefaultContinentCodeBackup
 	}
 
-	checkAllIPFSGateways()
+	checkAllIPFSGateways(false)
 
-	return append(
+	gateways := append(
 		getIPFSGatewaysInternal(continentCode),
 		getIPFSGatewaysInternal(backupContinentCode)...,
 	)
+
+	if len(gateways) < 1 {
+		checkAllIPFSGateways(true)
+		return getIPFSGateways(continentCode)
+	}
+
+	return gateways
 }
 
 func getIPFSGatewaysInternal(continentCode string) []string {
@@ -414,14 +421,14 @@ func getIPFSGatewaysInternal(continentCode string) []string {
 	)
 }
 
-func checkAllIPFSGateways() {
+func checkAllIPFSGateways(forceRetry bool) {
 	uptimeResults := make(chan bool, len(ipfsGatewayURLs))
 
 	for i := range ipfsGatewayURLs {
 		gateway := ipfsGatewayURLs[i].URL
 
 		go func() {
-			uptimeResults <- checkIPFSGateway(gateway)
+			uptimeResults <- checkIPFSGateway(gateway, forceRetry)
 		}()
 	}
 
@@ -430,15 +437,18 @@ func checkAllIPFSGateways() {
 	}
 }
 
-func checkIPFSGateway(gateway string) bool {
+func checkIPFSGateway(gateway string, forceRetry bool) bool {
 	packageData := packages[config.DefaultPackage]
 
 	if packageData.Uptime.IPFSHash == "" {
 		return true
 	}
 
-	if uptimeCheck, ok := ipfsGatewayUptimeChecks[gateway]; ok && config.IPFSGatewayUptimeCheckTTL > (time.Now().Unix()-uptimeCheck.Timestamp) {
-		return uptimeCheck.Result
+	if !forceRetry {
+		uptimeCheck, ok := ipfsGatewayUptimeChecks[gateway]
+		if ok && config.IPFSGatewayUptimeCheckTTL > (time.Now().Unix()-uptimeCheck.Timestamp) {
+			return uptimeCheck.Result
+		}
 	}
 
 	result := true

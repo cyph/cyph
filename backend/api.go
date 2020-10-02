@@ -51,7 +51,7 @@ func main() {
 	}
 	log.Fatal(http.ListenAndServe(fmt.Sprintf(":%s", port), nil))
 
-	checkAllIPFSGateways()
+	checkAllIPFSGateways(false)
 }
 
 func analytics(h HandlerArgs) (interface{}, int) {
