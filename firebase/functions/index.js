@@ -403,16 +403,30 @@ exports.appointmentInvite = onCall(async (data, namespace, getUsername) => {
 
 	const inviterLink = `${accountsURL}account-burner/${accountBurnerID}`;
 
-	const startTimeString = (timeZone = data.inviterTimeZone) =>
-		new Intl.DateTimeFormat('en-US', {
-			day: 'numeric',
-			hour: 'numeric',
-			minute: '2-digit',
-			month: 'long',
-			timeZone,
-			timeZoneName: 'long',
-			year: 'numeric'
-		}).format(new Date(data.eventDetails.startTime));
+	const startTimeString = timeZone => {
+		if (!timeZone) {
+			timeZone = data.inviterTimeZone || 'UTC';
+		}
+
+		try {
+			return new Intl.DateTimeFormat('en-US', {
+				day: 'numeric',
+				hour: 'numeric',
+				minute: '2-digit',
+				month: 'long',
+				timeZone,
+				timeZoneName: 'long',
+				year: 'numeric'
+			}).format(new Date(data.eventDetails.startTime));
+		}
+		catch (err) {
+			if (timeZone !== 'UTC') {
+				return startTimeString('UTC');
+			}
+
+			throw err;
+		}
+	};
 
 	const messagePart1 = `Cyph appointment with \${PARTY} is scheduled for ${Math.floor(
 		(data.eventDetails.endTime - data.eventDetails.startTime) / 60000
