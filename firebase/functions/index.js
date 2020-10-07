@@ -378,14 +378,18 @@ exports.acceptPseudoRelationship = onCall(
 exports.appointmentInvite = onCall(async (data, namespace, getUsername) => {
 	const {accountsURL} = namespaces[namespace];
 
-	const accountBurnerID = (data.accountBurnerID || '').trim();
+	const accountBurnerID = (
+		(data.eventDetails && data.eventDetails.uid) ||
+		''
+	).trim();
+
+	if (!accountBurnerID) {
+		throw new Error('Missing UID.');
+	}
+
 	const inviterUsername = await getUsername();
 	const telehealth = !!data.telehealth;
-
-	const uid =
-		data.eventDetails && data.eventDetails.uid ?
-			`${inviterUsername}-${data.eventDetails.uid}@cyph.com` :
-			undefined;
+	const uid = `${inviterUsername}-${accountBurnerID}@cyph.com`;
 
 	const members = ((data.to || {}).members || [])
 		.map(o => ({

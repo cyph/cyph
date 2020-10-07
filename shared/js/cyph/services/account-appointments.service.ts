@@ -300,7 +300,6 @@ export class AccountAppointmentsService extends BaseProvider {
 		}
 
 		this.accountDatabaseService.callFunction('appointmentInvite', {
-			accountBurnerID: calendarInvite.uid,
 			callType:
 				calendarInvite.callType === CallTypes.Audio ?
 					'audio' :
