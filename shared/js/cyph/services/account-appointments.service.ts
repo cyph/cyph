@@ -2,13 +2,23 @@ import {Injectable} from '@angular/core';
 import {EventSettingsModel} from '@syncfusion/ej2-angular-schedule';
 import memoize from 'lodash-es/memoize';
 import {Observable, of} from 'rxjs';
-import {map, switchMap} from 'rxjs/operators';
+import {map, switchMap, take} from 'rxjs/operators';
 import {BaseProvider} from '../base-provider';
-import {IAccountFileRecord, IAppointment} from '../proto/types';
+import {AppointmentSharing} from '../calendar';
+import {
+	BurnerSession,
+	CallTypes,
+	IAccountFileRecord,
+	IAppointment,
+	IBurnerSession,
+	ICalendarInvite
+} from '../../proto';
 import {filterUndefined} from '../util/filter';
 import {observableAll} from '../util/observable-all';
 import {watchTimestamp} from '../util/time';
 import {AccountFilesService} from './account-files.service';
+import {AccountSettingsService} from './account-settings.service';
+import {ConfigService} from './config.service';
 import {AccountDatabaseService} from './crypto/account-database.service';
 
 /**
@@ -271,12 +281,74 @@ export class AccountAppointmentsService extends BaseProvider {
 		);
 	}
 
+	/** Sends appointment invite. */
+	public async invite (
+		calendarInvite: ICalendarInvite,
+		appointmentSharing: AppointmentSharing,
+		burnerSession?: IBurnerSession
+	) : Promise<void> {
+		if (
+			!(await this.accountSettingsService.staticFeatureFlags.scheduler
+				.pipe(take(1))
+				.toPromise())
+		) {
+			return;
+		}
+
+		if (!calendarInvite.uid) {
+			throw new Error('No calendar event UID.');
+		}
+
+		if (!burnerSession) {
+			burnerSession = await this.accountDatabaseService.getItem(
+				`burnerSessions/${calendarInvite.uid}`,
+				BurnerSession
+			);
+		}
+
+		if (!burnerSession.members || burnerSession.members.length < 1) {
+			throw new Error('No guests.');
+		}
+
+		this.accountDatabaseService.callFunction('appointmentInvite', {
+			accountBurnerID: calendarInvite.uid,
+			callType:
+				calendarInvite.callType === CallTypes.Audio ?
+					'audio' :
+				calendarInvite.callType === CallTypes.Video ?
+					'video' :
+					undefined,
+			eventDetails: {
+				endTime: calendarInvite.endTime,
+				startTime: calendarInvite.startTime,
+				uid: calendarInvite.uid
+			},
+			inviterTimeZone: appointmentSharing.inviterTimeZone.value ?
+				Intl.DateTimeFormat().resolvedOptions().timeZone :
+				undefined,
+			shareMemberContactInfo: appointmentSharing.memberContactInfo.value,
+			shareMemberList: appointmentSharing.memberList.value,
+			telehealth: this.configService.planConfig[
+				await this.accountSettingsService.plan.pipe(take(1)).toPromise()
+			].telehealth,
+			to: {
+				members: burnerSession.members
+			}
+		});
+	}
+
 	constructor (
 		/** @ignore */
 		private readonly accountDatabaseService: AccountDatabaseService,
 
 		/** @ignore */
-		private readonly accountFilesService: AccountFilesService
+		private readonly accountFilesService: AccountFilesService,
+
+		/** @ignore */
+		private readonly accountSettingsService: AccountSettingsService,
+
+		/** @ignore */
+		private readonly configService: ConfigService
 	) {
 		super();
 	}

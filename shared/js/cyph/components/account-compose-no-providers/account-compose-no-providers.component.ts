@@ -1,5 +1,6 @@
 import {ChangeDetectionStrategy, Component} from '@angular/core';
 import {ActivatedRoute} from '@angular/router';
+import {AccountAppointmentsService} from '../../services/account-appointments.service';
 import {AccountChatService} from '../../services/account-chat.service';
 import {AccountContactsService} from '../../services/account-contacts.service';
 import {AccountFilesService} from '../../services/account-files.service';
@@ -8,7 +9,6 @@ import {AccountService} from '../../services/account.service';
 import {ConfigService} from '../../services/config.service';
 import {AccountAuthService} from '../../services/crypto/account-auth.service';
 import {AccountDatabaseService} from '../../services/crypto/account-database.service';
-import {DatabaseService} from '../../services/database.service';
 import {DialogService} from '../../services/dialog.service';
 import {EnvService} from '../../services/env.service';
 import {ScrollService} from '../../services/scroll.service';
@@ -32,11 +32,11 @@ export class AccountComposeNoProvidersComponent extends AccountComposeComponent 
 	protected readonly hasOwnProviders: boolean = false;
 
 	constructor (
+		accountAppointmentsService: AccountAppointmentsService,
 		accountAuthService: AccountAuthService,
 		accountContactsService: AccountContactsService,
 		accountFilesService: AccountFilesService,
 		configService: ConfigService,
-		databaseService: DatabaseService,
 		dialogService: DialogService,
 		scrollService: ScrollService,
 		sessionService: SessionService,
@@ -49,11 +49,11 @@ export class AccountComposeNoProvidersComponent extends AccountComposeComponent 
 		stringsService: StringsService
 	) {
 		super(
+			accountAppointmentsService,
 			accountAuthService,
 			accountContactsService,
 			accountFilesService,
 			configService,
-			databaseService,
 			dialogService,
 			scrollService,
 			sessionService,
