@@ -631,6 +631,9 @@ message CalendarInvite {
 	/** Event title/subject. */
 	required string title = 7;
 
+	/** Event UID. */
+	string uid = 9;
+
 	/** Meeting URL. */
 	string url = 8;
 }

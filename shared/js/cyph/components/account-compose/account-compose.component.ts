@@ -419,6 +419,7 @@ export class AccountComposeComponent extends BaseProvider
 
 				const accountBurnerID = uuid();
 
+				calendarInvite.uid = accountBurnerID;
 				calendarInvite.url = `${this.envService.appUrl}account-burner/${accountBurnerID}`;
 
 				const members = this.appointmentGroupMembers.value.map(o => ({
@@ -475,7 +476,8 @@ export class AccountComposeComponent extends BaseProvider
 										callType,
 										eventDetails: {
 											endTime: calendarInvite.endTime,
-											startTime: calendarInvite.startTime
+											startTime: calendarInvite.startTime,
+											uid: calendarInvite.uid
 										},
 										inviterTimeZone: this.appointmentSharing
 											.value.inviterTimeZone.value ?

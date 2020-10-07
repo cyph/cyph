@@ -130,7 +130,8 @@ export class AccountAppointmentsComponent extends BaseProvider
 							undefined,
 					eventDetails: {
 						endTime: appointment.calendarInvite.endTime,
-						startTime: appointment.calendarInvite.startTime
+						startTime: appointment.calendarInvite.startTime,
+						uid: appointment.calendarInvite.uid
 					},
 					telehealth: this.configService.planConfig[
 						await this.accountSettingsService.plan
