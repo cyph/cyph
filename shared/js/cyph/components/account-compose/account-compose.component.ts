@@ -462,7 +462,7 @@ export class AccountComposeComponent extends BaseProvider
 						appointment,
 						recipients
 					).result,
-					this.accountAppointmentsService.invite(
+					this.accountAppointmentsService.sendInvite(
 						appointment,
 						burnerSession
 					)

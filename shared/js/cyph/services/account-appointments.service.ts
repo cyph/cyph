@@ -279,10 +279,11 @@ export class AccountAppointmentsService extends BaseProvider {
 		);
 	}
 
-	/** Sends appointment invite. */
-	public async invite (
+	/** @ignore */
+	private async sendInviteInternal (
 		{calendarInvite, sharing}: IAppointment,
-		burnerSession?: IBurnerSession
+		cancel: boolean,
+		burnerSession: IBurnerSession | undefined
 	) : Promise<void> {
 		if (
 			!(await this.accountSettingsService.staticFeatureFlags.scheduler
@@ -316,6 +317,7 @@ export class AccountAppointmentsService extends BaseProvider {
 					'video' :
 					undefined,
 			eventDetails: {
+				cancel,
 				endTime: calendarInvite.endTime,
 				startTime: calendarInvite.startTime,
 				uid: calendarInvite.uid
@@ -332,6 +334,22 @@ export class AccountAppointmentsService extends BaseProvider {
 				members: burnerSession.members
 			}
 		});
+	}
+
+	/** Sends appointment invite cancellation. */
+	public async cancelInvite (
+		appointment: IAppointment,
+		burnerSession?: IBurnerSession
+	) : Promise<void> {
+		return this.sendInviteInternal(appointment, true, burnerSession);
+	}
+
+	/** Sends appointment invite (initial invite or rescheduling). */
+	public async sendInvite (
+		appointment: IAppointment,
+		burnerSession?: IBurnerSession
+	) : Promise<void> {
+		return this.sendInviteInternal(appointment, false, burnerSession);
 	}
 
 	constructor (
