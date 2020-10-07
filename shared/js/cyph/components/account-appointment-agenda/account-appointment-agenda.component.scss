@@ -1,5 +1,16 @@
 @import '../../../../css/mixins';
 
+::ng-deep .e-schedule-dialog-container {
+	.e-subject-container {
+		width: 100% !important;
+	}
+
+	.e-location-container,
+	.e-recurrenceeditor {
+		display: none !important;
+	}
+}
+
 :host > div {
 	position: relative;
 	min-height: 100%;
