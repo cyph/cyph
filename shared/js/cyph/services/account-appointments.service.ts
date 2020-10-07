@@ -70,7 +70,9 @@ export class AccountAppointmentsService extends BaseProvider {
 						friend,
 						schedulerObject: {
 							/* eslint-disable-next-line @typescript-eslint/naming-convention */
-							Description: appointment.calendarInvite.title,
+							Description: appointment.fromName ?
+								appointment.calendarInvite.title :
+								'',
 							/* eslint-disable-next-line @typescript-eslint/naming-convention */
 							EndTime: new Date(
 								appointment.calendarInvite.endTime
@@ -84,7 +86,9 @@ export class AccountAppointmentsService extends BaseProvider {
 								appointment.calendarInvite.startTime
 							),
 							/* eslint-disable-next-line @typescript-eslint/naming-convention */
-							Subject: appointment.fromName || ''
+							Subject:
+								appointment.fromName ||
+								appointment.calendarInvite.title
 						}
 					};
 				})
