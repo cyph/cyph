@@ -589,11 +589,17 @@ message BurnerGroupMember {
 
 /** Burner group member init data. */
 message BurnerGroupMemberInitiator {
+	/** Email address. */
+	string email = 3;
+
 	/** ID. */
 	string id = 1;
 
 	/** Name. */
 	string name = 2;
+
+	/** Phone number. */
+	string phoneNumber = 4;
 }
 
 /** Burner session init data. */
