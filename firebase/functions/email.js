@@ -137,7 +137,7 @@ const sendMailInternal = async (
 								end: new Date(eventDetails.endTime),
 								location: eventDetails.location,
 								organizer: eventInviter || from,
-								sequence: cancelEvent ? 1 : 0,
+								sequence: Math.floor(Date.now() / 1000),
 								start: new Date(eventDetails.startTime),
 								status: cancelEvent ? 'cancelled' : 'confirmed',
 								summary: eventDetails.summary || subject,
