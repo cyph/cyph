@@ -130,10 +130,12 @@ const sendMailInternal = async (
 								description: eventDetails.description,
 								end: new Date(eventDetails.endTime),
 								location: eventDetails.location,
-								organizer: eventInviter || to,
+								organizer: eventInviter || from,
 								start: new Date(eventDetails.startTime),
+								status: 'confirmed',
 								summary: eventDetails.summary || subject
 							}],
+						method: 'request',
 						prodId: '//cyph.com//cyph-appointment-scheduler//EN'
 					}).toString(),
 					filename: 'invite.ics',
