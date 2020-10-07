@@ -4,6 +4,7 @@ import memoize from 'lodash-es/memoize';
 import {Observable, of} from 'rxjs';
 import {map, switchMap, take} from 'rxjs/operators';
 import {BaseProvider} from '../base-provider';
+import {ISchedulerObject, ISchedulerObjectBase} from '../calendar';
 import {
 	BurnerSession,
 	CallTypes,
@@ -35,20 +36,7 @@ export class AccountAppointmentsService extends BaseProvider {
 			| {
 					appointment: IAppointment;
 					friend?: string;
-					schedulerObject: {
-						/* eslint-disable-next-line @typescript-eslint/naming-convention */
-						Description: string;
-						/* eslint-disable-next-line @typescript-eslint/naming-convention */
-						EndTime: Date;
-						/* eslint-disable-next-line @typescript-eslint/naming-convention */
-						Id: number;
-						/* eslint-disable-next-line @typescript-eslint/naming-convention */
-						Location: string;
-						/* eslint-disable-next-line @typescript-eslint/naming-convention */
-						StartTime: Date;
-						/* eslint-disable-next-line @typescript-eslint/naming-convention */
-						Subject: string;
-					};
+					schedulerObject: ISchedulerObject;
 			  }
 			| undefined
 		> =>
@@ -57,7 +45,11 @@ export class AccountAppointmentsService extends BaseProvider {
 					const currentUser = this.accountDatabaseService.currentUser
 						.value;
 
-					if (!currentUser) {
+					if (
+						!currentUser ||
+						/* TODO: Investigate proto bug (undefined calendarInvite) */
+						!(<any> appointment)?.calendarInvite
+					) {
 						return;
 					}
 
@@ -65,30 +57,38 @@ export class AccountAppointmentsService extends BaseProvider {
 						participant => participant !== currentUser.user.username
 					)[0];
 
+					const schedulerObjectBase: ISchedulerObjectBase = {
+						/* eslint-disable-next-line @typescript-eslint/naming-convention */
+						Description: appointment.fromName ?
+							appointment.calendarInvite.title :
+							'',
+						/* eslint-disable-next-line @typescript-eslint/naming-convention */
+						EndTime: new Date(appointment.calendarInvite.endTime),
+						/* eslint-disable-next-line @typescript-eslint/naming-convention */
+						Id: ++this.lastAppointmentID,
+						/* eslint-disable-next-line @typescript-eslint/naming-convention */
+						Location: appointment.calendarInvite.url || '',
+						/* eslint-disable-next-line @typescript-eslint/naming-convention */
+						StartTime: new Date(
+							appointment.calendarInvite.startTime
+						),
+						/* eslint-disable-next-line @typescript-eslint/naming-convention */
+						Subject:
+							appointment.fromName ||
+							appointment.calendarInvite.title
+					};
+
 					return {
 						appointment,
 						friend,
 						schedulerObject: {
+							...schedulerObjectBase,
 							/* eslint-disable-next-line @typescript-eslint/naming-convention */
-							Description: appointment.fromName ?
-								appointment.calendarInvite.title :
-								'',
+							Appointment: appointment,
 							/* eslint-disable-next-line @typescript-eslint/naming-convention */
-							EndTime: new Date(
-								appointment.calendarInvite.endTime
-							),
+							OldData: schedulerObjectBase,
 							/* eslint-disable-next-line @typescript-eslint/naming-convention */
-							Id: ++this.lastAppointmentID,
-							/* eslint-disable-next-line @typescript-eslint/naming-convention */
-							Location: appointment.calendarInvite.url || '',
-							/* eslint-disable-next-line @typescript-eslint/naming-convention */
-							StartTime: new Date(
-								appointment.calendarInvite.startTime
-							),
-							/* eslint-disable-next-line @typescript-eslint/naming-convention */
-							Subject:
-								appointment.fromName ||
-								appointment.calendarInvite.title
+							Record: record
 						}
 					};
 				})
@@ -240,20 +240,7 @@ export class AccountAppointmentsService extends BaseProvider {
 			appointment: IAppointment;
 			friend?: string;
 			record: IAccountFileRecord;
-			schedulerObject: {
-				/* eslint-disable-next-line @typescript-eslint/naming-convention */
-				Description: string;
-				/* eslint-disable-next-line @typescript-eslint/naming-convention */
-				EndTime: Date;
-				/* eslint-disable-next-line @typescript-eslint/naming-convention */
-				Id: number;
-				/* eslint-disable-next-line @typescript-eslint/naming-convention */
-				Location: string;
-				/* eslint-disable-next-line @typescript-eslint/naming-convention */
-				StartTime: Date;
-				/* eslint-disable-next-line @typescript-eslint/naming-convention */
-				Subject: string;
-			};
+			schedulerObject: ISchedulerObject;
 		}[]
 	> {
 		return recordsList.pipe(
