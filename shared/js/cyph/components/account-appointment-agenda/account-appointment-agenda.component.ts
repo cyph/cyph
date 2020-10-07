@@ -184,8 +184,8 @@ export class AccountAppointmentAgendaComponent extends BaseProvider
 	}
 
 	/** Action complete handler. */
-	public async actionComplete (e: ActionEventArgs) : Promise<void> {
-		switch (e.requestType) {
+	public async actionComplete (e?: ActionEventArgs) : Promise<void> {
+		switch (e?.requestType) {
 			case 'eventChanged':
 				await Promise.all(
 					(e.changedRecords || []).map(async (o: any) =>
