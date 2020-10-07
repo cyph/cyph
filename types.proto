@@ -526,6 +526,18 @@ message Appointment {
 		string visitNumber = 13;
 	}
 
+	/** Indicates whether data can be shared with each recipient of a meeting invite. */
+	message Sharing {
+		/** Whether to share the current user's time zone. */
+		bool inviterTimeZone = 1;
+
+		/** Whether to share the list of recipients. */
+		bool memberContactInfo = 2;
+
+		/** Whether to share contact information for other recipients. */
+		bool memberList = 3;
+	}
+
 	/** @see CalendarInvite */
 	required CalendarInvite calendarInvite = 1;
 
@@ -552,6 +564,9 @@ message Appointment {
 
 	/** Sub-session ID where RSVP statuses are posted. */
 	required string rsvpSessionSubID = 7;
+
+	/** @see Sharing */
+	Sharing sharing = 10;
 }
 
 /** Burner group initialization data. */
@@ -574,11 +589,17 @@ message BurnerGroupMember {
 
 /** Burner group member init data. */
 message BurnerGroupMemberInitiator {
+	/** Email address. */
+	string email = 3;
+
 	/** ID. */
 	string id = 1;
 
 	/** Name. */
 	string name = 2;
+
+	/** Phone number. */
+	string phoneNumber = 4;
 }
 
 /** Burner session init data. */
@@ -630,6 +651,9 @@ message CalendarInvite {
 
 	/** Event title/subject. */
 	required string title = 7;
+
+	/** Event UID. */
+	string uid = 9;
 
 	/** Meeting URL. */
 	string url = 8;

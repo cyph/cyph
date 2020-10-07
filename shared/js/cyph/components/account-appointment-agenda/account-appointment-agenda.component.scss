@@ -1,12 +1,13 @@
 @import '../../../../css/mixins';
 
-/* Temporary workaround pending edit/delete functionality */
-:host ::ng-deep {
-	.e-header-icon-wrapper {
-		> .e-edit,
-		> .e-delete {
-			display: none !important;
-		}
+::ng-deep .e-schedule-dialog-container {
+	.e-subject-container {
+		width: 100% !important;
+	}
+
+	.e-location-container,
+	.e-recurrenceeditor {
+		display: none !important;
 	}
 }
 

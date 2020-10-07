@@ -122,6 +122,12 @@ export class StringsService extends BaseProvider {
 	public readonly appointmentDuration = `Appointment Duration`;
 
 	/** @see StringsService */
+	public readonly appointmentEditFailure = `Failed to change event. Please try again later.`;
+
+	/** @see StringsService */
+	public readonly appointmentEditIncompatible = `This event cannot be changed. Please create a new one instead.`;
+
+	/** @see StringsService */
 	public readonly appointmentNotes = `Notes about this appointment:`;
 
 	/** @see StringsService */

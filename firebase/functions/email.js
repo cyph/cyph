@@ -88,11 +88,19 @@ const sendMailInternal = async (
 			undefined;
 	}
 
+	const cancelEvent = !!(
+		eventDetails &&
+		eventDetails.cancel &&
+		eventDetails.uid
+	);
+
+	const fromFormatted = `Cyph <${from}>`;
+
 	const mailObject = !to ?
 		undefined :
 		{
 			bcc: from,
-			from: `Cyph <${from}>`,
+			from: fromFormatted,
 			html:
 				!text || !accountsURL ?
 					undefined :
@@ -130,14 +138,18 @@ const sendMailInternal = async (
 								description: eventDetails.description,
 								end: new Date(eventDetails.endTime),
 								location: eventDetails.location,
-								organizer: eventInviter || to,
+								organizer: eventInviter || fromFormatted,
+								sequence: Math.floor(Date.now() / 1000),
 								start: new Date(eventDetails.startTime),
-								summary: eventDetails.summary || subject
+								status: cancelEvent ? 'cancelled' : 'confirmed',
+								summary: eventDetails.summary || subject,
+								uid: eventDetails.uid
 							}],
+						method: cancelEvent ? 'cancel' : 'request',
 						prodId: '//cyph.com//cyph-appointment-scheduler//EN'
 					}).toString(),
 					filename: 'invite.ics',
-					method: 'request'
+					method: cancelEvent ? 'cancel' : 'request'
 				},
 			subject,
 			text: markdown,

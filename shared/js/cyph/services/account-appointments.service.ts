@@ -2,13 +2,22 @@ import {Injectable} from '@angular/core';
 import {EventSettingsModel} from '@syncfusion/ej2-angular-schedule';
 import memoize from 'lodash-es/memoize';
 import {Observable, of} from 'rxjs';
-import {map, switchMap} from 'rxjs/operators';
+import {map, switchMap, take} from 'rxjs/operators';
 import {BaseProvider} from '../base-provider';
-import {IAccountFileRecord, IAppointment} from '../proto/types';
+import {ISchedulerObject, ISchedulerObjectBase} from '../calendar';
+import {
+	BurnerSession,
+	CallTypes,
+	IAccountFileRecord,
+	IAppointment,
+	IBurnerSession
+} from '../../proto';
 import {filterUndefined} from '../util/filter';
 import {observableAll} from '../util/observable-all';
 import {watchTimestamp} from '../util/time';
 import {AccountFilesService} from './account-files.service';
+import {AccountSettingsService} from './account-settings.service';
+import {ConfigService} from './config.service';
 import {AccountDatabaseService} from './crypto/account-database.service';
 
 /**
@@ -27,20 +36,7 @@ export class AccountAppointmentsService extends BaseProvider {
 			| {
 					appointment: IAppointment;
 					friend?: string;
-					schedulerObject: {
-						/* eslint-disable-next-line @typescript-eslint/naming-convention */
-						Description: string;
-						/* eslint-disable-next-line @typescript-eslint/naming-convention */
-						EndTime: Date;
-						/* eslint-disable-next-line @typescript-eslint/naming-convention */
-						Id: number;
-						/* eslint-disable-next-line @typescript-eslint/naming-convention */
-						Location: string;
-						/* eslint-disable-next-line @typescript-eslint/naming-convention */
-						StartTime: Date;
-						/* eslint-disable-next-line @typescript-eslint/naming-convention */
-						Subject: string;
-					};
+					schedulerObject: ISchedulerObject;
 			  }
 			| undefined
 		> =>
@@ -49,7 +45,11 @@ export class AccountAppointmentsService extends BaseProvider {
 					const currentUser = this.accountDatabaseService.currentUser
 						.value;
 
-					if (!currentUser) {
+					if (
+						!currentUser ||
+						/* TODO: Investigate proto bug (undefined calendarInvite) */
+						!(<any> appointment)?.calendarInvite
+					) {
 						return;
 					}
 
@@ -57,26 +57,38 @@ export class AccountAppointmentsService extends BaseProvider {
 						participant => participant !== currentUser.user.username
 					)[0];
 
+					const schedulerObjectBase: ISchedulerObjectBase = {
+						/* eslint-disable-next-line @typescript-eslint/naming-convention */
+						Description: appointment.fromName ?
+							appointment.calendarInvite.title :
+							'',
+						/* eslint-disable-next-line @typescript-eslint/naming-convention */
+						EndTime: new Date(appointment.calendarInvite.endTime),
+						/* eslint-disable-next-line @typescript-eslint/naming-convention */
+						Id: ++this.lastAppointmentID,
+						/* eslint-disable-next-line @typescript-eslint/naming-convention */
+						Location: appointment.calendarInvite.url || '',
+						/* eslint-disable-next-line @typescript-eslint/naming-convention */
+						StartTime: new Date(
+							appointment.calendarInvite.startTime
+						),
+						/* eslint-disable-next-line @typescript-eslint/naming-convention */
+						Subject:
+							appointment.fromName ||
+							appointment.calendarInvite.title
+					};
+
 					return {
 						appointment,
 						friend,
 						schedulerObject: {
+							...schedulerObjectBase,
 							/* eslint-disable-next-line @typescript-eslint/naming-convention */
-							Description: appointment.calendarInvite.title,
+							Appointment: appointment,
 							/* eslint-disable-next-line @typescript-eslint/naming-convention */
-							EndTime: new Date(
-								appointment.calendarInvite.endTime
-							),
+							OldData: schedulerObjectBase,
 							/* eslint-disable-next-line @typescript-eslint/naming-convention */
-							Id: ++this.lastAppointmentID,
-							/* eslint-disable-next-line @typescript-eslint/naming-convention */
-							Location: appointment.calendarInvite.url || '',
-							/* eslint-disable-next-line @typescript-eslint/naming-convention */
-							StartTime: new Date(
-								appointment.calendarInvite.startTime
-							),
-							/* eslint-disable-next-line @typescript-eslint/naming-convention */
-							Subject: appointment.fromName || ''
+							Record: record
 						}
 					};
 				})
@@ -228,20 +240,7 @@ export class AccountAppointmentsService extends BaseProvider {
 			appointment: IAppointment;
 			friend?: string;
 			record: IAccountFileRecord;
-			schedulerObject: {
-				/* eslint-disable-next-line @typescript-eslint/naming-convention */
-				Description: string;
-				/* eslint-disable-next-line @typescript-eslint/naming-convention */
-				EndTime: Date;
-				/* eslint-disable-next-line @typescript-eslint/naming-convention */
-				Id: number;
-				/* eslint-disable-next-line @typescript-eslint/naming-convention */
-				Location: string;
-				/* eslint-disable-next-line @typescript-eslint/naming-convention */
-				StartTime: Date;
-				/* eslint-disable-next-line @typescript-eslint/naming-convention */
-				Subject: string;
-			};
+			schedulerObject: ISchedulerObject;
 		}[]
 	> {
 		return recordsList.pipe(
@@ -271,12 +270,90 @@ export class AccountAppointmentsService extends BaseProvider {
 		);
 	}
 
+	/** @ignore */
+	private async sendInviteInternal (
+		{calendarInvite, sharing}: IAppointment,
+		cancel: boolean,
+		burnerSession: IBurnerSession | undefined
+	) : Promise<void> {
+		if (
+			!(await this.accountSettingsService.staticFeatureFlags.scheduler
+				.pipe(take(1))
+				.toPromise())
+		) {
+			return;
+		}
+
+		if (!calendarInvite.uid) {
+			throw new Error('No calendar event UID.');
+		}
+
+		if (!burnerSession) {
+			burnerSession = await this.accountDatabaseService.getItem(
+				`burnerSessions/${calendarInvite.uid}`,
+				BurnerSession
+			);
+		}
+
+		if (!burnerSession.members || burnerSession.members.length < 1) {
+			throw new Error('No guests.');
+		}
+
+		this.accountDatabaseService.callFunction('appointmentInvite', {
+			callType:
+				calendarInvite.callType === CallTypes.Audio ?
+					'audio' :
+				calendarInvite.callType === CallTypes.Video ?
+					'video' :
+					undefined,
+			eventDetails: {
+				cancel,
+				endTime: calendarInvite.endTime,
+				startTime: calendarInvite.startTime,
+				uid: calendarInvite.uid
+			},
+			inviterTimeZone: sharing?.inviterTimeZone ?
+				Intl.DateTimeFormat().resolvedOptions().timeZone :
+				undefined,
+			shareMemberContactInfo: !!sharing?.memberContactInfo,
+			shareMemberList: !!sharing?.memberList,
+			telehealth: this.configService.planConfig[
+				await this.accountSettingsService.plan.pipe(take(1)).toPromise()
+			].telehealth,
+			to: {
+				members: burnerSession.members
+			}
+		});
+	}
+
+	/** Sends appointment invite cancellation. */
+	public async cancelInvite (
+		appointment: IAppointment,
+		burnerSession?: IBurnerSession
+	) : Promise<void> {
+		return this.sendInviteInternal(appointment, true, burnerSession);
+	}
+
+	/** Sends appointment invite (initial invite or rescheduling). */
+	public async sendInvite (
+		appointment: IAppointment,
+		burnerSession?: IBurnerSession
+	) : Promise<void> {
+		return this.sendInviteInternal(appointment, false, burnerSession);
+	}
+
 	constructor (
 		/** @ignore */
 		private readonly accountDatabaseService: AccountDatabaseService,
 
 		/** @ignore */
-		private readonly accountFilesService: AccountFilesService
+		private readonly accountFilesService: AccountFilesService,
+
+		/** @ignore */
+		private readonly accountSettingsService: AccountSettingsService,
+
+		/** @ignore */
+		private readonly configService: ConfigService
 	) {
 		super();
 	}

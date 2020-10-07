@@ -1,14 +1,14 @@
 import {BehaviorSubject} from 'rxjs';
 
-/** Indicates whether data can be shared with each recipient of a meeting invite. */
+/** @see Appointment.Sharing */
 export class AppointmentSharing {
-	/** Whether to share the current user's time zone. */
+	/** @see Appointment.Sharing.inviterTimeZone */
 	public readonly inviterTimeZone = new BehaviorSubject<boolean>(true);
 
-	/** Whether to share the list of recipients. */
+	/** @see Appointment.Sharing.memberContactInfo */
 	public readonly memberContactInfo = new BehaviorSubject<boolean>(true);
 
-	/** Whether to share contact information for other recipients. */
+	/** @see Appointment.Sharing.memberList */
 	public readonly memberList = new BehaviorSubject<boolean>(true);
 
 	/** Sets inviterTimeZone. */

@@ -29,12 +29,13 @@ import {
 	AccountFileRecord,
 	AccountUserTypes,
 	BurnerSession,
-	CallTypes,
 	ChatMessageValue,
+	IAppointment,
 	IBurnerSession,
 	IForm
 } from '../../proto';
 import {accountChatProviders} from '../../providers';
+import {AccountAppointmentsService} from '../../services/account-appointments.service';
 import {AccountChatService} from '../../services/account-chat.service';
 import {AccountContactsService} from '../../services/account-contacts.service';
 import {AccountFilesService} from '../../services/account-files.service';
@@ -43,7 +44,6 @@ import {AccountService} from '../../services/account.service';
 import {ConfigService} from '../../services/config.service';
 import {AccountAuthService} from '../../services/crypto/account-auth.service';
 import {AccountDatabaseService} from '../../services/crypto/account-database.service';
-import {DatabaseService} from '../../services/database.service';
 import {DialogService} from '../../services/dialog.service';
 import {EnvService} from '../../services/env.service';
 import {ScrollService} from '../../services/scroll.service';
@@ -410,96 +410,62 @@ export class AccountComposeComponent extends BaseProvider
 					calendarInvite
 				} = this.accountChatService.chat.currentMessage;
 
-				const callType =
-					calendarInvite.callType === CallTypes.Audio ?
-						'audio' :
-					calendarInvite.callType === CallTypes.Video ?
-						'video' :
-						undefined;
-
-				const accountBurnerID = uuid();
-
-				calendarInvite.url = `${this.envService.appUrl}account-burner/${accountBurnerID}`;
+				calendarInvite.uid = uuid();
+				calendarInvite.url = `${this.envService.appUrl}account-burner/${calendarInvite.uid}`;
 
 				const members = this.appointmentGroupMembers.value.map(o => ({
 					...o,
 					id: readableID(this.configService.cyphIDLength)
 				}));
 
+				const burnerSession = {
+					callType: calendarInvite.callType,
+					members
+				};
+
 				await this.accountDatabaseService.setItem<IBurnerSession>(
-					`burnerSessions/${accountBurnerID}`,
+					`burnerSessions/${calendarInvite.uid}`,
 					BurnerSession,
-					{
-						callType: calendarInvite.callType,
-						members
-					}
+					burnerSession
 				);
+
+				const appointment: IAppointment = {
+					calendarInvite,
+					forms: this.accountChatService.chat.currentMessage.form ?
+						[this.accountChatService.chat.currentMessage.form] :
+						undefined,
+					participants: [
+						...recipients,
+						...(this.accountDatabaseService.currentUser.value ?
+							[
+								this.accountDatabaseService.currentUser.value
+									.user.username
+							] :
+							[])
+					],
+					rsvpSessionSubID: uuid(),
+					sharing: {
+						inviterTimeZone: this.appointmentSharing.value
+							.inviterTimeZone.value,
+						memberContactInfo: this.appointmentSharing.value
+							.memberContactInfo.value,
+						memberList: this.appointmentSharing.value.memberList
+							.value
+					}
+				};
 
 				const [sentFileID] = await Promise.all([
 					this.accountFilesService.upload(
 						(this.envService.isTelehealth ?
 							`${this.stringsService.telehealthCallAbout} ` :
 							'') + (calendarInvite.title || '?'),
-						{
-							calendarInvite,
-							forms: this.accountChatService.chat.currentMessage
-								.form ?
-								[
-									this.accountChatService.chat.currentMessage
-										.form
-								] :
-								undefined,
-							participants: [
-								...recipients,
-								...(this.accountDatabaseService.currentUser
-									.value ?
-									[
-										this.accountDatabaseService.currentUser
-											.value.user.username
-									] :
-									[])
-							],
-							rsvpSessionSubID: uuid()
-						},
+						appointment,
 						recipients
 					).result,
-					this.accountSettingsService.staticFeatureFlags.scheduler
-						.pipe(take(1))
-						.toPromise()
-						.then(async schedulerEnabled =>
-							schedulerEnabled ?
-								this.databaseService.callFunction(
-									'appointmentInvite',
-									{
-										accountBurnerID,
-										callType,
-										eventDetails: {
-											endTime: calendarInvite.endTime,
-											startTime: calendarInvite.startTime
-										},
-										inviterTimeZone: this.appointmentSharing
-											.value.inviterTimeZone.value ?
-											Intl.DateTimeFormat().resolvedOptions()
-												.timeZone :
-											undefined,
-										shareMemberContactInfo: this
-											.appointmentSharing.value
-											.memberContactInfo.value,
-										shareMemberList: this.appointmentSharing
-											.value.memberList.value,
-										telehealth: this.configService
-											.planConfig[
-											await this.accountSettingsService.plan
-												.pipe(take(1))
-												.toPromise()
-										].telehealth,
-										to: {
-											members
-										}
-									}
-								) :
-								undefined
-						)
+					this.accountAppointmentsService.sendInvite(
+						appointment,
+						burnerSession
+					)
 				]);
 
 				this.sentFileID.next(sentFileID);
@@ -608,6 +574,9 @@ export class AccountComposeComponent extends BaseProvider
 
 	constructor (
 		/** @ignore */
+		private readonly accountAppointmentsService: AccountAppointmentsService,
+
+		/** @ignore */
 		private readonly accountAuthService: AccountAuthService,
 
 		/** @ignore */
@@ -618,9 +587,6 @@ export class AccountComposeComponent extends BaseProvider
 
 		/** @ignore */
 		private readonly configService: ConfigService,
-
-		/** @ignore */
-		private readonly databaseService: DatabaseService,
 
 		/** @ignore */
 		private readonly dialogService: DialogService,

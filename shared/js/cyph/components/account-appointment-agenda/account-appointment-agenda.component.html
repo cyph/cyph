@@ -47,8 +47,8 @@
 					((windowWatcherService.height | await) || 120) - 120 :
 					((windowWatcherService.height | await) || 179) - 179
 			"
-			[readonly]="true"
 			[(selectedDate)]="selectedDate"
+			(actionComplete)="actionComplete($event)"
 		>
 			<e-views>
 				<e-view

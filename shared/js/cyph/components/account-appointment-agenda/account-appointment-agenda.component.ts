@@ -1,21 +1,32 @@
-import {ChangeDetectionStrategy, Component, OnInit} from '@angular/core';
+import {
+	ChangeDetectionStrategy,
+	Component,
+	OnInit,
+	ViewChild
+} from '@angular/core';
 import {Router} from '@angular/router';
 import {
+	ActionEventArgs,
 	AgendaService,
 	DayService,
 	DragAndDropService,
 	MonthService,
 	ResizeService,
+	ScheduleComponent,
 	WeekService,
 	WorkWeekService
 } from '@syncfusion/ej2-angular-schedule';
 import {Internationalization} from '@syncfusion/ej2-base';
 import memoize from 'lodash-es/memoize';
 import {BaseProvider} from '../../base-provider';
+import {ISchedulerObject} from '../../calendar';
+import {IAppointment} from '../../proto/types';
 import {AccountAppointmentsService} from '../../services/account-appointments.service';
+import {AccountFilesService} from '../../services/account-files.service';
 import {AccountSettingsService} from '../../services/account-settings.service';
 import {AccountService} from '../../services/account.service';
 import {AccountDatabaseService} from '../../services/crypto/account-database.service';
+import {DialogService} from '../../services/dialog.service';
 import {EnvService} from '../../services/env.service';
 import {StringsService} from '../../services/strings.service';
 import {WindowWatcherService} from '../../services/window-watcher.service';
@@ -56,8 +67,142 @@ export class AccountAppointmentAgendaComponent extends BaseProvider
 	/** @see openWindow */
 	public readonly openWindow = openWindow;
 
+	/** @see ScheduleComponent */
+	@ViewChild('schedule', {read: ScheduleComponent})
+	public schedule?: ScheduleComponent;
+
 	/** @see ScheduleComponent.selectedDate */
 	public selectedDate: Date = new Date();
+
+	/** Delete appointment. */
+	private async appointmentDelete (data: ISchedulerObject) : Promise<void> {
+		const reset = (message: string) => {
+			this.schedule?.addEvent(data);
+
+			this.dialogService.toast(
+				message,
+				undefined,
+				this.stringsService.ok
+			);
+		};
+
+		if (!data.Appointment.calendarInvite.uid) {
+			reset(this.stringsService.appointmentEditIncompatible);
+			return;
+		}
+
+		try {
+			await this.accountAppointmentsService.cancelInvite(
+				data.Appointment
+			);
+			await this.accountFilesService.remove(data.Record, false);
+		}
+		catch (err) {
+			reset(this.stringsService.appointmentEditFailure);
+			throw err;
+		}
+	}
+
+	/** Edit appointment. */
+	private async appointmentEdit (data: ISchedulerObject) : Promise<void> {
+		const oldAppointment = data.Appointment;
+
+		const reset = (message: string) => {
+			data.Appointment = oldAppointment;
+			data.Description = data.OldData.Description;
+			data.EndTime = data.OldData.EndTime;
+			data.Id = data.OldData.Id;
+			data.Location = data.OldData.Location;
+			data.StartTime = data.OldData.StartTime;
+			data.Subject = data.OldData.Subject;
+
+			this.schedule?.saveEvent(<any> data);
+
+			this.dialogService.toast(
+				message,
+				undefined,
+				this.stringsService.ok
+			);
+		};
+
+		if (!data.Appointment.calendarInvite.uid) {
+			if (
+				data.Description === data.OldData.Description &&
+				data.EndTime === data.OldData.EndTime &&
+				data.Id === data.OldData.Id &&
+				data.Location === data.OldData.Location &&
+				data.StartTime === data.OldData.StartTime &&
+				data.Subject === data.OldData.Subject
+			) {
+				return;
+			}
+
+			reset(this.stringsService.appointmentEditIncompatible);
+			return;
+		}
+
+		try {
+			const appointment: IAppointment = {
+				...data.Appointment,
+				calendarInvite: {
+					...data.Appointment.calendarInvite,
+					endTime: data.EndTime.getTime(),
+					startTime: data.StartTime.getTime(),
+					title: data.Appointment.fromName ?
+						data.Description :
+						data.Subject
+				}
+			};
+
+			await this.accountAppointmentsService.sendInvite(appointment);
+			await this.accountFilesService.updateAppointment(
+				data.Record.id,
+				appointment
+			);
+
+			data.Appointment = appointment;
+
+			data.OldData = {
+				/* eslint-disable-next-line @typescript-eslint/naming-convention */
+				Description: data.Description,
+				/* eslint-disable-next-line @typescript-eslint/naming-convention */
+				EndTime: data.EndTime,
+				/* eslint-disable-next-line @typescript-eslint/naming-convention */
+				Id: data.Id,
+				/* eslint-disable-next-line @typescript-eslint/naming-convention */
+				Location: data.Location,
+				/* eslint-disable-next-line @typescript-eslint/naming-convention */
+				StartTime: data.StartTime,
+				/* eslint-disable-next-line @typescript-eslint/naming-convention */
+				Subject: data.Subject
+			};
+		}
+		catch (err) {
+			reset(this.stringsService.appointmentEditFailure);
+			throw err;
+		}
+	}
+
+	/** Action complete handler. */
+	public async actionComplete (e: ActionEventArgs) : Promise<void> {
+		switch (e.requestType) {
+			case 'eventChanged':
+				await Promise.all(
+					(e.changedRecords || []).map(async (o: any) =>
+						this.appointmentEdit(o)
+					)
+				);
+				return;
+
+			case 'eventRemoved':
+				await Promise.all(
+					(e.deletedRecords || []).map(async (o: any) =>
+						this.appointmentDelete(o)
+					)
+				);
+				return;
+		}
+	}
 
 	/** @inheritDoc */
 	public ngOnInit () : void {
@@ -67,6 +212,12 @@ export class AccountAppointmentAgendaComponent extends BaseProvider
 	}
 
 	constructor (
+		/** @ignore */
+		private readonly accountFilesService: AccountFilesService,
+
+		/** @ignore */
+		private readonly dialogService: DialogService,
+
 		/** @see Router */
 		public readonly router: Router,
 
