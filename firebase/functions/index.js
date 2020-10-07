@@ -382,6 +382,11 @@ exports.appointmentInvite = onCall(async (data, namespace, getUsername) => {
 	const inviterUsername = await getUsername();
 	const telehealth = !!data.telehealth;
 
+	const uid =
+		data.eventDetails && data.eventDetails.uid ?
+			`${inviterUsername}-${data.eventDetails.uid}@cyph.com` :
+			undefined;
+
 	const members = ((data.to || {}).members || [])
 		.map(o => ({
 			email: (o.email || '').trim(),
@@ -491,9 +496,11 @@ exports.appointmentInvite = onCall(async (data, namespace, getUsername) => {
 			)}\n\n${messageAddendumEmail}${messageAddendumMembers}`,
 			{
 				attendees: members,
+				cancel: !!data.eventDetails.cancel,
 				endTime: data.eventDetails.endTime,
 				location: inviterLink,
-				startTime: data.eventDetails.startTime
+				startTime: data.eventDetails.startTime,
+				uid
 			}
 		),
 		Promise.all(
@@ -536,10 +543,12 @@ exports.appointmentInvite = onCall(async (data, namespace, getUsername) => {
 							},
 							{
 								attendees: members,
+								cancel: !!data.eventDetails.cancel,
 								endTime: data.eventDetails.endTime,
 								inviterUsername: emailTo,
 								location: inviteeLink,
-								startTime: data.eventDetails.startTime
+								startTime: data.eventDetails.startTime,
+								uid
 							}
 						),
 					o.phoneNumber &&
