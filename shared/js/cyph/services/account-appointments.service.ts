@@ -4,14 +4,12 @@ import memoize from 'lodash-es/memoize';
 import {Observable, of} from 'rxjs';
 import {map, switchMap, take} from 'rxjs/operators';
 import {BaseProvider} from '../base-provider';
-import {AppointmentSharing} from '../calendar';
 import {
 	BurnerSession,
 	CallTypes,
 	IAccountFileRecord,
 	IAppointment,
-	IBurnerSession,
-	ICalendarInvite
+	IBurnerSession
 } from '../../proto';
 import {filterUndefined} from '../util/filter';
 import {observableAll} from '../util/observable-all';
@@ -283,8 +281,7 @@ export class AccountAppointmentsService extends BaseProvider {
 
 	/** Sends appointment invite. */
 	public async invite (
-		calendarInvite: ICalendarInvite,
-		appointmentSharing: AppointmentSharing,
+		{calendarInvite, sharing}: IAppointment,
 		burnerSession?: IBurnerSession
 	) : Promise<void> {
 		if (
@@ -323,11 +320,11 @@ export class AccountAppointmentsService extends BaseProvider {
 				startTime: calendarInvite.startTime,
 				uid: calendarInvite.uid
 			},
-			inviterTimeZone: appointmentSharing.inviterTimeZone.value ?
+			inviterTimeZone: sharing?.inviterTimeZone ?
 				Intl.DateTimeFormat().resolvedOptions().timeZone :
 				undefined,
-			shareMemberContactInfo: appointmentSharing.memberContactInfo.value,
-			shareMemberList: appointmentSharing.memberList.value,
+			shareMemberContactInfo: !!sharing?.memberContactInfo,
+			shareMemberList: !!sharing?.memberList,
 			telehealth: this.configService.planConfig[
 				await this.accountSettingsService.plan.pipe(take(1)).toPromise()
 			].telehealth,

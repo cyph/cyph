@@ -30,6 +30,7 @@ import {
 	AccountUserTypes,
 	BurnerSession,
 	ChatMessageValue,
+	IAppointment,
 	IBurnerSession,
 	IForm
 } from '../../proto';
@@ -428,37 +429,41 @@ export class AccountComposeComponent extends BaseProvider
 					burnerSession
 				);
 
+				const appointment: IAppointment = {
+					calendarInvite,
+					forms: this.accountChatService.chat.currentMessage.form ?
+						[this.accountChatService.chat.currentMessage.form] :
+						undefined,
+					participants: [
+						...recipients,
+						...(this.accountDatabaseService.currentUser.value ?
+							[
+								this.accountDatabaseService.currentUser.value
+									.user.username
+							] :
+							[])
+					],
+					rsvpSessionSubID: uuid(),
+					sharing: {
+						inviterTimeZone: this.appointmentSharing.value
+							.inviterTimeZone.value,
+						memberContactInfo: this.appointmentSharing.value
+							.memberContactInfo.value,
+						memberList: this.appointmentSharing.value.memberList
+							.value
+					}
+				};
+
 				const [sentFileID] = await Promise.all([
 					this.accountFilesService.upload(
 						(this.envService.isTelehealth ?
 							`${this.stringsService.telehealthCallAbout} ` :
 							'') + (calendarInvite.title || '?'),
-						{
-							calendarInvite,
-							forms: this.accountChatService.chat.currentMessage
-								.form ?
-								[
-									this.accountChatService.chat.currentMessage
-										.form
-								] :
-								undefined,
-							participants: [
-								...recipients,
-								...(this.accountDatabaseService.currentUser
-									.value ?
-									[
-										this.accountDatabaseService.currentUser
-											.value.user.username
-									] :
-									[])
-							],
-							rsvpSessionSubID: uuid()
-						},
+						appointment,
 						recipients
 					).result,
 					this.accountAppointmentsService.invite(
-						calendarInvite,
-						this.appointmentSharing.value,
+						appointment,
 						burnerSession
 					)
 				]);
