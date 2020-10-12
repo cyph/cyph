@@ -9,6 +9,7 @@ import {
 	Output
 } from '@angular/core';
 import {ControlValueAccessor, NG_VALUE_ACCESSOR} from '@angular/forms';
+import {RecurrenceEditorChangeEventArgs} from '@syncfusion/ej2-angular-schedule';
 import memoize from 'lodash-es/memoize';
 import {BehaviorSubject} from 'rxjs';
 import {BaseProvider} from '../../base-provider';
@@ -293,6 +294,11 @@ export class CalendarInviteComponent extends BaseProvider
 		});
 
 		this.changeDetectorRef.markForCheck();
+	}
+
+	/** Handles recurrence change. */
+	public setRecurrence (recurrence: RecurrenceEditorChangeEventArgs) : void {
+		throw new Error(`TODO: Set recurrence "${recurrence.value}"`);
 	}
 
 	/** Handle value change. */

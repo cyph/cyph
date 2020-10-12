@@ -49,7 +49,10 @@ import {faLink} from '@fortawesome/free-solid-svg-icons/faLink';
 import {faMinus} from '@fortawesome/free-solid-svg-icons/faMinus';
 import {faPrint} from '@fortawesome/free-solid-svg-icons/faPrint';
 import {ShareButtonsModule} from '@ngx-share/buttons';
-import {ScheduleAllModule} from '@syncfusion/ej2-angular-schedule';
+import {
+	RecurrenceEditorModule,
+	ScheduleAllModule
+} from '@syncfusion/ej2-angular-schedule';
 import {SmdFabSpeedDialModule} from 'angular-speed-dial';
 import {AngularDraggableModule} from 'angular2-draggable';
 import {FullCalendarModule} from 'ng-fullcalendar';
@@ -100,6 +103,7 @@ import {CyphSharedModule} from './cyph-shared.module';
 		MatToolbarModule,
 		PickerModule,
 		ReactiveFormsModule,
+		RecurrenceEditorModule,
 		RouterModule,
 		ScheduleAllModule,
 		ShareButtonsModule,
@@ -133,6 +137,7 @@ import {CyphSharedModule} from './cyph-shared.module';
 		MatToolbarModule,
 		PickerModule,
 		ReactiveFormsModule,
+		RecurrenceEditorModule,
 		RouterModule,
 		ScheduleAllModule,
 		ShareButtonsModule,
