@@ -438,8 +438,8 @@ read -r -d '' modules <<- EOM
 	web-animations-js
 	web-social-share
 	webix
-	webpack
-	webpack-cli
+	webpack@^4
+	webpack-cli@^3
 	webrtc-adapter
 	webrtcsupport
 	webrtc-troubleshoot
