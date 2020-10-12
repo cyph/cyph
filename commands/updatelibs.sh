@@ -381,6 +381,7 @@ read -r -d '' modules <<- EOM
 	resize-observer-polyfill
 	retire@^2
 	rlwe
+	rrule
 	rsvp
 	run-node
 	rxfire
