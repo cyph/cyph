@@ -281,6 +281,13 @@
 
 				<div *ngIf="!mobile"></div>
 
+				<ejs-recurrenceeditor
+					fxFlex
+					(change)="setRecurrence($event)"
+				></ejs-recurrenceeditor>
+			</div>
+
+			<div fxLayoutAlign="start">
 				<div fxLayout="column" fxLayoutGap="16px">
 					<h4
 						cyphTranslate
