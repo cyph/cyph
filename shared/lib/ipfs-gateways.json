@@ -39,7 +39,6 @@
 	"https://ipfs.lc/ipfs/:hash",
 	"https://ipfs.leiyun.org/ipfs/:hash",
 	"https://ipfs.ink/ipfs/:hash",
-	"https://filecoin.io/ipfs/:hash",
 	"https://ipfs.jes.xxx/ipfs/:hash",
 	"https://ipfs.oceanprotocol.com/ipfs/:hash",
 	"https://d26g9c7mfuzstv.cloudfront.net/ipfs/:hash",
@@ -55,5 +54,6 @@
 	"https://ipfs.yt/ipfs/:hash",
 	"https://:hash.ipfs.jacl.tech",
 	"https://hashnews.k1ic.com/ipfs/:hash",
-	"https://ipfs.vip/ipfs/:hash"
+	"https://ipfs.vip/ipfs/:hash",
+	"https://ipfs.k1ic.com/ipfs/:hash"
 ]
