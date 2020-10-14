@@ -503,6 +503,7 @@ exports.appointmentInvite = onCall(async (data, namespace, getUsername) => {
 				cancel: !!data.eventDetails.cancel,
 				endTime: data.eventDetails.endTime,
 				location: inviterLink,
+				recurrence: data.eventDetails.recurrence,
 				startTime: data.eventDetails.startTime,
 				uid
 			}
@@ -551,6 +552,7 @@ exports.appointmentInvite = onCall(async (data, namespace, getUsername) => {
 								endTime: data.eventDetails.endTime,
 								inviterUsername: emailTo,
 								location: inviteeLink,
+								recurrence: data.eventDetails.recurrence,
 								startTime: data.eventDetails.startTime,
 								uid
 							}

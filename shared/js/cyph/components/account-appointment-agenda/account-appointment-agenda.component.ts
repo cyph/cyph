@@ -30,6 +30,7 @@ import {DialogService} from '../../services/dialog.service';
 import {EnvService} from '../../services/env.service';
 import {StringsService} from '../../services/strings.service';
 import {WindowWatcherService} from '../../services/window-watcher.service';
+import {parseRecurrenceRule} from '../../util/calendar';
 import {getDateTimeString} from '../../util/time';
 import {openWindow} from '../../util/window';
 
@@ -113,6 +114,7 @@ export class AccountAppointmentAgendaComponent extends BaseProvider
 			data.EndTime = data.OldData.EndTime;
 			data.Id = data.OldData.Id;
 			data.Location = data.OldData.Location;
+			data.RecurrenceRule = data.OldData.RecurrenceRule;
 			data.StartTime = data.OldData.StartTime;
 			data.Subject = data.OldData.Subject;
 
@@ -131,6 +133,7 @@ export class AccountAppointmentAgendaComponent extends BaseProvider
 				data.EndTime === data.OldData.EndTime &&
 				data.Id === data.OldData.Id &&
 				data.Location === data.OldData.Location &&
+				data.RecurrenceRule === data.OldData.RecurrenceRule &&
 				data.StartTime === data.OldData.StartTime &&
 				data.Subject === data.OldData.Subject
 			) {
@@ -147,6 +150,7 @@ export class AccountAppointmentAgendaComponent extends BaseProvider
 				calendarInvite: {
 					...data.Appointment.calendarInvite,
 					endTime: data.EndTime.getTime(),
+					recurrence: parseRecurrenceRule(data.RecurrenceRule),
 					startTime: data.StartTime.getTime(),
 					title: data.Appointment.fromName ?
 						data.Description :
@@ -171,6 +175,8 @@ export class AccountAppointmentAgendaComponent extends BaseProvider
 				Id: data.Id,
 				/* eslint-disable-next-line @typescript-eslint/naming-convention */
 				Location: data.Location,
+				/* eslint-disable-next-line @typescript-eslint/naming-convention */
+				RecurrenceRule: data.RecurrenceRule,
 				/* eslint-disable-next-line @typescript-eslint/naming-convention */
 				StartTime: data.StartTime,
 				/* eslint-disable-next-line @typescript-eslint/naming-convention */

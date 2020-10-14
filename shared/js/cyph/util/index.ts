@@ -1,3 +1,4 @@
+export * from './calendar';
 export * from './clipboard';
 export * from './compare';
 export * from './cordova';

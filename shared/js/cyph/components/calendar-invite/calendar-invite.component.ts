@@ -20,6 +20,10 @@ import {EnvService} from '../../services/env.service';
 import {StringsService} from '../../services/strings.service';
 import {trackBySelf} from '../../track-by/track-by-self';
 import {
+	parseRecurrenceRule,
+	serializeRecurrenceRule
+} from '../../util/calendar';
+import {
 	getDate,
 	getDurationString,
 	getStartPadding,
@@ -132,6 +136,9 @@ export class CalendarInviteComponent extends BaseProvider
 
 	/** List of possible reasons for this invite. */
 	@Input() public reasons?: string[];
+
+	/** @see serializeRecurrenceRule */
+	public readonly serializeRecurrenceRule = serializeRecurrenceRule;
 
 	/** @see CalendarInvite.TimeFrames */
 	public readonly timeFrames = CalendarInvite.TimeFrames;
@@ -298,7 +305,14 @@ export class CalendarInviteComponent extends BaseProvider
 
 	/** Handles recurrence change. */
 	public setRecurrence (recurrence: RecurrenceEditorChangeEventArgs) : void {
-		throw new Error(`TODO: Set recurrence "${recurrence.value}"`);
+		if (!this.calendarInvite.value) {
+			return;
+		}
+
+		this.valueChange({
+			...this.calendarInvite.value,
+			recurrence: parseRecurrenceRule(recurrence.value)
+		});
 	}
 
 	/** Handle value change. */

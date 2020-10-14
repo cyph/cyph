@@ -130,6 +130,7 @@ export class AccountAppointmentsComponent extends BaseProvider
 							undefined,
 					eventDetails: {
 						endTime: appointment.calendarInvite.endTime,
+						recurrence: appointment.calendarInvite.recurrence,
 						startTime: appointment.calendarInvite.startTime,
 						uid: appointment.calendarInvite.uid
 					},

@@ -646,6 +646,9 @@ message CalendarInvite {
 	/** End timestamp. */
 	required double endTime = 5;
 
+	/** @see CalendarRecurrenceRules */
+	CalendarRecurrenceRules recurrence = 10;
+
 	/** Start timestamp. */
 	required double startTime = 6;
 
@@ -657,6 +660,53 @@ message CalendarInvite {
 
 	/** Meeting URL. */
 	string url = 8;
+}
+
+/** Calendar invite recurrence rules. */
+message CalendarRecurrenceRules {
+	/** Recurrence frequency values. */
+	enum Frequency {
+		Yearly = 0;
+		Monthly = 1;
+		Weekly = 2;
+		Daily = 3;
+		Hourly = 4;
+		Minutely = 5;
+		Secondly = 6;
+	}
+
+	/** RFC 5545 BYMONTH. */
+	repeated uint32 byMonth = 1;
+
+	/** RFC 5545 BYMONTHDAY. */
+	repeated uint32 byMonthDay = 2;
+
+	/** RFC 5545 BYSETPOS. */
+	repeated uint32 bySetPosition = 3;
+
+	/** RFC 5545 BYDAY. */
+	repeated DaysOfWeek byWeekDay = 4;
+
+	/** RFC 5545 COUNT. */
+	uint32 count = 5;
+
+	/** RFC 5545 EXDATE. */
+	repeated double excludeDates = 6;
+
+	/** RFC 5545 EXDATE time zone. */
+	string excludeDatesTimeZone = 7;
+
+	/** RFC 5545 FREQ. */
+	required Frequency frequency = 8;
+
+	/** RFC 5545 INTERVAL. */
+	uint32 interval = 9;
+
+	/** RFC 5545 UNTIL. */
+	double until = 10;
+
+	/** RFC 5545 WKST. */
+	DaysOfWeek weekStart = 11;
 }
 
 /** Call types. */
