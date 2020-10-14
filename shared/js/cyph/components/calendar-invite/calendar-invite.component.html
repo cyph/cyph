@@ -283,6 +283,7 @@
 
 				<ejs-recurrenceeditor
 					fxFlex
+					[value]="serializeRecurrenceRule(value?.recurrence)"
 					(change)="setRecurrence($event)"
 				></ejs-recurrenceeditor>
 			</div>

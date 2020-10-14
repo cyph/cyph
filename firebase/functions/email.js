@@ -6,6 +6,7 @@ const {dompurifyHtmlSanitizer} = require('./dompurify-html-sanitizer');
 const {from, transport, transportBackup} = require('./email-credentials');
 const {render, renderTemplate} = require('./markdown-templating');
 const namespaces = require('./namespaces');
+const {CalendarInvite, CalendarRecurrenceRules} = require('./proto');
 const {normalize} = require('./util');
 
 const transporter = nodemailer.createTransport({
@@ -56,6 +57,12 @@ const getEmailAddress = async (database, namespace, username) => {
 		name
 	};
 };
+
+const recurrenceDayToString = dayOfWeek =>
+	CalendarInvite.DaysOfWeek[dayOfWeek].toUpperCase().slice(0, 2);
+
+const recurrenceFrequencyToString = frequency =>
+	CalendarRecurrenceRules.Frequency[frequency].toUpperCase();
 
 const sendMailInternal = async (
 	to,
@@ -139,6 +146,44 @@ const sendMailInternal = async (
 								end: new Date(eventDetails.endTime),
 								location: eventDetails.location,
 								organizer: eventInviter || fromFormatted,
+								repeating: eventDetails.recurrence ? {
+										byDay: (
+											eventDetails.recurrence.byWeekDay ||
+											[]
+										).map(recurrenceDayToString),
+										byMonth:
+											eventDetails.recurrence.byMonth,
+										byMonthDay:
+											eventDetails.recurrence.byMonthDay,
+										bySetPos:
+											eventDetails.recurrence
+												.bySetPosition,
+										count: eventDetails.recurrence.count,
+										exclude: (
+											eventDetails.recurrence
+												.excludeDates || []
+										).map(timestamp => new Date(timestamp)),
+										excludeTimezone:
+											eventDetails.recurrence
+												.excludeDatesTimeZone,
+										freq: recurrenceFrequencyToString(
+											eventDetails.recurrence.frequency
+										),
+										interval:
+											eventDetails.recurrence.interval,
+										until: eventDetails.recurrence.until ?
+											new Date(
+												eventDetails.recurrence.until
+											) :
+											undefined,
+										wkst: eventDetails.recurrence
+											.weekStart ?
+											recurrenceDayToString(
+												eventDetails.recurrence
+													.weekStart
+											) :
+											undefined
+									} : undefined,
 								sequence: Math.floor(Date.now() / 1000),
 								start: new Date(eventDetails.startTime),
 								status: cancelEvent ? 'cancelled' : 'confirmed',

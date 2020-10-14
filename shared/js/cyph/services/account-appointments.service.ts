@@ -12,6 +12,7 @@ import {
 	IAppointment,
 	IBurnerSession
 } from '../../proto';
+import {serializeRecurrenceRule} from '../util/calendar';
 import {filterUndefined} from '../util/filter';
 import {observableAll} from '../util/observable-all';
 import {watchTimestamp} from '../util/time';
@@ -68,6 +69,10 @@ export class AccountAppointmentsService extends BaseProvider {
 						Id: ++this.lastAppointmentID,
 						/* eslint-disable-next-line @typescript-eslint/naming-convention */
 						Location: appointment.calendarInvite.url || '',
+						/* eslint-disable-next-line @typescript-eslint/naming-convention */
+						RecurrenceRule: serializeRecurrenceRule(
+							appointment.calendarInvite.recurrence
+						),
 						/* eslint-disable-next-line @typescript-eslint/naming-convention */
 						StartTime: new Date(
 							appointment.calendarInvite.startTime
@@ -309,6 +314,7 @@ export class AccountAppointmentsService extends BaseProvider {
 			eventDetails: {
 				cancel,
 				endTime: calendarInvite.endTime,
+				recurrence: calendarInvite.recurrence,
 				startTime: calendarInvite.startTime,
 				uid: calendarInvite.uid
 			},

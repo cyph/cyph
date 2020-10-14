@@ -16,6 +16,10 @@ export interface ISchedulerObjectBase {
 	/* eslint-disable-next-line @typescript-eslint/naming-convention */
 	Location: string;
 
+	/** Recurrence rule. */
+	/* eslint-disable-next-line @typescript-eslint/naming-convention */
+	RecurrenceRule: string;
+
 	/** Start time. */
 	/* eslint-disable-next-line @typescript-eslint/naming-convention */
 	StartTime: Date;
