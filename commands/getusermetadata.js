@@ -148,12 +148,16 @@ const getUserMetadata = async (projectId, username, namespace) => {
 if (require.main === module) {
 	(async () => {
 		const projectId = process.argv[2];
-		const username = process.argv[3];
+		const usernames = process.argv[3].split(' ');
 		const namespace = process.argv[4];
 
 		console.log(
 			JSON.stringify(
-				await getUserMetadata(projectId, username, namespace),
+				await Promise.all(
+					usernames.map(async username =>
+						getUserMetadata(projectId, username, namespace)
+					)
+				),
 				undefined,
 				'\t'
 			)
