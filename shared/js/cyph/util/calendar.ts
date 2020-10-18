@@ -69,7 +69,7 @@ export const parseRecurrenceRule = (
 				CalendarRecurrenceRules.Frequency.Secondly,
 		interval: rrule.interval,
 		until: rrule.until ? rrule.until.getTime() : undefined,
-		weekStart: rruleWeekDayConvert(rrule.wkst)
+		weekStart: 0
 	};
 };
 
