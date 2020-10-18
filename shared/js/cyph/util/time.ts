@@ -197,6 +197,12 @@ export const timestampToDate = (
 		timestamp :
 		timestampToDateInternal(noZero)(timestamp);
 
+/** Converts a timestamp into a Date and zeroes out seconds and milliseconds. */
+export const timestampToDateNoSeconds = memoize(
+	(timestamp: number) : Date =>
+		new Date(new Date(new Date(timestamp).setSeconds(0)).setMilliseconds(0))
+);
+
 /** @ignore */
 const getTimeStringInternal = (
 	timestamp: number | Date,

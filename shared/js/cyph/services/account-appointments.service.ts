@@ -15,7 +15,7 @@ import {
 import {serializeRecurrenceRule} from '../util/calendar';
 import {filterUndefined} from '../util/filter';
 import {observableAll} from '../util/observable-all';
-import {watchTimestamp} from '../util/time';
+import {timestampToDateNoSeconds, watchTimestamp} from '../util/time';
 import {AccountFilesService} from './account-files.service';
 import {AccountSettingsService} from './account-settings.service';
 import {ConfigService} from './config.service';
@@ -64,7 +64,9 @@ export class AccountAppointmentsService extends BaseProvider {
 							appointment.calendarInvite.title :
 							'',
 						/* eslint-disable-next-line @typescript-eslint/naming-convention */
-						EndTime: new Date(appointment.calendarInvite.endTime),
+						EndTime: timestampToDateNoSeconds(
+							appointment.calendarInvite.endTime
+						),
 						/* eslint-disable-next-line @typescript-eslint/naming-convention */
 						Id: ++this.lastAppointmentID,
 						/* eslint-disable-next-line @typescript-eslint/naming-convention */
@@ -74,7 +76,7 @@ export class AccountAppointmentsService extends BaseProvider {
 							appointment.calendarInvite.recurrence
 						),
 						/* eslint-disable-next-line @typescript-eslint/naming-convention */
-						StartTime: new Date(
+						StartTime: timestampToDateNoSeconds(
 							appointment.calendarInvite.startTime
 						),
 						/* eslint-disable-next-line @typescript-eslint/naming-convention */
