@@ -502,10 +502,10 @@ exports.appointmentInvite = onCall(async (data, namespace, getUsername) => {
 				attendees: members,
 				cancel: !!data.eventDetails.cancel,
 				endTime: data.eventDetails.endTime,
-				location: inviterLink,
 				recurrence: data.eventDetails.recurrence,
 				startTime: data.eventDetails.startTime,
-				uid
+				uid,
+				url: inviterLink
 			}
 		),
 		Promise.all(
@@ -549,12 +549,13 @@ exports.appointmentInvite = onCall(async (data, namespace, getUsername) => {
 							{
 								attendees: members,
 								cancel: !!data.eventDetails.cancel,
+								description: inviteeLink,
 								endTime: data.eventDetails.endTime,
 								inviterUsername: emailTo,
-								location: inviteeLink,
 								recurrence: data.eventDetails.recurrence,
 								startTime: data.eventDetails.startTime,
-								uid
+								uid,
+								url: inviteeLink
 							}
 						),
 					o.phoneNumber &&

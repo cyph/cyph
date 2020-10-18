@@ -188,7 +188,8 @@ const sendMailInternal = async (
 								start: new Date(eventDetails.startTime),
 								status: cancelEvent ? 'cancelled' : 'confirmed',
 								summary: eventDetails.summary || subject,
-								uid: eventDetails.uid
+								uid: eventDetails.uid,
+								url: eventDetails.url
 							}],
 						method: cancelEvent ? 'cancel' : 'request',
 						prodId: '//cyph.com//cyph-appointment-scheduler//EN'
@@ -215,12 +216,16 @@ const sendMailInternal = async (
 
 /**
  * @param {{
+ *     cancel: boolean;
  *     description: string;
  *     endTime: number;
  *     inviterUsername: string;
  *     location: string;
+ *     recurrence: ICalendarRecurrenceRules;
  *     startTime: number;
  *     summary: string;
+ *     uid: string;
+ *     url: string;
  * }} eventDetails
  * @param {(
  *     {data?: Record<string, string>; template: string}|
