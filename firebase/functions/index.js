@@ -389,7 +389,7 @@ exports.appointmentInvite = onCall(async (data, namespace, getUsername) => {
 
 	const inviterUsername = await getUsername();
 	const telehealth = !!data.telehealth;
-	const uid = `${inviterUsername}-${accountBurnerID}@cyph.com`;
+	const uid = `${inviterUsername}-${accountBurnerID}`;
 
 	const members = ((data.to || {}).members || [])
 		.map(o => ({

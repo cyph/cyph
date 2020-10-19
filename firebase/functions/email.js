@@ -142,54 +142,114 @@ const sendMailInternal = async (
 										{}
 									)
 								).filter(o => o.email),
-								description: eventDetails.description,
+								...(eventDetails.description ?
+									{description: eventDetails.description} :
+									{}),
 								end: new Date(eventDetails.endTime),
-								location: eventDetails.location,
+								...(eventDetails.location ?
+									{location: eventDetails.location} :
+									{}),
 								organizer: eventInviter || fromFormatted,
-								repeating: eventDetails.recurrence ? {
-										byDay: (
-											eventDetails.recurrence.byWeekDay ||
-											[]
-										).map(recurrenceDayToString),
-										byMonth:
-											eventDetails.recurrence.byMonth,
-										byMonthDay:
-											eventDetails.recurrence.byMonthDay,
-										bySetPos:
-											eventDetails.recurrence
-												.bySetPosition,
-										count: eventDetails.recurrence.count,
-										exclude: (
-											eventDetails.recurrence
-												.excludeDates || []
-										).map(timestamp => new Date(timestamp)),
-										excludeTimezone:
-											eventDetails.recurrence
-												.excludeDatesTimeZone,
-										freq: recurrenceFrequencyToString(
-											eventDetails.recurrence.frequency
-										),
-										interval:
-											eventDetails.recurrence.interval,
-										until: eventDetails.recurrence.until ?
-											new Date(
-												eventDetails.recurrence.until
-											) :
-											undefined,
-										wkst: eventDetails.recurrence
-											.weekStart ?
-											recurrenceDayToString(
+								...(eventDetails.recurrence ? {repeating: {
+											...(eventDetails.recurrence
+												.byWeekDay &&
+											eventDetails.recurrence.byWeekDay
+												.length > 0 ?
+												{
+													byDay: eventDetails.recurrence.byWeekDay.map(
+														recurrenceDayToString
+													)
+												} :
+												{}),
+											...(eventDetails.recurrence
+												.byMonth ?
+												{
+													byMonth:
+														eventDetails.recurrence
+															.byMonth
+												} :
+												{}),
+											...(eventDetails.recurrence
+												.byMonthDay ?
+												{
+													byMonthDay:
+														eventDetails.recurrence
+															.byMonthDay
+												} :
+												{}),
+											...(eventDetails.recurrence
+												.bySetPosition ?
+												{
+													bySetPos:
+														eventDetails.recurrence
+															.bySetPosition
+												} :
+												{}),
+											...(eventDetails.recurrence.count ?
+												{
+													count:
+														eventDetails.recurrence
+															.count
+												} :
+												{}),
+											...(eventDetails.recurrence
+												.excludeDates &&
+											eventDetails.recurrence.excludeDates
+												.length > 0 ?
+												{
+													exclude: eventDetails.recurrence.excludeDates.map(
+														timestamp =>
+															new Date(timestamp)
+													)
+												} :
+												{}),
+											...(eventDetails.recurrence
+												.excludeDatesTimeZone ?
+												{
+													excludeTimezone:
+														eventDetails.recurrence
+															.excludeDatesTimeZone
+												} :
+												{}),
+											freq: recurrenceFrequencyToString(
 												eventDetails.recurrence
-													.weekStart
-											) :
-											undefined
-									} : undefined,
+													.frequency
+											),
+											...(eventDetails.recurrence
+												.interval ?
+												{
+													interval:
+														eventDetails.recurrence
+															.interval
+												} :
+												{}),
+											...(eventDetails.recurrence.until ?
+												{
+													until: new Date(
+														eventDetails.recurrence.until
+													)
+												} :
+												{}),
+											...(eventDetails.recurrence
+												.weekStart ?
+												{
+													wkst: recurrenceDayToString(
+														eventDetails.recurrence
+															.weekStart
+													)
+												} :
+												{})
+										}} : {}),
 								sequence: Math.floor(Date.now() / 1000),
 								start: new Date(eventDetails.startTime),
 								status: cancelEvent ? 'cancelled' : 'confirmed',
 								summary: eventDetails.summary || subject,
-								uid: eventDetails.uid,
-								url: eventDetails.url
+								...(eventDetails.uid ?
+									{uid: eventDetails.uid} :
+									{}),
+								...(eventDetails.url ?
+									{url: eventDetails.url} :
+									{})
 							}],
 						method: cancelEvent ? 'cancel' : 'request',
 						prodId: '//cyph.com//cyph-appointment-scheduler//EN'
