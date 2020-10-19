@@ -216,7 +216,7 @@ func datastoreQuery(kind string) *datastore.Query {
 }
 
 func isValidCyphID(id string) bool {
-	return len(id) == config.AllowedCyphIDLength && config.AllowedCyphIDs.MatchString(id)
+	return len(id) >= config.AllowedCyphIDLength && config.AllowedCyphIDs.MatchString(id)
 }
 
 func generateRandomID() string {

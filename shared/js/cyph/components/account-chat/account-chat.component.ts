@@ -223,7 +223,7 @@ export class AccountChatComponent extends BaseProvider
 								generateAnonymousChannelID
 							) {
 								anonymousChannelID = readableID(
-									this.configService.cyphIDLength
+									this.configService.secretLength
 								);
 							}
 

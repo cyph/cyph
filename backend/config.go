@@ -156,7 +156,7 @@ var config = struct {
 	Plans                         map[string]Plan
 	RootURL                       string
 }{
-	regexp.MustCompile("[A-Za-z0-9]{7}"),
+	regexp.MustCompile("[A-Za-z0-9]+$"),
 
 	7,
 

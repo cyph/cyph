@@ -400,8 +400,7 @@ exports.appointmentInvite = onCall(async (data, namespace, getUsername) => {
 		}))
 		.filter(
 			o =>
-				o.id.length === config.cyphIDLength &&
-				(o.email || o.phoneNumber)
+				o.id.length >= config.cyphIDLength && (o.email || o.phoneNumber)
 		);
 
 	if (members.length < 1) {

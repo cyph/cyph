@@ -83,9 +83,7 @@ export class EphemeralSessionService extends SessionService {
 					() => new Map<IBurnerGroupMember, IBurnerGroupMember>()
 				);
 
-				const id = `${readableID(
-					this.configService.cyphIDLength
-				)}${uuid(true, false)}`;
+				const id = uuid(true, false) + uuid(true, false);
 
 				aliceGroup.set(bob, {
 					id,
@@ -105,12 +103,12 @@ export class EphemeralSessionService extends SessionService {
 				{
 					members: [
 						{
-							id: readableID(
-								this.sessionInitService
+							id:
+								uuid(true, false) +
+								(this.sessionInitService
 									.accountsBurnerAliceData ?
-									this.configService.cyphIDLength :
-									this.configService.secretLength
-							),
+									'' :
+									uuid(true, false)),
 							isHost: true
 						},
 						...Array.from(fullBurnerGroup.get(o)?.values() || [])
@@ -130,7 +128,7 @@ export class EphemeralSessionService extends SessionService {
 			({id, name}) => ({
 				id:
 					id === undefined ?
-						readableID(this.configService.secretLength) :
+						uuid(true, false) + uuid(true, false) :
 						id,
 				name
 			})
@@ -321,14 +319,18 @@ export class EphemeralSessionService extends SessionService {
 					)
 			) {
 				id = headless ?
-					`${readableID(this.configService.cyphIDLength)}${uuid(
-						true,
-						false
-					)}` :
+					uuid(true, false) + uuid(true, false) :
 					readableID(this.configService.secretLength);
 			}
 
-			cyphIDs.push(id.substring(0, this.configService.cyphIDLength));
+			cyphIDs.push(
+				id.substring(
+					0,
+					id.length > this.configService.secretLength ?
+						Math.floor(id.length / 2) :
+						this.configService.cyphIDLength
+				)
+			);
 
 			sharedSecrets.push(
 				(oldSharedSecret !== undefined ? oldSharedSecret : id) +
@@ -506,7 +508,7 @@ export class EphemeralSessionService extends SessionService {
 					const chatRequestUsername = username;
 					this.chatRequestUsername.next(chatRequestUsername);
 
-					id = readableID(this.configService.cyphIDLength);
+					id = uuid(true, false);
 
 					(async () => {
 						await this.accountDatabaseService.notify(

@@ -415,7 +415,7 @@ export class AccountComposeComponent extends BaseProvider
 
 				const members = this.appointmentGroupMembers.value.map(o => ({
 					...o,
-					id: readableID(this.configService.cyphIDLength)
+					id: readableID(this.configService.secretLength)
 				}));
 
 				const burnerSession = {
