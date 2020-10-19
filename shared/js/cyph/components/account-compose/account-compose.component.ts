@@ -28,10 +28,8 @@ import {
 import {
 	AccountFileRecord,
 	AccountUserTypes,
-	BurnerSession,
 	ChatMessageValue,
 	IAppointment,
-	IBurnerSession,
 	IForm
 } from '../../proto';
 import {accountChatProviders} from '../../providers';
@@ -422,12 +420,6 @@ export class AccountComposeComponent extends BaseProvider
 					callType: calendarInvite.callType,
 					members
 				};
-
-				await this.accountDatabaseService.setItem<IBurnerSession>(
-					`burnerSessions/${calendarInvite.uid}`,
-					BurnerSession,
-					burnerSession
-				);
 
 				const appointment: IAppointment = {
 					calendarInvite,

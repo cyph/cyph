@@ -268,6 +268,7 @@ export class AccountSessionService extends SessionService {
 
 			sessionInit.callType = this.sessionInitService.callType;
 			sessionInit.localStorageKeyPrefix = this.localStorageKeyPrefix;
+			sessionInit.timeString = this.sessionInitService.timeString;
 
 			sessionInit.ephemeralGroupMembers.resolve(
 				chat.burnerSession.members || []

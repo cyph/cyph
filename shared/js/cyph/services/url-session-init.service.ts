@@ -56,6 +56,9 @@ export class UrlSessionInitService extends BaseProvider
 	);
 
 	/** @inheritDoc */
+	public readonly timeString?: string;
+
+	/** @inheritDoc */
 	public spawn (child: boolean = true) : UrlSessionInitService {
 		const sessionInitService = new UrlSessionInitService(this.router);
 		sessionInitService.child = child;
@@ -83,9 +86,16 @@ export class UrlSessionInitService extends BaseProvider
 				'video' :
 				undefined;
 
-		this.id = Promise.resolve(
-			urlSegmentPaths.slice(this.callType ? 1 : 0).join('/')
-		);
+		const [id, timeString] = urlSegmentPaths
+			.slice(this.callType ? 1 : 0)
+			.join('/')
+			.split('.');
+
+		if (timeString) {
+			this.timeString = timeString;
+		}
+
+		this.id = Promise.resolve(id);
 
 		if (!this.callType) {
 			this.callType = env.callType;

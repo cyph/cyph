@@ -60,6 +60,9 @@ export class BasicSessionInitService extends BaseProvider
 	/** @inheritDoc */
 	public readonly salt: Promise<string | undefined> = this._SALT;
 
+	/** @inheritDoc */
+	public timeString?: string;
+
 	/** Sets ID. */
 	public setID (id: string, salt?: string, headless: boolean = false) : void {
 		this._HEADLESS.resolve(headless);

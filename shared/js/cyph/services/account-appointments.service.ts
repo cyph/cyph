@@ -5,6 +5,7 @@ import {Observable, of} from 'rxjs';
 import {map, switchMap, take} from 'rxjs/operators';
 import {BaseProvider} from '../base-provider';
 import {ISchedulerObject, ISchedulerObjectBase} from '../calendar';
+import {potassiumUtil} from '../crypto/potassium/potassium-util';
 import {
 	BurnerSession,
 	CallTypes,
@@ -306,7 +307,19 @@ export class AccountAppointmentsService extends BaseProvider {
 			throw new Error('No guests.');
 		}
 
-		this.accountDatabaseService.callFunction('appointmentInvite', {
+		const startDate = new Date(calendarInvite.startTime);
+
+		burnerSession.timeString = potassiumUtil.toHex(
+			new Uint8Array([startDate.getUTCHours(), startDate.getUTCMinutes()])
+		);
+
+		await this.accountDatabaseService.setItem<IBurnerSession>(
+			`burnerSessions/${calendarInvite.uid}`,
+			BurnerSession,
+			burnerSession
+		);
+
+		await this.accountDatabaseService.callFunction('appointmentInvite', {
 			callType:
 				calendarInvite.callType === CallTypes.Audio ?
 					'audio' :
@@ -329,7 +342,10 @@ export class AccountAppointmentsService extends BaseProvider {
 				await this.accountSettingsService.plan.pipe(take(1)).toPromise()
 			].telehealth,
 			to: {
-				members: burnerSession.members
+				members: (burnerSession.members || []).map(o => ({
+					...o,
+					id: `${o.id || ''}.${burnerSession?.timeString || ''}`
+				}))
 			}
 		});
 	}

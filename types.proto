@@ -609,6 +609,9 @@ message BurnerSession {
 
 	/** @see BurnerGroupMemberInitiator */
 	repeated BurnerGroupMemberInitiator members = 2;
+
+	/** Encoded UTC hour and minute of meeting, used in session handshake. */
+	string timeString = 3;
 }
 
 /** Calendar invite. */

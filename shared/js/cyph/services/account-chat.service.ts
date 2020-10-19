@@ -234,6 +234,7 @@ export class AccountChatService extends ChatService {
 		}
 
 		this.accountSessionInitService.callType = callType;
+		this.accountSessionInitService.timeString = burnerSession?.timeString;
 
 		const callRequestPromise = callType ?
 			(async () => {
