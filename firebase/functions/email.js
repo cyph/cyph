@@ -253,7 +253,16 @@ const sendMailInternal = async (
 							}],
 						method: cancelEvent ? 'cancel' : 'request',
 						prodId: '//cyph.com//cyph-appointment-scheduler//EN'
-					}).toString(),
+					})
+						.toString()
+						.replace(
+							/RRULE:(.*)/,
+							(_, rrule) =>
+								`RRULE:${rrule
+									.split(';')
+									.filter(s => !s.endsWith('='))
+									.join(';')}`
+						),
 					filename: 'invite.ics',
 					method: cancelEvent ? 'cancel' : 'request'
 				},
