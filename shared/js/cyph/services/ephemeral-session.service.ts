@@ -83,7 +83,7 @@ export class EphemeralSessionService extends SessionService {
 					() => new Map<IBurnerGroupMember, IBurnerGroupMember>()
 				);
 
-				const id = uuid(true, false) + uuid(true, false);
+				const id = uuid(true) + uuid(true);
 
 				aliceGroup.set(bob, {
 					id,
@@ -104,11 +104,11 @@ export class EphemeralSessionService extends SessionService {
 					members: [
 						{
 							id:
-								uuid(true, false) +
+								uuid(true) +
 								(this.sessionInitService
 									.accountsBurnerAliceData ?
 									'' :
-									uuid(true, false)),
+									uuid(true)),
 							isHost: true
 						},
 						...Array.from(fullBurnerGroup.get(o)?.values() || [])
@@ -126,10 +126,7 @@ export class EphemeralSessionService extends SessionService {
 
 		const members: IBurnerGroupMember[] = groupMembers.map(
 			({id, name}) => ({
-				id:
-					id === undefined ?
-						uuid(true, false) + uuid(true, false) :
-						id,
+				id: id === undefined ? uuid(true) + uuid(true) : id,
 				name
 			})
 		);
@@ -319,7 +316,7 @@ export class EphemeralSessionService extends SessionService {
 					)
 			) {
 				id = headless ?
-					uuid(true, false) + uuid(true, false) :
+					uuid(true) + uuid(true) :
 					readableID(this.configService.secretLength);
 			}
 
@@ -508,7 +505,7 @@ export class EphemeralSessionService extends SessionService {
 					const chatRequestUsername = username;
 					this.chatRequestUsername.next(chatRequestUsername);
 
-					id = uuid(true, false);
+					id = uuid(true);
 
 					(async () => {
 						await this.accountDatabaseService.notify(
