@@ -283,6 +283,7 @@
 
 				<ejs-recurrenceeditor
 					fxFlex
+					[startDate]="timestampToDate(value?.startTime || 0)"
 					[value]="serializeRecurrenceRule(value?.recurrence)"
 					(change)="setRecurrence($event)"
 				></ejs-recurrenceeditor>

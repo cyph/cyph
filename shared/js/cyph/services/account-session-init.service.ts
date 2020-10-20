@@ -51,6 +51,9 @@ export class AccountSessionInitService extends BaseProvider
 	);
 
 	/** @inheritDoc */
+	public timeString?: string;
+
+	/** @inheritDoc */
 	public spawn (child: boolean = true) : AccountSessionInitService {
 		const sessionInitService = new AccountSessionInitService();
 		sessionInitService.child = child;

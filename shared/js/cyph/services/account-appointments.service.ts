@@ -5,6 +5,7 @@ import {Observable, of} from 'rxjs';
 import {map, switchMap, take} from 'rxjs/operators';
 import {BaseProvider} from '../base-provider';
 import {ISchedulerObject, ISchedulerObjectBase} from '../calendar';
+import {potassiumUtil} from '../crypto/potassium/potassium-util';
 import {
 	BurnerSession,
 	CallTypes,
@@ -12,10 +13,13 @@ import {
 	IAppointment,
 	IBurnerSession
 } from '../../proto';
-import {serializeRecurrenceRule} from '../util/calendar';
+import {
+	serializeRecurrenceExclusions,
+	serializeRecurrenceRule
+} from '../util/calendar';
 import {filterUndefined} from '../util/filter';
 import {observableAll} from '../util/observable-all';
-import {watchTimestamp} from '../util/time';
+import {timestampToDateNoSeconds, watchTimestamp} from '../util/time';
 import {AccountFilesService} from './account-files.service';
 import {AccountSettingsService} from './account-settings.service';
 import {ConfigService} from './config.service';
@@ -64,17 +68,23 @@ export class AccountAppointmentsService extends BaseProvider {
 							appointment.calendarInvite.title :
 							'',
 						/* eslint-disable-next-line @typescript-eslint/naming-convention */
-						EndTime: new Date(appointment.calendarInvite.endTime),
+						EndTime: timestampToDateNoSeconds(
+							appointment.calendarInvite.endTime
+						),
 						/* eslint-disable-next-line @typescript-eslint/naming-convention */
 						Id: ++this.lastAppointmentID,
 						/* eslint-disable-next-line @typescript-eslint/naming-convention */
 						Location: appointment.calendarInvite.url || '',
 						/* eslint-disable-next-line @typescript-eslint/naming-convention */
+						RecurrenceException: serializeRecurrenceExclusions(
+							appointment.calendarInvite.recurrence
+						),
+						/* eslint-disable-next-line @typescript-eslint/naming-convention */
 						RecurrenceRule: serializeRecurrenceRule(
 							appointment.calendarInvite.recurrence
 						),
 						/* eslint-disable-next-line @typescript-eslint/naming-convention */
-						StartTime: new Date(
+						StartTime: timestampToDateNoSeconds(
 							appointment.calendarInvite.startTime
 						),
 						/* eslint-disable-next-line @typescript-eslint/naming-convention */
@@ -293,9 +303,12 @@ export class AccountAppointmentsService extends BaseProvider {
 			throw new Error('No calendar event UID.');
 		}
 
+		const burnerSessionURL = `burnerSessions/${calendarInvite.burnerUID ||
+			calendarInvite.uid}`;
+
 		if (!burnerSession) {
 			burnerSession = await this.accountDatabaseService.getItem(
-				`burnerSessions/${calendarInvite.uid}`,
+				burnerSessionURL,
 				BurnerSession
 			);
 		}
@@ -304,7 +317,19 @@ export class AccountAppointmentsService extends BaseProvider {
 			throw new Error('No guests.');
 		}
 
-		this.accountDatabaseService.callFunction('appointmentInvite', {
+		const startDate = new Date(calendarInvite.startTime);
+
+		burnerSession.timeString = potassiumUtil.toHex(
+			new Uint8Array([startDate.getUTCHours(), startDate.getUTCMinutes()])
+		);
+
+		await this.accountDatabaseService.setItem<IBurnerSession>(
+			burnerSessionURL,
+			BurnerSession,
+			burnerSession
+		);
+
+		await this.accountDatabaseService.callFunction('appointmentInvite', {
 			callType:
 				calendarInvite.callType === CallTypes.Audio ?
 					'audio' :
@@ -327,7 +352,10 @@ export class AccountAppointmentsService extends BaseProvider {
 				await this.accountSettingsService.plan.pipe(take(1)).toPromise()
 			].telehealth,
 			to: {
-				members: burnerSession.members
+				members: (burnerSession.members || []).map(o => ({
+					...o,
+					id: `${o.id || ''}.${burnerSession?.timeString || ''}`
+				}))
 			}
 		});
 	}

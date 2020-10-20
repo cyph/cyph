@@ -16,7 +16,7 @@ import {getOrSetDefault} from '../util/get-or-set-default';
 import {random} from '../util/random';
 import {request} from '../util/request';
 import {deserialize, serialize} from '../util/serialization';
-import {getTimestamp} from '../util/time';
+import {getDate, getISODateString, getTimestamp} from '../util/time';
 import {readableID, uuid} from '../util/uuid';
 import {sleep} from '../util/wait';
 import {AccountService} from './account.service';
@@ -83,9 +83,7 @@ export class EphemeralSessionService extends SessionService {
 					() => new Map<IBurnerGroupMember, IBurnerGroupMember>()
 				);
 
-				const id = `${readableID(
-					this.configService.cyphIDLength
-				)}${uuid(true, false)}`;
+				const id = uuid(true) + uuid(true);
 
 				aliceGroup.set(bob, {
 					id,
@@ -105,12 +103,12 @@ export class EphemeralSessionService extends SessionService {
 				{
 					members: [
 						{
-							id: readableID(
-								this.sessionInitService
+							id:
+								uuid(true) +
+								(this.sessionInitService
 									.accountsBurnerAliceData ?
-									this.configService.cyphIDLength :
-									this.configService.secretLength
-							),
+									'' :
+									uuid(true)),
 							isHost: true
 						},
 						...Array.from(fullBurnerGroup.get(o)?.values() || [])
@@ -128,10 +126,7 @@ export class EphemeralSessionService extends SessionService {
 
 		const members: IBurnerGroupMember[] = groupMembers.map(
 			({id, name}) => ({
-				id:
-					id === undefined ?
-						readableID(this.configService.secretLength) :
-						id,
+				id: id === undefined ? uuid(true) + uuid(true) : id,
 				name
 			})
 		);
@@ -154,6 +149,7 @@ export class EphemeralSessionService extends SessionService {
 			masterSessionInit.child = true;
 			masterSessionInit.localStorageKeyPrefix = this.sessionInitService.localStorageKeyPrefix;
 			masterSessionInit.parentID = parentID;
+			masterSessionInit.timeString = this.sessionInitService.timeString;
 			masterSessionInit.setID(member.id, undefined, true);
 
 			const masterSession = this.spawn(masterSessionInit);
@@ -163,6 +159,7 @@ export class EphemeralSessionService extends SessionService {
 			childSessionInit.child = true;
 			childSessionInit.localStorageKeyPrefix = this.sessionInitService.localStorageKeyPrefix;
 			childSessionInit.parentID = parentID;
+			childSessionInit.timeString = this.sessionInitService.timeString;
 			childSessionInit.setID(burnerGroup.members[0].id);
 
 			const childCastleService = new BasicCastleService(
@@ -198,7 +195,7 @@ export class EphemeralSessionService extends SessionService {
 
 		this.setGroup(sessionServices.map(o => o.childSession));
 
-		this.setIDs(
+		await this.setIDs(
 			sessionServices.map(o => o.member.id),
 			undefined,
 			true
@@ -247,6 +244,39 @@ export class EphemeralSessionService extends SessionService {
 	}
 
 	/** @ignore */
+	private async getIDPrefix () : Promise<string | undefined> {
+		if (!this.sessionInitService.timeString) {
+			return;
+		}
+
+		const bytes = this.potassiumService.fromHex(
+			this.sessionInitService.timeString
+		);
+
+		if (bytes.length !== 2) {
+			return;
+		}
+
+		const utcHours = bytes[0];
+		const utcMinutes = bytes[1];
+		const utcTime = utcHours * 60 + utcMinutes;
+
+		const now = await getDate();
+		const currentUTCHours = now.getUTCHours();
+		const currentUTCMinutes = now.getUTCMinutes();
+		const currentUTCTime = currentUTCHours * 60 + currentUTCMinutes;
+
+		const dayDelta =
+			12 * 60 > Math.abs(currentUTCTime - utcTime) ?
+				0 :
+			utcTime > currentUTCTime ?
+				-1 :
+				1;
+
+		return getISODateString(now.setDate(now.getDate() + dayDelta));
+	}
+
+	/** @ignore */
 	private get localStorageKeyPrefix () : string {
 		return (
 			this.sessionInitService.localStorageKeyPrefix ||
@@ -279,11 +309,11 @@ export class EphemeralSessionService extends SessionService {
 	}
 
 	/** @ignore */
-	private setIDs (
+	private async setIDs (
 		ids: string[],
 		salt: string | undefined,
 		headless: boolean
-	) : void {
+	) : Promise<void> {
 		const cyphIDs: string[] = [];
 		const sharedSecrets: string[] = [];
 
@@ -321,14 +351,18 @@ export class EphemeralSessionService extends SessionService {
 					)
 			) {
 				id = headless ?
-					`${readableID(this.configService.cyphIDLength)}${uuid(
-						true,
-						false
-					)}` :
+					uuid(true) + uuid(true) :
 					readableID(this.configService.secretLength);
 			}
 
-			cyphIDs.push(id.substring(0, this.configService.cyphIDLength));
+			cyphIDs.push(
+				id.substring(
+					0,
+					id.length > this.configService.secretLength ?
+						Math.floor(id.length / 2) :
+						this.configService.cyphIDLength
+				)
+			);
 
 			sharedSecrets.push(
 				(oldSharedSecret !== undefined ? oldSharedSecret : id) +
@@ -336,7 +370,11 @@ export class EphemeralSessionService extends SessionService {
 			);
 		}
 
-		this.state.cyphIDs.next(cyphIDs);
+		const idPrefix = await this.getIDPrefix();
+
+		this.state.cyphIDs.next(
+			idPrefix ? cyphIDs.map(id => `${idPrefix}_${id}`) : cyphIDs
+		);
 		this.state.sharedSecrets.next(sharedSecrets);
 	}
 
@@ -506,7 +544,7 @@ export class EphemeralSessionService extends SessionService {
 					const chatRequestUsername = username;
 					this.chatRequestUsername.next(chatRequestUsername);
 
-					id = readableID(this.configService.cyphIDLength);
+					id = uuid(true);
 
 					(async () => {
 						await this.accountDatabaseService.notify(
@@ -615,12 +653,14 @@ export class EphemeralSessionService extends SessionService {
 			}
 
 			if (username) {
+				const idPrefix = await this.getIDPrefix();
+
 				this.remoteUsername.next(username);
-				this.state.cyphIDs.next([id]);
+				this.state.cyphIDs.next([idPrefix ? `${idPrefix}_${id}` : id]);
 				this.state.sharedSecrets.next([]);
 			}
 			else {
-				this.setIDs([id], salt, headless);
+				await this.setIDs([id], salt, headless);
 			}
 
 			this.state.ephemeralStateInitialized.next(true);
@@ -707,6 +747,7 @@ export class EphemeralSessionService extends SessionService {
 					sessionInit.child = true;
 					sessionInit.localStorageKeyPrefix = this.sessionInitService.localStorageKeyPrefix;
 					sessionInit.parentID = fullID;
+					sessionInit.timeString = this.sessionInitService.timeString;
 
 					if (i === 0) {
 						sessionInit.setID(

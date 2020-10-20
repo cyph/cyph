@@ -4,6 +4,7 @@ import {
 	CalendarRecurrenceRules,
 	ICalendarRecurrenceRules
 } from '../proto';
+import {timestampToDate} from './time';
 
 const rruleWeekDayConvert = (n: number) =>
 	n === RRule.SU.weekday ?
@@ -37,7 +38,8 @@ const rruleWeekDayRevert = (dayOfWeek: CalendarInvite.DaysOfWeek) =>
 
 /** Converts recurrence rule string to RecurrenceRules proto object. */
 export const parseRecurrenceRule = (
-	recurrenceRuleString: string
+	recurrenceRuleString: string,
+	excludeDatesString: string = ''
 ) : ICalendarRecurrenceRules | undefined => {
 	if (!recurrenceRuleString) {
 		return;
@@ -47,12 +49,26 @@ export const parseRecurrenceRule = (
 		recurrenceRuleString.replace(/[^;=]+=(;|$)/g, '').replace(/;$/, '')
 	).options;
 
+	const excludeDates = excludeDatesString
+		.split(',')
+		.filter(s => s)
+		.map(s =>
+			new Date(
+				s.replace(
+					/^(\d+)(\d\d)(\d\d)T(\d\d)(\d\d)(\d\d)Z$/,
+					(_, year, month, day, hour, minute, second) =>
+						`${year}-${month}-${day} ${hour}:${minute}:${second}Z`
+				)
+			).getTime()
+		);
+
 	return {
 		byMonth: rrule.bymonth || [],
 		byMonthDay: rrule.bymonthday || [],
 		bySetPosition: rrule.bysetpos || [],
 		byWeekDay: (rrule.byweekday || []).map(rruleWeekDayConvert),
 		count: rrule.count || undefined,
+		excludeDates,
 		frequency:
 			rrule.freq === Frequency.YEARLY ?
 				CalendarRecurrenceRules.Frequency.Yearly :
@@ -69,9 +85,31 @@ export const parseRecurrenceRule = (
 				CalendarRecurrenceRules.Frequency.Secondly,
 		interval: rrule.interval,
 		until: rrule.until ? rrule.until.getTime() : undefined,
-		weekStart: rruleWeekDayConvert(rrule.wkst)
+		weekStart: 0
 	};
 };
+
+/** Converts RecurrenceRules proto object to string of date exclusions. */
+export const serializeRecurrenceExclusions = (
+	recurrenceRule?: ICalendarRecurrenceRules
+) : string =>
+	recurrenceRule?.excludeDates && recurrenceRule.excludeDates.length > 0 ?
+		recurrenceRule.excludeDates
+			.map(timestamp => timestampToDate(timestamp))
+			.map(
+				d =>
+					`${d.getUTCFullYear()}${`0${d.getUTCMonth() + 1}`.slice(
+						-2
+					)}${`0${d.getUTCDate()}`.slice(
+						-2
+					)}T${`0${d.getUTCHours()}`.slice(
+						-2
+					)}${`0${d.getUTCMinutes()}`.slice(
+						-2
+					)}${`0${d.getUTCSeconds()}`.slice(-2)}Z`
+			)
+			.join(',') :
+		'';
 
 /** Converts RecurrenceRules proto object to string. */
 export const serializeRecurrenceRule = (

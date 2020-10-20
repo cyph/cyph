@@ -389,7 +389,8 @@ exports.appointmentInvite = onCall(async (data, namespace, getUsername) => {
 
 	const inviterUsername = await getUsername();
 	const telehealth = !!data.telehealth;
-	const uid = `${inviterUsername}-${accountBurnerID}@cyph.com`;
+	const uid = `${inviterUsername}-${accountBurnerID}`;
+	const cancel = !!data.eventDetails.cancel;
 
 	const members = ((data.to || {}).members || [])
 		.map(o => ({
@@ -400,8 +401,7 @@ exports.appointmentInvite = onCall(async (data, namespace, getUsername) => {
 		}))
 		.filter(
 			o =>
-				o.id.length === config.cyphIDLength &&
-				(o.email || o.phoneNumber)
+				o.id.length >= config.cyphIDLength && (o.email || o.phoneNumber)
 		);
 
 	if (members.length < 1) {
@@ -436,6 +436,12 @@ exports.appointmentInvite = onCall(async (data, namespace, getUsername) => {
 			throw err;
 		}
 	};
+
+	const messageStatusPrefix = cancel ? `CANCELLED:` : '';
+	const messageStatusPrefixLineBreak = cancel ?
+		`${messageStatusPrefix}\n\n` :
+		'';
+	const messageStatusPrefixSpace = cancel ? `${messageStatusPrefix} ` : '';
 
 	const messagePart1 = `Cyph appointment with \${PARTY} is scheduled for ${Math.floor(
 		(data.eventDetails.endTime - data.eventDetails.startTime) / 60000
@@ -478,7 +484,7 @@ exports.appointmentInvite = onCall(async (data, namespace, getUsername) => {
 			database,
 			namespace,
 			inviterUsername,
-			`Cyph Appointment${
+			`${messageStatusPrefixSpace}Cyph Appointment${
 				!singleRecipient ?
 					'' :
 					` with ${
@@ -489,7 +495,7 @@ exports.appointmentInvite = onCall(async (data, namespace, getUsername) => {
 								singleRecipient.phoneNumber}>`
 					}`
 			}`,
-			`${messagePart1
+			`${messageStatusPrefixLineBreak}${messagePart1
 				.replace(' with ${PARTY}', '')
 				.replace(
 					'${START_TIME}',
@@ -500,12 +506,12 @@ exports.appointmentInvite = onCall(async (data, namespace, getUsername) => {
 			)}\n\n${messageAddendumEmail}${messageAddendumMembers}`,
 			{
 				attendees: members,
-				cancel: !!data.eventDetails.cancel,
+				cancel,
 				endTime: data.eventDetails.endTime,
-				location: inviterLink,
 				recurrence: data.eventDetails.recurrence,
 				startTime: data.eventDetails.startTime,
-				uid
+				uid,
+				url: inviterLink
 			}
 		),
 		Promise.all(
@@ -541,26 +547,27 @@ exports.appointmentInvite = onCall(async (data, namespace, getUsername) => {
 							database,
 							namespace,
 							emailTo,
-							`Cyph Appointment with @${inviterUsername}`,
+							`${messageStatusPrefixSpace}Cyph Appointment with @${inviterUsername}`,
 							{
-								markdown: `${inviteeMessagePart1}.\n\n${inviteeMessagePart2}\n\n${messageAddendumEmail}${messageAddendumMembers}`,
+								markdown: `${messageStatusPrefixLineBreak}${inviteeMessagePart1}.\n\n${inviteeMessagePart2}\n\n${messageAddendumEmail}${messageAddendumMembers}`,
 								noUnsubscribe: true
 							},
 							{
 								attendees: members,
-								cancel: !!data.eventDetails.cancel,
+								cancel,
+								description: inviteeLink,
 								endTime: data.eventDetails.endTime,
 								inviterUsername: emailTo,
-								location: inviteeLink,
 								recurrence: data.eventDetails.recurrence,
 								startTime: data.eventDetails.startTime,
-								uid
+								uid,
+								url: inviteeLink
 							}
 						),
 					o.phoneNumber &&
 						sendSMS(
 							o.phoneNumber,
-							inviteeMessagePart1,
+							messageStatusPrefixSpace + inviteeMessagePart1,
 							smsCredentials
 						).then(async () =>
 							sendSMS(

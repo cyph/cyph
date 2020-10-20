@@ -32,6 +32,7 @@ import {StringsService} from '../../services/strings.service';
 import {WindowWatcherService} from '../../services/window-watcher.service';
 import {parseRecurrenceRule} from '../../util/calendar';
 import {getDateTimeString} from '../../util/time';
+import {uuid} from '../../util/uuid';
 import {openWindow} from '../../util/window';
 
 /**
@@ -114,6 +115,7 @@ export class AccountAppointmentAgendaComponent extends BaseProvider
 			data.EndTime = data.OldData.EndTime;
 			data.Id = data.OldData.Id;
 			data.Location = data.OldData.Location;
+			data.RecurrenceException = data.OldData.RecurrenceException;
 			data.RecurrenceRule = data.OldData.RecurrenceRule;
 			data.StartTime = data.OldData.StartTime;
 			data.Subject = data.OldData.Subject;
@@ -133,6 +135,7 @@ export class AccountAppointmentAgendaComponent extends BaseProvider
 				data.EndTime === data.OldData.EndTime &&
 				data.Id === data.OldData.Id &&
 				data.Location === data.OldData.Location &&
+				data.RecurrenceException === data.OldData.RecurrenceException &&
 				data.RecurrenceRule === data.OldData.RecurrenceRule &&
 				data.StartTime === data.OldData.StartTime &&
 				data.Subject === data.OldData.Subject
@@ -150,7 +153,10 @@ export class AccountAppointmentAgendaComponent extends BaseProvider
 				calendarInvite: {
 					...data.Appointment.calendarInvite,
 					endTime: data.EndTime.getTime(),
-					recurrence: parseRecurrenceRule(data.RecurrenceRule),
+					recurrence: parseRecurrenceRule(
+						data.RecurrenceRule,
+						data.RecurrenceException
+					),
 					startTime: data.StartTime.getTime(),
 					title: data.Appointment.fromName ?
 						data.Description :
@@ -176,6 +182,8 @@ export class AccountAppointmentAgendaComponent extends BaseProvider
 				/* eslint-disable-next-line @typescript-eslint/naming-convention */
 				Location: data.Location,
 				/* eslint-disable-next-line @typescript-eslint/naming-convention */
+				RecurrenceException: data.RecurrenceException,
+				/* eslint-disable-next-line @typescript-eslint/naming-convention */
 				RecurrenceRule: data.RecurrenceRule,
 				/* eslint-disable-next-line @typescript-eslint/naming-convention */
 				StartTime: data.StartTime,
@@ -189,24 +197,93 @@ export class AccountAppointmentAgendaComponent extends BaseProvider
 		}
 	}
 
+	/** Add single event forked off of recurring appointment. */
+	private async appointmentFork (data: ISchedulerObject) : Promise<void> {
+		try {
+			const appointment: IAppointment = {
+				...data.Appointment,
+				calendarInvite: {
+					...data.Appointment.calendarInvite,
+					burnerUID: data.Appointment.calendarInvite.uid,
+					endTime: data.EndTime.getTime(),
+					recurrence: undefined,
+					startTime: data.StartTime.getTime(),
+					title: data.Appointment.fromName ?
+						data.Description :
+						data.Subject,
+					uid: uuid()
+				}
+			};
+
+			await this.accountAppointmentsService.sendInvite(appointment);
+			await this.accountFilesService.upload(
+				(this.envService.isTelehealth ?
+					`${this.stringsService.telehealthCallAbout} ` :
+					'') + (appointment.calendarInvite.title || '?'),
+				appointment
+			).result;
+
+			data.Appointment = appointment;
+
+			data.OldData = {
+				/* eslint-disable-next-line @typescript-eslint/naming-convention */
+				Description: data.Description,
+				/* eslint-disable-next-line @typescript-eslint/naming-convention */
+				EndTime: data.EndTime,
+				/* eslint-disable-next-line @typescript-eslint/naming-convention */
+				Id: data.Id,
+				/* eslint-disable-next-line @typescript-eslint/naming-convention */
+				Location: data.Location,
+				/* eslint-disable-next-line @typescript-eslint/naming-convention */
+				RecurrenceException: data.RecurrenceException,
+				/* eslint-disable-next-line @typescript-eslint/naming-convention */
+				RecurrenceRule: data.RecurrenceRule,
+				/* eslint-disable-next-line @typescript-eslint/naming-convention */
+				StartTime: data.StartTime,
+				/* eslint-disable-next-line @typescript-eslint/naming-convention */
+				Subject: data.Subject
+			};
+		}
+		catch (err) {
+			this.dialogService.toast(
+				this.stringsService.appointmentEditFailure,
+				undefined,
+				this.stringsService.ok
+			);
+			throw err;
+		}
+	}
+
 	/** Action complete handler. */
 	public async actionComplete (e: ActionEventArgs) : Promise<void> {
-		switch (e.requestType) {
-			case 'eventChanged':
+		if (
+			e.requestType === 'eventChanged' ||
+			e.requestType === 'eventRemoved'
+		) {
+			try {
+				this.accountService.interstitial.next(true);
+
+				await Promise.all(
+					(e.addedRecords || []).map(async (o: any) =>
+						this.appointmentFork(o)
+					)
+				);
+
 				await Promise.all(
 					(e.changedRecords || []).map(async (o: any) =>
 						this.appointmentEdit(o)
 					)
 				);
-				return;
 
-			case 'eventRemoved':
 				await Promise.all(
 					(e.deletedRecords || []).map(async (o: any) =>
 						this.appointmentDelete(o)
 					)
 				);
-				return;
+			}
+			finally {
+				this.accountService.interstitial.next(false);
+			}
 		}
 	}
 

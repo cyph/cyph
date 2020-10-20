@@ -51,6 +51,9 @@ export class SessionInitService extends BaseProvider {
 		undefined
 	);
 
+	/** @see IBurnerSession.timeString */
+	public readonly timeString?: string;
+
 	/** Creates and returns a new instance. */
 	public spawn (child: boolean = false) : SessionInitService {
 		const sessionInitService = new SessionInitService();
