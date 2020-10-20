@@ -260,23 +260,30 @@ export class AccountAppointmentAgendaComponent extends BaseProvider
 			e.requestType === 'eventChanged' ||
 			e.requestType === 'eventRemoved'
 		) {
-			await Promise.all(
-				(e.addedRecords || []).map(async (o: any) =>
-					this.appointmentFork(o)
-				)
-			);
+			try {
+				this.accountService.interstitial.next(true);
 
-			await Promise.all(
-				(e.changedRecords || []).map(async (o: any) =>
-					this.appointmentEdit(o)
-				)
-			);
+				await Promise.all(
+					(e.addedRecords || []).map(async (o: any) =>
+						this.appointmentFork(o)
+					)
+				);
 
-			await Promise.all(
-				(e.deletedRecords || []).map(async (o: any) =>
-					this.appointmentDelete(o)
-				)
-			);
+				await Promise.all(
+					(e.changedRecords || []).map(async (o: any) =>
+						this.appointmentEdit(o)
+					)
+				);
+
+				await Promise.all(
+					(e.deletedRecords || []).map(async (o: any) =>
+						this.appointmentDelete(o)
+					)
+				);
+			}
+			finally {
+				this.accountService.interstitial.next(false);
+			}
 		}
 	}
 
