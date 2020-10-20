@@ -10,6 +10,11 @@
 	}
 }
 
+/* Temporary partial workaround pending support for disabling event creation */
+:host ::ng-deep .e-cell-popup {
+	display: none !important;
+}
+
 :host > div {
 	position: relative;
 	min-height: 100%;
