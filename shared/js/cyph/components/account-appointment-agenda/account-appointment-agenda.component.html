@@ -37,6 +37,11 @@
 	<div fxFlex>
 		<ejs-schedule
 			#schedule
+			[allowDragAndDrop]="false"
+			[allowKeyboardInteraction]="false"
+			[allowMultiCellSelection]="false"
+			[allowMultiRowSelection]="false"
+			[allowResizing]="false"
 			currentView="Agenda"
 			[eventSettings]="
 				(this.accountAppointmentsService.appointmentSchedulerModels.all
@@ -55,9 +60,9 @@
 					option="Agenda"
 					[eventTemplate]="agendaEventTemplate"
 				></e-view>
-				<e-view option="Day"> </e-view>
-				<e-view option="Month"> </e-view>
-				<e-view option="Week"> </e-view>
+				<e-view option="Day"></e-view>
+				<e-view option="Month"></e-view>
+				<e-view option="Week"></e-view>
 			</e-views>
 		</ejs-schedule>
 
