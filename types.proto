@@ -640,6 +640,9 @@ message CalendarInvite {
 	/** Preferred time frames days for counteroffers. */
 	map<uint32, bool> alternateTimeFrames = 2;
 
+	/** Burner-specific UID. */
+	string burnerUID = 11;
+
 	/** @see CallTypes */
 	required CallTypes callType = 3;
 

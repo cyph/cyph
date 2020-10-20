@@ -13,7 +13,10 @@ import {
 	IAppointment,
 	IBurnerSession
 } from '../../proto';
-import {serializeRecurrenceRule} from '../util/calendar';
+import {
+	serializeRecurrenceExclusions,
+	serializeRecurrenceRule
+} from '../util/calendar';
 import {filterUndefined} from '../util/filter';
 import {observableAll} from '../util/observable-all';
 import {timestampToDateNoSeconds, watchTimestamp} from '../util/time';
@@ -72,6 +75,10 @@ export class AccountAppointmentsService extends BaseProvider {
 						Id: ++this.lastAppointmentID,
 						/* eslint-disable-next-line @typescript-eslint/naming-convention */
 						Location: appointment.calendarInvite.url || '',
+						/* eslint-disable-next-line @typescript-eslint/naming-convention */
+						RecurrenceException: serializeRecurrenceExclusions(
+							appointment.calendarInvite.recurrence
+						),
 						/* eslint-disable-next-line @typescript-eslint/naming-convention */
 						RecurrenceRule: serializeRecurrenceRule(
 							appointment.calendarInvite.recurrence
@@ -296,9 +303,12 @@ export class AccountAppointmentsService extends BaseProvider {
 			throw new Error('No calendar event UID.');
 		}
 
+		const burnerSessionURL = `burnerSessions/${calendarInvite.burnerUID ||
+			calendarInvite.uid}`;
+
 		if (!burnerSession) {
 			burnerSession = await this.accountDatabaseService.getItem(
-				`burnerSessions/${calendarInvite.uid}`,
+				burnerSessionURL,
 				BurnerSession
 			);
 		}
@@ -314,7 +324,7 @@ export class AccountAppointmentsService extends BaseProvider {
 		);
 
 		await this.accountDatabaseService.setItem<IBurnerSession>(
-			`burnerSessions/${calendarInvite.uid}`,
+			burnerSessionURL,
 			BurnerSession,
 			burnerSession
 		);
