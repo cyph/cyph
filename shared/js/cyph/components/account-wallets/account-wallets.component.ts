@@ -118,7 +118,7 @@ export class AccountWalletsComponent extends BaseProvider implements OnInit {
 					value
 				})
 			),
-			title: 'Cryptocurrency:'
+			title: this.stringsService.cryptocurrencySelectionPrompt
 		});
 
 		const generateForm = await this.dialogService.prompt({
