@@ -245,13 +245,13 @@ export class EphemeralSessionService extends SessionService {
 
 	/** @ignore */
 	private async getIDPrefix () : Promise<string | undefined> {
-		if (!this.sessionInitService.timeString) {
+		const timeString = this.sessionInitService.timeString;
+
+		if (!timeString) {
 			return;
 		}
 
-		const bytes = this.potassiumService.fromHex(
-			this.sessionInitService.timeString
-		);
+		const bytes = this.potassiumService.fromHex(timeString);
 
 		if (bytes.length !== 2) {
 			return;
@@ -273,7 +273,9 @@ export class EphemeralSessionService extends SessionService {
 				-1 :
 				1;
 
-		return getISODateString(now.setDate(now.getDate() + dayDelta));
+		return `${timeString}_${getISODateString(
+			now.setDate(now.getDate() + dayDelta)
+		)}`;
 	}
 
 	/** @ignore */

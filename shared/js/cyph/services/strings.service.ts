@@ -299,6 +299,9 @@ export class StringsService extends BaseProvider {
 	public readonly createGroupTooltip = `Start a chat with a group of your contacts`;
 
 	/** @see StringsService */
+	public readonly cryptocurrencySelectionPrompt = `Cryptocurrency:`;
+
+	/** @see StringsService */
 	public readonly currentAppointment = `Current Appointment`;
 
 	/** @see StringsService */

@@ -128,11 +128,10 @@ export class MaterialDialogService extends BaseProvider
 
 			const promptResponse = beforeClosed()
 				.toPromise()
-				.then(
-					() =>
-						instance.multipleChoiceSelection ||
-						instance.form ||
-						instance.prompt
+				.then(() =>
+					instance.multipleChoiceSelection !== undefined ?
+						instance.multipleChoiceSelection :
+						instance.form || instance.prompt
 				);
 
 			let hasReturned = false;
