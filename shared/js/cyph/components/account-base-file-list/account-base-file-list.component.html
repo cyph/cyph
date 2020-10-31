@@ -162,13 +162,7 @@
 				((envService.isMobile | await) || !!(currentDirectory | await))
 			"
 		>
-			<div
-				fxFlex
-				*ngIf="
-					(envService.isMobile | await) ||
-					!!(currentDirectory | await)
-				"
-			>
+			<div fxFlex *ngIf="envService.isMobile | await">
 				<h3 *ngIf="currentDirectory | await as directory">
 					<code>/{{ directory }}</code>
 				</h3>
@@ -644,46 +638,52 @@
 			></ng-container>
 		</div>
 
-		<cyph-file-manager
-			[checkIfLinkShared]="accountDownloadService.watchIfShared"
-			[directories]="accountFilesService.directories.watchTree() | await"
-			[files]="
-				accountFilesService.config[recordTypes.File].list() | await
-			"
-			(changeDirectory)="changeDirectory($event, true)"
-			(createDirectory)="createDirectory($event)"
-			(downloadAndSave)="
-				accountFilesService.downloadAndSave($event.dataItem.id)
-			"
-			(removeDirectory)="
-				accountFilesService.directories.delete($event, false)
-			"
-			(removeFile)="accountFilesService.remove($event, false)"
-			(revokeDownloadLink)="revokeDownloadLink($event.dataItem)"
-			(selectedFileOpen)="
-				accountFilesService.openFile($event.dataItem.id)
-			"
-			(shareDownloadLink)="shareDownloadLink($event.dataItem)"
-			(shareFile)="accountFilesService.shareFilePrompt($event.record)"
-			(uploadFile)="
-				accountFilesService.upload(
-					$event.name,
-					$event,
-					undefined,
-					undefined,
-					undefined,
-					undefined,
-					undefined,
-					undefined,
-					currentDirectory.value
-				)
-			"
+		<mat-card
+			class="file-manager-wrapper"
 			*ngIf="
+				(envService.isMobile | await) === false &&
 				configService.enableNewFileManager &&
 				recordType === recordTypes.File
 			"
 		>
-		</cyph-file-manager>
+			<cyph-file-manager
+				[checkIfLinkShared]="accountDownloadService.watchIfShared"
+				[directories]="
+					accountFilesService.directories.watchTree() | await
+				"
+				[files]="
+					accountFilesService.config[recordTypes.File].list() | await
+				"
+				(changeDirectory)="changeDirectory($event, true)"
+				(createDirectory)="createDirectory($event)"
+				(downloadAndSave)="
+					accountFilesService.downloadAndSave($event.dataItem.id)
+				"
+				(removeDirectory)="
+					accountFilesService.directories.delete($event, false)
+				"
+				(removeFile)="accountFilesService.remove($event, false)"
+				(revokeDownloadLink)="revokeDownloadLink($event.dataItem)"
+				(selectedFileOpen)="
+					accountFilesService.openFile($event.dataItem.id)
+				"
+				(shareDownloadLink)="shareDownloadLink($event.dataItem)"
+				(shareFile)="accountFilesService.shareFilePrompt($event.record)"
+				(uploadFile)="
+					accountFilesService.upload(
+						$event.name,
+						$event,
+						undefined,
+						undefined,
+						undefined,
+						undefined,
+						undefined,
+						undefined,
+						currentDirectory.value
+					)
+				"
+			></cyph-file-manager>
+		</mat-card>
 
 		<ng-container *ngIf="envService.isMobile | await">
 			<mat-card

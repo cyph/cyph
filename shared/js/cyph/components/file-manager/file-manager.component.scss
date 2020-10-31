@@ -1,6 +1,40 @@
 @import '../../../../css/mixins';
 
 :host ::ng-deep {
+	dx-file-manager {
+		border: none;
+	}
+
+	.dx-datagrid-rowsview.dx-scrollable > .dx-scrollable-wrapper {
+		padding-bottom: 16px;
+	}
+
+	.dx-filemanager-wrapper {
+		.dx-datagrid-table > tbody > tr > td:nth-last-child(2) {
+			padding-right: 27px !important;
+		}
+
+		.dx-datagrid-table > tbody > tr > td:last-child {
+			padding-right: 36px !important;
+			text-overflow: clip !important;
+		}
+
+		.dx-drawer-panel-content {
+			padding: 16px;
+			padding-top: 0;
+			padding-right: 0;
+		}
+	}
+
+	.dx-filemanager-breadcrumbs {
+		padding-right: 27px !important;
+	}
+
+	.dx-filemanager-toolbar {
+		padding: 16px;
+		padding-bottom: 0;
+	}
+
 	.dx-icon.dx-icon-link_off {
 		font-family: 'Material Icons';
 
