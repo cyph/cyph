@@ -24,4 +24,4 @@ export type AccountFile =
 	| IPGPKey
 	| IRedoxPatient
 	| IWallet
-	| File;
+	| Blob;

@@ -659,6 +659,13 @@
 				(downloadAndSave)="
 					accountFilesService.downloadAndSave($event.dataItem.id)
 				"
+				(moveFile)="
+					accountFilesService.moveFile(
+						$event.file.dataItem,
+						$event.destinationPath,
+						$event.copy
+					)
+				"
 				(removeDirectory)="
 					accountFilesService.directories.delete($event, false)
 				"

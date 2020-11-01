@@ -2109,6 +2109,55 @@ export class AccountFilesService extends BaseProvider {
 		return {group, id: await this.upload('', group, usernames).result};
 	}
 
+	/** Moves or copies a file. */
+	public async moveFile (
+		id: string | Async<IAccountFileRecord> | undefined,
+		destinationPath: string,
+		copy: boolean = false
+	) : Promise<void> {
+		if (id === undefined) {
+			return;
+		}
+
+		if (typeof id !== 'string') {
+			id = await awaitAsync(id);
+		}
+
+		const file = await this.getFile(id);
+
+		const fileData = new Blob(
+			[
+				await this.downloadFile(
+					file,
+					AccountFileRecord.RecordTypes.File
+				).result
+			],
+			{type: file.mediaType}
+		);
+
+		const destinationSplit = destinationPath.split('/');
+		const name = destinationSplit.slice(-1)[0];
+		const parentPath = destinationSplit.slice(0, -1).join('/');
+
+		await this.upload(
+			name,
+			fileData,
+			undefined,
+			undefined,
+			undefined,
+			undefined,
+			undefined,
+			undefined,
+			parentPath
+		).result;
+
+		if (copy) {
+			return;
+		}
+
+		await this.remove(file, false);
+	}
+
 	/** Opens a file. */
 	public async openFile (id: string) : Promise<void> {
 		const data = {id, ...this.downloadItem(id, BinaryProto)};

@@ -59,6 +59,13 @@ export class FileManagerComponent extends BaseProvider implements OnChanges {
 	/** List of files. */
 	@Input() public files?: IDataSourceFile[];
 
+	/** Download file event. */
+	@Output() public readonly moveFile = new EventEmitter<{
+		copy?: boolean;
+		destinationPath: string;
+		file: FileSystemItem;
+	}>();
+
 	/** Remove directory event (emits directory name). */
 	@Output() public readonly removeDirectory = new EventEmitter<string>();
 
@@ -268,13 +275,17 @@ export class FileManagerComponent extends BaseProvider implements OnChanges {
 		super();
 
 		this.customProvider = new CustomFileSystemProvider({
-			createDirectory: (
-				_PARENT_DIR: FileSystemItem,
-				name: string
-			) : void => {
+			copyItem: (item, destinationDirectory) => {
+				this.moveFile.emit({
+					copy: true,
+					destinationPath: `${destinationDirectory.path}/${item.name}`,
+					file: item
+				});
+			},
+			createDirectory: (_PARENT_DIR, name) => {
 				this.createDirectory.emit(name);
 			},
-			deleteItem: (item: FileSystemItem) : void => {
+			deleteItem: item => {
 				if (!item.isDirectory) {
 					this.removeFile.emit(item.dataItem.id);
 					return;
@@ -291,19 +302,33 @@ export class FileManagerComponent extends BaseProvider implements OnChanges {
 					this.removeFile.emit(file.record.id);
 				}
 			},
-			downloadItems: (items: FileSystemItem[]) : void => {
+			downloadItems: items => {
 				for (const item of items) {
 					this.downloadAndSave.emit(item);
 				}
 			},
 			getItems: async (
-				pathInfo: FileSystemItem
+				pathInfo
 			) : Promise<(IDataSourceFile | IFileManagerDirectory)[]> => {
 				if (!pathInfo.name) {
 					return this.allData;
 				}
 
 				return pathInfo.dataItem.items;
+			},
+			moveItem: (item, destinationDirectory) => {
+				this.moveFile.emit({
+					destinationPath: `${destinationDirectory.path}/${item.name}`,
+					file: item
+				});
+			},
+			renameItem: (item, newName) => {
+				this.moveFile.emit({
+					destinationPath: `${item.pathKeys
+						.slice(0, -1)
+						.join('')}/${newName}`,
+					file: item
+				});
 			},
 			uploadFileChunk: (fileData: File) => {
 				this.uploadFile.emit(fileData);
