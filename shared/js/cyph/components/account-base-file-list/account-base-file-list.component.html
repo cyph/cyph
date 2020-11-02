@@ -197,12 +197,15 @@
 			fxLayoutAlign="center"
 			*ngIf="
 				(recordType !== recordTypes.File ||
-					!(currentDirectory | await)) &&
+					((envService.isMobile | await) &&
+						!(currentDirectory | await))) &&
 				(
-					accountFilesService.config[recordType].list()
-					| await
-					| cyphFilter: (getFilterFunction() | await)
-				)?.length < 1
+					(accountFilesService.config[recordType].list()
+						| await
+						| cyphFilter: (getFilterFunction() | await)) || []
+				).length < 1 &&
+				((accountFilesService.directories.watch('') | await) || [])
+					.length < 1
 			"
 		>
 			<h2>
@@ -227,10 +230,10 @@
 				((recordType === recordTypes.File &&
 					!!(currentDirectory | await)) ||
 					(
-						accountFilesService.config[recordType].list()
-						| await
-						| cyphFilter: (getFilterFunction() | await)
-					)?.length > 0)
+						(accountFilesService.config[recordType].list()
+							| await
+							| cyphFilter: (getFilterFunction() | await)) || []
+					).length > 0)
 			"
 		>
 			<mat-table
