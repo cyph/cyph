@@ -647,48 +647,13 @@
 			"
 		>
 			<cyph-file-manager
-				[checkIfLinkShared]="accountDownloadService.watchIfShared"
 				[directories]="
 					accountFilesService.directories.watchTree() | await
 				"
 				[files]="
 					accountFilesService.config[recordTypes.File].list() | await
 				"
-				(changeDirectory)="changeDirectory($event, true)"
-				(createDirectory)="createDirectory($event)"
-				(downloadAndSave)="
-					accountFilesService.downloadAndSave($event.dataItem.id)
-				"
-				(moveFile)="
-					accountFilesService.moveFile(
-						$event.file.dataItem,
-						$event.destinationPath,
-						$event.copy
-					)
-				"
-				(removeDirectory)="
-					accountFilesService.directories.delete($event, false)
-				"
-				(removeFile)="accountFilesService.remove($event, false)"
-				(revokeDownloadLink)="revokeDownloadLink($event.dataItem)"
-				(selectedFileOpen)="
-					accountFilesService.openFile($event.dataItem.id)
-				"
-				(shareDownloadLink)="shareDownloadLink($event.dataItem)"
-				(shareFile)="accountFilesService.shareFilePrompt($event.record)"
-				(uploadFile)="
-					accountFilesService.upload(
-						$event.name,
-						$event,
-						undefined,
-						undefined,
-						undefined,
-						undefined,
-						undefined,
-						undefined,
-						currentDirectory.value
-					)
-				"
+				[handlers]="fileManagerHandlers"
 			></cyph-file-manager>
 		</mat-card>
 

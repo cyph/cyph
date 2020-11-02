@@ -1,10 +1,8 @@
 import {
 	ChangeDetectionStrategy,
 	Component,
-	EventEmitter,
 	Input,
 	OnChanges,
-	Output,
 	ViewChild
 } from '@angular/core';
 import CustomFileSystemProvider from 'devextreme/file_management/custom_provider';
@@ -16,6 +14,7 @@ import {IAccountFileDirectory} from '../../proto';
 import {StringsService} from '../../services/strings.service';
 import {IDataSourceFile} from './interfaces/idata-source-file';
 import {IFileManagerDirectory} from './interfaces/ifile-manager-directory';
+import {IFileManagerHandlers} from './interfaces/ifile-manager-handlers';
 
 /**
  * Angular component for file manager UI.
@@ -30,27 +29,20 @@ export class FileManagerComponent extends BaseProvider implements OnChanges {
 	/** @ignore */
 	private allData: (IDataSourceFile | IFileManagerDirectory)[] = [];
 
-	/** Change directory event (emits directory name). */
-	@Output() public readonly changeDirectory = new EventEmitter<string>();
-
-	/** Create directory event (emits directory name). */
-	@Output() public readonly createDirectory = new EventEmitter<string>();
+	/** @ignore */
+	private readonly defaultCheckIfLinkShared = (_DOWNLOAD_ID: string) =>
+		of(true);
 
 	/** Current selection. */
-	@Output() public readonly currentSelection = new BehaviorSubject<
-		FileSystemItem[]
-	>([]);
+	public readonly currentSelection = new BehaviorSubject<FileSystemItem[]>(
+		[]
+	);
 
 	/** @see CustomFileSystemProvider */
 	public readonly customProvider: CustomFileSystemProvider;
 
 	/** Tree of directories. */
 	@Input() public directories?: IAccountFileDirectory;
-
-	/** Download file event. */
-	@Output() public readonly downloadAndSave = new EventEmitter<
-		FileSystemItem
-	>();
 
 	/** @see DxFileManagerComponent */
 	@ViewChild('fileManager', {read: DxFileManagerComponent})
@@ -59,44 +51,8 @@ export class FileManagerComponent extends BaseProvider implements OnChanges {
 	/** List of files. */
 	@Input() public files?: IDataSourceFile[];
 
-	/** Download file event. */
-	@Output() public readonly moveFile = new EventEmitter<{
-		copy?: boolean;
-		destinationPath: string;
-		file: FileSystemItem;
-	}>();
-
-	/** Remove directory event (emits directory name). */
-	@Output() public readonly removeDirectory = new EventEmitter<string>();
-
-	/** Remove file event. */
-	@Output() public readonly removeFile = new EventEmitter<string>();
-
-	/** Revoke publick link event. */
-	@Output() public readonly revokeDownloadLink = new EventEmitter<
-		FileSystemItem
-	>();
-
-	/** Open selected file event. */
-	@Output() public readonly selectedFileOpen = new EventEmitter<
-		FileSystemItem
-	>();
-
-	/** Change selection event. */
-	@Output() public readonly selectionChange = new EventEmitter<
-		FileSystemItem[]
-	>();
-
-	/** Share file as public link event. */
-	@Output() public readonly shareDownloadLink = new EventEmitter<
-		FileSystemItem
-	>();
-
-	/** Share file event. */
-	@Output() public readonly shareFile = new EventEmitter<IDataSourceFile>();
-
-	/** Upload file event. */
-	@Output() public readonly uploadFile = new EventEmitter<File>();
+	/** @see IFileManagerHandlers */
+	@Input() public handlers?: IFileManagerHandlers;
 
 	/** @ignore */
 	private fillDirectories (
@@ -174,10 +130,14 @@ export class FileManagerComponent extends BaseProvider implements OnChanges {
 		return resultStructure;
 	}
 
-	/** Function to check if a file has a link shared. */
-	@Input() public checkIfLinkShared: (
+	/** @see IFileManagerHandlers.checkIfLinkShared */
+	public get checkIfLinkShared () : (
 		downloadID: string
-	) => Observable<boolean> = _DOWNLOAD_ID => of(false);
+	) => Observable<boolean> {
+		return (
+			this.handlers?.checkIfLinkShared || this.defaultCheckIfLinkShared
+		);
+	}
 
 	/** @inheritDoc */
 	public ngOnChanges () : void {
@@ -194,78 +154,92 @@ export class FileManagerComponent extends BaseProvider implements OnChanges {
 	}
 
 	/** @see DxFileManagerComponent.onCurrentDirectoryChanged */
-	public onCurrentDirectoryChanged (event?: {
+	public async onCurrentDirectoryChanged (event?: {
 		directory?: FileSystemItem;
-	}) : void {
+	}) : Promise<void> {
 		if (event?.directory) {
-			this.changeDirectory.emit(event.directory.path);
+			await this.handlers?.changeDirectory(event.directory.path);
 		}
 	}
 
 	/** @see DxFileManagerComponent.onSelectedFileOpened */
-	public onSelectedFileOpened (event?: {file?: FileSystemItem}) : void {
+	public async onSelectedFileOpened (event?: {
+		file?: FileSystemItem;
+	}) : Promise<void> {
 		if (event?.file) {
-			this.selectedFileOpen.emit(event.file);
+			this.handlers?.selectedFileOpen(event.file);
 		}
 	}
 
 	/** @see DxFileManagerComponent.onSelectionChanged */
-	public onSelectionChanged (event?: {
+	public async onSelectionChanged (event?: {
 		selectedItems?: FileSystemItem[];
-	}) : void {
+	}) : Promise<void> {
 		this.currentSelection.next(event?.selectedItems || []);
-		this.selectionChange.emit(this.currentSelection.value);
+
+		const selectionChange = this.handlers?.selectionChange;
+		if (!selectionChange) {
+			return;
+		}
+
+		await selectionChange(this.currentSelection.value);
 	}
 
-	/** Revoke publick link button click handler. */
-	public readonly revokeDownloadLinkClick = () => {
+	/** Revoke public link button click handler. */
+	public readonly revokeDownloadLinkClick = async () => {
 		const files = this.fileManager?.instance.getSelectedItems();
 
 		if (!files) {
 			return;
 		}
 
-		for (const file of files) {
-			if (file.isDirectory) {
-				continue;
-			}
+		await Promise.all(
+			files.map(async file => {
+				if (file.isDirectory) {
+					return;
+				}
 
-			this.revokeDownloadLink.emit(file);
-		}
+				await this.handlers?.revokeDownloadLink(file);
+			})
+		);
 	};
 
 	/** Share files as public link button click handler. */
-	public readonly shareDownloadLinkClick = () : void => {
+	public readonly shareDownloadLinkClick = async () => {
 		const files = this.fileManager?.instance.getSelectedItems();
 
 		if (!files) {
 			return;
 		}
 
-		for (const file of files) {
-			if (file.isDirectory) {
-				continue;
-			}
+		await Promise.all(
+			files.map(async file => {
+				if (file.isDirectory) {
+					return;
+				}
 
-			this.shareDownloadLink.emit(file);
-		}
+				await this.handlers?.shareDownloadLink(file);
+			})
+		);
 	};
 
 	/** Share file button click handler. */
-	public readonly shareFileClick = () : void => {
+	public readonly shareFileClick = async () => {
 		const files = this.fileManager?.instance.getSelectedItems();
 
 		if (!files) {
 			return;
 		}
 
-		for (const file of files) {
-			if (file.isDirectory) {
-				continue;
-			}
+		await Promise.all(
+			files.map(async file => {
+				if (file.isDirectory) {
+					return;
+				}
 
-			this.shareFile.emit(file.dataItem);
-		}
+				await this.handlers?.shareFile(file.dataItem);
+			})
+		);
 	};
 
 	constructor (
@@ -275,38 +249,39 @@ export class FileManagerComponent extends BaseProvider implements OnChanges {
 		super();
 
 		this.customProvider = new CustomFileSystemProvider({
-			copyItem: (item, destinationDirectory) => {
-				this.moveFile.emit({
-					copy: true,
-					destinationPath: `${destinationDirectory.path}/${item.name}`,
-					file: item
-				});
-			},
-			createDirectory: (_PARENT_DIR, name) => {
-				this.createDirectory.emit(name);
-			},
-			deleteItem: item => {
+			copyItem: async (item, destinationDirectory) =>
+				this.handlers?.moveFile(
+					item,
+					`${destinationDirectory.path}/${item.name}`,
+					true
+				),
+			createDirectory: async (_PARENT_DIR, name) =>
+				this.handlers?.createDirectory(name),
+			deleteItem: async item => {
 				if (!item.isDirectory) {
-					this.removeFile.emit(item.dataItem.id);
+					await this.handlers?.removeFile(item.dataItem.id);
 					return;
 				}
 
-				this.removeDirectory.emit(item.path);
+				await this.handlers?.removeDirectory(item.path);
 
 				const relatedFiles =
 					this.files?.filter(
 						el => el.record.parentPath?.indexOf(item.path) === 0
 					) || [];
 
-				for (const file of relatedFiles) {
-					this.removeFile.emit(file.record.id);
-				}
+				await Promise.all(
+					relatedFiles.map(async file =>
+						this.handlers?.removeFile(file.record.id)
+					)
+				);
 			},
-			downloadItems: items => {
-				for (const item of items) {
-					this.downloadAndSave.emit(item);
-				}
-			},
+			downloadItems: async items =>
+				Promise.all(
+					items.map(async item =>
+						this.handlers?.downloadAndSave(item)
+					)
+				),
 			getItems: async (
 				pathInfo
 			) : Promise<(IDataSourceFile | IFileManagerDirectory)[]> => {
@@ -316,23 +291,20 @@ export class FileManagerComponent extends BaseProvider implements OnChanges {
 
 				return pathInfo.dataItem.items;
 			},
-			moveItem: (item, destinationDirectory) => {
-				this.moveFile.emit({
-					destinationPath: `${destinationDirectory.path}/${item.name}`,
-					file: item
-				});
-			},
-			renameItem: (item, newName) => {
-				this.moveFile.emit({
-					destinationPath: `${item.pathKeys
-						.slice(0, -1)
-						.join('')}/${newName}`,
-					file: item
-				});
-			},
-			uploadFileChunk: (fileData: File) => {
-				this.uploadFile.emit(fileData);
-			}
+			moveItem: async (item, destinationDirectory) =>
+				this.handlers?.moveFile(
+					item,
+					`${destinationDirectory.path}/${item.name}`,
+					false
+				),
+			renameItem: async (item, newName) =>
+				this.handlers?.moveFile(
+					item,
+					`${item.pathKeys.slice(0, -1).join('')}/${newName}`,
+					false
+				),
+			uploadFileChunk: async (fileData: File) =>
+				this.handlers?.uploadFile(fileData)
 		});
 	}
 }

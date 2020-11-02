@@ -16,6 +16,7 @@ import memoize from 'lodash-es/memoize';
 import {BehaviorSubject, of} from 'rxjs';
 import {map} from 'rxjs/operators';
 import {BaseProvider} from '../../base-provider';
+import {IFileManagerHandlers} from '../../components/file-manager/interfaces/ifile-manager-handlers';
 import {potassiumUtil} from '../../crypto/potassium/potassium-util';
 import {
 	AccountFileRecord,
@@ -71,6 +72,45 @@ export class AccountBaseFileListComponent extends BaseProvider
 
 	/** Current directory. */
 	public readonly currentDirectory = new BehaviorSubject<string>('');
+
+	/** @see IFileManagerHandlers */
+	public readonly fileManagerHandlers: IFileManagerHandlers = {
+		changeDirectory: async directory =>
+			this.changeDirectory(directory, true),
+		checkIfLinkShared: this.accountDownloadService.watchIfShared,
+		createDirectory: async directory => this.createDirectory(directory),
+		downloadAndSave: async file =>
+			this.accountFilesService.downloadAndSave(file.dataItem.id).result,
+		moveFile: async (file, destinationPath, copy) =>
+			this.accountFilesService.moveFile(
+				file.dataItem,
+				destinationPath,
+				copy
+			),
+		removeDirectory: async directory =>
+			this.accountFilesService.directories.delete(directory, false),
+		removeFile: async id => this.accountFilesService.remove(id, false),
+		revokeDownloadLink: async file =>
+			this.revokeDownloadLink(file.dataItem),
+		selectedFileOpen: async file =>
+			this.accountFilesService.openFile(file.dataItem.id),
+		shareDownloadLink: async file => this.shareDownloadLink(file.dataItem),
+		shareFile: async file =>
+			this.accountFilesService.shareFilePrompt(file.record),
+		uploadFile: async fileData => {
+			await this.accountFilesService.upload(
+				fileData.name,
+				fileData,
+				undefined,
+				undefined,
+				undefined,
+				undefined,
+				undefined,
+				undefined,
+				this.currentDirectory.value
+			).result;
+		}
+	};
 
 	/** Record filter function. */
 	@Input() public filterFunction?: (o: IAccountFileRecord) => boolean;
