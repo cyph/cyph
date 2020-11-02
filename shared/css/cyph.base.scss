@@ -340,8 +340,7 @@ smd-fab-speed-dial {
 }
 
 .ui-disabled {
-	opacity: 0.5;
-	pointer-events: none;
+	@include disabled;
 }
 
 mat-option img {

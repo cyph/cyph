@@ -26,6 +26,11 @@ $default-white: map-get($mat-grey, 100);
 	@include transform(translate(-50%, -50%));
 }
 
+@mixin disabled {
+	opacity: 0.5;
+	pointer-events: none;
+}
+
 /* Changes size of mat-icon */
 @mixin icon-size($size) {
 	font-size: $size;

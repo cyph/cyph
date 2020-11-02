@@ -3,6 +3,11 @@
 :host ::ng-deep {
 	dx-file-manager {
 		border: none;
+
+		&.revoke-download-link-disabled .revoke-download-link,
+		&.share-download-link-disabled .share-download-link {
+			@include disabled;
+		}
 	}
 
 	.dx-datagrid-rowsview.dx-scrollable > .dx-scrollable-wrapper {

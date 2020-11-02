@@ -1,5 +1,16 @@
 <dx-file-manager
 	#fileManager
+	[class.revoke-download-link-disabled]="
+		((currentSelection | await) || []).length !== 1 ||
+		((currentSelection | await) || [])[0]?.isDirectory === true ||
+		(checkIfLinkShared(
+			((currentSelection | await) || [])[0]?.dataItem?.id || ''
+		) | await) !== true
+	"
+	[class.share-download-link-disabled]="
+		((currentSelection | await) || []).length !== 1 ||
+		((currentSelection | await) || [])[0]?.isDirectory === true
+	"
 	[fileSystemProvider]="customProvider"
 	(onCurrentDirectoryChanged)="onCurrentDirectoryChanged($event)"
 	(onSelectedFileOpened)="onSelectedFileOpened($event)"
@@ -30,9 +41,7 @@
 			location="before"
 			widget="dxButton"
 			[options]="{
-				disabled:
-					((currentSelection | await) || []).length !== 1 ||
-					((currentSelection | await) || [])[0]?.isDirectory === true,
+				elementAttr: {class: 'share-download-link'},
 				icon: 'link',
 				onClick: shareDownloadLinkClick,
 				text: stringsService.shareDownloadLink
@@ -42,14 +51,7 @@
 			location="before"
 			widget="dxButton"
 			[options]="{
-				disabled:
-					((currentSelection | await) || []).length !== 1 ||
-					((currentSelection | await) || [])[0]?.isDirectory ===
-						true ||
-					(checkIfLinkShared(
-						((currentSelection | await) || [])[0]?.dataItem?.id ||
-							''
-					) | await) !== true,
+				elementAttr: {class: 'revoke-download-link'},
 				icon: 'link_off',
 				onClick: revokeDownloadLinkClick,
 				text: stringsService.shareDownloadLinkRevoke
