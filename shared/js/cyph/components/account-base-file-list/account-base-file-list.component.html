@@ -32,6 +32,25 @@
 		</ng-container>
 
 		<mat-card
+			class="file-manager-wrapper"
+			*ngIf="
+				(envService.isMobile | await) === false &&
+				configService.enableNewFileManager &&
+				recordType === recordTypes.File
+			"
+		>
+			<cyph-file-manager
+				[directories]="
+					accountFilesService.directories.watchTree() | await
+				"
+				[files]="
+					accountFilesService.config[recordTypes.File].list() | await
+				"
+				[handlers]="fileManagerHandlers"
+			></cyph-file-manager>
+		</mat-card>
+
+		<mat-card
 			class="animated incoming"
 			*ngFor="
 				let o of accountFilesService.config[recordType].incoming()
@@ -637,25 +656,6 @@
 				*ngTemplateOutlet="createDirectoryButton"
 			></ng-container>
 		</div>
-
-		<mat-card
-			class="file-manager-wrapper"
-			*ngIf="
-				(envService.isMobile | await) === false &&
-				configService.enableNewFileManager &&
-				recordType === recordTypes.File
-			"
-		>
-			<cyph-file-manager
-				[directories]="
-					accountFilesService.directories.watchTree() | await
-				"
-				[files]="
-					accountFilesService.config[recordTypes.File].list() | await
-				"
-				[handlers]="fileManagerHandlers"
-			></cyph-file-manager>
-		</mat-card>
 
 		<ng-container *ngIf="envService.isMobile | await">
 			<mat-card
