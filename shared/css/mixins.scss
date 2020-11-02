@@ -661,6 +661,42 @@ $default-white: map-get($mat-grey, 100);
 			}
 		}
 	}
+
+	$cyph-theme-accent-default: map-get(map-get($cyph-theme, accent), default);
+
+	$cyph-theme-primary-default: map-get(
+		map-get($cyph-theme, primary),
+		default
+	);
+
+	/* DevExtreme theme */
+
+	.dx-button-mode-text.dx-button-default {
+		color: $cyph-theme-primary-default !important;
+	}
+
+	.dx-checkbox-checked,
+	.dx-checkbox-indeterminate {
+		.dx-checkbox-icon {
+			background-color: $cyph-theme-primary-default !important;
+		}
+	}
+
+	.dx-datagrid-rowsview .dx-row-focused.dx-data-row {
+		> td:not(.dx-focused) {
+			background-color: $cyph-theme-accent-default !important;
+		}
+
+		> td:not(.dx-focused),
+		&:not(.dx-row-lines) > td {
+			border-color: $cyph-theme-accent-default !important;
+		}
+	}
+
+	.dx-texteditor.dx-state-active:before,
+	.dx-texteditor.dx-state-focused:before {
+		border-bottom-color: $cyph-theme-primary-default !important;
+	}
 }
 
 @mixin cyph-main-theme {
