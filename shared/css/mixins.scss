@@ -697,6 +697,52 @@ $default-white: map-get($mat-grey, 100);
 	.dx-texteditor.dx-state-focused:before {
 		border-bottom-color: $cyph-theme-primary-default !important;
 	}
+
+	/* SyncFusion theme */
+
+	.e-btn:not(.e-flat).e-primary {
+		background-color: $cyph-theme-primary-default !important;
+	}
+
+	.e-schedule .e-month-view .e-current-date .e-date-header,
+	.e-btn:not(.e-flat).e-primary.e-active,
+	.e-float-input.e-input-group:not(.e-float-icon-left) .e-float-line:before,
+	.e-float-input.e-input-group:not(.e-float-icon-left) .e-float-line:after,
+	.e-input-group:not(.e-float-icon-left):not(.e-float-input):before,
+	.e-input-group:not(.e-float-icon-left):not(.e-float-input):after,
+	input.e-control::selection {
+		background-color: $cyph-theme-accent-default !important;
+	}
+
+	.e-schedule .e-schedule-toolbar .e-active-view .e-tbar-btn-text,
+	.e-schedule .e-month-agenda-view .e-date-header-wrap table td.e-current-day,
+	.e-schedule .e-month-view .e-date-header-wrap table td.e-current-day,
+	.e-schedule .e-agenda-view .e-day-date-header.e-current-day,
+	.e-schedule .e-vertical-view .e-header-cells.e-current-day,
+	.e-schedule .e-vertical-view .e-header-cells.e-current-day,
+	.e-schedule .e-vertical-view .e-current-time,
+	.e-dropdownbase .e-list-item.e-active,
+	.e-dropdownbase .e-list-item.e-active.e-hover,
+	.e-btn.e-flat:not(.e-icons),
+	.e-float-input.e-control-wrapper:not(.e-error).e-input-focus
+		input
+		~ label.e-float-text {
+		color: $cyph-theme-accent-default !important;
+	}
+
+	.e-calendar .e-content td.e-selected span.e-day {
+		background-color: $cyph-theme-primary-default !important;
+		border-color: $cyph-theme-primary-default !important;
+	}
+
+	.e-schedule .e-vertical-view .e-previous-timeline,
+	.e-schedule .e-vertical-view .e-current-timeline {
+		border-color: $cyph-theme-primary-default !important;
+	}
+
+	.e-spinner-pane .e-spinner-inner .e-spin-material {
+		stroke: $cyph-theme-primary-default !important;
+	}
 }
 
 @mixin cyph-main-theme {
