@@ -107,6 +107,10 @@
 		"justification": "Dev dependency"
 	},
 	{
+		"path": "rrule/dist/esm/demo",
+		"justification": "Third-party demo project"
+	},
+	{
 		"path": "scandirectory",
 		"justification": "Dev dependency"
 	},
