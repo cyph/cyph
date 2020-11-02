@@ -257,33 +257,35 @@ export class AccountAppointmentAgendaComponent extends BaseProvider
 	/** Action complete handler. */
 	public async actionComplete (e: ActionEventArgs) : Promise<void> {
 		if (
-			e.requestType === 'eventChanged' ||
-			e.requestType === 'eventRemoved'
+			e.requestType !== 'eventChanged' &&
+			e.requestType !== 'eventRemoved'
 		) {
-			try {
-				this.accountService.interstitial.next(true);
+			return;
+		}
 
-				await Promise.all(
-					(e.addedRecords || []).map(async (o: any) =>
-						this.appointmentFork(o)
-					)
-				);
+		try {
+			this.accountService.interstitial.next(true);
 
-				await Promise.all(
-					(e.changedRecords || []).map(async (o: any) =>
-						this.appointmentEdit(o)
-					)
-				);
+			await Promise.all(
+				(e.addedRecords || []).map(async (o: any) =>
+					this.appointmentFork(o)
+				)
+			);
 
-				await Promise.all(
-					(e.deletedRecords || []).map(async (o: any) =>
-						this.appointmentDelete(o)
-					)
-				);
-			}
-			finally {
-				this.accountService.interstitial.next(false);
-			}
+			await Promise.all(
+				(e.changedRecords || []).map(async (o: any) =>
+					this.appointmentEdit(o)
+				)
+			);
+
+			await Promise.all(
+				(e.deletedRecords || []).map(async (o: any) =>
+					this.appointmentDelete(o)
+				)
+			);
+		}
+		finally {
+			this.accountService.interstitial.next(false);
 		}
 	}
 

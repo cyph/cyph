@@ -29,10 +29,6 @@ export class FileManagerComponent extends BaseProvider implements OnChanges {
 	/** @ignore */
 	private allData: (IDataSourceFile | IFileManagerDirectory)[] = [];
 
-	/** @ignore */
-	private readonly defaultCheckIfLinkShared = (_DOWNLOAD_ID: string) =>
-		of(true);
-
 	/** Current selection. */
 	public readonly currentSelection = new BehaviorSubject<FileSystemItem[]>(
 		[]
@@ -53,6 +49,10 @@ export class FileManagerComponent extends BaseProvider implements OnChanges {
 
 	/** @see IFileManagerHandlers */
 	@Input() public handlers?: IFileManagerHandlers;
+
+	/** @ignore */
+	private readonly defaultCheckIfLinkShared = (_DOWNLOAD_ID: string) =>
+		of(true);
 
 	/** @ignore */
 	private fillDirectories (

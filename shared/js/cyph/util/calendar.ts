@@ -95,6 +95,7 @@ export const serializeRecurrenceExclusions = (
 ) : string =>
 	recurrenceRule?.excludeDates && recurrenceRule.excludeDates.length > 0 ?
 		recurrenceRule.excludeDates
+			/* eslint-disable-next-line @typescript-eslint/tslint/config */
 			.map(timestamp => timestampToDate(timestamp))
 			.map(
 				d =>
