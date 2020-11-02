@@ -70,6 +70,10 @@ export class AccountDatabaseService extends BaseProvider {
 				proto: IProto<T>,
 				immutable: boolean
 			) : Promise<ITimedValue<T | ListHoleError>[] | undefined> => {
+				if (!immutable) {
+					return undefined;
+				}
+
 				try {
 					return (await this.localStorageService.getItem(
 						`AccountDatabaseService/cache.list${
@@ -94,8 +98,12 @@ export class AccountDatabaseService extends BaseProvider {
 				proto: IProto<T>,
 				immutable: boolean,
 				list: ITimedValue<T | ListHoleError>[]
-			) =>
-				this.localStorageService.setItem(
+			) => {
+				if (!immutable) {
+					return;
+				}
+
+				await this.localStorageService.setItem(
 					`AccountDatabaseService/cache.list${
 						immutable ? '-immutable' : ''
 					}/${await this.normalizeURL(url, true)}`,
@@ -107,7 +115,8 @@ export class AccountDatabaseService extends BaseProvider {
 								{empty: true, timestamp: o.timestamp}
 						)
 					)
-				)
+				);
+			}
 		}
 	};
 
