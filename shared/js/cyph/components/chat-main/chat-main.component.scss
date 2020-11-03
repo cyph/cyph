@@ -547,6 +547,12 @@ mat-icon.button-on {
 	color: map-get($mat-green, 700) !important;
 }
 
+.gallery-view-toggle {
+	position: fixed;
+	top: 36px;
+	right: 96px;
+}
+
 .muted-indicator {
 	color: map-get($mat-red, 700);
 	position: fixed;
