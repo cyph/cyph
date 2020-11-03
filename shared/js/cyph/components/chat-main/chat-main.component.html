@@ -499,6 +499,7 @@
 				"
 			>
 				<mat-slide-toggle
+					[matTooltip]="stringsService.walkieTalkieMode"
 					[ngModel]="chatService.walkieTalkieMode | await"
 					(ngModelChange)="chatService.walkieTalkieMode.next($event)"
 					*ngIf="envService.pro | await"
@@ -506,6 +507,7 @@
 					<mat-icon svgIcon="walkie-talkie"></mat-icon>
 				</mat-slide-toggle>
 				<mat-slide-toggle
+					[matTooltip]="stringsService.galleryView"
 					[ngModel]="p2pService.galleryView | await"
 					(ngModelChange)="p2pService.galleryView.next($event)"
 				>

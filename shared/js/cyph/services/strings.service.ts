@@ -508,6 +508,9 @@ export class StringsService extends BaseProvider {
 	public readonly futureAppointments = `Appointments`;
 
 	/** @see StringsService */
+	public readonly galleryView = `Gallery View`;
+
+	/** @see StringsService */
 	public readonly getMessageIDFailure = `\`[WARNING: One or more messages missing here]\``;
 
 	/** @see StringsService */
