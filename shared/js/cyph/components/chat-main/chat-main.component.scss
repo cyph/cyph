@@ -543,6 +543,10 @@
 	}
 }
 
+mat-icon.button-on {
+	color: map-get($mat-green, 700) !important;
+}
+
 .poof {
 	&,
 	video {

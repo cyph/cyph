@@ -526,20 +526,18 @@
 					matTooltipPosition="above"
 					*ngIf="p2pWebRTCService.videoEnabled | await"
 				>
-					<mat-icon>
-						<ng-container
-							*ngIf="
-								!(p2pWebRTCService.outgoingStream | await)
-									?.constraints?.video;
-								else videocamOff
-							"
-						>
-							videocam
-						</ng-container>
-						<ng-template #videocamOff>
-							videocam_off
-						</ng-template>
-					</mat-icon>
+					<ng-container
+						*ngIf="
+							!!(p2pWebRTCService.outgoingStream | await)
+								?.constraints?.video;
+							else videocamOff
+						"
+					>
+						<mat-icon class="button-on">videocam</mat-icon>
+					</ng-container>
+					<ng-template #videocamOff>
+						<mat-icon>videocam_off</mat-icon>
+					</ng-template>
 				</button>
 				<button
 					mat-icon-button
@@ -570,15 +568,15 @@
 					<mat-icon>
 						<ng-container
 							*ngIf="
-								!(p2pWebRTCService.outgoingStream | await)
+								!!(p2pWebRTCService.outgoingStream | await)
 									?.constraints?.audio;
 								else micOff
 							"
 						>
-							mic
+							<mat-icon class="button-on">mic</mat-icon>
 						</ng-container>
 						<ng-template #micOff>
-							mic_off
+							<mat-icon>mic_off</mat-icon>
 						</ng-template>
 					</mat-icon>
 				</button>
