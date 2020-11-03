@@ -165,6 +165,7 @@
 				((p2pWebRTCService.incomingVideoStreams | await) || []).length <
 					1 || (p2pWebRTCService.loading | await)
 			"
+			*ngIf="(p2pService.galleryView | await) === false"
 		>
 			<ng-container
 				*ngFor="
@@ -173,22 +174,80 @@
 					trackBy: trackByIndex
 				"
 			>
-				<cyph-video
-					[fxShow]="incomingStream.activeVideo"
-					[autoplay]="true"
-					[playsinline]="true"
-					[src]="incomingStream.stream"
-					[title]="
-						incomingStream.user.username ?
-							'@' + (incomingStream.user.username || '') :
-						incomingStream.user.name ?
-							incomingStream.user.name :
-							undefined
+				<ng-container
+					*ngTemplateOutlet="
+						friendVideoUI;
+						context: {
+							incomingStream: incomingStream,
+							show: incomingStream.activeVideo
+						}
 					"
-					*ngIf="!!incomingStream.stream"
-				></cyph-video>
+				></ng-container>
 			</ng-container>
 		</div>
+		<div
+			class="video-gallery"
+			*ngIf="(p2pService.galleryView | await) === true"
+		>
+			<div
+				fxLayout="row wrap"
+				fxLayout.lt-sm="column"
+				fxLayoutAlign.gt-xs="center center"
+				fxLayoutGap="4px grid"
+				*ngIf="
+					p2pService.galleryViewOptions | await as galleryViewOptions
+				"
+			>
+				<div
+					[fxFlex.gt-xs]="
+						'calc(' +
+						galleryViewOptions.flexAmount +
+						'% - ' +
+						galleryViewOptions.gridMargin +
+						'px)'
+					"
+					fxLayoutAlign.gt-xs="space-evenly space-between"
+					*ngFor="
+						let panel of galleryViewOptions.panels;
+						trackBy: trackByIndex
+					"
+				>
+					<ng-container *ngIf="!!panel?.stream">
+						<ng-container
+							*ngTemplateOutlet="
+								friendVideoUI;
+								context: {
+									incomingStream: panel,
+									show: true
+								}
+							"
+						></ng-container
+					></ng-container>
+					<div *ngIf="!panel?.stream"></div>
+				</div>
+			</div>
+		</div>
+		<ng-template
+			#friendVideoUI
+			let-incomingStream="incomingStream"
+			let-show="show"
+		>
+			<cyph-video
+				[fxShow]="show"
+				[autoplay]="true"
+				[playsinline]="true"
+				[src]="incomingStream.stream"
+				[title]="
+					incomingStream.user.username ?
+						'@' + (incomingStream.user.username || '') :
+					incomingStream.user.name ?
+						incomingStream.user.name :
+						undefined
+				"
+				*ngIf="!!incomingStream.stream"
+			></cyph-video>
+		</ng-template>
+
 		<ng-container *ngIf="!envService.isAccounts; else accountsAudioCall">
 			<img
 				*ngIf="!envService.customBuildImages.audioImage"
@@ -445,6 +504,12 @@
 					*ngIf="envService.pro | await"
 				>
 					<mat-icon svgIcon="walkie-talkie"></mat-icon>
+				</mat-slide-toggle>
+				<mat-slide-toggle
+					[ngModel]="p2pService.galleryView | await"
+					(ngModelChange)="p2pService.galleryView.next($event)"
+				>
+					<mat-icon>view_module</mat-icon>
 				</mat-slide-toggle>
 				<button
 					mat-icon-button

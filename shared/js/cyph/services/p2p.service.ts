@@ -8,6 +8,7 @@ import {BaseProvider} from '../base-provider';
 import {IP2PHandlers} from '../p2p/ip2p-handlers';
 import {IAppointment} from '../proto';
 import {filterUndefinedOperator} from '../util/filter';
+import {observableAll} from '../util/observable-all';
 import {prettyPrint} from '../util/serialization';
 import {AccountUserLookupService} from './account-user-lookup.service';
 import {ChatService} from './chat.service';
@@ -17,6 +18,7 @@ import {LocalStorageService} from './local-storage.service';
 import {P2PWebRTCService} from './p2p-webrtc.service';
 import {SessionInitService} from './session-init.service';
 import {StringsService} from './strings.service';
+import {WindowWatcherService} from './window-watcher.service';
 
 /**
  * Manages P2P sessions.
@@ -46,6 +48,42 @@ export class P2PService extends BaseProvider {
 						}
 			)
 		)
+	);
+
+	/** Indicates whether the gallery view is enabled for group video calls. */
+	public readonly galleryView = new BehaviorSubject<boolean>(false);
+
+	/** Gallery view configuration. */
+	public readonly galleryViewOptions = observableAll([
+		this.p2pWebRTCService.incomingStreams,
+		this.windowWatcherService.height,
+		this.windowWatcherService.width
+	]).pipe(
+		map(([incomingStreams, height, width]) => {
+			const gridMargin = 4;
+			const rows = Math.floor(Math.sqrt(incomingStreams.length));
+			const columns = Math.floor(
+				Math.ceil(incomingStreams.length / rows)
+			);
+			const widescreen = height * 3 < width * 2;
+			const flexAmount = widescreen ? 100 / columns : 100 / rows;
+			const totalCount = rows * columns;
+
+			const panels: (typeof incomingStreams[0] | undefined)[] =
+				totalCount > incomingStreams.length ?
+					incomingStreams.concat(
+						new Array(totalCount - incomingStreams.length).fill(
+							undefined
+						)
+					) :
+					incomingStreams;
+
+			return {
+				flexAmount: flexAmount.toFixed(2),
+				gridMargin: gridMargin.toString(),
+				panels
+			};
+		})
 	);
 
 	/** @see IP2PHandlers */
@@ -416,7 +454,10 @@ export class P2PService extends BaseProvider {
 		protected readonly sessionInitService: SessionInitService,
 
 		/** @ignore */
-		protected readonly stringsService: StringsService
+		protected readonly stringsService: StringsService,
+
+		/** @ignore */
+		protected readonly windowWatcherService: WindowWatcherService
 	) {
 		super();
 

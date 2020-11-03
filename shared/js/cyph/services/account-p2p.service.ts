@@ -21,6 +21,7 @@ import {P2PWebRTCService} from './p2p-webrtc.service';
 import {P2PService} from './p2p.service';
 import {SessionInitService} from './session-init.service';
 import {StringsService} from './strings.service';
+import {WindowWatcherService} from './window-watcher.service';
 
 /**
  * Angular service for account P2P.
@@ -211,6 +212,7 @@ export class AccountP2PService extends P2PService {
 		p2pWebRTCService: P2PWebRTCService,
 		sessionInitService: SessionInitService,
 		stringsService: StringsService,
+		windowWatcherService: WindowWatcherService,
 
 		/** @ignore */
 		private readonly router: Router,
@@ -244,7 +246,8 @@ export class AccountP2PService extends P2PService {
 			localStorageService,
 			p2pWebRTCService,
 			sessionInitService,
-			stringsService
+			stringsService,
+			windowWatcherService
 		);
 	}
 }
