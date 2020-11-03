@@ -547,6 +547,19 @@ mat-icon.button-on {
 	color: map-get($mat-green, 700) !important;
 }
 
+.muted-indicator {
+	color: map-get($mat-red, 700);
+	position: fixed;
+	left: 32px;
+	top: 48px;
+	font-family: 'Ubuntu';
+	font-variant-caps: all-small-caps;
+	font-size: 32px;
+	font-weight: 600;
+	letter-spacing: 2px;
+	opacity: 0.5;
+}
+
 .poof {
 	&,
 	video {

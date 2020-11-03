@@ -158,6 +158,17 @@
 		*ngIf="chat?.state === states.chat"
 	>
 		<cyph-logo alignment="left" homeLink video></cyph-logo>
+
+		<div
+			cyphTranslate
+			class="muted-indicator"
+			*ngIf="
+				!(p2pWebRTCService.outgoingStream | await)?.constraints?.audio
+			"
+		>
+			[Muted]
+		</div>
+
 		<div
 			class="friend stream"
 			[class.ios-app]="envService.isCordovaMobileIOS"
