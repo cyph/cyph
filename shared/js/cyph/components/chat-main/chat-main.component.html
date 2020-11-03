@@ -581,20 +581,18 @@
 					"
 					matTooltipPosition="above"
 				>
-					<mat-icon>
-						<ng-container
-							*ngIf="
-								!!(p2pWebRTCService.outgoingStream | await)
-									?.constraints?.audio;
-								else micOff
-							"
-						>
-							<mat-icon class="button-on">mic</mat-icon>
-						</ng-container>
-						<ng-template #micOff>
-							<mat-icon>mic_off</mat-icon>
-						</ng-template>
-					</mat-icon>
+					<ng-container
+						*ngIf="
+							!!(p2pWebRTCService.outgoingStream | await)
+								?.constraints?.audio;
+							else micOff
+						"
+					>
+						<mat-icon class="button-on">mic</mat-icon>
+					</ng-container>
+					<ng-template #micOff>
+						<mat-icon>mic_off</mat-icon>
+					</ng-template>
 				</button>
 				<button
 					mat-icon-button
