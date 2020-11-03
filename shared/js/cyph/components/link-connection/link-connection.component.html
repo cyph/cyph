@@ -329,8 +329,7 @@
 						fxLayoutGap="8px"
 					>
 						<mat-button-toggle
-							matTooltip="Walkie Talkie Mode"
-							cyphTranslate
+							[matTooltip]="stringsService.walkieTalkieMode"
 							[checked]="chatService.walkieTalkieMode | await"
 							(change)="
 								chatService.walkieTalkieMode.next(

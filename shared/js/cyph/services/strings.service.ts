@@ -1554,6 +1554,9 @@ export class StringsService extends BaseProvider {
 	public readonly walletTransactionFee = `Transaction fee: \${AMOUNT} \${CRYPTOCURRENCY}`;
 
 	/** @see StringsService */
+	public readonly walkieTalkieMode = `Push-to-Talk`;
+
+	/** @see StringsService */
 	public readonly warningTitle = `Warning`;
 
 	/** @see StringsService */
