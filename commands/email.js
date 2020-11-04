@@ -3,8 +3,12 @@
 const fs = require('fs');
 const os = require('os');
 
-const tmp = fs.mkdtempSync(`${os.homedir()}/`);
+const tmpParent = fs.mkdtempSync(`${os.homedir()}/`);
+const tmp = `${tmpParent}/root`;
 
+fs.mkdirSync(tmp);
+
+fs.symlinkSync(`${__dirname}/../shared`, `${tmpParent}/shared`);
 fs.symlinkSync(
 	`${os.homedir()}/.cyph/email-credentials.js`,
 	`${tmp}/email-credentials.js`
@@ -18,6 +22,7 @@ fs.symlinkSync(
 	`${__dirname}/../modules/dompurify-html-sanitizer.js`,
 	`${tmp}/dompurify-html-sanitizer.js`
 );
+fs.symlinkSync(`${__dirname}/../modules/proto.js`, `${tmp}/proto.js`);
 fs.symlinkSync(`${__dirname}/../modules/util.js`, `${tmp}/util.js`);
 fs.writeFileSync(
 	`${tmp}/index.js`,
