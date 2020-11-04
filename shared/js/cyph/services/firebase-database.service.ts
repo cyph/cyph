@@ -25,7 +25,7 @@ import {
 	getOrSetDefaultObservable
 } from '../util/get-or-set-default';
 import {lock, lockFunction} from '../util/lock';
-import {debugLog} from '../util/log';
+import {debugLog, debugLogError} from '../util/log';
 import {request, requestByteStream} from '../util/request';
 import {
 	deserialize,
@@ -47,6 +47,13 @@ import {EnvService} from './env.service';
 import {LocalStorageService} from './local-storage.service';
 import {NotificationService} from './notification.service';
 import {WorkerService} from './worker.service';
+
+try {
+	(<any> firebase).database.INTERNAL.forceWebSockets();
+}
+catch (err) {
+	debugLogError(() => ({firebaseForceWebSocketsError: err}));
+}
 
 /**
  * DatabaseService implementation built on Firebase.
