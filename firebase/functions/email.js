@@ -144,10 +144,18 @@ const sendMailInternal = async (
 								).filter(o => o.email),
 								...(eventDetails.description ?
 									{description: eventDetails.description} :
+								eventDetails.url ?
+									{
+										description: eventDetails.url
+									} :
 									{}),
 								end: new Date(eventDetails.endTime),
 								...(eventDetails.location ?
 									{location: eventDetails.location} :
+								eventDetails.url && eventDetails.description ?
+									{
+										location: eventDetails.url
+									} :
 									{}),
 								organizer: eventInviter || fromFormatted,
 								...(eventDetails.recurrence ? {repeating: {
