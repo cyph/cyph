@@ -35,22 +35,28 @@ else
 fi
 
 password=''
+passwordWindows=''
 if [ "${1}" ] ; then
 	password="${1}"
+	shift
+	passwordWindows="${1}"
 	shift
 elif [ ! "${debug}" ] && ( [ "${allPlatforms}" ] || [ "${android}" ] || [ "${electron}" ] ) ; then
 	echo -n 'Password: '
 	read -s password
 	echo
+	echo -n 'Password (Windows): '
+	read -s passwordWindows
+	echo
 fi
 
 if [ "${allPlatforms}" ] ; then
 	rm -rf ../cyph-phonegap-build* 2> /dev/null
-	./build.sh android "${password}" || exit 1
+	./build.sh android "${password}" "${passwordWindows}" || exit 1
 	mv ../cyph-phonegap-build ../cyph-phonegap-build.android
-	./build.sh electron "${password}" || exit 1
+	./build.sh electron "${password}" "${passwordWindows}" || exit 1
 	mv ../cyph-phonegap-build ../cyph-phonegap-build.electron
-	./build.sh ios "${password}" || exit 1
+	./build.sh ios "${password}" "${passwordWindows}" || exit 1
 	mv ../cyph-phonegap-build ../cyph-phonegap-build.ios
 	mkdir -p ../cyph-phonegap-build/build
 	cp -a ../cyph-phonegap-build.*/build/* ../cyph-phonegap-build/build/
@@ -58,7 +64,7 @@ if [ "${allPlatforms}" ] ; then
 fi
 
 
-export CSC_KEY_PASSWORD="${password}"
+export CSC_KEY_PASSWORD="${passwordWindows}"
 export CSC_KEYCHAIN="${HOME}/.cyph/nativereleasesigning/apple/cyph.keychain"
 
 if [ -d ../cyph-phonegap-build ] ; then
@@ -215,6 +221,8 @@ if [ "${electron}" ] ; then
 	electronScript="
 		const buildConfig = JSON.parse(fs.readFileSync('build.json').toString());
 		const {linux, mac, windows} = buildConfig.electron;
+
+		windows.signing.release.certificatePassword = '${passwordWindows}';
 
 		const build = (config, docker = false) => {
 			fs.writeFileSync('build.json', JSON.stringify({electron: config}));

@@ -18,7 +18,13 @@
 		"windows": {
 			"applicationId": "Cyph.Cyph",
 			"package": ["appx", "nsis"],
-			"publisher": "CN=D116D532-5873-4FAE-9CA2-6E026A5288B7"
+			"publisher": "CN=D116D532-5873-4FAE-9CA2-6E026A5288B7",
+			"signing": {
+				"release": {
+					"certificateSubjectName": "Cyph, Inc.",
+					"signingHashAlgorithms": ["sha256"]
+				}
+			}
 		}
 	}
 }
