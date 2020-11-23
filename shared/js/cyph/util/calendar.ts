@@ -39,10 +39,14 @@ const rruleWeekDayRevert = (dayOfWeek: CalendarInvite.DaysOfWeek) =>
 /** Converts recurrence rule string to RecurrenceRules proto object. */
 export const parseRecurrenceRule = (
 	recurrenceRuleString: string,
-	excludeDatesString: string = ''
+	excludeDatesString?: string
 ) : ICalendarRecurrenceRules | undefined => {
 	if (!recurrenceRuleString) {
 		return;
+	}
+
+	if (!excludeDatesString) {
+		excludeDatesString = '';
 	}
 
 	const rrule = RRule.fromString(
