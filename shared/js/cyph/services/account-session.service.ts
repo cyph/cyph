@@ -370,6 +370,11 @@ export class AccountSessionService extends SessionService {
 
 			await ephemeralSessionService.opened;
 
+			this.apiFlags.disableP2P =
+				ephemeralSessionService.apiFlags.disableP2P;
+			this.apiFlags.modestBranding =
+				ephemeralSessionService.apiFlags.modestBranding;
+
 			this.group = ephemeralSessionService.group;
 
 			this.ready.resolve();

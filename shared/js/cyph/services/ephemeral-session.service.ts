@@ -608,6 +608,11 @@ export class EphemeralSessionService extends SessionService {
 				this.analyticsService.sendEvent(flag.analEvent, 'used');
 			}
 
+			/* Force TURN for all scheduled meetings */
+			if (this.sessionInitService.timeString) {
+				this.apiFlags.disableP2P = true;
+			}
+
 			if (this.envService.isTelehealth) {
 				this.remoteUsername.next(
 					this.state.isAlice.value ?
