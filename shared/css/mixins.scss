@@ -723,7 +723,7 @@ $default-white: map-get($mat-grey, 100);
 	.e-schedule .e-vertical-view .e-current-time,
 	.e-dropdownbase .e-list-item.e-active,
 	.e-dropdownbase .e-list-item.e-active.e-hover,
-	.e-btn.e-flat:not(.e-icons),
+	.e-btn.e-flat:not(.e-icons):not(.e-close),
 	.e-float-input.e-control-wrapper:not(.e-error).e-input-focus
 		input
 		~ label.e-float-text {
