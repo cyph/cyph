@@ -383,6 +383,31 @@ export class Config {
 				},
 				namespace: 'video.cyph.healthcare'
 			},
+			holidaySale: {
+				id: 13,
+				items: {
+					giftPackA: {
+						amount: 15,
+						id: 1,
+						name: '10x 1-Year Supporter Gift Pack'
+					},
+					giftPackB: {
+						amount: 45,
+						id: 2,
+						name: '5x 2-Year Premium Gift Pack'
+					},
+					giftPackC: {
+						amount: 150,
+						id: 3,
+						name: '2x 3-Year Platinum Gift Pack'
+					},
+					giftPackD: {
+						amount: 175,
+						id: 4,
+						name: 'Gift Pack Ultimate Bundle'
+					}
+				}
+			},
 			subscription: {
 				id: 1,
 				items: {

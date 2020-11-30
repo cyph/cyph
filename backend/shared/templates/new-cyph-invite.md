@@ -1,7 +1,12 @@
 {{^fromApp}}Hello{{#name}} {{name}}{{/name}},{{/fromApp}}
 
 {{#purchased}}
+{{^gift}}
 Welcome to Cyph; thanks for signing up! Your support means a lot to us, and helps ensure that we're able to continue our work to protect user privacy.
+{{/gift}}
+{{#gift}}
+Thanks for supporting Cyph and sharing the gift of Internet privacy!
+{{/gift}}
 
 {{#inviteCode}}
 [**Click here to set up your account.**]({{accountsURL}}register/{{inviteCode}})
@@ -13,6 +18,15 @@ Here are your invite codes:
 {{#inviteCodes}}
 [{{accountsURLShort}}register/{{.}}]({{accountsURL}}register/{{.}})  
 {{/inviteCodes}}
+
+{{#inviteCodeGroups}}
+**{{plan}}{{#trialDuration}} ({{trialDuration}}){{/trialDuration}}**
+
+{{#codes}}
+[{{accountsURLShort}}register/{{.}}]({{accountsURL}}register/{{.}})  
+{{/codes}}
+
+{{/inviteCodeGroups}}
 {{/inviteCode}}
 {{/purchased}}
 
@@ -45,6 +59,15 @@ Here are your invite codes:
 {{#inviteCodes}}
 [{{accountsURLShort}}register/{{.}}]({{accountsURL}}register/{{.}})  
 {{/inviteCodes}}
+
+{{#inviteCodeGroups}}
+**{{plan}}{{#trialDuration}} ({{trialDuration}}){{/trialDuration}}**
+
+{{#codes}}
+[{{accountsURLShort}}register/{{.}}]({{accountsURL}}register/{{.}})  
+{{/codes}}
+
+{{/inviteCodeGroups}}
 {{/inviteCode}}
 {{/fromApp}}
 
@@ -55,6 +78,8 @@ Congratulations on securing your Cyph account invite!
 
 {{/purchased}}
 
+
+{{^inviteCodeGroups}}
 
 ---
 
@@ -175,6 +200,8 @@ Your {{#planFree}}account{{/planFree}}{{^planFree}}plan{{/planFree}} also includ
 * **Lifetime priority support:** Email us any time at founders@cyph.com — or just add @ryan and @josh on Cyph :)
 {{/platinumFeatures}}
 
+{{/inviteCodeGroups}}
+
 ---
 
-If you have any questions{{^planChange}} about the signup process{{/planChange}}, just email help@cyph.com.
+If you have any questions{{^planChange}} about the signup process{{#purchased}} or your purchase{{/purchased}}{{/planChange}}, just email help@cyph.com.

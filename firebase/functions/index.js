@@ -149,7 +149,9 @@ const getName = async (namespace, username) => {
 };
 
 const getInviteTemplateData = ({
+	gift,
 	inviteCode,
+	inviteCodeGroups,
 	inviteCodes,
 	inviterName,
 	name,
@@ -175,7 +177,36 @@ const getInviteTemplateData = ({
 				planChangeUpgrade: isUpgrade
 			}),
 		fromApp,
+		gift,
 		inviteCode,
+		inviteCodeGroups:
+			inviteCodeGroups !== undefined ?
+				inviteCodeGroups
+					.map(({codes, planGroup}) => ({
+						codes: codes || [],
+						plan: titleize(
+							isNaN(planGroup.trialMonths) ||
+								planGroup.trialMonths < 1 ?
+								CyphPlans[planGroup.plan] :
+								CyphPlans[planGroup.plan].replace(
+									/^(Annual|Monthly)/,
+									''
+								)
+						),
+						trialDuration:
+							isNaN(planGroup.trialMonths) ||
+							planGroup.trialMonths < 1 ?
+								undefined :
+							planGroup.trialMonths < 12 ?
+								`${Math.floor(
+									planGroup.trialMonths
+								)} Months`.replace('1 Months', '1 Month') :
+								`${Math.floor(
+									planGroup.trialMonths / 12
+								)} Years`.replace('1 Years', '1 Year')
+					}))
+					.filter(o => o.codes.length > 0) :
+				undefined,
 		inviteCodes,
 		inviterName,
 		name,
@@ -724,6 +755,7 @@ exports.generateInvite = onRequest(true, async (req, res, namespace) => {
 		true
 	);
 	const email = validateEmail(req.body.email, true);
+	const giftPack = !!req.body.giftPack;
 	const name = validateInput(req.body.name, undefined, true);
 	let plan =
 		req.body.plan in CyphPlans ? CyphPlans[req.body.plan] : CyphPlans.Free;
@@ -833,6 +865,7 @@ exports.generateInvite = onRequest(true, async (req, res, namespace) => {
 				isUpgrade ? 'Cyph Status Upgrade!' : 'Your Cyph Status',
 				{
 					data: getInviteTemplateData({
+						gift: giftPack,
 						name,
 						oldPlan,
 						plan
@@ -872,75 +905,117 @@ exports.generateInvite = onRequest(true, async (req, res, namespace) => {
 			preexistingInviteCodeData.braintreeSubscriptionID;
 	}
 
-	/* Previously gifted free users one-month premium trials */
-	let planTrialEnd = undefined;
-	if (false && plan === CyphPlans.Free) {
-		plan = CyphPlans.MonthlyPremium;
-		planTrialEnd = new Date().setMonth(new Date().getMonth() + 1);
-	}
-
 	const {firstName, lastName} = splitName(name);
 
-	const inviteCodes = await Promise.all(
-		new Array(
-			Math.min(braintreeIDs.length, braintreeSubscriptionIDs.length)
-		)
-			.fill(0)
-			.map((_, i) => [braintreeIDs[i], braintreeSubscriptionIDs[i]])
-			.map(async ([braintreeID, braintreeSubscriptionID], i) => {
-				const inviteCode = readableID(15);
+	const planGroups = req.body.plan.startsWith('[') ?
+		JSON.parse(req.body.plan).map(o => ({
+			plan: o.plan in CyphPlans ? CyphPlans[o.plan] : CyphPlans.Free,
+			planTrialEnd:
+				!isNaN(o.trialMonths) && o.trialMonths > 0 ?
+					new Date().setMonth(new Date().getMonth() + o.trialMonths) :
+					undefined,
+			quantity: !isNaN(o.quantity) && o.quantity > 0 ? o.quantity : 1,
+			trialMonths:
+				!isNaN(o.trialMonths) && o.trialMonths > 0 ?
+					o.trialMonths :
+					undefined
+		})) :
+		[{braintreeIDs, braintreeSubscriptionIDs, plan}];
 
-				await Promise.all([
-					database.ref(`${namespace}/inviteCodes/${inviteCode}`).set({
-						inviterUsername: '',
-						plan,
-						...(braintreeID ? {braintreeID} : {}),
-						...(braintreeSubscriptionID ?
-							{braintreeSubscriptionID} :
-							{}),
-						...(i === 0 && email ? {email} : {}),
-						...(!isNaN(planTrialEnd) ? {planTrialEnd} : {})
-					}),
-					email ?
-						database
-							.ref(
-								`${namespace}/inviteCodeEmailAddresses/${Buffer.from(
-									email
-								).toString('hex')}/${inviteCode}`
-							)
-							.set({inviterUsername: ''}) :
-						undefined,
-					i === 0 &&
-					email &&
-					mailchimp &&
-					mailchimpCredentials &&
-					mailchimpCredentials.listIDs &&
-					mailchimpCredentials.listIDs.pendingInvites ?
-						addToMailingList(
-							mailchimpCredentials.listIDs.pendingInvites,
-							email,
-							{
-								FNAME: firstName,
-								ICODE: inviteCode,
-								LNAME: lastName,
-								PLAN: CyphPlans[plan],
-								TRIAL: !!planTrialEnd
-							}
-						)
-							.then(async mailingListID =>
+	const inviteCodeGroups = await Promise.all(
+		planGroups.map(async planGroup => ({
+			codes: await Promise.all(
+				new Array(
+					planGroup.quantity !== undefined ?
+						planGroup.quantity :
+					planGroup.braintreeIDs &&
+						planGroup.braintreeSubscriptionIDs ?
+						Math.min(
+							planGroup.braintreeIDs.length,
+							planGroup.braintreeSubscriptionIDs.length
+						) :
+						0
+				)
+					.fill(0)
+					.map((_, i) =>
+						planGroup.quantity === undefined &&
+						planGroup.braintreeIDs &&
+						planGroup.braintreeSubscriptionIDs ?
+							[
+								planGroup.braintreeIDs[i],
+								planGroup.braintreeSubscriptionIDs[i]
+							] :
+							[]
+					)
+					.map(async ([braintreeID, braintreeSubscriptionID], i) => {
+						const inviteCode = readableID(15);
+
+						await Promise.all([
+							database
+								.ref(`${namespace}/inviteCodes/${inviteCode}`)
+								.set({
+									inviterUsername: '',
+									plan: planGroup.plan,
+									...(braintreeID ? {braintreeID} : {}),
+									...(braintreeSubscriptionID ?
+										{braintreeSubscriptionID} :
+										{}),
+									...(i === 0 && email ? {email} : {}),
+									...(!isNaN(planGroup.planTrialEnd) ?
+										{planTrialEnd: planGroup.planTrialEnd} :
+										{})
+								}),
+							email ?
 								database
 									.ref(
-										`${namespace}/pendingInvites/${inviteCode}`
+										`${namespace}/inviteCodeEmailAddresses/${Buffer.from(
+											email
+										).toString('hex')}/${inviteCode}`
 									)
-									.set(mailingListID)
-							)
-							.catch(() => {}) :
-						undefined
-				]);
+									.set({inviterUsername: ''}) :
+								undefined,
+							i === 0 &&
+							email &&
+							mailchimp &&
+							mailchimpCredentials &&
+							mailchimpCredentials.listIDs &&
+							mailchimpCredentials.listIDs.pendingInvites ?
+								addToMailingList(
+									mailchimpCredentials.listIDs.pendingInvites,
+									email,
+									{
+										FNAME: firstName,
+										ICODE: inviteCode,
+										LNAME: lastName,
+										PLAN: CyphPlans[planGroup.plan],
+										TRIAL: !!planGroup.planTrialEnd
+									}
+								)
+									.then(async mailingListID =>
+										database
+											.ref(
+												`${namespace}/pendingInvites/${inviteCode}`
+											)
+											.set(mailingListID)
+									)
+									.catch(() => {}) :
+								undefined
+						]);
 
-				return inviteCode;
-			})
+						return inviteCode;
+					})
+			),
+			planGroup
+		}))
 	);
+
+	const inviteCodes = inviteCodeGroups
+		.map(o => o.codes)
+		.reduce((a, b) => a.concat(b), []);
+
+	if (inviteCodeGroups.length === 1) {
+		plan = inviteCodeGroups[0].planGroup.plan;
+	}
 
 	return {
 		inviteCode: inviteCodes.length < 1 ? '' : inviteCodes[0],
@@ -953,16 +1028,23 @@ exports.generateInvite = onRequest(true, async (req, res, namespace) => {
 					(purchased ?
 						'Cyph Purchase Confirmation' :
 						"You've Been Invited to Cyph!") +
-						(plan === CyphPlans.Free ?
+						(giftPack ?
+							' (Gift Pack)' :
+						plan === CyphPlans.Free ?
 							'' :
+							/*
 							planTrialEnd ?
 							` (with ${titleize(CyphPlans[plan])} trial)` :
+							*/
 							` (${titleize(CyphPlans[plan])})`),
 					{
 						data: getInviteTemplateData({
-							...(inviteCodes.length > 1 ?
+							...(inviteCodes.length < 2 ?
+								{inviteCode: inviteCodes[0]} :
+							inviteCodeGroups.length < 2 ?
 								{inviteCodes} :
-								{inviteCode: inviteCodes[0]}),
+								{inviteCodeGroups}),
+							gift: giftPack,
 							name,
 							plan,
 							purchased

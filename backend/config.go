@@ -77,6 +77,7 @@ type PackageData struct {
 // Plan : Braintree plan
 type Plan struct {
 	AccountsPlan      string
+	GiftPack          bool
 	Price             int64
 	ProFeatures       map[string]bool
 	SessionCountLimit int64
@@ -720,6 +721,62 @@ var config = struct {
 		},
 		"12-1": Plan{
 			AccountsPlan: "MonthlyPlatinum",
+			ProFeatures: map[string]bool{
+				"disableP2P":     false,
+				"modestBranding": false,
+				"nativeCrypto":   false,
+				"telehealth":     false,
+				"video":          true,
+				"voice":          true,
+			},
+			SessionCountLimit: -1,
+		},
+		"13-1": Plan{
+			AccountsPlan: "[{\"plan\": \"AnnualSupporter\", \"quantity\": 10, \"trialMonths\": 18}]",
+			GiftPack:     true,
+			Price:        1500,
+			ProFeatures: map[string]bool{
+				"disableP2P":     false,
+				"modestBranding": false,
+				"nativeCrypto":   false,
+				"telehealth":     false,
+				"video":          true,
+				"voice":          true,
+			},
+			SessionCountLimit: -1,
+		},
+		"13-2": Plan{
+			AccountsPlan: "[{\"plan\": \"AnnualPremium\", \"quantity\": 5, \"trialMonths\": 30}]",
+			GiftPack:     true,
+			Price:        4500,
+			ProFeatures: map[string]bool{
+				"disableP2P":     false,
+				"modestBranding": false,
+				"nativeCrypto":   false,
+				"telehealth":     false,
+				"video":          true,
+				"voice":          true,
+			},
+			SessionCountLimit: -1,
+		},
+		"13-3": Plan{
+			AccountsPlan: "[{\"plan\": \"AnnualPlatinum\", \"quantity\": 2, \"trialMonths\": 42}]",
+			GiftPack:     true,
+			Price:        15000,
+			ProFeatures: map[string]bool{
+				"disableP2P":     false,
+				"modestBranding": false,
+				"nativeCrypto":   false,
+				"telehealth":     false,
+				"video":          true,
+				"voice":          true,
+			},
+			SessionCountLimit: -1,
+		},
+		"13-4": Plan{
+			AccountsPlan: "[{\"plan\": \"AnnualSupporter\", \"quantity\": 10, \"trialMonths\": 18}, {\"plan\": \"AnnualPremium\", \"quantity\": 5, \"trialMonths\": 30}, {\"plan\": \"AnnualPlatinum\", \"quantity\": 2, \"trialMonths\": 42}]",
+			GiftPack:     true,
+			Price:        17500,
 			ProFeatures: map[string]bool{
 				"disableP2P":     false,
 				"modestBranding": false,

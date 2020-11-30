@@ -568,12 +568,13 @@ func downgradeAccountHelper(userToken string, removeAppStoreReceiptRef bool) (st
 	return appStoreReceipt, braintreeSubscriptionID, nil
 }
 
-func generateInvite(email, name, plan, appStoreReceipt string, braintreeIDs, braintreeSubscriptionIDs []string, inviteCode, username string, purchased bool) (string, string, string, error) {
+func generateInvite(email, name, plan, appStoreReceipt string, braintreeIDs, braintreeSubscriptionIDs []string, inviteCode, username string, giftPack, purchased bool) (string, string, string, error) {
 	body, _ := json.Marshal(map[string]interface{}{
 		"appStoreReceipt":          appStoreReceipt,
 		"braintreeIDs":             strings.Join(braintreeIDs, "\n"),
 		"braintreeSubscriptionIDs": strings.Join(braintreeSubscriptionIDs, "\n"),
 		"email":                    email,
+		"giftPack":                 giftPack,
 		"inviteCode":               inviteCode,
 		"name":                     name,
 		"namespace":                "cyph.ws",

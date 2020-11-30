@@ -577,7 +577,7 @@ func braintreeCheckout(h HandlerArgs) (interface{}, int) {
 	plan, hasPlan := config.Plans[planID]
 
 	if success && hasPlan && plan.AccountsPlan != "" {
-		_inviteCode, oldBraintreeSubscriptionID, welcomeLetter, err := generateInvite(email, name, plan.AccountsPlan, appStoreReceipt, braintreeIDs, braintreeSubscriptionIDs, inviteCode, username, true)
+		_inviteCode, oldBraintreeSubscriptionID, welcomeLetter, err := generateInvite(email, name, plan.AccountsPlan, appStoreReceipt, braintreeIDs, braintreeSubscriptionIDs, inviteCode, username, plan.GiftPack, true)
 
 		inviteCode := _inviteCode
 
@@ -1276,7 +1276,7 @@ func rollOutWaitlistInvites(h HandlerArgs) (interface{}, int) {
 			break
 		}
 
-		_, _, _, err = generateInvite(betaSignup.Email, betaSignup.Name, "", "", []string{""}, []string{""}, "", "", false)
+		_, _, _, err = generateInvite(betaSignup.Email, betaSignup.Name, "", "", []string{""}, []string{""}, "", "", false, false)
 
 		if err != nil {
 			log.Printf("Failed to invite %s in rollOutWaitlistInvites: %v", betaSignup.Email, err)
