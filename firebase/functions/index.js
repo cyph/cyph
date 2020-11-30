@@ -907,7 +907,9 @@ exports.generateInvite = onRequest(true, async (req, res, namespace) => {
 
 	const {firstName, lastName} = splitName(name);
 
-	const planGroups = req.body.plan.startsWith('[') ?
+	const isPlanGroupPurchase = req.body.plan.startsWith('[');
+
+	const planGroups = isPlanGroupPurchase ?
 		JSON.parse(req.body.plan).map(o => ({
 			plan: o.plan in CyphPlans ? CyphPlans[o.plan] : CyphPlans.Free,
 			planTrialEnd:
@@ -1013,10 +1015,6 @@ exports.generateInvite = onRequest(true, async (req, res, namespace) => {
 		.map(o => o.codes)
 		.reduce((a, b) => a.concat(b), []);
 
-	if (inviteCodeGroups.length === 1) {
-		plan = inviteCodeGroups[0].planGroup.plan;
-	}
-
 	return {
 		inviteCode: inviteCodes.length < 1 ? '' : inviteCodes[0],
 		oldBraintreeSubscriptionID,
@@ -1039,11 +1037,11 @@ exports.generateInvite = onRequest(true, async (req, res, namespace) => {
 							` (${titleize(CyphPlans[plan])})`),
 					{
 						data: getInviteTemplateData({
-							...(inviteCodes.length < 2 ?
+							...(isPlanGroupPurchase ?
+								{inviteCodeGroups} :
+							inviteCodes.length < 2 ?
 								{inviteCode: inviteCodes[0]} :
-							inviteCodeGroups.length < 2 ?
-								{inviteCodes} :
-								{inviteCodeGroups}),
+								{inviteCodes}),
 							gift: giftPack,
 							name,
 							plan,
