@@ -1,3 +1,5 @@
+/* eslint-disable max-lines */
+
 import {Injectable} from '@angular/core';
 import {EventSettingsModel} from '@syncfusion/ej2-angular-schedule';
 import memoize from 'lodash-es/memoize';
@@ -32,6 +34,7 @@ import {AccountSettingsService} from './account-settings.service';
 import {ConfigService} from './config.service';
 import {AccountDatabaseService} from './crypto/account-database.service';
 import {EnvService} from './env.service';
+import {StringsService} from './strings.service';
 
 /**
  * Account appointments service.
@@ -428,6 +431,66 @@ export class AccountAppointmentsService extends BaseProvider {
 		return {appointment, burnerSession};
 	}
 
+	/**
+	 * Creates appointment object and sends invite.
+	 * @returns Uploaded file ID.
+	 */
+	public async sendAppointment (
+		calendarInvite: ICalendarInvite,
+		appointmentGroupMembers?: {
+			email?: string;
+			name: string;
+			phoneNumber?: string;
+		}[],
+		appointmentSharing?: AppointmentSharing,
+		forms?: IForm[],
+		recipients?: string[]
+	) : Promise<string> {
+		const {appointment, burnerSession} = this.createAppointment(
+			calendarInvite,
+			appointmentGroupMembers,
+			appointmentSharing,
+			forms,
+			recipients
+		);
+
+		const [sentFileID] = await Promise.all([
+			this.accountFilesService.upload(
+				(this.envService.isTelehealth ?
+					`${this.stringsService.telehealthCallAbout} ` :
+					'') + (appointment.calendarInvite.title || '?'),
+				appointment,
+				recipients
+			).result,
+			this.sendInvite(appointment, burnerSession)
+		]);
+
+		return sentFileID;
+	}
+
+	/** Creates appointment object and sends invite (no upload). */
+	public async sendAppointmentNoUpload (
+		calendarInvite: ICalendarInvite,
+		appointmentGroupMembers?: {
+			email?: string;
+			name: string;
+			phoneNumber?: string;
+		}[],
+		appointmentSharing?: AppointmentSharing,
+		forms?: IForm[],
+		recipients?: string[]
+	) : Promise<void> {
+		const {appointment, burnerSession} = this.createAppointment(
+			calendarInvite,
+			appointmentGroupMembers,
+			appointmentSharing,
+			forms,
+			recipients
+		);
+
+		await this.sendInvite(appointment, burnerSession);
+	}
+
 	/** Sends appointment invite (initial invite or rescheduling). */
 	public async sendInvite (
 		appointment: IAppointment,
@@ -450,7 +513,10 @@ export class AccountAppointmentsService extends BaseProvider {
 		private readonly configService: ConfigService,
 
 		/** @ignore */
-		private readonly envService: EnvService
+		private readonly envService: EnvService,
+
+		/** @ignore */
+		private readonly stringsService: StringsService
 	) {
 		super();
 	}

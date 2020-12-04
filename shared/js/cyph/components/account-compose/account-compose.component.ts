@@ -401,33 +401,17 @@ export class AccountComposeComponent extends BaseProvider
 				this.accountChatService.chat.currentMessage.calendarInvite !==
 					undefined
 			) {
-				const {
-					appointment,
-					burnerSession
-				} = this.accountAppointmentsService.createAppointment(
-					this.accountChatService.chat.currentMessage.calendarInvite,
-					this.appointmentGroupMembers.value,
-					this.appointmentSharing.value,
-					this.accountChatService.chat.currentMessage.form ?
-						[this.accountChatService.chat.currentMessage.form] :
-						undefined
-				);
-
-				const [sentFileID] = await Promise.all([
-					this.accountFilesService.upload(
-						(this.envService.isTelehealth ?
-							`${this.stringsService.telehealthCallAbout} ` :
-							'') + (appointment.calendarInvite.title || '?'),
-						appointment,
-						recipients
-					).result,
-					this.accountAppointmentsService.sendInvite(
-						appointment,
-						burnerSession
+				this.sentFileID.next(
+					await this.accountAppointmentsService.sendAppointment(
+						this.accountChatService.chat.currentMessage
+							.calendarInvite,
+						this.appointmentGroupMembers.value,
+						this.appointmentSharing.value,
+						this.accountChatService.chat.currentMessage.form ?
+							[this.accountChatService.chat.currentMessage.form] :
+							undefined
 					)
-				]);
-
-				this.sentFileID.next(sentFileID);
+				);
 			}
 			else if (
 				this.messageType.value === ChatMessageValue.Types.Quill &&
