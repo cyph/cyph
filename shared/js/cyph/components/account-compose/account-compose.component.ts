@@ -374,10 +374,10 @@ export class AccountComposeComponent extends BaseProvider
 		}
 		else {
 			const recipientUsers = Array.from(this.recipients.value);
-			const recipients = recipientUsers.map(o => o.username);
+			const recipientUsernames = recipientUsers.map(o => o.username);
 
 			if (
-				recipients.length < 1 &&
+				recipientUsernames.length < 1 &&
 				!(
 					this.accountDatabaseService.currentUser.value &&
 					(this.accountService.fromEmail.value ||
@@ -420,7 +420,7 @@ export class AccountComposeComponent extends BaseProvider
 				if (
 					!this.messageSubject.value ||
 					!this.accountChatService.chat.currentMessage.quill ||
-					recipients.length < 1
+					recipientUsernames.length < 1
 				) {
 					return;
 				}
@@ -428,7 +428,7 @@ export class AccountComposeComponent extends BaseProvider
 				await this.accountFilesService.upload(
 					this.messageSubject.value,
 					this.accountChatService.chat.currentMessage.quill,
-					recipients,
+					recipientUsernames,
 					undefined,
 					{
 						email: this.accountService.fromEmail.value,
@@ -452,15 +452,17 @@ export class AccountComposeComponent extends BaseProvider
 					return;
 				}
 
-				if (recipients.length === 1) {
-					await this.accountContactsService.addContact(recipients[0]);
+				if (recipientUsernames.length === 1) {
+					await this.accountContactsService.addContact(
+						recipientUsernames[0]
+					);
 				}
 
 				const chat =
-					recipients.length === 1 ?
-						{username: recipients[0]} :
+					recipientUsernames.length === 1 ?
+						{username: recipientUsernames[0]} :
 						await this.accountFilesService.initMessagingGroup(
-							recipients,
+							recipientUsernames,
 							this.messageType.value ===
 								ChatMessageValue.Types.Quill
 						);

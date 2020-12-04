@@ -389,7 +389,7 @@ export class AccountAppointmentsService extends BaseProvider {
 		}[] = [],
 		appointmentSharing?: AppointmentSharing,
 		forms?: IForm[],
-		recipients: string[] = []
+		recipientUsernames: string[] = []
 	) : {
 		appointment: IAppointment;
 		burnerSession: IBurnerSession;
@@ -411,7 +411,7 @@ export class AccountAppointmentsService extends BaseProvider {
 			calendarInvite,
 			forms,
 			participants: [
-				...recipients,
+				...recipientUsernames,
 				...(this.accountDatabaseService.currentUser.value ?
 					[
 						this.accountDatabaseService.currentUser.value.user
@@ -444,14 +444,14 @@ export class AccountAppointmentsService extends BaseProvider {
 		}[],
 		appointmentSharing?: AppointmentSharing,
 		forms?: IForm[],
-		recipients?: string[]
+		recipientUsernames?: string[]
 	) : Promise<string> {
 		const {appointment, burnerSession} = this.createAppointment(
 			calendarInvite,
 			appointmentGroupMembers,
 			appointmentSharing,
 			forms,
-			recipients
+			recipientUsernames
 		);
 
 		const [sentFileID] = await Promise.all([
@@ -460,7 +460,7 @@ export class AccountAppointmentsService extends BaseProvider {
 					`${this.stringsService.telehealthCallAbout} ` :
 					'') + (appointment.calendarInvite.title || '?'),
 				appointment,
-				recipients
+				recipientUsernames
 			).result,
 			this.sendInvite(appointment, burnerSession)
 		]);
@@ -478,14 +478,14 @@ export class AccountAppointmentsService extends BaseProvider {
 		}[],
 		appointmentSharing?: AppointmentSharing,
 		forms?: IForm[],
-		recipients?: string[]
+		recipientUsernames?: string[]
 	) : Promise<void> {
 		const {appointment, burnerSession} = this.createAppointment(
 			calendarInvite,
 			appointmentGroupMembers,
 			appointmentSharing,
 			forms,
-			recipients
+			recipientUsernames
 		);
 
 		await this.sendInvite(appointment, burnerSession);
