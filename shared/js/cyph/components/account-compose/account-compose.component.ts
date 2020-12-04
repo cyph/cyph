@@ -29,7 +29,6 @@ import {
 	AccountFileRecord,
 	AccountUserTypes,
 	ChatMessageValue,
-	IAppointment,
 	IForm
 } from '../../proto';
 import {accountChatProviders} from '../../providers';
@@ -39,7 +38,6 @@ import {AccountContactsService} from '../../services/account-contacts.service';
 import {AccountFilesService} from '../../services/account-files.service';
 import {AccountSettingsService} from '../../services/account-settings.service';
 import {AccountService} from '../../services/account.service';
-import {ConfigService} from '../../services/config.service';
 import {AccountAuthService} from '../../services/crypto/account-auth.service';
 import {AccountDatabaseService} from '../../services/crypto/account-database.service';
 import {DialogService} from '../../services/dialog.service';
@@ -49,7 +47,6 @@ import {SessionService} from '../../services/session.service';
 import {StringsService} from '../../services/strings.service';
 import {trackBySelf} from '../../track-by/track-by-self';
 import {toBehaviorSubject} from '../../util/flatten-observable';
-import {readableID, uuid} from '../../util/uuid';
 
 /**
  * Angular component for account compose UI.
@@ -405,52 +402,22 @@ export class AccountComposeComponent extends BaseProvider
 					undefined
 			) {
 				const {
-					calendarInvite
-				} = this.accountChatService.chat.currentMessage;
-
-				calendarInvite.uid = uuid();
-				calendarInvite.url = `${this.envService.appUrl}account-burner/${calendarInvite.uid}`;
-
-				const members = this.appointmentGroupMembers.value.map(o => ({
-					...o,
-					id: readableID(this.configService.secretLength)
-				}));
-
-				const burnerSession = {
-					callType: calendarInvite.callType,
-					members
-				};
-
-				const appointment: IAppointment = {
-					calendarInvite,
-					forms: this.accountChatService.chat.currentMessage.form ?
+					appointment,
+					burnerSession
+				} = this.accountAppointmentsService.createAppointment(
+					this.accountChatService.chat.currentMessage.calendarInvite,
+					this.appointmentGroupMembers.value,
+					this.appointmentSharing.value,
+					this.accountChatService.chat.currentMessage.form ?
 						[this.accountChatService.chat.currentMessage.form] :
-						undefined,
-					participants: [
-						...recipients,
-						...(this.accountDatabaseService.currentUser.value ?
-							[
-								this.accountDatabaseService.currentUser.value
-									.user.username
-							] :
-							[])
-					],
-					rsvpSessionSubID: uuid(),
-					sharing: {
-						inviterTimeZone: this.appointmentSharing.value
-							.inviterTimeZone.value,
-						memberContactInfo: this.appointmentSharing.value
-							.memberContactInfo.value,
-						memberList: this.appointmentSharing.value.memberList
-							.value
-					}
-				};
+						undefined
+				);
 
 				const [sentFileID] = await Promise.all([
 					this.accountFilesService.upload(
 						(this.envService.isTelehealth ?
 							`${this.stringsService.telehealthCallAbout} ` :
-							'') + (calendarInvite.title || '?'),
+							'') + (appointment.calendarInvite.title || '?'),
 						appointment,
 						recipients
 					).result,
@@ -576,9 +543,6 @@ export class AccountComposeComponent extends BaseProvider
 
 		/** @ignore */
 		private readonly accountFilesService: AccountFilesService,
-
-		/** @ignore */
-		private readonly configService: ConfigService,
 
 		/** @ignore */
 		private readonly dialogService: DialogService,

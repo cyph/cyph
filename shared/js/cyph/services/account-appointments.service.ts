@@ -4,14 +4,20 @@ import memoize from 'lodash-es/memoize';
 import {Observable, of} from 'rxjs';
 import {map, switchMap, take} from 'rxjs/operators';
 import {BaseProvider} from '../base-provider';
-import {ISchedulerObject, ISchedulerObjectBase} from '../calendar';
+import {
+	AppointmentSharing,
+	ISchedulerObject,
+	ISchedulerObjectBase
+} from '../calendar';
 import {potassiumUtil} from '../crypto/potassium/potassium-util';
 import {
 	BurnerSession,
 	CallTypes,
 	IAccountFileRecord,
 	IAppointment,
-	IBurnerSession
+	IBurnerSession,
+	ICalendarInvite,
+	IForm
 } from '../../proto';
 import {
 	serializeRecurrenceExclusions,
@@ -20,10 +26,12 @@ import {
 import {filterUndefined} from '../util/filter';
 import {observableAll} from '../util/observable-all';
 import {timestampToDateNoSeconds, watchTimestamp} from '../util/time';
+import {readableID, uuid} from '../util/uuid';
 import {AccountFilesService} from './account-files.service';
 import {AccountSettingsService} from './account-settings.service';
 import {ConfigService} from './config.service';
 import {AccountDatabaseService} from './crypto/account-database.service';
+import {EnvService} from './env.service';
 
 /**
  * Account appointments service.
@@ -368,6 +376,58 @@ export class AccountAppointmentsService extends BaseProvider {
 		return this.sendInviteInternal(appointment, true, burnerSession);
 	}
 
+	/** Creates appointment object. */
+	public createAppointment (
+		calendarInvite: ICalendarInvite,
+		appointmentGroupMembers: {
+			email?: string;
+			name: string;
+			phoneNumber?: string;
+		}[] = [],
+		appointmentSharing?: AppointmentSharing,
+		forms?: IForm[],
+		recipients: string[] = []
+	) : {
+		appointment: IAppointment;
+		burnerSession: IBurnerSession;
+	} {
+		calendarInvite.uid = uuid();
+		calendarInvite.url = `${this.envService.appUrl}account-burner/${calendarInvite.uid}`;
+
+		const members = appointmentGroupMembers.map(o => ({
+			...o,
+			id: readableID(this.configService.secretLength)
+		}));
+
+		const burnerSession = {
+			callType: calendarInvite.callType,
+			members
+		};
+
+		const appointment: IAppointment = {
+			calendarInvite,
+			forms,
+			participants: [
+				...recipients,
+				...(this.accountDatabaseService.currentUser.value ?
+					[
+						this.accountDatabaseService.currentUser.value.user
+							.username
+					] :
+					[])
+			],
+			rsvpSessionSubID: uuid(),
+			sharing: {
+				inviterTimeZone: !!appointmentSharing?.inviterTimeZone.value,
+				memberContactInfo: !!appointmentSharing?.memberContactInfo
+					.value,
+				memberList: !!appointmentSharing?.memberList.value
+			}
+		};
+
+		return {appointment, burnerSession};
+	}
+
 	/** Sends appointment invite (initial invite or rescheduling). */
 	public async sendInvite (
 		appointment: IAppointment,
@@ -387,7 +447,10 @@ export class AccountAppointmentsService extends BaseProvider {
 		private readonly accountSettingsService: AccountSettingsService,
 
 		/** @ignore */
-		private readonly configService: ConfigService
+		private readonly configService: ConfigService,
+
+		/** @ignore */
+		private readonly envService: EnvService
 	) {
 		super();
 	}
