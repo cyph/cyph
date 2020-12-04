@@ -152,10 +152,6 @@ const sendMailInternal = async (
 								end: new Date(eventDetails.endTime),
 								...(eventDetails.location ?
 									{location: eventDetails.location} :
-								eventDetails.url && eventDetails.description ?
-									{
-										location: eventDetails.url
-									} :
 									{}),
 								organizer: eventInviter || fromFormatted,
 								...(eventDetails.recurrence ? {repeating: {
