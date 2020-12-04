@@ -402,7 +402,7 @@ export class AccountComposeComponent extends BaseProvider
 					undefined
 			) {
 				this.sentFileID.next(
-					await this.accountAppointmentsService.sendAppointment(
+					(await this.accountAppointmentsService.sendAppointment(
 						this.accountChatService.chat.currentMessage
 							.calendarInvite,
 						this.appointmentGroupMembers.value,
@@ -410,7 +410,7 @@ export class AccountComposeComponent extends BaseProvider
 						this.accountChatService.chat.currentMessage.form ?
 							[this.accountChatService.chat.currentMessage.form] :
 							undefined
-					)
+					)).uploadedFileID
 				);
 			}
 			else if (

@@ -431,10 +431,7 @@ export class AccountAppointmentsService extends BaseProvider {
 		return {appointment, burnerSession};
 	}
 
-	/**
-	 * Creates appointment object and sends invite.
-	 * @returns Uploaded file ID.
-	 */
+	/** Creates appointment object and sends invite. */
 	public async sendAppointment (
 		calendarInvite: ICalendarInvite,
 		appointmentGroupMembers?: {
@@ -445,7 +442,11 @@ export class AccountAppointmentsService extends BaseProvider {
 		appointmentSharing?: AppointmentSharing,
 		forms?: IForm[],
 		recipientUsernames?: string[]
-	) : Promise<string> {
+	) : Promise<{
+		appointment: IAppointment;
+		burnerSession: IBurnerSession;
+		uploadedFileID: string;
+	}> {
 		const {appointment, burnerSession} = this.createAppointment(
 			calendarInvite,
 			appointmentGroupMembers,
@@ -454,7 +455,7 @@ export class AccountAppointmentsService extends BaseProvider {
 			recipientUsernames
 		);
 
-		const [sentFileID] = await Promise.all([
+		const [uploadedFileID] = await Promise.all([
 			this.accountFilesService.upload(
 				(this.envService.isTelehealth ?
 					`${this.stringsService.telehealthCallAbout} ` :
@@ -465,7 +466,7 @@ export class AccountAppointmentsService extends BaseProvider {
 			this.sendInvite(appointment, burnerSession)
 		]);
 
-		return sentFileID;
+		return {appointment, burnerSession, uploadedFileID};
 	}
 
 	/** Creates appointment object and sends invite (no upload). */
@@ -479,7 +480,10 @@ export class AccountAppointmentsService extends BaseProvider {
 		appointmentSharing?: AppointmentSharing,
 		forms?: IForm[],
 		recipientUsernames?: string[]
-	) : Promise<void> {
+	) : Promise<{
+		appointment: IAppointment;
+		burnerSession: IBurnerSession;
+	}> {
 		const {appointment, burnerSession} = this.createAppointment(
 			calendarInvite,
 			appointmentGroupMembers,
@@ -489,6 +493,8 @@ export class AccountAppointmentsService extends BaseProvider {
 		);
 
 		await this.sendInvite(appointment, burnerSession);
+
+		return {appointment, burnerSession};
 	}
 
 	/** Sends appointment invite (initial invite or rescheduling). */
