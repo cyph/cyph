@@ -17,6 +17,7 @@ import {AccountHomeComponent} from '../components/account-home';
 import {AccountIncomingPatientInfoComponent} from '../components/account-incoming-patient-info';
 import {AccountLogoutComponent} from '../components/account-logout';
 import {AccountMessagingComponent} from '../components/account-messaging';
+import {AccountNewAppointmentTestComponent} from '../components/account-new-appointment-test';
 import {AccountNoteComponent} from '../components/account-note';
 import {AccountNotesComponent} from '../components/account-notes';
 import {AccountNotificationsSubscribeComponent} from '../components/account-notifications-subscribe';
@@ -47,6 +48,14 @@ export const account: Route = {
 	canActivate: [AccountAuthGuardService],
 	canActivateChild: [AccountAuthGuardService],
 	children: [
+		...(!env.environment.production ?
+			[
+				{
+					path: 'new-appointment-test',
+					component: AccountNewAppointmentTestComponent
+				}
+			] :
+			[]),
 		{
 			path: '',
 			component: AccountHomeComponent,

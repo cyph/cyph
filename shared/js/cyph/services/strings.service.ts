@@ -821,6 +821,24 @@ export class StringsService extends BaseProvider {
 	public readonly nameOrPseudonym = `Name or Pseudonym`;
 
 	/** @see StringsService */
+	public readonly newAppointmentTestGuestEmailContent = `Where should the invites be sent?`;
+
+	/** @see StringsService */
+	public readonly newAppointmentTestGuestEmailPlaceholder = `Email`;
+
+	/** @see StringsService */
+	public readonly newAppointmentTestHostOpenAlert = `Dismiss this alert to open the appointment as the host.`;
+
+	/** @see StringsService */
+	public readonly newAppointmentTestNumberOfGuestsContent = `How many guests should be invited?`;
+
+	/** @see StringsService */
+	public readonly newAppointmentTestNumberOfGuestsPlaceholder = `Number of Guests`;
+
+	/** @see StringsService */
+	public readonly newAppointmentTestTitle = `Appointment Test Setup`;
+
+	/** @see StringsService */
 	public readonly newDeviceActivationConfirmation = `New device successfully activated!`;
 
 	/** @see StringsService */
