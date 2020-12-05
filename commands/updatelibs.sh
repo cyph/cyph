@@ -400,7 +400,7 @@ read -r -d '' modules <<- EOM
 	supersphincs
 	tab-indent
 	terser
-	terser-webpack-plugin
+	terser-webpack-plugin@^4
 	text-mask-addons
 	textillate
 	tns-android
