@@ -348,7 +348,6 @@ read -r -d '' modules <<- EOM
 	ngx-scrollbar
 	ngx-teximate
 	node-fetch
-	node-sass
 	nodemailer@4
 	notify-cli
 	ntru
