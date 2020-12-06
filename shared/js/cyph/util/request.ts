@@ -16,6 +16,8 @@ const baseRequest = <R, T>(
 	o: {
 		contentType?: string;
 		data?: any;
+		debug?: {tries?: number};
+
 		discardErrors?: boolean;
 		headers?: Record<string, string | string[]>;
 		method?: string;
@@ -74,6 +76,10 @@ const baseRequest = <R, T>(
 			let statusOk = false;
 
 			for (let i = 0; !statusOk && i <= retries; ++i) {
+				if (o.debug) {
+					o.debug.tries = (o.debug.tries || 0) + 1;
+				}
+
 				try {
 					progress.next(0);
 
@@ -147,6 +153,7 @@ const baseRequest = <R, T>(
 export const request = async (o: {
 	contentType?: string;
 	data?: any;
+	debug?: {tries?: number};
 	headers?: Record<string, string | string[]>;
 	method?: string;
 	retries?: number;
@@ -162,6 +169,7 @@ export const request = async (o: {
 export const requestByteStream = (o: {
 	contentType?: string;
 	data?: any;
+	debug?: {tries?: number};
 	headers?: Record<string, string | string[]>;
 	method?: string;
 	retries?: number;
@@ -180,6 +188,7 @@ export const requestByteStream = (o: {
 export const requestBytes = async (o: {
 	contentType?: string;
 	data?: any;
+	debug?: {tries?: number};
 	headers?: Record<string, string | string[]>;
 	method?: string;
 	retries?: number;
@@ -193,6 +202,7 @@ export const requestBytes = async (o: {
 export const requestMaybeJSON = async (o: {
 	contentType?: string;
 	data?: any;
+	debug?: {tries?: number};
 	headers?: Record<string, string | string[]>;
 	method?: string;
 	retries?: number;
@@ -213,6 +223,7 @@ export const requestMaybeJSON = async (o: {
 export const requestJSON = async (o: {
 	contentType?: string;
 	data?: any;
+	debug?: {tries?: number};
 	headers?: Record<string, string | string[]>;
 	method?: string;
 	retries?: number;

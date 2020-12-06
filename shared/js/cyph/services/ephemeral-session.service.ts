@@ -677,6 +677,7 @@ export class EphemeralSessionService extends SessionService {
 				this.state.startingNewCyph.value === false ? '' : uuid(true);
 
 			let calledGetChannelID = false;
+			const getChannelIDRequestDebug = {tries: 0};
 
 			const getChannelID = async () => {
 				calledGetChannelID = true;
@@ -686,6 +687,7 @@ export class EphemeralSessionService extends SessionService {
 						channelID: maybeChannelID,
 						proFeatures: this.proFeatures
 					},
+					debug: getChannelIDRequestDebug,
 					method: 'POST',
 					retries: 5,
 					url: `${env.baseUrl}channels/${this.cyphID}`
@@ -716,6 +718,7 @@ export class EphemeralSessionService extends SessionService {
 				ephemeralSessionInit: {
 					channelID,
 					cyphID: this.cyphID,
+					getChannelIDRequestTries: getChannelIDRequestDebug.tries,
 					maybeChannelID,
 					startingNewCyph: this.state.startingNewCyph.value,
 					wasChannelIDCached: !!channelID && !calledGetChannelID
