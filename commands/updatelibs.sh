@@ -244,8 +244,8 @@ read -r -d '' modules <<- EOM
 	csv-stringify
 	d3
 	datauri
-	devextreme
-	devextreme-angular
+	devextreme@20.1.9
+	devextreme-angular@20.1.9
 	dompurify
 	dope-qr
 	dropzone
