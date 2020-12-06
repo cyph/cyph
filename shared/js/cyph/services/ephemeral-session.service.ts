@@ -13,6 +13,7 @@ import {
 } from '../proto';
 import {ProFeatures, RpcEvents} from '../session';
 import {getOrSetDefault} from '../util/get-or-set-default';
+import {debugLog} from '../util/log';
 import {random} from '../util/random';
 import {request} from '../util/request';
 import {deserialize, serialize} from '../util/serialization';
@@ -675,8 +676,12 @@ export class EphemeralSessionService extends SessionService {
 			const maybeChannelID =
 				this.state.startingNewCyph.value === false ? '' : uuid(true);
 
-			const getChannelID = async () =>
-				request({
+			let calledGetChannelID = false;
+
+			const getChannelID = async () => {
+				calledGetChannelID = true;
+
+				return request({
 					data: {
 						channelID: maybeChannelID,
 						proFeatures: this.proFeatures
@@ -685,6 +690,7 @@ export class EphemeralSessionService extends SessionService {
 					retries: 5,
 					url: `${env.baseUrl}channels/${this.cyphID}`
 				});
+			};
 
 			let channelID: string | undefined;
 
@@ -705,6 +711,16 @@ export class EphemeralSessionService extends SessionService {
 					getChannelID());
 			}
 			catch {}
+
+			debugLog(() => ({
+				ephemeralSessionInit: {
+					channelID,
+					cyphID: this.cyphID,
+					maybeChannelID,
+					startingNewCyph: this.state.startingNewCyph.value,
+					wasChannelIDCached: !!channelID && !calledGetChannelID
+				}
+			}));
 
 			if (channelID === undefined) {
 				this.cyphNotFound.resolve();
