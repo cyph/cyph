@@ -8,8 +8,7 @@ import {
 	IBurnerGroup,
 	IBurnerGroupMember,
 	IBurnerGroupMemberInitiator,
-	NotificationTypes,
-	StringProto
+	NotificationTypes
 } from '../proto';
 import {ProFeatures, RpcEvents} from '../session';
 import {getOrSetDefault} from '../util/get-or-set-default';
@@ -33,7 +32,6 @@ import {DatabaseService} from './database.service';
 import {DialogService} from './dialog.service';
 import {EnvService} from './env.service';
 import {ErrorService} from './error.service';
-import {LocalStorageService} from './local-storage.service';
 import {NotificationService} from './notification.service';
 import {SessionInitService} from './session-init.service';
 import {SessionWrapperService} from './session-wrapper.service';
@@ -50,9 +48,6 @@ export class EphemeralSessionService extends SessionService {
 
 	/** @ignore */
 	private readonly chatRequestRingTimeoutGracePeriod: number = 60000;
-
-	/** @ignore */
-	private readonly localStorageKeyPrefixInternal = 'BurnerChannelID';
 
 	/** @ignore */
 	private pingPongTimeouts: number = 0;
@@ -148,7 +143,6 @@ export class EphemeralSessionService extends SessionService {
 			const masterSessionInit = new BasicSessionInitService();
 			masterSessionInit.accountsBurnerAliceData = this.sessionInitService.accountsBurnerAliceData;
 			masterSessionInit.child = true;
-			masterSessionInit.localStorageKeyPrefix = this.sessionInitService.localStorageKeyPrefix;
 			masterSessionInit.parentID = parentID;
 			masterSessionInit.timeString = this.sessionInitService.timeString;
 			masterSessionInit.setID(member.id, undefined, true);
@@ -158,7 +152,6 @@ export class EphemeralSessionService extends SessionService {
 			const childSessionInit = new BasicSessionInitService();
 			childSessionInit.accountsBurnerAliceData = this.sessionInitService.accountsBurnerAliceData;
 			childSessionInit.child = true;
-			childSessionInit.localStorageKeyPrefix = this.sessionInitService.localStorageKeyPrefix;
 			childSessionInit.parentID = parentID;
 			childSessionInit.timeString = this.sessionInitService.timeString;
 			childSessionInit.setID(burnerGroup.members[0].id);
@@ -279,14 +272,6 @@ export class EphemeralSessionService extends SessionService {
 		)}`;
 	}
 
-	/** @ignore */
-	private get localStorageKeyPrefix () : string {
-		return (
-			this.sessionInitService.localStorageKeyPrefix ||
-			this.localStorageKeyPrefixInternal
-		);
-	}
-
 	/**
 	 * @ignore
 	 * Intermittent check to verify chat is still alive and send fake encrypted chatter.
@@ -395,12 +380,7 @@ export class EphemeralSessionService extends SessionService {
 					request({
 						method: 'POST',
 						url: `${env.baseUrl}channels/${this.cyphID}`
-					}).catch(() => {}),
-					this.localStorageService
-						.removeItem(
-							`${this.localStorageKeyPrefix}:${this.cyphID}`
-						)
-						.catch(() => {})
+					}).catch(() => {})
 				] :
 				[])
 		]);
@@ -467,7 +447,6 @@ export class EphemeralSessionService extends SessionService {
 			this.accountService,
 			this.accountDatabaseService,
 			this.configService,
-			this.localStorageService,
 			this.notificationService
 		);
 	}
@@ -496,9 +475,6 @@ export class EphemeralSessionService extends SessionService {
 
 		/** @ignore */
 		private readonly configService: ConfigService,
-
-		/** @ignore */
-		private readonly localStorageService: LocalStorageService,
 
 		/** @ignore */
 		private readonly notificationService: NotificationService
@@ -676,13 +652,9 @@ export class EphemeralSessionService extends SessionService {
 			const maybeChannelID =
 				this.state.startingNewCyph.value === false ? '' : uuid(true);
 
-			let calledGetChannelID = false;
 			const getChannelIDRequestDebug = {tries: 0};
 
-			const getChannelID = async () => {
-				calledGetChannelID = true;
-
-				return request({
+			const getChannelID = async () => request({
 					data: {
 						channelID: maybeChannelID,
 						proFeatures: this.proFeatures
@@ -692,7 +664,6 @@ export class EphemeralSessionService extends SessionService {
 					retries: 5,
 					url: `${env.baseUrl}channels/${this.cyphID}`
 				});
-			};
 
 			let channelID: string | undefined;
 
@@ -703,14 +674,7 @@ export class EphemeralSessionService extends SessionService {
 
 				await this.prepareForCallType();
 
-				channelID = await (this.state.startingNewCyph.value ===
-				undefined ?
-					this.localStorageService.getOrSetDefault(
-						`${this.localStorageKeyPrefix}:${this.cyphID}`,
-						StringProto,
-						getChannelID
-					) :
-					getChannelID());
+				channelID = await getChannelID();
 			}
 			catch {}
 
@@ -720,8 +684,7 @@ export class EphemeralSessionService extends SessionService {
 					cyphID: this.cyphID,
 					getChannelIDRequestTries: getChannelIDRequestDebug.tries,
 					maybeChannelID,
-					startingNewCyph: this.state.startingNewCyph.value,
-					wasChannelIDCached: !!channelID && !calledGetChannelID
+					startingNewCyph: this.state.startingNewCyph.value
 				}
 			}));
 
@@ -771,7 +734,6 @@ export class EphemeralSessionService extends SessionService {
 					const sessionInit = new BasicSessionInitService();
 					sessionInit.accountsBurnerAliceData = this.sessionInitService.accountsBurnerAliceData;
 					sessionInit.child = true;
-					sessionInit.localStorageKeyPrefix = this.sessionInitService.localStorageKeyPrefix;
 					sessionInit.parentID = fullID;
 					sessionInit.timeString = this.sessionInitService.timeString;
 

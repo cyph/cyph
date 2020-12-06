@@ -45,9 +45,6 @@ export class UrlSessionInitService extends BaseProvider
 	public readonly id: Promise<string>;
 
 	/** @inheritDoc */
-	public localStorageKeyPrefix?: string;
-
-	/** @inheritDoc */
 	public parentID?: string;
 
 	/** @inheritDoc */

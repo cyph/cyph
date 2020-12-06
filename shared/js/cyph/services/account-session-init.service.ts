@@ -43,9 +43,6 @@ export class AccountSessionInitService extends BaseProvider
 	public readonly id: Promise<string> = Promise.resolve('');
 
 	/** @inheritDoc */
-	public localStorageKeyPrefix?: string;
-
-	/** @inheritDoc */
 	public readonly salt: Promise<string | undefined> = Promise.resolve(
 		undefined
 	);

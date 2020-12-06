@@ -40,9 +40,6 @@ export class SessionInitService extends BaseProvider {
 	/** ID for initiating new Session. */
 	public readonly id: Promise<string> = Promise.resolve('');
 
-	/** Prefix for any local storage keys. */
-	public localStorageKeyPrefix?: string;
-
 	/** ID of parent session (if applicable). */
 	public parentID?: string;
 

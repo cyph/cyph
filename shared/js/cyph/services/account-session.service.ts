@@ -53,9 +53,6 @@ export class AccountSessionService extends SessionService {
 	/** @ignore */
 	private initiated: boolean = false;
 
-	/** @ignore */
-	private readonly localStorageKeyPrefix = 'AccountBurnerChannelID';
-
 	/** @inheritDoc */
 	protected readonly account: boolean = true;
 
@@ -267,7 +264,6 @@ export class AccountSessionService extends SessionService {
 			};
 
 			sessionInit.callType = this.sessionInitService.callType;
-			sessionInit.localStorageKeyPrefix = this.localStorageKeyPrefix;
 			sessionInit.timeString = this.sessionInitService.timeString;
 
 			sessionInit.ephemeralGroupMembers.resolve(
@@ -291,7 +287,6 @@ export class AccountSessionService extends SessionService {
 				this.accountService,
 				this.accountDatabaseService,
 				this.configService,
-				this.localStorageService,
 				this.notificationService
 			);
 

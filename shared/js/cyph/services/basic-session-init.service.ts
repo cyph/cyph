@@ -52,9 +52,6 @@ export class BasicSessionInitService extends BaseProvider
 	public readonly id: Promise<string> = this._ID;
 
 	/** @inheritDoc */
-	public localStorageKeyPrefix?: string;
-
-	/** @inheritDoc */
 	public parentID?: string;
 
 	/** @inheritDoc */
