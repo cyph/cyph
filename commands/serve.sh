@@ -9,6 +9,7 @@ customBuild=''
 firebaseBackup=''
 noLockDown=''
 e2e=''
+unitTest=''
 localSeleniumServer=''
 site='cyph.app'
 prod=''
@@ -22,6 +23,10 @@ if [ "${1}" == '--environment' ] ; then
 fi
 if [ "${1}" == '--e2e' ] ; then
 	e2e=true
+	shift
+fi
+if [ "${1}" == '--unit-test' ] ; then
+	unitTest=true
 	shift
 fi
 if [ "${1}" == '--firebase-backup' ] ; then
@@ -88,9 +93,14 @@ if [ "${customBuild}" ] ; then
 fi
 
 
+export CHROME_BIN="$(node -e 'console.log(require("puppeteer").executablePath())')"
+
+
 ngserve () {
 	ngserveInternal () {
-		if [ "${e2e}" ] ; then
+		if [ "${unitTest}" ] ; then
+			ng test --browsers ChromeHeadless --watch true
+		elif [ "${e2e}" ] ; then
 			ng e2e \
 				$(if [ "${localSeleniumServer}" ] ; then
 					echo '--protractorConfig protractor.local-selenium-server.js'
@@ -116,7 +126,7 @@ ngserve () {
 	../commands/ngprojectinit.sh
 	echo -e '\n\n\n'
 
-	if [ ! "${e2e}" ] && [ "${project}" == 'cyph.app' ] ; then
+	if [ ! "${e2e}" ] && [ ! "${unitTest}" ] && [ "${project}" == 'cyph.app' ] ; then
 		compodoc \
 			-s \
 			-t \
