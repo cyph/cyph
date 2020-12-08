@@ -701,52 +701,56 @@ func channelSetup(h HandlerArgs) (interface{}, int) {
 	channelID := ""
 	status := http.StatusOK
 
-	_, transactionErr := h.Datastore.RunInTransaction(h.Context, func(tx *datastore.Transaction) error {
-		burnerChannel := &BurnerChannel{}
-		burnerChannelKey := datastoreKey("BurnerChannel", id)
+	for {
+		_, transactionErr := h.Datastore.RunInTransaction(h.Context, func(datastoreTransaction *datastore.Transaction) error {
+			burnerChannel := &BurnerChannel{}
+			burnerChannelKey := datastoreKey("BurnerChannel", id)
 
-		h.Datastore.Get(h.Context, burnerChannelKey, burnerChannel)
+			datastoreTransaction.Get(burnerChannelKey, burnerChannel)
 
-		if now-burnerChannel.Timestamp > config.BurnerChannelExpiration {
-			burnerChannel = &BurnerChannel{}
-		}
-
-		if burnerChannel.ID != "" {
-			h.Datastore.Delete(h.Context, preAuthorizedCyphKey)
-
-			if now-burnerChannel.Timestamp < config.NewCyphTimeout {
-				channelID = burnerChannel.ChannelID
+			if now-burnerChannel.Timestamp > config.BurnerChannelExpiration {
+				burnerChannel = &BurnerChannel{}
 			}
 
-			burnerChannel.ChannelID = ""
-			burnerChannel.Timestamp = 0
+			if burnerChannel.ID != "" {
+				datastoreTransaction.Delete(preAuthorizedCyphKey)
 
-			if _, err := h.Datastore.Put(h.Context, burnerChannelKey, burnerChannel); err != nil {
-				return err
-			}
-		} else {
-			channelID = sanitize(h.Request.FormValue("channelID"))
+				if now-burnerChannel.Timestamp < config.NewCyphTimeout {
+					channelID = burnerChannel.ChannelID
+				}
 
-			if len(channelID) > config.MaxChannelDescriptorLength {
-				channelID = ""
-			}
+				burnerChannel.ChannelID = ""
+				burnerChannel.Timestamp = 0
 
-			if channelID != "" {
-				burnerChannel.ChannelID = channelID
-				burnerChannel.ID = id
-				burnerChannel.Timestamp = now
-
-				if _, err := h.Datastore.Put(h.Context, burnerChannelKey, burnerChannel); err != nil {
+				if _, err := datastoreTransaction.Put(burnerChannelKey, burnerChannel); err != nil {
+					datastoreTransaction.Rollback()
 					return err
 				}
+			} else {
+				channelID = sanitize(h.Request.FormValue("channelID"))
+
+				if len(channelID) > config.MaxChannelDescriptorLength {
+					channelID = ""
+				}
+
+				if channelID != "" {
+					burnerChannel.ChannelID = channelID
+					burnerChannel.ID = id
+					burnerChannel.Timestamp = now
+
+					if _, err := datastoreTransaction.Put(burnerChannelKey, burnerChannel); err != nil {
+						datastoreTransaction.Rollback()
+						return err
+					}
+				}
 			}
+
+			return nil
+		})
+
+		if transactionErr == nil {
+			break
 		}
-
-		return nil
-	})
-
-	if transactionErr != nil {
-		channelID = ""
 	}
 
 	if channelID == "" {
