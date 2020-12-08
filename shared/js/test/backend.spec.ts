@@ -1,7 +1,6 @@
 import {random} from '../cyph/util/random';
-import {request} from '../cyph/util/request';
 import {uuid} from '../cyph/util/uuid';
-import {sleep} from '../cyph/util/wait';
+import {sleep} from '../cyph/util/wait/sleep';
 
 const getID = () => `test-${uuid(true)}`;
 
@@ -10,13 +9,20 @@ const getChannelID = async (cyphID: string, maxSleep: number) => {
 		await sleep(random(maxSleep));
 	}
 
-	return request({
-		data: {
-			channelID: getID()
-		},
-		method: 'POST',
-		url: `https://master-dot-cyphme.appspot.com/channels/${cyphID}`
-	});
+	/* eslint-disable-next-line @typescript-eslint/tslint/config */
+	return (await fetch(
+		`https://master-dot-cyphme.appspot.com/channels/${cyphID}`,
+		{
+			body: Object.entries({channelID: getID()}).reduce(
+				(data, [k, v]) => {
+					data.append(k, v);
+					return data;
+				},
+				new FormData()
+			),
+			method: 'POST'
+		}
+	)).text();
 };
 
 describe('backend/channels', () => {

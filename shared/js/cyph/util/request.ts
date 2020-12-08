@@ -9,7 +9,7 @@ import {BehaviorSubject, Observable} from 'rxjs';
 import {MaybePromise} from '../maybe-promise-type';
 import {parse, stringify, toQueryString} from './serialization';
 import {staticHttpClient} from './static-services';
-import {sleep} from './wait';
+import {sleep} from './wait/sleep';
 
 /** Performs HTTP request. */
 const baseRequest = <R, T>(
