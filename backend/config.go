@@ -157,15 +157,15 @@ var config = struct {
 	Plans                         map[string]Plan
 	RootURL                       string
 }{
-	regexp.MustCompile("[A-Za-z0-9_-]+$"),
+	AllowedCyphIDs: regexp.MustCompile("[A-Za-z0-9_-]+$"),
 
-	7,
+	AllowedCyphIDLength: 7,
 
-	"Access-Control-Request-Method,Authorization,X-Forwarded-For",
+	AllowedHeaders: "Access-Control-Request-Method,Authorization,X-Forwarded-For",
 
-	"GET,HEAD,POST,PUT,DELETE,OPTIONS",
+	AllowedMethods: "GET,HEAD,POST,PUT,DELETE,OPTIONS",
 
-	map[string]none{
+	AllowedHosts: map[string]none{
 		"cyph.com":                     empty,
 		"www.cyph.com":                 empty,
 		"cyph.ws":                      empty,
@@ -201,17 +201,17 @@ var config = struct {
 		"localhost:8080":                                empty,
 	},
 
-	"UA-56220601-1",
+	AnalID: "UA-56220601-1",
 
-	16,
+	APIKeyByteLength: 16,
 
-	"CsLk78BjUj81tBENkNpZxoPFGJWWss5qsga86xDKFWBR",
+	BitPayToken: "CsLk78BjUj81tBENkNpZxoPFGJWWss5qsga86xDKFWBR",
 
-	172800000,
+	BurnerChannelExpiration: 172800000,
 
-	"no-cache",
+	CacheControlHeader: "no-cache",
 
-	[]string{
+	CloudFunctionRoutes: []string{
 		"acceptPseudoRelationship",
 		"appointmentInvite",
 		"channelDisconnect",
@@ -240,7 +240,7 @@ var config = struct {
 		"userRegisterConfirmed",
 	},
 
-	map[string]none{
+	Continents: map[string]none{
 		"af": empty,
 		/* "an": empty, */
 		"as": empty,
@@ -250,61 +250,61 @@ var config = struct {
 		"sa": empty,
 	},
 
-	"Europe",
+	DefaultContinent: "Europe",
 
-	"eu",
+	DefaultContinentCode: "eu",
 
-	"na",
+	DefaultContinentCodeBackup: "na",
 
-	"en",
+	DefaultLanguageCode: "en",
 
-	"cyph.app",
+	DefaultPackage: "cyph.app",
 
-	"1027213",
+	DummyAnalID: "1027213",
 
-	"McLean",
+	DummyCity: "McLean",
 
-	"North America",
+	DummyContinent: "North America",
 
-	"na",
+	DummyContinentCode: "na",
 
-	"United States",
+	DummyCountry: "United States",
 
-	"us",
+	DummyCountryCode: "us",
 
-	"22103",
+	DummyPostalCode: "22103",
 
-	"Legion of Doom",
+	DummyOrg: "Legion of Doom",
 
-	"Cyph <hello@cyph.com>",
+	EmailAddress: "Cyph <hello@cyph.com>",
 
-	"max-age=5184000; pin-sha256=\"unPe8YYMLOhkaAWcjfFF1q571QqcrI5NUfP+0eBT/po=\"; pin-sha256=\"Hw4WoLZDs5AprzDc7tUWz8FDbWw/luIQq+FL03zozsw=\"; preload",
+	HPKPHeader: "max-age=5184000; pin-sha256=\"unPe8YYMLOhkaAWcjfFF1q571QqcrI5NUfP+0eBT/po=\"; pin-sha256=\"Hw4WoLZDs5AprzDc7tUWz8FDbWw/luIQq+FL03zozsw=\"; preload",
 
-	"max-age=31536000; includeSubdomains; preload",
+	HSTSHeader: "max-age=31536000; includeSubdomains; preload",
 
-	time.Millisecond * time.Duration(1500),
+	IPFSGatewayUptimeCheckTimeout: time.Millisecond * time.Duration(1500),
 
-	int64(600),
+	IPFSGatewayUptimeCheckTTL: int64(600),
 
-	150,
+	MaxChannelDescriptorLength: 150,
 
 	/* Max length of a valid email address, but also happened
 	to seem like a sane limit for the other values */
-	256,
+	MaxSignupValueLength: 256,
 
 	/* Reasonable threshold beyond which Alice is unlikely to
 	still be waiting for Bob */
-	2629800000,
+	NewCyphTimeout: 2629800000,
 
-	"https://partner-api.cyph.com",
+	PartnerConversionURL: "https://partner-api.cyph.com",
 
-	20,
+	PartnerDiscountRate: 20,
 
-	map[string]string{
+	PlanAppleIDs: map[string]string{
 		"MonthlyPlatinum": "8-4",
 	},
 
-	map[string]Plan{
+	Plans: map[string]Plan{
 		"0-0": Plan{
 			ProFeatures: map[string]bool{
 				"disableP2P":     true,
@@ -789,5 +789,5 @@ var config = struct {
 		},
 	},
 
-	"http://localhost:42000",
+	RootURL: "http://localhost:42000",
 }
