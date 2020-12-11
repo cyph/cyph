@@ -381,9 +381,9 @@ for f in $(find . -type f -not -name '*.xml' -and -not -path './wp-content/theme
 
 	# Special cases where full URL should be preserved
 	sed -i "s|<link rel=\"canonical\" href=\"/\">|<link rel=\"canonical\" href=\"${rootURL}/\">|g" "${f}"
-	sed -i "s|<meta property=\"og:image\" content=\"/\">|<meta property=\"og:image\" content=\"${rootURL}/\">|g" "${f}"
-	sed -i "s|<meta property=\"og:url\" content=\"/\">|<meta property=\"og:url\" content=\"${rootURL}/\">|g" "${f}"
-	sed -i "s|<meta name=\"twitter:image\" content=\"/\">|<meta name=\"twitter:image\" content=\"${rootURL}/\">|g" "${f}"
+	sed -i "s|<meta property=\"og:image\" content=\"/|<meta property=\"og:image\" content=\"${rootURL}/|g" "${f}"
+	sed -i "s|<meta property=\"og:url\" content=\"/|<meta property=\"og:url\" content=\"${rootURL}/|g" "${f}"
+	sed -i "s|<meta name=\"twitter:image\" content=\"/|<meta name=\"twitter:image\" content=\"${rootURL}/|g" "${f}"
 
 	# Ensure single source of truth for meta image
 	sed -i "s|${rootURL}/wp-content/uploads/2020/12/metaimage.png|${rootURL}/img/metaimage.png|g" "${f}"
