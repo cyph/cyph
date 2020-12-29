@@ -410,7 +410,7 @@ exports.appointmentInvite = onCall(async (data, namespace, getUsername) => {
 	const {accountsURL} = namespaces[namespace];
 
 	const accountBurnerID = (
-		(data.eventDetails && data.eventDetails.uid) ||
+		(data.eventDetails && (data.burnerUID || data.eventDetails.uid)) ||
 		''
 	).trim();
 
