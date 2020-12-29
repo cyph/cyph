@@ -378,7 +378,8 @@ export class EphemeralSessionService extends SessionService {
 			...(this.cyphID ?
 				[
 					request({
-						method: 'POST',
+						method: 'DELETE',
+						retries: 5,
 						url: `${env.baseUrl}channels/${this.cyphID}`
 					}).catch(() => {})
 				] :
@@ -713,6 +714,16 @@ export class EphemeralSessionService extends SessionService {
 			}
 
 			await this.init(channelID);
+
+			this.connected
+				.then(async () =>
+					request({
+						method: 'DELETE',
+						retries: 5,
+						url: `${env.baseUrl}channels/${this.cyphID}`
+					})
+				)
+				.catch(() => {});
 
 			if (
 				isAliceRoot ||

@@ -21,7 +21,7 @@ func main() {
 	handleFuncs("/accountstanding/{userToken}", false, Handlers{methods.GET: isAccountInGoodStanding})
 	handleFuncs("/analytics/*", false, Handlers{methods.GET: analytics, methods.POST: analytics})
 	handleFuncs("/braintree", false, Handlers{methods.GET: braintreeToken, methods.POST: braintreeCheckout})
-	handleFuncs("/channels/{id}", false, Handlers{methods.POST: channelSetup})
+	handleFuncs("/channels/{id}", false, Handlers{methods.DELETE: channelDelete, methods.POST: channelSetup})
 	handleFuncs("/continent", false, Handlers{methods.GET: getContinent})
 	handleFuncs("/downgradeaccount/{userToken}", false, Handlers{methods.GET: downgradeAccount})
 	handleFuncs("/geolocation/{language}", false, Handlers{methods.GET: getGeolocation})
@@ -660,6 +660,32 @@ func braintreeToken(h HandlerArgs) (interface{}, int) {
 	return braintreeToken(h)
 }
 
+func channelDelete(h HandlerArgs) (interface{}, int) {
+	id := sanitize(h.Vars["id"])
+
+	if !isValidCyphID(id) {
+		return "invalid ID", http.StatusForbidden
+	}
+
+	burnerChannelKey := datastoreKey("BurnerChannel", id)
+
+	emptyBurnerChannel := &BurnerChannel{
+		ChannelID: "",
+		ID:        id,
+		Timestamp: 0,
+	}
+
+	for {
+		_, err := h.Datastore.Put(h.Context, burnerChannelKey, emptyBurnerChannel)
+
+		if err == nil {
+			break
+		}
+	}
+
+	return "", http.StatusOK
+}
+
 func channelSetup(h HandlerArgs) (interface{}, int) {
 	/* Block Facebook tampering with links sent through Messenger */
 	org := getOrg(h)
@@ -722,10 +748,14 @@ func channelSetup(h HandlerArgs) (interface{}, int) {
 				burnerChannel.ChannelID = ""
 				burnerChannel.Timestamp = 0
 
-				if _, err := datastoreTransaction.Put(burnerChannelKey, burnerChannel); err != nil {
-					datastoreTransaction.Rollback()
-					return err
-				}
+				/*
+					For now, clear out channel data in channelDelete instead
+
+					if _, err := datastoreTransaction.Put(burnerChannelKey, burnerChannel); err != nil {
+						datastoreTransaction.Rollback()
+						return err
+					}
+				*/
 			} else {
 				channelID = sanitize(h.Request.FormValue("channelID"))
 
