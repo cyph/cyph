@@ -22,7 +22,7 @@ const vars = fs
 	)
 	.reduce((o, [k, v]) => ({...o, [k]: v}), {});
 
-const gateway = braintree.connect({
+const gateway = new braintree.BraintreeGateway({
 	environment: braintree.Environment.Production,
 	merchantId: vars.BRAINTREE_MERCHANT_ID,
 	privateKey: vars.BRAINTREE_PRIVATE_KEY,
