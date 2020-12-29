@@ -43,6 +43,9 @@ export class AccountSessionInitService extends BaseProvider
 	public readonly id: Promise<string> = Promise.resolve('');
 
 	/** @inheritDoc */
+	public readonly joinConfirmation: Promise<boolean> = Promise.resolve(true);
+
+	/** @inheritDoc */
 	public readonly salt: Promise<string | undefined> = Promise.resolve(
 		undefined
 	);

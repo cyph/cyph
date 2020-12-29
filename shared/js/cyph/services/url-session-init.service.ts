@@ -45,6 +45,9 @@ export class UrlSessionInitService extends BaseProvider
 	public readonly id: Promise<string>;
 
 	/** @inheritDoc */
+	public readonly joinConfirmation: Promise<boolean> = Promise.resolve(true);
+
+	/** @inheritDoc */
 	public parentID?: string;
 
 	/** @inheritDoc */

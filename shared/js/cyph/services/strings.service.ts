@@ -1374,6 +1374,15 @@ export class StringsService extends BaseProvider {
 	)} complete.`;
 
 	/** @see StringsService */
+	public readonly sessionJoinConfirmContent = `Would you like to join right now?`;
+
+	/** @see StringsService */
+	public readonly sessionJoinDialogTitle = `Join Session`;
+
+	/** @see StringsService */
+	public readonly sessionJoinRejectContent = `Not joining at this time. When you are ready to join, just open the same link.`;
+
+	/** @see StringsService */
 	public readonly share = `Share`;
 
 	/** @see StringsService */

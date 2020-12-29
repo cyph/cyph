@@ -509,6 +509,8 @@ export class EphemeralSessionService extends SessionService {
 			let id = fullID;
 			const salt = await this.sessionInitService.salt;
 			const headless = await this.sessionInitService.headless;
+			const joinConfirmation = await this.sessionInitService
+				.joinConfirmation;
 
 			if (id === '404') {
 				this.state.startingNewCyph.next(true);
@@ -621,6 +623,22 @@ export class EphemeralSessionService extends SessionService {
 					false
 			);
 
+			if (
+				joinConfirmation &&
+				this.state.startingNewCyph.value !== true &&
+				!(await this.dialogService.confirm({
+					content: this.stringsService.sessionJoinConfirmContent,
+					title: this.stringsService.sessionJoinDialogTitle
+				}))
+			) {
+				await this.router.navigate([burnerRoot, '404']);
+				await this.dialogService.alert({
+					content: this.stringsService.sessionJoinRejectContent,
+					title: this.stringsService.sessionJoinDialogTitle
+				});
+				return;
+			}
+
 			const isAliceRoot =
 				(!!this.sessionInitService.accountsBurnerAliceData ||
 					this.state.startingNewCyph.value === true) &&
@@ -654,7 +672,8 @@ export class EphemeralSessionService extends SessionService {
 
 			const getChannelIDRequestDebug = {tries: 0};
 
-			const getChannelID = async () => request({
+			const getChannelID = async () =>
+				request({
 					data: {
 						channelID: maybeChannelID,
 						proFeatures: this.proFeatures

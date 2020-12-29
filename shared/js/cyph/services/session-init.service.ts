@@ -40,6 +40,9 @@ export class SessionInitService extends BaseProvider {
 	/** ID for initiating new Session. */
 	public readonly id: Promise<string> = Promise.resolve('');
 
+	/** Indicates whether or not a confirmation dialog should be displayed before joining. */
+	public readonly joinConfirmation: Promise<boolean> = Promise.resolve(false);
+
 	/** ID of parent session (if applicable). */
 	public parentID?: string;
 

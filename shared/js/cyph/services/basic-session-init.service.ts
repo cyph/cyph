@@ -19,6 +19,9 @@ export class BasicSessionInitService extends BaseProvider
 	private readonly _ID = resolvable<string>();
 
 	/** @ignore */
+	private readonly _JOIN_CONFIRMATION = resolvable<boolean>();
+
+	/** @ignore */
 	private readonly _SALT = resolvable<string>();
 
 	/** @inheritDoc */
@@ -52,6 +55,10 @@ export class BasicSessionInitService extends BaseProvider
 	public readonly id: Promise<string> = this._ID;
 
 	/** @inheritDoc */
+	public readonly joinConfirmation: Promise<boolean> = this
+		._JOIN_CONFIRMATION;
+
+	/** @inheritDoc */
 	public parentID?: string;
 
 	/** @inheritDoc */
@@ -61,9 +68,15 @@ export class BasicSessionInitService extends BaseProvider
 	public timeString?: string;
 
 	/** Sets ID. */
-	public setID (id: string, salt?: string, headless: boolean = false) : void {
+	public setID (
+		id: string,
+		salt?: string,
+		headless: boolean = false,
+		joinConfirmation: boolean = false
+	) : void {
 		this._HEADLESS.resolve(headless);
 		this._ID.resolve(id);
+		this._JOIN_CONFIRMATION.resolve(joinConfirmation);
 		this._SALT.resolve(salt);
 	}
 

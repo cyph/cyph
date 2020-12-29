@@ -269,7 +269,12 @@ export class AccountSessionService extends SessionService {
 			sessionInit.ephemeralGroupMembers.resolve(
 				chat.burnerSession.members || []
 			);
-			sessionInit.setID(anonymousChannelID || '');
+			sessionInit.setID(
+				anonymousChannelID || '',
+				undefined,
+				undefined,
+				true
+			);
 
 			const ephemeralSessionService = new EphemeralSessionService(
 				this.analyticsService,
