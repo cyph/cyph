@@ -153,7 +153,7 @@ const sendMailInternal = async (
 								...(eventDetails.location ?
 									{location: eventDetails.location} :
 									{}),
-								organizer: eventInviter || fromFormatted,
+								organizer: fromFormatted,
 								...(eventDetails.recurrence ? {repeating: {
 											...(eventDetails.recurrence
 												.byWeekDay &&
