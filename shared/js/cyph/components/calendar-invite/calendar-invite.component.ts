@@ -99,11 +99,8 @@ export class CalendarInviteComponent extends BaseProvider
 	/** Defaults selection to a follow-up apointment. */
 	@Input() public followUp: boolean = false;
 
-	/** Disallowed days of the week (Saturday and Sunday by default). */
-	@Input() public forbiddenDays: CalendarInvite.DaysOfWeek[] = [
-		CalendarInvite.DaysOfWeek.Sunday,
-		CalendarInvite.DaysOfWeek.Saturday
-	];
+	/** Disallowed days of the week. */
+	@Input() public forbiddenDays: CalendarInvite.DaysOfWeek[] = [];
 
 	/** Returns a human-readable day abbreviation (e.g. "SUN"). */
 	public readonly getDayString = memoize((day: CalendarInvite.DaysOfWeek) =>
