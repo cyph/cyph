@@ -132,6 +132,7 @@ export class AccountAppointmentsComponent extends BaseProvider
 						endTime: appointment.calendarInvite.endTime,
 						recurrence: appointment.calendarInvite.recurrence,
 						startTime: appointment.calendarInvite.startTime,
+						title: appointment.calendarInvite.title,
 						uid: appointment.calendarInvite.uid
 					},
 					telehealth: this.configService.planConfig[

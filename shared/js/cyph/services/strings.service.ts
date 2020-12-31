@@ -1280,7 +1280,7 @@ export class StringsService extends BaseProvider {
 	public readonly reactionRemove = `Remove Reaction`;
 
 	/** @see StringsService */
-	public readonly reasonForAppointment = `Reason for Appointment`;
+	public readonly reasonForAppointment = `Title`;
 
 	/** @see StringsService */
 	public readonly reasonForAppointmentDefault = `Conference`;

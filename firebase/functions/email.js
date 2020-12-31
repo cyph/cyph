@@ -103,6 +103,15 @@ const sendMailInternal = async (
 
 	const fromFormatted = `Cyph <${from}>`;
 
+	const description = [
+		...(eventDetails.title ? [subject] : []),
+		...(eventDetails.description ?
+			[eventDetails.description] :
+		eventDetails.url ?
+			[eventDetails.url] :
+			[])
+	].join('\n\n');
+
 	const mailObject = !to ?
 		undefined :
 		{
@@ -142,13 +151,7 @@ const sendMailInternal = async (
 										{}
 									)
 								).filter(o => o.email),
-								...(eventDetails.description ?
-									{description: eventDetails.description} :
-								eventDetails.url ?
-									{
-										description: eventDetails.url
-									} :
-									{}),
+								...(description ? {description} : {}),
 								end: new Date(eventDetails.endTime),
 								...(eventDetails.location ?
 									{location: eventDetails.location} :
@@ -247,7 +250,7 @@ const sendMailInternal = async (
 								sequence: Math.floor(Date.now() / 1000),
 								start: new Date(eventDetails.startTime),
 								status: cancelEvent ? 'cancelled' : 'confirmed',
-								summary: eventDetails.summary || subject,
+								summary: eventDetails.title || subject,
 								...(eventDetails.uid ?
 									{uid: eventDetails.uid} :
 									{}),
@@ -296,7 +299,7 @@ const sendMailInternal = async (
  *     location: string;
  *     recurrence: ICalendarRecurrenceRules;
  *     startTime: number;
- *     summary: string;
+ *     title: string;
  *     uid: string;
  *     url: string;
  * }} eventDetails

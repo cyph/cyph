@@ -353,6 +353,7 @@ export class AccountAppointmentsService extends BaseProvider {
 				endTime: calendarInvite.endTime,
 				recurrence: calendarInvite.recurrence,
 				startTime: calendarInvite.startTime,
+				title: calendarInvite.title,
 				uid: calendarInvite.uid
 			},
 			inviterTimeZone: sharing?.inviterTimeZone ?

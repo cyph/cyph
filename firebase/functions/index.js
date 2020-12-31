@@ -541,6 +541,7 @@ exports.appointmentInvite = onCall(async (data, namespace, getUsername) => {
 				endTime: data.eventDetails.endTime,
 				recurrence: data.eventDetails.recurrence,
 				startTime: data.eventDetails.startTime,
+				title: data.eventDetails.title,
 				uid,
 				url: inviterLink
 			}
@@ -591,6 +592,7 @@ exports.appointmentInvite = onCall(async (data, namespace, getUsername) => {
 								inviterUsername: emailTo,
 								recurrence: data.eventDetails.recurrence,
 								startTime: data.eventDetails.startTime,
+								title: data.eventDetails.title,
 								uid,
 								url: inviteeLink
 							}
@@ -1993,7 +1995,7 @@ const userNotify = async (data, namespace, username, serverInitiated) => {
 					startTime: isNaN(metadata.startTime) ?
 						now + 1800000 :
 						metadata.startTime,
-					summary: metadata.summary || 'Cyph Appointment'
+					title: metadata.title || 'Cyph Appointment'
 				},
 				subject: `Calendar Invite from ${senderUsername}`,
 				text: `${targetName}, ${senderName} has sent an appointment request.`
