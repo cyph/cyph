@@ -143,6 +143,12 @@ export abstract class SessionService extends BaseProvider
 	public readonly initialMessagesProcessed = resolvable<true>(true);
 
 	/** @inheritDoc */
+	public readonly joinConfirmation = resolvable<true>(true);
+
+	/** @inheritDoc */
+	public readonly joinConfirmationWait = new BehaviorSubject<boolean>(false);
+
+	/** @inheritDoc */
 	public readonly localUsername: Observable<string> = new BehaviorSubject<
 		string
 	>(this.stringsService.me);

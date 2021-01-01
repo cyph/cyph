@@ -2,6 +2,7 @@ import {AfterViewInit, ChangeDetectionStrategy, Component} from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
 import * as $ from 'jquery';
 import * as Konami from 'konami';
+import {filter, take} from 'rxjs/operators';
 import {fadeIn} from '../../../cyph/animations';
 import {BaseProvider} from '../../../cyph/base-provider';
 import {States as ChatStates} from '../../../cyph/chat/enums';
@@ -190,6 +191,22 @@ export class EphemeralChatRootComponent extends BaseProvider
 			this.appService.chatRootState.next(ChatRootStates.error);
 			this.router.navigate([burnerRoot, '404']);
 		});
+
+		this.sessionService.joinConfirmationWait
+			.pipe(
+				filter(b => b),
+				take(1)
+			)
+			.toPromise()
+			.then(() => {
+				if (this.destroyed.value) {
+					return;
+				}
+
+				this.appService.chatRootState.next(
+					ChatRootStates.waitingForFriend
+				);
+			});
 
 		/* Cyphertext easter egg */
 

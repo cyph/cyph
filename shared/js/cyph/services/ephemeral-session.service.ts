@@ -624,20 +624,10 @@ export class EphemeralSessionService extends SessionService {
 					false
 			);
 
-			if (
-				joinConfirmation &&
-				this.state.startingNewCyph.value !== true &&
-				!(await this.dialogService.confirm({
-					content: this.stringsService.sessionJoinConfirmContent,
-					title: this.stringsService.sessionJoinDialogTitle
-				}))
-			) {
-				await this.router.navigate([burnerRoot, '404']);
-				await this.dialogService.alert({
-					content: this.stringsService.sessionJoinRejectContent,
-					title: this.stringsService.sessionJoinDialogTitle
-				});
-				return;
+			if (joinConfirmation && this.state.startingNewCyph.value !== true) {
+				this.joinConfirmationWait.next(true);
+				await this.joinConfirmation;
+				this.joinConfirmationWait.next(false);
 			}
 
 			const isAliceRoot =

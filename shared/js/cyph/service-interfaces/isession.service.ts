@@ -89,6 +89,12 @@ export interface ISessionService {
 	/** Another session service that this one internally delegates to. */
 	internalSessionService?: ISessionService;
 
+	/** Resolves when confirmed to join session. */
+	readonly joinConfirmation: IResolvable<true>;
+
+	/** Indicates whether we're waiting for confirmation to join session. */
+	readonly joinConfirmationWait: BehaviorSubject<boolean>;
+
 	/** Local username (e.g. "me"). */
 	readonly localUsername: Observable<string>;
 

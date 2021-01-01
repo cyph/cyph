@@ -161,9 +161,24 @@
 		</div>
 		<div
 			fxLayoutAlign="center center"
-			*ngIf="(isPassive | await) === undefined"
+			*ngIf="
+				(isPassive | await) === undefined &&
+				(sessionService.joinConfirmationWait | await) === false
+			"
 		>
 			<cyph-spinner mode="indeterminate"></cyph-spinner>
+		</div>
+		<div
+			fxLayoutAlign="center center"
+			*ngIf="(sessionService.joinConfirmationWait | await) === true"
+		>
+			<br />
+			<button
+				mat-raised-button
+				(click)="sessionService.joinConfirmation.resolve()"
+			>
+				{{ stringsService.sessionJoin }}
+			</button>
 		</div>
 
 		<br />
