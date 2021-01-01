@@ -1085,10 +1085,10 @@ export class StringsService extends BaseProvider {
 	public readonly p2pWarningVPN = `This may involve sharing your IP address with your ${this.internalFriend}. Proceed if you trust your ${this.internalFriend} or hide your IP by [connecting through a VPN](https://go.nordvpn.net/SH1F4).`;
 
 	/** @see StringsService */
-	public readonly p2pWarningAudioPassive = `Starting voice call (P2P).`;
+	public readonly p2pWarningAudioPassive = `Preparing for P2P voice call.`;
 
 	/** @see StringsService */
-	public readonly p2pWarningVideoPassive = `Starting video call (P2P).`;
+	public readonly p2pWarningVideoPassive = `Preparing for P2P video call.`;
 
 	/** @see StringsService */
 	public readonly partnerDiscount = `$\${DISCOUNT} Discount Applied!`;

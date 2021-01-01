@@ -519,6 +519,8 @@ export class EphemeralSessionService extends SessionService {
 				return;
 			}
 
+			const preparingForCallType = this.prepareForCallType();
+
 			if (id.indexOf('/') > -1) {
 				[username, id] = id.split('/');
 
@@ -625,6 +627,7 @@ export class EphemeralSessionService extends SessionService {
 			);
 
 			if (joinConfirmation && this.state.startingNewCyph.value !== true) {
+				await preparingForCallType;
 				this.joinConfirmationWait.next(true);
 				await this.joinConfirmation;
 				this.joinConfirmationWait.next(false);
@@ -682,7 +685,7 @@ export class EphemeralSessionService extends SessionService {
 					throw new Error('No session ID.');
 				}
 
-				await this.prepareForCallType();
+				await preparingForCallType;
 
 				channelID = await getChannelID();
 			}
