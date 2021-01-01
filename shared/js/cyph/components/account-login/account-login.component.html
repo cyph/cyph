@@ -179,9 +179,11 @@
 								"
 							>
 								{{
-									(pinUnlock | await) ?
-										stringsService.invalidPIN :
-										stringsService.invalidCredentials
+									((accountAuthService.errorMessage | await) !== "") ?
+									(accountAuthService.errorMessage | await) :
+										(pinUnlock | await) ?
+											stringsService.invalidPIN :
+											stringsService.invalidCredentials
 								}}
 							</h3>
 						</div>
