@@ -54,12 +54,13 @@ export class AccountAuthService extends BaseProvider {
 	/** @ignore */
 	private readonly defaultPinDuration = 3600000;
 
+	/** User-facing login failure error message. */
+	public readonly loginErrorMessage = new BehaviorSubject<string | undefined>(
+		undefined
+	);
+
 	/** If true, the login prompt will be used to create a pseudo-account. */
 	public readonly pseudoAccountLogin = new BehaviorSubject<boolean>(false);
-
-	/** Firebase auth error message displayed to user
-	 * see https://firebase.google.com/docs/reference/js/firebase.auth.Error */
-	public readonly errorMessage = new BehaviorSubject<string>("");
 
 	/** @ignore */
 	private async getItem<T> (
@@ -459,6 +460,8 @@ export class AccountAuthService extends BaseProvider {
 		pin?: string | Uint8Array,
 		altMasterKey: boolean = false
 	) : Promise<boolean> {
+		this.loginErrorMessage.next(undefined);
+
 		const logoutPromise = this.logout(false, false);
 
 		if (!username || masterKey.length === 0) {
@@ -604,6 +607,7 @@ export class AccountAuthService extends BaseProvider {
 				user
 			] = await getUserData().catch(async () => {
 				setErrorMessageLog('database service login');
+
 				try {
 					await this.databaseService.login(
 						username,
@@ -611,7 +615,17 @@ export class AccountAuthService extends BaseProvider {
 					);
 				}
 				catch (err) {
-					this.errorMessage.next(err.message);
+					/*
+						Firebase auth error message;
+						see https://firebase.google.com/docs/reference/js/firebase.auth.Error
+					*/
+					this.loginErrorMessage.next(
+						this.stringsService.setParameters(
+							this.stringsService.authError,
+							{error: err.message}
+						)
+					);
+
 					if (loginData.oldSecondaryPassword) {
 						await this.databaseService.login(
 							username,
@@ -785,6 +799,7 @@ export class AccountAuthService extends BaseProvider {
 		}
 
 		this.analyticsService.sendEvent('login', 'success');
+		this.loginErrorMessage.next(undefined);
 
 		return true;
 	}

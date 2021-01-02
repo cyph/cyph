@@ -134,6 +134,9 @@ export class StringsService extends BaseProvider {
 	public readonly audioCall = `call`;
 
 	/** @see StringsService */
+	public readonly authError = `Auth Error: \${ERROR}`;
+
+	/** @see StringsService */
 	public readonly bannerText = `Help Defend Internet Privacy: `;
 
 	/** @see StringsService */

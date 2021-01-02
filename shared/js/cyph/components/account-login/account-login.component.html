@@ -179,11 +179,11 @@
 								"
 							>
 								{{
-									((accountAuthService.errorMessage | await) !== "") ?
-									(accountAuthService.errorMessage | await) :
-										(pinUnlock | await) ?
+									(accountAuthService.loginErrorMessage
+										| await) ||
+										((pinUnlock | await) ?
 											stringsService.invalidPIN :
-											stringsService.invalidCredentials
+											stringsService.invalidCredentials)
 								}}
 							</h3>
 						</div>
