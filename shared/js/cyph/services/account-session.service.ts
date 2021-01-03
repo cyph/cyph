@@ -302,6 +302,9 @@ export class AccountSessionService extends SessionService {
 			});
 
 			this.subscriptions.push(
+				ephemeralSessionService.joinConfirmationWait.subscribe(
+					this.joinConfirmationWait
+				),
 				ephemeralSessionService.state.cyphIDs.subscribe(
 					this.state.cyphIDs
 				),
@@ -363,6 +366,12 @@ export class AccountSessionService extends SessionService {
 			]) {
 				ephemeralSessionService[event].then(() => {
 					this[event].resolve();
+				});
+			}
+
+			for (const event of <'joinConfirmation'[]> ['joinConfirmation']) {
+				this[event].then(() => {
+					ephemeralSessionService[event].resolve();
 				});
 			}
 
