@@ -16,6 +16,7 @@ import {
 	WeekService,
 	WorkWeekService
 } from '@syncfusion/ej2-angular-schedule';
+import {ItemModel, MenuEventArgs} from '@syncfusion/ej2-angular-splitbuttons';
 import {Internationalization} from '@syncfusion/ej2-base';
 import memoize from 'lodash-es/memoize';
 import {BaseProvider} from '../../base-provider';
@@ -65,6 +66,34 @@ export class AccountAppointmentAgendaComponent extends BaseProvider
 	public readonly getTimeString = memoize((date: Date) : string =>
 		this.internationalization.formatDate(date, {skeleton: 'hm'})
 	);
+
+	/** Split button menu oprions for hosting an unscheduled call */
+	public readonly hostMenuItems: ItemModel[] = [
+		{
+			text: 'Video Call',
+			iconCss: 'fa fa-video'
+		},
+		{
+			text: 'Audio Call',
+			iconCss: 'fa fa-phone'
+		}
+	];
+
+	/** Event handler for hosting options split button */
+	public hostOptions (args: MenuEventArgs)  {
+		let callType: string =
+			args.item.text === 'Video Call' ? 'video' : 'audio';
+
+		!this.accountDatabaseService.currentUser.value?.agseConfirmed ?
+			openWindow(
+				callType ?
+					this.envService.cyphVideoUrl :
+					this.envService.cyphAudioUrl
+			) :
+		this.envService.isCordovaMobile ?
+			this.router.navigate(['account-burner', callType]) :
+			openWindow('#account-burner/' + callType);
+	}
 
 	/** @see openWindow */
 	public readonly openWindow = openWindow;

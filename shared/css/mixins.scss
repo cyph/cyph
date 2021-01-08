@@ -743,6 +743,19 @@ $default-white: map-get($mat-grey, 100);
 	.e-spinner-pane .e-spinner-inner .e-spin-material {
 		stroke: $cyph-theme-primary-default !important;
 	}
+
+	.e-dropdown-btn {
+		background-color: map-get($cyph-accent, default);
+		color: map-get($cyph-white, default);
+	}
+	ejs-splitbutton.e-split-btn-wrapper button:not(.e-dropdown-btn) {
+		padding-left: 16px;
+		padding-right: 12px;
+	}
+	.e-dropdown-popup li.e-item {
+		width: 140px;
+		justify-content: space-evenly;
+	}
 }
 
 @mixin cyph-main-theme {

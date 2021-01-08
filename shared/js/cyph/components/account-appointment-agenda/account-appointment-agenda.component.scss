@@ -55,6 +55,10 @@
 	border-left: 3px solid #7e57c2 !important;
 }
 
+::ng-deep ejs-splitbutton.e-split-btn-wrapper button:not(.e-dropdown-btn) {
+	text-transform: uppercase;
+}
+
 .e-day-date-header {
 	font-size: 2em;
 }

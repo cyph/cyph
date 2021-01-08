@@ -16,9 +16,9 @@
 					stringsService.meetingSchedule
 			}}
 		</button>
-		<button
-			mat-raised-button
-			color="accent"
+		<ejs-splitbutton
+			[items]="hostMenuItems"
+			class="mat-raised-button mat-button-base mat-accent"
 			(click)="
 				!accountDatabaseService.currentUser.value?.agseConfirmed ?
 					openWindow(envService.cyphVideoUrl) :
@@ -26,13 +26,13 @@
 					router.navigate(['account-burner', 'video']) :
 					openWindow('#account-burner/video')
 			"
-		>
-			{{
+			[content]="
 				(accountSettingsService.telehealth | await) ?
 					stringsService.meetingHostTitleTelehealth :
 					stringsService.meetingHost
-			}}
-		</button>
+			"
+			(select)="hostOptions($event)"
+		></ejs-splitbutton>
 	</div>
 	<div fxFlex>
 		<ejs-schedule

@@ -53,6 +53,7 @@ import {
 	RecurrenceEditorModule,
 	ScheduleAllModule
 } from '@syncfusion/ej2-angular-schedule';
+import {SplitButtonModule} from '@syncfusion/ej2-angular-splitbuttons';
 import {SmdFabSpeedDialModule} from 'angular-speed-dial';
 import {AngularDraggableModule} from 'angular2-draggable';
 import {DxFileManagerModule} from 'devextreme-angular/ui/file-manager';
@@ -116,6 +117,7 @@ import {CyphSharedModule} from './cyph-shared.module';
 		SimpleEmojiPickerComponent,
 		SmdFabSpeedDialModule,
 		SocialShareComponent,
+		SplitButtonModule,
 		VideoComponent
 	],
 	imports: [
