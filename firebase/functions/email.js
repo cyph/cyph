@@ -103,14 +103,16 @@ const sendMailInternal = async (
 
 	const fromFormatted = `Cyph <${from}>`;
 
-	const description = [
-		...(eventDetails.title ? [subject] : []),
-		...(eventDetails.description ?
-			[eventDetails.description] :
-		eventDetails.url ?
-			[eventDetails.url] :
-			[])
-	].join('\n\n');
+	const eventDescription = !eventDetails ?
+		'' :
+		[
+			...(eventDetails.title ? [subject] : []),
+			...(eventDetails.description ?
+				[eventDetails.description] :
+				eventDetails.url ?
+				[eventDetails.url] :
+				[])
+		].join('\n\n');
 
 	const mailObject = !to ?
 		undefined :
@@ -151,7 +153,9 @@ const sendMailInternal = async (
 										{}
 									)
 								).filter(o => o.email),
-								...(description ? {description} : {}),
+								...(eventDescription ?
+									{description: eventDescription} :
+									{}),
 								end: new Date(eventDetails.endTime),
 								...(eventDetails.location ?
 									{location: eventDetails.location} :
