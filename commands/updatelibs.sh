@@ -83,6 +83,7 @@ read -r -d '' modules <<- EOM
 	@fortawesome/free-solid-svg-icons
 	@fortawesome/fontawesome-svg-core
 	@google-cloud/storage
+	@ignatiusmb/scramble
 	@ngrx/core
 	@ngrx/effects
 	@ngrx/router-store
