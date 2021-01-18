@@ -151,6 +151,7 @@ export class VideoComponent extends BaseProvider
 			const input = e.inputBuffer.getChannelData(0);
 
 			let sum = 0;
+			/* eslint-disable-next-line @typescript-eslint/prefer-for-of */
 			for (let i = 0; i < input.length; ++i) {
 				sum += input[i] * input[i];
 			}
