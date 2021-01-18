@@ -177,6 +177,16 @@ read -r -d '' modules <<- EOM
 	@syncfusion/ej2-svg-base
 	@syncfusion/ej2-treegrid
 	@syncfusion/ej2-treemap
+	@taiga-ui/addon-charts
+	@taiga-ui/addon-commerce
+	@taiga-ui/addon-editor
+	@taiga-ui/addon-mobile
+	@taiga-ui/addon-table
+	@taiga-ui/addon-tablebars
+	@taiga-ui/cdk
+	@taiga-ui/core
+	@taiga-ui/icons
+	@taiga-ui/kit
 	@types/animejs
 	@types/braintree-web
 	@types/country-list
