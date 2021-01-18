@@ -239,6 +239,7 @@ declare module 'lz4' {
 EOM
 
 for anyType in \
+	@ignatiusmb/scramble \
 	bitauth \
 	bitpay-rest \
 	braintree-web-drop-in \
@@ -268,13 +269,14 @@ for anyType in \
 	wavesurfer.js \
 	wowjs
 do
-	mkdir -p "@types/${anyType}"
+	anyTypePackage="$(echo "${anyType}" | sed 's|/|__|g')"
+	mkdir -p "@types/${anyTypePackage}"
 	echo "
 		declare module '${anyType}' {
 			const balls: any;
 			export = balls;
 		}
-	" > "@types/${anyType}/index.d.ts"
+	" > "@types/${anyTypePackage}/index.d.ts"
 done
 
 for anyType in \
@@ -282,13 +284,14 @@ for anyType in \
 	readable-stream \
 	stream-browserify
 do
-	mkdir -p "@types/${anyType}"
+	anyTypePackage="$(echo "${anyType}" | sed 's|/|__|g')"
+	mkdir -p "@types/${anyTypePackage}"
 	echo "
 		declare module '${anyType}' {
 			const balls: any;
 			export default balls;
 		}
-	" > "@types/${anyType}/index.d.ts"
+	" > "@types/${anyTypePackage}/index.d.ts"
 done
 
 for m in \
