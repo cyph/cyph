@@ -84,6 +84,7 @@ read -r -d '' modules <<- EOM
 	@fortawesome/fontawesome-svg-core
 	@google-cloud/storage
 	@ignatiusmb/scramble
+	@isomorphic-git/lightning-fs
 	@ngrx/core
 	@ngrx/effects
 	@ngrx/router-store
@@ -296,6 +297,7 @@ read -r -d '' modules <<- EOM
 	ical-generator@~0.2
 	image-type
 	intro.js
+	isomorphic-git
 	jasmine-core
 	jasmine-spec-reporter
 	jquery
