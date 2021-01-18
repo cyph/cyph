@@ -177,6 +177,7 @@ read -r -d '' modules <<- EOM
 	@syncfusion/ej2-svg-base
 	@syncfusion/ej2-treegrid
 	@syncfusion/ej2-treemap
+	@types/animejs
 	@types/braintree-web
 	@types/country-list
 	@types/dompurify
@@ -218,6 +219,7 @@ read -r -d '' modules <<- EOM
 	angular2-text-mask
 	animate.css@https://github.com/daneden/animate.css
 	animated-scroll-to
+	animejs
 	awesome-typescript-loader
 	babel-core
 	babel-preset-env
