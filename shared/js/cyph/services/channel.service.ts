@@ -166,6 +166,21 @@ export class ChannelService extends BaseProvider implements IChannelService {
 
 		const connected = resolvable();
 
+		const debugLogData = () => ({
+			account,
+			channelID,
+			channelSubID,
+			ephemeral: this.ephemeral,
+			initialMessageCount,
+			messagesURL,
+			parentID,
+			possibleChannelRejoin,
+			url,
+			userID
+		});
+
+		debugLog(() => ({channelInit: debugLogData()}));
+
 		this.subscriptions.push(
 			this.databaseService
 				.watchListPushes(
@@ -255,6 +270,8 @@ export class ChannelService extends BaseProvider implements IChannelService {
 			);
 		}
 
+		debugLog(() => ({channelInitJoined: debugLogData()}));
+
 		let isOpen = false;
 		this.subscriptions.push(
 			this.databaseService
@@ -266,6 +283,8 @@ export class ChannelService extends BaseProvider implements IChannelService {
 				)
 				.subscribe(
 					async users => {
+						debugLog(() => ({channelInitUsers: debugLogData()}));
+
 						if (users.length < 1) {
 							return;
 						}
@@ -280,10 +299,20 @@ export class ChannelService extends BaseProvider implements IChannelService {
 						connected.resolve();
 					},
 					async err => {
+						debugLogError(() => ({
+							channelInitUsersError: {...debugLogData(), err}
+						}));
+
 						await handlers.onClose();
 						throw err;
 					},
-					async () => handlers.onClose()
+					async () => {
+						debugLog(() => ({
+							channelInitUsersClose: debugLogData()
+						}));
+
+						await handlers.onClose();
+					}
 				)
 		);
 	}
