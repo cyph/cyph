@@ -83,6 +83,8 @@ read -r -d '' modules <<- EOM
 	@fortawesome/free-solid-svg-icons
 	@fortawesome/fontawesome-svg-core
 	@google-cloud/storage
+	@ignatiusmb/scramble
+	@isomorphic-git/lightning-fs
 	@ngrx/core
 	@ngrx/effects
 	@ngrx/router-store
@@ -177,6 +179,17 @@ read -r -d '' modules <<- EOM
 	@syncfusion/ej2-svg-base
 	@syncfusion/ej2-treegrid
 	@syncfusion/ej2-treemap
+	@taiga-ui/addon-charts
+	@taiga-ui/addon-commerce
+	@taiga-ui/addon-editor
+	@taiga-ui/addon-mobile
+	@taiga-ui/addon-table
+	@taiga-ui/addon-tablebars
+	@taiga-ui/cdk
+	@taiga-ui/core
+	@taiga-ui/icons
+	@taiga-ui/kit
+	@types/animejs
 	@types/braintree-web
 	@types/country-list
 	@types/dompurify
@@ -218,6 +231,7 @@ read -r -d '' modules <<- EOM
 	angular2-text-mask
 	animate.css@https://github.com/daneden/animate.css
 	animated-scroll-to
+	animejs
 	awesome-typescript-loader
 	babel-core
 	babel-preset-env
@@ -283,6 +297,7 @@ read -r -d '' modules <<- EOM
 	ical-generator@~0.2
 	image-type
 	intro.js
+	isomorphic-git
 	jasmine-core
 	jasmine-spec-reporter
 	jquery

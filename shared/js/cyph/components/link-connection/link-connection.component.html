@@ -11,6 +11,7 @@
 		[matTooltip]="stringsService.videoPreview"
 		[muted]="true"
 		[playsinline]="true"
+		[showAudioLevel]="true"
 		[src]="(p2pWebRTCService.outgoingStream | await)?.stream"
 		*ngIf="
 			!!(p2pWebRTCService.outgoingStream | await)?.constraints?.video &&

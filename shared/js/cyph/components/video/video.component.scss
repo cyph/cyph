@@ -4,6 +4,7 @@
 	position: relative;
 	width: 100%;
 	height: 100%;
+	background-color: black;
 }
 
 .title {
@@ -18,6 +19,15 @@
 	font-weight: normal;
 	font-size: 16px;
 	background: rgba(0, 0, 0, 0.33);
+}
+
+mat-progress-bar.audio-level {
+	position: absolute;
+	bottom: calc(50% - 2px);
+	left: calc(-50% + 2px);
+	width: 100%;
+
+	@include transform(rotate(270deg));
 }
 
 video {

@@ -14,7 +14,6 @@ import {debugLog, debugLogError} from '../util/log';
 import {uuid} from '../util/uuid';
 import {resolvable} from '../util/wait';
 import {DatabaseService} from './database.service';
-import {LocalStorageService} from './local-storage.service';
 
 /** @inheritDoc */
 @Injectable()
@@ -27,16 +26,10 @@ export class ChannelService extends BaseProvider implements IChannelService {
 	}>();
 
 	/** @ignore */
-	private account: boolean = false;
-
-	/** @ignore */
 	private ephemeral: boolean = false;
 
 	/** @ignore */
 	private isClosed: boolean = false;
-
-	/** @ignore */
-	private parentID?: string;
 
 	/** @ignore */
 	private readonly receiveLock = lockFunction();
@@ -64,13 +57,6 @@ export class ChannelService extends BaseProvider implements IChannelService {
 	/** Resolves when first batch of incoming messages have been processed. */
 	public readonly initialMessagesProcessed = resolvable();
 
-	/** @ignore */
-	private get localStorageKey () : string {
-		return `${this.account ? 'Account' : ''}ChannelUserID${
-			this.parentID ? `-${this.parentID}` : ''
-		}`;
-	}
-
 	/** @inheritDoc */
 	public async close () : Promise<void> {
 		if (this.isClosed || !this.ephemeral) {
@@ -79,14 +65,9 @@ export class ChannelService extends BaseProvider implements IChannelService {
 
 		this.isClosed = true;
 
-		const {messagesURL, url} = await this.state;
+		const {url} = await this.state;
 
-		await Promise.all([
-			this.databaseService.removeItem(url),
-			this.localStorageService.removeItem(
-				`${this.localStorageKey}:${messagesURL}`
-			)
-		]);
+		await this.databaseService.removeItem(url);
 	}
 
 	/** @inheritDoc */
@@ -116,17 +97,11 @@ export class ChannelService extends BaseProvider implements IChannelService {
 		channelID: string | undefined,
 		channelSubID: string | undefined,
 		userID: string | undefined,
-		parentID: string | undefined,
-		possibleChannelRejoin: boolean,
-		account: boolean,
 		handlers: IChannelHandlers
 	) : Promise<void> {
 		if (!channelID) {
 			throw new Error('Invalid channel ID.');
 		}
-
-		this.account = account;
-		this.parentID = parentID;
 
 		const url = `channels/${channelID}`;
 		const messagesURL = `channels/${channelSubID || channelID}/messages`;
@@ -139,13 +114,7 @@ export class ChannelService extends BaseProvider implements IChannelService {
 
 		if (!userID) {
 			this.ephemeral = true;
-			userID = possibleChannelRejoin ?
-				await this.localStorageService.getOrSetDefault(
-					`${this.localStorageKey}:${messagesURL}`,
-					StringProto,
-					uuid
-				) :
-				uuid();
+			userID = uuid();
 
 			/*
 			this.databaseService.setDisconnectTracker(
@@ -165,6 +134,18 @@ export class ChannelService extends BaseProvider implements IChannelService {
 		}
 
 		const connected = resolvable();
+
+		const debugLogData = () => ({
+			channelID,
+			channelSubID,
+			ephemeral: this.ephemeral,
+			initialMessageCount,
+			messagesURL,
+			url,
+			userID
+		});
+
+		debugLog(() => ({channelInit: debugLogData()}));
 
 		this.subscriptions.push(
 			this.databaseService
@@ -255,6 +236,8 @@ export class ChannelService extends BaseProvider implements IChannelService {
 			);
 		}
 
+		debugLog(() => ({channelInitJoined: debugLogData()}));
+
 		let isOpen = false;
 		this.subscriptions.push(
 			this.databaseService
@@ -266,6 +249,8 @@ export class ChannelService extends BaseProvider implements IChannelService {
 				)
 				.subscribe(
 					async users => {
+						debugLog(() => ({channelInitUsers: debugLogData()}));
+
 						if (users.length < 1) {
 							return;
 						}
@@ -280,10 +265,20 @@ export class ChannelService extends BaseProvider implements IChannelService {
 						connected.resolve();
 					},
 					async err => {
+						debugLogError(() => ({
+							channelInitUsersError: {...debugLogData(), err}
+						}));
+
 						await handlers.onClose();
 						throw err;
 					},
-					async () => handlers.onClose()
+					async () => {
+						debugLog(() => ({
+							channelInitUsersClose: debugLogData()
+						}));
+
+						await handlers.onClose();
+					}
 				)
 		);
 	}
@@ -312,18 +307,12 @@ export class ChannelService extends BaseProvider implements IChannelService {
 
 	/** @inheritDoc */
 	public spawn () : ChannelService {
-		return new ChannelService(
-			this.databaseService,
-			this.localStorageService
-		);
+		return new ChannelService(this.databaseService);
 	}
 
 	constructor (
 		/** @ignore */
-		private readonly databaseService: DatabaseService,
-
-		/** @ignore */
-		private readonly localStorageService: LocalStorageService
+		private readonly databaseService: DatabaseService
 	) {
 		super();
 	}

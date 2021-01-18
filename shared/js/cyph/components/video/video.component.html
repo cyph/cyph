@@ -3,6 +3,13 @@
 		{{ title }}
 	</div>
 
+	<mat-progress-bar
+		class="audio-level"
+		mode="determinate"
+		[value]="(audioLevel | await) || 0"
+		*ngIf="showAudioLevel"
+	></mat-progress-bar>
+
 	<video
 		#video
 		[attr.autoplay]="autoplay ? '' : undefined"
