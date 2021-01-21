@@ -315,7 +315,7 @@ export class FileService extends BaseProvider {
 	) : Promise<HTMLImageElement> {
 		const img = document.createElement('img');
 
-		const imgLoaded = new Promise(resolve => {
+		const imgLoaded = new Promise<void>(resolve => {
 			img.onload = () => {
 				resolve();
 			};
