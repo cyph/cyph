@@ -1,2 +1,2 @@
 /** Warrant canary date. */
-export const warrantCanaryDate = 'December 8th, 2020';
+export const warrantCanaryDate = 'January 21st, 2021';
