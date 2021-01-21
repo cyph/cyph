@@ -432,7 +432,7 @@ read -r -d '' modules <<- EOM
 	tslint-microsoft-contrib
 	tsutils
 	typedoc
-	typescript@4.0
+	typescript@4.1
 	u2f-api-polyfill
 	uglify-es
 	universal-analytics
