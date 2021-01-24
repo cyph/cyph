@@ -241,7 +241,7 @@ read -r -d '' modules <<- EOM
 	braintree
 	braintree-web
 	braintree-web-drop-in
-	cheerio
+	cheerio@1.0.0-rc.3
 	clean-css-cli
 	clipboard-polyfill@^2
 	codelyzer
@@ -432,7 +432,7 @@ read -r -d '' modules <<- EOM
 	tslint-microsoft-contrib
 	tsutils
 	typedoc
-	typescript@4.0
+	typescript@4.1
 	u2f-api-polyfill
 	uglify-es
 	universal-analytics

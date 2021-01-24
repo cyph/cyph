@@ -6,7 +6,7 @@ import {MaybePromise} from '../../maybe-promise-type';
 export const resolvable = <T = void>(
 	value?: MaybePromise<T>
 ) : IResolvable<T> => {
-	let resolve: ((t?: T | PromiseLike<T>) => void) | undefined;
+	let resolve: ((t: T | PromiseLike<T>) => void) | undefined;
 	let reject: ((err?: any) => void) | undefined;
 
 	/* eslint-disable-next-line @typescript-eslint/tslint/config */

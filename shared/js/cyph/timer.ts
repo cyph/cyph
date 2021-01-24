@@ -73,7 +73,7 @@ export class Timer {
 
 		this.isStarted.next(true);
 
-		this.startPromise = new Promise(async (resolve, reject) => {
+		this.startPromise = new Promise<void>(async (resolve, reject) => {
 			await sleep(1000);
 
 			const startTime = await getTimestamp();
