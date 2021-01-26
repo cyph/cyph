@@ -369,8 +369,10 @@
 					matTooltip="Vault"
 					[matTooltipDisabled]="menuExpanded | await"
 					matTooltipPosition="right"
-					routerLink="/vault"
-					(click)="click()"
+					[routerLink]="
+						(envService.isMobile | await) || false ? '/vault' : null
+					"
+					(click)="accountService.toggleVaultMenu()"
 					*ngIf="
 						accountSettingsService.featureFlags.vault.watch()
 							| await
@@ -416,6 +418,14 @@
 						Vault
 					</h3>
 				</a>
+				<ng-container
+					*ngIf="
+						(accountService.vaultMenuExpanded | await) &&
+						(envService.isMobile | await) === true
+					"
+				>
+					<cyph-account-vault class="in-menu"></cyph-account-vault>
+				</ng-container>
 			</ng-container>
 		</mat-nav-list>
 	</ng-template>

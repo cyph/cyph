@@ -93,6 +93,16 @@ cyph-account-notification-center ::ng-deep .menu-button,
 	}
 }
 
+::ng-deep cyph-account-vault.in-menu {
+	padding-top: 0;
+	.mat-selection-list {
+		background-color: #43257d70;
+	}
+	.mat-list-item.mat-list-option {
+		padding-left: 16px;
+	}
+}
+
 .menu {
 	width: calc(100% + 4px) !important;
 	max-width: calc(100% + 4px) !important;

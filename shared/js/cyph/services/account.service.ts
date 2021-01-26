@@ -252,6 +252,9 @@ export class AccountService extends BaseProvider {
 		)
 	);
 
+	/** Indicates whether Vault sub-menu is expanded. */
+	public readonly vaultMenuExpanded = new BehaviorSubject<boolean>(false);
+
 	/** @ignore */
 	private async getIncomingCallRoute (
 		callMetadata: string
@@ -540,6 +543,11 @@ export class AccountService extends BaseProvider {
 		}
 
 		this.mobileMenuOpenInternal.next(menuOpen);
+	}
+
+	/** Toggles Vault sub-menu. */
+	public toggleVaultMenu () : void {
+		this.vaultMenuExpanded.next(!this.vaultMenuExpanded.value);
 	}
 
 	/** Triggers event to ends transition between components. */
