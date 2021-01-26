@@ -134,6 +134,9 @@ export class StringsService extends BaseProvider {
 	public readonly audioCall = `call`;
 
 	/** @see StringsService */
+	public readonly audioCallTitle = `Voice Call`;
+
+	/** @see StringsService */
 	public readonly authError = `Auth Error: \${ERROR}`;
 
 	/** @see StringsService */
@@ -1519,6 +1522,9 @@ export class StringsService extends BaseProvider {
 
 	/** @see StringsService */
 	public readonly videoCall = `video call`;
+
+	/** @see StringsService */
+	public readonly videoCallTitle = `Video Call`;
 
 	/** @see StringsService */
 	public readonly videoPreview = `Video Preview (you can switch cameras once in the call)`;

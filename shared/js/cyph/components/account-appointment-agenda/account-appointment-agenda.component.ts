@@ -67,33 +67,17 @@ export class AccountAppointmentAgendaComponent extends BaseProvider
 		this.internationalization.formatDate(date, {skeleton: 'hm'})
 	);
 
-	/** Split button menu oprions for hosting an unscheduled call */
+	/** Split button menu options for hosting an unscheduled call. */
 	public readonly hostMenuItems: ItemModel[] = [
 		{
-			text: 'Video Call',
+			text: this.stringsService.videoCallTitle,
 			iconCss: 'fa fa-video'
 		},
 		{
-			text: 'Audio Call',
+			text: this.stringsService.audioCallTitle,
 			iconCss: 'fa fa-phone'
 		}
 	];
-
-	/** Event handler for hosting options split button */
-	public hostOptions (args: MenuEventArgs)  {
-		let callType: string =
-			args.item.text === 'Video Call' ? 'video' : 'audio';
-
-		!this.accountDatabaseService.currentUser.value?.agseConfirmed ?
-			openWindow(
-				callType ?
-					this.envService.cyphVideoUrl :
-					this.envService.cyphAudioUrl
-			) :
-		this.envService.isCordovaMobile ?
-			this.router.navigate(['account-burner', callType]) :
-			openWindow('#account-burner/' + callType);
-	}
 
 	/** @see openWindow */
 	public readonly openWindow = openWindow;
@@ -315,6 +299,28 @@ export class AccountAppointmentAgendaComponent extends BaseProvider
 		}
 		finally {
 			this.accountService.interstitial.next(false);
+		}
+	}
+
+	/** Event handler for hosting options split button. */
+	public async hostOptions (args: MenuEventArgs) : Promise<void> {
+		const callType =
+			args.item.text === this.stringsService.videoCallTitle ?
+				'video' :
+				'audio';
+
+		if (!this.accountDatabaseService.currentUser.value?.agseConfirmed) {
+			await openWindow(
+				callType ?
+					this.envService.cyphVideoUrl :
+					this.envService.cyphAudioUrl
+			);
+		}
+		else if (this.envService.isCordovaMobile) {
+			await this.router.navigate(['account-burner', callType]);
+		}
+		else {
+			await openWindow('#account-burner/' + callType);
 		}
 	}
 
