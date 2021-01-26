@@ -161,10 +161,9 @@ export class ChatService extends BaseProvider {
 	/** Indicates whether delivery receipts are enabled. */
 	public readonly deliveryReceipts = (async () =>
 		this.sessionInitService.ephemeral &&
-		!(await this.sessionService.childChannelsConnected.then(() =>
-			this.sessionService.group
-		))
-	)();
+		!(await this.sessionService.childChannelsConnected.then(
+			() => this.sessionService.group
+		)))();
 
 	/** Used for initial scroll down on load. */
 	public initialScrollDown: boolean = true;
@@ -207,10 +206,9 @@ export class ChatService extends BaseProvider {
 	/** Indicates whether typing indicators are enabled. */
 	public readonly typingIndicators = (async () =>
 		this.sessionInitService.ephemeral &&
-		!(await this.sessionService.childChannelsConnected.then(() =>
-			this.sessionService.group
-		))
-	)();
+		!(await this.sessionService.childChannelsConnected.then(
+			() => this.sessionService.group
+		)))();
 
 	/** Resolves when UI is ready to be displayed. */
 	public readonly uiReady: Promise<true> = Promise.all([
@@ -592,13 +590,15 @@ export class ChatService extends BaseProvider {
 
 		const groupIndex =
 			this.sessionService.group && author instanceof BehaviorSubject ?
-				this.sessionService.group.map(o =>
-					o.remoteUsername
-				).indexOf(author) :
+				this.sessionService.group
+					.map(o => o.remoteUsername)
+					.indexOf(author) :
 				-1;
 
 		return groupIndex > -1 ?
-			`${ChatMessageService.groupSessionIndexPrefix}${groupIndex.toString()}` :
+			`${
+				ChatMessageService.groupSessionIndexPrefix
+			}${groupIndex.toString()}` :
 			undefined;
 	}
 
@@ -966,7 +966,11 @@ export class ChatService extends BaseProvider {
 
 	/** @see ChatMessageService.getMetadata */
 	public async getMessageMetadata (
-		id: string | IChatMessage | (IChatMessage & {pending: true}) | ListHoleError
+		id:
+			| string
+			| IChatMessage
+			| (IChatMessage & {pending: true})
+			| ListHoleError
 	) : Promise<{message: ChatMessage; pending: boolean}> {
 		return this.chatMessageService.getMetadata(id, this.chat);
 	}
@@ -1051,8 +1055,8 @@ export class ChatService extends BaseProvider {
 										this.messageValueHasher(message)
 									);
 								}
-								/* Temporary workaround for bad author IDs */
 								catch (err) {
+									/* Temporary workaround for bad author IDs */
 									debugLogError(() => ({
 										chatMessageValueError: err
 									}));
@@ -1095,7 +1099,10 @@ export class ChatService extends BaseProvider {
 										}
 									}));
 
-									await this.chat.messages.setItem(message.id, message);
+									await this.chat.messages.setItem(
+										message.id,
+										message
+									);
 
 									debugLog(() => ({
 										chatMessageValueBadDataRecoverySuccess: {
@@ -1823,7 +1830,7 @@ export class ChatService extends BaseProvider {
 						const id = o.textConfirmation.id;
 
 						const getNewLastConfirmedMesssage = (
-							messageIDs: (string|ListHoleError)[]
+							messageIDs: (string | ListHoleError)[]
 						) : IChatLastConfirmedMessage | undefined => {
 							for (let i = messageIDs.length - 1; i >= 0; --i) {
 								if (messageIDs[i] === id) {
@@ -1878,7 +1885,7 @@ export class ChatService extends BaseProvider {
 						);
 					}
 				});
-			}
+			};
 
 			this.deliveryReceipts.then(deliveryReceipts => {
 				if (deliveryReceipts) {
