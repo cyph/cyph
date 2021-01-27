@@ -239,7 +239,8 @@ export class AppService extends BaseProvider implements CanActivate {
 			if (
 				burnerRoot !== '' &&
 				urlSegmentPaths[0] !== burnerRoot &&
-				urlSegmentPaths[0] !== `${burnerRoot}-group-test`
+				urlSegmentPaths[0] !== `${burnerRoot}-group-test` &&
+				urlSegmentPaths[0] !== `${burnerRoot}-ui-test`
 			) {
 				await this.accountService.uiReady;
 			}

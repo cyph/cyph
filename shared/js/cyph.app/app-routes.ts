@@ -38,6 +38,15 @@ export const appRoutes = <Routes> [
 								data: {groupTest: true}
 							}
 						]
+					},
+					{
+						path: `${burnerRoot}-ui-test`,
+						children: [
+							{
+								...burner,
+								data: {uiTest: true}
+							}
+						]
 					}
 				] :
 				[]),

@@ -23,6 +23,7 @@ import {SplitTestingService} from '../../../cyph/services/split-testing.service'
 import {StringsService} from '../../../cyph/services/strings.service';
 import {UrlSessionInitService} from '../../../cyph/services/url-session-init.service';
 import {WindowWatcherService} from '../../../cyph/services/window-watcher.service';
+import {filterUndefinedOperator} from '../../../cyph/util/filter';
 import {random} from '../../../cyph/util/random';
 import {sleep} from '../../../cyph/util/wait';
 import {AppService} from '../../app.service';
@@ -65,6 +66,44 @@ export class EphemeralChatRootComponent extends BaseProvider
 		}
 		else {
 			this.sessionInitService.ephemeralGroupMembers.resolve([]);
+		}
+
+		if (this.activatedRoute.snapshot.data.uiTest === true) {
+			this.sessionService.channelConnected.resolve();
+			await sleep(1000);
+			this.sessionService.childChannelsConnected.resolve();
+			await sleep(1000);
+			this.sessionService.connected.resolve();
+			await sleep(1000);
+			this.sessionService.beginChat.resolve();
+
+			await this.p2pWebRTCService.webRTC
+				.pipe(filterUndefinedOperator(), take(1))
+				.toPromise();
+
+			this.p2pWebRTCService.loading.next(false);
+
+			if (
+				this.sessionInitService.callType &&
+				'captureStream' in HTMLVideoElement.prototype
+			) {
+				const video = document.createElement('video');
+				video.crossOrigin = 'anonymous';
+				video.loop = true;
+				video.muted = true;
+				video.src = 'https://i.imgur.com/MxAE8Wp.mp4';
+				await video.play();
+
+				const stream: MediaStream = (<any> video).captureStream();
+
+				this.p2pWebRTCService.incomingStreams.next([
+					{
+						...this.p2pWebRTCService.incomingStreams.value[0],
+						activeVideo: true,
+						stream
+					}
+				]);
+			}
 		}
 
 		const granimStates = {
@@ -236,6 +275,9 @@ export class EphemeralChatRootComponent extends BaseProvider
 
 		/** @ignore */
 		private readonly dialogService: DialogService,
+
+		/** @ignore */
+		private readonly p2pWebRTCService: P2PWebRTCService,
 
 		/** @ignore */
 		private readonly sessionInitService: SessionInitService,
