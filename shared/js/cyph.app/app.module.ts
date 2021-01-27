@@ -86,6 +86,7 @@ export class AppModule {
 		httpClient: HttpClient,
 		ngZone: NgZone,
 		router: Router,
+		appService: AppService,
 		databaseService: DatabaseService,
 		dialogService: DialogService,
 		fileService: FileService,
@@ -119,6 +120,7 @@ export class AppModule {
 			return;
 		}
 
+		(<any> self).appService = appService;
 		(<any> self).potassiumService = potassiumService;
 		(<any> self).proto = proto;
 	}
