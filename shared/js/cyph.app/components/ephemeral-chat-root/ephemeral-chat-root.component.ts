@@ -77,21 +77,27 @@ export class EphemeralChatRootComponent extends BaseProvider
 			await sleep(1000);
 			this.sessionService.beginChat.resolve();
 
-			await this.p2pWebRTCService.webRTC
-				.pipe(filterUndefinedOperator(), take(1))
-				.toPromise();
-
-			this.p2pWebRTCService.loading.next(false);
-
 			if (
 				this.sessionInitService.callType &&
 				'captureStream' in HTMLVideoElement.prototype
 			) {
+				await this.p2pWebRTCService.webRTC
+					.pipe(filterUndefinedOperator(), take(1))
+					.toPromise();
+
+				this.p2pWebRTCService.loading.next(false);
+
 				const video = document.createElement('video');
-				video.crossOrigin = 'anonymous';
 				video.loop = true;
 				video.muted = true;
-				video.src = 'https://i.imgur.com/MxAE8Wp.mp4';
+
+				video.src = URL.createObjectURL(
+					/* eslint-disable-next-line @typescript-eslint/tslint/config */
+					await fetch(`${this.envService.baseUrl}test.webm`).then(o =>
+						o.blob()
+					)
+				);
+
 				await video.play();
 
 				const stream: MediaStream = (<any> video).captureStream();

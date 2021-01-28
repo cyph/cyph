@@ -13,6 +13,13 @@ handlers:
   secure: always
   # default_headers Cache-Control X-Frame-Options Content-Security-Policy
 
+- url: /test.webm
+  static_files: test.webm
+  upload: test.webm
+  secure: always
+  http_headers:
+    Access-Control-Allow-Origin: *
+
 - url: .*
   script: auto
   secure: always
