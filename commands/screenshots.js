@@ -47,11 +47,18 @@ const resolutions = [
 const screenshotDir = '/cyph/screenshots';
 const screenshotEnv = 'https://staging.cyph.app';
 
-const click = async (page, selector) => {
+const click = async (page, selector, doubleClick = false) => {
 	await page.waitForSelector(selector);
-	await page.evaluate(selector => {
-		document.querySelector(selector).click();
-	}, selector);
+	await page.evaluate(
+		({doubleClick, selector}) => {
+			const elem = document.querySelector(selector);
+			elem.click();
+			if (doubleClick) {
+				elem.click();
+			}
+		},
+		{doubleClick, selector}
+	);
 };
 
 const setViewport = async (page, viewport) => {
@@ -90,10 +97,15 @@ const logIn = async (username, isMobile) => {
 		resolutions.find(o => o.viewport.isMobile === isMobile).viewport
 	);
 	await page.goto(screenshotEnv);
+	await page.evaluate(() => {
+		localStorage.debug = true;
+	});
+	await page.reload();
 
+	await click(page, 'button[routerlink="login"]');
+	await new Promise(resolve => setTimeout(resolve, 5000));
 	await page.waitForSelector('[name="cyphUsername"]');
 	await page.type('[name="cyphUsername"]', username);
-	await click(page, 'button[routerlink="login"]');
 	await page.waitForSelector('[name="masterKey"]');
 	await page.type('[name="masterKey"]', credentials.password);
 	await click(page, 'button[type="submit"]');
@@ -101,10 +113,6 @@ const logIn = async (username, isMobile) => {
 	if (!isMobile) {
 		await page.waitForSelector('img[alt="Profile Picture"]');
 	}
-
-	await page.waitForSelector(
-		'cyph-account-contact:nth-of-type(2) img[alt="User Avatar"]'
-	);
 
 	await click(
 		page,
@@ -114,8 +122,37 @@ const logIn = async (username, isMobile) => {
 	return {browser, page};
 };
 
+const loadContacts = async page => {
+	await new Promise(resolve => setTimeout(resolve, 30000));
+	await page.evaluate(() => {
+		(async () => {
+			const contacts = Array.from(
+				document.querySelectorAll(
+					'cyph-account-contact .mat-card-avatar'
+				)
+			)
+				.filter(elem => elem.textContent === 'person')
+				.map(elem =>
+					elem.parentElement
+						.querySelector('mat-card-title')
+						.textContent.slice(1)
+				);
+
+			for (const contact of contacts) {
+				await router.navigate(['profile', contact]);
+				await new Promise(resolve => setTimeout(resolve, 10000));
+			}
+
+			await router.navigate([
+				accountService.envService.isMobileOS ? 'contacts' : 'messaging'
+			]);
+		})();
+	});
+	await new Promise(resolve => setTimeout(resolve, 60000));
+};
+
 const openChat = async page => {
-	await click(page, 'cyph-account-contact:nth-of-type(2) mat-card');
+	await click(page, 'cyph-account-contact:nth-of-type(3) mat-card');
 	await page.waitForSelector(
 		'[data-message-id="987ed37d79b66977b32af77459677bc2b43e8ff7cda055af7a46a2638a6212b8c646446b70d38c96972c4f0218d87fdcce2a8460a306340ae40028f45d9fe2bc8af2fe0c"] cyph-markdown'
 	);
@@ -162,37 +199,48 @@ const generateScreenshots = async () => {
 			await toggleMobileMenu(page, isMobile);
 			await click(page, '[routerlink="/profile"]');
 		}
-		else {
-			await page.waitForSelector(
-				'cyph-account-contact:nth-of-type(4) img[alt="User Avatar"]'
-			);
-		}
 
 		await takeScreenshot(page, isMobile, 'profile');
 
+		await toggleMobileMenu(page, isMobile);
+		await takeScreenshot(page, isMobile, 'menu');
+		await click(page, '[routerlink="/messaging"]');
+
 		if (isMobile) {
-			await toggleMobileMenu(page, isMobile);
-			await takeScreenshot(page, isMobile, 'menu');
-			await click(page, '[routerlink="/"]');
-			await page.waitForSelector(
-				'cyph-account-contact:nth-of-type(4) img[alt="User Avatar"]'
-			);
-			await takeScreenshot(page, isMobile, 'messages');
+			await click(page, '[routerlink="/contacts"]');
 		}
+
+		await loadContacts(page);
+		await page.waitForSelector(
+			'cyph-account-contact:nth-of-type(4) img[alt="User Avatar"]'
+		);
+		await takeScreenshot(page, isMobile, 'messages');
 
 		await openChat(page);
 		await takeScreenshot(page, isMobile, 'chat');
 
-		for (const {name, route} of [
-			{name: 'anonymous-inbox', route: 'inbox'},
-			{name: 'files', route: 'files'},
-			{name: 'notes', route: 'notes'}
+		for (const {name, openFile, route} of [
+			{name: 'files', openFile: true, route: 'files'},
+			{name: 'meetings', route: 'schedule'},
+			{name: 'notes', openFile: true, route: 'notes'},
+			{name: 'pgp', route: 'pgp'}
 		]) {
 			await toggleMobileMenu(page, isMobile);
+			await click(page, '[routerlink="/vault"]');
 			await click(page, `[routerlink="/${route}"]`);
 			await takeScreenshot(page, isMobile, name);
 
-			await click(page, 'mat-row:first-of-type, mat-card:first-of-type');
+			if (!openFile) {
+				continue;
+			}
+
+			await click(
+				page,
+				!isMobile && name === 'files' ?
+					'.dx-data-row:first-of-type' :
+					'mat-row:first-of-type, mat-card:first-of-type',
+				!isMobile
+			);
 			await page.waitForSelector(
 				'[mattooltip="Back"], [mattooltip="Close"]'
 			);
@@ -201,6 +249,11 @@ const generateScreenshots = async () => {
 			await click(page, '[mattooltip="Back"], [mattooltip="Close"]');
 		}
 
+		await toggleMobileMenu(page, isMobile);
+		await click(page, '[routerlink="/feed"]');
+		await page.waitForSelector('cyph-account-post');
+		await takeScreenshot(page, isMobile, 'feed');
+
 		await browser.close();
 
 		const {browser: browserAlt, page: pageAlt} = await logIn(
@@ -208,6 +261,9 @@ const generateScreenshots = async () => {
 			isMobile
 		);
 
+		await toggleMobileMenu(pageAlt, isMobile);
+		await click(pageAlt, '[routerlink="/messaging"]');
+		await loadContacts(pageAlt);
 		await openChat(pageAlt);
 		await takeScreenshot(pageAlt, isMobile, 'chat-alt');
 
