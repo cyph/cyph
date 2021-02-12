@@ -200,40 +200,42 @@ export class P2PService extends BaseProvider {
 		devices: new BehaviorSubject<{
 			cameras: {label: string; switchTo: () => Promise<void>}[];
 			mics: {label: string; switchTo: () => Promise<void>}[];
-			screens: {label: string; switchTo: () => Promise<void>}[];
+			screen: {switchTo: () => Promise<void>};
 			speakers: {label: string; switchTo: () => Promise<void>}[];
 		}>({
 			cameras: [],
 			mics: [],
-			screens: [],
+			screen: {switchTo: async () => {}},
 			speakers: []
 		}),
 		isOpen: new BehaviorSubject<boolean>(false),
-		open: async (includeScreens: boolean = false) => {
+		open: async () => {
 			this.ioSwitcher.devices.next(
-				await this.p2pWebRTCService.getDevices(includeScreens)
+				await this.p2pWebRTCService.getDevices()
 			);
 			this.ioSwitcher.isOpen.next(true);
 		},
 		switch: async (
-			kind: 'cameras' | 'mics' | 'screens' | 'speakers',
+			kind: 'cameras' | 'mics' | 'screen' | 'speakers',
 			title: string
 		) => {
 			try {
-				if (kind === 'screens') {
-					await this.ioSwitcher.open(true);
+				if (kind === 'screen') {
+					await this.ioSwitcher.open();
 				}
 
 				const devices = this.ioSwitcher.devices.value[kind];
 
-				const device = await this.dialogService.prompt({
-					bottomSheet: true,
-					multipleChoiceOptions: devices.map((o, i) => ({
-						title: (i === 0 ? '* ' : '') + o.label,
-						value: o
-					})),
-					title
-				});
+				const device = !(devices instanceof Array) ?
+					devices :
+					await this.dialogService.prompt({
+						bottomSheet: true,
+						multipleChoiceOptions: devices.map((o, i) => ({
+							title: (i === 0 ? '* ' : '') + o.label,
+							value: o
+						})),
+						title
+					});
 
 				if (device) {
 					await device.switchTo();

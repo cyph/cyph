@@ -42,6 +42,10 @@ export class P2PWebRTCService extends BaseProvider
 		webRTC: 'webRTC'
 	};
 
+	/** Indicates whether screen sharing is supported in the current environment. */
+	public static readonly isScreenSharingSupported: boolean =
+		typeof (<any> navigator)?.mediaDevices?.getDisplayMedia === 'function';
+
 	/** Indicates whether WebRTC is supported in the current environment. */
 	public static readonly isSupported: boolean = _SimplePeer.WEBRTC_SUPPORT;
 
@@ -227,7 +231,9 @@ export class P2PWebRTCService extends BaseProvider
 	) => void = this._REMOTE_VIDEOS.resolve;
 
 	/** @inheritDoc */
-	public readonly screenSharingEnabled = new BehaviorSubject<boolean>(false);
+	public readonly screenSharingEnabled = new BehaviorSubject<boolean>(
+		P2PWebRTCService.isScreenSharingSupported
+	);
 
 	/** @inheritDoc */
 	public readonly videoEnabled = new BehaviorSubject<boolean>(true);
@@ -284,7 +290,9 @@ export class P2PWebRTCService extends BaseProvider
 		const {constraints} = this.outgoingStream.value;
 
 		try {
-			return await navigator.mediaDevices.getUserMedia(constraints);
+			return await (this.lastDeviceIDs.screenShare ?
+				(<any> navigator).mediaDevices.getDisplayMedia() :
+				navigator.mediaDevices.getUserMedia(constraints));
 		}
 		catch (err) {
 			debugLogError(() => ({
@@ -426,29 +434,14 @@ export class P2PWebRTCService extends BaseProvider
 	}
 
 	/** @inheritDoc */
-	public async getDevices (
-		includeScreens: boolean = false
-	) : Promise<{
+	public async getDevices () : Promise<{
 		cameras: {label: string; switchTo: () => Promise<void>}[];
 		mics: {label: string; switchTo: () => Promise<void>}[];
-		screens: {label: string; switchTo: () => Promise<void>}[];
+		screen: {switchTo: () => Promise<void>};
 		speakers: {label: string; switchTo: () => Promise<void>}[];
 	}> {
-		const [allDevices, screenSources]: [
-			MediaDeviceInfo[],
-			{id: string; name: string}[]
-		] = await Promise.all([
-			(async () =>
-				navigator.mediaDevices.enumerateDevices())().catch(() => []),
-			includeScreens &&
-			typeof cordovaRequire === 'function' &&
-			this.screenSharingEnabled.value ?
-				(async () =>
-					cordovaRequire('electron').desktopCapturer.getSources({
-						types: ['screen', 'window']
-					}))().catch(() => []) :
-				[]
-		]);
+		const allDevices = await (async () =>
+			navigator.mediaDevices.enumerateDevices())().catch(() => []);
 
 		const filterDevices = (
 			kind: string,
@@ -486,14 +479,14 @@ export class P2PWebRTCService extends BaseProvider
 				(o: MediaDeviceInfo) => async () =>
 					this.toggle('audio', {newDeviceID: o.deviceId})
 			),
-			screens: screenSources.map(source => ({
-				label: source.name,
+			screen: {
 				switchTo: async () =>
 					this.toggle('video', {
-						newDeviceID: source.id,
+						newDeviceID:
+							'screen-share-456ea64bc2811705460fd1296bc54e96',
 						screenShare: true
 					})
-			})),
+			},
 			speakers: !('sinkId' in HTMLMediaElement.prototype) ?
 				[] :
 				filterDevices(
@@ -1077,16 +1070,10 @@ export class P2PWebRTCService extends BaseProvider
 					await this.setOutgoingStreamConstraints({
 						...this.outgoingStream.value.constraints,
 						video:
-							!video || !this.lastDeviceIDs.camera ?
-								video :
+							!video ||
+							!this.lastDeviceIDs.camera ||
 							this.lastDeviceIDs.screenShare ?
-								<any> {
-									mandatory: {
-										chromeMediaSource: 'desktop',
-										chromeMediaSourceId: this.lastDeviceIDs
-											.camera
-									}
-								} :
+								video :
 								{deviceId: this.lastDeviceIDs.camera}
 					});
 				}

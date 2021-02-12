@@ -192,6 +192,10 @@ export class AccountP2PService extends P2PService {
 			})
 		);
 
+		if (!P2PWebRTCService.isScreenSharingSupported) {
+			return;
+		}
+
 		this.subscriptions.push(
 			this.accountSettingsService.staticFeatureFlags.screenSharing.subscribe(
 				screenSharingEnabled => {

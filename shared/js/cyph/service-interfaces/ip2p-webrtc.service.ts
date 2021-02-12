@@ -112,12 +112,10 @@ export interface IP2PWebRTCService {
 	close (incomingP2PKill?: boolean) : Promise<void>;
 
 	/** Gets all available I/O devices. */
-	getDevices (
-		includeScreens?: boolean
-	) : Promise<{
+	getDevices () : Promise<{
 		cameras: {label: string; switchTo: () => Promise<void>}[];
 		mics: {label: string; switchTo: () => Promise<void>}[];
-		screens: {label: string; switchTo: () => Promise<void>}[];
+		screen: {switchTo: () => Promise<void>};
 		speakers: {label: string; switchTo: () => Promise<void>}[];
 	}>;
 

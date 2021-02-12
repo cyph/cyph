@@ -465,14 +465,11 @@
 					[matTooltip]="stringsService.screenSwitchTitle"
 					matTooltipPosition="left"
 					[class.visibility-hidden]="
-						!(
-							envService.isCordovaDesktop &&
-							(p2pWebRTCService.screenSharingEnabled | await)
-						)
+						!(p2pWebRTCService.screenSharingEnabled | await)
 					"
 					(click)="
 						p2pService.ioSwitcher.switch(
-							'screens',
+							'screen',
 							stringsService.screenSwitchTitle
 						)
 					"
