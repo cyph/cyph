@@ -857,9 +857,11 @@ export class P2PWebRTCService extends BaseProvider
 								activeVideo:
 									!!this.incomingStreams.value[i].constraints
 										.video &&
-									!this.incomingStreams.value.find(
-										o => o.activeVideo
-									),
+									(this.incomingStreams.value[i]
+										.activeVideo ||
+										!this.incomingStreams.value.find(
+											o => o.activeVideo
+										)),
 								stream: remoteStream
 							},
 							...this.incomingStreams.value.slice(i + 1)
