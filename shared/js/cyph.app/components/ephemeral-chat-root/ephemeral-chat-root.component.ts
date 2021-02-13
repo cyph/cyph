@@ -93,9 +93,9 @@ export class EphemeralChatRootComponent extends BaseProvider
 
 				video.src = URL.createObjectURL(
 					/* eslint-disable-next-line @typescript-eslint/tslint/config */
-					await fetch(`${this.envService.baseUrl}test.webm`).then(o =>
-						o.blob()
-					)
+					await fetch(
+						`${this.envService.baseUrl}test.webm`
+					).then(async o => o.blob())
 				);
 
 				await video.play();

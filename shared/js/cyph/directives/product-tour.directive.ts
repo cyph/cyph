@@ -49,7 +49,7 @@ export class ProductTourDirective extends BaseProvider
 		@Host()
 		@Inject(TranslateDirective)
 		@Optional()
-		private translateDirective: TranslateDirective | undefined,
+		private readonly translateDirective: TranslateDirective | undefined,
 
 		/** @inheritDoc */
 		public readonly elementRef: ElementRef<HTMLElement>
