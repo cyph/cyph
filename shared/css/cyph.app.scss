@@ -7,6 +7,7 @@
 @import '~devextreme/dist/css/dx.common.css';
 @import '~devextreme/dist/css/dx.material.purple.light.compact.css';
 @import '~fullcalendar/dist/fullcalendar.min.css';
+@import '~intro.js/minified/introjs.min.css';
 @import '~quill/dist/quill.snow.css';
 @import './cyph.base';
 @import './themes/account';
@@ -114,4 +115,20 @@ cyph-chat-message-box smd-fab-speed-dial:not(.smd-opened) smd-fab-actions {
 	background-color: rgba(0, 0, 0, 0.5);
 	z-index: 997;
 	display: none;
+}
+
+/* Workarounds for intro.js bugs */
+
+.introjs-button {
+	font-weight: normal;
+}
+
+.introjs-skipbutton {
+	text-decoration: none;
+}
+
+.introjs-tooltiptext {
+	color: black;
+	font-weight: normal;
+	font-size: 16px;
 }

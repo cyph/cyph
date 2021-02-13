@@ -1,22 +1,58 @@
-import {Directive, ElementRef, OnInit, Renderer2} from '@angular/core';
+import {
+	Directive,
+	ElementRef,
+	Host,
+	Inject,
+	Input,
+	OnDestroy,
+	OnInit,
+	Optional
+} from '@angular/core';
 import {BaseProvider} from '../base-provider';
+import {IProductTourDirective} from '../directive-interfaces/iproduct-tour.directive';
+import {ProductTourService} from '../services/product-tour.service';
+import {TranslateDirective} from './translate.directive';
 
-/**
- * Angular directive for product tour.
- */
+/** @see IProductTourDirective */
 @Directive({
-	selector: '[cyphProductTour]'
+	/* eslint-disable-next-line @typescript-eslint/tslint/config */
+	selector: '[cyphProductTourContent][cyphProductTourOrder]'
 })
-export class ProductTourDirective extends BaseProvider implements OnInit {
+export class ProductTourDirective extends BaseProvider
+	implements IProductTourDirective, OnDestroy, OnInit {
 	/** @inheritDoc */
-	public ngOnInit () : void {}
+	@Input() public cyphProductTourContent: string = '';
+
+	/** @inheritDoc */
+	@Input() public cyphProductTourOrder: number = 0;
+
+	/** @inheritDoc */
+	public ngOnDestroy () : void {
+		this.productTourService.items.delete(this);
+	}
+
+	/** @inheritDoc */
+	public ngOnInit () : void {
+		this.productTourService.items.add(this);
+	}
+
+	/** @inheritDoc */
+	public get translate () : boolean {
+		return this.translateDirective !== undefined;
+	}
 
 	constructor (
 		/** @ignore */
-		private readonly elementRef: ElementRef,
+		private readonly productTourService: ProductTourService,
 
 		/** @ignore */
-		private readonly renderer: Renderer2
+		@Host()
+		@Inject(TranslateDirective)
+		@Optional()
+		private translateDirective: TranslateDirective | undefined,
+
+		/** @inheritDoc */
+		public readonly elementRef: ElementRef<HTMLElement>
 	) {
 		super();
 	}

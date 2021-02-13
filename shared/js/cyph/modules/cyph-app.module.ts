@@ -56,6 +56,7 @@ import {PGPPublicKeyComponent} from '../components/pgp-public-key';
 import {QRCodeScannerComponent} from '../components/qr-code-scanner';
 import {UploadEhrCredentialsComponent} from '../components/upload-ehr-credentials';
 import {WarrantCanaryComponent} from '../components/warrant-canary';
+import {ProductTourDirective} from '../directives/product-tour.directive';
 import {env} from '../env';
 import {AccountAppointmentsService} from '../services/account-appointments.service';
 import {AccountAuthGuardService} from '../services/account-auth-guard.service';
@@ -78,6 +79,7 @@ import {EHRIntegrationService} from '../services/ehr-integration.service';
 import {EHRService} from '../services/ehr.service';
 import {FingerprintService} from '../services/fingerprint.service';
 import {FirebaseDatabaseService} from '../services/firebase-database.service';
+import {ProductTourService} from '../services/product-tour.service';
 import {QRService} from '../services/qr.service';
 import {WorkerService} from '../services/worker.service';
 import {CyphCommonModule} from './cyph-common.module';
@@ -142,6 +144,7 @@ import {CyphWebModule} from './cyph-web.module';
 		LinkConnectionEmailComponent,
 		NotFoundComponent,
 		PGPPublicKeyComponent,
+		ProductTourDirective,
 		QRCodeScannerComponent,
 		UploadEhrCredentialsComponent,
 		WarrantCanaryComponent
@@ -201,6 +204,7 @@ import {CyphWebModule} from './cyph-web.module';
 		LinkConnectionEmailComponent,
 		NotFoundComponent,
 		PGPPublicKeyComponent,
+		ProductTourDirective,
 		QRCodeScannerComponent,
 		UploadEhrCredentialsComponent,
 		WarrantCanaryComponent
@@ -226,6 +230,7 @@ import {CyphWebModule} from './cyph-web.module';
 		EHRService,
 		FingerprintService,
 		PGPService,
+		ProductTourService,
 		QRService,
 		WorkerService,
 		{
@@ -244,7 +249,8 @@ export class CyphAppModule {
 		accountFilesService: AccountFilesService,
 		accountPostsService: AccountPostsService,
 		databaseService: DatabaseService,
-		pgpService: PGPService
+		pgpService: PGPService,
+		productTourService: ProductTourService
 	) {
 		AccountContactsService.accountContactsSearchComponent.resolve(
 			AccountContactsSearchComponent
@@ -269,5 +275,6 @@ export class CyphAppModule {
 		(<any> self).accountPostsService = accountPostsService;
 		(<any> self).databaseService = databaseService;
 		(<any> self).pgpService = pgpService;
+		(<any> self).productTourService = productTourService;
 	}
 }
