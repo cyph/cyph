@@ -298,6 +298,12 @@ message AccountPostReference {
 	required string id = 2;
 }
 
+/** Completion state of recommended tasks for new accounts. */
+message AccountSetupChecklist {
+	/** Product tour. */
+	bool productTour = 1;
+}
+
 /** User presence. */
 message AccountUserPresence {
 	/** Possible presence statuses. */

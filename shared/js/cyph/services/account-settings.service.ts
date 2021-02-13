@@ -7,8 +7,10 @@ import {IAsyncValue} from '../iasync-value';
 import {IFile} from '../ifile';
 import {CyphPlanConfig} from '../plan-config';
 import {
+	AccountSetupChecklist,
 	BinaryProto,
 	CyphPlans,
+	IAccountSetupChecklist,
 	InvertedBooleanProto,
 	StringArrayProto
 } from '../proto';
@@ -26,6 +28,11 @@ import {StringsService} from './strings.service';
  */
 @Injectable()
 export class AccountSettingsService extends BaseProvider {
+	/** @ignore */
+	private readonly setupChecklistInternal = this.accountDatabaseService.getAsyncValue<
+		IAccountSetupChecklist
+	>('setupChecklist', AccountSetupChecklist);
+
 	/** User-set flags to enable/disable features. */
 	public readonly featureFlags = {
 		docs: this.getFeatureFlag('docs'),
@@ -84,6 +91,9 @@ export class AccountSettingsService extends BaseProvider {
 		),
 		this.subscriptions
 	);
+
+	/** @see AccountSetupChecklist */
+	public readonly setupChecklist = this.setupChecklistInternal.watch();
 
 	/** Indicates whether features are enabled by current environment or plan. */
 	public readonly staticFeatureFlags = {
@@ -191,6 +201,17 @@ export class AccountSettingsService extends BaseProvider {
 	/** Sets the currently signed in user's cover image. */
 	public async setCoverImage (file: IFile) : Promise<void> {
 		return this.setImage(file, 'coverImage');
+	}
+
+	/** Checks a task in the setup checklist. */
+	public async updateSetupChecklist (
+		key: keyof IAccountSetupChecklist,
+		value: boolean = true
+	) : Promise<void> {
+		await this.setupChecklistInternal.updateValue(async o => ({
+			...o,
+			[key]: value
+		}));
 	}
 
 	constructor (
