@@ -1,5 +1,4 @@
 import {ChangeDetectionStrategy, Component, Input} from '@angular/core';
-import {Router} from '@angular/router';
 import {map} from 'rxjs/operators';
 import {
 	NewContactTypes,
@@ -87,26 +86,7 @@ export class AccountMenuComponent extends BaseProvider {
 		await this.accountAuthService.lock();
 	}
 
-	/** @see AccountAuthService.logout */
-	public async logout () : Promise<void> {
-		this.click();
-
-		if (
-			!(await this.dialogService.confirm({
-				content: this.stringsService.logoutPrompt,
-				title: this.stringsService.logoutTitle
-			}))
-		) {
-			return;
-		}
-
-		await this.router.navigate(['logout']);
-	}
-
 	constructor (
-		/** @ignore */
-		private readonly router: Router,
-
 		/** @ignore */
 		private readonly dialogService: DialogService,
 

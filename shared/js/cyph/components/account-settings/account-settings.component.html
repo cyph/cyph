@@ -250,6 +250,27 @@
 			<div fxLayoutAlign="center">
 				<button
 					mat-raised-button
+					[disabled]="
+						!(accountDatabaseService.currentUser | await)
+							?.masterKeyConfirmed
+					"
+					(click)="logout()"
+				>
+					<mat-icon>exit_to_app</mat-icon>
+					&nbsp;&nbsp;
+					<span cyphTranslate>
+						Log Out
+					</span>
+				</button>
+			</div>
+
+			<div></div>
+			<hr class="full-width" />
+			<div></div>
+
+			<div fxLayoutAlign="center">
+				<button
+					mat-raised-button
 					color="warn"
 					(click)="setAccountDeactivated(!deactivated.value)"
 				>

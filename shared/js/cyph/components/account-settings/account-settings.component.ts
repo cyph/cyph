@@ -224,6 +224,20 @@ export class AccountSettingsComponent extends BaseProvider implements OnInit {
 		);
 	}
 
+	/** @see AccountAuthService.logout */
+	public async logout () : Promise<void> {
+		if (
+			!(await this.dialogService.confirm({
+				content: this.stringsService.logoutPrompt,
+				title: this.stringsService.logoutTitle
+			}))
+		) {
+			return;
+		}
+
+		await this.router.navigate(['logout']);
+	}
+
 	/** New device activation completion handler. */
 	public async newDeviceActivationComplete (
 		success: boolean
