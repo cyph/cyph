@@ -937,20 +937,7 @@ export class AccountRegisterComponent extends BaseProvider
 	) {
 		super();
 
-		this.additionalDevicesReady = toBehaviorSubject(
-			observableAll([
-				this.additionalDevices.desktop,
-				this.additionalDevices.mobile,
-				this.additionalDevices.paperMasterKey
-			]).pipe(
-				map(
-					([desktop, mobile, paperMasterKey]) =>
-						desktop > 0 || mobile > 0 || paperMasterKey
-				)
-			),
-			false,
-			this.subscriptions
-		);
+		this.additionalDevicesReady = this.additionalDevices.paperMasterKey;
 
 		this.subscriptions.push(
 			this.inviteCode.valueChanges.subscribe(value => {
