@@ -177,6 +177,13 @@ export class CyphWebModule {
 		);
 
 		matIconRegistry.addSvgIcon(
+			'diamond',
+			sanitizer.bypassSecurityTrustResourceUrl(
+				'/assets/img/iconfinder/diamond.svg'
+			)
+		);
+
+		matIconRegistry.addSvgIcon(
 			'doctor',
 			sanitizer.bypassSecurityTrustResourceUrl(
 				'/assets/img/iconfinder/doctor.svg'
