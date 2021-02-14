@@ -300,8 +300,23 @@ message AccountPostReference {
 
 /** Completion state of recommended tasks for new accounts. */
 message AccountSetupChecklist {
+	/** Adding contacts. */
+	bool addContact = 1;
+
+	/** Files. */
+	bool files = 2;
+
+	/** Inviting friends. */
+	bool inviteFriend = 3;
+
+	/** Meetings. */
+	bool meetings = 4;
+
 	/** Product tour. */
-	bool productTour = 1;
+	bool productTour = 5;
+
+	/** Social. */
+	bool social = 6;
 }
 
 /** User presence. */
