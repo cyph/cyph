@@ -224,48 +224,6 @@ export class AccountSettingsComponent extends BaseProvider implements OnInit {
 		);
 	}
 
-	/** Saves lock screen password update. */
-	public async setAccountDeactivated (deactivated: boolean) : Promise<void> {
-		if (
-			!(await this.dialogService.confirm({
-				content: this.stringsService.setParameters(
-					this.stringsService.deactivateAccountConfirm,
-					{
-						action: deactivated ?
-							this.stringsService.deactivateAccountDeactivate :
-							this.stringsService.deactivateAccountReactivate
-					}
-				),
-				markdown: true,
-				title: deactivated ?
-					this.stringsService.deactivateAccountDeactivateTitle :
-					this.stringsService.deactivateAccountReactivateTitle
-			}))
-		) {
-			return;
-		}
-
-		if (deactivated) {
-			await this.accountDatabaseService.setItem(
-				'deactivated',
-				BinaryProto,
-				new Uint8Array(0),
-				SecurityModels.unprotected
-			);
-		}
-		else {
-			await this.accountDatabaseService.removeItem('deactivated');
-		}
-
-		await this.dialogService.toast(
-			deactivated ?
-				this.stringsService.deactivateAccountDeactivateToast :
-				this.stringsService.deactivateAccountReactivateToast,
-			undefined,
-			this.stringsService.ok
-		);
-	}
-
 	/** New device activation completion handler. */
 	public async newDeviceActivationComplete (
 		success: boolean
@@ -359,6 +317,48 @@ export class AccountSettingsComponent extends BaseProvider implements OnInit {
 		this.updateData({current: {email, name, profileVisible, realUsername}});
 
 		this.loading.next(false);
+	}
+
+	/** Saves lock screen password update. */
+	public async setAccountDeactivated (deactivated: boolean) : Promise<void> {
+		if (
+			!(await this.dialogService.confirm({
+				content: this.stringsService.setParameters(
+					this.stringsService.deactivateAccountConfirm,
+					{
+						action: deactivated ?
+							this.stringsService.deactivateAccountDeactivate :
+							this.stringsService.deactivateAccountReactivate
+					}
+				),
+				markdown: true,
+				title: deactivated ?
+					this.stringsService.deactivateAccountDeactivateTitle :
+					this.stringsService.deactivateAccountReactivateTitle
+			}))
+		) {
+			return;
+		}
+
+		if (deactivated) {
+			await this.accountDatabaseService.setItem(
+				'deactivated',
+				BinaryProto,
+				new Uint8Array(0),
+				SecurityModels.unprotected
+			);
+		}
+		else {
+			await this.accountDatabaseService.removeItem('deactivated');
+		}
+
+		await this.dialogService.toast(
+			deactivated ?
+				this.stringsService.deactivateAccountDeactivateToast :
+				this.stringsService.deactivateAccountReactivateToast,
+			undefined,
+			this.stringsService.ok
+		);
 	}
 
 	/** Updates draft. */
