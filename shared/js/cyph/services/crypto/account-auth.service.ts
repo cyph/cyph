@@ -103,6 +103,19 @@ export class AccountAuthService extends BaseProvider {
 	}
 
 	/** @ignore */
+	private reload (reload: boolean = true) : void {
+		if (!reload) {
+			return;
+		}
+
+		if ((<any> self).androidBackbuttonReady) {
+			(<any> self).plugins.appMinimize.minimize();
+		}
+
+		closeWindow();
+	}
+
+	/** @ignore */
 	private async setItem<T> (
 		url: string,
 		proto: IProto<T>,
@@ -437,16 +450,7 @@ export class AccountAuthService extends BaseProvider {
 	/** Removes PIN from local storage. */
 	public async lock (reload: boolean = true) : Promise<void> {
 		await this.localStorageService.removeItem('pinHash');
-
-		if (!reload) {
-			return;
-		}
-
-		if ((<any> self).androidBackbuttonReady) {
-			(<any> self).plugins.appMinimize.minimize();
-		}
-
-		closeWindow();
+		this.reload(reload);
 	}
 
 	/**
@@ -462,7 +466,7 @@ export class AccountAuthService extends BaseProvider {
 	) : Promise<boolean> {
 		this.loginErrorMessage.next(undefined);
 
-		const logoutPromise = this.logout(false, false);
+		const logoutPromise = this.logout(false, false, false);
 
 		if (!username || masterKey.length === 0) {
 			return false;
@@ -807,7 +811,8 @@ export class AccountAuthService extends BaseProvider {
 	/** Logs out. */
 	public async logout (
 		clearSavedCredentials: boolean = true,
-		timeouts: boolean = true
+		timeouts: boolean = true,
+		reload: boolean = true
 	) : Promise<boolean> {
 		const currentUser = this.accountDatabaseService.currentUser.value;
 
@@ -859,6 +864,7 @@ export class AccountAuthService extends BaseProvider {
 		}
 
 		this.accountDatabaseService.currentUser.next(undefined);
+		this.reload(reload);
 		return true;
 	}
 

@@ -236,7 +236,8 @@ export class AccountSettingsComponent extends BaseProvider implements OnInit {
 			return;
 		}
 
-		await this.router.navigate(['logout']);
+		this.accountService.interstitial.next(true);
+		await this.accountAuthService.logout();
 	}
 
 	/** New device activation completion handler. */

@@ -97,7 +97,6 @@ export class AccountComponent extends BaseProvider
 					'call',
 					'contacts',
 					'doctors',
-					'logout',
 					'mail',
 					'messages',
 					'patients',

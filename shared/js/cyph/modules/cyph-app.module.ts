@@ -21,7 +21,6 @@ import {AccountFormsComponent} from '../components/account-forms';
 import {AccountHomeComponent} from '../components/account-home';
 import {AccountIncomingPatientInfoComponent} from '../components/account-incoming-patient-info';
 import {AccountLoginComponent} from '../components/account-login';
-import {AccountLogoutComponent} from '../components/account-logout';
 import {AccountMenuComponent} from '../components/account-menu';
 import {AccountMessagingComponent} from '../components/account-messaging';
 import {AccountNewDeviceActivationComponent} from '../components/account-new-device-activation';
@@ -112,7 +111,6 @@ import {CyphWebModule} from './cyph-web.module';
 		AccountHomeComponent,
 		AccountIncomingPatientInfoComponent,
 		AccountLoginComponent,
-		AccountLogoutComponent,
 		AccountMenuComponent,
 		AccountMessagingComponent,
 		AccountNewDeviceActivationComponent,
@@ -172,7 +170,6 @@ import {CyphWebModule} from './cyph-web.module';
 		AccountHomeComponent,
 		AccountIncomingPatientInfoComponent,
 		AccountLoginComponent,
-		AccountLogoutComponent,
 		AccountMenuComponent,
 		AccountMessagingComponent,
 		AccountNewDeviceActivationComponent,

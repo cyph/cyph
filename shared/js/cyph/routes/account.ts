@@ -15,7 +15,6 @@ import {AccountFormComponent} from '../components/account-form';
 import {AccountFormsComponent} from '../components/account-forms';
 import {AccountHomeComponent} from '../components/account-home';
 import {AccountIncomingPatientInfoComponent} from '../components/account-incoming-patient-info';
-import {AccountLogoutComponent} from '../components/account-logout';
 import {AccountMessagingComponent} from '../components/account-messaging';
 import {AccountNewAppointmentTestComponent} from '../components/account-new-appointment-test';
 import {AccountNoteComponent} from '../components/account-note';
@@ -243,7 +242,6 @@ export const account: Route = {
 			data: {anonymousMessages: true, realTime: false},
 			children: [{path: 'edit', component: BlankComponent}]
 		},
-		{path: 'logout', component: AccountLogoutComponent},
 		{
 			path: 'mail/:contactID',
 			component: AccountChatComponent,
