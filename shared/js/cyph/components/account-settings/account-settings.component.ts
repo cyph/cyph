@@ -229,6 +229,7 @@ export class AccountSettingsComponent extends BaseProvider implements OnInit {
 		if (
 			!(await this.dialogService.confirm({
 				content: this.stringsService.logoutPrompt,
+				markdown: true,
 				title: this.stringsService.logoutTitle
 			}))
 		) {

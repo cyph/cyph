@@ -716,7 +716,7 @@ export class StringsService extends BaseProvider {
 	public readonly logoText = this.internalLogoText;
 
 	/** @see StringsService */
-	public readonly logoutPrompt = `Quit and log out of ${this.internalProductShort}?`;
+	public readonly logoutPrompt = `**WARNING:** First, please double-check that you remember or have a record of your Master Key to ensure that you don't lose access to this account.\n\nQuit and log out of ${this.internalProductShort}?`;
 
 	/** @see StringsService */
 	public readonly logoutTitle = `Log Out`;
