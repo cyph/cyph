@@ -30,6 +30,9 @@ export class SalesService extends BaseProvider {
 		!this.envService.isTelehealth
 	);
 
+	/** Indicates whether upselling is allowed. */
+	public readonly upsellAllowed = new ReplaySubject<boolean>();
+
 	/** Controls whether upsell banner is enabled. */
 	public readonly upsellBanner = new ReplaySubject<boolean>();
 
@@ -147,21 +150,27 @@ export class SalesService extends BaseProvider {
 		}
 
 		this.subscriptions.push(
+			this.accountSettingsService.plan.subscribe(plan => {
+				this.upsellAllowed.next(
+					!this.envService.isTelehealth &&
+						this.configService.planConfig[plan].upsell &&
+						!this.envService.noInAppPurchasesReferenceAllowed
+				);
+			})
+		);
+
+		this.subscriptions.push(
 			observableAll([
 				this.localStorageService.watch(
 					'disableUpsellBanner',
 					BooleanProto,
 					this.subscriptions
 				),
-				this.accountSettingsService.plan
-			]).subscribe(([disableUpsellBanner, plan]) => {
-				const upsellBanner =
-					!disableUpsellBanner.value &&
-					!this.envService.isTelehealth &&
-					this.configService.planConfig[plan].upsell &&
-					!this.envService.noInAppPurchasesReferenceAllowed;
-
-				this.upsellBanner.next(upsellBanner);
+				this.upsellAllowed
+			]).subscribe(([disableUpsellBanner, upsellAllowed]) => {
+				this.upsellBanner.next(
+					!disableUpsellBanner.value && upsellAllowed
+				);
 			})
 		);
 	}

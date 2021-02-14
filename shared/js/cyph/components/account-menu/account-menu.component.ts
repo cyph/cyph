@@ -18,6 +18,7 @@ import {AccountAuthService} from '../../services/crypto/account-auth.service';
 import {AccountDatabaseService} from '../../services/crypto/account-database.service';
 import {DialogService} from '../../services/dialog.service';
 import {EnvService} from '../../services/env.service';
+import {SalesService} from '../../services/sales.service';
 import {StringsService} from '../../services/strings.service';
 import {trackByValue} from '../../track-by/track-by-value';
 import {urlToSafeStyle} from '../../util/safe-values';
@@ -135,6 +136,9 @@ export class AccountMenuComponent extends BaseProvider {
 
 		/** @see EnvService */
 		public readonly envService: EnvService,
+
+		/** @see SalesService */
+		public readonly salesService: SalesService,
 
 		/** @see StringsService */
 		public readonly stringsService: StringsService

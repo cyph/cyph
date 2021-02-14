@@ -611,6 +611,80 @@
 				</button>
 			</mat-menu>
 
+			<cyph-in-app-purchase
+				#inAppPurchase
+				[userToken]="true"
+			></cyph-in-app-purchase>
+
+			<a
+				mat-list-item
+				cyphTranslate
+				class="upgrade"
+				matTooltip="Upgrade"
+				[matTooltipDisabled]="menuExpanded | await"
+				matTooltipPosition="right"
+				(click)="
+					salesService.openPricing(
+						[
+							envService.homeUrl,
+							'pricing?current=',
+							accountSettingsService.getPlanString(),
+							'&userToken=',
+							accountService.getUserToken(
+								accountService.interstitial
+							)
+						],
+						undefined,
+						inAppPurchase
+					);
+					click()
+				"
+				*ngIf="salesService.upsellAllowed | await"
+			>
+				<mat-icon mat-list-icon svgIcon="diamond"></mat-icon>
+				<h3 matLine cyphTranslate *ngIf="menuExpanded | await">
+					Upgrade
+				</h3>
+			</a>
+
+			<a
+				mat-list-item
+				cyphTranslate
+				class="lifetime-upgrade"
+				matTooltip="Lifetime Platinum Offer"
+				[matTooltipDisabled]="menuExpanded | await"
+				matTooltipPosition="right"
+				(click)="
+					salesService.openPricing(
+						[
+							envService.homeUrl,
+							'checkout/#',
+							'flash-sale/lifetime-platinum',
+							'/userToken=',
+							accountService.getUserToken(
+								accountService.interstitial
+							)
+						],
+						undefined,
+						undefined
+					);
+					click()
+				"
+				*ngIf="
+					(salesService.upsellAllowed | await) &&
+					(
+						(
+							accountDatabaseService.currentUser | await
+						)?.user?.extra() | await
+					)?.pgp?.keybaseUsername
+				"
+			>
+				<mat-icon mat-list-icon svgIcon="diamond"></mat-icon>
+				<h3 matLine *ngIf="menuExpanded | await">
+					<strong cyphTranslate>Lifetime Platinum Offer</strong>
+				</h3>
+			</a>
+
 			<a
 				mat-list-item
 				cyphTranslate
