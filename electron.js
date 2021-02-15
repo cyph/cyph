@@ -18,6 +18,7 @@
 */
 
 const fs = require('fs');
+const path = require('path');
 // Module to control application life, browser window and tray.
 const {app, BrowserWindow, Menu, shell} = require('electron');
 const {setup: setupPushReceiver} = require('electron-push-receiver');
@@ -49,7 +50,10 @@ function createWindow ()  {
 			webPreferences: Object.assign(
 				{},
 				(cdvElectronSettings.browserWindow || {}).webPreferences,
-				{enableRemoteModule: true}
+				{
+					enableRemoteModule: true,
+					preload: path.join(__dirname, 'preload.js')
+				}
 			)
 		}
 	);
