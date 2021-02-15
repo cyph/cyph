@@ -204,7 +204,7 @@ export class AccountLoginComponent extends BaseProvider implements OnInit {
 				}
 				*/
 
-				if (this.activatedRoute.snapshot.url[0].path === 'settings') {
+				if (this.activatedRoute.snapshot.url[0]?.path === 'settings') {
 					await this.router.navigate([
 						'login',
 						...this.activatedRoute.snapshot.url

@@ -542,6 +542,10 @@ export class AccountService extends BaseProvider {
 			history.pushState(undefined, '');
 		}
 
+		if (!menuOpen) {
+			this.vaultMenuExpanded.next(false);
+		}
+
 		this.mobileMenuOpenInternal.next(menuOpen);
 	}
 

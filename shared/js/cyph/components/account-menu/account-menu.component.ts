@@ -1,4 +1,5 @@
 import {ChangeDetectionStrategy, Component, Input} from '@angular/core';
+import {Router} from '@angular/router';
 import {map} from 'rxjs/operators';
 import {
 	NewContactTypes,
@@ -89,6 +90,9 @@ export class AccountMenuComponent extends BaseProvider {
 	constructor (
 		/** @ignore */
 		private readonly dialogService: DialogService,
+
+		/** @see Router */
+		public readonly router: Router,
 
 		/** @see AccountService */
 		public readonly accountService: AccountService,

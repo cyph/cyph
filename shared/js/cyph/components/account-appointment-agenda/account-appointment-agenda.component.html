@@ -17,19 +17,19 @@
 			}}
 		</button>
 		<ejs-splitbutton
-			[items]="hostMenuItems"
 			class="mat-raised-button mat-button-base mat-accent"
+			[content]="
+				(accountSettingsService.telehealth | await) ?
+					stringsService.meetingHostTitleTelehealth :
+					stringsService.meetingHost
+			"
+			[items]="hostMenuItems"
 			(click)="
 				!accountDatabaseService.currentUser.value?.agseConfirmed ?
 					openWindow(envService.cyphVideoUrl) :
 				envService.isCordovaMobile ?
 					router.navigate(['account-burner', 'video']) :
 					openWindow('#account-burner/video')
-			"
-			[content]="
-				(accountSettingsService.telehealth | await) ?
-					stringsService.meetingHostTitleTelehealth :
-					stringsService.meetingHost
 			"
 			(select)="hostOptions($event)"
 		></ejs-splitbutton>

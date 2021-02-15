@@ -320,7 +320,7 @@ export class AccountAppointmentAgendaComponent extends BaseProvider
 			await this.router.navigate(['account-burner', callType]);
 		}
 		else {
-			await openWindow('#account-burner/' + callType);
+			await openWindow(`#account-burner/${callType}`);
 		}
 	}
 

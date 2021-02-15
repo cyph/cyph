@@ -369,10 +369,12 @@
 					matTooltip="Vault"
 					[matTooltipDisabled]="menuExpanded | await"
 					matTooltipPosition="right"
-					[routerLink]="
-						(envService.isMobile | await) || false ? '/vault' : null
+					(click)="
+						envService.isMobile.value ?
+							accountService.toggleVaultMenu() :
+							router.navigate(['vault']);
+						envService.isMobile.value ? undefined : click()
 					"
-					(click)="accountService.toggleVaultMenu()"
 					*ngIf="
 						accountSettingsService.featureFlags.vault.watch()
 							| await
