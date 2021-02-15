@@ -189,13 +189,36 @@ Since fonts are big, uncomment these as they actually get used.
 	font-feature-settings: 'liga';
 }
 
+/* Font Awesome */
+
+@font-face {
+	font-family: 'Font Awesome 5 Free';
+	font-style: normal;
+	font-weight: 400;
+	src: url(/assets/fonts/fontawesome/fa-regular-400.woff) format('woff');
+}
+
+@font-face {
+	font-family: 'Font Awesome 5 Free';
+	font-style: normal;
+	font-weight: 900;
+	src: url(/assets/fonts/fontawesome/fa-solid-900.woff) format('woff');
+}
+
+@font-face {
+	font-family: 'Font Awesome 5 Brands';
+	font-style: normal;
+	font-weight: 400;
+	src: url(/assets/fonts/fontawesome/fa-brands-400.woff) format('woff');
+}
+
 /* For DevExtreme */
 
 @font-face {
 	font-family: DXIcons;
-	src: url(/assets/fonts/devextreme/dxiconsmaterial.woff) format('woff');
-	font-weight: 400;
 	font-style: normal;
+	font-weight: 400;
+	src: url(/assets/fonts/devextreme/dxiconsmaterial.woff) format('woff');
 }
 
 /* For DevExtreme, from https://fonts.googleapis.com/earlyaccess/notokufiarabic.css */
