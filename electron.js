@@ -44,7 +44,14 @@ function createWindow ()  {
 	const browserWindowOpts = Object.assign(
 		{},
 		cdvElectronSettings.browserWindow,
-		{icon: appIcon}
+		{
+			icon: appIcon,
+			webPreferences: Object.assign(
+				{},
+				(cdvElectronSettings.browserWindow || {}).webPreferences,
+				{enableRemoteModule: true}
+			)
+		}
 	);
 	mainWindow = new BrowserWindow(browserWindowOpts);
 
