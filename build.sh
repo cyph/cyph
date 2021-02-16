@@ -224,6 +224,27 @@ if [ "${electron}" ] ; then
 
 		windows.signing.release.certificatePassword = '${passwordWindows}';
 
+		const macDmgDebug = {
+			...mac,
+			package: ['dmg']
+		};
+
+		const windowsExe = {
+			...windows,
+			package: ['nsis']
+		};
+
+		const windowsExeDebug = {
+			...windowsExe,
+			signing: undefined
+		};
+
+		const windowsAppStore = {
+			...windows,
+			package: ['appx'],
+			signing: undefined
+		};
+
 		const build = (config, docker = false) => {
 			fs.writeFileSync('build.json', JSON.stringify({electron: config}));
 
@@ -286,7 +307,8 @@ if [ "${electron}" ] ; then
 
 		build({linux}, true);
 		build({mac});
-		build({windows});
+		build({windows: windowsExe});
+		build({windows: windowsAppStore});
 	"
 	cp -f build.json.bak build.json
 
@@ -302,11 +324,8 @@ if [ "${electron}" ] ; then
 	node -e "
 		$(echo "${electronScript}" | sed 's|--release|--debug|g')
 
-		mac.package = ['dmg'];
-		windows.package = ['nsis'];
-
-		build({mac});
-		build({windows});
+		build({mac: macDmgDebug});
+		build({windows: windowsExeDebug});
 	"
 
 	cp platforms/electron/build/*.dmg build/cyph.debug.dmg || exit 1
