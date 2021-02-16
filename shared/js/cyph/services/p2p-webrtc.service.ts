@@ -300,6 +300,10 @@ export class P2PWebRTCService extends BaseProvider
 			}));
 		}
 
+		if (this.lastDeviceIDs.screenShare) {
+			return undefined;
+		}
+
 		try {
 			return await new Promise<MediaStream>((resolve, reject) => {
 				navigator.getUserMedia(constraints, resolve, reject);
@@ -995,6 +999,7 @@ export class P2PWebRTCService extends BaseProvider
 			const oldVideoTracks =
 				this.outgoingStream.value.stream?.getVideoTracks() || [];
 			const oldTracks = [...oldAudioTracks, ...oldVideoTracks];
+			const oldDeviceIDs = {...this.lastDeviceIDs};
 
 			if (medium === 'audio' || medium === undefined) {
 				if (
@@ -1003,7 +1008,9 @@ export class P2PWebRTCService extends BaseProvider
 				) {
 					deviceIdChanged =
 						deviceIdChanged ||
-						this.lastDeviceIDs.mic !== shouldPause.newDeviceID;
+						this.lastDeviceIDs.mic !== shouldPause.newDeviceID ||
+						!!shouldPause.screenShare;
+
 					this.lastDeviceIDs.mic = shouldPause.newDeviceID;
 				}
 
@@ -1044,7 +1051,9 @@ export class P2PWebRTCService extends BaseProvider
 				) {
 					deviceIdChanged =
 						deviceIdChanged ||
-						this.lastDeviceIDs.camera !== shouldPause.newDeviceID;
+						this.lastDeviceIDs.camera !== shouldPause.newDeviceID ||
+						!!shouldPause.screenShare;
+
 					this.lastDeviceIDs.camera = shouldPause.newDeviceID;
 					this.lastDeviceIDs.screenShare = !!shouldPause.screenShare;
 				}
@@ -1089,7 +1098,11 @@ export class P2PWebRTCService extends BaseProvider
 			const newStream = await this.getUserMedia();
 
 			if (newStream === undefined) {
-				throw new Error('getUserMedia failed.');
+				this.lastDeviceIDs.camera = oldDeviceIDs.camera;
+				this.lastDeviceIDs.mic = oldDeviceIDs.mic;
+				this.lastDeviceIDs.screenShare = oldDeviceIDs.screenShare;
+				this.lastDeviceIDs.speaker = oldDeviceIDs.speaker;
+				return;
 			}
 
 			const newAudioTracks = newStream.getAudioTracks();
