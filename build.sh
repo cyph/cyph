@@ -312,7 +312,7 @@ if [ "${electron}" ] ; then
 	"
 	cp -f build.json.bak build.json
 
-	cp -a platforms/electron/build/mas/*.pkg build/cyph.pkg || exit 1
+	cp -a platforms/electron/build/mas-universal/*.pkg build/cyph.pkg || exit 1
 	cp platforms/electron/build/*.appx build/cyph.appx || exit 1
 	cp platforms/electron/build/*.AppImage build/cyph.AppImage || exit 1
 	cp platforms/electron/build/*.deb build/cyph.deb || exit 1
