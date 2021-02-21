@@ -7,7 +7,7 @@ import {
 	Output,
 	Renderer2
 } from '@angular/core';
-import * as Dropzone from 'dropzone';
+import Dropzone from 'dropzone';
 import {BaseProvider} from '../base-provider';
 import {IFile} from '../ifile';
 import {DialogService} from '../services/dialog.service';
