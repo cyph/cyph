@@ -117,6 +117,7 @@ const shellCommandArgs = baseShellCommandArgs
 const homeDir = os.homedir();
 const cyphConfigDir = path.join(homeDir, '.cyph');
 const backupDir = path.join(homeDir, '.cyphbackup');
+const backupDirGitLock = path.join(backupDir, '.git', 'index.lock');
 const backupTargets = ['gitconfig', 'gnupg', 'ssh'];
 const dockerHomeDir = '/home/gibson';
 const dockerCredentials = catJSON(
@@ -340,6 +341,10 @@ const backup = () => {
 			path.join(cyphConfigDir, d),
 			path.join(backupDir, 'cyph', d)
 		]);
+	}
+
+	if (fs.existsSync(backupDirGitLock)) {
+		fs.unlinkSync(backupDirGitLock);
 	}
 
 	childProcess.spawnSync('git', ['add', '.'], {cwd: backupDir});
