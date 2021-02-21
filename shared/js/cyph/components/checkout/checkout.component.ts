@@ -549,9 +549,12 @@ export class CheckoutComponent extends BaseProvider
 
 		this.updateUserOptions();
 
-		const affid =
+		const affid: string | undefined =
 			EF && this.offerID !== undefined ?
-				EF.urlParameter('affid') :
+				EF.urlParameter('affid') ||
+				/* eslint-disable-next-line @typescript-eslint/tslint/config */
+				localStorage.getItem('affid') ||
+				undefined :
 				undefined;
 
 		if (affid) {
