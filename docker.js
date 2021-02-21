@@ -437,6 +437,16 @@ const editImage = (command, condition, dryRunName, useOriginal = false) =>
 			.then(() => spawnAsync('docker', ['commit', tmpContainer, image]))
 			.then(() => spawnAsync('docker', ['rm', '-f', tmpContainer]))
 			.then(() => spawnAsync('docker', ['system', 'prune', '-f']))
+			.then(() =>
+				spawnAsync('docker', [
+					'run',
+					'--pid=host',
+					'--privileged',
+					'--rm',
+					'docker/desktop-reclaim-space'
+				])
+			)
+			.then(() => spawnAsync('docker', ['system', 'prune', '-f']))
 			.then(() => true);
 	});
 
