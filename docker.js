@@ -334,7 +334,7 @@ const backup = () => {
 		]);
 	}
 
-	for (const d of fs.readdirSync(cyphConfigDir).filter(d => d !== 'cdn')) {
+	for (const d of fs.readdirSync(cyphConfigDir).filter(d => d !== 'repos')) {
 		spawn('cp', [
 			'-a',
 			path.join(cyphConfigDir, d),
