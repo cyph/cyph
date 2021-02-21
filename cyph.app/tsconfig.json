@@ -11,6 +11,7 @@
 	"include": [
 		"src/js/cyph.app/main.ts",
 		"src/js/cyph.app/polyfills.ts",
+		"src/js/externals/crypto.ts",
 		"src/js/externals/debug.ts",
 		"src/js/externals/request.ts"
 	]
