@@ -346,7 +346,10 @@ rm -rf simplebtc/node_modules &> /dev/null
 rm -rf ng-fullcalendar/node_modules &> /dev/null
 
 # Temporary workaround for unwanted font import
-rg -l '@import url' @syncfusion | grep '\.css$' | xargs sed -i 's|@import url(.*);||g'
+for f in $(rg -l '@import url' @syncfusion | grep '\.css$') ; do
+	cat ${f} | perl -pe "s/\@import url\(.*?\);//g" > ${f}.new
+	mv ${f}.new ${f}
+done
 
 # Temporary workaround pending https://github.com/syncfusion/ej2-javascript-ui-controls/pull/86
 echo 'NSw2YzUsMjAKPCBleHBvcnQgaW50ZXJmYWNlIEFuZ3VsYXJFdmVudEVtaXR0ZXIgewo8ICAgICBzdWJzY3JpYmU/OiAoZ2VuZXJhdG9yT3JOZXh0PzogYW55LCBlcnJvcj86IGFueSwgY29tcGxldGU/OiBhbnkpID0+IGFueTsKLS0tCj4gZXhwb3J0IGludGVyZmFjZSBBbmd1bGFyRXZlbnRFbWl0dGVyPFQ+IHsKPiAgICAgY2xvc2VkOiBib29sZWFuOwo+ICAgICBoYXNFcnJvcjogYm9vbGVhbjsKPiAgICAgaXNTdG9wcGVkOiBib29sZWFuOwo+ICAgICBvYnNlcnZlcnM6IGFueVtdOwo+ICAgICB0aHJvd25FcnJvcjogYW55Owo+ICAgICBfc3Vic2NyaWJlKHN1YnNjcmliZXI6IGFueSk6IGFueTsKPiAgICAgX3RyeVN1YnNjcmliZShzdWJzY3JpYmVyOiBhbnkpOiBhbnk7Cj4gICAgIGFzT2JzZXJ2YWJsZSgpOiBhbnk7Cj4gICAgIGNvbXBsZXRlKCk6IHZvaWQ7Cj4gICAgIGVtaXQodmFsdWU/OiBUKTogdm9pZDsKPiAgICAgZXJyb3IoZXJyOiBhbnkpOiB2b2lkOwo+ICAgICBsaWZ0PF9SPihvcGVyYXRvcjogYW55KTogYW55Owo+ICAgICBuZXh0KHZhbHVlPzogVCk6IHZvaWQ7Cj4gICAgIHN1YnNjcmliZShnZW5lcmF0b3JPck5leHQ/OiBhbnksIGVycm9yPzogYW55LCBjb21wbGV0ZT86IGFueSk6IGFueTsKPiAgICAgdW5zdWJzY3JpYmUoKTogdm9pZDsKOGMyMgo8IGV4cG9ydCBkZWNsYXJlIHR5cGUgRW1pdFR5cGU8VD4gPSBBbmd1bGFyRXZlbnRFbWl0dGVyICYgKChhcmc/OiBULCAuLi5yZXN0OiBhbnlbXSkgPT4gdm9pZCk7Ci0tLQo+IGV4cG9ydCBkZWNsYXJlIHR5cGUgRW1pdFR5cGU8VD4gPSBBbmd1bGFyRXZlbnRFbWl0dGVyPFQ+ICYgKChhcmc/OiBULCAuLi5yZXN0OiBhbnlbXSkgPT4gdm9pZCk7Cg==' | base64 --decode | patch @syncfusion/ej2-base/src/base.d.ts
