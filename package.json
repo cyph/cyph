@@ -2,11 +2,6 @@
 	"name": "cyph",
 	"version": "0.0.0",
 	"license": "Ms-RSL",
-	"husky": {
-		"hooks": {
-			"pre-commit": "npm run prettyQuick"
-		}
-	},
 	"prettier": {
 		"arrowParens": "avoid",
 		"bracketSpacing": false,

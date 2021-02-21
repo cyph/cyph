@@ -507,7 +507,6 @@ const huskySetup = () => {
 				'node_modules',
 				'husky',
 				'lib',
-				'installer',
 				'bin.js'
 			),
 			'install'
