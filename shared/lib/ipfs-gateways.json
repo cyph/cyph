@@ -10,6 +10,7 @@
 	"https://hardbin.com/ipfs/:hash",
 	"https://gateway.blocksec.com/ipfs/:hash",
 	"https://cloudflare-ipfs.com/ipfs/:hash",
+	"https://astyanax.io/ipfs/:hash",
 	"https://cf-ipfs.com/ipfs/:hash",
 	"https://ipns.co/ipfs/:hash",
 	"https://ipfs.mrh.io/ipfs/:hash",
@@ -36,10 +37,9 @@
 	"https://trusti.id/ipfs/:hash",
 	"https://apac.trusti.id/ipfs/:hash",
 	"https://ipfs.overpi.com/ipfs/:hash",
-	"https://ipfs.lc/ipfs/:hash",
+	"https://gateway.ipfs.lc/ipfs/:hash",
 	"https://ipfs.leiyun.org/ipfs/:hash",
 	"https://ipfs.ink/ipfs/:hash",
-	"https://ipfs.jes.xxx/ipfs/:hash",
 	"https://ipfs.oceanprotocol.com/ipfs/:hash",
 	"https://d26g9c7mfuzstv.cloudfront.net/ipfs/:hash",
 	"https://ipfsgateway.makersplace.com/ipfs/:hash",
@@ -60,5 +60,7 @@
 	"https://ipfs.azurewebsites.net/ipfs/:hash",
 	"https://gw.ipfspin.com/ipfs/:hash",
 	"https://ipfs.kavin.rocks/ipfs/:hash",
-	"https://ipfs.denarius.io/ipfs/:hash"
+	"https://ipfs.denarius.io/ipfs/:hash",
+	"https://ipfs.mihir.ch/ipfs/:hash",
+	"https://bluelight.link/ipfs/:hash"
 ]
