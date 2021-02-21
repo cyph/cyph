@@ -469,54 +469,9 @@ const killEverything = () => killContainer('cyph');
 const huskySetup = () => {
 	backup();
 
-	const huskyRunPath = path.join(
-		__dirname,
-		'shared',
-		'node_modules',
-		'.bin',
-		'husky-run'
-	);
-
-	if (fs.existsSync(huskyRunPath)) {
-		fs.unlinkSync(huskyRunPath);
-	}
-
-	fs.writeFileSync(
-		huskyRunPath,
-		'#!/usr/bin/env node\nrequire("../husky/bin/run")'
-	);
-	fs.chmodSync(
-		huskyRunPath,
-		fs.constants.S_IRUSR |
-			fs.constants.S_IWUSR |
-			fs.constants.S_IXUSR |
-			fs.constants.S_IRGRP |
-			fs.constants.S_IWGRP |
-			fs.constants.S_IXGRP |
-			fs.constants.S_IROTH |
-			fs.constants.S_IWOTH |
-			fs.constants.S_IXOTH
-	);
-
-	return spawnAsync(
-		'node',
-		[
-			path.join(
-				__dirname,
-				'shared',
-				'node_modules',
-				'husky',
-				'lib',
-				'bin.js'
-			),
-			'install'
-		],
-		undefined,
-		{
-			INIT_CWD: __dirname,
-			npm_config_user_agent: 'npm/6.0.0'
-		}
-	);
+	return spawnAsync('npx', ['husky', 'install'], undefined, {
+		INIT_CWD: __dirname
+	});
 };
 
 const pullUpdates = (forceUpdate = false, initialSetup = false) => {
