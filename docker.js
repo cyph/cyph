@@ -744,6 +744,10 @@ switch (args.command) {
 		editImage(`source ~/.bashrc ; ${baseShellCommandArgs[0]}`);
 		break;
 
+	case 'huskysetup':
+		huskySetup();
+		break;
+
 	case 'kill':
 		killEverything();
 		break;
