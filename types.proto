@@ -2255,12 +2255,6 @@ message SessionMessageData {
 	/** @see ChatMessage.authorID */
 	string authorID = 1;
 
-	/** Unique ID. */
-	required string id = 2;
-
-	/** Timestamp of this message. */
-	required double timestamp = 3;
-
 	/** Arbitrary bytes. */
 	bytes bytes = 4;
 
@@ -2270,6 +2264,9 @@ message SessionMessageData {
 	/** @see SessionCommand */
 	SessionCommand command = 7;
 
+	/** Unique ID. */
+	required string id = 2;
+
 	/** If applicable, ID of an isolated exchange of messages within a session. */
 	string sessionSubID = 8;
 
@@ -2278,6 +2275,9 @@ message SessionMessageData {
 
 	/** @see SessionTextConfirmation */
 	SessionTextConfirmation textConfirmation = 10;
+
+	/** Timestamp of this message. */
+	required double timestamp = 3;
 }
 
 /** Array of session messages. */
