@@ -115,6 +115,41 @@ export class EphemeralSessionService extends SessionService {
 	}
 
 	/** @ignore */
+	private async getIDPrefix () : Promise<string | undefined> {
+		const timeString = this.sessionInitService.timeString;
+
+		if (!timeString) {
+			return;
+		}
+
+		const bytes = this.potassiumService.fromHex(timeString);
+
+		if (bytes.length !== 2) {
+			return;
+		}
+
+		const utcHours = bytes[0];
+		const utcMinutes = bytes[1];
+		const utcTime = utcHours * 60 + utcMinutes;
+
+		const now = await getDate();
+		const currentUTCHours = now.getUTCHours();
+		const currentUTCMinutes = now.getUTCMinutes();
+		const currentUTCTime = currentUTCHours * 60 + currentUTCMinutes;
+
+		const dayDelta =
+			12 * 60 > Math.abs(currentUTCTime - utcTime) ?
+				0 :
+			utcTime > currentUTCTime ?
+				-1 :
+				1;
+
+		return `${timeString}_${getISODateString(
+			now.setDate(now.getDate() + dayDelta)
+		)}`;
+	}
+
+	/** @ignore */
 	private async initGroup (
 		groupMembers: IBurnerGroupMemberInitiator[]
 	) : Promise<void> {
@@ -235,41 +270,6 @@ export class EphemeralSessionService extends SessionService {
 				])
 			)
 		]);
-	}
-
-	/** @ignore */
-	private async getIDPrefix () : Promise<string | undefined> {
-		const timeString = this.sessionInitService.timeString;
-
-		if (!timeString) {
-			return;
-		}
-
-		const bytes = this.potassiumService.fromHex(timeString);
-
-		if (bytes.length !== 2) {
-			return;
-		}
-
-		const utcHours = bytes[0];
-		const utcMinutes = bytes[1];
-		const utcTime = utcHours * 60 + utcMinutes;
-
-		const now = await getDate();
-		const currentUTCHours = now.getUTCHours();
-		const currentUTCMinutes = now.getUTCMinutes();
-		const currentUTCTime = currentUTCHours * 60 + currentUTCMinutes;
-
-		const dayDelta =
-			12 * 60 > Math.abs(currentUTCTime - utcTime) ?
-				0 :
-			utcTime > currentUTCTime ?
-				-1 :
-				1;
-
-		return `${timeString}_${getISODateString(
-			now.setDate(now.getDate() + dayDelta)
-		)}`;
 	}
 
 	/**
