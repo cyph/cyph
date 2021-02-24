@@ -504,7 +504,7 @@ export class AccountChatComponent extends BaseProvider
 									return;
 								}
 
-								if (!this.accountSessionService.group) {
+								if (!this.accountSessionService.group.value) {
 									this.notificationService
 										.ring(
 											async () =>

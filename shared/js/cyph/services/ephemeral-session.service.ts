@@ -12,6 +12,7 @@ import {
 } from '../proto';
 import {ProFeatures, RpcEvents} from '../session';
 import {getOrSetDefault} from '../util/get-or-set-default';
+import {lockFunction} from '../util/lock';
 import {debugLog} from '../util/log';
 import {random} from '../util/random';
 import {request} from '../util/request';
@@ -50,121 +51,69 @@ export class EphemeralSessionService extends SessionService {
 	private readonly chatRequestRingTimeoutGracePeriod: number = 60000;
 
 	/** @ignore */
+	private readonly fullBurnerGroup = new Map<
+		IBurnerGroupMember,
+		Map<IBurnerGroupMember, IBurnerGroupMember>
+	>();
+
+	/** @ignore */
+	private readonly groupMemberHostIDs = new Map<IBurnerGroupMember, string>();
+
+	/** @ignore */
+	private readonly groupMembers: (IBurnerGroupMemberInitiator &
+		IBurnerGroupMember)[] = [];
+
+	/** @ignore */
+	private readonly groupMemberSessionServices: {
+		burnerGroup: IBurnerGroup;
+		childSession: EphemeralSessionService;
+		childSessionHandshake: Promise<void>;
+		masterSession: EphemeralSessionService;
+		member: IBurnerGroupMember;
+	}[] = [];
+
+	/** @ignore */
 	private pingPongTimeouts: number = 0;
 
 	/** @ignore */
-	private createBurnerGroups (
-		members: IBurnerGroupMember[]
-	) : Map<IBurnerGroupMember, IBurnerGroup> {
-		const fullBurnerGroup = new Map<
-			IBurnerGroupMember,
-			Map<IBurnerGroupMember, IBurnerGroupMember>
-		>();
-
-		for (const alice of members) {
-			for (const bob of members) {
-				if (alice === bob || fullBurnerGroup.get(alice)?.has(bob)) {
-					continue;
-				}
-
-				const aliceGroup = getOrSetDefault(
-					fullBurnerGroup,
-					alice,
-					() => new Map<IBurnerGroupMember, IBurnerGroupMember>()
-				);
-
-				const bobGroup = getOrSetDefault(
-					fullBurnerGroup,
-					bob,
-					() => new Map<IBurnerGroupMember, IBurnerGroupMember>()
-				);
-
-				const id = uuid(true) + uuid(true);
-
-				aliceGroup.set(bob, {
-					id,
-					name: bob.name
-				});
-
-				bobGroup.set(alice, {
-					id,
-					name: alice.name
-				});
-			}
-		}
-
-		return new Map<IBurnerGroupMember, IBurnerGroup>(
-			members.map(o => [
-				o,
-				{
-					members: [
-						{
-							id:
-								uuid(true) +
-								(this.sessionInitService
-									.accountsBurnerAliceData ?
-									'' :
-									uuid(true)),
-							isHost: true
-						},
-						...Array.from(fullBurnerGroup.get(o)?.values() || [])
-					]
-				}
-			])
-		);
-	}
-
-	/** @ignore */
-	private async getIDPrefix () : Promise<string | undefined> {
-		const timeString = this.sessionInitService.timeString;
-
-		if (!timeString) {
-			return;
-		}
-
-		const bytes = this.potassiumService.fromHex(timeString);
-
-		if (bytes.length !== 2) {
-			return;
-		}
-
-		const utcHours = bytes[0];
-		const utcMinutes = bytes[1];
-		const utcTime = utcHours * 60 + utcMinutes;
-
-		const now = await getDate();
-		const currentUTCHours = now.getUTCHours();
-		const currentUTCMinutes = now.getUTCMinutes();
-		const currentUTCTime = currentUTCHours * 60 + currentUTCMinutes;
-
-		const dayDelta =
-			12 * 60 > Math.abs(currentUTCTime - utcTime) ?
-				0 :
-			utcTime > currentUTCTime ?
-				-1 :
-				1;
-
-		return `${timeString}_${getISODateString(
-			now.setDate(now.getDate() + dayDelta)
-		)}`;
-	}
-
-	/** @ignore */
-	private async initGroup (
-		groupMembers: IBurnerGroupMemberInitiator[]
-	) : Promise<void> {
+	private async addToGroupInternal (
+		groupMember:
+			| IBurnerGroupMemberInitiator
+			| IBurnerGroupMemberInitiator[],
+		initNewMembers: boolean = true
+	) : Promise<{initSessions: () => Promise<void>; newSessionIDs: string[]}> {
 		const parentID = await this.sessionInitService.id;
+		const previousGroupSize = this.groupMembers.length;
 
-		const members: IBurnerGroupMember[] = groupMembers.map(
-			({id, name}) => ({
-				id: id === undefined ? uuid(true) + uuid(true) : id,
-				name
-			})
-		);
+		const groupMembers =
+			groupMember instanceof Array ? groupMember : [groupMember];
 
-		const burnerGroups = this.createBurnerGroups(members);
+		const newMembers = groupMembers.map(o => ({
+			...o,
+			id: o.id === undefined ? uuid(true) + uuid(true) : o.id
+		}));
 
-		const sessionServices = members.map((member, i) => {
+		this.groupMembers.push(...newMembers);
+
+		const burnerGroups = this.createBurnerGroups();
+
+		for (const o of this.groupMemberSessionServices.slice()) {
+			const burnerGroup = burnerGroups.get(o.member);
+
+			if (
+				!burnerGroup ||
+				!burnerGroup.members ||
+				burnerGroup.members.length < 1
+			) {
+				continue;
+			}
+
+			o.burnerGroup = burnerGroup;
+		}
+
+		const newSessionServices = newMembers.map((member, i) => {
+			i += previousGroupSize;
+
 			const burnerGroup = burnerGroups.get(member);
 
 			if (
@@ -222,17 +171,153 @@ export class EphemeralSessionService extends SessionService {
 			};
 		});
 
-		this.setGroup(sessionServices.map(o => o.childSession));
+		const newSessionIDs = newSessionServices.map(o => o.member.id);
 
-		await this.setIDs(
-			sessionServices.map(o => o.member.id),
-			undefined,
-			true
+		this.groupMemberSessionServices.push(...newSessionServices);
+		this.setGroup(this.groupMemberSessionServices.map(o => o.childSession));
+
+		const initSessions = async () => {
+			await Promise.all(
+				this.groupMemberSessionServices.map(async o =>
+					Promise.all([
+						serialize(BurnerGroup, o.burnerGroup).then(
+							async bytes =>
+								o.masterSession.send([
+									RpcEvents.burnerGroup,
+									{
+										bytes
+									}
+								])
+						),
+						o.childSessionHandshake
+					])
+				)
+			);
+		};
+
+		if (!initNewMembers) {
+			return {initSessions, newSessionIDs};
+		}
+
+		const initSessionsPromise = initSessions();
+
+		return {initSessions: async () => initSessionsPromise, newSessionIDs};
+	}
+
+	/** @ignore */
+	private createBurnerGroups () : Map<IBurnerGroupMember, IBurnerGroup> {
+		for (const alice of this.groupMembers) {
+			for (const bob of this.groupMembers) {
+				if (
+					alice === bob ||
+					this.fullBurnerGroup.get(alice)?.has(bob)
+				) {
+					continue;
+				}
+
+				const aliceGroup = getOrSetDefault(
+					this.fullBurnerGroup,
+					alice,
+					() => new Map<IBurnerGroupMember, IBurnerGroupMember>()
+				);
+
+				const bobGroup = getOrSetDefault(
+					this.fullBurnerGroup,
+					bob,
+					() => new Map<IBurnerGroupMember, IBurnerGroupMember>()
+				);
+
+				const id = uuid(true) + uuid(true);
+
+				aliceGroup.set(bob, {
+					id,
+					name: bob.name
+				});
+
+				bobGroup.set(alice, {
+					id,
+					name: alice.name
+				});
+			}
+		}
+
+		return new Map<IBurnerGroupMember, IBurnerGroup>(
+			this.groupMembers.map(o => [
+				o,
+				{
+					members: [
+						{
+							id: getOrSetDefault(
+								this.groupMemberHostIDs,
+								o,
+								() =>
+									uuid(true) +
+									(this.sessionInitService
+										.accountsBurnerAliceData ?
+										'' :
+										uuid(true))
+							),
+							isHost: true
+						},
+						...Array.from(
+							this.fullBurnerGroup.get(o)?.values() || []
+						)
+					]
+				}
+			])
 		);
+	}
+
+	/** @ignore */
+	private async getIDPrefix () : Promise<string | undefined> {
+		const timeString = this.sessionInitService.timeString;
+
+		if (!timeString) {
+			return;
+		}
+
+		const bytes = this.potassiumService.fromHex(timeString);
+
+		if (bytes.length !== 2) {
+			return;
+		}
+
+		const utcHours = bytes[0];
+		const utcMinutes = bytes[1];
+		const utcTime = utcHours * 60 + utcMinutes;
+
+		const now = await getDate();
+		const currentUTCHours = now.getUTCHours();
+		const currentUTCMinutes = now.getUTCMinutes();
+		const currentUTCTime = currentUTCHours * 60 + currentUTCMinutes;
+
+		const dayDelta =
+			12 * 60 > Math.abs(currentUTCTime - utcTime) ?
+				0 :
+			utcTime > currentUTCTime ?
+				-1 :
+				1;
+
+		return `${timeString}_${getISODateString(
+			now.setDate(now.getDate() + dayDelta)
+		)}`;
+	}
+
+	/** @ignore */
+	private async initGroup (
+		groupMembers: IBurnerGroupMemberInitiator[]
+	) : Promise<void> {
+		const {initSessions, newSessionIDs} = await this.addToGroupInternal(
+			groupMembers,
+			false
+		);
+
+		await this.setIDs(newSessionIDs, undefined, true);
 
 		this.channelService.initialMessagesProcessed.resolve();
 		this.state.ephemeralStateInitialized.next(true);
 		this.state.isAlice.next(true);
+		this.isBurnerGroupHost.next(true);
 
 		await Promise.all<unknown>([
 			this.opened.then(async () => this.channelOnOpen(true)),
@@ -240,7 +325,9 @@ export class EphemeralSessionService extends SessionService {
 				this.state.isConnected.next(true);
 			}),
 			Promise.race(
-				sessionServices.map(async o => o.masterSession.connected)
+				this.groupMemberSessionServices.map(
+					async o => o.masterSession.connected
+				)
 			).then(async () => {
 				const castleService = new BasicCastleService(
 					this.accountDatabaseService,
@@ -256,19 +343,7 @@ export class EphemeralSessionService extends SessionService {
 
 				await this.castleService.setPairwiseSession(castleService);
 			}),
-			...sessionServices.map(async o =>
-				Promise.all([
-					serialize(BurnerGroup, o.burnerGroup).then(async bytes =>
-						o.masterSession.send([
-							RpcEvents.burnerGroup,
-							{
-								bytes
-							}
-						])
-					),
-					o.childSessionHandshake
-				])
-			)
+			initSessions()
 		]);
 	}
 
@@ -368,7 +443,7 @@ export class EphemeralSessionService extends SessionService {
 
 	/** @inheritDoc */
 	protected async channelOnClose () : Promise<void> {
-		if (this.group && this.group.length > 1) {
+		if (this.group.value && this.group.value.length > 1) {
 			return;
 		}
 
@@ -397,7 +472,7 @@ export class EphemeralSessionService extends SessionService {
 		}
 
 		if (
-			!this.group &&
+			!this.group.value &&
 			!this.sessionInitService.child &&
 			!(await this.sessionInitService.headless)
 		) {
@@ -415,6 +490,34 @@ export class EphemeralSessionService extends SessionService {
 		}
 
 		this.analyticsService.sendEvent('api-initiated-cyph', 'started');
+	}
+
+	/** @inheritDoc */
+	public async addToGroup (name?: string) : Promise<string> {
+		if (!this.group.value) {
+			throw new Error('Group must already exist.');
+		}
+
+		if (!this.isBurnerGroupHost.value) {
+			throw new Error('Only the host may invite a new guest.');
+		}
+
+		const {
+			newSessionIDs: [id]
+		} = await this.addToGroupInternal({
+			id: (await this.sessionInitService.headless) ?
+				uuid(true) + uuid(true) :
+				readableID(this.configService.secretLength),
+			name
+		});
+
+		return this.sessionInitService.accountsBurnerAliceData ?
+			`${this.envService.cyphImUrl.replace('#', '')}${
+				this.sessionInitService.accountsBurnerAliceData.username
+			}/${id}.${this.sessionInitService.timeString}` :
+			`${this.envService.cyphImUrl}${
+				this.envService.cyphImUrl.indexOf('#') > -1 ? '' : '#'
+			}${id}`;
 	}
 
 	/** @inheritDoc */
@@ -732,76 +835,100 @@ export class EphemeralSessionService extends SessionService {
 				return;
 			}
 
-			let burnerGroup: IBurnerGroup | undefined;
+			const burnerGroupLock = lockFunction();
+			const burnerGroupMembers: SessionService[] = [];
 
-			try {
-				burnerGroup = await deserialize(
-					BurnerGroup,
-					(await this.one(RpcEvents.burnerGroup))[0]?.bytes ||
-						new Uint8Array(0)
-				);
-			}
-			catch {}
+			this.on(RpcEvents.burnerGroup, async burnerGroupData =>
+				burnerGroupLock(async () => {
+					let burnerGroup: IBurnerGroup | undefined;
 
-			if (
-				!burnerGroup ||
-				!burnerGroup.members ||
-				burnerGroup.members.length < 1
-			) {
-				this.childChannelsConnected.resolve();
-				return;
-			}
-
-			this.setGroup(
-				burnerGroup.members.map((member, i) => {
-					const sessionInit = new BasicSessionInitService();
-					sessionInit.accountsBurnerAliceData = this.sessionInitService.accountsBurnerAliceData;
-					sessionInit.child = true;
-					sessionInit.parentID = fullID;
-					sessionInit.timeString = this.sessionInitService.timeString;
-
-					if (i === 0) {
-						sessionInit.setID(
-							username ? `${username}/${member.id}` : member.id
+					try {
+						burnerGroup = await deserialize(
+							BurnerGroup,
+							burnerGroupData[0]?.bytes || new Uint8Array(0)
 						);
+					}
+					catch {}
 
-						const castleService = new BasicCastleService(
-							this.accountDatabaseService,
-							this.potassiumService
-						);
-
-						const hostSession = this.spawn(
-							sessionInit,
-							castleService
-						);
-
-						hostSession.remoteUsername.next(
-							username ||
-								this.stringsService.burnerGroupDefaultHostName
-						);
-
-						castleService
-							.setKey(this.getSymmetricKey())
-							.then(async () => castleService.init(hostSession))
-							.catch(() => {});
-
-						return hostSession;
+					if (
+						!burnerGroup ||
+						!burnerGroup.members ||
+						burnerGroup.members.length < 1
+					) {
+						this.off(RpcEvents.burnerGroup);
+						this.childChannelsConnected.resolve();
+						return;
 					}
 
-					sessionInit.setID(member.id);
+					if (
+						burnerGroup.members.length <= burnerGroupMembers.length
+					) {
+						return;
+					}
 
-					const session = this.spawn(sessionInit);
+					burnerGroupMembers.push(
+						...burnerGroup.members
+							.slice(burnerGroupMembers.length)
+							.map((member, i) => {
+								i += burnerGroupMembers.length;
 
-					session.remoteUsername.next(
-						member.name ||
-							this.stringsService.setParameters(
-								this.stringsService
-									.burnerGroupDefaultMemberName,
-								{i: i.toString()}
-							)
+								const sessionInit = new BasicSessionInitService();
+								sessionInit.accountsBurnerAliceData = this.sessionInitService.accountsBurnerAliceData;
+								sessionInit.child = true;
+								sessionInit.parentID = fullID;
+								sessionInit.timeString = this.sessionInitService.timeString;
+
+								if (i === 0) {
+									sessionInit.setID(
+										username ?
+											`${username}/${member.id}` :
+											member.id
+									);
+
+									const castleService = new BasicCastleService(
+										this.accountDatabaseService,
+										this.potassiumService
+									);
+
+									const hostSession = this.spawn(
+										sessionInit,
+										castleService
+									);
+
+									hostSession.remoteUsername.next(
+										username ||
+											this.stringsService
+												.burnerGroupDefaultHostName
+									);
+
+									castleService
+										.setKey(this.getSymmetricKey())
+										.then(async () =>
+											castleService.init(hostSession)
+										)
+										.catch(() => {});
+
+									return hostSession;
+								}
+
+								sessionInit.setID(member.id);
+
+								const session = this.spawn(sessionInit);
+
+								session.remoteUsername.next(
+									member.name ||
+										this.stringsService.setParameters(
+											this.stringsService
+												.burnerGroupDefaultMemberName,
+											{i: i.toString()}
+										)
+								);
+
+								return session;
+							})
 					);
 
-					return session;
+					this.setGroup(burnerGroupMembers);
 				})
 			);
 		})();

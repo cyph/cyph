@@ -22,7 +22,9 @@ import {IP2PWebRTCService} from './ip2p-webrtc.service';
  * Encapsulates an end-to-end encrypted communication session.
  * This is the entire non-UI representation of a cyph.
  */
-export interface ISessionService {
+export interface ISessionService<
+	TSessionService extends ISessionService = any
+> {
 	/** Resolves when service is aborted. */
 	readonly aborted: IResolvable<true>;
 
@@ -81,13 +83,16 @@ export interface ISessionService {
 	readonly freezePong: BehaviorSubject<boolean>;
 
 	/** Messaging group, if applicable. */
-	group?: ISessionService[];
+	readonly group: BehaviorSubject<TSessionService[] | undefined>;
 
 	/** Resolves when first batch of incoming messages have been processed. */
 	readonly initialMessagesProcessed: IResolvable<true>;
 
 	/** Another session service that this one internally delegates to. */
 	internalSessionService?: ISessionService;
+
+	/** Indicates whether this session is the host of a Burner group. */
+	readonly isBurnerGroupHost: BehaviorSubject<boolean>;
 
 	/** Resolves when confirmed to join session. */
 	readonly joinConfirmation: IResolvable<true>;
@@ -142,6 +147,12 @@ export interface ISessionService {
 
 	/** Session key for misc stuff like locking. */
 	readonly symmetricKey: BehaviorSubject<Uint8Array | undefined>;
+
+	/**
+	 * Adds a member to the group.
+	 * (For now, requires that this have been a group session from the start.)
+	 */
+	addToGroup (name?: string) : Promise<string>;
 
 	/** Castle event handler called by Castle.Transport. */
 	castleHandler (
@@ -225,5 +236,5 @@ export interface ISessionService {
 	spawn (
 		sessionInitService?: SessionInitService,
 		castleService?: CastleService
-	) : ISessionService;
+	) : ISessionService<TSessionService>;
 }

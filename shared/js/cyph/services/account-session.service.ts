@@ -89,7 +89,7 @@ export class AccountSessionService extends SessionService {
 
 	/** @inheritDoc */
 	protected async channelOnClose () : Promise<void> {
-		if (this.group) {
+		if (this.group.value) {
 			throw new Error(
 				'Master channelOnClose should not be used in a group session.'
 			);
@@ -102,7 +102,7 @@ export class AccountSessionService extends SessionService {
 
 	/** @inheritDoc */
 	protected async channelOnOpen (isAlice: boolean) : Promise<void> {
-		if (this.group) {
+		if (this.group.value) {
 			throw new Error(
 				'Master channelOnOpen should not be used in a group session.'
 			);
@@ -384,7 +384,7 @@ export class AccountSessionService extends SessionService {
 			this.apiFlags.modestBranding =
 				ephemeralSessionService.apiFlags.modestBranding;
 
-			this.group = ephemeralSessionService.group;
+			ephemeralSessionService.group.subscribe(this.group);
 
 			this.ready.resolve();
 			return;

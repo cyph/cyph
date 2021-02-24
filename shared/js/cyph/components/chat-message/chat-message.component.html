@@ -87,7 +87,7 @@
 						<ng-container
 							*ngIf="
 								mobile &&
-								!!sessionService.group &&
+								(sessionService.group | await) !== undefined &&
 								(chatMessage | await)?.authorType ===
 									authorTypes.Remote
 							"

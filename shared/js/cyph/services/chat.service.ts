@@ -162,7 +162,7 @@ export class ChatService extends BaseProvider {
 	public readonly deliveryReceipts = (async () =>
 		this.sessionInitService.ephemeral &&
 		!(await this.sessionService.childChannelsConnected.then(
-			() => this.sessionService.group
+			() => this.sessionService.group.value
 		)))();
 
 	/** Used for initial scroll down on load. */
@@ -207,7 +207,7 @@ export class ChatService extends BaseProvider {
 	public readonly typingIndicators = (async () =>
 		this.sessionInitService.ephemeral &&
 		!(await this.sessionService.childChannelsConnected.then(
-			() => this.sessionService.group
+			() => this.sessionService.group.value
 		)))();
 
 	/** Resolves when UI is ready to be displayed. */
@@ -219,7 +219,7 @@ export class ChatService extends BaseProvider {
 		this.sessionService.initialMessagesProcessed,
 		this.sessionService.ready.then(async () =>
 			Promise.all([
-				!this.sessionService.group ?
+				!this.sessionService.group.value ?
 					this.channelService?.initialMessagesProcessed :
 					undefined
 			])
@@ -589,8 +589,9 @@ export class ChatService extends BaseProvider {
 		}
 
 		const groupIndex =
-			this.sessionService.group && author instanceof BehaviorSubject ?
-				this.sessionService.group
+			this.sessionService.group.value &&
+			author instanceof BehaviorSubject ?
+				this.sessionService.group.value
 					.map(o => o.remoteUsername)
 					.indexOf(author) :
 				-1;
@@ -1064,7 +1065,7 @@ export class ChatService extends BaseProvider {
 									if (
 										messageValues !== this.messageValues ||
 										message.authorID ||
-										this.sessionService.group
+										this.sessionService.group.value
 									) {
 										throw err;
 									}
@@ -1389,7 +1390,7 @@ export class ChatService extends BaseProvider {
 			IChatMessagePredecessor[] | undefined
 		> => {
 			/* Redundant for 1:1 chats since Castle already enforces message order */
-			if (!this.sessionService.group) {
+			if (!this.sessionService.group.value) {
 				return [];
 			}
 
@@ -1578,7 +1579,7 @@ export class ChatService extends BaseProvider {
 						'ChatService.sessionService.initialMessagesProcessed resolved'
 				);
 			});
-			(this.channelService && !this.sessionService.group ?
+			(this.channelService && !this.sessionService.group.value ?
 				this.channelService.initialMessagesProcessed :
 				Promise.resolve()
 			).then(() => {

@@ -56,7 +56,7 @@ import {StringsService} from './strings.service';
  */
 @Injectable()
 export abstract class SessionService extends BaseProvider
-	implements ISessionService {
+	implements ISessionService<SessionService> {
 	/** @ignore */
 	private readonly eventManager = new EventManager();
 
@@ -134,13 +134,18 @@ export abstract class SessionService extends BaseProvider
 	>(false);
 
 	/** @inheritDoc */
-	public group?: SessionService[];
+	public readonly group = new BehaviorSubject<SessionService[] | undefined>(
+		undefined
+	);
 
 	/** @inheritDoc */
 	public internalSessionService?: SessionService;
 
 	/** @inheritDoc */
 	public readonly initialMessagesProcessed = resolvable<true>(true);
+
+	/** @inheritDoc */
+	public readonly isBurnerGroupHost = new BehaviorSubject<boolean>(false);
 
 	/** @inheritDoc */
 	public readonly joinConfirmation = resolvable<true>(true);
@@ -388,9 +393,9 @@ export abstract class SessionService extends BaseProvider
 	protected async plaintextSendHandler (
 		messages: ISessionMessage[]
 	) : Promise<void> {
-		if (this.group) {
+		if (this.group.value) {
 			await Promise.all(
-				this.group.map(async session => {
+				this.group.value.map(async session => {
 					const confirmPromise = session.plaintextSendHandler(
 						messages
 					);
@@ -423,7 +428,11 @@ export abstract class SessionService extends BaseProvider
 			throw new Error('Cannot create empty group.');
 		}
 
-		this.group = group;
+		const newMembers = this.group.value ?
+			group.slice(this.group.value.length) :
+			group;
+
+		this.group.next(group);
 
 		/*
 		Commenting these out until we re-enable delivery receipts for groups:
@@ -431,7 +440,7 @@ export abstract class SessionService extends BaseProvider
 		const confirmations = new Map<string, Set<SessionService>>();
 		*/
 
-		for (const session of group) {
+		for (const session of newMembers) {
 			/*
 			session.on(RpcEvents.confirm, newEvents => {
 				this.trigger(
@@ -493,7 +502,6 @@ export abstract class SessionService extends BaseProvider
 		> [
 			{event: 'beginChat'},
 			{event: 'childChannelsConnected'},
-			{all: true, event: 'closed'},
 			{event: 'connected'},
 			{event: 'channelConnected'},
 			{event: 'connectFailure'},
@@ -514,6 +522,10 @@ export abstract class SessionService extends BaseProvider
 				continue;
 			}
 
+			if (all && group !== newMembers) {
+				continue;
+			}
+
 			const promises = group.map(async session => session[event]);
 
 			if (all) {
@@ -528,6 +540,11 @@ export abstract class SessionService extends BaseProvider
 	/** Trigger event. */
 	protected trigger (event: RpcEvents, data: ISessionMessageData[]) : void {
 		this.eventManager.trigger(event, data);
+	}
+
+	/** @inheritDoc */
+	public async addToGroup (_NAME?: string) : Promise<string> {
+		throw new Error('Not implemented.');
 	}
 
 	/** @inheritDoc */
@@ -628,8 +645,8 @@ export abstract class SessionService extends BaseProvider
 
 	/** @inheritDoc */
 	public close () : void {
-		if (this.group) {
-			for (const session of this.group) {
+		if (this.group.value) {
+			for (const session of this.group.value) {
 				session.close();
 			}
 
@@ -648,7 +665,7 @@ export abstract class SessionService extends BaseProvider
 
 	/** @inheritDoc */
 	public async destroy () : Promise<void> {
-		if (!this.state.isAlive.value || this.group) {
+		if (!this.state.isAlive.value || this.group.value) {
 			return;
 		}
 

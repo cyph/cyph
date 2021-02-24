@@ -212,9 +212,9 @@ const getMetadataInternal = async (
 			user instanceof User ?
 				user.realUsername :
 			!isNaN(groupIndex) &&
-				sessionService.group &&
-				sessionService.group[groupIndex] ?
-				sessionService.group[groupIndex].remoteUsername :
+				sessionService.group.value &&
+				sessionService.group.value[groupIndex] ?
+				sessionService.group.value[groupIndex].remoteUsername :
 				sessionService.remoteUsername
 			)
 				/* eslint-disable-next-line @typescript-eslint/tslint/config */
