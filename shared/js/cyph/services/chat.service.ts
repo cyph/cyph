@@ -1389,8 +1389,14 @@ export class ChatService extends BaseProvider {
 		const predecessorsPromise = (async () : Promise<
 			IChatMessagePredecessor[] | undefined
 		> => {
-			/* Redundant for 1:1 chats since Castle already enforces message order */
-			if (!this.sessionService.group.value) {
+			/*
+				Redundant for 1:1 chats since Castle already enforces message order.
+				Disabled for ephemeral chats to prevent issues for added guests.
+			*/
+			if (
+				!this.sessionService.group.value ||
+				this.sessionInitService.ephemeral
+			) {
 				return [];
 			}
 
