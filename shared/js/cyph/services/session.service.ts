@@ -432,7 +432,7 @@ export abstract class SessionService extends BaseProvider
 			group.slice(this.group.value.length) :
 			group;
 
-		this.group.next(group);
+		this.group.next(group.slice());
 
 		/*
 		Commenting these out until we re-enable delivery receipts for groups:
