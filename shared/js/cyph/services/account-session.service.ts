@@ -384,7 +384,9 @@ export class AccountSessionService extends SessionService {
 			this.apiFlags.modestBranding =
 				ephemeralSessionService.apiFlags.modestBranding;
 
-			ephemeralSessionService.group.subscribe(this.group);
+			this.subscriptions.push(
+				ephemeralSessionService.group.subscribe(this.group)
+			);
 
 			this.ready.resolve();
 			return;
