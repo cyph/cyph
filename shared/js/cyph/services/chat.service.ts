@@ -1301,11 +1301,7 @@ export class ChatService extends BaseProvider {
 			username
 		});
 
-		await this.dialogService.toast(
-			this.stringsService.inviteSent,
-			undefined,
-			this.stringsService.ok
-		);
+		await this.dialogService.toast(this.stringsService.inviteSent);
 	}
 
 	/** Jumps to recent messages. */
