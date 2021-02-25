@@ -112,17 +112,10 @@ const getFullBurnerBaseURL = (
 	return removeHash ? fullBurnerURL.replace('#', '') : fullBurnerURL;
 };
 
-const getBurnerLink = (
-	namespace,
-	id,
-	username,
-	callType,
-	telehealth = false
-) => {
+const getBurnerLink = (namespace, id, username, callType, telehealth = false) =>
 	`${getFullBurnerBaseURL(namespace, callType, telehealth, !!username)}${
 		username ? `${username}/` : ''
 	}${validateInput(id, /^[A-Za-z0-9_-]+(\.\d{4})?$/)}`;
-};
 
 const getRealUsername = async (namespace, username) => {
 	if (!username) {
