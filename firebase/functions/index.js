@@ -121,7 +121,7 @@ const getBurnerLink = (
 ) => {
 	`${getFullBurnerBaseURL(namespace, callType, telehealth, !!username)}${
 		username ? `${username}/` : ''
-	}${validateInput(id, /^[A-Za-z0-9_-]+$/)}`;
+	}${validateInput(id, /^[A-Za-z0-9_-]+(\.\d{4})?$/)}`;
 };
 
 const getRealUsername = async (namespace, username) => {
