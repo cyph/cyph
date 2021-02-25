@@ -71,7 +71,6 @@ import {AccountSettingsService} from './account-settings.service';
 import {AnalyticsService} from './analytics.service';
 import {ChannelService} from './channel.service';
 import {ChatMessageService} from './chat-message.service';
-import {ConfigService} from './config.service';
 import {CastleService} from './crypto/castle.service';
 import {PotassiumService} from './crypto/potassium.service';
 import {DatabaseService} from './database.service';
@@ -1239,6 +1238,10 @@ export class ChatService extends BaseProvider {
 			title: this.stringsService.meetingGuestContactInfoTitle
 		});
 
+		if (!contactInfoForm) {
+			return;
+		}
+
 		const name = (
 			getFormValue(contactInfoForm, 'string', 0, 0, 0) || ''
 		).trim();
@@ -1292,11 +1295,9 @@ export class ChatService extends BaseProvider {
 			telehealth:
 				this.envService.isTelehealth ||
 				(!!this.accountSettingsService &&
-					this.configService.planConfig[
-						await this.accountSettingsService.plan
-							.pipe(take(1))
-							.toPromise()
-					].telehealth),
+					(await this.accountSettingsService.telehealth
+						.pipe(take(1))
+						.toPromise())),
 			username
 		});
 
@@ -1648,9 +1649,6 @@ export class ChatService extends BaseProvider {
 
 		/** @ignore */
 		protected readonly chatMessageService: ChatMessageService,
-
-		/** @ignore */
-		protected readonly configService: ConfigService,
 
 		/** @ignore */
 		protected readonly databaseService: DatabaseService,

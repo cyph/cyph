@@ -33,7 +33,6 @@ import {AnalyticsService} from './analytics.service';
 import {ChannelService} from './channel.service';
 import {ChatMessageService} from './chat-message.service';
 import {ChatService} from './chat.service';
-import {ConfigService} from './config.service';
 import {AccountDatabaseService} from './crypto/account-database.service';
 import {CastleService} from './crypto/castle.service';
 import {PotassiumService} from './crypto/potassium.service';
@@ -385,7 +384,6 @@ export class AccountChatService extends ChatService {
 		castleService: CastleService,
 		channelService: ChannelService,
 		chatMessageService: ChatMessageService,
-		configService: ConfigService,
 		databaseService: DatabaseService,
 		dialogService: DialogService,
 		envService: EnvService,
@@ -420,7 +418,6 @@ export class AccountChatService extends ChatService {
 			castleService,
 			channelService,
 			chatMessageService,
-			configService,
 			databaseService,
 			dialogService,
 			envService,
