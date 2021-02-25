@@ -233,9 +233,9 @@ export class AccountComposeComponent extends BaseProvider
 
 		name = (getFormValue(contactInfoForm, 'string', 0, 0, 0) || '').trim();
 
-		const email = (
-			getFormValue(contactInfoForm, 'string', 1, 1, 0) || ''
-		).trim();
+		const email = (getFormValue(contactInfoForm, 'string', 1, 1, 0) || '')
+			.trim()
+			.toLowerCase();
 
 		let phoneNumber = (
 			getFormValue(contactInfoForm, 'string', 1, 2, 0) || ''
