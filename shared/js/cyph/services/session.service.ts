@@ -543,7 +543,14 @@ export abstract class SessionService extends BaseProvider
 	}
 
 	/** @inheritDoc */
-	public async addToGroup (_NAME?: string) : Promise<string> {
+	public async addToBurnerGroup (
+		_NAME?: string
+	) : Promise<{
+		callType?: 'audio' | 'video';
+		id: string;
+		url: string;
+		username?: string;
+	}> {
 		throw new Error('Not implemented.');
 	}
 

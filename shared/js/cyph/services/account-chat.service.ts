@@ -28,10 +28,12 @@ import {resolvable} from '../util/wait';
 import {AccountContactsService} from './account-contacts.service';
 import {AccountSessionInitService} from './account-session-init.service';
 import {AccountSessionService} from './account-session.service';
+import {AccountSettingsService} from './account-settings.service';
 import {AnalyticsService} from './analytics.service';
 import {ChannelService} from './channel.service';
 import {ChatMessageService} from './chat-message.service';
 import {ChatService} from './chat.service';
+import {ConfigService} from './config.service';
 import {AccountDatabaseService} from './crypto/account-database.service';
 import {CastleService} from './crypto/castle.service';
 import {PotassiumService} from './crypto/potassium.service';
@@ -41,6 +43,7 @@ import {EnvService} from './env.service';
 import {LocalStorageService} from './local-storage.service';
 import {NotificationService} from './notification.service';
 import {P2PWebRTCService} from './p2p-webrtc.service';
+import {QRService} from './qr.service';
 import {ScrollService} from './scroll.service';
 import {SessionInitService} from './session-init.service';
 import {SessionService} from './session.service';
@@ -377,10 +380,12 @@ export class AccountChatService extends ChatService {
 	}
 
 	constructor (
+		accountSettingsService: AccountSettingsService,
 		analyticsService: AnalyticsService,
 		castleService: CastleService,
 		channelService: ChannelService,
 		chatMessageService: ChatMessageService,
+		configService: ConfigService,
 		databaseService: DatabaseService,
 		dialogService: DialogService,
 		envService: EnvService,
@@ -388,6 +393,7 @@ export class AccountChatService extends ChatService {
 		notificationService: NotificationService,
 		p2pWebRTCService: P2PWebRTCService,
 		potassiumService: PotassiumService,
+		qrService: QRService,
 		scrollService: ScrollService,
 		sessionService: SessionService,
 		sessionInitService: SessionInitService,
@@ -409,10 +415,12 @@ export class AccountChatService extends ChatService {
 		private readonly accountSessionInitService: AccountSessionInitService
 	) {
 		super(
+			accountSettingsService,
 			analyticsService,
 			castleService,
 			channelService,
 			chatMessageService,
+			configService,
 			databaseService,
 			dialogService,
 			envService,
@@ -420,6 +428,7 @@ export class AccountChatService extends ChatService {
 			notificationService,
 			p2pWebRTCService,
 			potassiumService,
+			qrService,
 			scrollService,
 			sessionService,
 			sessionInitService,

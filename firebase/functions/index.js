@@ -82,10 +82,10 @@ const {notify} = require('./notify')(database, messaging);
 
 const channelDisconnectTimeout = 30000;
 
-const getFullBurnerURL = (
+const getFullBurnerBaseURL = (
 	namespace,
 	callType,
-	telehealth,
+	telehealth = false,
 	removeHash = false
 ) => {
 	const {
@@ -110,6 +110,18 @@ const getFullBurnerURL = (
 		burnerURL;
 
 	return removeHash ? fullBurnerURL.replace('#', '') : fullBurnerURL;
+};
+
+const getBurnerLink = (
+	namespace,
+	id,
+	username,
+	callType,
+	telehealth = false
+) => {
+	`${getFullBurnerBaseURL(namespace, callType, telehealth, !!username)}${
+		username ? `${username}/` : ''
+	}${validateInput(id, /^[A-Za-z0-9_-]+$/)}`;
 };
 
 const getRealUsername = async (namespace, username) => {
@@ -226,6 +238,24 @@ const getInviteTemplateData = ({
 		purchased,
 		storageCap: readableByteLength(planConfig.storageCapGB, 'gb')
 	};
+};
+
+const getSMSCredentials = async (namespace, username) => {
+	try {
+		if (!username) {
+			return;
+		}
+
+		return (await database
+			.ref(
+				`${namespace.replace(
+					/\./g,
+					'_'
+				)}/users/${username}/internal/smsCredentials`
+			)
+			.once('value')).val();
+	}
+	catch {}
 };
 
 const getURL = (adminRef, namespace) => {
@@ -501,14 +531,9 @@ exports.appointmentInvite = onCall(async (data, namespace, getUsername) => {
 			)}` :
 			'';
 
-	const smsCredentials = await (async () =>
-		members.find(o => o.phoneNumber) ?
-			(await database
-				.ref(
-					`${namespace}/users/${inviterUsername}/internal/smsCredentials`
-				)
-				.once('value')).val() :
-			undefined)().catch(() => undefined);
+	const smsCredentials = members.find(o => o.phoneNumber) ?
+		await getSMSCredentials(namespace, inviterUsername) :
+		undefined;
 
 	await Promise.all([
 		sendMail(
@@ -550,12 +575,13 @@ exports.appointmentInvite = onCall(async (data, namespace, getUsername) => {
 			members.map(async o => {
 				const emailTo = {email: o.email, name: o.name};
 
-				const inviteeLink = `${getFullBurnerURL(
+				const inviteeLink = getBurnerLink(
 					namespace,
+					o.id,
+					inviterUsername,
 					data.callType,
-					telehealth,
-					true
-				)}${inviterUsername}/${o.id}`;
+					telehealth
+				);
 
 				const inviteeMessagePart1 = messagePart1
 					.replace('${PARTY}', `@${inviterUsername}`)
@@ -612,6 +638,45 @@ exports.appointmentInvite = onCall(async (data, namespace, getUsername) => {
 				]);
 			})
 		)
+	]);
+});
+
+exports.burnerInvite = onCall(async (data, namespace, getUsername) => {
+	const {callType, id, name, phoneNumber, telehealth} = data;
+
+	const email = validateEmail(data.email, true);
+	const username =
+		data.username && data.username === (await getUsername()) ?
+			data.username :
+			undefined;
+
+	const url = getBurnerLink(namespace, id, username, callType, telehealth);
+
+	const subject =
+		'Cyph Meeting Invite' + (username ? ` from @${username}` : '');
+
+	const message = `${
+		name ? `${name}, you've` : "You've"
+	} been invited to an encrypted Cyph meeting! Click here to join: ${url}`;
+
+	await Promise.all([
+		email &&
+			sendMail(
+				database,
+				namespace,
+				name ? {email, name} : email,
+				subject,
+				{
+					markdown: message,
+					noUnsubscribe: true
+				}
+			),
+		phoneNumber &&
+			sendSMS(
+				phoneNumber,
+				message,
+				await getSMSCredentials(namespace, username)
+			)
 	]);
 });
 

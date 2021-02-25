@@ -447,7 +447,7 @@
 					mat-mini-fab
 					[matTooltip]="stringsService.speakerSwitchTitle"
 					matTooltipPosition="left"
-					[class.visibility-hidden]="
+					[disabled]="
 						((p2pService.ioSwitcher.devices | await)?.speakers
 							?.length || 0) < 1
 					"
@@ -464,7 +464,7 @@
 					mat-mini-fab
 					[matTooltip]="stringsService.screenSwitchTitle"
 					matTooltipPosition="left"
-					[class.visibility-hidden]="
+					[disabled]="
 						!(p2pWebRTCService.screenSharingEnabled | await)
 					"
 					(click)="
@@ -475,6 +475,17 @@
 					"
 				>
 					<mat-icon>tv</mat-icon>
+				</button>
+				<button
+					mat-mini-fab
+					[matTooltip]="stringsService.inviteGuest"
+					matTooltipPosition="left"
+					[class.visibility-hidden]="
+						!(sessionService.isBurnerGroupHost | await)
+					"
+					(click)="chatService.inviteToGroup()"
+				>
+					<mat-icon>person_add</mat-icon>
 				</button>
 			</smd-fab-actions>
 		</smd-fab-speed-dial>

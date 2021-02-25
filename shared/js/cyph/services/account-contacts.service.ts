@@ -505,6 +505,12 @@ export class AccountContactsService extends BaseProvider {
 		}
 
 		await this.accountInviteService.send(email, name);
+
+		await this.dialogService.toast(
+			this.stringsService.inviteSent,
+			undefined,
+			this.stringsService.ok
+		);
 	}
 
 	/** Contact URL. */

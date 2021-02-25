@@ -622,6 +622,9 @@ export class StringsService extends BaseProvider {
 	public readonly inviteContactTitle = `Invite Friend`;
 
 	/** @see StringsService */
+	public readonly inviteGuest = `Invite Guest`;
+
+	/** @see StringsService */
 	public readonly inviteLinkButton = `Generate Invite Link`;
 
 	/** @see StringsService */
@@ -635,6 +638,9 @@ export class StringsService extends BaseProvider {
 
 	/** @see StringsService */
 	public readonly invitePatientTitle = `Invite Patient`;
+
+	/** @see StringsService */
+	public readonly inviteSent = `Invite Sent!`;
 
 	/** @see StringsService */
 	public readonly ioPermissionDeviceAudio = `microphone`;
@@ -1197,6 +1203,12 @@ export class StringsService extends BaseProvider {
 
 	/** @see StringsService */
 	public readonly pgpVerifyMessage = `Verify Message`;
+
+	/** @see StringsService */
+	public readonly phoneNumber = `Phone Number`;
+
+	/** @see StringsService */
+	public readonly phoneNumberOptional = `Phone Number (optional)`;
 
 	/** @see StringsService */
 	public readonly pin = `PIN`;

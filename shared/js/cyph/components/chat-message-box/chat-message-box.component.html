@@ -250,6 +250,16 @@
 					<button
 						mat-mini-fab
 						cyphTranslate
+						[matTooltip]="stringsService.inviteGuest"
+						matTooltipPosition="left"
+						(click)="chatService.inviteToGroup()"
+						*ngIf="sessionService.isBurnerGroupHost | await"
+					>
+						<mat-icon>person_add</mat-icon>
+					</button>
+					<button
+						mat-mini-fab
+						cyphTranslate
 						class="alt"
 						[matTooltip]="stringsService.help"
 						matTooltipPosition="left"

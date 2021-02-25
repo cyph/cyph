@@ -149,10 +149,17 @@ export interface ISessionService<
 	readonly symmetricKey: BehaviorSubject<Uint8Array | undefined>;
 
 	/**
-	 * Adds a member to the group.
+	 * Adds a member to the Burner group, if applicable.
 	 * (For now, requires that this have been a group session from the start.)
 	 */
-	addToGroup (name?: string) : Promise<string>;
+	addToBurnerGroup (
+		name?: string
+	) : Promise<{
+		callType?: 'audio' | 'video';
+		id: string;
+		url: string;
+		username?: string;
+	}>;
 
 	/** Castle event handler called by Castle.Transport. */
 	castleHandler (

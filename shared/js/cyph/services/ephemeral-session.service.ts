@@ -493,7 +493,14 @@ export class EphemeralSessionService extends SessionService {
 	}
 
 	/** @inheritDoc */
-	public async addToGroup (name?: string) : Promise<string> {
+	public async addToBurnerGroup (
+		name?: string
+	) : Promise<{
+		callType?: 'audio' | 'video';
+		id: string;
+		url: string;
+		username?: string;
+	}> {
 		if (!this.group.value) {
 			throw new Error('Group must already exist.');
 		}
@@ -503,7 +510,7 @@ export class EphemeralSessionService extends SessionService {
 		}
 
 		const {
-			newSessionIDs: [id]
+			newSessionIDs: [baseID]
 		} = await this.addToGroupInternal({
 			id: (await this.sessionInitService.headless) ?
 				uuid(true) + uuid(true) :
@@ -511,13 +518,26 @@ export class EphemeralSessionService extends SessionService {
 			name
 		});
 
-		return this.sessionInitService.accountsBurnerAliceData ?
+		const id =
+			baseID +
+			(this.sessionInitService.timeString ?
+				`.${this.sessionInitService.timeString}` :
+				'');
+
+		const url = this.sessionInitService.accountsBurnerAliceData ?
 			`${this.envService.cyphImUrl.replace('#', '')}${
 				this.sessionInitService.accountsBurnerAliceData.username
-			}/${id}.${this.sessionInitService.timeString}` :
+			}/${id}` :
 			`${this.envService.cyphImUrl}${
 				this.envService.cyphImUrl.indexOf('#') > -1 ? '' : '#'
 			}${id}`;
+
+		return {
+			callType: this.sessionInitService.callType,
+			id,
+			url,
+			username: this.sessionInitService.accountsBurnerAliceData?.username
+		};
 	}
 
 	/** @inheritDoc */

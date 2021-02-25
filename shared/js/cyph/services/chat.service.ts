@@ -17,6 +17,16 @@ import {
 } from '../chat';
 import {HelpComponent} from '../components/help';
 import {EncryptedAsyncMap} from '../crypto/encrypted-async-map';
+import {isValidEmail} from '../email-pattern';
+import {
+	email as emailElement,
+	getFormValue,
+	input,
+	newForm,
+	newFormComponent,
+	newFormContainer,
+	phone as phoneElement
+} from '../forms';
 import {IAsyncSet} from '../iasync-set';
 import {IProto} from '../iproto';
 import {IResolvable} from '../iresolvable';
@@ -57,9 +67,11 @@ import {observableAll} from '../util/observable-all';
 import {getTimestamp} from '../util/time';
 import {uuid} from '../util/uuid';
 import {resolvable, retryUntilSuccessful, sleep} from '../util/wait';
+import {AccountSettingsService} from './account-settings.service';
 import {AnalyticsService} from './analytics.service';
 import {ChannelService} from './channel.service';
 import {ChatMessageService} from './chat-message.service';
+import {ConfigService} from './config.service';
 import {CastleService} from './crypto/castle.service';
 import {PotassiumService} from './crypto/potassium.service';
 import {DatabaseService} from './database.service';
@@ -68,6 +80,7 @@ import {EnvService} from './env.service';
 import {LocalStorageService} from './local-storage.service';
 import {NotificationService} from './notification.service';
 import {P2PWebRTCService} from './p2p-webrtc.service';
+import {QRService} from './qr.service';
 import {ScrollService} from './scroll.service';
 import {SessionInitService} from './session-init.service';
 import {SessionService} from './session.service';
@@ -1190,6 +1203,110 @@ export class ChatService extends BaseProvider {
 		);
 	}
 
+	/** Invites new member to group. */
+	public async inviteToGroup () : Promise<void> {
+		if (!this.sessionService.isBurnerGroupHost.value) {
+			return;
+		}
+
+		const contactInfoForm = await this.dialogService.prompt({
+			bottomSheet: true,
+			content: '',
+			form: newForm([
+				newFormComponent([
+					newFormContainer([
+						input({
+							label: this.stringsService.nameOptional
+						})
+					]),
+					newFormContainer([
+						emailElement(
+							undefined,
+							undefined,
+							this.stringsService.emailOptional,
+							false
+						)
+					]),
+					newFormContainer([
+						phoneElement(
+							undefined,
+							this.stringsService.phoneNumberOptional,
+							100
+						)
+					])
+				])
+			]),
+			title: this.stringsService.meetingGuestContactInfoTitle
+		});
+
+		const name = (
+			getFormValue(contactInfoForm, 'string', 0, 0, 0) || ''
+		).trim();
+
+		let email = (getFormValue(contactInfoForm, 'string', 0, 1, 0) || '')
+			.trim()
+			.toLowerCase();
+
+		if (!isValidEmail(email)) {
+			email = '';
+		}
+
+		let phoneNumber = (
+			getFormValue(contactInfoForm, 'string', 0, 2, 0) || ''
+		).trim();
+
+		if (phoneNumber.indexOf('_') > -1) {
+			phoneNumber = '';
+		}
+
+		const {
+			callType,
+			id,
+			url,
+			username
+		} = await this.sessionService.addToBurnerGroup(name);
+
+		if (!email && !phoneNumber) {
+			await this.dialogService.alert({
+				content: this.stringsService.setParameters(
+					this.stringsService.inviteLinkText,
+					{link: url}
+				),
+				image: await this.qrService.getQRCode({
+					dotScale: 0.75,
+					size: 250,
+					text: url
+				}),
+				markdown: true,
+				title: this.stringsService.inviteLinkTitle
+			});
+			return;
+		}
+
+		await this.databaseService.callFunction('burnerInvite', {
+			callType,
+			email,
+			id,
+			name,
+			phoneNumber,
+			telehealth:
+				this.envService.isTelehealth ||
+				(!!this.accountSettingsService &&
+					this.configService.planConfig[
+						await this.accountSettingsService.plan
+							.pipe(take(1))
+							.toPromise()
+					].telehealth),
+			username
+		});
+
+		await this.dialogService.toast(
+			this.stringsService.inviteSent,
+			undefined,
+			this.stringsService.ok
+		);
+	}
+
 	/** Jumps to recent messages. */
 	public jumpToRecentMessages () : void {
 		this.initialScrollDown = true;
@@ -1510,6 +1627,13 @@ export class ChatService extends BaseProvider {
 
 	constructor (
 		/** @ignore */
+		@Inject(AccountSettingsService)
+		@Optional()
+		protected readonly accountSettingsService:
+			| AccountSettingsService
+			| undefined,
+
+		/** @ignore */
 		protected readonly analyticsService: AnalyticsService,
 
 		/** @ignore */
@@ -1524,6 +1648,9 @@ export class ChatService extends BaseProvider {
 
 		/** @ignore */
 		protected readonly chatMessageService: ChatMessageService,
+
+		/** @ignore */
+		protected readonly configService: ConfigService,
 
 		/** @ignore */
 		protected readonly databaseService: DatabaseService,
@@ -1545,6 +1672,9 @@ export class ChatService extends BaseProvider {
 
 		/** @ignore */
 		protected readonly potassiumService: PotassiumService,
+
+		/** @ignore */
+		protected readonly qrService: QRService,
 
 		/** @ignore */
 		protected readonly scrollService: ScrollService,
