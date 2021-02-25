@@ -16,6 +16,7 @@ const markdownEscape = markdown =>
 			return s.replace(/\n/g, `\\${c}`);
 		}, markdown.replace(/\s+/g, ' ').trim()) :
 		markdown;
+
 const mustacheUnescape = memoize(template =>
 	template.replace(/\{?\{\{([^#\^\/].*?)\}\}\}?/g, '{{{$1}}}')
 );
@@ -37,6 +38,11 @@ const getTemplate = memoize(
 		})
 );
 
+const renderMarkdown = markdown =>
+	dompurifyHtmlSanitizer
+		.sanitize(markdownIt.render(markdown).replace(/\s+/g, ' '))
+		.trim();
+
 const render = (template, data, markdownOnly) => {
 	const markdown = mustache
 		.render(
@@ -50,11 +56,7 @@ const render = (template, data, markdownOnly) => {
 		.replace(/\n\n+/g, '\n\n');
 
 	return {
-		html: markdownOnly ?
-			'' :
-			dompurifyHtmlSanitizer
-				.sanitize(markdownIt.render(markdown).replace(/\s+/g, ' '))
-				.trim(),
+		html: markdownOnly ? '' : renderMarkdown(markdown),
 		markdown
 	};
 };
@@ -62,4 +64,4 @@ const render = (template, data, markdownOnly) => {
 const renderTemplate = async (templateName, data, markdownOnly) =>
 	render(await getTemplate(templateName), data, markdownOnly);
 
-module.exports = {render, renderTemplate};
+module.exports = {render, renderMarkdown, renderTemplate};

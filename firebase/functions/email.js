@@ -4,7 +4,11 @@ const mustache = require('mustache');
 const nodemailer = require('nodemailer');
 const {dompurifyHtmlSanitizer} = require('./dompurify-html-sanitizer');
 const {from, transport, transportBackup} = require('./email-credentials');
-const {render, renderTemplate} = require('./markdown-templating');
+const {
+	render,
+	renderMarkdown,
+	renderTemplate
+} = require('./markdown-templating');
 const namespaces = require('./namespaces');
 const {CalendarInvite, CalendarRecurrenceRules} = require('./proto');
 const {normalize} = require('./util');
@@ -92,6 +96,8 @@ const sendMailInternal = async (
 			render(text.template, data) :
 		text.templateName ?
 			await renderTemplate(text.templateName, data) :
+		!text.textOnly ?
+			{html: renderMarkdown(markdown)} :
 			undefined;
 	}
 
