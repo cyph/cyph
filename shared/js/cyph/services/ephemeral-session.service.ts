@@ -920,7 +920,7 @@ export class EphemeralSessionService extends SessionService {
 										this.stringsService.setParameters(
 											this.stringsService
 												.burnerGroupDefaultMemberName,
-											{i: i.toString()}
+											{i: (i + 1).toString()}
 										)
 								);
 
