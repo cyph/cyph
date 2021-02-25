@@ -120,6 +120,8 @@ export class MaterialDialogService extends BaseProvider
 			instance.promptPlaceholder = o.placeholder;
 			instance.title = o.title !== undefined ? o.title : '';
 
+			instance.changeDetectorRef.markForCheck();
+
 			if (closeFunction) {
 				closeFunction.resolve(close);
 			}
@@ -190,6 +192,8 @@ export class MaterialDialogService extends BaseProvider
 				o.ok !== undefined ? o.ok : this.stringsService.ok;
 			matDialogRef.componentInstance.title =
 				o.title !== undefined ? o.title : '';
+
+			matDialogRef.componentInstance.changeDetectorRef.markForCheck();
 
 			if (closeFunction) {
 				closeFunction.resolve(() => {
@@ -317,6 +321,8 @@ export class MaterialDialogService extends BaseProvider
 			matDialogRef.componentInstance.src = o.src;
 			matDialogRef.componentInstance.title = o.title;
 
+			matDialogRef.componentInstance.changeDetectorRef.markForCheck();
+
 			return Promise.race([
 				cropResult,
 				matDialogRef.afterClosed().toPromise()
@@ -347,6 +353,8 @@ export class MaterialDialogService extends BaseProvider
 			if (o.mediaType) {
 				matDialogRef.componentInstance.mediaType = o.mediaType;
 			}
+
+			matDialogRef.componentInstance.changeDetectorRef.markForCheck();
 
 			if (closeFunction) {
 				closeFunction.resolve(() => {

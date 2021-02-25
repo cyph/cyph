@@ -1,5 +1,6 @@
 import {
 	ChangeDetectionStrategy,
+	ChangeDetectorRef,
 	Component,
 	ElementRef,
 	OnInit
@@ -148,6 +149,9 @@ export class DialogMediaComponent extends BaseProvider implements OnInit {
 
 		/** @ignore */
 		private readonly matDialogRef: MatDialogRef<DialogMediaComponent>,
+
+		/** @see ChangeDetectorRef */
+		public readonly changeDetectorRef: ChangeDetectorRef,
 
 		/** @see FileService */
 		public readonly fileService: FileService,

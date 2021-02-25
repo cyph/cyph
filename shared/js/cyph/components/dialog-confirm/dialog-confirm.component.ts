@@ -111,9 +111,6 @@ export class DialogConfirmComponent extends BaseProvider
 
 	constructor (
 		/** @ignore */
-		private readonly changeDetectorRef: ChangeDetectorRef,
-
-		/** @ignore */
 		@Optional()
 		@Inject(MatBottomSheetRef)
 		private readonly matBottomSheetRef:
@@ -126,6 +123,9 @@ export class DialogConfirmComponent extends BaseProvider
 		private readonly matDialogRef:
 			| MatDialogRef<DialogConfirmComponent>
 			| undefined,
+
+		/** @see ChangeDetectorRef */
+		public readonly changeDetectorRef: ChangeDetectorRef,
 
 		/** @see StringsService */
 		public readonly stringsService: StringsService
