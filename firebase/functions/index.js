@@ -648,9 +648,14 @@ exports.burnerInvite = onCall(async (data, namespace, getUsername) => {
 	const subject =
 		'Cyph Meeting Invite' + (username ? ` from @${username}` : '');
 
-	const message = `${
+	const messagePart1 = `${
 		name ? `${name}, you've` : "You've"
-	} been invited to an encrypted Cyph meeting! Click here to join: ${url}`;
+	} been invited to an encrypted Cyph meeting!`;
+
+	const messagePart2 = `Click here to join: ${url}`;
+
+	const emailMessage = `${messagePart1}\n\n[${messagePart2}.](${url})`;
+	const smsMessage = `${messagePart1} ${messagePart2}`;
 
 	await Promise.all([
 		email &&
@@ -660,14 +665,14 @@ exports.burnerInvite = onCall(async (data, namespace, getUsername) => {
 				name ? {email, name} : email,
 				subject,
 				{
-					markdown: message,
+					markdown: emailMessage,
 					noUnsubscribe: true
 				}
 			),
 		phoneNumber &&
 			sendSMS(
 				phoneNumber,
-				message,
+				smsMessage,
 				await getSMSCredentials(namespace, username)
 			)
 	]);
