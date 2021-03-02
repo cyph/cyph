@@ -28,6 +28,7 @@ import {AccountProfileComponent} from '../components/account-profile';
 import {AccountPseudoRelationshipResponseComponent} from '../components/account-pseudo-relationship-response';
 import {AccountRegisterComponent} from '../components/account-register';
 import {AccountSettingsComponent} from '../components/account-settings';
+import {AccountSetupChecklistComponent} from '../components/account-setup-checklist';
 import {AccountUpgradeComponent} from '../components/account-upgrade';
 import {AccountVaultComponent} from '../components/account-vault';
 import {AccountWalletsComponent} from '../components/account-wallets';
@@ -179,6 +180,7 @@ export const account: Route = {
 				ephemeralSubSession: true
 			}
 		},
+		{path: 'checklist', component: AccountSetupChecklistComponent},
 		{
 			path: 'compose',
 			component: AccountComposeComponent,

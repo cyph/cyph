@@ -1,1 +1,90 @@
-<div>AccountSetupChecklist</div>
+<mat-list>
+	<mat-list-item>
+		<mat-checkbox
+			[checked]="
+				(accountSettingsService.setupChecklist | await)?.addContact ===
+				true
+			"
+			disabled
+			mat-list-icon
+		></mat-checkbox>
+		<div mat-line>
+			<span cyphTranslate>
+				Add a contact
+			</span>
+		</div>
+	</mat-list-item>
+	<mat-list-item>
+		<mat-checkbox
+			[checked]="
+				(accountSettingsService.setupChecklist | await)?.files === true
+			"
+			disabled
+			mat-list-icon
+		></mat-checkbox>
+		<div mat-line>
+			<span cyphTranslate>
+				Upload a file
+			</span>
+		</div>
+	</mat-list-item>
+	<mat-list-item>
+		<mat-checkbox
+			[checked]="
+				(accountSettingsService.setupChecklist | await)
+					?.inviteFriend === true
+			"
+			disabled
+			mat-list-icon
+		></mat-checkbox>
+		<div mat-line>
+			<span cyphTranslate>
+				Invite a friend
+			</span>
+		</div>
+	</mat-list-item>
+	<mat-list-item>
+		<mat-checkbox
+			[checked]="
+				(accountSettingsService.setupChecklist | await)?.meetings ===
+				true
+			"
+			disabled
+			mat-list-icon
+		></mat-checkbox>
+		<div mat-line>
+			<span cyphTranslate>
+				Start a meeting
+			</span>
+		</div>
+	</mat-list-item>
+	<mat-list-item>
+		<mat-checkbox
+			[checked]="
+				(accountSettingsService.setupChecklist | await)?.productTour ===
+				true
+			"
+			disabled
+			mat-list-icon
+		></mat-checkbox>
+		<div mat-line>
+			<span cyphTranslate>
+				Complete the product tour
+			</span>
+		</div>
+	</mat-list-item>
+	<mat-list-item>
+		<mat-checkbox
+			[checked]="
+				(accountSettingsService.setupChecklist | await)?.social === true
+			"
+			disabled
+			mat-list-icon
+		></mat-checkbox>
+		<div mat-line>
+			<span cyphTranslate>
+				Make a social post
+			</span>
+		</div>
+	</mat-list-item>
+</mat-list>

@@ -2758,6 +2758,8 @@ export class AccountFilesService extends BaseProvider {
 				sub.unsubscribe();
 				this.showSpinner.next(undefined);
 
+				await this.accountSettingsService.updateSetupChecklist('files');
+
 				return id;
 			})
 		};

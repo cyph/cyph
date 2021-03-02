@@ -340,6 +340,8 @@ export class AccountAppointmentsService extends BaseProvider {
 			burnerSession
 		);
 
+		await this.accountSettingsService.updateSetupChecklist('meetings');
+
 		await this.accountDatabaseService.callFunction('appointmentInvite', {
 			burnerUID: calendarInvite.burnerUID,
 			callType:

@@ -37,6 +37,7 @@ import {deserialize, serialize} from '../util/serialization';
 import {getTimestamp} from '../util/time';
 import {uuid} from '../util/uuid';
 import {AccountContactsService} from './account-contacts.service';
+import {AccountSettingsService} from './account-settings.service';
 import {AccountUserLookupService} from './account-user-lookup.service';
 import {AccountService} from './account.service';
 import {ConfigService} from './config.service';
@@ -907,6 +908,8 @@ export class AccountPostsService extends BaseProvider {
 
 		await postDataPart.pushID(id);
 
+		await this.accountSettingsService.updateSetupChecklist('social');
+
 		return id;
 	}
 
@@ -1402,6 +1405,9 @@ export class AccountPostsService extends BaseProvider {
 
 		/** @ignore */
 		private readonly accountDatabaseService: AccountDatabaseService,
+
+		/** @ignore */
+		private readonly accountSettingsService: AccountSettingsService,
 
 		/** @ignore */
 		private readonly accountUserLookupService: AccountUserLookupService,

@@ -6,6 +6,7 @@ import {BaseProvider} from '../base-provider';
 import {BooleanProto} from '../proto';
 import {toBehaviorSubject} from '../util/flatten-observable';
 import {resolvable} from '../util/wait';
+import {AccountSettingsService} from './account-settings.service';
 import {ConfigService} from './config.service';
 import {AccountDatabaseService} from './crypto/account-database.service';
 import {DatabaseService} from './database.service';
@@ -45,6 +46,8 @@ export class AccountInviteService extends BaseProvider {
 		if (typeof inviteCode !== 'string') {
 			throw new Error('Invite failed');
 		}
+
+		await this.accountSettingsService.updateSetupChecklist('inviteFriend');
 
 		return inviteCode;
 	}
@@ -133,6 +136,9 @@ export class AccountInviteService extends BaseProvider {
 	constructor (
 		/** @ignore */
 		private readonly accountDatabaseService: AccountDatabaseService,
+
+		/** @ignore */
+		private readonly accountSettingsService: AccountSettingsService,
 
 		/** @ignore */
 		private readonly configService: ConfigService,

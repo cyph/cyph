@@ -1104,6 +1104,7 @@ export class AccountService extends BaseProvider {
 						'',
 						'404',
 						'appointments',
+						'checklist',
 						'contacts',
 						'docs',
 						'doctors',

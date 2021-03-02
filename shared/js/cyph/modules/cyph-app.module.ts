@@ -40,6 +40,7 @@ import {AccountProfileComponent} from '../components/account-profile';
 import {AccountPseudoRelationshipResponseComponent} from '../components/account-pseudo-relationship-response';
 import {AccountRegisterComponent} from '../components/account-register';
 import {AccountSettingsComponent} from '../components/account-settings';
+import {AccountSetupChecklistComponent} from '../components/account-setup-checklist';
 import {AccountStorageAnalyticsComponent} from '../components/account-storage-analytics';
 import {AccountUpgradeComponent} from '../components/account-upgrade';
 import {AccountUserRatingComponent} from '../components/account-user-rating';
@@ -130,6 +131,7 @@ import {CyphWebModule} from './cyph-web.module';
 		AccountPseudoRelationshipResponseComponent,
 		AccountRegisterComponent,
 		AccountSettingsComponent,
+		AccountSetupChecklistComponent,
 		AccountStorageAnalyticsComponent,
 		AccountUpgradeComponent,
 		AccountUserRatingComponent,
@@ -189,6 +191,7 @@ import {CyphWebModule} from './cyph-web.module';
 		AccountPseudoRelationshipResponseComponent,
 		AccountRegisterComponent,
 		AccountSettingsComponent,
+		AccountSetupChecklistComponent,
 		AccountStorageAnalyticsComponent,
 		AccountUpgradeComponent,
 		AccountUserRatingComponent,

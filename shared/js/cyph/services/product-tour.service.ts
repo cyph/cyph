@@ -3,6 +3,7 @@ import introJs from 'intro.js';
 import {BaseProvider} from '../base-provider';
 import {IProductTourDirective} from '../directive-interfaces/iproduct-tour.directive';
 import {translate} from '../util/translate';
+import {AccountSettingsService} from './account-settings.service';
 
 /**
  * Manages product tours.
@@ -67,6 +68,8 @@ export class ProductTourService extends BaseProvider {
 			instance.oncomplete(resolve);
 			instance.onexit(resolve);
 		});
+
+		await this.accountSettingsService.updateSetupChecklist('productTour');
 	}
 
 	/** Stops ongoing tour, if applicable. */
@@ -78,7 +81,10 @@ export class ProductTourService extends BaseProvider {
 		this.instance.exit();
 	}
 
-	constructor () {
+	constructor (
+		/** @ignore */
+		private readonly accountSettingsService: AccountSettingsService
+	) {
 		super();
 	}
 }

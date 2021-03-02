@@ -208,10 +208,20 @@ export class AccountSettingsService extends BaseProvider {
 		key: keyof IAccountSetupChecklist,
 		value: boolean = true
 	) : Promise<void> {
-		await this.setupChecklistInternal.updateValue(async o => ({
-			...o,
-			[key]: value
-		}));
+		if (!this.accountDatabaseService.currentUser.value) {
+			return;
+		}
+
+		await this.setupChecklistInternal.updateValue(async o => {
+			if (o[key] === value) {
+				throw new Error();
+			}
+
+			return {
+				...o,
+				[key]: value
+			};
+		});
 	}
 
 	constructor (

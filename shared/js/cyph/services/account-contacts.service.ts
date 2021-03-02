@@ -42,6 +42,7 @@ import {resolvable, retryUntilSuccessful} from '../util/wait';
 import {AccountFilesService} from './account-files.service';
 import {AccountInviteService} from './account-invite.service';
 import {AccountPostsService} from './account-posts.service';
+import {AccountSettingsService} from './account-settings.service';
 import {AccountUserLookupService} from './account-user-lookup.service';
 import {ConfigService} from './config.service';
 import {AccountDatabaseService} from './crypto/account-database.service';
@@ -399,6 +400,8 @@ export class AccountContactsService extends BaseProvider {
 			innerCircle,
 			username
 		});
+
+		await this.accountSettingsService.updateSetupChecklist('addContact');
 	}
 
 	/** Displays prompt to add a new contact. */
@@ -685,6 +688,9 @@ export class AccountContactsService extends BaseProvider {
 
 		/** @ignore */
 		private readonly accountInviteService: AccountInviteService,
+
+		/** @ignore */
+		private readonly accountSettingsService: AccountSettingsService,
 
 		/** @ignore */
 		private readonly configService: ConfigService,

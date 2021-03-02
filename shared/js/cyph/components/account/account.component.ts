@@ -186,6 +186,7 @@ export class AccountComponent extends BaseProvider
 					'schedule',
 					'audio',
 					'call',
+					'checklist',
 					'compose',
 					'contacts',
 					'docs',

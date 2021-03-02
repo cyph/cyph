@@ -1,5 +1,6 @@
 import {ChangeDetectionStrategy, Component} from '@angular/core';
 import {BaseProvider} from '../../base-provider';
+import {AccountSettingsService} from '../../services/account-settings.service';
 import {StringsService} from '../../services/strings.service';
 
 /**
@@ -13,6 +14,9 @@ import {StringsService} from '../../services/strings.service';
 })
 export class AccountSetupChecklistComponent extends BaseProvider {
 	constructor (
+		/** @see AccountSettingsService */
+		public readonly accountSettingsService: AccountSettingsService,
+
 		/** @see StringsService */
 		public readonly stringsService: StringsService
 	) {
