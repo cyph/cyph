@@ -302,6 +302,9 @@ export class AccountSessionService extends SessionService {
 			});
 
 			this.subscriptions.push(
+				ephemeralSessionService.isBurnerGroupHost.subscribe(
+					this.isBurnerGroupHost
+				),
 				ephemeralSessionService.joinConfirmationWait.subscribe(
 					this.joinConfirmationWait
 				),
