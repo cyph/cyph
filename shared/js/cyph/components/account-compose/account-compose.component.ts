@@ -191,12 +191,42 @@ export class AccountComposeComponent extends BaseProvider
 	public readonly trackBySelf = trackBySelf;
 
 	/** Adds a value to the group. */
-	public async addToGroup (allowEmptyName: boolean = true) : Promise<void> {
-		let name = this.appointmentGroupMemberDraft.value;
+	public async addToGroup (allowEmptyInput: boolean = true) : Promise<void> {
+		const groupInput = this.appointmentGroupMemberDraft.value;
 
-		if (!name && !allowEmptyName) {
+		if (!groupInput && !allowEmptyInput) {
 			return;
 		}
+
+		const parsedInput =
+			groupInput.indexOf('<') < 0 ?
+				[{email: '', name: groupInput}] :
+				groupInput.split(',').map(s => {
+					s = s.trim();
+					const parts = s.match(/^"?(.*?)"?\s*<(.*?)>$/) || [];
+
+					return parts[1] && parts[2] ?
+						{email: parts[2].toLowerCase(), name: parts[1]} :
+						{email: s.toLowerCase(), name: s};
+				});
+
+		if (parsedInput.length === 0) {
+			return;
+		}
+
+		if (!parsedInput.find(({email}) => !isValidEmail(email))) {
+			this.appointmentGroupMemberDraft.next('');
+			this.appointmentGroupMembers.next(
+				this.appointmentGroupMembers.value.concat(parsedInput)
+			);
+			return;
+		}
+
+		if (parsedInput.length > 1) {
+			return;
+		}
+
+		let {email, name} = parsedInput[0];
 
 		const contactInfoForm = await this.dialogService.prompt({
 			bottomSheet: true,
@@ -219,7 +249,7 @@ export class AccountComposeComponent extends BaseProvider
 						})
 					]),
 					newFormContainer([
-						emailElement(undefined, undefined, undefined, false)
+						emailElement(undefined, {email}, undefined, false)
 					]),
 					newFormContainer([phoneElement(undefined, undefined, 100)])
 				])
@@ -233,7 +263,7 @@ export class AccountComposeComponent extends BaseProvider
 
 		name = (getFormValue(contactInfoForm, 'string', 0, 0, 0) || '').trim();
 
-		const email = (getFormValue(contactInfoForm, 'string', 1, 1, 0) || '')
+		email = (getFormValue(contactInfoForm, 'string', 1, 1, 0) || '')
 			.trim()
 			.toLowerCase();
 
