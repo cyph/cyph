@@ -131,6 +131,22 @@ export class AccountSessionService extends SessionService {
 	}
 
 	/** @inheritDoc */
+	public async addToBurnerGroup (
+		name?: string
+	) : Promise<{
+		callType?: 'audio' | 'video';
+		id: string;
+		url: string;
+		username?: string;
+	}> {
+		if (this.internalSessionService) {
+			return this.internalSessionService.addToBurnerGroup(name);
+		}
+
+		return super.addToBurnerGroup(name);
+	}
+
+	/** @inheritDoc */
 	public close () : void {
 		if (this.internalSessionService) {
 			this.internalSessionService.close();

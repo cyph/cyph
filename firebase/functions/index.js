@@ -652,10 +652,10 @@ exports.burnerInvite = onCall(async (data, namespace, getUsername) => {
 		name ? `${name}, you've` : "You've"
 	} been invited to an encrypted Cyph meeting!`;
 
-	const messagePart2 = `Click here to join: ${url}`;
+	const messagePart2 = `Click here to join:`;
 
-	const emailMessage = `${messagePart1}\n\n[${messagePart2}.](${url})`;
-	const smsMessage = `${messagePart1} ${messagePart2}`;
+	const emailMessage = `${messagePart1}\n\n${messagePart2} [${url}](${url})`;
+	const smsMessage = `${messagePart1} ${messagePart2} ${url}`;
 
 	await Promise.all([
 		email &&
