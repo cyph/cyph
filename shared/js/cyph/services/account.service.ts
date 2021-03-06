@@ -9,7 +9,7 @@ import {
 	Router,
 	UrlSegment
 } from '@angular/router';
-import {BehaviorSubject, Observable, of} from 'rxjs';
+import {BehaviorSubject, Observable, of, Subject} from 'rxjs';
 import {filter, map, skip, switchMap} from 'rxjs/operators';
 import {SecurityModels, User} from '../account';
 import {BaseProvider} from '../base-provider';
@@ -97,6 +97,9 @@ export class AccountService extends BaseProvider {
 
 	/** @ignore */
 	private readonly transitionInternal = new BehaviorSubject<boolean>(false);
+
+	/** @ignore */
+	private readonly uiReadyResolved = new Subject<void>();
 
 	/** Indicates whether account is in good standing. */
 	public readonly accountGoodStanding = new BehaviorSubject<boolean>(true);
@@ -205,9 +208,6 @@ export class AccountService extends BaseProvider {
 		this.envService.isMobile,
 		this.mobileMenuOpenInternal
 	]).pipe(map(([isMobile, mobileMenuOpen]) => isMobile && mobileMenuOpen));
-
-	/** Resolves ready promise. */
-	public readonly resolveUiReady: () => void = this._UI_READY.resolve;
 
 	/** Route change listener. */
 	public readonly routeChanges = toBehaviorSubject<string>(
@@ -489,6 +489,12 @@ export class AccountService extends BaseProvider {
 		spinner?.next(false);
 
 		return this.lastUserToken?.token;
+	}
+
+	/** Resolves ready promise. */
+	public resolveUiReady () : void {
+		this._UI_READY.resolve();
+		this.uiReadyResolved.next();
 	}
 
 	/** Current route path. */
@@ -1255,5 +1261,49 @@ export class AccountService extends BaseProvider {
 		this.uiReady.then(() => {
 			this.isUiReady.next(true);
 		});
+
+		if (!this.envService.debugLog) {
+			return;
+		}
+
+		this.subscriptions.push(
+			observableAll([
+				this.routeChanges.pipe(
+					map(route => ({
+						route,
+						/* eslint-disable-next-line @typescript-eslint/tslint/config */
+						routeChangeTimestamp: Date.now()
+					}))
+				),
+				this.transition.pipe(
+					/* eslint-disable-next-line @typescript-eslint/tslint/config */
+					map(() => Date.now())
+				),
+				this.uiReadyResolved.pipe(
+					/* eslint-disable-next-line @typescript-eslint/tslint/config */
+					map(() => Date.now())
+				)
+			]).subscribe(
+				async ([
+					{route, routeChangeTimestamp},
+					transitionTimestamp,
+					uiReadyTimestamp
+				]) =>
+					debugLog(() => ({
+						routeChangePerformance: {
+							route,
+							startTime: routeChangeTimestamp,
+							timeToTransition:
+								routeChangeTimestamp < transitionTimestamp ?
+									transitionTimestamp - routeChangeTimestamp :
+									undefined,
+							timeToUiReady:
+								routeChangeTimestamp < uiReadyTimestamp ?
+									uiReadyTimestamp - routeChangeTimestamp :
+									undefined
+						}
+					}))
+			)
+		);
 	}
 }
