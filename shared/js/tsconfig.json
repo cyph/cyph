@@ -31,8 +31,8 @@
 			"debug": ["js/externals/debug"],
 			"faye-websocket": ["js/externals/faye-websocket"],
 			/* "fs": ["js/externals/fs"], */
-			"lodash/*": ["../node_modules/@types/lodash-es/*"],
 			"libsodium": ["js/externals/libsodium"],
+			"lodash/*": ["../node_modules/@types/lodash-es/*"],
 			"request": ["js/externals/request"],
 			"rsvp": ["js/externals/rsvp"],
 			"stream": ["js/externals/stream"],

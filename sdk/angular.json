@@ -1,0 +1,216 @@
+{
+	"$schema": "../node_modules/@angular/cli/lib/config/schema.json",
+	"version": 1,
+	"newProjectRoot": "projects",
+	"projects": {
+		"sdk": {
+			"root": "",
+			"sourceRoot": "src",
+			"projectType": "application",
+			"architect": {
+				"build": {
+					"builder": "@angular-devkit/build-angular:server",
+					"options": {
+						"outputPath": "dist",
+						"main": "src/js/sdk/main.ts",
+						"tsConfig": "src/tsconfig.app.json"
+					},
+					"configurations": {
+						"backup": {
+							"fileReplacements": [
+								{
+									"replace": "src/js/environments/environment.ts",
+									"with": "src/js/environments/environment.backup.ts"
+								}
+							]
+						},
+						"beta": {
+							"fileReplacements": [
+								{
+									"replace": "src/js/environments/environment.ts",
+									"with": "src/js/environments/environment.beta.ts"
+								}
+							]
+						},
+						"betaProd": {
+							"optimization": true,
+							"outputHashing": "all",
+							"sourceMap": false,
+							"extractCss": true,
+							"namedChunks": false,
+							"aot": true,
+							"extractLicenses": true,
+							"vendorChunk": false,
+							"buildOptimizer": true,
+							"fileReplacements": [
+								{
+									"replace": "src/js/environments/environment.ts",
+									"with": "src/js/environments/environment.beta-prod.ts"
+								}
+							]
+						},
+						"debugProd": {
+							"aot": true,
+							"outputHashing": "none",
+							"fileReplacements": [
+								{
+									"replace": "src/js/environments/environment.ts",
+									"with": "src/js/environments/environment.debug-prod.ts"
+								}
+							]
+						},
+						"dev": {
+							"fileReplacements": [
+								{
+									"replace": "src/js/environments/environment.ts",
+									"with": "src/js/environments/environment.dev.ts"
+								}
+							]
+						},
+						"e2e": {
+							"outputHashing": "all",
+							"fileReplacements": [
+								{
+									"replace": "src/js/environments/environment.ts",
+									"with": "src/js/environments/environment.e2e.ts"
+								}
+							]
+						},
+						"local": {
+							"outputHashing": "all",
+							"fileReplacements": [
+								{
+									"replace": "src/js/environments/environment.ts",
+									"with": "src/js/environments/environment.local.ts"
+								}
+							]
+						},
+						"localBackup": {
+							"outputHashing": "all",
+							"fileReplacements": [
+								{
+									"replace": "src/js/environments/environment.ts",
+									"with": "src/js/environments/environment.local-backup.ts"
+								}
+							]
+						},
+						"localBeta": {
+							"outputHashing": "all",
+							"fileReplacements": [
+								{
+									"replace": "src/js/environments/environment.ts",
+									"with": "src/js/environments/environment.local-beta.ts"
+								}
+							]
+						},
+						"localDev": {
+							"outputHashing": "all",
+							"fileReplacements": [
+								{
+									"replace": "src/js/environments/environment.ts",
+									"with": "src/js/environments/environment.local-dev.ts"
+								}
+							]
+						},
+						"localMaster": {
+							"outputHashing": "all",
+							"fileReplacements": [
+								{
+									"replace": "src/js/environments/environment.ts",
+									"with": "src/js/environments/environment.local-master.ts"
+								}
+							]
+						},
+						"localProd": {
+							"outputHashing": "all",
+							"fileReplacements": [
+								{
+									"replace": "src/js/environments/environment.ts",
+									"with": "src/js/environments/environment.local-prod.ts"
+								}
+							]
+						},
+						"localStaging": {
+							"outputHashing": "all",
+							"fileReplacements": [
+								{
+									"replace": "src/js/environments/environment.ts",
+									"with": "src/js/environments/environment.local-staging.ts"
+								}
+							]
+						},
+						"master": {
+							"fileReplacements": [
+								{
+									"replace": "src/js/environments/environment.ts",
+									"with": "src/js/environments/environment.master.ts"
+								}
+							]
+						},
+						"prod": {
+							"optimization": true,
+							"outputHashing": "all",
+							"sourceMap": false,
+							"extractCss": true,
+							"namedChunks": false,
+							"aot": true,
+							"extractLicenses": true,
+							"vendorChunk": false,
+							"buildOptimizer": true,
+							"fileReplacements": [
+								{
+									"replace": "src/js/environments/environment.ts",
+									"with": "src/js/environments/environment.prod.ts"
+								}
+							]
+						},
+						"production": {
+							"optimization": true,
+							"outputHashing": "all",
+							"sourceMap": false,
+							"extractCss": true,
+							"namedChunks": false,
+							"aot": true,
+							"extractLicenses": true,
+							"vendorChunk": false,
+							"buildOptimizer": true,
+							"fileReplacements": [
+								{
+									"replace": "src/js/environments/environment.ts",
+									"with": "src/js/environments/environment.prod.ts"
+								}
+							]
+						},
+						"staging": {
+							"optimization": true,
+							"outputHashing": "all",
+							"sourceMap": false,
+							"extractCss": true,
+							"namedChunks": false,
+							"aot": true,
+							"extractLicenses": true,
+							"vendorChunk": false,
+							"buildOptimizer": true,
+							"fileReplacements": [
+								{
+									"replace": "src/js/environments/environment.ts",
+									"with": "src/js/environments/environment.staging.ts"
+								}
+							]
+						},
+						"tmp": {
+							"outputHashing": "all",
+							"fileReplacements": [
+								{
+									"replace": "src/js/environments/environment.ts",
+									"with": "src/js/environments/.environment.tmp.ts"
+								}
+							]
+						}
+					}
+				}
+			}
+		}
+	},
+	"cli": {}
+}

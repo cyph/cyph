@@ -16,7 +16,7 @@ cd shared
 cp -a $(ls | grep -vP '^(lib|node_modules)$') "${dir}/shared/"
 cp -a lib/js lib/ipfs-gateways.json "${dir}/shared/lib/"
 
-for d in cyph.app cyph.com ; do
+for d in cyph.app cyph.com sdk ; do
 	cd "${dir}/${d}"
 	../commands/ngprojectinit.sh
 done

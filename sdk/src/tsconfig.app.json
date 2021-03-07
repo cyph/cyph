@@ -1,0 +1,15 @@
+{
+	"extends": "../tsconfig.json",
+	"angularCompilerOptions": {
+		"fullTemplateTypeCheck": true,
+		"preserveWhitespaces": false,
+		"strictTemplates": true
+	},
+	"compilerOptions": {
+		"outDir": "../out-tsc/app",
+		"module": "es2015",
+		"baseUrl": "",
+		"types": []
+	},
+	"exclude": ["js/native", "**/*.spec.ts"]
+}

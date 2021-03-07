@@ -1,0 +1,28 @@
+{
+	"extends": "./src/js/tsconfig.ng.json",
+	"compileOnSave": false,
+	"compilerOptions": {
+		"baseUrl": "src",
+		"declaration": false,
+		"outDir": "./dist/out-tsc",
+		"typeRoots": ["node_modules/@types"]
+	},
+	"files": ["src/js/sdk/main.ts"],
+	"include": [
+		"src/js/sdk/main.ts",
+		"src/js/sdk/polyfills.ts",
+		"src/js/externals/node-faye-websocket.ts",
+		"src/js/externals/node-lz4.ts",
+		"src/js/externals/node-request.ts"
+	],
+	"paths": {
+		"core-js/es6/*": ["../node_modules/core-js/es"],
+		"core-js/es7/reflect": [
+			"../node_modules/core-js/proposals/reflect-metadata"
+		],
+		"faye-websocket": ["src/js/externals/node-faye-websocket"],
+		"lodash/*": ["../node_modules/@types/lodash-es/*"],
+		"lz4": ["src/js/externals/node-lz4"],
+		"request": ["src/js/externals/node-request"]
+	}
+}
