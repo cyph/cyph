@@ -1,7 +1,7 @@
 {
 	"name": "cyph.com",
 	"version": "0.0.0",
-	"license": "Ms-RSL",
+	"license": "Cyph-RSL",
 	"scripts": {
 		"ng": "ng",
 		"start": "ng serve",

@@ -400,7 +400,7 @@ cat > ${d}/package.json << EOM
 {
 	"name": "@types/${d}",
 	"version": "1.0.0",
-	"license": "Ms-RSL"
+	"license": "Cyph-RSL"
 }
 EOM
 fi ; done

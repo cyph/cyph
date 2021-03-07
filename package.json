@@ -1,7 +1,7 @@
 {
 	"name": "cyph",
 	"version": "0.0.0",
-	"license": "Ms-RSL",
+	"license": "Cyph-RSL",
 	"prettier": {
 		"arrowParens": "avoid",
 		"bracketSpacing": false,
