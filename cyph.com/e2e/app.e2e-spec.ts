@@ -9,6 +9,6 @@ describe('cyph.com', () => {
 
 	it('should display footer', async () => {
 		page.navigateTo();
-		expect(await page.getParagraphText()).toEqual('© Cyph 2018');
+		expect(await page.getParagraphText()).toEqual('© Cyph 2021');
 	});
 });
