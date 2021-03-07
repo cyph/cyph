@@ -33,9 +33,9 @@ for d in ${projects} ; do
 	cd "${d}"
 	ng build \
 		--aot true \
-		--commonChunk false \
-		--sourceMap false \
-		--vendorChunk false
+		--common-chunk false \
+		--source-map false \
+		--vendor-chunk false
 	checkfail
 	cd ..
 done

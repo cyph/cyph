@@ -404,7 +404,7 @@ for d in ${compiledProjects} ; do
 		( [ "${debug}" ] && [ ! "${debugProdBuild}" ] ) || \
 		( [ "${simple}" ] && [ ! "${simpleProdBuild}" ] )
 	then
-		ng build --sourceMap false --configuration "${environment}" || fail
+		ng build --source-map false --configuration "${environment}" || fail
 	else
 		../commands/prodbuild.sh --configuration "${environment}" || fail
 

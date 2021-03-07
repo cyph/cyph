@@ -69,14 +69,14 @@ done
 
 ngProdFlags='
 	--aot true
-	--buildOptimizer true
-	--extractCss true
-	--extractLicenses true
-	--namedChunks false
+	--build-optimizer true
+	--extract-css true
+	--extract-licenses true
+	--named-chunks false
 	--optimization true
 	--output-hashing none
-	--sourceMap false
-	--vendorChunk false
+	--source-map false
+	--vendor-chunk false
 '
 
 if [ ! "${noBuild}" ] ; then

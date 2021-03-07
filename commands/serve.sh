@@ -103,15 +103,15 @@ ngserve () {
 		elif [ "${e2e}" ] ; then
 			ng e2e \
 				$(if [ "${localSeleniumServer}" ] ; then
-					echo '--protractorConfig protractor.local-selenium-server.js'
+					echo '--protractor-config protractor.local-selenium-server.js'
 				fi) \
 				"${@}"
 		else
 			ng serve \
 				--configuration "${environment}" \
-				--liveReload false \
-				--sourceMap false \
-				--publicHost "localhost:${port}" \
+				--live-reload false \
+				--source-map false \
+				--public-host "localhost:${port}" \
 				$(if [ "${prodBuild}" ] ; then echo '--watch false' ; fi) \
 				"${@}"
 		fi
