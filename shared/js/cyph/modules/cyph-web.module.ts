@@ -65,9 +65,8 @@ import {SocialShareComponent} from '../components/social-share';
 import {VideoComponent} from '../components/video';
 import {InitDirective} from '../directives/init.directive';
 import {env} from '../env';
+import {webModuleProviders} from '../providers/web-module';
 import {LocalStorageService} from '../services/local-storage.service';
-import {SocialShareService} from '../services/social-share.service';
-import {WebLocalStorageService} from '../services/web-local-storage.service';
 import {CyphSharedModule} from './cyph-shared.module';
 
 /**
@@ -151,13 +150,7 @@ import {CyphSharedModule} from './cyph-shared.module';
 		ShareButtonsModule,
 		SmdFabSpeedDialModule
 	],
-	providers: [
-		SocialShareService,
-		{
-			provide: LocalStorageService,
-			useClass: WebLocalStorageService
-		}
-	]
+	providers: webModuleProviders
 })
 export class CyphWebModule {
 	constructor (

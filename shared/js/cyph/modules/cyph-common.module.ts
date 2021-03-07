@@ -1,5 +1,4 @@
-import {ErrorHandler, NgModule} from '@angular/core';
-import {Title} from '@angular/platform-browser';
+import {NgModule} from '@angular/core';
 import {BannerComponent} from '../components/banner';
 import {BlankComponent} from '../components/blank';
 import {CalendarInviteComponent} from '../components/calendar-invite';
@@ -19,15 +18,7 @@ import {QuillComponent} from '../components/quill';
 import {RedirectComponent} from '../components/redirect';
 import {SearchBarComponent} from '../components/search-bar';
 import {SignupFormComponent} from '../components/signup-form';
-import {env} from '../env';
-import {AnalyticsService} from '../services/analytics.service';
-import {ErrorService} from '../services/error.service';
-import {FileService} from '../services/file.service';
-import {NotificationService} from '../services/notification.service';
-import {ScreenshotService} from '../services/screenshot.service';
-import {SignupService} from '../services/signup.service';
-import {VirtualKeyboardWatcherService} from '../services/virtual-keyboard-watcher.service';
-import {WindowWatcherService} from '../services/window-watcher.service';
+import {commonModuleProviders} from '../providers/common-module';
 import {CyphWebModule} from './cyph-web.module';
 
 /**
@@ -78,25 +69,7 @@ import {CyphWebModule} from './cyph-web.module';
 		SignupFormComponent
 	],
 	imports: [CyphWebModule],
-	providers: [
-		AnalyticsService,
-		ErrorService,
-		FileService,
-		NotificationService,
-		ScreenshotService,
-		SignupService,
-		Title,
-		VirtualKeyboardWatcherService,
-		WindowWatcherService,
-		...(env.isLocalEnv ?
-			[] :
-			[
-				{
-					provide: ErrorHandler,
-					useExisting: ErrorService
-				}
-			])
-	]
+	providers: commonModuleProviders
 })
 export class CyphCommonModule {
 	constructor () {}
