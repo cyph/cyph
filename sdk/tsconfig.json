@@ -5,24 +5,27 @@
 		"baseUrl": "src",
 		"declaration": false,
 		"outDir": "./dist/out-tsc",
+		"paths": {
+			"bitpay.js": ["js/externals/bitpay.js"],
+			"core-js/es6/*": ["../node_modules/core-js/es"],
+			"core-js/es7/reflect": [
+				"../node_modules/core-js/proposals/reflect-metadata"
+			],
+			"debug": ["js/externals/debug"],
+			"dropzone": ["js/externals/dropzone"],
+			"faye-websocket": ["js/externals/faye-websocket"],
+			"hammerjs": ["js/externals/hammerjs"],
+			"libsodium": ["js/externals/libsodium-bundle"],
+			"lodash/*": ["../node_modules/@types/lodash-es/*"],
+			"materialize-css": ["js/externals/materialize-css"],
+			"microlight-string": ["js/externals/microlight-string"],
+			"quill": ["js/externals/quill"],
+			"recordrtc": ["js/externals/recordrtc"],
+			"request": ["js/externals/request"],
+			"rsvp": ["js/externals/rsvp"]
+		},
 		"typeRoots": ["node_modules/@types"]
 	},
 	"files": ["src/js/sdk/main.ts"],
-	"include": [
-		"src/js/sdk/main.ts",
-		"src/js/sdk/polyfills.ts",
-		"src/js/externals/node-faye-websocket.ts",
-		"src/js/externals/node-lz4.ts",
-		"src/js/externals/node-request.ts"
-	],
-	"paths": {
-		"core-js/es6/*": ["../node_modules/core-js/es"],
-		"core-js/es7/reflect": [
-			"../node_modules/core-js/proposals/reflect-metadata"
-		],
-		"faye-websocket": ["src/js/externals/node-faye-websocket"],
-		"lodash/*": ["../node_modules/@types/lodash-es/*"],
-		"lz4": ["src/js/externals/node-lz4"],
-		"request": ["src/js/externals/node-request"]
-	}
+	"include": ["src/js/sdk/main.ts", "src/js/externals/*.ts"]
 }

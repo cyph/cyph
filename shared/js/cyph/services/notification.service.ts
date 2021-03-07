@@ -37,9 +37,10 @@ export class NotificationService extends BaseProvider
 	private readonly ringLock = lockFunction();
 
 	/** @ignore */
-	private readonly ringtone: HTMLAudioElement = new Audio(
-		'/assets/audio/ring.mp3'
-	);
+	private readonly ringtone =
+		typeof Audio !== 'undefined' ?
+			new Audio('/assets/audio/ring.mp3') :
+			undefined;
 
 	/** Max ring time. */
 	public readonly ringTimeout: number = 60000;
@@ -127,10 +128,12 @@ export class NotificationService extends BaseProvider
 	) : Promise<boolean> {
 		return this.ringLock(async () => {
 			try {
-				this.ringtone.currentTime = 0;
+				if (this.ringtone) {
+					this.ringtone.currentTime = 0;
 
-				if (!silent) {
-					await this.ringtone.play().catch(() => {});
+					if (!silent) {
+						await this.ringtone.play().catch(() => {});
+					}
 				}
 
 				return await Promise.race([
@@ -141,7 +144,7 @@ export class NotificationService extends BaseProvider
 				]);
 			}
 			finally {
-				this.ringtone.pause();
+				this.ringtone?.pause();
 			}
 		});
 	}
@@ -167,11 +170,13 @@ export class NotificationService extends BaseProvider
 		if (this.envService.isMobileOS) {
 			this.config.audio = undefined;
 		}
-		else if (Audio) {
+		else if (typeof Audio !== 'undefined') {
 			this.audio = new Audio(this.config.audio);
 		}
 
-		this.ringtone.loop = true;
+		if (this.ringtone) {
+			this.ringtone.loop = true;
+		}
 
 		this.subscriptions.push(
 			this.windowWatcherService.visibility.subscribe(isVisible => {

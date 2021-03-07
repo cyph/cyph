@@ -82,16 +82,31 @@ for (const k of [
 		};
 
 if (!IS_WEB) {
-	(<any> self).saveAs =
-		'FileSaver is only supported in main thread of web environment.';
+	(<any> self).saveAs = () => {
+		throw new Error(
+			'FileSaver is only supported in main thread of web environment.'
+		);
+	};
 }
 
-/* Import TypeScript helpers in Node environments */
+/* Import TypeScript helpers and fetch in Node environments */
 
 try {
 	/* eslint-disable-next-line no-eval */
 	for (const [k, v] of Object.entries(eval('require')('tslib'))) {
 		(<any> self)[k] = v;
+	}
+}
+catch {}
+
+try {
+	if (typeof fetch === 'undefined') {
+		/* eslint-disable-next-line no-eval */
+		const nodeFetch = eval('require')('node-fetch');
+		(<any> self).fetch = nodeFetch;
+		(<any> self).Headers = nodeFetch.Headers;
+		(<any> self).Request = nodeFetch.Request;
+		(<any> self).Response = nodeFetch.Response;
 	}
 }
 catch {}

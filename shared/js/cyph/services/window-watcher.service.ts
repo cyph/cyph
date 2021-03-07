@@ -25,7 +25,7 @@ export class WindowWatcherService extends BaseProvider {
 
 	/** Indicates whether the window is currently visible. */
 	public readonly visibility: BehaviorSubject<boolean> = new BehaviorSubject(
-		!document.hidden
+		typeof document === 'undefined' || !document.hidden
 	);
 
 	/** Window width. */

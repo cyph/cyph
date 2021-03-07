@@ -15,7 +15,7 @@ import {
 	ViewChild
 } from '@angular/core';
 import {MatMenuTrigger} from '@angular/material/menu';
-import * as Hammer from 'hammerjs';
+import Hammer from 'hammerjs';
 import * as $ from 'jquery';
 import * as msgpack from 'msgpack-lite';
 import {BehaviorSubject} from 'rxjs';

@@ -3,7 +3,11 @@
  */
 
 import {enableProdMode} from '@angular/core';
-import {platformDynamicServer} from '@angular/platform-server';
+import {
+	INITIAL_CONFIG,
+	PlatformConfig,
+	platformDynamicServer
+} from '@angular/platform-server';
 import {environment} from '../environments/environment';
 import {AppModule} from './app.module';
 
@@ -11,6 +15,13 @@ if (environment.production) {
 	enableProdMode();
 }
 
-platformDynamicServer().bootstrapModule(AppModule, {
+platformDynamicServer([
+	{
+		provide: INITIAL_CONFIG,
+		useValue: <PlatformConfig> {
+			document: '<html><body><cyph-app></cyph-app></body></html>'
+		}
+	}
+]).bootstrapModule(AppModule, {
 	preserveWhitespaces: false
 });

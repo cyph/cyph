@@ -16,6 +16,7 @@ export class Analytics {
 	 * of a Cyph URL, particularly to avoid leaking shared secret.
 	 */
 	private readonly referrer =
+		typeof document !== 'undefined' &&
 		document.referrer &&
 		!arrayAny(
 			[
@@ -52,7 +53,7 @@ export class Analytics {
 	private readonly uid = resolvable<string>();
 
 	/** @ignore */
-	private readonly visitor: Promise<ua.Visitor>;
+	private readonly visitor?: Promise<ua.Visitor>;
 
 	/** @ignore */
 	private async baseSend (visit: ua.Visitor) : Promise<void> {
@@ -77,6 +78,10 @@ export class Analytics {
 	) : Promise<void> {
 		const visitor = await this.visitor;
 
+		if (!visitor) {
+			return;
+		}
+
 		return this.baseSend(
 			label === undefined ?
 				visitor.event(category, action) :
@@ -88,7 +93,13 @@ export class Analytics {
 
 	/** Sends exception. */
 	public async sendException (description: string) : Promise<void> {
-		return this.baseSend((await this.visitor).exception(description));
+		const visitor = await this.visitor;
+
+		if (!visitor) {
+			return;
+		}
+
+		return this.baseSend(visitor.exception(description));
 	}
 
 	/** Sends transaction. */
@@ -98,6 +109,10 @@ export class Analytics {
 		sku?: string
 	) : Promise<void> {
 		const visitor = await this.visitor;
+
+		if (!visitor) {
+			return;
+		}
 
 		return this.baseSend(
 			sku === undefined ?
@@ -115,6 +130,11 @@ export class Analytics {
 		/** @see EnvDeploy */
 		public readonly env: EnvDeploy = envDeploy
 	) {
+		/* Disable on non-web for now (TODO: make distinction between SDK and native) */
+		if (!this.env.isWeb) {
+			return;
+		}
+
 		const appName = this.env.host;
 		const appVersion = this.env.isWeb ? 'Web' : 'Native';
 

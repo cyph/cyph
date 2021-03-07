@@ -44,6 +44,7 @@ export class P2PWebRTCService extends BaseProvider
 
 	/** Indicates whether screen sharing is supported in the current environment. */
 	public static readonly isScreenSharingSupported: boolean =
+		typeof navigator !== 'undefined' &&
 		typeof (<any> navigator)?.mediaDevices?.getDisplayMedia === 'function';
 
 	/** Indicates whether WebRTC is supported in the current environment. */

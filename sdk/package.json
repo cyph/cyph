@@ -8,8 +8,8 @@
 	},
 	"dependencies": {
 		"faye-websocket": "*",
-		"lz4": "*",
-		"request": "*"
+		"node-fetch": "*",
+		"tslib": "*"
 	},
 	"devDependencies": {
 		"@angular/cli": "*",

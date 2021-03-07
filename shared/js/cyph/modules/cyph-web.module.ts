@@ -57,7 +57,6 @@ import {SplitButtonModule} from '@syncfusion/ej2-angular-splitbuttons';
 import {SmdFabSpeedDialModule} from 'angular-speed-dial';
 import {AngularDraggableModule} from 'angular2-draggable';
 import {DxFileManagerModule} from 'devextreme-angular/ui/file-manager';
-import {FullCalendarModule} from 'ng-fullcalendar';
 import {FileManagerComponent} from '../components/file-manager';
 import {SidenavComponent} from '../components/sidenav';
 import {SimpleEmojiPickerComponent} from '../components/simple-emoji-picker';
@@ -87,7 +86,6 @@ import {CyphSharedModule} from './cyph-shared.module';
 		DxFileManagerModule,
 		EmojiModule,
 		FileManagerComponent,
-		FullCalendarModule,
 		InitDirective,
 		MatAutocompleteModule,
 		MatBadgeModule,
@@ -125,7 +123,6 @@ import {CyphSharedModule} from './cyph-shared.module';
 		DxFileManagerModule,
 		EmojiModule,
 		FontAwesomeModule,
-		FullCalendarModule,
 		MatAutocompleteModule,
 		MatBadgeModule,
 		MatBottomSheetModule,

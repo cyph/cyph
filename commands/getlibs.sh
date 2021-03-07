@@ -366,9 +366,7 @@ for f in devextreme/dist/css/*.css ; do
 done
 
 # Temporary workaround for https://github.com/pierrec/node-lz4/pull/64#issuecomment-416119077
-sed -i \
-	's|"browser": "./build/lz4.js",|"browser": {"./lib/utils.js": "./lib/utils-js.js"},|g' \
-	lz4/package.json
+cp -f lz4/lib/utils-js.js lz4/lib/utils.js
 
 # Temporary workaround for https://github.com/microsoft/TypeScript/issues/33752
 sed -i 's|: readonly|:|g' typescript/lib/lib.es2015.promise.d.ts

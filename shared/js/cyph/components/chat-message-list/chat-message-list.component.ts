@@ -15,7 +15,7 @@ import {
 } from '@angular/core';
 import {ThemePalette} from '@angular/material/core/common-behaviors/color';
 import {SafeStyle} from '@angular/platform-browser';
-import * as Hammer from 'hammerjs';
+import Hammer from 'hammerjs';
 import * as $ from 'jquery';
 import debounce from 'lodash-es/debounce';
 import {BehaviorSubject, Observable} from 'rxjs';

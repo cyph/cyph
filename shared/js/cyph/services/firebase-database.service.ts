@@ -1206,7 +1206,11 @@ export class FirebaseDatabaseService extends DatabaseService {
 			return;
 		}
 
-		if (event || !navigator.serviceWorker) {
+		if (
+			event ||
+			typeof navigator === 'undefined' ||
+			!navigator.serviceWorker
+		) {
 			return;
 		}
 

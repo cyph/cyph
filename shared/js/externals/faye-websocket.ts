@@ -2,4 +2,6 @@
 
 /** @file faye-websocket external. */
 
-export const Client = (<any> self).WebSocket;
+export default (<any> self).IS_WEB ?
+	{Client: (<any> self).WebSocket} :
+	eval('require')('faye-websocket');

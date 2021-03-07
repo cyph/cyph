@@ -1,7 +1,6 @@
 import {NgModule} from '@angular/core';
 import {AccountComponent} from '../components/account';
 import {AccountAfterRegisterComponent} from '../components/account-after-register';
-import {AccountAppointmentsComponent} from '../components/account-appointments';
 import {AccountAppointmentAgendaComponent} from '../components/account-appointment-agenda';
 import {AccountBaseFileListComponent} from '../components/account-base-file-list';
 import {AccountCallWaitingComponent} from '../components/account-call-waiting';
@@ -70,7 +69,6 @@ import {PGPService} from '../services/crypto/pgp.service';
 import {DatabaseService} from '../services/database.service';
 import {ProductTourService} from '../services/product-tour.service';
 import {CyphCommonModule} from './cyph-common.module';
-import {CyphWebModule} from './cyph-web.module';
 
 /**
  * Common module with shared imports for application projects.
@@ -79,7 +77,6 @@ import {CyphWebModule} from './cyph-web.module';
 	declarations: [
 		AccountAfterRegisterComponent,
 		AccountAppointmentAgendaComponent,
-		AccountAppointmentsComponent,
 		AccountBaseFileListComponent,
 		AccountCallWaitingComponent,
 		AccountChatComponent,
@@ -139,7 +136,6 @@ import {CyphWebModule} from './cyph-web.module';
 	exports: [
 		AccountAfterRegisterComponent,
 		AccountAppointmentAgendaComponent,
-		AccountAppointmentsComponent,
 		AccountBaseFileListComponent,
 		AccountCallWaitingComponent,
 		AccountChatComponent,
@@ -185,6 +181,7 @@ import {CyphWebModule} from './cyph-web.module';
 		AccountVaultComponent,
 		AccountWalletsComponent,
 		BurnerChatSetupComponent,
+		CyphCommonModule,
 		FooterComponent,
 		InAppPurchaseComponent,
 		LinkConnectionComponent,
@@ -196,7 +193,7 @@ import {CyphWebModule} from './cyph-web.module';
 		UploadEhrCredentialsComponent,
 		WarrantCanaryComponent
 	],
-	imports: [CyphCommonModule, CyphWebModule],
+	imports: [CyphCommonModule],
 	providers: appModuleProviders
 })
 export class CyphAppModule {

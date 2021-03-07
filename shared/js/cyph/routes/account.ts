@@ -3,7 +3,6 @@
 import {Route} from '@angular/router';
 import {AccountComponent} from '../components/account';
 import {AccountAfterRegisterComponent} from '../components/account-after-register';
-import {AccountAppointmentsComponent} from '../components/account-appointments';
 import {AccountAppointmentAgendaComponent} from '../components/account-appointment-agenda';
 import {AccountChatComponent} from '../components/account-chat';
 import {AccountComposeComponent} from '../components/account-compose';
@@ -106,7 +105,6 @@ export const account: Route = {
 			component: AccountPseudoRelationshipResponseComponent,
 			data: {accept: true}
 		},
-		{path: 'appointments', component: AccountAppointmentsComponent},
 		{
 			path: 'appointments/:appointmentID',
 			component: AccountChatComponent,

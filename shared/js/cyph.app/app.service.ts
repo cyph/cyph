@@ -85,6 +85,10 @@ export class AppService extends BaseProvider implements CanActivate {
 
 	/** Marks load as complete. */
 	public async loadComplete () : Promise<void> {
+		if (!this.envService.isWeb) {
+			return;
+		}
+
 		$(document.body).addClass('load-complete');
 		await sleep(5000);
 		$('#pre-load').remove();
@@ -185,18 +189,20 @@ export class AppService extends BaseProvider implements CanActivate {
 			faviconService.setFavicon('telehealth');
 		}
 
-		self.addEventListener('hashchange', e => {
-			if (
-				e.oldURL
-					.split(location.origin)[1]
-					.match(new RegExp(`^/?#?/?${burnerRoot}(/|$)`)) ||
-				e.oldURL
-					.split(location.origin)[1]
-					.match(/^\/?#?\/?account-burner(\/|$)/)
-			) {
-				reloadWindow();
-			}
-		});
+		if (this.envService.isWeb) {
+			self.addEventListener('hashchange', e => {
+				if (
+					e.oldURL
+						.split(location.origin)[1]
+						.match(new RegExp(`^/?#?/?${burnerRoot}(/|$)`)) ||
+					e.oldURL
+						.split(location.origin)[1]
+						.match(/^\/?#?\/?account-burner(\/|$)/)
+				) {
+					reloadWindow();
+				}
+			});
+		}
 
 		localStorageService
 			.getString('username')
