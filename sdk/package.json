@@ -2,6 +2,11 @@
 	"name": "@cyph/sdk",
 	"version": "4.0.0",
 	"license": "Cyph-RSL",
+	"main": "./dist/main.js",
+	"files": [
+		"/dist",
+		"/README.md"
+	],
 	"scripts": {
 		"ng": "ng",
 		"build": "ng build"

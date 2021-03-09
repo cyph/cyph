@@ -60,8 +60,10 @@ read -r -d '' modules <<- EOM
 	@covalent/markdown
 	@ctrl/ngx-emoji-mart
 	@ctrl/ngx-rightclick
+	@cyph/burner-sdk
 	@cyph/prettier
 	@cyph/pretty-quick
+	@cyph/sdk
 	@firebase/app
 	@firebase/app-types
 	@firebase/auth

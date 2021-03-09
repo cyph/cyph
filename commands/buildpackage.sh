@@ -62,6 +62,11 @@ if [ ! "${mainVersion}" ] ; then
 	mainVersion="${version}"
 fi
 
+if [ "${site}" == 'sdk' ] ; then
+	cacheBustedProjects=''
+	compiledProjects=''
+fi
+
 
 # TODO: Factor out from here and deploy.sh
 
@@ -376,6 +381,15 @@ fi
 
 ./commands/ngassets.sh
 touch shared/assets/frozen
+
+if [ "${site}" == 'sdk' ] ; then
+	log "Build $(projectname sdk ${branchDir})"
+	cd sdk
+	ng build --source-map false --configuration "${environment}" || fail
+	echo -n 'module.exports=module.exports.default;' >> dist/main.js
+	echo -n 'module.exports.default=module.exports;' >> dist/main.js
+	exit 0
+fi
 
 for d in ${compiledProjects} ; do
 	if [ ! -d "${d}" ] ; then
