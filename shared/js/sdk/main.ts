@@ -25,3 +25,6 @@ platformDynamicServer([
 ]).bootstrapModule(AppModule, {
 	preserveWhitespaces: false
 });
+
+/* eslint-disable-next-line import/no-default-export */
+export default AppModule.sdk;
