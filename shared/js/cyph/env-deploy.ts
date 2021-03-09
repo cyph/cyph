@@ -34,6 +34,9 @@ export class EnvDeploy {
 	public readonly isOnion: boolean =
 		this.host.split('.').slice(-1)[0] === 'onion';
 
+	/** Indicates whether this is the Cyph SDK. */
+	public readonly isSDK: boolean = false;
+
 	/** Indicates whether this is (the main thread of) a Web environment. */
 	public readonly isWeb: boolean = IS_WEB;
 

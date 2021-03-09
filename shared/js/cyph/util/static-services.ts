@@ -1,6 +1,6 @@
 import {HttpClient} from '@angular/common/http';
 import {NgZone} from '@angular/core';
-import {DomSanitizer} from '@angular/platform-browser';
+import {DomSanitizer, SafeValue} from '@angular/platform-browser';
 import {env} from '../env';
 import {DialogService} from '../services/dialog.service';
 import {FileService} from '../services/file.service';
@@ -20,10 +20,7 @@ export const staticDialogService = resolvableDialogService ?
 /** Resolvable domSanitizer. */
 const resolvableDomSanitizer = resolvable<DomSanitizer>();
 
-/*
-TODO: Make distinction between SDK and native.
-
-if (!(env.isMainThread && env.isWeb)) {
+if (!env.isSDK && !(env.isMainThread && env.isWeb)) {
 	const notImplemented = () => {
 		throw new Error('Not implemented.');
 	};
@@ -37,7 +34,6 @@ if (!(env.isMainThread && env.isWeb)) {
 		sanitize: (_: any, data: SafeValue) => <string> data
 	});
 }
-*/
 
 /** @see DomSanitizer */
 export const staticDomSanitizer = resolvableDomSanitizer;

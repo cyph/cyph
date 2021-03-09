@@ -130,8 +130,7 @@ export class Analytics {
 		/** @see EnvDeploy */
 		public readonly env: EnvDeploy = envDeploy
 	) {
-		/* Disable on non-web for now (TODO: make distinction between SDK and native) */
-		if (!this.env.isWeb) {
+		if (this.env.isSDK) {
 			return;
 		}
 

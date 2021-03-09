@@ -183,6 +183,10 @@ defaultHost='${locationData.protocol}//${locationData.hostname}:'
 simpleWebSignPackageName=''
 homeURL=''
 
+if [ "${site}" == 'sdk' ] ; then
+	sed -i 's|isSDK: boolean = false;|isSDK: boolean = true;|g' shared/js/cyph/env-deploy.ts
+fi
+
 if [ "${test}" ] ; then
 	appURL="https://${version}.cyph.app"
 
