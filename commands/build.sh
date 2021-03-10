@@ -2,7 +2,7 @@
 
 
 cd $(cd "$(dirname "$0")" ; pwd)/..
-dir="$DIR"
+dir="$PWD"
 
 
 if [ "${1}" != '--angular-only' ] ; then
