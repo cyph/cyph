@@ -33,3 +33,4 @@ cd ~/.build
 
 rm -rf ${dir}/sdk/dist 2> /dev/null
 cp -a sdk/dist ${dir}/sdk/
+cp -f LICENSE ${dir}/sdk/

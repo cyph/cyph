@@ -1,6 +1,7 @@
 # Cyph project bind mounts (see commands/ngprojectinit.sh)
 
 favicon.ico
+LICENSE
 src/assets
 src/css
 src/js
