@@ -1042,7 +1042,11 @@ export class FirebaseDatabaseService extends DatabaseService {
 			const auth = (await this.app).auth();
 
 			if (firebase.auth) {
-				await auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL);
+				await auth.setPersistence(
+					this.envService.isSDK ?
+						firebase.auth.Auth.Persistence.NONE :
+						firebase.auth.Auth.Persistence.LOCAL
+				);
 			}
 
 			await auth.signInWithEmailAndPassword(
@@ -1242,7 +1246,7 @@ export class FirebaseDatabaseService extends DatabaseService {
 			handleDesktopNotification(e?.data?.notification?.FCM_MSG);
 		});
 
-		(await this.app).messaging().onMessage(payload => {
+		(await this.app).messaging().onMessage((payload: any) => {
 			handleDesktopNotification(payload, true);
 		});
 	}
@@ -1450,7 +1454,9 @@ export class FirebaseDatabaseService extends DatabaseService {
 						if (progress) {
 							uploadTask.on(
 								firebase.storage.TaskEvent.STATE_CHANGED,
-								snapshot => {
+								(
+									snapshot: firebase.storage.UploadTaskSnapshot
+								) => {
 									progress.next(
 										Math.floor(
 											(snapshot.bytesTransferred /
@@ -1571,7 +1577,7 @@ export class FirebaseDatabaseService extends DatabaseService {
 
 					(await this.getDatabaseRef(url)).on(
 						'value',
-						async snapshot =>
+						async (snapshot: firebase.database.DataSnapshot) =>
 							localLock(async () => {
 								const value: {
 									[key: string]: {

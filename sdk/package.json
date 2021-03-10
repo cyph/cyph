@@ -12,9 +12,11 @@
 		"build": "ng build"
 	},
 	"dependencies": {
-		"faye-websocket": "*",
+		"fetch-blob": "*",
+		"firebase": "*",
 		"node-fetch": "*",
-		"tslib": "*"
+		"tslib": "*",
+		"xhr2": "*"
 	},
 	"devDependencies": {
 		"@angular/cli": "*",

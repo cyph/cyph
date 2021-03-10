@@ -4,4 +4,4 @@
 
 export default (<any> self).IS_WEB ?
 	{Client: (<any> self).WebSocket} :
-	eval('require')('faye-websocket');
+	eval('require')('faye-websocket').default;

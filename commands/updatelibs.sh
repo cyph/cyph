@@ -275,6 +275,7 @@ read -r -d '' modules <<- EOM
 	fast-text-encoding@https://github.com/buu700/fast-text-encoding
 	faye-websocket
 	fcm-node
+	fetch-blob
 	fg-loadcss
 	file-saver
 	firebase
@@ -461,6 +462,7 @@ read -r -d '' modules <<- EOM
 	webrtc-troubleshoot
 	whatwg-fetch
 	wowjs
+	xhr2
 	xkcd-passphrase
 	zone.js
 	$(cat ${dir}/native/plugins.list)

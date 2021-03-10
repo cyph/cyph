@@ -30,6 +30,11 @@
 			"crypto": ["js/externals/crypto"],
 			"debug": ["js/externals/debug"],
 			"faye-websocket": ["js/externals/faye-websocket"],
+			"firebase/app": ["js/externals/firebase-app"],
+			"firebase/auth": ["js/externals/firebase-auth"],
+			"firebase/database": ["js/externals/firebase-database"],
+			"firebase/messaging": ["js/externals/firebase-messaging"],
+			"firebase/storage": ["js/externals/firebase-storage"],
 			/* "fs": ["js/externals/fs"], */
 			"libsodium": ["js/externals/libsodium"],
 			"lodash/*": ["../node_modules/@types/lodash-es/*"],

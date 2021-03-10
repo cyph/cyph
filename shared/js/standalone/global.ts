@@ -100,6 +100,14 @@ try {
 catch {}
 
 try {
+	if (typeof Blob === 'undefined') {
+		/* eslint-disable-next-line no-eval */
+		(<any> self).Blob = eval('require')('fetch-blob');
+	}
+}
+catch {}
+
+try {
 	if (typeof fetch === 'undefined') {
 		/* eslint-disable-next-line no-eval */
 		const nodeFetch = eval('require')('node-fetch');
@@ -107,6 +115,16 @@ try {
 		(<any> self).Headers = nodeFetch.Headers;
 		(<any> self).Request = nodeFetch.Request;
 		(<any> self).Response = nodeFetch.Response;
+	}
+}
+catch {}
+
+try {
+	if (typeof XMLHttpRequest === 'undefined') {
+		/* eslint-disable-next-line no-eval */
+		const xhr2 = eval('require')('xhr2');
+		(<any> self).XMLHttpRequest = xhr2;
+		(<any> self).XMLHttpRequestUpload = xhr2.XMLHttpRequestUpload;
 	}
 }
 catch {}
