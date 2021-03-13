@@ -15,6 +15,7 @@ import {NgModule, NgZone} from '@angular/core';
 import {SERVER_TOKEN} from '@angular/flex-layout';
 import {DomSanitizer} from '@angular/platform-browser';
 import {ServerModule} from '@angular/platform-server';
+import {DOMPurifyHtmlSanitizer} from '../cyph/dompurify-html-sanitizer';
 import * as forms from '../cyph/forms';
 import {IResolvable} from '../cyph/iresolvable';
 import * as proto from '../cyph/proto';
@@ -114,6 +115,7 @@ export class AppModule {
 				configService,
 				cryptocurrencyService,
 				databaseService,
+				DOMPurifyHtmlSanitizer,
 				envService,
 				forms,
 				potassiumService,
