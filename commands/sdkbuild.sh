@@ -32,5 +32,22 @@ cd ~/.build
 || fail
 
 rm -rf ${dir}/sdk/dist 2> /dev/null
-cp -a sdk/dist ${dir}/sdk/
+mkdir ${dir}/sdk/dist
+cp sdk/dist/main.js ${dir}/sdk/dist/main.cjs
 cp -f LICENSE ${dir}/sdk/
+
+cat > ${dir}/sdk/sdk.js <<- EOM
+import cyphSDK from './dist/main.cjs';
+await cyphSDK.ready;
+
+$(
+	cat shared/js/sdk/app.module.ts |
+		tr '\n' ' ' |
+		perl -pe 's/.*?Object.entries\(\{(.*?)\}\).*/\1/' |
+		perl -pe 's/\s+//g' |
+		tr ',' '\n' |
+		perl -pe 's/^(.*)$/export const \1 = cyphSDK.\1;/g'
+)
+
+export default cyphSDK;
+EOM

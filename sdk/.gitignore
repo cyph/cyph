@@ -9,6 +9,7 @@ src/templates
 
 # compiled output
 /dist
+/sdk.js
 /tmp
 /out-tsc
 

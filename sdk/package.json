@@ -1,11 +1,13 @@
 {
 	"name": "@cyph/sdk",
-	"version": "4.0.1",
+	"version": "4.1.1",
 	"license": "Cyph-RSL",
-	"main": "./dist/main.js",
+	"type": "module",
+	"main": "./sdk.js",
 	"files": [
 		"/dist",
 		"/LICENSE",
+		"/sdk.js",
 		"/README.md"
 	],
 	"scripts": {
