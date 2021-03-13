@@ -3,8 +3,10 @@
 import {getMeta} from '../modules/base.js';
 const {isCLI} = getMeta(import.meta);
 
-import databaseService from '../modules/database-service.js';
-import {normalize} from '../modules/util.js';
+import {util} from '@cyph/sdk';
+import {initDatabaseService} from '../modules/database-service.js';
+
+const {normalize} = util;
 
 export const changeInviteCode = async (
 	projectId,
@@ -27,7 +29,7 @@ export const changeInviteCode = async (
 
 	const namespacePath = namespace.replace(/\./g, '_');
 
-	const {database} = databaseService(projectId);
+	const {database} = initDatabaseService(projectId);
 
 	const oldInviteCodeValue = (await database
 		.ref(`${namespacePath}/inviteCodes/${inviteCode}`)

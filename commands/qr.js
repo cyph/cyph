@@ -5,7 +5,7 @@ const {__dirname, isCLI} = getMeta(import.meta);
 
 import fs from 'fs';
 import puppeteer from 'puppeteer';
-import util from 'util';
+import nodeUtil from 'util';
 
 /** TODO: Handle this locally. */
 export const getQR = async (text, path) => {
@@ -34,7 +34,7 @@ export const getQR = async (text, path) => {
 		`${__dirname}/../shared/assets/img/cyph.icon.png`
 	);
 
-	await util.promisify(setTimeout)(1000);
+	await nodeUtil.promisify(setTimeout)(1000);
 	await page.evaluate(() => j_generate());
 	await page.waitForSelector('#qrcode');
 

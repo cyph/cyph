@@ -3,14 +3,16 @@
 import {getMeta} from '../modules/base.js';
 const {isCLI} = getMeta(import.meta);
 
+import {util} from '@cyph/sdk';
 import braintree from 'braintree';
 import fs from 'fs';
 import memoize from 'lodash-es/memoize';
 import os from 'os';
 import read from 'read';
-import {normalize, uuid} from '../modules/util.js';
 import {getUserMetadata} from './getusermetadata.js';
 import {inviteUser} from './inviteuser.js';
+
+const {normalize, uuid} = util;
 
 const namespace = 'cyph.ws';
 

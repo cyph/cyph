@@ -34,6 +34,8 @@ import terser from 'terser';
 	}
 
 	fs.writeFileSync(args.path, code);
+
+	process.exit();
 })().catch(err => {
 	console.error(err);
 	process.exit(1);

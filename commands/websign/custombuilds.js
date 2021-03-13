@@ -1,13 +1,14 @@
 #!/usr/bin/env node
 
+import {potassiumService as potassium, proto, util} from '@cyph/sdk';
 import cheerio from 'cheerio';
 import fs from 'fs';
 import mkdirp from 'mkdirp';
 import superSphincs from 'supersphincs';
-import {potassium} from '../../modules/potassium.js';
-import {Environment} from '../../modules/proto.js';
-import {serialize} from '../../modules/util.js';
 import {customBuild, customBuildIds} from '../custombuild.js';
+
+const {Environment} = proto;
+const {serialize} = util;
 
 (async () => {
 	const args = {
@@ -96,6 +97,8 @@ import {customBuild, customBuildIds} from '../custombuild.js';
 		`${args.outputPath}/custombuilds.list`,
 		outputIds.join(' ')
 	);
+
+	process.exit();
 })().catch(err => {
 	console.error(err);
 	process.exit(1);

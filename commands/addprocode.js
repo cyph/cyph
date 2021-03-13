@@ -3,10 +3,10 @@
 import {getMeta} from '../modules/base.js';
 const {isCLI} = getMeta(import.meta);
 
+import {potassiumService as potassium} from '@cyph/sdk';
 import firebase from 'firebase-admin';
 import xkcdPassphrase from 'xkcd-passphrase';
-import databaseService from '../modules/database-service.js';
-import potassium from '../modules/potassium.js';
+import {initDatabaseService} from '../modules/database-service.js';
 
 export const addProCode = async (
 	projectId,
@@ -29,7 +29,7 @@ export const addProCode = async (
 		namespace = 'cyph.ws';
 	}
 
-	const {database, processURL} = databaseService(projectId);
+	const {database, processURL} = initDatabaseService(projectId);
 
 	const salt = namespace + 'Eaf60vuVWm67dNISjm6qdTGqgEhIW4Oes+BTsiuNjvs=';
 	const passwordHash = potassium.toHex(

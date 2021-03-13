@@ -651,7 +651,7 @@ if [ ! "${simple}" ] ; then
 		const test = process.env.test;
 
 		for (const [domain, path] of Object.entries(
-			(await import("./modules/config.js")).webSignRedirects
+			(await import("@cyph/sdk")).configService.webSignRedirects
 		).map(([k, v]) =>
 			[k, v.join("/")]
 		)) {
@@ -660,6 +660,8 @@ if [ ! "${simple}" ] ; then
 					"${path}" "${domain}" "${branchPackage}" "${test}"
 			`], {stdio: "inherit"});
 		}
+
+		process.exit();
 	})()'
 fi
 
@@ -722,7 +724,7 @@ then
 	cd functions
 
 	npm install
-	cp ../../modules/database-service.js ~/.cyph/email-credentials.js ./
+	cp ../../modules/*.js ~/.cyph/email-credentials.js ./
 	html-minifier --collapse-whitespace --minify-css --remove-comments email.html -o email.html
 
 	cp -rf ../../shared/assets/js ./

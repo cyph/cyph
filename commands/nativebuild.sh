@@ -62,7 +62,7 @@ node -e '(async () => console.log(`
 	})();
 
 	self.translations = ${JSON.stringify((await import("../commands/translations")).translations)};
-`))()' >> starter.js
+`))().then(() => process.exit())' >> starter.js
 cat app/starter.js >> starter.js
 
 ${dir}/commands/websign/threadpack.js starter.js || fail

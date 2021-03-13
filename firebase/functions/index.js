@@ -1,19 +1,29 @@
+import {
+	configService as config,
+	potassiumService as potassium,
+	proto,
+	util
+} from '@cyph/sdk';
 import initCors from 'cors';
 import functions from 'firebase-functions';
 import fs from 'fs';
 import MailchimpApiV3 from 'mailchimp-api-v3';
 import {phoneNumberTimezone} from 'phone-number-timezone';
 import usernameBlacklistArray from 'username-blacklist';
-import {config} from './config.js';
 import {cyphAdminKey, mailchimpCredentials} from './cyph-admin-vars.js';
-import initDatabaseService from './database-service.js';
+import {initDatabaseService} from './database-service.js';
 import {sendMail, sendMailInternal} from './email.js';
 import {emailRegex} from './email-regex.js';
-import initMailchimp from './mailchimp.js';
+import {initMailchimp} from './mailchimp.js';
 import {renderTemplate} from './markdown-templating.js';
 import namespaces from './namespaces.js';
-import initNotify from './notify.js';
-import {
+import {initNotify} from './notify.js';
+import {sendSMS} from './sms.js';
+import {initTokenKey} from './token-key.js';
+import tokens from './tokens.js';
+
+const cors = initCors({origin: true});
+const {
 	AccountContactState,
 	AccountFileRecord,
 	AccountNotification,
@@ -25,11 +35,8 @@ import {
 	NotificationTypes,
 	NumberProto,
 	StringProto
-} from './proto.js';
-import {sendSMS} from './sms.js';
-import initTokenKey from './token-key.js';
-import tokens from './tokens.js';
-import {
+} = proto;
+const {
 	dynamicDeserialize,
 	dynamicSerialize,
 	normalize,
@@ -39,10 +46,7 @@ import {
 	sleep,
 	titleize,
 	uuid
-} from './util.js';
-
-const cors = initCors({origin: true});
-
+} = util;
 const usernameBlacklist = new Set(usernameBlacklistArray);
 
 const mailchimp =
@@ -50,7 +54,21 @@ const mailchimp =
 		new MailchimpApiV3(mailchimpCredentials.apiKey) :
 		undefined;
 
-const databaseService = initDatabaseService(
+const {
+	admin,
+	auth,
+	database,
+	getHash,
+	getItem,
+	getOrSetDefaultSimple,
+	hasItem,
+	messaging,
+	pushItem,
+	removeItem,
+	setItem,
+	setItemInternal,
+	storage
+} = initDatabaseService(
 	{
 		...functions.config(),
 		fcmServerKey: fs
@@ -60,21 +78,6 @@ const databaseService = initDatabaseService(
 	},
 	true
 );
-
-const {
-	admin,
-	auth,
-	database,
-	getHash,
-	getItem,
-	hasItem,
-	messaging,
-	pushItem,
-	removeItem,
-	setItem,
-	setItemInternal,
-	storage
-} = databaseService;
 
 const {addToMailingList, removeFromMailingList, splitName} = initMailchimp(
 	mailchimp,
@@ -1167,7 +1170,7 @@ exports.getCastleSessionID = onCall(async (data, namespace, getUsername) => {
 		return '';
 	}
 
-	return databaseService.getOrSetDefaultSimple(
+	return getOrSetDefaultSimple(
 		namespace,
 		`castleSessions/${userA}/${userB}/id`,
 		() => uuid(true)

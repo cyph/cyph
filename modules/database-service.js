@@ -2,6 +2,7 @@
  * @file Simple implementation of subset of FirebaseDatabaseService logic for interoperability.
  */
 
+import {proto, util} from '@cyph/sdk';
 import {Storage} from '@google-cloud/storage';
 import crypto from 'crypto';
 import FCM from 'fcm-node';
@@ -9,14 +10,9 @@ import admin from 'firebase-admin';
 import fs from 'fs';
 import lz4 from 'lz4';
 import os from 'os';
-import {BinaryProto, StringProto} from './proto.js';
-import {
-	deserialize,
-	retryUntilSuccessful,
-	serialize,
-	sleep,
-	uuid
-} from './util.js';
+
+const {BinaryProto, StringProto} = proto;
+const {deserialize, retryUntilSuccessful, serialize, sleep, uuid} = util;
 
 /** Max number of bytes to upload to non-blob storage. */
 const nonBlobStorageLimit = 8192;
@@ -240,5 +236,3 @@ export const initDatabaseService = (config, isCloudFunction) => {
 
 	return databaseService;
 };
-
-export default initDatabaseService;

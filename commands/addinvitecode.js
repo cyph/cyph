@@ -1,12 +1,15 @@
 #!/usr/bin/env node
 
 import {getMeta} from '../modules/base.js';
-const {isCLI, require} = getMeta(import.meta);
+const {isCLI} = getMeta(import.meta);
 
-const usernameBlacklist = new Set(require('username-blacklist'));
-import databaseService from '../modules/database-service.js';
-import {BooleanProto, CyphPlans} from '../modules/proto.js';
-import {normalize, readableID, toInt} from '../modules/util.js';
+import {proto, util} from '@cyph/sdk';
+import usernameBlacklistArray from 'username-blacklist';
+import {initDatabaseService} from '../modules/database-service.js';
+
+const {BooleanProto, CyphPlans} = proto;
+const {normalize, readableID, toInt} = util;
+const usernameBlacklist = new Set(usernameBlacklistArray);
 
 export const addInviteCode = async (
 	projectId,
@@ -59,7 +62,7 @@ export const addInviteCode = async (
 		removeItem,
 		setItem,
 		storage
-	} = databaseService(projectId);
+	} = initDatabaseService(projectId);
 
 	const inviteCodes = Object.keys(countByUser).map(inviterUsername => ({
 		codes: new Array(

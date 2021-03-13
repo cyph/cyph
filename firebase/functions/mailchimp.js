@@ -59,5 +59,3 @@ export const initMailchimp = (mailchimp, mailchimpCredentials) => {
 		splitName
 	};
 };
-
-export default initMailchimp;

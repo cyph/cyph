@@ -58,5 +58,7 @@ if (isCLI) {
 		else {
 			console.log(output);
 		}
+
+		process.exit();
 	})();
 }

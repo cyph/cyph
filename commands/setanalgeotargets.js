@@ -29,3 +29,5 @@ fs.writeFileSync(
 		.map(arr => arr.join(':'))
 		.join('\n')
 );
+
+process.exit();

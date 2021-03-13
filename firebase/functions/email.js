@@ -1,3 +1,4 @@
+import {proto, util} from '@cyph/sdk';
 import fs from 'fs';
 import ical from 'ical-generator';
 import mustache from 'mustache';
@@ -6,8 +7,9 @@ import {dompurifyHtmlSanitizer} from './dompurify-html-sanitizer.js';
 import {from, transport, transportBackup} from './email-credentials.js';
 import {render, renderMarkdown, renderTemplate} from './markdown-templating.js';
 import namespaces from './namespaces.js';
-import {CalendarInvite, CalendarRecurrenceRules} from './proto.js';
-import {normalize} from './util.js';
+
+const {CalendarInvite, CalendarRecurrenceRules} = proto;
+const {normalize} = util;
 
 const transporter = nodemailer.createTransport({
 	...transport,

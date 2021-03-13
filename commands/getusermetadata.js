@@ -3,11 +3,12 @@
 import {getMeta} from '../modules/base.js';
 const {__dirname, isCLI} = getMeta(import.meta);
 
+import {potassiumService as potassium, proto, util} from '@cyph/sdk';
 import fs from 'fs';
 import openpgp from 'openpgp';
-import databaseService from '../modules/database-service.js';
-import potassium from '../modules/potassium.js';
-import {
+import {initDatabaseService} from '../modules/database-service.js';
+
+const {
 	AccountUserProfile,
 	AccountUserProfileExtra,
 	AGSEPKICert,
@@ -15,8 +16,8 @@ import {
 	CyphPlan,
 	CyphPlans,
 	StringProto
-} from '../modules/proto.js';
-import {normalize} from '../modules/util.js';
+} = proto;
+const {normalize} = util;
 
 openpgp.config.versionstring = 'Cyph';
 openpgp.config.commentstring = 'https://www.cyph.com';
@@ -83,7 +84,7 @@ export const getUserMetadata = async (projectId, username, namespace) => {
 
 	username = normalize(username);
 
-	const {database, getItem} = databaseService(projectId);
+	const {database, getItem} = initDatabaseService(projectId);
 
 	const [
 		certTimestamp,

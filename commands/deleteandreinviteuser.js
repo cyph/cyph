@@ -3,11 +3,13 @@
 import {getMeta} from '../modules/base.js';
 const {isCLI} = getMeta(import.meta);
 
+import {util} from '@cyph/sdk';
 import read from 'read';
-import {normalize} from '../modules/util.js';
 import {deleteUser} from './deleteuser.js';
 import {getUserMetadata} from './getusermetadata.js';
 import {inviteUser} from './inviteuser.js';
+
+const {normalize} = util;
 
 const namespace = 'cyph.ws';
 

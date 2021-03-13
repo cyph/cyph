@@ -1,4 +1,4 @@
-import crypto from 'crypto';
+import {potassiumService as potassium} from '@cyph/sdk';
 import memoize from 'lodash-es/memoize';
 import tokens from './tokens.js';
 
@@ -11,10 +11,8 @@ export const initTokenKey = database => ({
 			return Buffer.from(tokenKeyHex, 'hex');
 		}
 
-		const tokenKeyBytes = crypto.randomBytes(await tokens.keyBytes);
+		const tokenKeyBytes = potassium.randomBytes(await tokens.keyBytes);
 		await tokenKeyRef.set(tokenKeyBytes.toString('hex'));
 		return tokenKeyBytes;
 	})
 });
-
-export default initTokenKey;

@@ -29,8 +29,6 @@ fs.symlinkSync(
 	`${__dirname}/../modules/dompurify-html-sanitizer.js`,
 	`${tmp}/dompurify-html-sanitizer.js`
 );
-fs.symlinkSync(`${__dirname}/../modules/proto.js`, `${tmp}/proto.js`);
-fs.symlinkSync(`${__dirname}/../modules/util.js`, `${tmp}/util.js`);
 fs.writeFileSync(
 	`${tmp}/index.js`,
 	fs.readFileSync(`${__dirname}/../firebase/functions/email.js`)
@@ -41,4 +39,4 @@ fs.writeFileSync(
 );
 fs.writeFileSync(`${tmp}/namespaces.js`, 'module.exports = {};');
 
-export const sendMail = require(tmp).sendMailInternal;
+export const sendMail = (await import(tmp)).sendMailInternal;

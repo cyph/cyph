@@ -3,10 +3,11 @@
 import {getMeta} from '../modules/base.js';
 const {__dirname, isCLI} = getMeta(import.meta);
 
+import {configService as config, util} from '@cyph/sdk';
 import fs from 'fs';
-import {config} from '../modules/config.js';
-import {titleize} from '../modules/util.js';
 import {addInviteCode} from './addinvitecode.js';
+
+const {titleize} = util;
 
 const configGoText = fs
 	.readFileSync(__dirname + '/../backend/config.go')

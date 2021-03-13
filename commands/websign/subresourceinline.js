@@ -80,6 +80,8 @@ import superSphincs from 'supersphincs';
 			fs.writeFileSync(file, content);
 		}
 	}
+
+	process.exit();
 })().catch(err => {
 	console.error(err);
 	process.exit(1);

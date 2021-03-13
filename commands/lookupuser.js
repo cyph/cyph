@@ -3,7 +3,7 @@
 import {getMeta} from '../modules/base.js';
 const {isCLI} = getMeta(import.meta);
 
-import databaseService from '../modules/database-service.js';
+import {initDatabaseService} from '../modules/database-service.js';
 import {getUserMetadata} from './getusermetadata.js';
 
 export const lookUpUser = async (projectId, query, namespace) => {
@@ -18,7 +18,7 @@ export const lookUpUser = async (projectId, query, namespace) => {
 		throw new Error('Invalid query.');
 	}
 
-	const {database} = databaseService(projectId);
+	const {database} = initDatabaseService(projectId);
 
 	const isEmail = query.indexOf('@') > -1;
 

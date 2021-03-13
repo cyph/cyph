@@ -27,7 +27,13 @@ const mailchimp = new (require('mailchimp-api-v3'))(
 	mailchimpCredentials.apiKey
 );
 
-export default require(`${__dirname}/../firebase/functions/mailchimp`)(
-	mailchimp,
-	mailchimpCredentials
-);
+const {
+	addToMailingList,
+	mailingListIDs,
+	removeFromMailingList,
+	splitName
+} = (await import(
+	`${__dirname}/../firebase/functions/mailchimp`
+)).initMailchimp(mailchimp, mailchimpCredentials);
+
+export {addToMailingList, mailingListIDs, removeFromMailingList, splitName};

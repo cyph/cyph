@@ -3,13 +3,14 @@
 import {getMeta} from '../modules/base.js';
 const {isCLI} = getMeta(import.meta);
 
-import {config} from '../modules/config.js';
-import databaseService from '../modules/database-service.js';
-import {CyphPlans, CyphPlanTypes} from '../modules/proto.js';
-import {readableByteLength, titleize} from '../modules/util.js';
+import {configService as config, proto, util} from '@cyph/sdk';
+import {initDatabaseService} from '../modules/database-service.js';
 import {addInviteCode} from './addinvitecode.js';
 import {sendMail} from './email.js';
 import {addToMailingList, mailingListIDs, splitName} from './mailchimp.js';
+
+const {CyphPlans, CyphPlanTypes} = proto;
+const {readableByteLength, titleize} = util;
 
 export const inviteUser = async (
 	projectId,
@@ -33,7 +34,7 @@ export const inviteUser = async (
 		trialMonths = 1;
 	}
 
-	const {database} = databaseService(projectId);
+	const {database} = initDatabaseService(projectId);
 	const namespacePath = 'cyph_ws';
 
 	const inviteCodes = (await addInviteCode(

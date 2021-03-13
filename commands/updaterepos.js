@@ -113,5 +113,12 @@ export const updateRepos = async () => {
 };
 
 if (isCLI) {
-	updateRepos();
+	updateRepos()
+		.then(() => {
+			process.exit();
+		})
+		.catch(err => {
+			console.error(err);
+			process.exit(1);
+		});
 }

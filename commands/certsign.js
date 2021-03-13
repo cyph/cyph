@@ -3,13 +3,20 @@
 import {getMeta} from '../modules/base.js';
 const {isCLI} = getMeta(import.meta);
 
+import {
+	configService as config,
+	potassiumService as potassium,
+	proto,
+	util
+} from '@cyph/sdk';
 import fs from 'fs';
 import os from 'os';
 import read from 'read';
-import {config} from '../modules/config.js';
-import databaseService from '../modules/database-service.js';
-import potassium from '../modules/potassium.js';
-import {
+import {initDatabaseService} from '../modules/database-service.js';
+import {addInviteCode} from './addinvitecode.js';
+import {getPublicKeys, sign} from './sign.js';
+
+const {
 	AGSEPKICert,
 	AGSEPKICSR,
 	AGSEPKIIssuanceHistory,
@@ -17,10 +24,8 @@ import {
 	CyphPlan,
 	CyphPlans,
 	StringProto
-} from '../modules/proto.js';
-import {deserialize, lockFunction, serialize, sleep} from '../modules/util.js';
-import {addInviteCode} from './addinvitecode.js';
-import {getPublicKeys, sign} from './sign.js';
+} = proto;
+const {deserialize, lockFunction, serialize, sleep} = util;
 
 const readInput = async prompt =>
 	new Promise(resolve => {
@@ -87,7 +92,7 @@ export const certSign = async (projectId, standalone, namespace) => {
 			removeItem,
 			setItem,
 			storage
-		} = databaseService(projectId);
+		} = initDatabaseService(projectId);
 
 		const namespacePath = namespace.replace(/\./g, '_');
 

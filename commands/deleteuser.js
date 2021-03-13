@@ -3,9 +3,11 @@
 import {getMeta} from '../modules/base.js';
 const {isCLI} = getMeta(import.meta);
 
+import {util} from '@cyph/sdk';
 import read from 'read';
-import databaseService from '../modules/database-service.js';
-import {normalize} from '../modules/util.js';
+import {initDatabaseService} from '../modules/database-service.js';
+
+const {normalize} = util;
 
 export const deleteUser = async (
 	projectId,
@@ -50,7 +52,7 @@ export const deleteUser = async (
 
 	const namespacePath = namespace.replace(/\./g, '_');
 
-	const {auth, database, removeItem} = databaseService(projectId);
+	const {auth, database, removeItem} = initDatabaseService(projectId);
 
 	if (blockOffUsername) {
 		await database

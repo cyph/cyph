@@ -1,4 +1,6 @@
-import {normalize} from './util.js';
+import {util} from '@cyph/sdk';
+
+const {normalize} = util;
 
 export const sendMessage = async (
 	database,

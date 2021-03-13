@@ -98,4 +98,6 @@ if (isCLI) {
 	else {
 		console.log(JSON.stringify(packageDatabase()));
 	}
+
+	process.exit();
 }

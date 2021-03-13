@@ -3,16 +3,12 @@
 import {getMeta} from '../modules/base.js';
 const {isCLI} = getMeta(import.meta);
 
-import {config} from '../modules/config.js';
-import databaseService from '../modules/database-service.js';
-import {CyphPlan, CyphPlans, CyphPlanTypes} from '../modules/proto.js';
-import {
-	readableByteLength,
-	normalize,
-	readableID,
-	titleize
-} from '../modules/util.js';
+import {configService as config, proto, util} from '@cyph/sdk';
+import {initDatabaseService} from '../modules/database-service.js';
 import {sendMail} from './email.js';
+
+const {CyphPlan, CyphPlans, CyphPlanTypes} = proto;
+const {readableByteLength, normalize, readableID, titleize} = util;
 
 export const changeUserPlan = async (
 	projectId,
@@ -48,7 +44,7 @@ export const changeUserPlan = async (
 		removeItem,
 		setItem,
 		storage
-	} = databaseService(projectId);
+	} = initDatabaseService(projectId);
 
 	const cyphPlan = CyphPlans[plan];
 

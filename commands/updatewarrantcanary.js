@@ -3,9 +3,11 @@
 import {getMeta} from '../modules/base.js';
 const {__dirname} = getMeta(import.meta);
 
+import {util} from '@cyph/sdk';
 import childProcess from 'child_process';
 import fs from 'fs';
-import {getDateString} from '../modules/util.js';
+
+const {getDateString} = util;
 
 const warrantCanaryDatePath = `${__dirname}/../shared/js/cyph/components/warrant-canary/warrant-canary-date.ts`;
 
@@ -19,3 +21,5 @@ childProcess.spawnSync(
 	['commit', '-S', '-m', 'warrant canary update', warrantCanaryDatePath],
 	{stdio: 'inherit'}
 );
+
+process.exit();

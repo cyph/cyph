@@ -1,8 +1,10 @@
+import {util} from '@cyph/sdk';
 import admin from 'firebase-admin';
 import {dompurifyHtmlSanitizer} from './dompurify-html-sanitizer.js';
 import {sendMail} from './email.js';
 import {sendMessage} from './messaging.js';
-import {normalize} from './util.js';
+
+const {normalize} = util;
 
 const emailNotificationRateLimit = 3600000;
 
@@ -67,5 +69,3 @@ export const initNotify = (database, messaging) => ({
 		]);
 	}
 });
-
-export default initNotify;
