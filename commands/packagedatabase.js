@@ -1,18 +1,21 @@
 #!/usr/bin/env node
 
-const childProcess = require('child_process');
-const fs = require('fs');
-const glob = require('glob/sync');
-const os = require('os');
-const path = require('path');
-const {updateRepos} = require('./updaterepos');
+import {getMeta} from '../modules/base.js';
+const {isCLI} = getMeta(import.meta);
+
+import childProcess from 'child_process';
+import fs from 'fs';
+import glob from 'glob/sync';
+import os from 'os';
+import path from 'path';
+import {updateRepos} from './updaterepos.js';
 
 const repoPath = `${os.homedir()}/.cyph/repos/cdn`;
 
 const options = {cwd: repoPath};
 const globOptions = {cwd: repoPath, symlinks: true};
 
-const packageDatabase = () => {
+export const packageDatabase = () => {
 	updateRepos();
 
 	return glob('**/pkg.gz', globOptions)
@@ -88,14 +91,11 @@ const packageDatabase = () => {
 		);
 };
 
-if (require.main === module) {
+if (isCLI) {
 	if (process.argv[2]) {
 		fs.writeFileSync(process.argv[2], JSON.stringify(packageDatabase()));
 	}
 	else {
 		console.log(JSON.stringify(packageDatabase()));
 	}
-}
-else {
-	module.exports = {packageDatabase};
 }

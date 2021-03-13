@@ -1,17 +1,20 @@
 #!/usr/bin/env node
 
-const childProcess = require('child_process');
-const datauri = require('datauri/sync');
-const fs = require('fs');
-const htmlencode = require('htmlencode');
-const os = require('os');
-const {updateRepos} = require('./updaterepos');
+import {getMeta} from '../modules/base.js';
+const {__dirname, isCLI} = getMeta(import.meta);
+
+import childProcess from 'child_process';
+import datauri from 'datauri/sync';
+import fs from 'fs';
+import htmlencode from 'htmlencode';
+import os from 'os';
+import {updateRepos} from './updaterepos.js';
 
 let hasUpdatedRepos = false;
 
-const repoPath = `${os.homedir()}/.cyph/repos/custom-builds`;
+export const repoPath = `${os.homedir()}/.cyph/repos/custom-builds`;
 
-const customBuildIds = fs
+export const customBuildIds = fs
 	.readdirSync(repoPath)
 	.filter(
 		s =>
@@ -47,7 +50,7 @@ const tryReadFile = (path, jsonParse) => {
 	return buffer;
 };
 
-const customBuild = (id, version) => {
+export const customBuild = (id, version) => {
 	if (
 		!id ||
 		typeof id !== 'string' ||
@@ -187,9 +190,6 @@ const customBuild = (id, version) => {
 	return o;
 };
 
-if (require.main === module) {
+if (isCLI) {
 	console.log(customBuild(process.argv[2]));
-}
-else {
-	module.exports = {customBuild, customBuildIds, repoPath};
 }

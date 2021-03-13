@@ -1,14 +1,17 @@
 #!/usr/bin/env node
 
-const {config} = require('../modules/config');
-const databaseService = require('../modules/database-service');
-const {CyphPlans, CyphPlanTypes} = require('../modules/proto');
-const {readableByteLength, titleize} = require('../modules/util');
-const {addInviteCode} = require('./addinvitecode');
-const {sendMail} = require('./email');
-const {addToMailingList, mailingListIDs, splitName} = require('./mailchimp');
+import {getMeta} from '../modules/base.js';
+const {isCLI} = getMeta(import.meta);
 
-const inviteUser = async (
+import {config} from '../modules/config.js';
+import databaseService from '../modules/database-service.js';
+import {CyphPlans, CyphPlanTypes} from '../modules/proto.js';
+import {readableByteLength, titleize} from '../modules/util.js';
+import {addInviteCode} from './addinvitecode.js';
+import {sendMail} from './email.js';
+import {addToMailingList, mailingListIDs, splitName} from './mailchimp.js';
+
+export const inviteUser = async (
 	projectId,
 	email,
 	name,
@@ -111,7 +114,7 @@ const inviteUser = async (
 	return inviteCodes;
 };
 
-if (require.main === module) {
+if (isCLI) {
 	(async () => {
 		const projectId = process.argv[2];
 
@@ -165,7 +168,4 @@ if (require.main === module) {
 		console.error(err);
 		process.exit(1);
 	});
-}
-else {
-	module.exports = {inviteUser};
 }

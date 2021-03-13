@@ -1,8 +1,11 @@
 #!/usr/bin/env node
 
-const childProcess = require('child_process');
-const fs = require('fs');
-const {getDateString} = require('../modules/util');
+import {getMeta} from '../modules/base.js';
+const {__dirname} = getMeta(import.meta);
+
+import childProcess from 'child_process';
+import fs from 'fs';
+import {getDateString} from '../modules/util.js';
 
 const warrantCanaryDatePath = `${__dirname}/../shared/js/cyph/components/warrant-canary/warrant-canary-date.ts`;
 

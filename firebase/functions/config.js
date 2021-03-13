@@ -1,11 +1,12 @@
-global.crypto = require('crypto');
+import './js/standalone/global.js';
+import './js/cyph/config.js';
+import './js/cyph/plan-config.js';
 
-require('./js/standalone/global');
-require('./js/cyph/config');
-require('./js/cyph/plan-config');
+const config = new Config();
+config.config = config;
+config.planConfig = planConfig;
+export {config, planConfig};
+export default config;
 
-module.exports = new Config();
-module.exports.planConfig = planConfig;
-module.exports.config = module.exports;
 global.Config = undefined;
 global.planConfig = undefined;

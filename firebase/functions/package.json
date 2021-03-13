@@ -1,6 +1,7 @@
 {
 	"name": "functions",
 	"description": "Cloud Functions for Firebase",
+	"type": "module",
 	"dependencies": {
 		"@firebase/app": "*",
 		"@firebase/auth": "*",

@@ -1,12 +1,12 @@
-global.crypto = require('crypto');
-global.sodium = require('libsodium-wrappers-sumo');
+import sodium from 'libsodium-wrappers-sumo';
 
-require('./buildunbundledassets');
-require('../shared/assets/js/standalone/global');
-require('../shared/assets/js/cyph/crypto/potassium');
+global.sodium = sodium;
 
-const potassium = new Potassium();
-potassium.potassium = potassium;
+import './buildunbundledassets.js';
+import '../shared/assets/js/standalone/global.js';
+import '../shared/assets/js/cyph/crypto/potassium.js';
 
-module.exports = potassium;
+export const potassium = new Potassium();
+export default potassium;
+
 global.Index = undefined;

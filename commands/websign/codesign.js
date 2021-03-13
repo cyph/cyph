@@ -1,10 +1,10 @@
 #!/usr/bin/env node
 
-const fs = require('fs');
-const mkdirp = require('mkdirp');
-const {sign} = require('../sign');
+import fs from 'fs';
+import mkdirp from 'mkdirp';
+import {sign} from '../sign.js';
 
-(async () => {
+try {
 	const argv = process.argv.slice(2).filter(s => s && s !== '--test');
 
 	const args = {
@@ -32,40 +32,35 @@ const {sign} = require('../sign');
 			outputDir: arr[1]
 		}));
 
-	try {
-		const {rsaIndex, signedInputs, sphincsIndex} = await sign(
-			inputs.map(({message}) => ({message})),
-			args.test
+	const {rsaIndex, signedInputs, sphincsIndex} = await sign(
+		inputs.map(({message}) => ({message})),
+		args.test
+	);
+
+	for (let i = 0; i < inputs.length; ++i) {
+		const outputDir = inputs[i].outputDir;
+
+		await mkdirp(outputDir);
+
+		fs.writeFileSync(`${outputDir}/current`, timestamp);
+
+		fs.writeFileSync(
+			`${outputDir}/pkg`,
+			signedInputs[i].toString('base64').replace(/\s+/g, '') +
+				'\n' +
+				rsaIndex +
+				'\n' +
+				sphincsIndex
 		);
 
-		for (let i = 0; i < inputs.length; ++i) {
-			const outputDir = inputs[i].outputDir;
-
-			await mkdirp(outputDir);
-
-			fs.writeFileSync(`${outputDir}/current`, timestamp);
-
-			fs.writeFileSync(
-				`${outputDir}/pkg`,
-				signedInputs[i].toString('base64').replace(/\s+/g, '') +
-					'\n' +
-					rsaIndex +
-					'\n' +
-					sphincsIndex
-			);
-
-			console.log(`${outputDir} saved.`);
-		}
-
-		console.log('Code signing complete.');
-		process.exit(0);
+		console.log(`${outputDir} saved.`);
 	}
-	catch (err) {
-		console.error(err);
-		console.log('Code signing failed.');
-		process.exit(1);
-	}
-})().catch(err => {
+
+	console.log('Code signing complete.');
+	process.exit(0);
+}
+catch (err) {
 	console.error(err);
+	console.log('Code signing failed.');
 	process.exit(1);
-});
+}

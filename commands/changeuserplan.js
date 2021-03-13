@@ -1,20 +1,20 @@
 #!/usr/bin/env node
 
-const firebase = require('firebase-admin');
-const fs = require('fs');
-const os = require('os');
-const {config} = require('../modules/config');
-const databaseService = require('../modules/database-service');
-const {CyphPlan, CyphPlans, CyphPlanTypes} = require('../modules/proto');
-const {
+import {getMeta} from '../modules/base.js';
+const {isCLI} = getMeta(import.meta);
+
+import {config} from '../modules/config.js';
+import databaseService from '../modules/database-service.js';
+import {CyphPlan, CyphPlans, CyphPlanTypes} from '../modules/proto.js';
+import {
 	readableByteLength,
 	normalize,
 	readableID,
 	titleize
-} = require('../modules/util');
-const {sendMail} = require('./email');
+} from '../modules/util.js';
+import {sendMail} from './email.js';
 
-const changeUserPlan = async (
+export const changeUserPlan = async (
 	projectId,
 	username,
 	plan,
@@ -197,7 +197,7 @@ const changeUserPlan = async (
 	return CyphPlans[cyphPlan];
 };
 
-if (require.main === module) {
+if (isCLI) {
 	(async () => {
 		const projectId = process.argv[2];
 
@@ -233,7 +233,4 @@ if (require.main === module) {
 		console.error(err);
 		process.exit(1);
 	});
-}
-else {
-	module.exports = {changeUserPlan};
 }

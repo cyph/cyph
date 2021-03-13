@@ -91,7 +91,7 @@ cp -rf \
 rm hooks/*/nativescript-dev-typescript.js 2> /dev/null
 
 exceptions='nsWebpack.uglifyMangleExcludes'
-newExceptions="Array.from(new Set(${exceptions}.concat(require('../commands/mangleexceptions'))))"
+newExceptions="Array.from(new Set(${exceptions}.concat(require('../scripts/mangleexceptions'))))"
 sed -i "s|${exceptions}|${newExceptions}|g" webpack.config.js
 
 node -e "

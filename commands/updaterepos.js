@@ -1,16 +1,19 @@
 #!/usr/bin/env node
 
-const childProcess = require('child_process');
-const fs = require('fs');
-const mkdirp = require('mkdirp');
-const os = require('os');
+import {getMeta} from '../modules/base.js';
+const {__dirname, isCLI} = getMeta(import.meta);
+
+import childProcess from 'child_process';
+import fs from 'fs';
+import mkdirp from 'mkdirp';
+import os from 'os';
 
 const getSubdirectories = dir =>
 	fs
 		.readdirSync(dir)
 		.filter(d => d !== '.git' && fs.lstatSync(`${dir}/${d}`).isDirectory());
 
-const updateRepos = async () => {
+export const updateRepos = async () => {
 	childProcess.spawnSync('bash', ['./keycache.sh'], {
 		cwd: __dirname,
 		stdio: 'inherit'
@@ -109,9 +112,6 @@ const updateRepos = async () => {
 	}
 };
 
-if (require.main === module) {
+if (isCLI) {
 	updateRepos();
-}
-else {
-	module.exports = {updateRepos};
 }

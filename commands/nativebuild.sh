@@ -49,7 +49,7 @@ echo >> starter.js
 cat assets/js/standalone/global.js >> starter.js
 echo >> starter.js
 cat assets/js/cyph/crypto/native-web-crypto-polyfill.js >> starter.js
-node -e 'console.log(`
+node -e '(async () => console.log(`
 	var crypto = self.crypto;
 
 	(function () {
@@ -61,8 +61,8 @@ node -e 'console.log(`
 		);
 	})();
 
-	self.translations = ${JSON.stringify(require("../commands/translations").translations)};
-`)' >> starter.js
+	self.translations = ${JSON.stringify((await import("../commands/translations")).translations)};
+`))()' >> starter.js
 cat app/starter.js >> starter.js
 
 ${dir}/commands/websign/threadpack.js starter.js || fail

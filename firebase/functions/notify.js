@@ -1,12 +1,12 @@
-const admin = require('firebase-admin');
-const {dompurifyHtmlSanitizer} = require('./dompurify-html-sanitizer');
-const {sendMail} = require('./email');
-const {sendMessage} = require('./messaging');
-const {normalize} = require('./util');
+import admin from 'firebase-admin';
+import {dompurifyHtmlSanitizer} from './dompurify-html-sanitizer.js';
+import {sendMail} from './email.js';
+import {sendMessage} from './messaging.js';
+import {normalize} from './util.js';
 
 const emailNotificationRateLimit = 3600000;
 
-module.exports = (database, messaging) => ({
+export const initNotify = (database, messaging) => ({
 	notify: async (
 		namespace,
 		username,
@@ -67,3 +67,5 @@ module.exports = (database, messaging) => ({
 		]);
 	}
 });
+
+export default initNotify;

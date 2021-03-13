@@ -1,8 +1,8 @@
-const crypto = require('crypto');
-const memoize = require('lodash/memoize');
-const tokens = require('./tokens');
+import crypto from 'crypto';
+import memoize from 'lodash-es/memoize';
+import tokens from './tokens.js';
 
-module.exports = database => ({
+export const initTokenKey = database => ({
 	getTokenKey: memoize(async namespace => {
 		const tokenKeyRef = database.ref(`${namespace}/tokenKey`);
 		const tokenKeyHex = (await tokenKeyRef.once('value')).val();
@@ -16,3 +16,5 @@ module.exports = database => ({
 		return tokenKeyBytes;
 	})
 });
+
+export default initTokenKey;

@@ -1,33 +1,12 @@
 #!/usr/bin/env node
 
-const fs = require('fs');
-const path = require('path');
-const tslib = require('tslib');
+import {getMeta} from '../modules/base.js';
+const {isCLI} = getMeta(import.meta);
 
-const mangleExceptions = Array.from(
-	new Set([
-		'firebase',
-		...Object.keys(tslib),
-		...(fs
-			.readFileSync(
-				path.join(
-					__dirname,
-					'..',
-					'shared',
-					'assets',
-					'js',
-					'standalone',
-					'global.js'
-				)
-			)
-			.toString()
-			.match(/[A-Za-z_\$][A-Za-z0-9_\$]*/g) || [])
-	])
-).sort();
+import {mangleExceptions as mangleExceptionsInternal} from '../scripts/mangleexceptions.js';
 
-if (require.main === module) {
+export const mangleExceptions = mangleExceptionsInternal;
+
+if (isCLI) {
 	console.log(JSON.stringify(mangleExceptions));
-}
-else {
-	module.exports = {mangleExceptions};
 }

@@ -1,7 +1,5 @@
-global.crypto = require('crypto');
+import './js/standalone/global.js';
+import './js/cyph/util.js';
 
-require('./js/standalone/global');
-require('./js/cyph/util');
-
-module.exports = Index;
+export default Index;
 global.Index = undefined;

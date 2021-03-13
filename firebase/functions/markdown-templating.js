@@ -1,9 +1,9 @@
-const fs = require('fs');
-const memoize = require('lodash/memoize');
-const markdownEscapes = require('markdown-escapes');
-const MarkdownIt = require('markdown-it');
-const mustache = require('mustache');
-const {dompurifyHtmlSanitizer} = require('./dompurify-html-sanitizer');
+import fs from 'fs';
+import memoize from 'lodash-es/memoize';
+import markdownEscapes from 'markdown-escapes';
+import MarkdownIt from 'markdown-it';
+import mustache from 'mustache';
+import {dompurifyHtmlSanitizer} from './dompurify-html-sanitizer.js';
 
 const markdownIt = new MarkdownIt();
 
@@ -38,12 +38,12 @@ const getTemplate = memoize(
 		})
 );
 
-const renderMarkdown = markdown =>
+export const renderMarkdown = markdown =>
 	dompurifyHtmlSanitizer
 		.sanitize(markdownIt.render(markdown).replace(/\s+/g, ' '))
 		.trim();
 
-const render = (template, data, markdownOnly) => {
+export const render = (template, data, markdownOnly) => {
 	const markdown = mustache
 		.render(
 			mustacheUnescape(template),
@@ -61,7 +61,5 @@ const render = (template, data, markdownOnly) => {
 	};
 };
 
-const renderTemplate = async (templateName, data, markdownOnly) =>
+export const renderTemplate = async (templateName, data, markdownOnly) =>
 	render(await getTemplate(templateName), data, markdownOnly);
-
-module.exports = {render, renderMarkdown, renderTemplate};

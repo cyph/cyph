@@ -1,8 +1,11 @@
 #!/usr/bin/env node
 
-const braintree = require('braintree');
-const fs = require('fs');
-const os = require('os');
+import {getMeta} from '../modules/base.js';
+const {isCLI} = getMeta(import.meta);
+
+import braintree from 'braintree';
+import fs from 'fs';
+import os from 'os';
 
 const vars = fs
 	.readFileSync(os.homedir() + '/.cyph/backend.vars.prod')
@@ -59,13 +62,13 @@ const refundSubscription = async subscriptionID => {
 	await gateway.subscription.cancel(subscriptionID);
 };
 
-const refundSubscriptions = async subscriptionIDs => {
+export const refundSubscriptions = async subscriptionIDs => {
 	for (const subscriptionID of subscriptionIDs) {
 		await refundSubscription(subscriptionID);
 	}
 };
 
-if (require.main === module) {
+if (isCLI) {
 	(async () => {
 		await refundSubscriptions(process.argv.slice(2));
 		console.log('done');
@@ -74,7 +77,4 @@ if (require.main === module) {
 		console.error(err);
 		process.exit(1);
 	});
-}
-else {
-	module.exports = {refundSubscriptions};
 }

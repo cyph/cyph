@@ -1,17 +1,13 @@
-const fs = require('fs');
-const ical = require('ical-generator');
-const mustache = require('mustache');
-const nodemailer = require('nodemailer');
-const {dompurifyHtmlSanitizer} = require('./dompurify-html-sanitizer');
-const {from, transport, transportBackup} = require('./email-credentials');
-const {
-	render,
-	renderMarkdown,
-	renderTemplate
-} = require('./markdown-templating');
-const namespaces = require('./namespaces');
-const {CalendarInvite, CalendarRecurrenceRules} = require('./proto');
-const {normalize} = require('./util');
+import fs from 'fs';
+import ical from 'ical-generator';
+import mustache from 'mustache';
+import nodemailer from 'nodemailer';
+import {dompurifyHtmlSanitizer} from './dompurify-html-sanitizer.js';
+import {from, transport, transportBackup} from './email-credentials.js';
+import {render, renderMarkdown, renderTemplate} from './markdown-templating.js';
+import namespaces from './namespaces.js';
+import {CalendarInvite, CalendarRecurrenceRules} from './proto.js';
+import {normalize} from './util.js';
 
 const transporter = nodemailer.createTransport({
 	...transport,
@@ -68,7 +64,7 @@ const recurrenceDayToString = dayOfWeek =>
 const recurrenceFrequencyToString = frequency =>
 	CalendarRecurrenceRules.Frequency[frequency].toUpperCase();
 
-const sendMailInternal = async (
+export const sendMailInternal = async (
 	to,
 	subject,
 	text,
@@ -319,7 +315,7 @@ const sendMailInternal = async (
  *     string
  * )} text
  */
-const sendMail = async (
+export const sendMail = async (
 	database,
 	namespace,
 	username,
@@ -351,5 +347,3 @@ const sendMail = async (
 		namespaces[namespace].accountsURL
 	);
 };
-
-module.exports = {sendMail, sendMailInternal};

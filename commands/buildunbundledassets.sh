@@ -201,7 +201,7 @@ for f in ${typescriptAssets} ; do
 		const {TsConfigPathsPlugin} = require('awesome-typescript-loader');
 		const path = require('path');
 		const TerserPlugin = require('terser-webpack-plugin');
-		const {mangleExceptions} = require('../../../commands/mangleexceptions');
+		const {mangleExceptions} = require('../../../scripts/mangleexceptions');
 
 		module.exports = {
 			entry: {

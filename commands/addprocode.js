@@ -1,13 +1,20 @@
 #!/usr/bin/env node
 
-const firebase = require('firebase-admin');
-const fs = require('fs');
-const os = require('os');
-const xkcdPassphrase = require('xkcd-passphrase');
-const databaseService = require('../modules/database-service');
-const potassium = require('../modules/potassium');
+import {getMeta} from '../modules/base.js';
+const {isCLI} = getMeta(import.meta);
 
-const addProCode = async (projectId, name, password, namespace, email) => {
+import firebase from 'firebase-admin';
+import xkcdPassphrase from 'xkcd-passphrase';
+import databaseService from '../modules/database-service.js';
+import potassium from '../modules/potassium.js';
+
+export const addProCode = async (
+	projectId,
+	name,
+	password,
+	namespace,
+	email
+) => {
 	throw new Error(
 		'Non-functional for now. Codes can be obtained via Braintree checkout.'
 	);
@@ -41,7 +48,7 @@ const addProCode = async (projectId, name, password, namespace, email) => {
 	return {name, password};
 };
 
-if (require.main === module) {
+if (isCLI) {
 	(async () => {
 		const projectId = process.argv[2];
 		const name = process.argv[3];
@@ -59,7 +66,4 @@ if (require.main === module) {
 		console.error(err);
 		process.exit(1);
 	});
-}
-else {
-	module.exports = {addProCode};
 }

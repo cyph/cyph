@@ -1,13 +1,16 @@
 #!/usr/bin/env node
 
-const dns = require('dns');
-const fs = require('fs');
-const memoize = require('lodash/memoize');
-const maxmind = require('maxmind');
-const os = require('os');
-const {URL} = require('url');
+import {getMeta} from '../modules/base.js';
+const {__dirname, isCLI} = getMeta(import.meta);
 
-const ipfsGateways = memoize(async () => {
+import dns from 'dns';
+import fs from 'fs';
+import memoize from 'lodash-es/memoize';
+import maxmind from 'maxmind';
+import os from 'os';
+import {URL} from 'url';
+
+export const ipfsGateways = memoize(async () => {
 	const lookup = maxmind.open(os.homedir() + '/.cyph/GeoIP2-City.mmdb');
 
 	const gatewayURLs = JSON.parse(
@@ -45,7 +48,7 @@ const ipfsGateways = memoize(async () => {
 	)).reduce((a, b) => a.concat(b), []);
 });
 
-if (require.main === module) {
+if (isCLI) {
 	(async () => {
 		const output = JSON.stringify(await ipfsGateways());
 
@@ -56,7 +59,4 @@ if (require.main === module) {
 			console.log(output);
 		}
 	})();
-}
-else {
-	module.exports = {ipfsGateways};
 }

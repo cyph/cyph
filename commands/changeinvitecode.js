@@ -1,9 +1,17 @@
 #!/usr/bin/env node
 
-const databaseService = require('../modules/database-service');
-const {normalize} = require('../modules/util');
+import {getMeta} from '../modules/base.js';
+const {isCLI} = getMeta(import.meta);
 
-const changeInviteCode = async (projectId, inviteCode, data, namespace) => {
+import databaseService from '../modules/database-service.js';
+import {normalize} from '../modules/util.js';
+
+export const changeInviteCode = async (
+	projectId,
+	inviteCode,
+	data,
+	namespace
+) => {
 	if (typeof projectId !== 'string' || projectId.indexOf('cyph') !== 0) {
 		throw new Error('Invalid Firebase project ID.');
 	}
@@ -139,7 +147,7 @@ const changeInviteCode = async (projectId, inviteCode, data, namespace) => {
 	*/
 };
 
-if (require.main === module) {
+if (isCLI) {
 	(async () => {
 		const projectId = process.argv[2];
 		const inviteCode = process.argv[3];
@@ -158,7 +166,4 @@ if (require.main === module) {
 		console.error(err);
 		process.exit(1);
 	});
-}
-else {
-	module.exports = {changeInviteCode};
 }

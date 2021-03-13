@@ -52,7 +52,7 @@ for minifyScript in ${minifyScripts} ; do
 	cat ${minifyScript} |
 		perl -pe "s/this\.options\[['\"]sequences['\"]\]/this.options.sequences/g" |
 		perl -pe "s/this\.options\.sequences/this.options.sequences = false/g" |
-		perl -pe "s/reserved:\s*?\[\]/reserved: require('$(echo "${commandsDir}" | sed 's|/|\\/|g')\\/mangleexceptions').mangleExceptions/g" |
+		perl -pe "s/reserved:\s*?\[\]/reserved: require('$(echo "${commandsDir}" | sed 's|/|\\/|g')\\/../scripts/mangleexceptions').mangleExceptions/g" |
 		perl -pe "s/safari10\s*?=.*?;/safari10 = true;/g" |
 		perl -pe "s/safari10\s*?:\s*?false/safari10: true/g" \
 	> ${minifyScript}.new
@@ -106,7 +106,7 @@ cat > webpack.js <<- EOM
 	const path = require('path');
 	const TerserPlugin = require('terser-webpack-plugin');
 	const {CommonsChunkPlugin} = require('webpack').optimize;
-	const {mangleExceptions} = require('../commands/mangleexceptions');
+	const {mangleExceptions} = require('../scripts/mangleexceptions');
 	const config = require('./webpack.config.js');
 
 	const chunks =

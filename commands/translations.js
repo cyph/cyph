@@ -1,10 +1,13 @@
 #!/usr/bin/env node
 
-const fs = require('fs');
-const glob = require('glob');
-const path = require('path');
+import {getMeta} from '../modules/base.js';
+const {__dirname, isCLI} = getMeta(import.meta);
 
-const translations = glob
+import fs from 'fs';
+import glob from 'glob';
+import path from 'path';
+
+export const translations = glob
 	.sync(path.join(__dirname, '..', 'translations', '*.json'))
 	.map(file => ({
 		key: file
@@ -18,9 +21,7 @@ const translations = glob
 		translations[o.key] = o.value;
 		return translations;
 	}, {});
-if (require.main) {
+
+if (isCLI) {
 	console.log(JSON.stringify(translations));
-}
-else {
-	module.exports = {translations};
 }

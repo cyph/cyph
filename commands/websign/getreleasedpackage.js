@@ -1,8 +1,11 @@
 #!/usr/bin/env node
 
-const fs = require('fs');
-const fetch = require('node-fetch');
-const superSphincs = require('/home/gibson/oldsupersphincs/node_modules/supersphincs');
+import {getMeta} from '../../modules/base.js';
+const {__dirname, isCLI} = getMeta(import.meta);
+
+import fs from 'fs';
+import fetch from 'node-fetch';
+import superSphincs from '/home/gibson/oldsupersphincs/node_modules/supersphincs';
 
 const publicKeys = (() => {
 	const publicKeysJS = fs
@@ -18,7 +21,7 @@ const publicKeys = (() => {
 	);
 })();
 
-const getReleasedPackage = async (packageName = 'cyph.app') => {
+export const getReleasedPackage = async (packageName = 'cyph.app') => {
 	const packageURL = `https://api.cyph.com/package/${packageName}`;
 
 	const packageMetadata = await fetch(packageURL).then(async o => o.json());
@@ -68,7 +71,7 @@ const getReleasedPackage = async (packageName = 'cyph.app') => {
 	return opened.package.trim();
 };
 
-if (require.main === module) {
+if (isCLI) {
 	const packageName = process.argv[2];
 	const output = process.argv[3];
 
@@ -87,7 +90,4 @@ if (require.main === module) {
 			console.error(err);
 			process.exit(1);
 		});
-}
-else {
-	module.exports = {getReleasedPackage};
 }

@@ -1,5 +1,5 @@
-require('./js/standalone/global');
-require('./js/cyph/proto');
+import './js/standalone/global.js';
+import './js/cyph/proto.js';
 
-module.exports = Index;
+export default Index;
 global.Index = undefined;

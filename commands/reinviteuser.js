@@ -1,13 +1,16 @@
 #!/usr/bin/env node
 
-const read = require('read');
-const {normalize} = require('../modules/util');
-const {getUserMetadata} = require('./getusermetadata');
-const {inviteUser} = require('./inviteuser');
+import {getMeta} from '../modules/base.js';
+const {isCLI} = getMeta(import.meta);
+
+import read from 'read';
+import {normalize} from '../modules/util.js';
+import {getUserMetadata} from './getusermetadata.js';
+import {inviteUser} from './inviteuser.js';
 
 const namespace = 'cyph.ws';
 
-const reinviteUser = async (projectId, username) => {
+export const reinviteUser = async (projectId, username) => {
 	username = normalize(username);
 
 	if (typeof projectId !== 'string' || projectId.indexOf('cyph') !== 0) {
@@ -116,7 +119,7 @@ const reinviteUser = async (projectId, username) => {
 	);
 };
 
-if (require.main === module) {
+if (isCLI) {
 	(async () => {
 		const projectId = process.argv[2];
 		const username = process.argv[3];
@@ -128,7 +131,4 @@ if (require.main === module) {
 		console.error(err);
 		process.exit(1);
 	});
-}
-else {
-	module.exports = {reinviteUser};
 }

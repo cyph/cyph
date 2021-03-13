@@ -1,11 +1,10 @@
 #!/usr/bin/env node
 
-const childProcess = require('child_process');
-const datauri = require('datauri/sync');
-const fs = require('fs');
-const glob = require('glob');
-const mkdirp = require('mkdirp');
-const superSphincs = require('supersphincs');
+import datauri from 'datauri/sync';
+import fs from 'fs';
+import glob from 'glob';
+import mkdirp from 'mkdirp';
+import superSphincs from 'supersphincs';
 
 (async () => {
 	const args = {

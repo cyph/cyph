@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
-const fs = require('fs');
-const terser = require('terser');
+import fs from 'fs';
+import terser from 'terser';
 
 (async () => {
 	const args = {

@@ -1,7 +1,14 @@
 #!/usr/bin/env node
 
-const fs = require('fs');
-const os = require('os');
+import {getMeta} from '../modules/base.js';
+const {__dirname, isCLI, require} = getMeta(import.meta);
+
+import fs from 'fs';
+import os from 'os';
+
+if (isCLI) {
+	throw new Error('Email CLI command not implemented.');
+}
 
 const tmpParent = fs.mkdtempSync(`${os.homedir()}/`);
 const tmp = `${tmpParent}/root`;
@@ -34,11 +41,4 @@ fs.writeFileSync(
 );
 fs.writeFileSync(`${tmp}/namespaces.js`, 'module.exports = {};');
 
-const sendMail = require(tmp).sendMailInternal;
-
-if (require.main === module) {
-	throw new Error('Email CLI command not implemented.');
-}
-else {
-	module.exports = {sendMail};
-}
+export const sendMail = require(tmp).sendMailInternal;

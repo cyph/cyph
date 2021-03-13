@@ -19,7 +19,7 @@
 		"useTabs": true
 	},
 	"scripts": {
-		"prettyQuick": "node commands/pretty-quick.js",
+		"prettyQuick": "node scripts/pretty-quick.js",
 		"serve": "node docker.js serve",
 		"verify": "node docker.js verify"
 	}

@@ -1,6 +1,6 @@
-global.crypto = require('crypto');
+import childProcess from 'child_process';
 
-module.exports = require('child_process').spawnSync(
+export default childProcess.spawnSync(
 	'bash',
 	[`${__dirname}/../commands/buildunbundledassets.sh`, '--test'],
 	{stdio: 'inherit'}

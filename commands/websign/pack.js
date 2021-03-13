@@ -1,12 +1,21 @@
 #!/usr/bin/env node
 
-const cheerio = require('cheerio');
-const fs = require('fs');
-const htmlMinifier = require('html-minifier');
-const mkdirp = require('mkdirp');
-const superSphincs = require('supersphincs');
+import {getMeta} from '../../modules/base.js';
+const {isCLI} = getMeta(import.meta);
 
-const pack = async (dir, inputPath, enableMinify, enableSRI, outputPath) => {
+import cheerio from 'cheerio';
+import fs from 'fs';
+import htmlMinifier from 'html-minifier';
+import mkdirp from 'mkdirp';
+import superSphincs from 'supersphincs';
+
+export const pack = async (
+	dir,
+	inputPath,
+	enableMinify,
+	enableSRI,
+	outputPath
+) => {
 	if (enableSRI && !outputPath) {
 		throw new Error('Cannot enable SRI without an output path specified.');
 	}
@@ -116,7 +125,7 @@ const pack = async (dir, inputPath, enableMinify, enableSRI, outputPath) => {
 	return output;
 };
 
-if (require.main === module) {
+if (isCLI) {
 	const args = {
 		enableMinify: process.argv.indexOf('--minify') > -1,
 		enableSRI: process.argv.indexOf('--sri') > -1,
@@ -138,7 +147,4 @@ if (require.main === module) {
 			console.error(err);
 			process.exit(1);
 		});
-}
-else {
-	module.exports = {pack};
 }

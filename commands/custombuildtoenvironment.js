@@ -1,7 +1,10 @@
 #!/usr/bin/env node
 
-const fs = require('fs');
-const {customBuild} = require('./custombuild');
+import {getMeta} from '../modules/base.js';
+const {__dirname} = getMeta(import.meta);
+
+import fs from 'fs';
+import {customBuild} from './custombuild.js';
 
 (async () => {
 	const args = {

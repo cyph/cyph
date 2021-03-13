@@ -1,24 +1,56 @@
-const cors = require('cors')({origin: true});
-const functions = require('firebase-functions');
-const fs = require('fs');
-const {phoneNumberTimezone} = require('phone-number-timezone');
-const usernameBlacklist = new Set(require('username-blacklist'));
-const {config} = require('./config');
-const {cyphAdminKey, mailchimpCredentials} = require('./cyph-admin-vars');
-const {sendMail, sendMailInternal} = require('./email');
-const {from: cyphFromEmail} = require('./email-credentials');
-const {emailRegex} = require('./email-regex');
-const {renderTemplate} = require('./markdown-templating');
-const namespaces = require('./namespaces');
-const {sendSMS} = require('./sms');
-const tokens = require('./tokens');
+import initCors from 'cors';
+import functions from 'firebase-functions';
+import fs from 'fs';
+import MailchimpApiV3 from 'mailchimp-api-v3';
+import {phoneNumberTimezone} from 'phone-number-timezone';
+import usernameBlacklistArray from 'username-blacklist';
+import {config} from './config.js';
+import {cyphAdminKey, mailchimpCredentials} from './cyph-admin-vars.js';
+import initDatabaseService from './database-service.js';
+import {sendMail, sendMailInternal} from './email.js';
+import {emailRegex} from './email-regex.js';
+import initMailchimp from './mailchimp.js';
+import {renderTemplate} from './markdown-templating.js';
+import namespaces from './namespaces.js';
+import initNotify from './notify.js';
+import {
+	AccountContactState,
+	AccountFileRecord,
+	AccountNotification,
+	AccountUserProfile,
+	BinaryProto,
+	CyphPlan,
+	CyphPlans,
+	CyphPlanTypes,
+	NotificationTypes,
+	NumberProto,
+	StringProto
+} from './proto.js';
+import {sendSMS} from './sms.js';
+import initTokenKey from './token-key.js';
+import tokens from './tokens.js';
+import {
+	dynamicDeserialize,
+	dynamicSerialize,
+	normalize,
+	normalizeArray,
+	readableByteLength,
+	readableID,
+	sleep,
+	titleize,
+	uuid
+} from './util.js';
+
+const cors = initCors({origin: true});
+
+const usernameBlacklist = new Set(usernameBlacklistArray);
 
 const mailchimp =
 	mailchimpCredentials && mailchimpCredentials.apiKey ?
-		new (require('mailchimp-api-v3'))(mailchimpCredentials.apiKey) :
+		new MailchimpApiV3(mailchimpCredentials.apiKey) :
 		undefined;
 
-const databaseService = require('./database-service')(
+const databaseService = initDatabaseService(
 	{
 		...functions.config(),
 		fcmServerKey: fs
@@ -44,41 +76,14 @@ const {
 	storage
 } = databaseService;
 
-const {
-	addToMailingList,
-	removeFromMailingList,
-	splitName
-} = require('./mailchimp')(mailchimp, mailchimpCredentials);
+const {addToMailingList, removeFromMailingList, splitName} = initMailchimp(
+	mailchimp,
+	mailchimpCredentials
+);
 
-const {getTokenKey} = require('./token-key')(database);
+const {getTokenKey} = initTokenKey(database);
 
-const {
-	AccountContactState,
-	AccountFileRecord,
-	AccountNotification,
-	AccountUserProfile,
-	BinaryProto,
-	CyphPlan,
-	CyphPlans,
-	CyphPlanTypes,
-	NotificationTypes,
-	NumberProto,
-	StringProto
-} = require('./proto');
-
-const {
-	dynamicDeserialize,
-	dynamicSerialize,
-	normalize,
-	normalizeArray,
-	readableByteLength,
-	readableID,
-	sleep,
-	titleize,
-	uuid
-} = require('./util');
-
-const {notify} = require('./notify')(database, messaging);
+const {notify} = initNotify(database, messaging);
 
 const channelDisconnectTimeout = 30000;
 

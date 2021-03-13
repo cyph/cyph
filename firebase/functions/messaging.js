@@ -1,6 +1,6 @@
-const {normalize} = require('./util');
+import {normalize} from './util.js';
 
-const sendMessage = async (
+export const sendMessage = async (
 	database,
 	messaging,
 	namespace,
@@ -80,5 +80,3 @@ const sendMessage = async (
 		})
 	)).reduce((a, b) => a || b, false);
 };
-
-module.exports = {sendMessage};

@@ -1,7 +1,10 @@
 #!/usr/bin/env node
 
-const fs = require('fs');
-const os = require('os');
+import {getMeta} from '../modules/base.js';
+const {__dirname, require} = getMeta(import.meta);
+
+import fs from 'fs';
+import os from 'os';
 
 const getBackendVar = k =>
 	new Map(
@@ -24,7 +27,7 @@ const mailchimp = new (require('mailchimp-api-v3'))(
 	mailchimpCredentials.apiKey
 );
 
-module.exports = require(`${__dirname}/../firebase/functions/mailchimp`)(
+export default require(`${__dirname}/../firebase/functions/mailchimp`)(
 	mailchimp,
 	mailchimpCredentials
 );

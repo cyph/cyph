@@ -1,10 +1,13 @@
 #!/usr/bin/env node
 
-const fs = require('fs');
-const openpgp = require('openpgp');
-const databaseService = require('../modules/database-service');
-const potassium = require('../modules/potassium');
-const {
+import {getMeta} from '../modules/base.js';
+const {__dirname, isCLI} = getMeta(import.meta);
+
+import fs from 'fs';
+import openpgp from 'openpgp';
+import databaseService from '../modules/database-service.js';
+import potassium from '../modules/potassium.js';
+import {
 	AccountUserProfile,
 	AccountUserProfileExtra,
 	AGSEPKICert,
@@ -12,8 +15,8 @@ const {
 	CyphPlan,
 	CyphPlans,
 	StringProto
-} = require('../modules/proto');
-const {normalize} = require('../modules/util');
+} from '../modules/proto.js';
+import {normalize} from '../modules/util.js';
 
 openpgp.config.versionstring = 'Cyph';
 openpgp.config.commentstring = 'https://www.cyph.com';
@@ -70,7 +73,7 @@ const getCertTimestamp = async (username, namespace, getItem) => {
 	return new Date(cert.timestamp).toLocaleString();
 };
 
-const getUserMetadata = async (projectId, username, namespace) => {
+export const getUserMetadata = async (projectId, username, namespace) => {
 	if (typeof projectId !== 'string' || projectId.indexOf('cyph') !== 0) {
 		throw new Error('Invalid Firebase project ID.');
 	}
@@ -145,7 +148,7 @@ const getUserMetadata = async (projectId, username, namespace) => {
 	};
 };
 
-if (require.main === module) {
+if (isCLI) {
 	(async () => {
 		const projectId = process.argv[2];
 		const usernames = process.argv[3].split(' ');
@@ -168,7 +171,4 @@ if (require.main === module) {
 		console.error(err);
 		process.exit(1);
 	});
-}
-else {
-	module.exports = {getUserMetadata};
 }

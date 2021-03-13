@@ -1,10 +1,13 @@
 #!/usr/bin/env node
 
-const read = require('read');
-const databaseService = require('../modules/database-service');
-const {normalize} = require('../modules/util');
+import {getMeta} from '../modules/base.js';
+const {isCLI} = getMeta(import.meta);
 
-const deleteUser = async (
+import read from 'read';
+import databaseService from '../modules/database-service.js';
+import {normalize} from '../modules/util.js';
+
+export const deleteUser = async (
 	projectId,
 	namespace,
 	username,
@@ -64,7 +67,7 @@ const deleteUser = async (
 	console.log(`Deleted @${username}.`);
 };
 
-if (require.main === module) {
+if (isCLI) {
 	(async () => {
 		const projectId = process.argv[2];
 		const namespace = process.argv[3];
@@ -77,7 +80,4 @@ if (require.main === module) {
 		console.error(err);
 		process.exit(1);
 	});
-}
-else {
-	module.exports = {deleteUser};
 }

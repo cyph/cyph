@@ -1,11 +1,14 @@
 #!/usr/bin/env node
 
-const fs = require('fs');
-const puppeteer = require('puppeteer');
-const util = require('util');
+import {getMeta} from '../modules/base.js';
+const {__dirname, isCLI} = getMeta(import.meta);
+
+import fs from 'fs';
+import puppeteer from 'puppeteer';
+import util from 'util';
 
 /** TODO: Handle this locally. */
-const getQR = async (text, path) => {
+export const getQR = async (text, path) => {
 	const browser = await puppeteer.launch();
 	const page = await browser.newPage();
 
@@ -52,7 +55,7 @@ const getQR = async (text, path) => {
 	return qrCode;
 };
 
-if (require.main === module) {
+if (isCLI) {
 	(async () => {
 		console.log(await getQR(process.argv[2], process.argv[3]));
 		process.exit(0);
@@ -60,7 +63,4 @@ if (require.main === module) {
 		console.error(err);
 		process.exit(1);
 	});
-}
-else {
-	module.exports = {getQR};
 }

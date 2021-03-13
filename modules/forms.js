@@ -1,6 +1,6 @@
-require('./buildunbundledassets');
-require('../shared/assets/js/standalone/global');
-require('../shared/assets/js/cyph/forms');
+import './buildunbundledassets.js';
+import '../shared/assets/js/standalone/global.js';
+import '../shared/assets/js/cyph/forms.js';
 
-module.exports = Index;
+export default Index;
 global.Index = undefined;

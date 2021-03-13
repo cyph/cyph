@@ -1,29 +1,26 @@
 #!/usr/bin/env node
 
-const firebase = require('firebase-admin');
-const fs = require('fs');
-const os = require('os');
-const read = require('read');
-const {config} = require('../modules/config');
-const databaseService = require('../modules/database-service');
-const potassium = require('../modules/potassium');
-const {CyphPlan, CyphPlans} = require('../modules/proto');
-const {
-	deserialize,
-	lockFunction,
-	serialize,
-	sleep
-} = require('../modules/util');
-const {addInviteCode} = require('./addinvitecode');
-const {getPublicKeys, sign} = require('./sign');
+import {getMeta} from '../modules/base.js';
+const {isCLI} = getMeta(import.meta);
 
-const {
+import fs from 'fs';
+import os from 'os';
+import read from 'read';
+import {config} from '../modules/config.js';
+import databaseService from '../modules/database-service.js';
+import potassium from '../modules/potassium.js';
+import {
 	AGSEPKICert,
 	AGSEPKICSR,
 	AGSEPKIIssuanceHistory,
 	BinaryProto,
+	CyphPlan,
+	CyphPlans,
 	StringProto
-} = require('../modules/proto');
+} from '../modules/proto.js';
+import {deserialize, lockFunction, serialize, sleep} from '../modules/util.js';
+import {addInviteCode} from './addinvitecode.js';
+import {getPublicKeys, sign} from './sign.js';
 
 const readInput = async prompt =>
 	new Promise(resolve => {
@@ -57,7 +54,7 @@ const duplicateCSR = async (issuanceHistory, csr, publicSigningKeyHash) =>
 			}
 		})));
 
-const certSign = async (projectId, standalone, namespace) => {
+export const certSign = async (projectId, standalone, namespace) => {
 	try {
 		if (typeof projectId !== 'string' || !projectId) {
 			projectId = 'cyphme';
@@ -440,9 +437,6 @@ const certSign = async (projectId, standalone, namespace) => {
 	}
 };
 
-if (require.main === module) {
+if (isCLI) {
 	certSign(process.argv[2], true, process.argv[3]);
-}
-else {
-	module.exports = {certSign};
 }

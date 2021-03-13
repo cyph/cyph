@@ -1,8 +1,8 @@
 #!/usr/bin/env node
 
-const fs = require('fs');
-const glob = require('glob');
-const superSphincs = require('supersphincs');
+import fs from 'fs';
+import glob from 'glob';
+import superSphincs from 'supersphincs';
 
 (async () => {
 	const files = [

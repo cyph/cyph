@@ -1,22 +1,24 @@
 #!/usr/bin/env node
 
-const childProcess = require('child_process');
-const crypto = require('crypto');
-const dgram = require('dgram');
-const fs = require('fs');
-const os = require('os');
-const read = require('read');
-const sodiumUtil = require('sodiumutil');
-const superSphincs = require('supersphincs');
+import {getMeta} from '../modules/base.js';
+const {__dirname, isCLI} = getMeta(import.meta);
+
+import childProcess from 'child_process';
+import crypto from 'crypto';
+import dgram from 'dgram';
+import fs from 'fs';
+import read from 'read';
+import sodiumUtil from 'sodiumutil';
+import superSphincs from 'supersphincs';
 
 // Temporary workaround pending AGSE update to SuperSPHINCS v6
-const oldSuperSphincs = require('/home/gibson/oldsupersphincs/node_modules/supersphincs');
+import oldSuperSphincs from '/home/gibson/oldsupersphincs/node_modules/supersphincs';
 
 const remoteAddress = '10.0.0.42';
 const port = 31337;
 const chunkSize = 576;
 
-const interfaces = os.networkInterfaces();
+// const interfaces = os.networkInterfaces();
 const macAddress = Buffer.from(
 	fs
 		.readFileSync(`${process.env.HOME}/.cyph/agse.local.mac`)
@@ -105,7 +107,7 @@ const testKeyPair = {
 	)
 };
 
-const getPublicKeys = demoSign => {
+export const getPublicKeys = demoSign => {
 	const publicKeysJS = fs
 		.readFileSync(
 			`${__dirname}/../${
@@ -125,7 +127,7 @@ const getPublicKeys = demoSign => {
 	);
 };
 
-const sign = async (inputs, testSign, demoSign, skipNotify = false) =>
+export const sign = async (inputs, testSign, demoSign, skipNotify = false) =>
 	new Promise(async (resolve, reject) => {
 		if (testSign) {
 			return resolve({
@@ -332,7 +334,7 @@ const sign = async (inputs, testSign, demoSign, skipNotify = false) =>
 		);
 	}).catch(async () => sign(inputs, testSign, demoSign, true));
 
-if (require.main === module) {
+if (isCLI) {
 	(async () => {
 		const args = process.argv.slice(2);
 		const inputs = args[0];
@@ -354,7 +356,4 @@ if (require.main === module) {
 		console.error(err);
 		process.exit(1);
 	});
-}
-else {
-	module.exports = {getPublicKeys, sign};
 }

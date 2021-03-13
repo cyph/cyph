@@ -1,7 +1,7 @@
-const memoize = require('lodash/memoize');
-const plivo = require('plivo');
-const twilio = require('twilio');
-const {twilioCredentials} = require('./cyph-admin-vars');
+import memoize from 'lodash-es/memoize';
+import plivo from 'plivo';
+import twilio from 'twilio';
+import {twilioCredentials} from './cyph-admin-vars.js';
 
 const getPlivoClient = memoize(
 	o => new plivo.Client(o.id, o.authToken),
@@ -13,7 +13,7 @@ const getTwilioClient = memoize(
 	o => o.id
 );
 
-const sendSMS = async (to, text, credentials) => {
+export const sendSMS = async (to, text, credentials) => {
 	if (!credentials) {
 		credentials = {twilio: twilioCredentials};
 	}
@@ -55,5 +55,3 @@ const sendSMS = async (to, text, credentials) => {
 		);
 	}
 };
-
-module.exports = {sendSMS};

@@ -3,8 +3,8 @@
 cd "$(cd "$(dirname "$0")" ; pwd)"
 
 node -e '(async () => {
-	console.log((await require("supersphincs").hash(
-		await require("./bootstrapstring").bootstrapString()
+	console.log((await (await import("supersphincs")).hash(
+		await (await import("./bootstrapstring.js")).bootstrapString()
 	)).hex);
 })().catch(err => {
 	console.error(err);

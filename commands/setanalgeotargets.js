@@ -1,8 +1,11 @@
 #!/usr/bin/env node
 
-const parse = require('csv-parse/lib/sync');
-const fs = require('fs');
-const os = require('os');
+import {getMeta} from '../modules/base.js';
+const {__dirname} = getMeta(import.meta);
+
+import parse from 'csv-parse/lib/sync';
+import fs from 'fs';
+import os from 'os';
 
 /*
 	Processes geo target database into usable form.

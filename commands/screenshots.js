@@ -1,8 +1,11 @@
 #!/usr/bin/env node
 
-const fs = require('fs');
-const os = require('os');
-const puppeteer = require('puppeteer');
+import {getMeta} from '../modules/base.js';
+const {isCLI} = getMeta(import.meta);
+
+import fs from 'fs';
+import os from 'os';
+import puppeteer from 'puppeteer';
 
 const credentials = {
 	password: fs
@@ -182,7 +185,7 @@ const takeScreenshot = async (page, isMobile, screenshotName) => {
 	}
 };
 
-const generateScreenshots = async () => {
+export const generateScreenshots = async () => {
 	if (fs.existsSync(screenshotDir)) {
 		throw new Error(`${screenshotDir} already exists.`);
 	}
@@ -271,7 +274,7 @@ const generateScreenshots = async () => {
 	}
 };
 
-if (require.main === module) {
+if (isCLI) {
 	(async () => {
 		console.log(await generateScreenshots());
 		process.exit(0);
@@ -279,7 +282,4 @@ if (require.main === module) {
 		console.error(err);
 		process.exit(1);
 	});
-}
-else {
-	module.exports = {generateScreenshots};
 }

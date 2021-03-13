@@ -1,10 +1,13 @@
 #!/usr/bin/env node
 
-const childProcess = require('child_process');
-const fs = require('fs');
-const mkdirp = require('mkdirp');
-const {addInviteCode} = require('./addinvitecode');
-const {getQR} = require('./qr');
+import {getMeta} from '../modules/base.js';
+const {__dirname, isCLI} = getMeta(import.meta);
+
+import childProcess from 'child_process';
+import fs from 'fs';
+import mkdirp from 'mkdirp';
+import {addInviteCode} from './addinvitecode.js';
+import {getQR} from './qr.js';
 
 const businessCardBackground = `${__dirname}/../shared/assets/img/business-card-back.png`;
 const businessCardInvite = `${__dirname}/../shared/assets/img/business-card-invite.png`;
@@ -14,7 +17,7 @@ const qrInviteCodeBusinessCardDir = `${__dirname}/../qr-invite-codes/business-ca
 const qrInviteCodeQRDir = `${__dirname}/../qr-invite-codes/qrs`;
 const qrInviteCodeURLDir = `${__dirname}/../qr-invite-codes/urls`;
 
-const qrInviteCode = async (countByUser, plan) => {
+export const qrInviteCode = async (countByUser, plan) => {
 	childProcess.spawnSync('rm', ['-rf', qrInviteCodeDir]);
 	await mkdirp(qrInviteCodeBusinessCardDir);
 	await mkdirp(qrInviteCodeQRDir);
@@ -81,7 +84,7 @@ const qrInviteCode = async (countByUser, plan) => {
 	}
 };
 
-if (require.main === module) {
+if (isCLI) {
 	(async () => {
 		const count = toInt(process.argv[2]);
 		const plan = process.argv[3];
@@ -94,7 +97,4 @@ if (require.main === module) {
 		console.error(err);
 		process.exit(1);
 	});
-}
-else {
-	module.exports = {qrInviteCode};
 }

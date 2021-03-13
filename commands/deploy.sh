@@ -646,12 +646,12 @@ if [ ! "${simple}" ] ; then
 	export branchPackage
 	export test
 
-	node -e '
+	node -e '(async () => {
 		const branchPackage = process.env.branchPackage;
 		const test = process.env.test;
 
 		for (const [domain, path] of Object.entries(
-			require("./modules/config").webSignRedirects
+			(await import("./modules/config.js")).webSignRedirects
 		).map(([k, v]) =>
 			[k, v.join("/")]
 		)) {
@@ -660,7 +660,7 @@ if [ ! "${simple}" ] ; then
 					"${path}" "${domain}" "${branchPackage}" "${test}"
 			`], {stdio: "inherit"});
 		}
-	'
+	})()'
 fi
 
 

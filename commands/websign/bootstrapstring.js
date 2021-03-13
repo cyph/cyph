@@ -1,9 +1,12 @@
 #!/usr/bin/env node
 
-const fs = require('fs');
-const {pack} = require('./pack');
+import {getMeta} from '../../modules/base.js';
+const {__dirname, isCLI} = getMeta(import.meta);
 
-const bootstrapString = async () => {
+import fs from 'fs';
+import {pack} from './pack.js';
+
+export const bootstrapString = async () => {
 	const path = `${__dirname}/../../websign`;
 
 	const index = await pack(path, 'index.html');
@@ -53,7 +56,7 @@ const bootstrapString = async () => {
 		.join('\n\n\n\n\n\n');
 };
 
-if (require.main === module) {
+if (isCLI) {
 	bootstrapString()
 		.then(content => {
 			console.log(content);
@@ -62,7 +65,4 @@ if (require.main === module) {
 			console.error(err);
 			process.exit(1);
 		});
-}
-else {
-	module.exports = {bootstrapString};
 }

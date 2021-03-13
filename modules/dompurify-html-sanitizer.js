@@ -1,14 +1,17 @@
-require('./buildunbundledassets');
-require('../shared/assets/js/standalone/global');
-require('../shared/assets/js/cyph/dompurify-html-sanitizer');
+import DOMPurify from 'dompurify';
+import {JSDOM} from 'jsdom';
+import './buildunbundledassets.js';
+import '../shared/assets/js/standalone/global.js';
+import '../shared/assets/js/cyph/dompurify-html-sanitizer.js';
 
-const {window} = new (require('jsdom').JSDOM)();
+const {window} = new JSDOM();
 
-module.exports = new DOMPurifyHtmlSanitizer(
-	require('dompurify')(window),
+export const dompurifyHtmlSanitizer = new DOMPurifyHtmlSanitizer(
+	DOMPurify(window),
 	window.document,
 	['http', 'https']
 );
 
-module.exports.dompurifyHtmlSanitizer = module.exports;
+export default dompurifyHtmlSanitizer;
+
 global.DOMPurifyHtmlSanitizer = undefined;

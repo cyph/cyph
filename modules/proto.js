@@ -1,6 +1,6 @@
-require('./buildunbundledassets');
-require('../shared/assets/js/standalone/global');
-require('../shared/assets/js/cyph/proto');
+import './buildunbundledassets.js';
+import '../shared/assets/js/standalone/global.js';
+import '../shared/assets/js/cyph/proto.js';
 
-module.exports = Index;
+export default Index;
 global.Index = undefined;

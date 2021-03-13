@@ -1,4 +1,4 @@
-module.exports = (mailchimp, mailchimpCredentials) => {
+export const initMailchimp = (mailchimp, mailchimpCredentials) => {
 	const addToMailingList = async (listID, email, mergeFields) =>
 		(await mailchimp.post(`/lists/${listID}/members`, {
 			email_address: email,
@@ -59,3 +59,5 @@ module.exports = (mailchimp, mailchimpCredentials) => {
 		splitName
 	};
 };
+
+export default initMailchimp;

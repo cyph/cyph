@@ -1,15 +1,14 @@
-global.crypto = require('crypto');
+import './js/standalone/global.js';
+import './js/cyph/dompurify-html-sanitizer.js';
 
-require('./js/standalone/global');
-require('./js/cyph/dompurify-html-sanitizer');
+const {window} = new JSDOM();
 
-const {window} = new (require('jsdom').JSDOM)();
-
-module.exports = new DOMPurifyHtmlSanitizer(
-	require('dompurify')(window),
+export const dompurifyHtmlSanitizer = new DOMPurifyHtmlSanitizer(
+	DOMPurify(window),
 	window.document,
 	['http', 'https']
 );
 
-module.exports.dompurifyHtmlSanitizer = module.exports;
+export default dompurifyHtmlSanitizer;
+
 global.DOMPurifyHtmlSanitizer = undefined;

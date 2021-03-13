@@ -1,11 +1,14 @@
 #!/usr/bin/env node
 
-const usernameBlacklist = new Set(require('username-blacklist'));
-const databaseService = require('../modules/database-service');
-const {BooleanProto, CyphPlans} = require('../modules/proto');
-const {normalize, readableID, toInt} = require('../modules/util');
+import {getMeta} from '../modules/base.js';
+const {isCLI, require} = getMeta(import.meta);
 
-const addInviteCode = async (
+const usernameBlacklist = new Set(require('username-blacklist'));
+import databaseService from '../modules/database-service.js';
+import {BooleanProto, CyphPlans} from '../modules/proto.js';
+import {normalize, readableID, toInt} from '../modules/util.js';
+
+export const addInviteCode = async (
 	projectId,
 	countByUser,
 	namespace,
@@ -138,7 +141,7 @@ const addInviteCode = async (
 	);
 };
 
-if (require.main === module) {
+if (isCLI) {
 	(async () => {
 		const projectId = process.argv[2];
 		const count = toInt(process.argv[3]);
@@ -169,7 +172,4 @@ if (require.main === module) {
 		console.error(err);
 		process.exit(1);
 	});
-}
-else {
-	module.exports = {addInviteCode};
 }

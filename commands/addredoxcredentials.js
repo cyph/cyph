@@ -1,10 +1,13 @@
 #!/usr/bin/env node
 
-const fs = require('fs');
-const os = require('os');
-const puppeteer = require('puppeteer');
+import {getMeta} from '../modules/base.js';
+const {isCLI} = getMeta(import.meta);
 
-const addRedoxCredentials = async (
+import fs from 'fs';
+import os from 'os';
+import puppeteer from 'puppeteer';
+
+export const addRedoxCredentials = async (
 	isProd,
 	url,
 	username,
@@ -79,7 +82,7 @@ const addRedoxCredentials = async (
 	throw new Error('Uploading EHR credentials failed.');
 };
 
-if (require.main === module) {
+if (isCLI) {
 	(async () => {
 		const isProd =
 			process.argv.slice(2).find(s => s === '--prod') !== undefined;
@@ -104,7 +107,4 @@ if (require.main === module) {
 		console.error(err);
 		process.exit(1);
 	});
-}
-else {
-	module.exports = {addRedoxCredentials};
 }

@@ -1,15 +1,18 @@
 #!/usr/bin/env node
 
-const fs = require('fs');
-const {config} = require('../modules/config');
-const {titleize} = require('../modules/util');
-const {addInviteCode} = require('./addinvitecode');
+import {getMeta} from '../modules/base.js';
+const {__dirname, isCLI} = getMeta(import.meta);
+
+import fs from 'fs';
+import {config} from '../modules/config.js';
+import {titleize} from '../modules/util.js';
+import {addInviteCode} from './addinvitecode.js';
 
 const configGoText = fs
 	.readFileSync(__dirname + '/../backend/config.go')
 	.toString();
 
-const giftAccount = async (projectId, checkoutURL) => {
+export const giftAccount = async (projectId, checkoutURL) => {
 	/* TODO: Handle other cases */
 	const accountsURL =
 		projectId === 'cyphme' ?
@@ -88,7 +91,7 @@ const giftAccount = async (projectId, checkoutURL) => {
 	);
 };
 
-if (require.main === module) {
+if (isCLI) {
 	(async () => {
 		const projectId = process.argv[2];
 		const checkoutURL = process.argv[3];
@@ -109,7 +112,4 @@ if (require.main === module) {
 		console.error(err);
 		process.exit(1);
 	});
-}
-else {
-	module.exports = {giftAccount};
 }

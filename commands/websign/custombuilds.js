@@ -1,13 +1,13 @@
 #!/usr/bin/env node
 
-const cheerio = require('cheerio');
-const fs = require('fs');
-const mkdirp = require('mkdirp');
-const superSphincs = require('supersphincs');
-const {potassium} = require('../../modules/potassium');
-const {Environment} = require('../../modules/proto');
-const {serialize} = require('../../modules/util');
-const {customBuild, customBuildIds} = require('../custombuild');
+import cheerio from 'cheerio';
+import fs from 'fs';
+import mkdirp from 'mkdirp';
+import superSphincs from 'supersphincs';
+import {potassium} from '../../modules/potassium.js';
+import {Environment} from '../../modules/proto.js';
+import {serialize} from '../../modules/util.js';
+import {customBuild, customBuildIds} from '../custombuild.js';
 
 (async () => {
 	const args = {

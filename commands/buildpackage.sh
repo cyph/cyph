@@ -410,13 +410,13 @@ for d in ${compiledProjects} ; do
 		../commands/websign/subresourceinline.js ../pkg/cyph.app-subresources
 	fi
 
-	node -e 'console.log(`
+	node -e '(async () => console.log(`
 		/* tslint:disable */
 
 		(<any> self).translations = ${JSON.stringify(
-			require("../commands/translations").translations
+			(await import("../commands/translations.js")).translations
 		)};
-	`.trim())' > src/js/standalone/translations.ts
+	`.trim()))()' > src/js/standalone/translations.ts
 
 	if \
 		( [ "${debug}" ] && [ ! "${debugProdBuild}" ] ) || \

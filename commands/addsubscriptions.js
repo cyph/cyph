@@ -1,13 +1,16 @@
 #!/usr/bin/env node
 
-const braintree = require('braintree');
-const fs = require('fs');
-const memoize = require('lodash/memoize');
-const os = require('os');
-const read = require('read');
-const {normalize, uuid} = require('../modules/util');
-const {getUserMetadata} = require('./getusermetadata');
-const {inviteUser} = require('./inviteuser');
+import {getMeta} from '../modules/base.js';
+const {isCLI} = getMeta(import.meta);
+
+import braintree from 'braintree';
+import fs from 'fs';
+import memoize from 'lodash-es/memoize';
+import os from 'os';
+import read from 'read';
+import {normalize, uuid} from '../modules/util.js';
+import {getUserMetadata} from './getusermetadata.js';
+import {inviteUser} from './inviteuser.js';
 
 const namespace = 'cyph.ws';
 
@@ -46,7 +49,7 @@ const cloneSubscription = async subscriptionID => {
 	})).subscription.id;
 };
 
-const addSubscriptions = async (projectId, username, count) => {
+export const addSubscriptions = async (projectId, username, count) => {
 	username = normalize(username);
 
 	if (isNaN(count)) {
@@ -133,7 +136,7 @@ const addSubscriptions = async (projectId, username, count) => {
 	);
 };
 
-if (require.main === module) {
+if (isCLI) {
 	(async () => {
 		const projectId = process.argv[2];
 		const username = process.argv[3];
@@ -146,7 +149,4 @@ if (require.main === module) {
 		console.error(err);
 		process.exit(1);
 	});
-}
-else {
-	module.exports = {addSubscriptions};
 }
