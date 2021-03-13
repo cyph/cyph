@@ -20,7 +20,7 @@
 		"firebase-tools": "*",
 		"ical-generator": "~0.2",
 		"jsdom": "*",
-		"libsodium-wrappers-sumo": "https://github.com/jedisct1/libsodium.js",
+		"libsodium-wrappers-sumo": "*",
 		"lodash": "*",
 		"lz4": "0.6.3",
 		"mailchimp-api-v3": "*",
