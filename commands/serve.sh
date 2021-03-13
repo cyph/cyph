@@ -132,7 +132,7 @@ ngserve () {
 			-t \
 			-r 42003 \
 			-n 'Cyph Docs' \
-			-p src/tsconfig.app.json \
+			-p src/tsconfig.docs.json \
 			--disablePrivate \
 			--disableProtected \
 			--disableInternal \

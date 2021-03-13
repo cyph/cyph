@@ -12,7 +12,7 @@ rm -rf src/js/cyph.com src/js/native src/js/sdk "${dir}/docs"
 
 compodoc \
 	-n 'Cyph Docs' \
-	-p src/tsconfig.app.json \
+	-p src/tsconfig.docs.json \
 	--disablePrivate \
 	--disableProtected \
 	--disableInternal
