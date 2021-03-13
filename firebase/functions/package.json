@@ -29,7 +29,7 @@
 		"mceliece": "*",
 		"msgpack-lite": "*",
 		"mustache": "*",
-		"node": "10",
+		"node": "14",
 		"nodemailer": "^4",
 		"ntru": "*",
 		"phone-number-timezone": "*",
@@ -42,7 +42,7 @@
 		"username-blacklist": "https://github.com/cyph/The-Big-Username-Blacklist"
 	},
 	"engines": {
-		"node": "10"
+		"node": "14"
 	},
 	"private": true
 }

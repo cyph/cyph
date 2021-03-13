@@ -40,7 +40,7 @@ apt-get -y --allow-downgrades install \
 apt-get -y --allow-downgrades purge apache* mysql*
 
 distro="\$(lsb_release -c | awk '{print \$2}')"
-echo "deb https://deb.nodesource.com/node_12.x \${distro} main" >> /etc/apt/sources.list
+echo "deb https://deb.nodesource.com/node_14.x \${distro} main" >> /etc/apt/sources.list
 curl https://deb.nodesource.com/gpgkey/nodesource.gpg.key | apt-key add -
 
 apt-get -y --allow-downgrades update
