@@ -455,10 +455,12 @@ for branchDir in ~/.build ${branchDirs} ; do
 done
 cd ~/.build
 
-rm -rf "${dir}/shared/assets"
-cp -a shared/assets "${dir}/shared/"
-if [ "${assetsFrozen}" ] ; then
-	touch "${dir}/shared/assets/frozen"
+if [ ! "${site}" ] || [ "${site}" == 'cyph.app' ] || [ "${site}" == 'cyph.com' ] ; then
+	rm -rf "${dir}/shared/assets"
+	cp -a shared/assets "${dir}/shared/"
+	if [ "${assetsFrozen}" ] ; then
+		touch "${dir}/shared/assets/frozen"
+	fi
 fi
 
 
@@ -706,7 +708,6 @@ then
 		mv firebase/functions/index.new.js firebase/functions/index.js
 	fi
 
-	./commands/buildunbundledassets.sh || fail
 	./commands/updaterepos.js
 
 	cd firebase
@@ -727,7 +728,6 @@ then
 	cp ../../modules/*.js ~/.cyph/email-credentials.js ./
 	html-minifier --collapse-whitespace --minify-css --remove-comments email.html -o email.html
 
-	cp -rf ../../shared/assets/js ./
 	cd ..
 
 	for firebaseProject in ${firebaseProjects} ; do

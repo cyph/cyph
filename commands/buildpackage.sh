@@ -373,15 +373,17 @@ fi
 
 # Compile + translate + minify
 
-./commands/buildunbundledassets.sh $(
-	if [ "${simple}" ] || ( [ "${debug}" ] && [ ! "${debugProdBuild}" ] ) ; then
-		if [ "${simpleProdBuild}" ] ; then
-			echo '--prod-test --service-worker'
-		else
-			echo '--test'
+if [ ! "${site}" ] || [ "${site}" == 'cyph.app' ] || [ "${site}" == 'cyph.com' ] ; then
+	./commands/buildunbundledassets.sh $(
+		if [ "${simple}" ] || ( [ "${debug}" ] && [ ! "${debugProdBuild}" ] ) ; then
+			if [ "${simpleProdBuild}" ] ; then
+				echo '--prod-test --service-worker'
+			else
+				echo '--test'
+			fi
 		fi
-	fi
-) || fail
+	) || fail
+fi
 
 ./commands/ngassets.sh
 touch shared/assets/frozen
