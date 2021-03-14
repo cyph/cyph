@@ -126,18 +126,18 @@ ngserve () {
 	../commands/ngprojectinit.sh
 	echo -e '\n\n\n'
 
-	if [ ! "${e2e}" ] && [ ! "${unitTest}" ] && [ "${project}" == 'cyph.app' ] ; then
-		compodoc \
-			-s \
-			-t \
-			-r 42003 \
-			-n 'Cyph Docs' \
-			-p src/tsconfig.docs.json \
-			--disablePrivate \
-			--disableProtected \
-			--disableInternal \
-		&> /dev/null &
-	fi
+	# if [ ! "${e2e}" ] && [ ! "${unitTest}" ] && [ "${project}" == 'cyph.app' ] ; then
+	# 	compodoc \
+	# 		-s \
+	# 		-t \
+	# 		-r 42003 \
+	# 		-n 'Cyph Docs' \
+	# 		-p src/tsconfig.docs.json \
+	# 		--disablePrivate \
+	# 		--disableProtected \
+	# 		--disableInternal \
+	# 	&> /dev/null &
+	# fi
 
 	ngserveInternal \
 		--host '0.0.0.0' \
@@ -197,9 +197,9 @@ for arr in 'cyph.app 42002' 'cyph.com 42001' ; do
 			ngserve "${arr[0]}" "${arr[1]}"
 			exit $?
 		else
-			if [ "${arr[0]}" == 'cyph.app' ] ; then
-				ports="${ports} 42003"
-			fi
+			# if [ "${arr[0]}" == 'cyph.app' ] ; then
+			# 	ports="${ports} 42003"
+			# fi
 			ports="${ports} ${arr[1]}"
 
 			ngserve "${arr[0]}" "${arr[1]}" &
