@@ -1,6 +1,5 @@
 import {PreloadAllModules, RouterModule, UrlSerializer} from '@angular/router';
 import {CyphAppModule} from '../cyph/modules/cyph-app.module';
-import {FaviconService} from '../cyph/services/favicon.service';
 import {appRoutes} from './app-routes';
 import {AppService} from './app.service';
 import {AppComponent} from './components/app';
@@ -33,7 +32,6 @@ export const imports = [
 /** @see NgModule.providers */
 export const providers = [
 	AppService,
-	FaviconService,
 	{
 		provide: UrlSerializer,
 		useClass: CustomUrlSerializer

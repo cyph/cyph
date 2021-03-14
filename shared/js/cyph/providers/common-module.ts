@@ -3,6 +3,7 @@ import {Title} from '@angular/platform-browser';
 import {env} from '../env';
 import {AnalyticsService} from '../services/analytics.service';
 import {ErrorService} from '../services/error.service';
+import {FaviconService} from '../services/favicon.service';
 import {FileService} from '../services/file.service';
 import {NotificationService} from '../services/notification.service';
 import {ScreenshotService} from '../services/screenshot.service';
@@ -14,6 +15,7 @@ import {WindowWatcherService} from '../services/window-watcher.service';
 export const commonModuleProviders = [
 	AnalyticsService,
 	ErrorService,
+	FaviconService,
 	FileService,
 	NotificationService,
 	ScreenshotService,
