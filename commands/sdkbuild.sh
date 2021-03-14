@@ -51,3 +51,16 @@ $(
 
 export default cyphSDK;
 EOM
+
+if [ "${version}" != 'prod' ] ; then
+	exit
+fi
+
+./commands/buildpackage.sh \
+	--branch-dir ~/.build \
+	--environment prodOptimized \
+	--site sdk \
+	--version prodOptimized \
+|| fail
+
+cp sdk/dist/main.js ${dir}/sdk/dist/main.min.cjs

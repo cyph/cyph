@@ -33,7 +33,7 @@
 							]
 						},
 						"betaProd": {
-							"optimization": true,
+							"optimization": false,
 							"outputHashing": "none",
 							"sourceMap": false,
 							"namedChunks": false,
@@ -143,6 +143,19 @@
 							]
 						},
 						"prod": {
+							"optimization": false,
+							"outputHashing": "none",
+							"sourceMap": false,
+							"namedChunks": false,
+							"extractLicenses": true,
+							"fileReplacements": [
+								{
+									"replace": "src/js/environments/environment.ts",
+									"with": "src/js/environments/environment.prod.ts"
+								}
+							]
+						},
+						"prodOptimized": {
 							"optimization": true,
 							"outputHashing": "none",
 							"sourceMap": false,
@@ -156,7 +169,7 @@
 							]
 						},
 						"production": {
-							"optimization": true,
+							"optimization": false,
 							"outputHashing": "none",
 							"sourceMap": false,
 							"namedChunks": false,
@@ -169,7 +182,7 @@
 							]
 						},
 						"staging": {
-							"optimization": true,
+							"optimization": false,
 							"outputHashing": "none",
 							"sourceMap": false,
 							"namedChunks": false,
