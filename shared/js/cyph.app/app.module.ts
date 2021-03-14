@@ -32,7 +32,8 @@ import {resolveStaticServices} from '../cyph/util/static-services';
 import {
 	bootstrap,
 	declarations,
-	imports
+	imports,
+	providers
 } from './app-module-options';
 import {appRoutes} from './app-routes';
 import {AppService} from './app.service';
@@ -45,6 +46,7 @@ import {AppService} from './app.service';
 	declarations,
 	imports,
 	providers: [
+		...providers,
 		{
 			provide: PotassiumService,
 			useClass: ThreadedPotassiumService
