@@ -146,7 +146,7 @@ if (isCLI) {
 
 		await addSubscriptions(projectId, username, count);
 
-		process.exit(0);
+		process.exit();
 	})().catch(err => {
 		console.error(err);
 		process.exit(1);

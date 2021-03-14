@@ -351,7 +351,7 @@ if (isCLI) {
 			...signed,
 			signedInputs: signed.signedInputs.map(o => o.toString('base64'))
 		});
-		process.exit(0);
+		process.exit();
 	})().catch(err => {
 		console.error(err);
 		process.exit(1);

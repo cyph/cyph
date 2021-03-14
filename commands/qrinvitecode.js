@@ -92,7 +92,7 @@ if (isCLI) {
 
 		await qrInviteCode({[inviterUsername]: isNaN(count) ? 1 : count}, plan);
 
-		process.exit(0);
+		process.exit();
 	})().catch(err => {
 		console.error(err);
 		process.exit(1);

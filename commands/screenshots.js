@@ -277,7 +277,7 @@ export const generateScreenshots = async () => {
 if (isCLI) {
 	(async () => {
 		console.log(await generateScreenshots());
-		process.exit(0);
+		process.exit();
 	})().catch(err => {
 		console.error(err);
 		process.exit(1);

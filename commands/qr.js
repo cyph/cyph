@@ -58,7 +58,7 @@ export const getQR = async (text, path) => {
 if (isCLI) {
 	(async () => {
 		console.log(await getQR(process.argv[2], process.argv[3]));
-		process.exit(0);
+		process.exit();
 	})().catch(err => {
 		console.error(err);
 		process.exit(1);

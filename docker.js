@@ -68,7 +68,7 @@ const runScript = script => {
 
 const fail = errorMessage => {
 	console.error(`ERROR: ${errorMessage}`);
-	process.exit(0);
+	process.exit(1);
 };
 
 const isMacOS = process.platform === 'darwin';
