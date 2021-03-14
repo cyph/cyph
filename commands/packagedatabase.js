@@ -5,7 +5,7 @@ const {isCLI} = getMeta(import.meta);
 
 import childProcess from 'child_process';
 import fs from 'fs';
-import glob from 'glob/sync';
+import glob from 'glob/sync.js';
 import os from 'os';
 import path from 'path';
 import {updateRepos} from './updaterepos.js';

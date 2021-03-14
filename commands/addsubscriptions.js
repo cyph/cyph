@@ -6,7 +6,7 @@ const {isCLI} = getMeta(import.meta);
 import {util} from '@cyph/sdk';
 import braintree from 'braintree';
 import fs from 'fs';
-import memoize from 'lodash-es/memoize';
+import memoize from 'lodash-es/memoize.js';
 import os from 'os';
 import read from 'read';
 import {getUserMetadata} from './getusermetadata.js';

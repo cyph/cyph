@@ -4,7 +4,7 @@ import {getMeta} from '../modules/base.js';
 const {__dirname, isCLI} = getMeta(import.meta);
 
 import childProcess from 'child_process';
-import datauri from 'datauri/sync';
+import datauri from 'datauri/sync.js';
 import fs from 'fs';
 import htmlencode from 'htmlencode';
 import os from 'os';

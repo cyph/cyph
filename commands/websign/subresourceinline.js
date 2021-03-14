@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-import datauri from 'datauri/sync';
+import datauri from 'datauri/sync.js';
 import fs from 'fs';
 import glob from 'glob';
 import mkdirp from 'mkdirp';

@@ -1,5 +1,5 @@
 import fs from 'fs';
-import memoize from 'lodash-es/memoize';
+import memoize from 'lodash-es/memoize.js';
 import markdownEscapes from 'markdown-escapes';
 import MarkdownIt from 'markdown-it';
 import mustache from 'mustache';

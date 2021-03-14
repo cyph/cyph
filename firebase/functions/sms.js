@@ -1,4 +1,4 @@
-import memoize from 'lodash-es/memoize';
+import memoize from 'lodash-es/memoize.js';
 import plivo from 'plivo';
 import twilio from 'twilio';
 import {twilioCredentials} from './cyph-admin-vars.js';

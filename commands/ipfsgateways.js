@@ -5,7 +5,7 @@ const {__dirname, isCLI} = getMeta(import.meta);
 
 import dns from 'dns';
 import fs from 'fs';
-import memoize from 'lodash-es/memoize';
+import memoize from 'lodash-es/memoize.js';
 import maxmind from 'maxmind';
 import os from 'os';
 import {URL} from 'url';
