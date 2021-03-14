@@ -33,7 +33,6 @@ cd ~/.build
 
 rm -rf ${dir}/sdk/dist 2> /dev/null
 mkdir ${dir}/sdk/dist
-cp sdk/dist/main.js ${dir}/sdk/dist/main.cjs
 cp -f LICENSE ${dir}/sdk/
 
 cat > ${dir}/sdk/sdk.js <<- EOM
@@ -53,8 +52,11 @@ export default cyphSDK;
 EOM
 
 if [ "${version}" != 'prod' ] ; then
+	cp sdk/dist/main.js ${dir}/sdk/dist/main.cjs
 	exit
 fi
+
+cp sdk/dist/main.js ${dir}/sdk/dist/main.debug.cjs
 
 ./commands/buildpackage.sh \
 	--branch-dir ~/.build \
@@ -63,4 +65,4 @@ fi
 	--version prodOptimized \
 || fail
 
-cp sdk/dist/main.js ${dir}/sdk/dist/main.min.cjs
+cp sdk/dist/main.js ${dir}/sdk/dist/main.cjs
