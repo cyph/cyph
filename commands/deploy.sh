@@ -305,7 +305,7 @@ if \
 	cp ~/.cyph/repos/chat-widget/dist/index.js backend/chat-widget.js
 fi
 
-cp -a backend/shared/* firebase/functions/
+cp -a backend/shared/* firebase/functions/js/
 
 # Secret credentials
 cat ~/.cyph/backend.vars >> backend/app.yaml
@@ -725,8 +725,9 @@ then
 	cd functions
 
 	npm install
-	cp ../../modules/*.js ~/.cyph/email-credentials.js ./
-	html-minifier --collapse-whitespace --minify-css --remove-comments email.html -o email.html
+
+	cp ../../modules/*.js ~/.cyph/email-credentials.js js/
+	html-minifier --collapse-whitespace --minify-css --remove-comments js/email.html -o js/email.html
 
 	cd ..
 
@@ -742,7 +743,7 @@ then
 				sed "s|${1}: ||"
 		}
 
-		cat > functions/cyph-admin-vars.js <<- EOM
+		cat > functions/js/cyph-admin-vars.js <<- EOM
 			module.exports = {
 				cyphAdminKey: $(getBackendVar CYPH_FIREBASE_ADMIN_KEY),
 				mailchimpCredentials: {
@@ -820,7 +821,7 @@ EOM
 				;;
 		esac
 
-		node -e "fs.writeFileSync('functions/namespaces.js', \`module.exports = \${JSON.stringify(
+		node -e "fs.writeFileSync('functions/js/namespaces.js', \`module.exports = \${JSON.stringify(
 			require('glob').sync(\`\${os.homedir()}/.cyph/repos/custom-builds/*/config.json\`).
 				map(path => ({
 					domain: path.split('/').slice(-2)[0],
@@ -876,7 +877,7 @@ EOM
 			./functions/node_modules/node/bin/node functions/node_modules/.bin/firebase "${@}"
 		}
 
-		cp -f ~/.cyph/firebase-credentials/${firebaseProject}.fcm functions/fcm-server-key
+		cp -f ~/.cyph/firebase-credentials/${firebaseProject}.fcm functions/js/fcm-server-key
 		firebaseCLI use --add "${firebaseProject}"
 		firebaseCLI functions:config:set project.id="${firebaseProject}"
 		gsutil cors set storage.cors.json "gs://${firebaseProject}.appspot.com"
