@@ -18,6 +18,8 @@ exports.burnerInvite = onRequest(async (...args) =>
 );
 
 /*
+TODO: Re-enable after edge case false positives are fixed
+
 exports.channelDisconnect = database
 	.ref('/{namespace}/channels/{channel}/disconnects/{user}')
 	.onWrite(async (...args) => (await functions).channelDisconnect(...args));
