@@ -44,7 +44,7 @@
 		"@cyph/burner-sdk": "^3.2.0",
 		"@cyph/prettier": "^2.1.0",
 		"@cyph/pretty-quick": "^3.1.0",
-		"@cyph/sdk": "^4.0.0",
+		"@cyph/sdk": "^4.1.1",
 		"@firebase/app": "^0.6.15",
 		"@firebase/app-types": "^0.6.1",
 		"@firebase/auth": "^0.16.4",

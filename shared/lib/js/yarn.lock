@@ -1645,10 +1645,10 @@
     mri "^1.1.4"
     multimatch "^4.0.0"
 
-"@cyph/sdk@^4.0.0":
-  version "4.0.0"
-  resolved "https://registry.yarnpkg.com/@cyph/sdk/-/sdk-4.0.0.tgz#6da66ac25a86c0f0659730330b7968010b2eed79"
-  integrity sha512-fkIq4sMJQj3Bzm4YR9S1Ht14t+X++8FORpnbvQAA2ys0JMXelhnhA5yqjsAXJUpkozdh2ojDKLHSKaOuze0p4A==
+"@cyph/sdk@^4.1.1":
+  version "4.1.1"
+  resolved "https://registry.yarnpkg.com/@cyph/sdk/-/sdk-4.1.1.tgz#4c2a36fd697acd134816decc011e68bc6beebc4c"
+  integrity sha512-PqZ2p24qNVH6LqfvnZdf0AvHfASdOKo6lLyx3wy0MfUnK/Cw/QM5+fqnjtjtOYv4csNrz3XomCXAE6V/C0B0Hg==
   dependencies:
     fetch-blob "*"
     firebase "*"
