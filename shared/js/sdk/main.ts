@@ -19,7 +19,7 @@ platformDynamicServer([
 	{
 		provide: INITIAL_CONFIG,
 		useValue: <PlatformConfig> {
-			document: '<html><body><cyph-app></cyph-app></body></html>'
+			document: '<html><body><cyph-sdk></cyph-sdk></body></html>'
 		}
 	}
 ]).bootstrapModule(AppModule, {

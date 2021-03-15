@@ -12,56 +12,107 @@ import '../standalone/global';
 /* eslint-disable-next-line @typescript-eslint/tslint/config */
 import '../environments';
 
-import {HttpClient} from '@angular/common/http';
+import {HttpClient, HttpClientModule} from '@angular/common/http';
 import {NgModule, NgZone} from '@angular/core';
-import {SERVER_TOKEN} from '@angular/flex-layout';
 import {DomSanitizer} from '@angular/platform-browser';
 import {ServerModule} from '@angular/platform-server';
+import {RouterModule} from '@angular/router';
 import {DOMPurifyHtmlSanitizer} from '../cyph/dompurify-html-sanitizer';
 import * as forms from '../cyph/forms';
 import {IResolvable} from '../cyph/iresolvable';
 import * as proto from '../cyph/proto';
 import {AccountAppointmentsService} from '../cyph/services/account-appointments.service';
+import {AccountAuthService} from '../cyph/services/crypto/account-auth.service';
 import {AccountContactsService} from '../cyph/services/account-contacts.service';
+import {AccountDatabaseService} from '../cyph/services/crypto/account-database.service';
 import {AccountDownloadService} from '../cyph/services/account-download.service';
 import {AccountFilesService} from '../cyph/services/account-files.service';
 import {AccountInviteService} from '../cyph/services/account-invite.service';
 import {AccountNotificationsService} from '../cyph/services/account-notifications.service';
 import {AccountPostsService} from '../cyph/services/account-posts.service';
+import {AccountService} from '../cyph/services/account.service';
 import {AccountSettingsService} from '../cyph/services/account-settings.service';
 import {AccountUserLookupService} from '../cyph/services/account-user-lookup.service';
-import {AccountService} from '../cyph/services/account.service';
+import {AnalyticsService} from '../cyph/services/analytics.service';
 import {ConfigService} from '../cyph/services/config.service';
-import {AccountAuthService} from '../cyph/services/crypto/account-auth.service';
-import {AccountDatabaseService} from '../cyph/services/crypto/account-database.service';
 import {MainThreadPotassiumService} from '../cyph/services/crypto/main-thread-potassium.service';
 import {PotassiumService} from '../cyph/services/crypto/potassium.service';
 import {CryptocurrencyService} from '../cyph/services/cryptocurrency.service';
 import {DatabaseService} from '../cyph/services/database.service';
 import {DialogService} from '../cyph/services/dialog.service';
 import {EnvService} from '../cyph/services/env.service';
+import {ErrorService} from '../cyph/services/error.service';
+import {FaviconService} from '../cyph/services/favicon.service';
 import {FileService} from '../cyph/services/file.service';
+import {FingerprintService} from '../cyph/services/fingerprint.service';
+import {FirebaseDatabaseService} from '../cyph/services/firebase-database.service';
+import {LocalStorageService} from '../cyph/services/local-storage.service';
+import {NotificationService} from '../cyph/services/notification.service';
+import {PGPService} from '../cyph/services/crypto/pgp.service';
+import {QRService} from '../cyph/services/qr.service';
+import {SalesService} from '../cyph/services/sales.service';
 import {StringsService} from '../cyph/services/strings.service';
+import {WindowWatcherService} from '../cyph/services/window-watcher.service';
+import {WorkerService} from '../cyph/services/worker.service';
 import {resolveStaticServices} from '../cyph/util/static-services';
 import {resolvable} from '../cyph/util/wait';
 import * as util from '../cyph/util';
-import {
-	bootstrap,
-	declarations,
-	imports,
-	providers
-} from '../cyph.app/app-module-options';
+import {AppComponent} from './app.component';
 
 /**
  * Angular module for Cyph SDK.
  */
 @NgModule({
-	bootstrap,
-	declarations,
-	imports: [...imports, ServerModule],
+	bootstrap: [AppComponent],
+	declarations: [AppComponent],
+	imports: [HttpClientModule, RouterModule.forRoot([]), ServerModule],
 	providers: [
-		...providers,
-		{provide: SERVER_TOKEN, useValue: true},
+		/* From sharedModuleProviders */
+		ConfigService,
+		DialogService,
+		EnvService,
+		SalesService,
+		StringsService,
+		{
+			provide: 'EnvService',
+			useExisting: EnvService
+		},
+
+		/* From webModuleProviders */
+		LocalStorageService,
+
+		/* From sharedModuleProviders */
+		AnalyticsService,
+		ErrorService,
+		FaviconService,
+		FileService,
+		NotificationService,
+		WindowWatcherService,
+
+		/* From appModuleProviders */
+		AccountAppointmentsService,
+		AccountAuthService,
+		AccountContactsService,
+		AccountDatabaseService,
+		AccountDownloadService,
+		AccountFilesService,
+		AccountInviteService,
+		AccountNotificationsService,
+		AccountPostsService,
+		AccountService,
+		AccountSettingsService,
+		AccountUserLookupService,
+		CryptocurrencyService,
+		FingerprintService,
+		PGPService,
+		QRService,
+		WorkerService,
+		{
+			provide: DatabaseService,
+			useClass: FirebaseDatabaseService
+		},
+
+		/* SDK-specific */
 		{
 			provide: PotassiumService,
 			useClass: MainThreadPotassiumService
@@ -97,6 +148,7 @@ export class AppModule {
 		dialogService: DialogService,
 		envService: EnvService,
 		fileService: FileService,
+		pgpService: PGPService,
 		potassiumService: PotassiumService,
 		stringsService: StringsService
 	) {
@@ -120,6 +172,7 @@ export class AppModule {
 				DOMPurifyHtmlSanitizer,
 				envService,
 				forms,
+				pgpService,
 				potassiumService,
 				proto,
 				stringsService,
