@@ -52,7 +52,7 @@ for minifyScript in ${minifyScripts} ; do
 	cat ${minifyScript} |
 		perl -pe "s/this\.options\[['\"]sequences['\"]\]/this.options.sequences/g" |
 		perl -pe "s/this\.options\.sequences/this.options.sequences = false/g" |
-		perl -pe "s/reserved:\s*?\[\]/reserved: require('$(echo "${commandsDir}" | sed 's|/|\\/|g')\\/../scripts/mangleexceptions').mangleExceptions/g" |
+		perl -pe "s/reserved:\s*?\[\]/reserved: require('$(echo "${commandsDir}" | sed 's|/|\\/|g')\\/..\\/scripts\\/mangleexceptions').mangleExceptions/g" |
 		perl -pe "s/safari10\s*?=.*?;/safari10 = true;/g" |
 		perl -pe "s/safari10\s*?:\s*?false/safari10: true/g" \
 	> ${minifyScript}.new
