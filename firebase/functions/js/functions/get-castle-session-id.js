@@ -1,5 +1,5 @@
 import {util} from '@cyph/sdk';
-import {getOrSetDefaultSimple, onCall} from '../base.js';
+import {getOrSetDefaultSimple, onCall} from '../init.js';
 
 const {normalizeArray, uuid} = util;
 

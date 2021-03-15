@@ -1,5 +1,6 @@
 import {proto} from '@cyph/sdk';
 import {mailchimpCredentials} from '../cyph-admin-vars.js';
+import {emailRegex} from '../email-regex.js';
 import {
 	addToMailingList,
 	database,
@@ -8,8 +9,7 @@ import {
 	mailchimp,
 	notify,
 	splitName
-} from '../base.js';
-import {emailRegex} from '../email-regex.js';
+} from '../init.js';
 
 const {CyphPlan, CyphPlans, StringProto} = proto;
 

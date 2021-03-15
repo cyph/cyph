@@ -1,4 +1,4 @@
-import {database, getName, getRealUsername, notify} from '../base.js';
+import {database, getName, getRealUsername, notify} from '../init.js';
 
 export const userRegisterConfirmed = async (data, {params}) => {
 	const username = params.user;

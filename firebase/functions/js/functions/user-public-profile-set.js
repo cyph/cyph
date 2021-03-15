@@ -1,5 +1,5 @@
 import {proto, util} from '@cyph/sdk';
-import {database, getItem} from '../base.js';
+import {database, getItem} from '../init.js';
 
 const {AccountUserProfile} = proto;
 const {normalize} = util;

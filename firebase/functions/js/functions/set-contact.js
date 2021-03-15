@@ -6,7 +6,7 @@ import {
 	removeItem,
 	setItem,
 	validateInput
-} from '../base.js';
+} from '../init.js';
 import {notifyUser} from '../notify-user.js';
 
 const {AccountContactState, AccountUserProfile, NotificationTypes} = proto;

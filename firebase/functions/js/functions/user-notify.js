@@ -1,4 +1,4 @@
-import {onCall} from '../base.js';
+import {onCall} from '../init.js';
 import {notifyUser} from '../notify-user.js';
 
 export const userNotify = onCall(async (data, namespace, getUsername) => {

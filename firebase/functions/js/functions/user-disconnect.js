@@ -1,4 +1,4 @@
-import {removeItem} from '../base.js';
+import {removeItem} from '../init.js';
 
 export const userDisconnect = async (data, {params}) => {
 	const username = params.user;

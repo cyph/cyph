@@ -1,5 +1,5 @@
 import {util} from '@cyph/sdk';
-import {database, onCall, validateInput} from '../base.js';
+import {database, onCall, validateInput} from '../init.js';
 
 const {normalize} = util;
 

@@ -1,5 +1,6 @@
 import {configService as config, proto, util} from '@cyph/sdk';
 import {mailchimpCredentials} from '../cyph-admin-vars.js';
+import {sendMailInternal} from '../email.js';
 import {
 	addToMailingList,
 	database,
@@ -13,8 +14,7 @@ import {
 	splitName,
 	validateEmail,
 	validateInput
-} from '../base.js';
-import {sendMailInternal} from '../email.js';
+} from '../init.js';
 import namespaces from '../namespaces.js';
 
 const {CyphPlan, CyphPlans} = proto;

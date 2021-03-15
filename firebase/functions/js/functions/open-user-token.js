@@ -1,4 +1,4 @@
-import {getTokenKey, onRequest, validateInput} from '../base.js';
+import {getTokenKey, onRequest, validateInput} from '../init.js';
 import tokens from '../tokens.js';
 
 export const openUserToken = onRequest(true, async (req, res, namespace) => {

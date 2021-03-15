@@ -1,4 +1,4 @@
-import {onCall} from '../base.js';
+import {onCall} from '../init.js';
 import {sendSMS} from '../sms.js';
 
 export const sendAppLink = onCall(async (data, namespace, getUsername) => {

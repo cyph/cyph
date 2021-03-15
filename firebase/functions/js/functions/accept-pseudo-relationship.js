@@ -8,7 +8,7 @@ import {
 	removeItem,
 	setItem,
 	validateInput
-} from '../base.js';
+} from '../init.js';
 
 const {AccountContactState, StringProto} = proto;
 const {titleize} = util;

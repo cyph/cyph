@@ -1,10 +1,10 @@
-import {configService as config, proto} from '@cyph/sdk';
+import {proto} from '@cyph/sdk';
 import {
 	database,
 	getInviteTemplateData,
 	onCall,
 	validateInput
-} from '../base.js';
+} from '../init.js';
 import {renderTemplate} from '../markdown-templating.js';
 
 const {CyphPlans} = proto;

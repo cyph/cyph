@@ -1,4 +1,4 @@
-import {getTokenKey, onCall} from '../base.js';
+import {getTokenKey, onCall} from '../init.js';
 import tokens from '../tokens.js';
 
 export const getUserToken = onCall(async (data, namespace, getUsername) => {

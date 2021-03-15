@@ -1,4 +1,4 @@
-import {getURL, storage} from '../base.js';
+import {getURL, storage} from '../init.js';
 
 export const itemHashChange = async ({after: data}, {params}) => {
 	if (!data.exists()) {

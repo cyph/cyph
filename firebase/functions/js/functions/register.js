@@ -1,5 +1,6 @@
 import {configService as config, proto, util} from '@cyph/sdk';
 import {mailchimpCredentials} from '../cyph-admin-vars.js';
+import {sendMailInternal} from '../email.js';
 import {
 	admin,
 	auth,
@@ -10,8 +11,7 @@ import {
 	removeFromMailingList,
 	removeItem,
 	setItem
-} from '../base.js';
-import {sendMailInternal} from '../email.js';
+} from '../init.js';
 
 const {BinaryProto, CyphPlan, CyphPlans, StringProto} = proto;
 const {normalize} = util;

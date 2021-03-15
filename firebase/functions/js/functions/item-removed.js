@@ -1,4 +1,4 @@
-import {getURL, removeItem} from '../base.js';
+import {getURL, removeItem} from '../init.js';
 
 export const itemRemoved = async (data, {params}) => {
 	if (data.exists()) {

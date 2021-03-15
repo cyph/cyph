@@ -1,4 +1,4 @@
-import {removeItem} from '../base.js';
+import {removeItem} from '../init.js';
 
 export const channelDisconnect = async ({after: data}, {params}) => {
 	if (!data.exists()) {

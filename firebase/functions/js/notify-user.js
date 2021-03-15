@@ -6,7 +6,7 @@ import {
 	getRealUsername,
 	notify,
 	pushItem
-} from './base.js';
+} from './init.js';
 
 const {AccountFileRecord, AccountNotification, NotificationTypes} = proto;
 const {normalize, titleize} = util;

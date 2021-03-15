@@ -1,11 +1,11 @@
+import {sendMail} from '../email.js';
 import {
 	database,
 	getBurnerLink,
 	getSMSCredentials,
 	onCall,
 	validateEmail
-} from '../base.js';
-import {sendMail} from '../email.js';
+} from '../init.js';
 import {sendSMS} from '../sms.js';
 
 export const burnerInvite = onCall(async (data, namespace, getUsername) => {

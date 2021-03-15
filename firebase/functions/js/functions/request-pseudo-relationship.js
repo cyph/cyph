@@ -1,4 +1,5 @@
 import {configService as config, proto, util} from '@cyph/sdk';
+import {sendMailInternal} from '../email.js';
 import {
 	database,
 	getName,
@@ -7,8 +8,7 @@ import {
 	setItem,
 	validateEmail,
 	validateInput
-} from '../base.js';
-import {sendMailInternal} from '../email.js';
+} from '../init.js';
 import namespaces from '../namespaces.js';
 
 const {AccountContactState} = proto;
