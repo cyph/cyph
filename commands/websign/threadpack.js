@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 import fs from 'fs';
-import terser from 'terser';
+import {minify} from 'terser';
 
 (async () => {
 	const args = {
@@ -23,7 +23,7 @@ import terser from 'terser';
 				'\n\n'
 		);
 
-	const {error} = terser.minify(code);
+	const {error} = minify(code);
 
 	if (error) {
 		fs.appendFileSync(
