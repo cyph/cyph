@@ -1,5 +1,5 @@
 import {Injectable} from '@angular/core';
-import {memoize} from 'lodash-es';
+import memoize from 'lodash-es/memoize';
 import {map} from 'rxjs/operators';
 import {SecurityModels, User} from '../account';
 import {BaseProvider} from '../base-provider';

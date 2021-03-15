@@ -1,5 +1,5 @@
 import {Injectable} from '@angular/core';
-import {memoize} from 'lodash-es';
+import memoize from 'lodash-es/memoize';
 import {BehaviorSubject, of} from 'rxjs';
 import {map} from 'rxjs/operators';
 import {IContactListItem} from '../account';

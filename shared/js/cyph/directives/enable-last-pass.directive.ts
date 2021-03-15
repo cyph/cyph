@@ -1,5 +1,5 @@
 import {Directive, ElementRef, OnInit, Renderer2} from '@angular/core';
-import {memoize} from 'lodash-es';
+import memoize from 'lodash-es/memoize';
 import {BaseProvider} from '../base-provider';
 import {uuid} from '../util/uuid';
 import {sleep} from '../util/wait';

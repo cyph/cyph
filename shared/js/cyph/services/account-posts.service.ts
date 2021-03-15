@@ -1,7 +1,7 @@
 /* eslint-disable max-lines */
 
 import {Injectable} from '@angular/core';
-import {memoize} from 'lodash-es';
+import memoize from 'lodash-es/memoize';
 import {BehaviorSubject, from, Observable} from 'rxjs';
 import {map, switchMap} from 'rxjs/operators';
 import {
