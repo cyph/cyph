@@ -1,5 +1,8 @@
 const cors = require('cors')({origin: true});
-const {database, https} = require('firebase-functions');
+const {database, https} = require('firebase-functions').runWith({
+	memory: '256MB',
+	timeoutSeconds: 60
+});
 const functions = import('./js/index.js');
 
 const onRequest = f =>
