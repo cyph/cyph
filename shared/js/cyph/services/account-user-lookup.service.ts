@@ -16,6 +16,7 @@ import {
 } from '../proto';
 import {normalize} from '../util/formatting';
 import {getOrSetDefaultAsync} from '../util/get-or-set-default';
+import {debugLogTime} from '../util/log';
 import {AccountContactsService} from './account-contacts.service';
 import {AccountDatabaseService} from './crypto/account-database.service';
 import {DatabaseService} from './database.service';
@@ -174,10 +175,35 @@ export class AccountUserLookupService extends BaseProvider {
 		preFetch: boolean = false,
 		skipExistsCheck: boolean = true
 	) : Promise<User | undefined> {
+		let logKey = 'getUser';
+
+		const initialArgs = {
+			blockUntilAlreadyCached,
+			preFetch,
+			skipExistsCheck,
+			user
+		};
+
 		const returnUser = async (userValue?: User) => {
 			if (preFetch && userValue) {
+				debugLogTime(() => ({
+					[`${logKey}_preFetch`]: {
+						initialArgs,
+						user: userValue,
+						username: userValue.username
+					}
+				}));
+
 				await userValue.fetch();
 			}
+
+			debugLogTime(() => ({
+				[`${logKey}_return`]: {
+					initialArgs,
+					user: userValue,
+					username: userValue?.username
+				}
+			}));
 
 			return userValue;
 		};
@@ -191,24 +217,52 @@ export class AccountUserLookupService extends BaseProvider {
 
 		const username = normalize(user);
 
+		logKey += `_${username}`;
+
 		user = this.userCache.get(username);
+
+		debugLogTime(() => ({
+			[`${logKey}_start`]: {
+				initialArgs,
+				preExistingInMemoryCache: user,
+				username
+			}
+		}));
+
 		if (user instanceof User) {
 			return returnUser(user);
 		}
 
 		const url = `users/${username}`;
 
-		if (
-			blockUntilAlreadyCached &&
-			(await this.accountDatabaseService.isCached(`${url}/publicProfile`))
-		) {
+		const isCached = memoize(async () =>
+			this.accountDatabaseService.isCached(`${url}/publicProfile`)
+		);
+
+		if (blockUntilAlreadyCached && (await isCached())) {
 			blockUntilAlreadyCached = false;
 		}
+
+		debugLogTime(async () => ({
+			[`${logKey}_localStorageCache`]: {
+				initialArgs,
+				isCached: await isCached(),
+				username
+			}
+		}));
 
 		user = await getOrSetDefaultAsync(
 			this.userCache,
 			username,
 			async () => {
+				debugLogTime(async () => ({
+					[`${logKey}_downloadFromServer`]: {
+						initialArgs,
+						isCached: await isCached(),
+						username
+					}
+				}));
+
 				if (
 					(!skipExistsCheck && !(await this.exists(username))) ||
 					(await this.isDeactivated(username))
@@ -289,6 +343,14 @@ export class AccountUserLookupService extends BaseProvider {
 					),
 					this.getUnreadMessageCount(username)
 				);
+
+				debugLogTime(async () => ({
+					[`${logKey}_objectInitComplete`]: {
+						initialArgs,
+						username,
+						user: userValue
+					}
+				}));
 
 				const userTypeWhitelist = await this.userTypeWhitelist();
 
