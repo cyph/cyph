@@ -23,6 +23,9 @@ fi
 ./commands/copyworkspace.sh ~/.build
 cd ~/.build
 
+find shared/js -name '*.component.html' -exec bash -c 'echo > {}' \;
+echo "export const bitPayLogo = '';" > shared/js/cyph/components/checkout/bit-pay-logo.ts
+
 ./commands/buildpackage.sh \
 	--branch-dir ~/.build \
 	--environment "${version}" \
