@@ -5,7 +5,7 @@ const {__dirname, isCLI} = getMeta(import.meta);
 
 import fs from 'fs';
 import fetch from 'node-fetch';
-import superSphincs from '/home/gibson/oldsupersphincs/node_modules/supersphincs';
+import superSphincs from '/home/gibson/oldsupersphincs/node_modules/supersphincs/supersphincs.js';
 
 const publicKeys = (() => {
 	const publicKeysJS = fs

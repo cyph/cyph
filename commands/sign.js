@@ -12,7 +12,7 @@ import sodiumUtil from 'sodiumutil';
 import superSphincs from 'supersphincs';
 
 // Temporary workaround pending AGSE update to SuperSPHINCS v6
-import oldSuperSphincs from '/home/gibson/oldsupersphincs/node_modules/supersphincs';
+import oldSuperSphincs from '/home/gibson/oldsupersphincs/node_modules/supersphincs/supersphincs.js';
 
 const remoteAddress = '10.0.0.42';
 const port = 31337;
