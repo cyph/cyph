@@ -42,7 +42,7 @@ try {
 
 		await mkdirp(outputDir);
 
-		fs.writeFileSync(`${outputDir}/current`, timestamp);
+		fs.writeFileSync(`${outputDir}/current`, timestamp.toString());
 
 		fs.writeFileSync(
 			`${outputDir}/pkg`,
