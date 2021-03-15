@@ -418,7 +418,7 @@ for d in ${compiledProjects} ; do
 		(<any> self).translations = ${JSON.stringify(
 			(await import("../commands/translations.js")).translations
 		)};
-	`.trim()))().then(() => process.exit())' > src/js/standalone/translations.ts
+	`.trim()))().then(() => process.exit(0))' > src/js/standalone/translations.ts
 
 	if \
 		( [ "${debug}" ] && [ ! "${debugProdBuild}" ] ) || \

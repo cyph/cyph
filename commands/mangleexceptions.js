@@ -9,5 +9,5 @@ export {mangleExceptions};
 
 if (isCLI) {
 	console.log(JSON.stringify(mangleExceptions));
-	process.exit();
+	process.exit(0);
 }

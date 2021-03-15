@@ -22,4 +22,4 @@ childProcess.spawnSync(
 	{stdio: 'inherit'}
 );
 
-process.exit();
+process.exit(0);

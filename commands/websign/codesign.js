@@ -57,7 +57,7 @@ try {
 	}
 
 	console.log('Code signing complete.');
-	process.exit();
+	process.exit(0);
 }
 catch (err) {
 	console.error(err);

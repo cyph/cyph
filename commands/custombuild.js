@@ -192,5 +192,5 @@ export const customBuild = (id, version) => {
 
 if (isCLI) {
 	console.log(customBuild(process.argv[2]));
-	process.exit();
+	process.exit(0);
 }

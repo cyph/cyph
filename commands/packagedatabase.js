@@ -99,5 +99,5 @@ if (isCLI) {
 		console.log(JSON.stringify(packageDatabase()));
 	}
 
-	process.exit();
+	process.exit(0);
 }

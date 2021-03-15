@@ -84,7 +84,7 @@ if (isCLI) {
 				console.log(s);
 			}
 
-			process.exit();
+			process.exit(0);
 		})
 		.catch(err => {
 			console.error(err);

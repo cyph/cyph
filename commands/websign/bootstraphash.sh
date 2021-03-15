@@ -7,7 +7,7 @@ node -e '(async () => {
 		await (await import("./bootstrapstring.js")).bootstrapString()
 	)).hex);
 
-	process.exit();
+	process.exit(0);
 })().catch(err => {
 	console.error(err);
 	process.exit(1);

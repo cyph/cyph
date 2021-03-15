@@ -35,7 +35,7 @@ import {minify} from 'terser';
 
 	fs.writeFileSync(args.path, code);
 
-	process.exit();
+	process.exit(0);
 })().catch(err => {
 	console.error(err);
 	process.exit(1);

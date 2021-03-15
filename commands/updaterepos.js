@@ -115,7 +115,7 @@ export const updateRepos = async () => {
 if (isCLI) {
 	updateRepos()
 		.then(() => {
-			process.exit();
+			process.exit(0);
 		})
 		.catch(err => {
 			console.error(err);

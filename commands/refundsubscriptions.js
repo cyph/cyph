@@ -72,7 +72,7 @@ if (isCLI) {
 	(async () => {
 		await refundSubscriptions(process.argv.slice(2));
 		console.log('done');
-		process.exit();
+		process.exit(0);
 	})().catch(err => {
 		console.error(err);
 		process.exit(1);

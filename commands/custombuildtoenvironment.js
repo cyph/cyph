@@ -54,7 +54,7 @@ import {customBuild} from './custombuild.js';
 		`.trim()
 	);
 
-	process.exit();
+	process.exit(0);
 })().catch(err => {
 	console.error(err);
 	process.exit(1);

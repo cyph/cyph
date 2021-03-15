@@ -71,7 +71,7 @@ command="$(node -e "(async () => {
 	);
 
 	await browser.close();
-	process.exit();
+	process.exit(0);
 })().catch(() => process.exit(1))" 2> /dev/null | tail -n1)"
 
 if [ ! "$(echo "${command}" | grep "${commandComment}")" ] ; then
@@ -118,7 +118,7 @@ node -e "(async () => {
 	await page.click('.ai1wm-modal-container .ai1wm-button-red');
 
 	await browser.close();
-	process.exit();
+	process.exit(0);
 })().catch(err => {
 	console.error(err);
 	process.exit(1);

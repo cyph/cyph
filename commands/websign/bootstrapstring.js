@@ -60,7 +60,7 @@ if (isCLI) {
 	bootstrapString()
 		.then(content => {
 			console.log(content);
-			process.exit();
+			process.exit(0);
 		})
 		.catch(err => {
 			console.error(err);

@@ -61,7 +61,7 @@ if (isCLI) {
 				await addProCode(projectId, name, password, namespace, email)
 			)
 		);
-		process.exit();
+		process.exit(0);
 	})().catch(err => {
 		console.error(err);
 		process.exit(1);

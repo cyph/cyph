@@ -24,5 +24,5 @@ export const translations = glob
 
 if (isCLI) {
 	console.log(JSON.stringify(translations));
-	process.exit();
+	process.exit(0);
 }

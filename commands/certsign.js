@@ -140,7 +140,7 @@ export const certSign = async (projectId, standalone, namespace) => {
 
 		if (usernames.length < 1) {
 			console.log('No certificate requests.');
-			process.exit();
+			process.exit(0);
 		}
 
 		const agsePublicSigningKeys = getPublicKeys();
@@ -306,7 +306,7 @@ export const certSign = async (projectId, standalone, namespace) => {
 		if (csrs.length < 1) {
 			console.log('No certificates to sign.');
 			if (standalone) {
-				process.exit();
+				process.exit(0);
 			}
 			else {
 				return;
@@ -427,7 +427,7 @@ export const certSign = async (projectId, standalone, namespace) => {
 
 		console.log('Certificate signing complete.');
 		if (standalone) {
-			process.exit();
+			process.exit(0);
 		}
 	}
 	catch (err) {

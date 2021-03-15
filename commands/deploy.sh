@@ -663,7 +663,7 @@ if [ ! "${simple}" ] ; then
 			`], {stdio: "inherit"});
 		}
 
-		process.exit();
+		process.exit(0);
 	})()'
 fi
 

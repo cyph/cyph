@@ -30,4 +30,4 @@ fs.writeFileSync(
 		.join('\n')
 );
 
-process.exit();
+process.exit(0);
