@@ -3,14 +3,16 @@ import firebaseFunctions from 'firebase-functions';
 import fs from 'fs';
 import MailchimpApiV3 from 'mailchimp-api-v3';
 import usernameBlacklistArray from 'username-blacklist';
+import {getMeta} from './base.js';
 import {cyphAdminKey, mailchimpCredentials} from './cyph-admin-vars.js';
 import {initDatabaseService} from './database-service.js';
 import {emailRegex} from './email-regex.js';
 import {initMailchimp} from './mailchimp.js';
-import namespaces from './namespaces.js';
+import {namespaces} from './namespaces.js';
 import {initNotify} from './notify.js';
 import {initTokenKey} from './token-key.js';
 
+const {__dirname} = getMeta(import.meta);
 const {CyphPlans, CyphPlanTypes} = proto;
 const {
 	dynamicDeserialize,

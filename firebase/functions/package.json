@@ -22,6 +22,7 @@
 		"ical-generator": "~0.2",
 		"jsdom": "*",
 		"lodash-es": "*",
+		"lz4": "0.6.3",
 		"mailchimp-api-v3": "*",
 		"markdown-escapes": "*",
 		"markdown-it": "*",

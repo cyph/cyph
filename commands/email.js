@@ -37,6 +37,6 @@ fs.writeFileSync(
 	`${tmp}/markdown-templating.js`,
 	fs.readFileSync(`${__dirname}/../firebase/functions/markdown-templating.js`)
 );
-fs.writeFileSync(`${tmp}/namespaces.js`, 'module.exports = {};');
+fs.writeFileSync(`${tmp}/namespaces.js`, 'export const namespaces = {};');
 
 export const sendMail = (await import(tmp)).sendMailInternal;

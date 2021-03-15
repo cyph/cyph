@@ -1,6 +1,6 @@
 import {potassiumService as potassium} from '@cyph/sdk';
 import memoize from 'lodash-es/memoize.js';
-import tokens from './tokens.js';
+import * as tokens from './tokens.js';
 
 export const initTokenKey = database => ({
 	getTokenKey: memoize(async namespace => {

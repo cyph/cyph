@@ -744,20 +744,20 @@ then
 		}
 
 		cat > functions/js/cyph-admin-vars.js <<- EOM
-			module.exports = {
-				cyphAdminKey: $(getBackendVar CYPH_FIREBASE_ADMIN_KEY),
-				mailchimpCredentials: {
-					apiKey: $(getBackendVar MAILCHIMP_API_KEY),
-					listIDs: {
-						pendingInvites: $(getBackendVar MAILCHIMP_LIST_ID_PENDING_INVITES),
-						users: $(getBackendVar MAILCHIMP_LIST_ID_USERS)
-					}
-				},
-				twilioCredentials: {
-					authToken: $(getBackendVar TWILIO_AUTH_TOKEN),
-					from: $(getBackendVar TWILIO_FROM),
-					id: $(getBackendVar TWILIO_SID)
+			export const cyphAdminKey = $(getBackendVar CYPH_FIREBASE_ADMIN_KEY);
+
+			export const mailchimpCredentials = {
+				apiKey: $(getBackendVar MAILCHIMP_API_KEY),
+				listIDs: {
+					pendingInvites: $(getBackendVar MAILCHIMP_LIST_ID_PENDING_INVITES),
+					users: $(getBackendVar MAILCHIMP_LIST_ID_USERS)
 				}
+			};
+
+			export const twilioCredentials = {
+				authToken: $(getBackendVar TWILIO_AUTH_TOKEN),
+				from: $(getBackendVar TWILIO_FROM),
+				id: $(getBackendVar TWILIO_SID)
 			};
 EOM
 
@@ -821,8 +821,9 @@ EOM
 				;;
 		esac
 
-		node -e "fs.writeFileSync('functions/js/namespaces.js', \`module.exports = \${JSON.stringify(
-			require('glob').sync(\`\${os.homedir()}/.cyph/repos/custom-builds/*/config.json\`).
+		node -e "fs.writeFileSync('functions/js/namespaces.js', \`export const namespaces = \${
+			JSON.stringify(require('glob').
+				sync(\`\${os.homedir()}/.cyph/repos/custom-builds/*/config.json\`).
 				map(path => ({
 					domain: path.split('/').slice(-2)[0],
 					...JSON.parse(fs.readFileSync(path).toString())
@@ -871,7 +872,8 @@ EOM
 						}
 					}
 				)
-		)};\`)"
+			)
+		};\`)"
 
 		firebaseCLI () {
 			./functions/node_modules/node/bin/node functions/node_modules/.bin/firebase "${@}"

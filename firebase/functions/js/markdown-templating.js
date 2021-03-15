@@ -1,15 +1,17 @@
 import fs from 'fs';
 import memoize from 'lodash-es/memoize.js';
-import markdownEscapes from 'markdown-escapes';
+import {markdownEscapes} from 'markdown-escapes';
 import MarkdownIt from 'markdown-it';
 import mustache from 'mustache';
+import {getMeta} from './base.js';
 import {dompurifyHtmlSanitizer} from './dompurify-html-sanitizer.js';
 
+const {__dirname} = getMeta(import.meta);
 const markdownIt = new MarkdownIt();
 
 const markdownEscape = markdown =>
 	typeof markdown === 'string' ?
-		markdownEscapes.commonmark.reduce((s, c) => {
+		markdownEscapes.reduce((s, c) => {
 			while (s.indexOf(c) > -1) {
 				s = s.replace(c, '\n');
 			}

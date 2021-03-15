@@ -3,11 +3,13 @@ import fs from 'fs';
 import ical from 'ical-generator';
 import mustache from 'mustache';
 import nodemailer from 'nodemailer';
+import {getMeta} from './base.js';
 import {dompurifyHtmlSanitizer} from './dompurify-html-sanitizer.js';
 import {from, transport, transportBackup} from './email-credentials.js';
 import {render, renderMarkdown, renderTemplate} from './markdown-templating.js';
-import namespaces from './namespaces.js';
+import {namespaces} from './namespaces.js';
 
+const {__dirname} = getMeta(import.meta);
 const {CalendarInvite, CalendarRecurrenceRules} = proto;
 const {normalize} = util;
 

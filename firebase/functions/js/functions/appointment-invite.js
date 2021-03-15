@@ -2,7 +2,7 @@ import {configService as config} from '@cyph/sdk';
 import {phoneNumberTimezone} from 'phone-number-timezone';
 import {sendMail} from '../email.js';
 import {database, getBurnerLink, getSMSCredentials, onCall} from '../init.js';
-import namespaces from '../namespaces.js';
+import {namespaces} from '../namespaces.js';
 import {sendSMS} from '../sms.js';
 
 export const appointmentInvite = onCall(

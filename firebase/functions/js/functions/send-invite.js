@@ -15,7 +15,7 @@ import {
 	validateEmail,
 	validateInput
 } from '../init.js';
-import namespaces from '../namespaces.js';
+import {namespaces} from '../namespaces.js';
 
 const {CyphPlan, CyphPlans} = proto;
 const {readableID, titleize} = util;

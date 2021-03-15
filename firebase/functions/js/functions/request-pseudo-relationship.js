@@ -9,7 +9,7 @@ import {
 	validateEmail,
 	validateInput
 } from '../init.js';
-import namespaces from '../namespaces.js';
+import {namespaces} from '../namespaces.js';
 
 const {AccountContactState} = proto;
 const {titleize, uuid} = util;

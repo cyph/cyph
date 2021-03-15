@@ -1,6 +1,6 @@
 import {database, getTokenKey, onRequest, validateInput} from '../init.js';
-import namespaces from '../namespaces.js';
-import tokens from '../tokens.js';
+import {namespaces} from '../namespaces.js';
+import * as tokens from '../tokens.js';
 
 export const getBraintreeSubscriptionID = onRequest(
 	true,

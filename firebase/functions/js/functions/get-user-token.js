@@ -1,5 +1,5 @@
 import {getTokenKey, onCall} from '../init.js';
-import tokens from '../tokens.js';
+import * as tokens from '../tokens.js';
 
 export const getUserToken = onCall(async (data, namespace, getUsername) => {
 	const [tokenKey, username] = await Promise.all([
