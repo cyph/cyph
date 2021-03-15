@@ -70,7 +70,6 @@ done
 ngProdFlags='
 	--aot true
 	--build-optimizer true
-	--extract-css true
 	--extract-licenses true
 	--named-chunks false
 	--optimization true

@@ -144,7 +144,7 @@ ngserve () {
 		--port "${port}" \
 		$(if [ "${prodBuild}" ] ; then
 			../commands/prodbuild.sh --no-build |
-				grep -vP '(build-optimizer|extract-css|extract-licenses|named-chunks|output-hashing)'
+				grep -vP '(build-optimizer|extract-licenses|named-chunks|output-hashing)'
 		fi) \
 		$(if [ "${poll}" ] ; then echo '--poll 1000' ; fi) \
 		${args} \
