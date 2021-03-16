@@ -144,6 +144,7 @@ var config = struct {
 	DummyPostalCode               string
 	DummyOrg                      string
 	EmailAddress                  string
+	FirebaseProjects              []string
 	HPKPHeader                    string
 	HSTSHeader                    string
 	IPFSGatewayUptimeCheckTimeout time.Duration
@@ -278,6 +279,17 @@ var config = struct {
 	DummyOrg: "Legion of Doom",
 
 	EmailAddress: "Cyph <hello@cyph.com>",
+
+	FirebaseProjects: []string{
+		"cyphme",
+		"cyph-test-beta",
+		"cyph-test-e2e",
+		"cyph-test-local",
+		"cyph-test-master",
+		"cyph-test-staging",
+		"cyph-test",
+		"cyph-test2",
+	},
 
 	HPKPHeader: "max-age=5184000; pin-sha256=\"unPe8YYMLOhkaAWcjfFF1q571QqcrI5NUfP+0eBT/po=\"; pin-sha256=\"Hw4WoLZDs5AprzDc7tUWz8FDbWw/luIQq+FL03zozsw=\"; preload",
 

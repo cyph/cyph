@@ -1382,21 +1382,32 @@ func signUp(h HandlerArgs) (interface{}, int) {
 }
 
 func warmUpCloudFunctions(h HandlerArgs) (interface{}, int) {
-	for i := range config.CloudFunctionRoutes {
-		client := &http.Client{}
+	results := make(chan int, len(config.FirebaseProjects)*len(config.CloudFunctionRoutes))
 
-		cloudFunctionRoute := config.CloudFunctionRoutes[i]
+	for i := range config.FirebaseProjects {
+		project := config.FirebaseProjects[i]
 
-		req, _ := http.NewRequest(
-			methods.POST,
-			"https://us-central1-"+firebaseProject+".cloudfunctions.net/"+cloudFunctionRoute,
-			bytes.NewBuffer([]byte("")),
-		)
+		for j := range config.CloudFunctionRoutes {
+			go func() {
+				client := &http.Client{}
 
-		req.Header.Add("X-Warmup-Ping", "true")
+				cloudFunctionRoute := config.CloudFunctionRoutes[j]
 
-		client.Do(req)
+				req, _ := http.NewRequest(
+					methods.POST,
+					"https://us-central1-"+project+".cloudfunctions.net/"+cloudFunctionRoute,
+					bytes.NewBuffer([]byte("")),
+				)
+
+				req.Header.Add("X-Warmup-Ping", "true")
+
+				client.Do(req)
+				results <- 0
+			}()
+		}
 	}
+
+	<-results
 
 	return "", http.StatusOK
 }
