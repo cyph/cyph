@@ -214,6 +214,7 @@ var config = struct {
 	CloudFunctionRoutes: []string{
 		"acceptPseudoRelationship",
 		"appointmentInvite",
+		"burnerInvite",
 		"channelDisconnect",
 		"checkInviteCode",
 		"downgradeAccount",
