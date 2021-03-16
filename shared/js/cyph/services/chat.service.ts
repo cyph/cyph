@@ -5,7 +5,7 @@ import memoize from 'lodash-es/memoize';
 import * as msgpack from 'msgpack-lite';
 import {BehaviorSubject, interval, Observable} from 'rxjs';
 /* eslint-disable-next-line @typescript-eslint/tslint/config */
-import {filter, map, switchMap, take, takeWhile} from 'rxjs/operators';
+import {map, switchMap, take, takeWhile} from 'rxjs/operators';
 import {UserLike} from '../account/user-like-type';
 import {BaseProvider} from '../base-provider';
 import {
@@ -1909,29 +1909,11 @@ export class ChatService extends BaseProvider {
 					return;
 				}
 
-				const [isPassiveAccepted] = await Promise.all([
-					this.p2pWebRTCService.handlers.then(async handlers =>
-						handlers.passiveAcceptConfirm(callType)
-					),
-					this.sessionService.freezePong
-						.pipe(
-							filter(b => !b),
-							take(1)
-						)
-						.toPromise()
-				]);
-
 				if (!this.sessionInitService.ephemeral) {
 					this.initProgressStart(42000);
 				}
 
-				if (isPassiveAccepted) {
-					await this.p2pWebRTCService.accept(callType, true);
-				}
-				else if (this.sessionInitService.ephemeral) {
-					await this.close();
-					return;
-				}
+				await this.p2pWebRTCService.accept(callType, true);
 
 				this.p2pWebRTCService.resolveReady();
 
@@ -1939,12 +1921,7 @@ export class ChatService extends BaseProvider {
 					await this.sessionService.beginChat;
 				}
 
-				if (!isPassiveAccepted) {
-					await this.p2pWebRTCService.close();
-				}
-				else {
-					await this.p2pWebRTCService.request(callType, true);
-				}
+				await this.p2pWebRTCService.request(callType, true);
 			});
 
 			this.sessionService.connectFailure.then(async () =>

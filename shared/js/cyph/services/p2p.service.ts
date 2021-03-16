@@ -1,5 +1,4 @@
 import {Injectable} from '@angular/core';
-import memoize from 'lodash-es/memoize';
 import {BehaviorSubject, of} from 'rxjs';
 import {map} from 'rxjs/operators';
 import {IContactListItem} from '../account';
@@ -147,16 +146,6 @@ export class P2PService extends BaseProvider {
 				title: this.stringsService.p2pTitle
 			});
 		},
-		passiveAcceptConfirm: memoize(
-			async callType =>
-				!(await this.dialogService.toast(
-					callType === 'video' ?
-						this.stringsService.p2pWarningVideoPassive :
-						this.stringsService.p2pWarningAudioPassive,
-					5000,
-					this.stringsService.cancel
-				))
-		),
 		requestConfirm: async (callType, isAccepted = false) => {
 			if (isAccepted) {
 				return true;

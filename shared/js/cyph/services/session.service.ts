@@ -906,12 +906,6 @@ export abstract class SessionService extends BaseProvider
 
 		if (localStream) {
 			this.prepareForCallTypeError.next(undefined);
-
-			(async () =>
-				(await p2pWebRTCService.handlers).passiveAcceptConfirm(
-					callType
-				))().catch(() => {});
-
 			return;
 		}
 

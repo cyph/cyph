@@ -29,9 +29,6 @@ export interface IP2PHandlers {
 	/** Local video start confirm handler. */
 	localVideoConfirm: (video: boolean) => Promise<boolean>;
 
-	/** Passive accept confirm handler. */
-	passiveAcceptConfirm: (callType: 'audio' | 'video') => Promise<boolean>;
-
 	/** Request confirm handler. */
 	requestConfirm: (
 		callType: 'audio' | 'video',

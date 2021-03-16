@@ -240,13 +240,6 @@ export class AccountChatService extends ChatService {
 
 		const callRequestPromise = callType ?
 			(async () => {
-				const isPassiveAccepted = await (await this.p2pWebRTCService
-					.handlers).passiveAcceptConfirm(callType);
-
-				if (!isPassiveAccepted) {
-					return false;
-				}
-
 				await this.p2pWebRTCService.accept(callType, true);
 
 				if (burnerSession) {
