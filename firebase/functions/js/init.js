@@ -3,6 +3,7 @@ import firebaseFunctions from 'firebase-functions';
 import fs from 'fs';
 import {promisify} from 'util';
 import {getMeta} from './base.js';
+import {cyphAdminKey} from './cyph-admin-vars.js';
 import {initDatabaseService} from './database-service.js';
 import {initNotify} from './notify.js';
 import {initTokenKey} from './token-key.js';
@@ -10,7 +11,7 @@ import {usernameBlacklist} from './username-blacklist.js';
 import {validateInput} from './validation.js';
 
 const {__dirname} = getMeta(import.meta);
-const {normalize} = util;
+const {dynamicDeserialize, dynamicSerialize, normalize} = util;
 
 export const {
 	admin,
