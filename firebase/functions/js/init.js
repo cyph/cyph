@@ -1,5 +1,5 @@
 import {util} from '@cyph/sdk';
-import firebaseFunctions from 'firebase-functions';
+import functions from 'firebase-functions';
 import fs from 'fs';
 import {promisify} from 'util';
 import {getMeta} from './base.js';
@@ -29,7 +29,7 @@ export const {
 	storage
 } = initDatabaseService(
 	{
-		...firebaseFunctions.config(),
+		...functions.config(),
 		fcmServerKey: (await promisify(fs.readFile)(
 			__dirname + '/fcm-server-key'
 		))
