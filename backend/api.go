@@ -1382,16 +1382,17 @@ func signUp(h HandlerArgs) (interface{}, int) {
 }
 
 func warmUpCloudFunctions(h HandlerArgs) (interface{}, int) {
-	results := make(chan int, len(config.FirebaseProjects)*len(config.CloudFunctionRoutes))
+	resultCount := len(config.FirebaseProjects) * len(config.CloudFunctionRoutes)
+	results := make(chan int, resultCount)
 
 	for i := range config.FirebaseProjects {
 		project := config.FirebaseProjects[i]
 
 		for j := range config.CloudFunctionRoutes {
+			cloudFunctionRoute := config.CloudFunctionRoutes[j]
+
 			go func() {
 				client := &http.Client{}
-
-				cloudFunctionRoute := config.CloudFunctionRoutes[j]
 
 				req, _ := http.NewRequest(
 					methods.POST,
@@ -1407,7 +1408,9 @@ func warmUpCloudFunctions(h HandlerArgs) (interface{}, int) {
 		}
 	}
 
-	<-results
+	for i := 0; i < resultCount; i++ {
+		<-results
+	}
 
 	return "", http.StatusOK
 }
