@@ -10,6 +10,9 @@ import maxmind from 'maxmind';
 import os from 'os';
 import {URL} from 'url';
 
+/* Blacklist of known bad or flagged gateways */
+const blacklist = new Set(['https://astyanax.io/ipfs/:hash']);
+
 export const ipfsGateways = memoize(async () => {
 	const lookup = maxmind.open(os.homedir() + '/.cyph/GeoIP2-City.mmdb');
 
@@ -17,7 +20,7 @@ export const ipfsGateways = memoize(async () => {
 		fs
 			.readFileSync(`${__dirname}/../shared/lib/ipfs-gateways.json`)
 			.toString()
-	).filter(s => !s.startsWith('https://:hash'));
+	).filter(s => !s.startsWith('https://:hash') && !blacklist.has(s));
 
 	return (await Promise.all(
 		gatewayURLs.map(async url => {
