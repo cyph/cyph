@@ -1,12 +1,8 @@
 import {sendMail} from '../email.js';
-import {
-	database,
-	getBurnerLink,
-	getSMSCredentials,
-	onCall,
-	validateEmail
-} from '../init.js';
+import {getBurnerLink} from '../get-burner-link.js';
+import {database, getSMSCredentials, onCall} from '../init.js';
 import {sendSMS} from '../sms.js';
+import {validateEmail} from '../validation.js';
 
 export const burnerInvite = onCall(async (data, namespace, getUsername) => {
 	const {callType, id, name, phoneNumber, telehealth} = data;

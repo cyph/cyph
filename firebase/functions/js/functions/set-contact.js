@@ -1,13 +1,7 @@
 import {proto, util} from '@cyph/sdk';
-import {
-	database,
-	getItem,
-	onCall,
-	removeItem,
-	setItem,
-	validateInput
-} from '../init.js';
+import {database, getItem, onCall, removeItem, setItem} from '../init.js';
 import {notifyUser} from '../notify-user.js';
+import {validateInput} from '../validation.js';
 
 const {AccountContactState, AccountUserProfile, NotificationTypes} = proto;
 const {normalize} = util;

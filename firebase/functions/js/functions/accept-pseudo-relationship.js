@@ -6,9 +6,9 @@ import {
 	notify,
 	onCall,
 	removeItem,
-	setItem,
-	validateInput
+	setItem
 } from '../init.js';
+import {validateInput} from '../validation.js';
 
 const {AccountContactState, StringProto} = proto;
 const {titleize} = util;

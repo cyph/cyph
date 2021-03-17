@@ -1,21 +1,18 @@
 import {configService as config, proto, util} from '@cyph/sdk';
 import {mailchimpCredentials} from '../cyph-admin-vars.js';
 import {sendMailInternal} from '../email.js';
+import {getInviteTemplateData} from '../get-invite-template-data.js';
 import {
-	addToMailingList,
 	database,
-	getInviteTemplateData,
 	getItem,
 	getName,
 	getRealUsername,
-	mailchimp,
 	onCall,
-	setItem,
-	splitName,
-	validateEmail,
-	validateInput
+	setItem
 } from '../init.js';
+import {addToMailingList, mailchimp, splitName} from '../mailchimp.js';
 import {namespaces} from '../namespaces.js';
+import {validateEmail, validateInput} from '../validation.js';
 
 const {CyphPlan, CyphPlans} = proto;
 const {readableID, titleize} = util;

@@ -1,11 +1,8 @@
 import {proto} from '@cyph/sdk';
-import {
-	database,
-	getInviteTemplateData,
-	onCall,
-	validateInput
-} from '../init.js';
+import {getInviteTemplateData} from '../get-invite-template-data.js';
+import {database, onCall} from '../init.js';
 import {renderTemplate} from '../markdown-templating.js';
+import {validateInput} from '../validation.js';
 
 const {CyphPlans} = proto;
 

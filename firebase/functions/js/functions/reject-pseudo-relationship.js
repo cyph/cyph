@@ -1,4 +1,5 @@
-import {database, onCall, removeItem, validateInput} from '../init.js';
+import {database, onCall, removeItem} from '../init.js';
+import {validateInput} from '../validation.js';
 
 export const rejectPseudoRelationship = onCall(
 	async (data, namespace, getUsername) => {

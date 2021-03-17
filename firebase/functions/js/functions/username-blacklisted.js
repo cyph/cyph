@@ -1,5 +1,6 @@
 import {util} from '@cyph/sdk';
-import {isUsernameBlacklisted, onCall, validateInput} from '../init.js';
+import {isUsernameBlacklisted, onCall} from '../init.js';
+import {validateInput} from '../validation.js';
 
 const {normalize} = util;
 

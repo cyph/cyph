@@ -1,5 +1,7 @@
 import {removeItem} from '../init.js';
 
+const channelDisconnectTimeout = 30000;
+
 export const channelDisconnect = async ({after: data}, {params}) => {
 	if (!data.exists()) {
 		return;

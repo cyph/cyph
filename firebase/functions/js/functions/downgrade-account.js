@@ -1,14 +1,8 @@
 import {configService as config, proto} from '@cyph/sdk';
-import {
-	database,
-	getItem,
-	getTokenKey,
-	onRequest,
-	setItem,
-	validateInput
-} from '../init.js';
+import {database, getItem, getTokenKey, onRequest, setItem} from '../init.js';
 import {namespaces} from '../namespaces.js';
 import * as tokens from '../tokens.js';
+import {validateInput} from '../validation.js';
 
 const {CyphPlan, CyphPlans} = proto;
 

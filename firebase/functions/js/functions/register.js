@@ -6,12 +6,11 @@ import {
 	auth,
 	database,
 	isUsernameBlacklisted,
-	mailchimp,
 	onCall,
-	removeFromMailingList,
 	removeItem,
 	setItem
 } from '../init.js';
+import {mailchimp, removeFromMailingList} from '../mailchimp.js';
 
 const {BinaryProto, CyphPlan, CyphPlans, StringProto} = proto;
 const {normalize} = util;

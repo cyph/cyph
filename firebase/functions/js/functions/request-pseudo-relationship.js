@@ -1,15 +1,8 @@
-import {configService as config, proto, util} from '@cyph/sdk';
+import {proto, util} from '@cyph/sdk';
 import {sendMailInternal} from '../email.js';
-import {
-	database,
-	getName,
-	getRealUsername,
-	onCall,
-	setItem,
-	validateEmail,
-	validateInput
-} from '../init.js';
+import {database, getName, getRealUsername, onCall, setItem} from '../init.js';
 import {namespaces} from '../namespaces.js';
+import {validateEmail, validateInput} from '../validation.js';
 
 const {AccountContactState} = proto;
 const {titleize, uuid} = util;
