@@ -123,6 +123,8 @@ export const isUsernameBlacklisted = async (
 			.once('value')).exists());
 
 export const onCall = f => async (req, res) => {
+	let data;
+
 	try {
 		if (req.get('X-Warmup-Ping')) {
 			res.status(200).send('');
@@ -130,7 +132,7 @@ export const onCall = f => async (req, res) => {
 		}
 
 		const idToken = req.get('Authorization');
-		const data = dynamicDeserialize(req.body);
+		data = dynamicDeserialize(req.body);
 
 		const result = await f(
 			data,
@@ -147,7 +149,7 @@ export const onCall = f => async (req, res) => {
 		res.status(200).send(dynamicSerialize({result}));
 	}
 	catch (err) {
-		console.error(err);
+		console.error(err, data);
 		res.status(200).send(
 			dynamicSerialize({
 				err: !err ? true : err.message ? err.message : err.toString()
