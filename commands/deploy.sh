@@ -958,7 +958,7 @@ EOM
 		fi
 
 		while [ ! -f ${result} ] ; do sleep 5 ; done
-		if [ "$(cat ${result})" == 'fail'] ; then fail ; fi
+		if [ "$(cat ${result})" == 'fail' ] ; then fail ; fi
 	done
 
 	rm -rf firebase*/functions/node_modules firebase*/functions/package-lock.json
