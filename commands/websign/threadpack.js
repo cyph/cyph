@@ -3,6 +3,10 @@
 import fs from 'fs';
 import {minify} from 'terser';
 
+const varToSelfReplacements = new Set([
+	'assets/node_modules/openpgp/dist/openpgp.min.js'
+]);
+
 (async () => {
 	const args = {
 		path: process.argv[2]
@@ -11,17 +15,20 @@ import {minify} from 'terser';
 	const code = fs
 		.readFileSync(args.path)
 		.toString()
-		.replace(
-			/importScripts\(\s*["'](.*?)["']\s*\)/g,
-			(_, value) =>
-				'\n\n' +
-				fs
-					.readFileSync(
-						value.slice(value[0] === '/' ? 1 : 0).split('?')[0]
-					)
-					.toString() +
-				'\n\n'
-		);
+		.replace(/importScripts\(\s*["'](.*?)["']\s*\)/g, (_, value) => {
+			const scriptPath = value
+				.slice(value[0] === '/' ? 1 : 0)
+				.split('?')[0];
+
+			let content =
+				'\n\n' + fs.readFileSync(scriptPath).toString() + '\n\n';
+
+			if (varToSelfReplacements.has(scriptPath)) {
+				content = content.replace(/(^|\n)var /, '$1self.');
+			}
+
+			return content;
+		});
 
 	const {error} = minify(code);
 
