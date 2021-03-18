@@ -5,4 +5,4 @@ cron:
 
 - description: "keep Firebase Cloud Function instances warm"
   url: /warmupcloudfunctions
-  schedule: every 1 minutes
+  schedule: every 5 minutes

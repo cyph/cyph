@@ -821,13 +821,13 @@ func downgradeAccount(h HandlerArgs) (interface{}, int) {
 }
 
 func getContinent(h HandlerArgs) (interface{}, int) {
-	_, continentCode, _, _, _, _, _ := geolocate(h)
+	_, continentCode, _, _, _, _, _, _ := geolocate(h)
 	return continentCode, http.StatusOK
 }
 
 func getGeolocation(h HandlerArgs) (interface{}, int) {
-	// continent, continentCode, country, countryCode, city, postalCode, analID := geolocate(h)
-	_, _, _, countryCode, _, _, analID := geolocate(h)
+	// continent, continentCode, country, countryCode, city, postalCode, analID, firebaseRegion := geolocate(h)
+	_, _, _, countryCode, _, _, analID, firebaseRegion := geolocate(h)
 	// org := getOrg(h)
 
 	/* Return fields on an as-needed basis to avoid unnecessarily scaring users */
@@ -837,7 +837,8 @@ func getGeolocation(h HandlerArgs) (interface{}, int) {
 		// "continent":     continent,
 		// "continentCode": continentCode,
 		// "country":       country,
-		"countryCode": countryCode,
+		"countryCode":    countryCode,
+		"firebaseRegion": firebaseRegion,
 		// "org":           org,
 		// "postalCode":    postalCode,
 	}, http.StatusOK
@@ -855,7 +856,7 @@ func getPackage(h HandlerArgs) (interface{}, int) {
 		return "package not found", http.StatusBadRequest
 	}
 
-	_, continentCode, _, _, _, _, _ := geolocate(h)
+	_, continentCode, _, _, _, _, _, _ := geolocate(h)
 
 	return map[string]interface{}{
 		"gateways":  getIPFSGateways(continentCode),
@@ -1382,29 +1383,36 @@ func signUp(h HandlerArgs) (interface{}, int) {
 }
 
 func warmUpCloudFunctions(h HandlerArgs) (interface{}, int) {
-	resultCount := len(config.FirebaseProjects) * len(config.CloudFunctionRoutes)
+	resultCount := len(config.FirebaseRegions) *
+		len(config.FirebaseProjects) *
+		len(config.CloudFunctionRoutes)
+
 	results := make(chan int, resultCount)
 
-	for i := range config.FirebaseProjects {
-		project := config.FirebaseProjects[i]
+	for i := range config.FirebaseRegions {
+		region := config.FirebaseRegions[i]
 
-		for j := range config.CloudFunctionRoutes {
-			cloudFunctionRoute := config.CloudFunctionRoutes[j]
+		for j := range config.FirebaseProjects {
+			project := config.FirebaseProjects[j]
 
-			go func() {
-				client := &http.Client{}
+			for k := range config.CloudFunctionRoutes {
+				route := config.CloudFunctionRoutes[k]
 
-				req, _ := http.NewRequest(
-					methods.POST,
-					"https://us-central1-"+project+".cloudfunctions.net/"+cloudFunctionRoute,
-					bytes.NewBuffer([]byte("")),
-				)
+				go func() {
+					client := &http.Client{}
 
-				req.Header.Add("X-Warmup-Ping", "true")
+					req, _ := http.NewRequest(
+						methods.POST,
+						"https://"+region+"-"+project+".cloudfunctions.net/"+route,
+						bytes.NewBuffer([]byte("")),
+					)
 
-				client.Do(req)
-				results <- 0
-			}()
+					req.Header.Add("X-Warmup-Ping", "true")
+
+					client.Do(req)
+					results <- 0
+				}()
+			}
 		}
 	}
 

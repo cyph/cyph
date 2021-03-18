@@ -129,10 +129,12 @@ var config = struct {
 	BurnerChannelExpiration       int64
 	CacheControlHeader            string
 	CloudFunctionRoutes           []string
+	ContinentFirebaseRegions      map[string]string
 	Continents                    map[string]none
 	DefaultContinent              string
 	DefaultContinentCode          string
 	DefaultContinentCodeBackup    string
+	DefaultFirebaseRegion         string
 	DefaultLanguageCode           string
 	DefaultPackage                string
 	DummyAnalID                   string
@@ -145,6 +147,7 @@ var config = struct {
 	DummyOrg                      string
 	EmailAddress                  string
 	FirebaseProjects              []string
+	FirebaseRegions               []string
 	HPKPHeader                    string
 	HSTSHeader                    string
 	IPFSGatewayUptimeCheckTimeout time.Duration
@@ -242,6 +245,16 @@ var config = struct {
 		"userRegisterConfirmed",
 	},
 
+	ContinentFirebaseRegions: map[string]string{
+		"af": "europe-west1",
+		/* "an": "us-central1", */
+		"as": "asia-northeast1",
+		"eu": "europe-west1",
+		"na": "us-central1",
+		"oc": "australia-southeast1",
+		"sa": "southamerica-east1",
+	},
+
 	Continents: map[string]none{
 		"af": empty,
 		/* "an": empty, */
@@ -257,6 +270,8 @@ var config = struct {
 	DefaultContinentCode: "eu",
 
 	DefaultContinentCodeBackup: "na",
+
+	DefaultFirebaseRegion: "us-central1",
 
 	DefaultLanguageCode: "en",
 
@@ -289,6 +304,14 @@ var config = struct {
 		"cyph-test-staging",
 		"cyph-test",
 		"cyph-test2",
+	},
+
+	FirebaseRegions: []string{
+		"asia-northeast1",
+		"australia-southeast1",
+		"europe-west1",
+		"southamerica-east1",
+		"us-central1",
 	},
 
 	HPKPHeader: "max-age=5184000; pin-sha256=\"unPe8YYMLOhkaAWcjfFF1q571QqcrI5NUfP+0eBT/po=\"; pin-sha256=\"Hw4WoLZDs5AprzDc7tUWz8FDbWw/luIQq+FL03zozsw=\"; preload",

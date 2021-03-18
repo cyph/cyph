@@ -101,6 +101,11 @@ var cyphAdminKey = os.Getenv("CYPH_ADMIN_KEY")
 var cyphFirebaseAdminKey = os.Getenv("CYPH_FIREBASE_ADMIN_KEY")
 
 var firebaseProject = os.Getenv("FIREBASE_PROJECT")
+var firebaseFunctionURL = "https://" +
+	config.DefaultFirebaseRegion +
+	"-" +
+	firebaseProject +
+	".cloudfunctions.net/"
 
 var twilioSID = os.Getenv("TWILIO_SID")
 var twilioAuthToken = os.Getenv("TWILIO_AUTH_TOKEN")
@@ -244,7 +249,7 @@ func generateAPIKey(h HandlerArgs, kind string) (string, *datastore.Key, error) 
 	return apiKey, datastoreKey, nil
 }
 
-func geolocate(h HandlerArgs) (string, string, string, string, string, string, string) {
+func geolocate(h HandlerArgs) (string, string, string, string, string, string, string, string) {
 	if appengine.IsDevAppServer() {
 		return config.DummyContinent,
 			config.DummyContinentCode,
@@ -252,12 +257,20 @@ func geolocate(h HandlerArgs) (string, string, string, string, string, string, s
 			config.DummyCountryCode,
 			config.DummyCity,
 			config.DummyPostalCode,
-			config.DummyAnalID
+			config.DummyAnalID,
+			config.DefaultFirebaseRegion
 	}
 
 	record, err := geodb.City(getIP(h))
 	if err != nil {
-		return config.DefaultContinent, config.DefaultContinentCode, "", "", "", "", ""
+		return config.DefaultContinent,
+			config.DefaultContinentCode,
+			"",
+			"",
+			"",
+			"",
+			"",
+			config.DefaultFirebaseRegion
 	}
 
 	language := config.DefaultLanguageCode
@@ -300,7 +313,12 @@ func geolocate(h HandlerArgs) (string, string, string, string, string, string, s
 		analID = countryCode
 	}
 
-	return continent, continentCode, country, countryCode, city, postalCode, analID
+	firebaseRegion := config.DefaultFirebaseRegion
+	if val, ok := config.ContinentFirebaseRegions[continentCode]; ok {
+		firebaseRegion = val
+	}
+
+	return continent, continentCode, country, countryCode, city, postalCode, analID, firebaseRegion
 }
 
 func getProFeaturesFromRequest(h HandlerArgs) map[string]bool {
@@ -315,7 +333,7 @@ func getProFeaturesFromRequest(h HandlerArgs) map[string]bool {
 }
 
 func getSignupFromRequest(h HandlerArgs) (BetaSignup, map[string]interface{}) {
-	_, _, country, countryCode, _, _, _ := geolocate(h)
+	_, _, country, countryCode, _, _, _, _ := geolocate(h)
 
 	signup := map[string]interface{}{}
 	profile := map[string]interface{}{}
@@ -526,7 +544,7 @@ func downgradeAccountHelper(userToken string, removeAppStoreReceiptRef bool) (st
 
 	req, _ := http.NewRequest(
 		methods.POST,
-		"https://us-central1-"+firebaseProject+".cloudfunctions.net/downgradeAccount",
+		firebaseFunctionURL+"downgradeAccount",
 		bytes.NewBuffer(body),
 	)
 
@@ -587,7 +605,7 @@ func generateInvite(email, name, plan, appStoreReceipt string, braintreeIDs, bra
 
 	req, _ := http.NewRequest(
 		methods.POST,
-		"https://us-central1-"+firebaseProject+".cloudfunctions.net/generateInvite",
+		firebaseFunctionURL+"generateInvite",
 		bytes.NewBuffer(body),
 	)
 
@@ -646,7 +664,7 @@ func getBraintreeSubscriptionID(userToken string) (string, string, int64, error)
 
 	req, _ := http.NewRequest(
 		methods.POST,
-		"https://us-central1-"+firebaseProject+".cloudfunctions.net/getBraintreeSubscriptionID",
+		firebaseFunctionURL+"getBraintreeSubscriptionID",
 		bytes.NewBuffer(body),
 	)
 
@@ -706,7 +724,7 @@ func getUsername(userToken string) (string, error) {
 
 	req, _ := http.NewRequest(
 		methods.POST,
-		"https://us-central1-"+firebaseProject+".cloudfunctions.net/openUserToken",
+		firebaseFunctionURL+"openUserToken",
 		bytes.NewBuffer(body),
 	)
 

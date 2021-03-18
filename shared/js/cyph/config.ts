@@ -70,6 +70,9 @@ export class Config {
 	/** Indicates the default country code. */
 	public readonly defaultCountryCode: string = 'US';
 
+	/** Indicates the default Firebase region. */
+	public readonly defaultFirebaseRegion: string = 'us-central1';
+
 	/** Indicates the original language of any content to be translated. */
 	public readonly defaultLanguage: string = 'en';
 

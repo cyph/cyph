@@ -13,6 +13,7 @@ import 'firebase/storage';
 import {BehaviorSubject, Observable, ReplaySubject, Subscription} from 'rxjs';
 import {skip} from 'rxjs/operators';
 import {env} from '../env';
+import {geolocation} from '../geolocation';
 import {IProto} from '../iproto';
 import {ITimedValue} from '../itimed-value';
 import {ListHoleError} from '../list-hole-error';
@@ -43,6 +44,7 @@ import {
 } from '../util/wait';
 import {PotassiumService} from './crypto/potassium.service';
 import {DatabaseService} from './database.service';
+import {ConfigService} from './config.service';
 import {EnvService} from './env.service';
 import {LocalStorageService} from './local-storage.service';
 import {NotificationService} from './notification.service';
@@ -382,7 +384,10 @@ export class FirebaseDatabaseService extends DatabaseService {
 						} :
 						undefined,
 					method: 'POST',
-					url: `https://us-central1-${this.envService.environment.firebase.project}.cloudfunctions.net/${name}`
+					url: `https://${(await geolocation.firebaseRegion) ||
+						this.configService.defaultFirebaseRegion}-${
+						this.envService.environment.firebase.project
+					}.cloudfunctions.net/${name}`
 				})
 			);
 
@@ -2181,6 +2186,9 @@ export class FirebaseDatabaseService extends DatabaseService {
 
 		/** @ignore */
 		private readonly ngZone: NgZone,
+
+		/** @ignore */
+		private readonly configService: ConfigService,
 
 		/** @ignore */
 		private readonly notificationService: NotificationService,
