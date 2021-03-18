@@ -12,7 +12,7 @@ import {
 } from '../init.js';
 import {mailchimp, removeFromMailingList} from '../mailchimp.js';
 
-const {BinaryProto, CyphPlan, CyphPlans, StringProto} = proto;
+const {BinaryProto, BooleanProto, CyphPlan, CyphPlans, StringProto} = proto;
 const {normalize} = util;
 
 export const register = onCall(
