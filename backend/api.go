@@ -1383,9 +1383,7 @@ func signUp(h HandlerArgs) (interface{}, int) {
 }
 
 func warmUpCloudFunctions(h HandlerArgs) (interface{}, int) {
-	resultCount := len(config.FirebaseRegions) *
-		len(config.FirebaseProjects) *
-		len(config.CloudFunctionRoutes)
+	resultCount := len(config.FirebaseRegions) * len(config.FirebaseProjects)
 
 	results := make(chan int, resultCount)
 
@@ -1395,10 +1393,10 @@ func warmUpCloudFunctions(h HandlerArgs) (interface{}, int) {
 		for j := range config.FirebaseProjects {
 			project := config.FirebaseProjects[j]
 
-			for k := range config.CloudFunctionRoutes {
-				route := config.CloudFunctionRoutes[k]
+			go func() {
+				for k := range config.CloudFunctionRoutes {
+					route := config.CloudFunctionRoutes[k]
 
-				go func() {
 					client := &http.Client{}
 
 					req, _ := http.NewRequest(
@@ -1410,9 +1408,10 @@ func warmUpCloudFunctions(h HandlerArgs) (interface{}, int) {
 					req.Header.Add("X-Warmup-Ping", "true")
 
 					client.Do(req)
-					results <- 0
-				}()
-			}
+				}
+
+				results <- 0
+			}()
 		}
 	}
 
