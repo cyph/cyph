@@ -31,18 +31,18 @@ export class PGPService extends BaseProvider {
 					openpgp.config.commentstring = 'https://www.cyph.com';
 
 					const readRawKey = async (key: Uint8Array | string) =>
-						typeof key === 'string' ?
-							openpgp.key.readArmored(key) :
-							openpgp.key.read(key);
+						openpgp.readKey(
+							typeof key === 'string' ?
+								{armoredKey: key} :
+								{binaryKey: key}
+						);
 
 					const readRawKeys = async (
 						keys: (Uint8Array | string)[] | undefined
 					) =>
 						keys === undefined ?
 							undefined :
-							(await Promise.all(
-								keys.map(async k => (await readRawKey(k)).keys)
-							)).reduce((a, b) => a.concat(b), []);
+							Promise.all(keys.map(readRawKey));
 
 					const transfer = async (data: any) => {
 						data = await data;
@@ -53,13 +53,14 @@ export class PGPService extends BaseProvider {
 
 					const validateSignatures = (
 						signatures: {valid?: boolean}[],
-						publicKeys: any[]
+						publicKeys?: any[]
 					) =>
-						publicKeys.length < 1 ||
-						(signatures.length >= publicKeys.length &&
-							signatures
-								.map(sig => !!sig.valid)
-								.reduce((a, b) => a && b, true));
+						!!publicKeys &&
+						(publicKeys.length < 1 ||
+							(signatures.length >= publicKeys.length &&
+								signatures
+									.map(sig => !!sig.valid)
+									.reduce((a, b) => a && b, true)));
 
 					(<any> self).Comlink.expose(
 						{
@@ -76,11 +77,11 @@ export class PGPService extends BaseProvider {
 									privateKeys,
 									publicKeys
 								] = await Promise.all([
-									typeof cyphertext === 'string' ?
-										openpgp.message.readArmored(
-											cyphertext
-										) :
-										openpgp.message.read(cyphertext),
+									openpgp.readMessage(
+										typeof cyphertext === 'string' ?
+											{armoredMessage: cyphertext} :
+											{binaryMessage: cyphertext}
+									),
 									readRawKeys(privateKeysRaw),
 									readRawKeys(signingPublicKeysRaw)
 								]);
@@ -115,8 +116,8 @@ export class PGPService extends BaseProvider {
 
 								const message =
 									typeof plaintext === 'string' ?
-										openpgp.message.fromText(plaintext) :
-										openpgp.message.fromBinary(plaintext);
+										openpgp.Message.fromText(plaintext) :
+										openpgp.Message.fromBinary(plaintext);
 
 								const [
 									privateKeys,
@@ -126,28 +127,24 @@ export class PGPService extends BaseProvider {
 									readRawKeys(publicKeysRaw)
 								]);
 
-								const o = await openpgp.encrypt({
-									armor,
-									message,
-									privateKeys,
-									publicKeys
-								});
-
 								return transfer(
-									armor ? o.data : o.message.packets.write()
+									await openpgp.encrypt({
+										armor,
+										message,
+										privateKeys,
+										publicKeys
+									})
 								);
 							},
 							getPrivateKeyArmor: async (
 								privateKeyRaw: Uint8Array | string
-							) =>
-								(await readRawKey(
-									privateKeyRaw
-								)).keys[0].armor(),
+							) => (await readRawKey(privateKeyRaw)).armor(),
 							getPublicKeyMetadata: async (
 								publicKeyRaw: Uint8Array | string
 							) => {
-								const o = await readRawKey(publicKeyRaw);
-								const publicKey = o.keys[0].toPublic();
+								const publicKey = (await readRawKey(
+									publicKeyRaw
+								)).toPublic();
 
 								const expirationTime = await publicKey.getExpirationTime();
 
@@ -188,8 +185,7 @@ export class PGPService extends BaseProvider {
 										rsaBits: 4096,
 										userIds: [options]
 									})).key :
-									(await readRawKey(options.privateKey))
-										.keys[0];
+									await readRawKey(options.privateKey);
 
 								if (
 									'privateKey' in options &&
@@ -242,35 +238,43 @@ export class PGPService extends BaseProvider {
 												message:
 													typeof signed.message ===
 													'string' ?
-														openpgp.cleartext.fromText(
+														openpgp.CleartextMessage.fromText(
 															signed.message
 														) :
-														openpgp.message.fromBinary(
+														openpgp.Message.fromBinary(
 															signed.message
 														),
-												signature: await (typeof signed.signature ===
-												'string' ?
-													openpgp.signature.readArmored(
-														signed.signature
-													) :
-													openpgp.signature.read(
-														signed.signature
-													))
+												signature: await openpgp.readSignature(
+													typeof signed.signature ===
+														'string' ?
+														{
+															armoredSignature:
+																signed.signature
+														} :
+														{
+															binarySignature:
+																signed.signature
+														}
+												)
 											}))() :
 										typeof signed === 'string' ?
 											(async () => {
 												try {
-													return await openpgp.cleartext.readArmored(
-														signed
+													return openpgp.readCleartextMessage(
+														{
+															cleartextMessage: signed
+														}
 													);
 												}
 												catch {
-													return openpgp.message.readArmored(
-														signed
-													);
+													return openpgp.readMessage({
+														armoredMessage: signed
+													});
 												}
 											})() :
-											openpgp.message.read(signed),
+											openpgp.readMessage({
+												binaryMessage: signed
+											}),
 										readRawKeys(publicKeysRaw)
 									]
 								);
@@ -307,29 +311,22 @@ export class PGPService extends BaseProvider {
 
 								const pgpMessage =
 									typeof message === 'string' ?
-										openpgp.cleartext.fromText(message) :
-										openpgp.message.fromBinary(message);
+										openpgp.CleartextMessage.fromText(
+											message
+										) :
+										openpgp.Message.fromBinary(message);
 
 								const privateKeys = await readRawKeys(
 									privateKeysRaw
 								);
 
-								const o = await openpgp.sign({
-									armor,
-									detached,
-									message: pgpMessage,
-									privateKeys
-								});
-
 								return transfer(
-									armor ?
-										detached ?
-											o.signature :
-											o.data :
-										(detached ?
-											o.signature :
-											o.message
-										).packets.write()
+									await openpgp.sign({
+										armor,
+										detached,
+										message: pgpMessage,
+										privateKeys
+									})
 								);
 							}
 						},
