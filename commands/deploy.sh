@@ -883,7 +883,8 @@ EOM
 		};\`)"
 
 		firebaseCLI () {
-			./functions/node_modules/node/bin/node functions/node_modules/.bin/firebase "${@}" |
+			./functions/node_modules/node/bin/node functions/node_modules/.bin/firebase \
+				--project=${firebaseProject} "${@}" |
 				tee firebase.out
 
 			# Workaround for Firebase CLI bug (edge case function deployment failure)
@@ -916,7 +917,6 @@ EOM
 		)"
 
 		cp -f ~/.cyph/firebase-credentials/${firebaseProject}.fcm functions/js/fcm-server-key
-		firebaseCLI use --add "${firebaseProject}"
 		firebaseCLI functions:config:set project.id="${firebaseProject}"
 		gsutil cors set storage.cors.json "gs://${firebaseProject}.appspot.com"
 
