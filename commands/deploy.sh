@@ -902,7 +902,10 @@ EOM
 				tr '.' ' ' |
 				awk '{print $2}' |
 				sort |
-				uniq
+				uniq |
+				tr '\n' ',' |
+				perl -pe 's/((.*?,){4}.*?),/\1\n/g' |
+				perl -pe 's/,$/\n/g'
 		)"
 
 		cp -f ~/.cyph/firebase-credentials/${firebaseProject}.fcm functions/js/fcm-server-key
