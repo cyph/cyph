@@ -228,6 +228,15 @@
 				></cyph-footer>
 			</div>
 		</footer>
+
+		<cyph-spinner
+			class="global"
+			mode="indeterminate"
+			*ngIf="
+				(appService.chatRootState | await) === chatRootStates.chat &&
+				chat?.state === chatStates.none
+			"
+		></cyph-spinner>
 	</section>
 
 	<cyph-chat-cyphertext></cyph-chat-cyphertext>

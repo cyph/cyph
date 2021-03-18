@@ -131,6 +131,15 @@
 					</cyph-chat-main>
 				</ng-template>
 			</div>
+
+			<cyph-spinner
+				class="global"
+				mode="indeterminate"
+				*ngIf="
+					chat?.state === states.none &&
+					(anonymousChatInitiating | await) !== true
+				"
+			></cyph-spinner>
 		</div>
 	</ng-container>
 
