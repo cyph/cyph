@@ -729,9 +729,16 @@ then
 	cp ../../modules/*.js ~/.cyph/email-credentials.js js/
 	html-minifier --collapse-whitespace --minify-css --remove-comments js/email.html -o js/email.html
 
-	cd ..
+	cd ../..
 
-	for firebaseProject in ${firebaseProjects} ; do
+	for firebaseProject in ${firebaseProjects} ; do {
+		if [ ! "${test}" ] ; then
+			cd firebase
+		else
+			cp -a firebase firebase.${firebaseProject}
+			cd firebase.${firebaseProject}
+		fi
+
 		getBackendVar () {
 			{ grep "${1}" ~/.cyph/backend.vars || grep "${1}" ~/.cyph/backend.vars.$(
 				if [ "${firebaseProject}" == 'cyphme' ] ; then
@@ -918,7 +925,10 @@ EOM
 			firebaseCLI deploy --except functions && break
 
 			i=$((i+1))
-			if [ $i -gt 5 ] ; then fail ; fi
+			if [ $i -gt 5 ] ; then
+				echo fail > result
+				fail
+			fi
 
 			sleep 60
 		done
@@ -929,15 +939,29 @@ EOM
 				firebaseCLI deploy --only functions:${function} && break
 
 				i=$((i+1))
-				if [ $i -gt 5 ] ; then fail ; fi
+				if [ $i -gt 5 ] ; then
+					echo fail > result
+					fail
+				fi
 
 				sleep 60
 			done
 		done
+
+		echo pass > result
+	} & done
+
+	for firebaseProject in ${firebaseProjects} ; do
+		result=firebase/result
+		if [ "${test}" ] ; then
+			result=firebase.${firebaseProject}/result
+		fi
+
+		while [ ! -f ${result} ] ; do sleep 5 ; done
+		if [ "$(cat ${result})" == 'fail'] ; then fail ; fi
 	done
 
-	rm -rf functions/node_modules functions/package-lock.json
-	cd ..
+	rm -rf firebase*/functions/node_modules firebase*/functions/package-lock.json
 fi
 
 backendFirebaseProject='cyphme'
