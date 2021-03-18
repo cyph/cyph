@@ -876,8 +876,34 @@ EOM
 		};\`)"
 
 		firebaseCLI () {
-			./functions/node_modules/node/bin/node functions/node_modules/.bin/firebase "${@}"
+			./functions/node_modules/node/bin/node functions/node_modules/.bin/firebase "${@}" |
+				tee firebase.out
+
+			# Workaround for Firebase CLI bug (edge case function deployment failure)
+			if \
+				(( $? )) || \
+				cat firebase.out | \
+					grep 'Unable to set publicly accessible IAM policy' &> /dev/null
+			then
+				rm firebase.out 2> /dev/null
+				return 1
+			fi
+
+			rm firebase.out 2> /dev/null
+			return 0
 		}
+
+		functions="$(
+			cat functions/index.js |
+				tr '\n' '☁' |
+				perl -pe 's/\/\*.*?\*\///g' |
+				tr '☁' '\n' |
+				grep 'exports\.' |
+				tr '.' ' ' |
+				awk '{print $2}' |
+				sort |
+				uniq
+		)"
 
 		cp -f ~/.cyph/firebase-credentials/${firebaseProject}.fcm functions/js/fcm-server-key
 		firebaseCLI use --add "${firebaseProject}"
@@ -886,12 +912,24 @@ EOM
 
 		i=0
 		while true ; do
-			firebaseCLI deploy && break
+			firebaseCLI deploy --except functions && break
 
 			i=$((i+1))
 			if [ $i -gt 5 ] ; then fail ; fi
 
-			sleep 10
+			sleep 60
+		done
+
+		for function in "${functions}" ; do
+			i=0
+			while true ; do
+				firebaseCLI deploy --only functions:${function} && break
+
+				i=$((i+1))
+				if [ $i -gt 5 ] ; then fail ; fi
+
+				sleep 60
+			done
 		done
 	done
 
