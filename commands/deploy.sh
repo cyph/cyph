@@ -920,7 +920,7 @@ EOM
 			sleep 60
 		done
 
-		for function in "${functions}" ; do
+		for function in ${functions} ; do
 			i=0
 			while true ; do
 				firebaseCLI deploy --only functions:${function} && break
