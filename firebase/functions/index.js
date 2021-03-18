@@ -1,16 +1,16 @@
 const cors = require('cors')({origin: true});
-const {database, https} = require('firebase-functions')
-	.runWith({
-		memory: '256MB',
-		timeoutSeconds: 60
-	})
-	.region(
-		'asia-northeast1',
-		'australia-southeast1',
-		'europe-west1',
-		'southamerica-east1',
-		'us-central1'
-	);
+const functions = require('firebase-functions').runWith({
+	memory: '256MB',
+	timeoutSeconds: 60
+});
+const {database} = functions;
+const {https} = functions.region(
+	'asia-northeast1',
+	'australia-southeast1',
+	'europe-west1',
+	'southamerica-east1',
+	'us-central1'
+);
 
 const importFunction = async functionName =>
 	import(`./js/functions/${functionName}.js`);
