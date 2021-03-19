@@ -8,7 +8,7 @@ import {namespaces} from '../namespaces.js';
 import * as tokens from '../tokens.js';
 import {validateEmail, validateInput} from '../validation.js';
 
-const {CyphPlan, CyphPlans} = proto;
+const {BooleanProto, CyphPlan, CyphPlans} = proto;
 const {readableID, titleize} = util;
 
 export const generateInvite = onRequest(true, async (req, res, namespace) => {

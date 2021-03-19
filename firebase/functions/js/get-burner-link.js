@@ -40,4 +40,4 @@ export const getBurnerLink = (
 ) =>
 	`${getFullBurnerBaseURL(namespace, callType, telehealth, !!username)}${
 		username ? `${username}/` : ''
-	}${validateInput(id, /^[A-Za-z0-9_-]+(\.[A-Za-z0-9]4})?$/)}`;
+	}${validateInput(id, /^[A-Za-z0-9_-]+(\.[A-Za-z0-9]{4})?$/)}`;

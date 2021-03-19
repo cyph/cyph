@@ -14,7 +14,7 @@ import {addToMailingList, mailchimp, splitName} from '../mailchimp.js';
 import {namespaces} from '../namespaces.js';
 import {validateEmail, validateInput} from '../validation.js';
 
-const {CyphPlan, CyphPlans} = proto;
+const {BooleanProto, CyphPlan, CyphPlans} = proto;
 const {readableID, titleize} = util;
 
 export const sendInvite = onCall(async (data, namespace, getUsername) => {
