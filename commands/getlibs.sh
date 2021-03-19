@@ -376,9 +376,6 @@ done
 # Temporary workaround for https://github.com/pierrec/node-lz4/pull/64#issuecomment-416119077
 cp -f lz4/lib/utils-js.js lz4/lib/utils.js
 
-# Temporary workaround for https://github.com/microsoft/TypeScript/issues/33752
-sed -i 's|: readonly|:|g' typescript/lib/lib.es2015.promise.d.ts
-
 # Temporary workaround for https://github.com/dcodeIO/protobuf.js/issues/863
 while true ; do
 	for host in raw.githubusercontent.com cdn.rawgit.com rawgit.com ; do
