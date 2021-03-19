@@ -354,6 +354,14 @@ done
 # Temporary workaround pending https://github.com/syncfusion/ej2-javascript-ui-controls/pull/86
 echo 'NSw2YzUsMjAKPCBleHBvcnQgaW50ZXJmYWNlIEFuZ3VsYXJFdmVudEVtaXR0ZXIgewo8ICAgICBzdWJzY3JpYmU/OiAoZ2VuZXJhdG9yT3JOZXh0PzogYW55LCBlcnJvcj86IGFueSwgY29tcGxldGU/OiBhbnkpID0+IGFueTsKLS0tCj4gZXhwb3J0IGludGVyZmFjZSBBbmd1bGFyRXZlbnRFbWl0dGVyPFQ+IHsKPiAgICAgY2xvc2VkOiBib29sZWFuOwo+ICAgICBoYXNFcnJvcjogYm9vbGVhbjsKPiAgICAgaXNTdG9wcGVkOiBib29sZWFuOwo+ICAgICBvYnNlcnZlcnM6IGFueVtdOwo+ICAgICB0aHJvd25FcnJvcjogYW55Owo+ICAgICBfc3Vic2NyaWJlKHN1YnNjcmliZXI6IGFueSk6IGFueTsKPiAgICAgX3RyeVN1YnNjcmliZShzdWJzY3JpYmVyOiBhbnkpOiBhbnk7Cj4gICAgIGFzT2JzZXJ2YWJsZSgpOiBhbnk7Cj4gICAgIGNvbXBsZXRlKCk6IHZvaWQ7Cj4gICAgIGVtaXQodmFsdWU/OiBUKTogdm9pZDsKPiAgICAgZXJyb3IoZXJyOiBhbnkpOiB2b2lkOwo+ICAgICBsaWZ0PF9SPihvcGVyYXRvcjogYW55KTogYW55Owo+ICAgICBuZXh0KHZhbHVlPzogVCk6IHZvaWQ7Cj4gICAgIHN1YnNjcmliZShnZW5lcmF0b3JPck5leHQ/OiBhbnksIGVycm9yPzogYW55LCBjb21wbGV0ZT86IGFueSk6IGFueTsKPiAgICAgdW5zdWJzY3JpYmUoKTogdm9pZDsKOGMyMgo8IGV4cG9ydCBkZWNsYXJlIHR5cGUgRW1pdFR5cGU8VD4gPSBBbmd1bGFyRXZlbnRFbWl0dGVyICYgKChhcmc/OiBULCAuLi5yZXN0OiBhbnlbXSkgPT4gdm9pZCk7Ci0tLQo+IGV4cG9ydCBkZWNsYXJlIHR5cGUgRW1pdFR5cGU8VD4gPSBBbmd1bGFyRXZlbnRFbWl0dGVyPFQ+ICYgKChhcmc/OiBULCAuLi5yZXN0OiBhbnlbXSkgPT4gdm9pZCk7Cg==' | base64 --decode | patch @syncfusion/ej2-base/src/base.d.ts
 
+# Workaround for https://github.com/DevExpress/DevExtreme/issues/15570
+for f in devextreme/dist/css/*.css ; do
+	node -e "fs.writeFileSync('${f}', fs.readFileSync('${f}').toString().
+		replace(/^@charset .UTF-8.;\n/, '').
+		replace(/[^\\x00-\\x7F]/g, c => \`\\\\\${c.codePointAt(0).toString(16)}\`)
+	)"
+done
+
 # Temporary workaround for unwanted font imports
 for f in devextreme/dist/css/*.css ; do
 	cat "${f}" |
