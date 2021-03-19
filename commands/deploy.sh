@@ -901,7 +901,7 @@ EOM
 			return 0
 		}
 
-		functions="$(
+		functionGroups="$(
 			cat functions/index.js |
 				tr '\n' '☁' |
 				perl -pe 's/\/\*.*?\*\///g' |
@@ -911,6 +911,7 @@ EOM
 				awk '{print $2}' |
 				sort |
 				uniq |
+				perl -pe 's/^(.+)$/functions:\1/g' |
 				tr '\n' ',' |
 				perl -pe 's/((.*?,){4}.*?),/\1\n/g' |
 				perl -pe 's/,$/\n/g'
@@ -933,10 +934,10 @@ EOM
 			sleep 60
 		done
 
-		for function in ${functions} ; do
+		for functionGroup in ${functionGroups} ; do
 			i=0
 			while true ; do
-				firebaseCLI deploy --only functions:${function} && break
+				firebaseCLI deploy --only ${functionGroup} && break
 
 				i=$((i+1))
 				if [ $i -gt 5 ] ; then
