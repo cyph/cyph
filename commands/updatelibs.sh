@@ -319,6 +319,7 @@ read -r -d '' modules <<- EOM
 	lamejs
 	lazy
 	leaflet
+	libpotassium
 	libsodium
 	libsodium-sumo
 	libsodium-wrappers

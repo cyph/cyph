@@ -1,0 +1,25 @@
+{
+	"name": "libpotassium",
+	"version": "0.0.2",
+	"license": "Cyph-RSL",
+	"type": "module",
+	"main": "./dist/libpotassium.js",
+	"files": [
+		"/dist",
+		"/LICENSE",
+		"/README.md"
+	],
+	"description": "Internal Potassium build",
+	"keywords": [
+		"cryptography",
+		"post-quantum"
+	],
+	"author": "Cyph, Inc. <libpotassium@cyph.com> (https://github.com/cyph)",
+	"repository": {
+		"type": "git",
+		"url": "git://github.com/cyph/cyph.git"
+	},
+	"bugs": {
+		"url": "https://github.com/cyph/cyph/issues"
+	}
+}

@@ -2,6 +2,7 @@
 
 
 eval "$(parseArgs \
+	--opt-bool libpotassium \
 	--opt-bool prod-test \
 	--opt-bool service-worker \
 	--opt-bool test \
@@ -16,6 +17,7 @@ if [ "${CIRCLECI}" ] ; then
 	parallelProcesses=2
 fi
 
+libpotassium="$(getBoolArg ${_arg_libpotassium})"
 prodTest="$(getBoolArg ${_arg_prod_test})"
 serviceWorker="$(getBoolArg ${_arg_service_worker})"
 test="$(getBoolArg ${_arg_test})"
@@ -66,6 +68,7 @@ typescriptAssets="$(
 		echo cyph/crypto/native-web-crypto-polyfill;
 		echo standalone/analytics;
 		echo standalone/node-polyfills;
+		if [ "${libpotassium}" ] ; then echo cyph/crypto/potassium/index ; fi;
 		grep -roP "importScripts\('/assets/js/.*?\.js'\)" shared/js |
 			perl -pe "s/^.*?'\/assets\/js\/(.*?)\.js'.*/\1/g" |
 			grep -vP '^standalone/global$' \

@@ -26,7 +26,9 @@ export class ThreadedPotassiumService extends PotassiumUtil
 			.createThread<any>(
 				/* eslint-disable-next-line prefer-arrow/prefer-arrow-functions */
 				function () : void {
-					importScripts('/assets/js/cyph/crypto/potassium/index.js');
+					importScripts(
+						'/assets/node_modules/libpotassium/dist/libpotassium.js'
+					);
 
 					const potassium = new (<any> self).Potassium(
 						(<any> self).threadLocals.isNative
