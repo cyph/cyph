@@ -376,6 +376,7 @@ fi
 cd ~/.build
 
 if [ ! "${test}" ] ; then
+	sed -i 's|# instance_class|instance_class|' backend/app.yaml
 	echo '  PROD: true' >> backend/app.yaml
 	cat ~/.cyph/backend.vars.prod >> backend/app.yaml
 else

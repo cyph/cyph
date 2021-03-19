@@ -1,5 +1,8 @@
 runtime: go115
 
+# Prod-only:
+# instance_class: F2
+
 handlers:
 - url: /chat-widget.js
   static_files: chat-widget.js
