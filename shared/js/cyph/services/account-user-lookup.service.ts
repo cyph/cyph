@@ -185,6 +185,12 @@ export class AccountUserLookupService extends BaseProvider {
 		};
 
 		const returnUser = async (userValue?: User) => {
+			let fetchPromise: Promise<void> | undefined;
+
+			if (!blockUntilAlreadyCached && userValue) {
+				fetchPromise = userValue.fetch(true);
+			}
+
 			if (preFetch && userValue) {
 				debugLogTime(() => ({
 					[`${logKey}_preFetch`]: {
@@ -194,7 +200,7 @@ export class AccountUserLookupService extends BaseProvider {
 					}
 				}));
 
-				await userValue.fetch();
+				(await fetchPromise) || userValue.fetch();
 			}
 
 			debugLogTime(() => ({

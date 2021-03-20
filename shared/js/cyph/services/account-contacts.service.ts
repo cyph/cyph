@@ -205,7 +205,7 @@ export class AccountContactsService extends BaseProvider {
 				filterUndefined(
 					await Promise.all(
 						normalizeArray(usernames).map(async username =>
-							accountUserLookupService.getUser(username)
+							accountUserLookupService.getUser(username, true)
 						)
 					)
 				)

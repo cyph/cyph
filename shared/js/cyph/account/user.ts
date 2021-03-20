@@ -20,6 +20,7 @@ import {toBehaviorSubject} from '../util/flatten-observable';
 import {lockFunction, lockTryOnce} from '../util/lock';
 import {arraySum} from '../util/reducers';
 import {staticDomSanitizer} from '../util/static-services';
+import {resolvable} from '../util/wait';
 import {UserPresence} from './enums';
 import {reviewMax} from './review-max';
 
@@ -48,6 +49,9 @@ export class User {
 
 	/** @ignore */
 	private readonly fetchLock = {};
+
+	/** @ignore */
+	private readonly fetchLockBypassed = resolvable();
 
 	/** Indicates that user is not anonymous. */
 	public readonly anonymous: false = false;
@@ -172,15 +176,24 @@ export class User {
 	);
 
 	/** Fetches user data and sets ready to true when complete. */
-	public async fetch () : Promise<void> {
+	public async fetch (bypassLock: boolean = false) : Promise<void> {
 		if (this.ready.value) {
 			return;
 		}
 
+		if (bypassLock) {
+			await this.accountUserProfile.getValue();
+			this.fetchLockBypassed.resolve();
+			this.ready.next(true);
+			return;
+		}
+
 		await lockTryOnce(this.fetchLock, async () => {
-			await User.fetchLock(async () =>
-				this.accountUserProfile.getValue()
-			);
+			await Promise.race([
+				User.fetchLock(async () => this.accountUserProfile.getValue()),
+				this.fetchLockBypassed
+			]);
+
 			this.ready.next(true);
 		});
 	}
