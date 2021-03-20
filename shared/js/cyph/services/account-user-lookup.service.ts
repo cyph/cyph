@@ -200,7 +200,11 @@ export class AccountUserLookupService extends BaseProvider {
 					}
 				}));
 
-				(await fetchPromise) || userValue.fetch();
+				if (!fetchPromise) {
+					fetchPromise = userValue.fetch();
+				}
+
+				await fetchPromise;
 			}
 
 			debugLogTime(() => ({
