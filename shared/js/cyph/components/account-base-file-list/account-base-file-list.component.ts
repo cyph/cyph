@@ -185,13 +185,16 @@ export class AccountBaseFileListComponent extends BaseProvider
 			return {
 				isPrimary: toBehaviorSubject(
 					pgpKeyFingerprint ?
-						this.accountFilesService.pgp.primaryKeyFingerprint.pipe(
-							map(
-								fingerprint =>
-									!!fingerprint &&
-									normalize(fingerprint) === pgpKeyFingerprint
-							)
-						) :
+						this.accountFilesService.pgp
+							.primaryKeyFingerprint()
+							.pipe(
+								map(
+									fingerprint =>
+										!!fingerprint &&
+										normalize(fingerprint) ===
+											pgpKeyFingerprint
+								)
+							) :
 						of(false),
 					false
 				),

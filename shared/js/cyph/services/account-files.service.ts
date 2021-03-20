@@ -1048,30 +1048,34 @@ export class AccountFilesService extends BaseProvider {
 					.pgp?.publicKey
 			)).pgpMetadata.fingerprint;
 
-		const primaryKeyFingerprint = toBehaviorSubject(
-			this.accountDatabaseService.currentUserFiltered.pipe(
-				switchMap(o => o.user.extra()),
-				switchMap(
-					async o =>
-						(await this.pgpService.getPublicKeyMetadata(
-							o?.pgp?.publicKey
-						))?.pgpMetadata.fingerprint
-				)
-			),
-			undefined
+		const primaryKeyFingerprint = memoize(() =>
+			toBehaviorSubject(
+				this.accountDatabaseService.currentUserFiltered.pipe(
+					switchMap(o => o.user.extra()),
+					switchMap(
+						async o =>
+							(await this.pgpService.getPublicKeyMetadata(
+								o?.pgp?.publicKey
+							))?.pgpMetadata.fingerprint
+					)
+				),
+				undefined
+			)
 		);
 
-		const primaryKey = toBehaviorSubject(
-			primaryKeyFingerprint.pipe(
-				switchMap(async fingerprint =>
-					!fingerprint ?
-						undefined :
-						this.downloadPGPKey({fingerprint}).catch(
-							() => undefined
-						)
-				)
-			),
-			undefined
+		const primaryKey = memoize(() =>
+			toBehaviorSubject(
+				primaryKeyFingerprint().pipe(
+					switchMap(async fingerprint =>
+						!fingerprint ?
+							undefined :
+							this.downloadPGPKey({fingerprint}).catch(
+								() => undefined
+							)
+					)
+				),
+				undefined
+			)
 		);
 
 		const setPrimaryKeyInternal = async (
