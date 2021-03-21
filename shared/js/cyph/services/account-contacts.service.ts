@@ -195,7 +195,7 @@ export class AccountContactsService extends BaseProvider {
 
 	/** List of Inner Circle contacts for current user, sorted alphabetically by username. */
 	public readonly contactListInnerCircle: Observable<
-		User[]
+		(IContactListItem | User)[]
 	> = cacheObservable(
 		observableAll([
 			this.accountDatabaseService.watchListKeys(
@@ -205,13 +205,9 @@ export class AccountContactsService extends BaseProvider {
 			),
 			this.accountUserLookupService.pipe(filterUndefinedOperator())
 		]).pipe(
-			switchMap(async ([usernames, accountUserLookupService]) =>
-				filterUndefined(
-					await Promise.all(
-						normalizeArray(usernames).map(async username =>
-							accountUserLookupService.getUser(username, true)
-						)
-					)
+			map(([usernames, accountUserLookupService]) =>
+				normalizeArray(usernames).map(
+					this.contactListHelpers.user(accountUserLookupService)
 				)
 			)
 		),
@@ -732,21 +728,24 @@ export class AccountContactsService extends BaseProvider {
 					switchMap(contactListInnerCircle =>
 						observableAll(
 							contactListInnerCircle.map(user =>
-								user.accountContactState
+								this.contactState(user.username)
 									.watch()
-									.pipe(map(() => user))
+									.pipe(
+										map(
+											contactState =>
+												<
+													[
+														IContactListItem | User,
+														IAccountContactState
+													]
+												> [user, contactState]
+										)
+									)
 							)
 						)
 					),
-					switchMap(async contactListInnerCircle =>
-						(await Promise.all(
-							contactListInnerCircle.map(async user =>
-								Promise.all([
-									user,
-									user.accountContactState.getValue()
-								])
-							)
-						))
+					map(contactListInnerCircle =>
+						contactListInnerCircle
 							.filter(
 								([_, contactState]) =>
 									contactState.innerCircle &&
