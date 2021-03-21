@@ -194,6 +194,7 @@ export -f fail
 export -f getBoolArg
 export -f ipfsAdd
 export -f ipfsGateways
+export -f ipfsHash
 export -f ipfsWarmUp
 export -f ipfsWarmUpAll
 export -f log
