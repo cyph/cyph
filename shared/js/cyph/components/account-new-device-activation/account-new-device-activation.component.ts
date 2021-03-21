@@ -20,7 +20,7 @@ import {StringsService} from '../../services/strings.service';
 import {RpcEvents} from '../../session';
 import {normalize} from '../../util/formatting';
 import {readableID} from '../../util/uuid';
-import {resolvable} from '../../util/wait';
+import {resolvable} from '../../util/wait/resolvable';
 
 /**
  * Angular component for account new device activation UI.

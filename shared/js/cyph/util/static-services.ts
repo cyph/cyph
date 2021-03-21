@@ -5,7 +5,7 @@ import {env} from '../env';
 import {DialogService} from '../services/dialog.service';
 import {FileService} from '../services/file.service';
 import {StringsService} from '../services/strings.service';
-import {resolvable} from './wait';
+import {resolvable} from './wait/resolvable';
 
 /** Resolvable dialogService. */
 const resolvableDialogService = !env.isMainThread ?

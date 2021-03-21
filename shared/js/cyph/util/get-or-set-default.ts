@@ -4,7 +4,7 @@ import {LockFunction} from '../lock-function-type';
 import {MaybePromise} from '../maybe-promise-type';
 import {cacheObservable} from './flatten-observable';
 import {lockFunction} from './lock';
-import {resolvable} from './wait';
+import {resolvable} from './wait/resolvable';
 
 /** @ignore */
 const getOrSetDefaultAsyncData = new Map<

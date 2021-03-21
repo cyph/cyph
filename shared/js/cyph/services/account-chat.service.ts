@@ -24,7 +24,7 @@ import {
 import {normalize} from '../util/formatting';
 import {getOrSetDefault} from '../util/get-or-set-default';
 import {observableAll} from '../util/observable-all';
-import {resolvable} from '../util/wait';
+import {resolvable} from '../util/wait/resolvable';
 import {AccountContactsService} from './account-contacts.service';
 import {AccountSessionInitService} from './account-session-init.service';
 import {AccountSessionService} from './account-session.service';

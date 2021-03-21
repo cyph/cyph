@@ -2,7 +2,7 @@ import {Injectable} from '@angular/core';
 import {take} from 'rxjs/operators';
 import {BaseProvider} from '../base-provider';
 import {SocialShareComponent} from '../components/social-share';
-import {resolvable} from '../util/wait';
+import {resolvable} from '../util/wait/resolvable';
 import {DialogService} from './dialog.service';
 
 /**

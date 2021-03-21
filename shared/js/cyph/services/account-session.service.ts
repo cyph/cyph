@@ -21,7 +21,7 @@ import {
 import {normalizeArray} from '../util/formatting';
 import {debugLog} from '../util/log';
 import {uuid} from '../util/uuid';
-import {resolvable} from '../util/wait';
+import {resolvable} from '../util/wait/resolvable';
 import {AccountContactsService} from './account-contacts.service';
 import {AccountSessionInitService} from './account-session-init.service';
 import {AccountUserLookupService} from './account-user-lookup.service';

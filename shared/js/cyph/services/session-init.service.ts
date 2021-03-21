@@ -3,7 +3,7 @@ import {UserLike} from '../account';
 import {BaseProvider} from '../base-provider';
 import {IResolvable} from '../iresolvable';
 import {IBurnerGroupMemberInitiator} from '../proto';
-import {resolvable} from '../util/wait';
+import {resolvable} from '../util/wait/resolvable';
 
 /**
  * Provides ID for initiating new Session.

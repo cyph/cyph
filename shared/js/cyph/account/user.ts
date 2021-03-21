@@ -20,7 +20,7 @@ import {toBehaviorSubject} from '../util/flatten-observable';
 import {lockFunction, lockTryOnce} from '../util/lock';
 import {arraySum} from '../util/reducers';
 import {staticDomSanitizer} from '../util/static-services';
-import {resolvable} from '../util/wait';
+import {resolvable} from '../util/wait/resolvable';
 import {UserPresence} from './enums';
 import {reviewMax} from './review-max';
 

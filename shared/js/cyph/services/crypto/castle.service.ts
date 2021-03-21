@@ -2,7 +2,7 @@ import {Injectable} from '@angular/core';
 import {BaseProvider} from '../../base-provider';
 import {IPairwiseSession} from '../../crypto/castle/ipairwise-session';
 import {ICastle} from '../../crypto/icastle';
-import {resolvable} from '../../util/wait';
+import {resolvable} from '../../util/wait/resolvable';
 import {SessionService} from '../session.service';
 
 /**

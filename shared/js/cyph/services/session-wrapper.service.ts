@@ -2,7 +2,7 @@ import {Injectable} from '@angular/core';
 import {BaseProvider} from '../base-provider';
 import {IResolvable} from '../iresolvable';
 import {ISessionService} from '../service-interfaces/isession.service';
-import {resolvable} from '../util/wait';
+import {resolvable} from '../util/wait/resolvable';
 
 /**
  * Wraps SessionService.

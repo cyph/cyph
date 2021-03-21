@@ -5,7 +5,7 @@ import {BaseProvider} from '../base-provider';
 import {env} from '../env';
 import {IResolvable} from '../iresolvable';
 import {IBurnerGroupMemberInitiator} from '../proto';
-import {resolvable} from '../util/wait';
+import {resolvable} from '../util/wait/resolvable';
 import {SessionInitService} from './session-init.service';
 
 /**

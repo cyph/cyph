@@ -55,7 +55,7 @@ import {StringsService} from '../cyph/services/strings.service';
 import {WindowWatcherService} from '../cyph/services/window-watcher.service';
 import {WorkerService} from '../cyph/services/worker.service';
 import {resolveStaticServices} from '../cyph/util/static-services';
-import {resolvable} from '../cyph/util/wait';
+import {resolvable} from '../cyph/util/wait/resolvable';
 import * as util from '../cyph/util';
 import {AppComponent} from './app.component';
 

@@ -28,7 +28,7 @@ import {ScreenshotService} from '../../services/screenshot.service';
 import {StringsService} from '../../services/strings.service';
 import {trackBySelf} from '../../track-by';
 import {observableAll} from '../../util/observable-all';
-import {resolvable} from '../../util/wait';
+import {resolvable} from '../../util/wait/resolvable';
 
 /**
  * Angular component for the Cyph account screen.

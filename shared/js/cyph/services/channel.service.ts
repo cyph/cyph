@@ -12,7 +12,7 @@ import {IChannelHandlers} from '../session';
 import {lockFunction} from '../util/lock';
 import {debugLog, debugLogError} from '../util/log';
 import {uuid} from '../util/uuid';
-import {resolvable} from '../util/wait';
+import {resolvable} from '../util/wait/resolvable';
 import {DatabaseService} from './database.service';
 
 /** @inheritDoc */

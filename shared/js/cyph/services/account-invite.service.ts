@@ -5,7 +5,7 @@ import {SecurityModels} from '../account';
 import {BaseProvider} from '../base-provider';
 import {BooleanProto} from '../proto';
 import {toBehaviorSubject} from '../util/flatten-observable';
-import {resolvable} from '../util/wait';
+import {resolvable} from '../util/wait/resolvable';
 import {AccountSettingsService} from './account-settings.service';
 import {ConfigService} from './config.service';
 import {AccountDatabaseService} from './crypto/account-database.service';
