@@ -2063,7 +2063,7 @@ export class FirebaseDatabaseService extends DatabaseService {
 		);
 
 		return limit !== undefined ?
-			listKeysObservable.pipe(map(keys => keys.slice(0, limit))) :
+			listKeysObservable.pipe(map(keys => keys.slice(-limit))) :
 			listKeysObservable;
 	}
 
