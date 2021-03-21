@@ -1016,7 +1016,7 @@ if \
 		[ ! "${site}" ] || \
 		[ "${site}" == 'backend' ] || \
 		[ "${site}" == 'websign' ] \
-	) && [ ! "${betaProd}" ]
+	) && [ ! "${betaProd}" ] \
 ; then
 	cd backend
 	goBuildSuccess=''
