@@ -106,6 +106,10 @@ ipfsGateways () {
 	echo -n "${ipfsGatewaysCache}"
 }
 
+ipfsHash () {
+	ipfs add -qn "${1}"
+}
+
 ipfsWarmUp () {
 	hash="${1}"
 	shift
@@ -117,8 +121,15 @@ ipfsWarmUp () {
 	fi
 
 	url="$(echo "${gateway}" | sed "s|:hash|${hash}|")"
+	f="/tmp/$(echo "${url}" | base64).ipfswarmup"
 
-	curl "${url}" &> /dev/null
+	while true ; do
+		rm "${f}" 2> /dev/null
+		wget "${url}" -O "${f}" &> /dev/null
+		if [ "$(ipfsHash "${f}")" == "${hash}" ] ; then break ; fi
+	done
+
+	rm "${f}" 2> /dev/null
 }
 
 ipfsWarmUpAll () {
