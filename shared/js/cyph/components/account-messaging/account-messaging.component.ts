@@ -1,4 +1,4 @@
-import {ChangeDetectionStrategy, Component, OnInit} from '@angular/core';
+import {ChangeDetectionStrategy, Component} from '@angular/core';
 import {BaseProvider} from '../../base-provider';
 import {AccountFilesService} from '../../services/account-files.service';
 import {AccountSettingsService} from '../../services/account-settings.service';
@@ -14,12 +14,7 @@ import {StringsService} from '../../services/strings.service';
 	styleUrls: ['./account-messaging.component.scss'],
 	templateUrl: './account-messaging.component.html'
 })
-export class AccountMessagingComponent extends BaseProvider implements OnInit {
-	/** @inheritDoc */
-	public async ngOnInit () : Promise<void> {
-		super.ngOnInit();
-	}
-
+export class AccountMessagingComponent extends BaseProvider {
 	constructor (
 		/** @see AccountService */
 		public readonly accountService: AccountService,
