@@ -1,6 +1,7 @@
 import {Observable} from 'rxjs';
 import {take} from 'rxjs/operators';
 import {AccountDatabaseService} from '../../services/crypto/account-database.service';
+import {filterEmptyOperator} from '../../util/filter';
 import {IRemoteUser} from './iremote-user';
 
 /**
@@ -17,7 +18,9 @@ export class RegisteredRemoteUser implements IRemoteUser {
 	}> {
 		if (!this.keys) {
 			this.keys = (async () => {
-				const username = await this.username.pipe(take(1)).toPromise();
+				const username = await this.username
+					.pipe(filterEmptyOperator(), take(1))
+					.toPromise();
 
 				if (this.pseudoAccount) {
 					return {encryption: new Uint8Array(0)};

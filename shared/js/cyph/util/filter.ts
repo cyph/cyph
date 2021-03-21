@@ -27,6 +27,13 @@ export const filterDuplicatesOperator = <T>() : ((
 	});
 };
 
+/** rxjs operator that filters out falsy values. */
+export const filterEmptyOperator = <T>() =>
+	/* eslint-disable-next-line @typescript-eslint/tslint/config */
+	<(source: Observable<T | undefined | void>) => Observable<T>> (
+		filter<T>(t => !!t)
+	);
+
 /** Filters out undefined values. */
 /* eslint-disable-next-line @typescript-eslint/tslint/config */
 export const filterUndefined = <T>(arr: (T | undefined | void)[]) : T[] =>
