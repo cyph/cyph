@@ -136,7 +136,7 @@ ipfsWarmUpAll () {
 	for gateway in $(ipfsGateways) ; do
 		for f in "${@}" ; do
 			ipfsWarmUp "$(cat "${f}")" "${gateway}"
-		done &
+		done
 	done
 }
 
