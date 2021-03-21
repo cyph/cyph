@@ -18,7 +18,6 @@ import {map, switchMap, tap} from 'rxjs/operators';
 import {
 	IContactListItem,
 	NewContactTypes,
-	SecurityModels,
 	User,
 	UserPresence
 } from '../../account';
@@ -318,6 +317,9 @@ export class AccountContactsComponent extends BaseProvider
 
 					return {
 						activeUser: {
+							contactState: this.accountContactsService.watchContactState(
+								username
+							),
 							unreadMessageCount: this.accountUserLookupService.getUnreadMessageCount(
 								username
 							),
@@ -357,15 +359,8 @@ export class AccountContactsComponent extends BaseProvider
 						)
 					),
 					observableAll(
-						o.filteredContactList.map(({username}) =>
-							this.accountDatabaseService.watch(
-								`contacts/${username}`,
-								AccountContactState,
-								SecurityModels.unprotected,
-								undefined,
-								undefined,
-								this.subscriptions
-							)
+						o.filteredContactList.map(
+							({contactState}) => contactState
 						)
 					)
 				])
@@ -384,25 +379,25 @@ export class AccountContactsComponent extends BaseProvider
 						...o.filteredContactList.filter(
 							(_, i) =>
 								counts[i] > 0 &&
-								contactStates[i].value.state ===
+								contactStates[i] ===
 									AccountContactState.States.IncomingRequest
 						),
 						...o.filteredContactList.filter(
 							(_, i) =>
 								counts[i] > 0 &&
-								contactStates[i].value.state !==
+								contactStates[i] !==
 									AccountContactState.States.IncomingRequest
 						),
 						...o.filteredContactList.filter(
 							(_, i) =>
 								counts[i] < 1 &&
-								contactStates[i].value.state ===
+								contactStates[i] ===
 									AccountContactState.States.IncomingRequest
 						),
 						...o.filteredContactList.filter(
 							(_, i) =>
 								counts[i] < 1 &&
-								contactStates[i].value.state !==
+								contactStates[i] !==
 									AccountContactState.States.IncomingRequest
 						)
 					]

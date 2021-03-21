@@ -7,6 +7,7 @@ import {IContactListItem, UserLike} from '../account';
 import {AccountContactsComponent} from '../components/account-contacts';
 import {MaybePromise} from '../maybe-promise-type';
 import {
+	AccountContactState,
 	IAccountMessagingGroup,
 	IBurnerSession,
 	ISessionMessage,
@@ -435,6 +436,7 @@ export class AccountSessionService extends SessionService {
 				const contactList = of(
 					usernames.map(
 						(username) : IContactListItem => ({
+							contactState: of(AccountContactState.States.None),
 							unreadMessageCount: of(0),
 							user: this.accountUserLookupService
 								.getUser(username)

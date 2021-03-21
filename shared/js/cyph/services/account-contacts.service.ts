@@ -80,6 +80,7 @@ export class AccountContactsService extends BaseProvider {
 				id: string;
 				incoming: boolean;
 			}) => ({
+				contactState: this.watchContactState(groupData.id),
 				groupData,
 				unreadMessageCount: toBehaviorSubject<number>(
 					this.accountDatabaseService
@@ -102,6 +103,7 @@ export class AccountContactsService extends BaseProvider {
 				const user = accountUserLookupService.getUser(username, true);
 
 				return {
+					contactState: this.watchContactState(username),
 					unreadMessageCount: accountUserLookupService.getUnreadMessageCount(
 						username
 					),
@@ -325,6 +327,16 @@ export class AccountContactsService extends BaseProvider {
 		contacts: new BehaviorSubject<boolean>(true),
 		contactsInnerCircle: new BehaviorSubject<boolean>(true)
 	};
+
+	/** Watches contact state. */
+	public readonly watchContactState = memoize((username: string) =>
+		toBehaviorSubject<AccountContactState.States>(
+			this.contactState(username)
+				.watch()
+				.pipe(map(o => o.state)),
+			AccountContactState.States.None
+		)
+	);
 
 	/** @ignore */
 	private async addToInnerCircleConfirm () : Promise<boolean> {

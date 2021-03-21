@@ -5,7 +5,7 @@ import {IContactListItem} from '../account';
 import {AccountContactsComponent} from '../components/account-contacts';
 import {BaseProvider} from '../base-provider';
 import {IP2PHandlers} from '../p2p/ip2p-handlers';
-import {IAppointment} from '../proto';
+import {AccountContactState, IAppointment} from '../proto';
 import {filterUndefinedOperator} from '../util/filter';
 import {observableAll} from '../util/observable-all';
 import {prettyPrint} from '../util/serialization';
@@ -31,6 +31,7 @@ export class P2PService extends BaseProvider {
 				({name, username}) : IContactListItem =>
 					username ?
 						{
+							contactState: of(AccountContactState.States.None),
 							unreadMessageCount: of(0),
 							user: this.accountUserLookupService
 								.getUser(username)
@@ -41,6 +42,7 @@ export class P2PService extends BaseProvider {
 							anonymousUser: {
 								name: name || this.stringsService.anonymous
 							},
+							contactState: of(AccountContactState.States.None),
 							unreadMessageCount: of(0),
 							user: Promise.resolve(undefined),
 							username: ''

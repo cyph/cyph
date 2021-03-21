@@ -1,5 +1,5 @@
 import {Observable} from 'rxjs';
-import {IAccountMessagingGroup} from '../proto/types';
+import {AccountContactState, IAccountMessagingGroup} from '../proto/types';
 import {User} from './user';
 
 /** A contact list item. */
@@ -8,6 +8,9 @@ export interface IContactListItem {
 	anonymousUser?: {
 		name: string;
 	};
+
+	/** @see IAccountContactState.state */
+	contactState: Observable<AccountContactState.States>;
 
 	/** Group messaging session data. */
 	groupData?: {
