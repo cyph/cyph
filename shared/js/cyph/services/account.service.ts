@@ -223,6 +223,11 @@ export class AccountService extends BaseProvider {
 		this.subscriptions
 	);
 
+	/** Indicates which sub-menu is expanded. */
+	public readonly subMenuExpanded = new BehaviorSubject<
+		'messaging' | 'vault' | undefined
+	>(undefined);
+
 	/** Indicates when view is in transition. */
 	public readonly transition: Observable<boolean> = this.transitionInternal;
 
@@ -251,9 +256,6 @@ export class AccountService extends BaseProvider {
 				upsellBanner && currentUser?.masterKeyConfirmed === true
 		)
 	);
-
-	/** Indicates whether Vault sub-menu is expanded. */
-	public readonly vaultMenuExpanded = new BehaviorSubject<boolean>(false);
 
 	/** @ignore */
 	private async getIncomingCallRoute (
@@ -549,15 +551,17 @@ export class AccountService extends BaseProvider {
 		}
 
 		if (!menuOpen) {
-			this.vaultMenuExpanded.next(false);
+			this.subMenuExpanded.next(undefined);
 		}
 
 		this.mobileMenuOpenInternal.next(menuOpen);
 	}
 
-	/** Toggles Vault sub-menu. */
-	public toggleVaultMenu () : void {
-		this.vaultMenuExpanded.next(!this.vaultMenuExpanded.value);
+	/** Toggles sub-menu. */
+	public toggleSubMenu (subMenu?: 'messaging' | 'vault') : void {
+		this.subMenuExpanded.next(
+			this.subMenuExpanded.value !== subMenu ? subMenu : undefined
+		);
 	}
 
 	/** Triggers event to ends transition between components. */

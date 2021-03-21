@@ -280,8 +280,12 @@
 					matTooltip="Messaging"
 					[matTooltipDisabled]="menuExpanded | await"
 					matTooltipPosition="right"
-					routerLink="/messaging"
-					(click)="click()"
+					(click)="
+						envService.isMobile.value ?
+							accountService.toggleSubMenu('messaging') :
+							router.navigate(['inbox']);
+						envService.isMobile.value ? undefined : click()
+					"
 					*ngIf="
 						accountSettingsService.featureFlags.messaging.watch()
 							| await
@@ -325,6 +329,15 @@
 						Messaging
 					</h3>
 				</a>
+				<ng-container
+					*ngIf="
+						(accountService.subMenuExpanded | await) === 'messaging'
+					"
+				>
+					<cyph-account-messaging
+						class="in-menu"
+					></cyph-account-messaging>
+				</ng-container>
 
 				<a
 					mat-list-item
@@ -369,12 +382,7 @@
 					matTooltip="Vault"
 					[matTooltipDisabled]="menuExpanded | await"
 					matTooltipPosition="right"
-					(click)="
-						envService.isMobile.value ?
-							accountService.toggleVaultMenu() :
-							router.navigate(['vault']);
-						envService.isMobile.value ? undefined : click()
-					"
+					(click)="accountService.toggleSubMenu('vault')"
 					*ngIf="
 						accountSettingsService.featureFlags.vault.watch()
 							| await
@@ -421,10 +429,7 @@
 					</h3>
 				</a>
 				<ng-container
-					*ngIf="
-						(accountService.vaultMenuExpanded | await) &&
-						(envService.isMobile | await) === true
-					"
+					*ngIf="(accountService.subMenuExpanded | await) === 'vault'"
 				>
 					<cyph-account-vault class="in-menu"></cyph-account-vault>
 				</ng-container>
