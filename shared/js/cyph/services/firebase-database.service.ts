@@ -11,7 +11,7 @@ import 'firebase/messaging';
 /* eslint-disable-next-line @typescript-eslint/tslint/config */
 import 'firebase/storage';
 import {BehaviorSubject, Observable, ReplaySubject, Subscription} from 'rxjs';
-import {skip} from 'rxjs/operators';
+import {map, skip} from 'rxjs/operators';
 import {env} from '../env';
 import {geolocation} from '../geolocation';
 import {IProto} from '../iproto';
@@ -2008,9 +2008,10 @@ export class FirebaseDatabaseService extends DatabaseService {
 	/** @inheritDoc */
 	public watchListKeys (
 		urlPromise: MaybePromise<string>,
+		limit?: number,
 		subscriptions?: Subscription[]
 	) : Observable<string[]> {
-		return getOrSetDefaultObservable(
+		const listKeysObservable = getOrSetDefaultObservable(
 			this.observableCaches.watchListKeys,
 			urlPromise,
 			() =>
@@ -2060,6 +2061,10 @@ export class FirebaseDatabaseService extends DatabaseService {
 				}),
 			subscriptions
 		);
+
+		return limit !== undefined ?
+			listKeysObservable.pipe(map(keys => keys.slice(0, limit))) :
+			listKeysObservable;
 	}
 
 	/** @inheritDoc */
@@ -2094,6 +2099,7 @@ export class FirebaseDatabaseService extends DatabaseService {
 
 					const keySubscription = this.watchListKeys(
 						urlPromise,
+						undefined,
 						subscriptions
 					).subscribe(async keys =>
 						keySubscriptionLock(async () => {

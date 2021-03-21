@@ -158,6 +158,7 @@ export class AccountContactsService extends BaseProvider {
 			this.accountFilesService.incomingFilesFilteredWithData.messagingGroups(),
 			this.accountDatabaseService.watchListKeys(
 				'contacts',
+				undefined,
 				this.subscriptions
 			),
 			this.accountUserLookupService.pipe(filterUndefinedOperator())
@@ -197,6 +198,7 @@ export class AccountContactsService extends BaseProvider {
 		observableAll([
 			this.accountDatabaseService.watchListKeys(
 				'contactsInnerCircle',
+				undefined,
 				this.subscriptions
 			),
 			this.accountUserLookupService.pipe(filterUndefinedOperator())

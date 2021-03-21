@@ -901,7 +901,7 @@ export class AccountDatabaseService extends BaseProvider {
 				updateValue: async f =>
 					asyncMap.setValue(await f(await asyncMap.getValue())),
 				watch: memoize(() =>
-					this.watchListKeys(url, subscriptions).pipe(
+					this.watchListKeys(url, undefined, subscriptions).pipe(
 						switchMap(getValueHelper)
 					)
 				),
@@ -1647,7 +1647,8 @@ export class AccountDatabaseService extends BaseProvider {
 			value: []
 		};
 
-		const keysWatcher = () => this.watchListKeys(url, subscriptions);
+		const keysWatcher = () =>
+			this.watchListKeys(url, undefined, subscriptions);
 		const headWatcher = () =>
 			this.watch(
 				(async () => `${await url}-head`)(),
@@ -1736,13 +1737,15 @@ export class AccountDatabaseService extends BaseProvider {
 	/** @see DatabaseService.watchListKeys */
 	public watchListKeys (
 		url: MaybePromise<string>,
+		limit?: number,
 		subscriptions?: Subscription[]
 	) : Observable<string[]> {
-		return cacheObservable(
+		const listKeysObservable = cacheObservable(
 			this.currentUser.pipe(
 				switchMap(async () =>
 					this.databaseService.watchListKeys(
 						await this.normalizeURL(url),
+						undefined,
 						subscriptions
 					)
 				),
@@ -1750,6 +1753,10 @@ export class AccountDatabaseService extends BaseProvider {
 			),
 			subscriptions
 		);
+
+		return limit !== undefined ?
+			listKeysObservable.pipe(map(keys => keys.slice(0, limit))) :
+			listKeysObservable;
 	}
 
 	/** @see DatabaseService.watchListPushes */
@@ -1807,9 +1814,10 @@ export class AccountDatabaseService extends BaseProvider {
 		securityModel: SecurityModels = SecurityModels.private,
 		customKey?: MaybePromise<Uint8Array>,
 		anonymous: boolean = false,
+		limit?: number,
 		subscriptions?: Subscription[]
 	) : Observable<{id: string; value: T | ListHoleError}[]> {
-		return this.watchListKeys(url, subscriptions).pipe(
+		return this.watchListKeys(url, limit, subscriptions).pipe(
 			switchMap(keys =>
 				observableAll(
 					keys.map(id =>

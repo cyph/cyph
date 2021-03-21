@@ -77,6 +77,7 @@ export class AccountNotificationsService extends BaseProvider {
 					SecurityModels.unprotected,
 					undefined,
 					undefined,
+					50,
 					this.subscriptions
 				)
 			)

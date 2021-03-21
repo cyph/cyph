@@ -457,7 +457,9 @@ export class DatabaseService extends DataManagerService {
 			]);
 		};
 
-		const watchKeys = memoize(() => this.watchListKeys(url, subscriptions));
+		const watchKeys = memoize(() =>
+			this.watchListKeys(url, undefined, subscriptions)
+		);
 
 		/* See https://github.com/Microsoft/tslint-microsoft-contrib/issues/381 */
 		/* eslint-disable-next-line @typescript-eslint/tslint/config */
@@ -946,6 +948,7 @@ export class DatabaseService extends DataManagerService {
 	/** Subscribes to the keys of a list. */
 	public watchListKeys (
 		_URL: MaybePromise<string>,
+		_LIMIT?: number,
 		_SUBSCRIPTIONS?: Subscription[]
 	) : Observable<string[]> {
 		throw new Error(
