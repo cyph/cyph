@@ -1,6 +1,6 @@
 # Sourced by bashrc within Docker
 
-NEWLINE=$'\n'
+export NEWLINE=$'\n'
 
 bindmount () {
 	if [ "${CIRCLECI}" -o ! -d /cyph ] ; then
@@ -46,7 +46,7 @@ getBoolArg () {
 	fi
 }
 
-temporalCloudToken=""
+export temporalCloudToken=""
 
 ipfsAdd () {
 	f="${PWD}/${1}"
@@ -94,7 +94,7 @@ ipfsAdd () {
 	fi
 }
 
-ipfsGatewaysCache=""
+export ipfsGatewaysCache=""
 
 ipfsGateways () {
 	if [ ! "${ipfsGatewaysCache}" ] ; then
@@ -110,7 +110,7 @@ ipfsHash () {
 	ipfs add -qn "${1}"
 }
 
-defaultGateway='https://gateway.ipfs.io/ipfs/:hash'
+export defaultGateway='https://gateway.ipfs.io/ipfs/:hash'
 
 ipfsWarmUp () {
 	verify=''
@@ -129,20 +129,22 @@ ipfsWarmUp () {
 	fi
 
 	url="$(echo "${gateway}" | sed "s|:hash|${hash}|")"
+
+	if [ ! "${verify}" ] ; then
+		curl -s -m 30 "${url}" &> /dev/null
+		return
+	fi
+
 	f="/tmp/$(echo "${url}" | sha).ipfswarmup"
 
 	while true ; do
 		rm "${f}" 2> /dev/null
-		wget "${url}" -T 30 -t 1 -O "${f}" &> /dev/null
+		echo wget "${url}" -T 30 -t 1 -O "${f}"
+		wget "${url}" -T 30 -t 1 -O "${f}"
 
-		if \
-			[ ! "${verify}" ] || ( \
-				[ -f "${f}" ] && \
-				[ "$(ipfsHash "${f}")" == "${hash}" ] \
-				\ # Switch to this if concurrency support is needed:
-				\ # [ "$(stat --printf='%s' "${f}")" != '0' ] \
-			) \
-		then
+		# Switch to this if concurrency support is needed:
+		# if [ -f "${f}" ] && [ "$(stat --printf='%s' "${f}")" != '0' ] ; then
+		if [ -f "${f}" ] && [ "$(ipfsHash "${f}")" == "${hash}" ] ; then
 			break
 		fi
 	done
