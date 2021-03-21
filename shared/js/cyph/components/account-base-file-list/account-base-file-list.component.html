@@ -199,13 +199,14 @@
 				(recordType !== recordTypes.File ||
 					((envService.isMobile | await) &&
 						!(currentDirectory | await))) &&
+				(recordType !== recordTypes.File ||
+					((accountFilesService.directories.watch('') | await) || [])
+						.length < 1) &&
 				(
 					(accountFilesService.config[recordType].list()
 						| await
 						| cyphFilter: (getFilterFunction() | await)) || []
-				).length < 1 &&
-				((accountFilesService.directories.watch('') | await) || [])
-					.length < 1
+				).length < 1
 			"
 		>
 			<h2>
