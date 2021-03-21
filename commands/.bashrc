@@ -110,33 +110,55 @@ ipfsHash () {
 	ipfs add -qn "${1}"
 }
 
+defaultGateway='https://gateway.ipfs.io/ipfs/:hash'
+
 ipfsWarmUp () {
+	verify=''
+	if [ "${1}" == '--verify' ] ; then
+		verify=true
+		shift
+	fi
+
 	hash="${1}"
 	shift
 
-	gateway='https://gateway.ipfs.io/ipfs/:hash'
+	gateway="${defaultGateway}"
 	if [ "${1}" ] ; then
 		gateway="${1}"
 		shift
 	fi
 
 	url="$(echo "${gateway}" | sed "s|:hash|${hash}|")"
-	f="/tmp/$(echo "${url}" | base64).ipfswarmup"
+	f="/tmp/$(echo "${url}" | sha).ipfswarmup"
 
 	while true ; do
 		rm "${f}" 2> /dev/null
-		wget "${url}" -O "${f}" &> /dev/null
-		if [ "$(ipfsHash "${f}")" == "${hash}" ] ; then break ; fi
+		wget "${url}" -T 30 -t 1 -O "${f}" &> /dev/null
+
+		if \
+			[ ! "${verify}" ] || ( \
+				[ -f "${f}" ] && \
+				[ "$(ipfsHash "${f}")" == "${hash}" ] \
+				\ # Switch to this if concurrency support is needed:
+				\ # [ "$(stat --printf='%s' "${f}")" != '0' ] \
+			) \
+		then
+			break
+		fi
 	done
 
 	rm "${f}" 2> /dev/null
 }
 
 ipfsWarmUpAll () {
-	for gateway in $(ipfsGateways) ; do
+	for gateway in $(ipfsGateways | grep -v "${defaultGateway}") ; do
 		for f in "${@}" ; do
 			ipfsWarmUp "$(cat "${f}")" "${gateway}"
-		done
+		done &
+	done
+
+	for f in "${@}" ; do
+		ipfsWarmUp --verify "$(cat "${f}")"
 	done
 }
 
