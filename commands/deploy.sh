@@ -1011,10 +1011,12 @@ gcloudDeploy () {
 }
 
 if \
-	[ "${websign}" ] || \
-	[ ! "${site}" ] || \
-	[ "${site}" == 'backend' ] || \
-	[ "${site}" == 'websign' ] \
+	( \
+		[ "${websign}" ] || \
+		[ ! "${site}" ] || \
+		[ "${site}" == 'backend' ] || \
+		[ "${site}" == 'websign' ] \
+	) && [ ! "${betaProd}" ]
 ; then
 	cd backend
 	goBuildSuccess=''
@@ -1035,7 +1037,7 @@ if [ "${site}" != 'firebase' ] ; then
 
 	gcloudDeploy $(
 		if [ "${site}" ] ; then
-			if [ "${websign}" ] || [ "${site}" == 'websign' ] ; then
+			if ( [ "${websign}" ] || [ "${site}" == 'websign' ] ) && [ ! "${betaProd}" ] ; then
 				ls backend/*.yaml
 			fi
 
