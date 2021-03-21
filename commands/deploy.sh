@@ -461,6 +461,8 @@ if [ ! "${site}" ] || [ "${site}" == 'cyph.app' ] || [ "${site}" == 'cyph.com' ]
 	cp -a shared/assets "${dir}/shared/"
 	if [ "${assetsFrozen}" ] ; then
 		touch "${dir}/shared/assets/frozen"
+	else
+		rm "${dir}/shared/assets/frozen" 2> /dev/null
 	fi
 fi
 
