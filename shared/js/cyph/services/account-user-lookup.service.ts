@@ -7,7 +7,6 @@ import {
 	AccountUserPresence,
 	AccountUserProfile,
 	AccountUserProfileExtra,
-	AccountUserTypes,
 	BooleanMapProto,
 	CyphPlan,
 	DataURIProto,
@@ -20,7 +19,6 @@ import {debugLogTime} from '../util/log';
 import {AccountContactsService} from './account-contacts.service';
 import {AccountDatabaseService} from './crypto/account-database.service';
 import {DatabaseService} from './database.service';
-import {EnvService} from './env.service';
 
 /**
  * Account user lookup service.
@@ -68,7 +66,11 @@ export class AccountUserLookupService extends BaseProvider {
 				username
 	);
 
-	/** If applicable, a whitelist of acceptable user types for this user to interact with. */
+	/*
+	TODO: Re-enable when needed, but ideally redesign for better performance.
+
+	If applicable, a whitelist of acceptable user types for this user to interact with.
+
 	public readonly userTypeWhitelist = memoize(
 		async () : Promise<AccountUserTypes[] | undefined> => {
 			if (!this.envService.isTelehealth) {
@@ -94,6 +96,7 @@ export class AccountUserLookupService extends BaseProvider {
 			];
 		}
 	);
+	*/
 
 	/** @ignore */
 	private async isDeactivated (user: string | User) : Promise<boolean> {
@@ -362,6 +365,7 @@ export class AccountUserLookupService extends BaseProvider {
 					}
 				}));
 
+				/*
 				const userTypeWhitelist = await this.userTypeWhitelist();
 
 				if (
@@ -372,6 +376,7 @@ export class AccountUserLookupService extends BaseProvider {
 				) {
 					return;
 				}
+				*/
 
 				return userValue;
 			},
@@ -390,10 +395,7 @@ export class AccountUserLookupService extends BaseProvider {
 		private readonly accountDatabaseService: AccountDatabaseService,
 
 		/** @ignore */
-		private readonly databaseService: DatabaseService,
-
-		/** @ignore */
-		private readonly envService: EnvService
+		private readonly databaseService: DatabaseService
 	) {
 		super();
 
