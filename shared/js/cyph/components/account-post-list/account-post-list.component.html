@@ -1,33 +1,61 @@
-<ng-container
-	*ngIf="
-		accountPostsService.watchUserPosts(author?.username) | await as posts;
-		else loading
-	"
->
+<ng-container *ngIf="(showPosts | await) !== true; else postListUI">
 	<div
-		class="full-width"
-		fxLayout="column"
-		fxLayoutGap="16px"
-		*ngIf="(posts?.length || 0) > 0"
+		fxFlex
+		fxLayoutAlign="center center"
+		class="full-width margin-top-bottom"
 	>
-		<cyph-account-post
-			class="full-width"
-			[author]="author"
-			[post]="post.watch() | await"
-			*ngFor="let post of posts; trackBy: trackByID"
-		></cyph-account-post>
-		<div></div>
-	</div>
-
-	<div fxFlex class="margin-top" *ngIf="(posts?.length || 0) < 1">
-		<h1 cyphTranslate fxFlex class="empty-list">
-			This user hasn't made any posts yet.
-		</h1>
+		<button
+			mat-raised-button
+			cyphTranslate
+			color="primary"
+			(click)="showPosts.resolve()"
+		>
+			Show Posts
+		</button>
 	</div>
 </ng-container>
 
+<ng-template #postListUI>
+	<ng-container
+		*ngIf="
+			accountPostsService.watchUserPosts(author?.username)
+				| await as posts;
+			else loading
+		"
+	>
+		<div
+			class="full-width"
+			fxLayout="column"
+			fxLayoutGap="16px"
+			*ngIf="(posts?.length || 0) > 0"
+		>
+			<cyph-account-post
+				class="full-width"
+				[author]="author"
+				[post]="post.watch() | await"
+				*ngFor="let post of posts; trackBy: trackByID"
+			></cyph-account-post>
+			<div></div>
+		</div>
+
+		<div
+			fxFlex
+			class="full-width margin-top-bottom"
+			*ngIf="(posts?.length || 0) < 1"
+		>
+			<h1 cyphTranslate fxFlex class="empty-list">
+				This user hasn't made any posts yet.
+			</h1>
+		</div>
+	</ng-container>
+</ng-template>
+
 <ng-template #loading>
-	<div class="margin-top" fxLayoutAlign="center center">
+	<div
+		fxFlex
+		fxLayoutAlign="center center"
+		class="full-width margin-top-bottom"
+	>
 		<cyph-spinner mode="indeterminate"></cyph-spinner>
 	</div>
 </ng-template>
