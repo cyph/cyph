@@ -25,7 +25,7 @@ elif [ "${1}" == 'electron' ] ; then
 elif [ "${1}" == 'ios' ] ; then
 	iOS=true
 	shift
-elif [ "${1}" == 'emulator' ] ; then
+elif [ "${1}" == 'iOSEmulator' ] ; then
 	iOS=true
 	iOSEmulator=true
 	shift
@@ -51,15 +51,15 @@ elif [ ! "${debug}" ] && ( [ "${allPlatforms}" ] || [ "${android}" ] || [ "${ele
 fi
 
 if [ "${allPlatforms}" ] ; then
-	rm -rf ../cyph-phonegap-build* 2> /dev/null
+	rm -rf cordova-build* 2> /dev/null
 	./build.sh android "${password}" "${passwordWindows}" || exit 1
-	mv ../cyph-phonegap-build ../cyph-phonegap-build.android
+	mv cordova-build cordova-build.android
 	./build.sh electron "${password}" "${passwordWindows}" || exit 1
-	mv ../cyph-phonegap-build ../cyph-phonegap-build.electron
+	mv cordova-build cordova-build.electron
 	./build.sh ios "${password}" "${passwordWindows}" || exit 1
-	mv ../cyph-phonegap-build ../cyph-phonegap-build.ios
-	mkdir -p ../cyph-phonegap-build/build
-	cp -a ../cyph-phonegap-build.*/build/* ../cyph-phonegap-build/build/
+	mv cordova-build cordova-build.ios
+	mkdir -p cordova-build/build
+	cp -a cordova-build.*/build/* cordova-build/build/
 	exit
 fi
 
@@ -67,16 +67,16 @@ fi
 export CSC_KEY_PASSWORD="${passwordWindows}"
 export CSC_KEYCHAIN="${HOME}/.cyph/nativereleasesigning/apple/cyph.keychain"
 
-if [ -d ../cyph-phonegap-build ] ; then
-	rm -rf ../cyph-phonegap-build
+if [ -d cordova-build ] ; then
+	rm -rf cordova-build
 fi
-mkdir -p ../cyph-phonegap-build/build
+mkdir -p cordova-build/build
 
-for f in $(ls -a | grep -v '^\.$' | grep -v '^\.\.$') ; do
-	cp -a "${f}" ../cyph-phonegap-build/
+for f in $(ls -a | grep -vP '^(\.|\.\.|cordova-build.*)$') ; do
+	cp -a "${f}" cordova-build/
 done
 
-cd ../cyph-phonegap-build
+cd cordova-build
 
 echo -e '\n\nADD PLATFORMS\n\n'
 

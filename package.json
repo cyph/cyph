@@ -1,6 +1,6 @@
 {
-	"name": "cyph-phonegap-app",
-	"author": "Cyph, Inc. <phonegap-app@cyph.com> (https://github.com/cyph)",
+	"name": "cyph-cordova-app",
+	"author": "Cyph, Inc. <cordova-app@cyph.com> (https://github.com/cyph)",
 	"dependencies": {
 		"electron-push-receiver": "*"
 	},
