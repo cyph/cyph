@@ -232,9 +232,8 @@ export class CalendarInviteComponent extends BaseProvider
 
 		this.currentDate.next(now);
 
-		/* Two weeks from this Monday. */
-		const timestamp =
-			now.getTime() + (1 - now.getDay()) * 86400000 + 1209600000;
+		/* Defaults to now */
+		const timestamp = now.getTime();
 
 		if (this.calendarInvite.value !== undefined) {
 			return;
