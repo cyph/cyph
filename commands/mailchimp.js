@@ -33,7 +33,7 @@ const {
 	removeFromMailingList,
 	splitName
 } = (await import(
-	`${__dirname}/../firebase/functions/mailchimp`
+	`${__dirname}/../firebase/functions/js/init-mailchimp.js`
 )).initMailchimp(mailchimp, mailchimpCredentials);
 
 export {addToMailingList, mailingListIDs, removeFromMailingList, splitName};
