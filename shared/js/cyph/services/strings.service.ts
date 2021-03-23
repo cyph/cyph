@@ -323,7 +323,7 @@ export class StringsService extends BaseProvider {
 	public readonly cypherToast3 = `Thou art amazed.`;
 
 	/** @see StringsService */
-	public readonly deactivateAccountConfirm = `Are you sure that you want to **\${ACTION}** your account?`;
+	public readonly deactivateAccountConfirm = `Are you sure that you want to **\${ACTION}** your account? NOTE: This will not downgrade paid plans or cancel your subscription. Use the downgrade button if you wish to revert to a free plan.`;
 
 	/** @see StringsService */
 	public readonly deactivateAccountDeactivate = `deactivate`;
@@ -377,7 +377,7 @@ export class StringsService extends BaseProvider {
 	public readonly doctor = `doctor`;
 
 	/** @see StringsService */
-	public readonly downgradeAccountPrompt = `This will downgrade your account to a free plan. Continue?`;
+	public readonly downgradeAccountPrompt = `This will downgrade your account to a free plan and your subscription rate will no longer be guaranteed. Continue?`;
 
 	/** @see StringsService */
 	public readonly downgradeAccountTitle = `Downgrade Account`;
