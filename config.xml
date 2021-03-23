@@ -20,7 +20,6 @@
 
 	<!-- <plugin name="cordova-call" spec="*" /> --> -->
 	<plugin name="cordova-clipboard" spec="*" />
-	<plugin name="cordova-plugin-add-swift-support" spec="*" />
 	<plugin name="cordova-plugin-appminimize" spec="*" />
 	<plugin name="cordova-plugin-battery-status" spec="*" />
 	<plugin name="cordova-plugin-camera" spec="*" />
@@ -242,6 +241,7 @@
 	</platform>
 
 	<platform name="ios">
+		<plugin name="cordova-plugin-add-swift-support" spec="*" />
 		<plugin name="cordova-plugin-browsertab" spec="*" />
 		<plugin
 			name="cordova-plugin-contacts"
