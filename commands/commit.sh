@@ -54,6 +54,11 @@ find shared/css shared/js \
 	' \
 \;
 
+for f in $(rg -l '/\*\*[^@\.]+\*/' shared/js | grep -P '\.ts$') ; do
+	cat "${f}" | perl -pe 's/\/\*\*\s*([^@\.]*[^@\.\s])\s*\*\//\/** \1. *\//g' > "${f}.new"
+	mv "${f}.new" "${f}"
+done
+
 cyph-prettier --write '**/*.{css,html,js,json,scss,ts,tsx}'
 
 find shared/assets/img -type f \( -name '*.jpg' -or -name '*.png' \) -exec bash -c '

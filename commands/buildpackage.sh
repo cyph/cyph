@@ -392,6 +392,15 @@ if [ "${site}" == 'sdk' ] ; then
 	log "Build $(projectname sdk ${branchDir})"
 	cd sdk
 	ng build --source-map false --configuration "${environment}" || fail
+
+	# Temporary workaround to remove unwanted excessively verbose error logging from emscripten
+	cat dist/main.js |
+		tr '\n' '☁' |
+		perl -pe 's/process\.on\("(uncaughtException|unhandledRejection)",(\s*function.*?\}\)|.*?\))/0/g' |
+		tr '☁' '\n' \
+	> dist/main.js.new
+	mv dist/main.js.new dist/main.js
+
 	echo -n 'module.exports=module.exports.default;' >> dist/main.js
 	echo -n 'module.exports.default=module.exports;' >> dist/main.js
 	exit 0

@@ -1,6 +1,6 @@
 {
 	"name": "@cyph/sdk",
-	"version": "4.2.0",
+	"version": "4.2.1",
 	"license": "Cyph-RSL",
 	"type": "module",
 	"main": "./sdk.js",

@@ -36,7 +36,7 @@ import {sleep} from '../../util/wait';
 import {openWindow, reloadWindow} from '../../util/window';
 import {bitPayLogo} from './bit-pay-logo';
 
-/** TODO: Replace with npm package */
+/* TODO: Replace with npm package */
 const EF: any | undefined =
 	typeof (<any> self).EF?.conversion === 'function' ?
 		(<any> self).EF :
