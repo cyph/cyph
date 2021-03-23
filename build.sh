@@ -72,7 +72,9 @@ if [ -d cordova-build ] ; then
 fi
 mkdir -p cordova-build/build
 
-for f in $(ls -a | grep -vP '^(\.|\.\.|cordova-build.*)$') ; do
+for f in $(ls -a | grep -vP \
+	'^(\.|\.\.|cordova-build.*|node_modules|package-lock.json|platforms|plugins)$'
+) ; do
 	cp -a "${f}" cordova-build/
 done
 
