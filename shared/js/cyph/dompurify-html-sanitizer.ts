@@ -18,7 +18,7 @@ export class DOMPurifyHtmlSanitizer {
 		/** @see Document */
 		private readonly document: Document = self.document,
 
-		/** Allowed URI schemes */
+		/** Allowed URI schemes. */
 		private readonly whitelist: string[] = [
 			'http',
 			'https',
