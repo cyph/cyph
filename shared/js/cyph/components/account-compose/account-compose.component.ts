@@ -6,7 +6,7 @@ import {
 	OnDestroy,
 	OnInit
 } from '@angular/core';
-import {ActivatedRoute} from '@angular/router';
+import {ActivatedRoute, Router} from '@angular/router';
 import {BehaviorSubject} from 'rxjs';
 import {map, take} from 'rxjs/operators';
 import {User} from '../../account';
@@ -545,6 +545,11 @@ export class AccountComposeComponent extends BaseProvider
 		this.accountChatService.updateChat();
 
 		this.sent.next(true);
+
+		/** Navigate back to schedule after 2.5s */
+		setTimeout(() => {
+			this.router.navigate(['/schedule']);
+		}, 2500);
 	};
 
 	constructor (
@@ -586,6 +591,9 @@ export class AccountComposeComponent extends BaseProvider
 
 		/** @see EnvService */
 		public readonly envService: EnvService,
+
+		/** @see Router */
+		public readonly router: Router,
 
 		/** @see StringsService */
 		public readonly stringsService: StringsService

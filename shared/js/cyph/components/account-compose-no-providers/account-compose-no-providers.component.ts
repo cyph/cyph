@@ -1,5 +1,5 @@
 import {ChangeDetectionStrategy, Component} from '@angular/core';
-import {ActivatedRoute} from '@angular/router';
+import {ActivatedRoute, Router} from '@angular/router';
 import {AccountAppointmentsService} from '../../services/account-appointments.service';
 import {AccountChatService} from '../../services/account-chat.service';
 import {AccountContactsService} from '../../services/account-contacts.service';
@@ -44,6 +44,7 @@ export class AccountComposeNoProvidersComponent extends AccountComposeComponent 
 		accountDatabaseService: AccountDatabaseService,
 		accountSettingsService: AccountSettingsService,
 		envService: EnvService,
+		router: Router,
 		stringsService: StringsService
 	) {
 		super(
@@ -60,6 +61,7 @@ export class AccountComposeNoProvidersComponent extends AccountComposeComponent 
 			accountDatabaseService,
 			accountSettingsService,
 			envService,
+			router,
 			stringsService
 		);
 	}
