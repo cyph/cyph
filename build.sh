@@ -114,7 +114,7 @@ initPlatform () {
 
 	sed -i 's/.*<engine.*//g' config.xml
 
-	node -e "console.log(
+	for plugin in $(node -e "console.log(
 		Array.from(
 			new (require('xmldom').DOMParser)().
 				parseFromString(fs.readFileSync('config.xml').toString()).
@@ -124,7 +124,17 @@ initPlatform () {
 				elem => \`\${elem.getAttribute('name')}@\${elem.getAttribute('spec')}\`
 			).
 			join('\n')
-	)" | xargs npx cordova plugin add
+	)") ; do npx cordova plugin add ${plugin} $(node -e "console.log(
+		Array.from(
+			Object.entries(
+				JSON.parse(
+					fs.readFileSync('package.json.old').toString()
+				).cordova.plugins['${plugin}'] || {}
+			)
+		).
+			map(([k, v]) => \`--variable \${k}=\${v}\`).
+			join(' ')
+	)") ; done
 
 	node -e "
 		const oldPackageJSON = JSON.parse(fs.readFileSync('package.json.old').toString());
