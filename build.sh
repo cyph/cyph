@@ -79,6 +79,7 @@ for f in $(ls -a | grep -vP \
 done
 
 cd cordova-build
+mkdir node_modules platforms plugins
 
 echo -e '\n\nADD PLATFORMS\n\n'
 
@@ -124,17 +125,25 @@ initPlatform () {
 				elem => \`\${elem.getAttribute('name')}@\${elem.getAttribute('spec')}\`
 			).
 			join('\n')
-	)") ; do npx cordova plugin add ${plugin} $(node -e "console.log(
-		Array.from(
-			Object.entries(
-				JSON.parse(
-					fs.readFileSync('package.json.old').toString()
-				).cordova.plugins['${plugin}'] || {}
-			)
-		).
-			map(([k, v]) => \`--variable \${k}=\${v}\`).
-			join(' ')
-	)") ; done
+	)") ; do node -e "process.exit(child_process.spawnSync(
+		'npx',
+		[
+			'cordova',
+			'plugin',
+			'add',
+			'${plugin}',
+			...Array.from(
+				Object.entries(
+					JSON.parse(
+						fs.readFileSync('package.json.old').toString()
+					).cordova.plugins['${plugin}'.replace(/(.)@.*/g, '\$1')] || {}
+				)
+			).
+				map(([k, v]) => ['--variable', \`\${k}=\${v}\`]).
+				reduce((a, b) => a.concat(b), [])
+		],
+		{stdio: 'inherit'}
+	).status)" ; done
 
 	node -e "
 		const oldPackageJSON = JSON.parse(fs.readFileSync('package.json.old').toString());
