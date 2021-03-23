@@ -90,23 +90,38 @@ initPlatform () {
 
 	cp package.json package.json.old
 
+	node -e "
+		const document = new (require('xmldom').DOMParser)().
+			parseFromString(fs.readFileSync('config.xml').toString());
+
+		const otherPlatforms = Array.from(
+			document.documentElement.getElementsByTagName('platform')
+		).filter(elem => elem.getAttribute('name') !== '${platform}');
+
+		for (const otherPlatform of otherPlatforms) {
+			otherPlatform.parentNode.removeChild(otherPlatform);
+		}
+
+		fs.writeFileSync(
+			'config.xml',
+			new (require('xmldom').XMLSerializer)().serializeToString(document)
+		);
+	"
+
 	npx cordova platform add ${platform}
 
 	sed -i 's/.*<engine.*//g' config.xml
 
 	node -e "console.log(
 		Array.from(
-			Array.from(
-				new (require('xmldom').DOMParser)()
-					.parseFromString(fs.readFileSync('config.xml').toString())
-					.documentElement.getElementsByTagName('platform')
-			).find(elem => elem.getAttribute('name') === '${platform}').childNodes
-		)
-			.filter(elem => elem.tagName === 'plugin')
-			.map(
+			new (require('xmldom').DOMParser)().
+				parseFromString(fs.readFileSync('config.xml').toString()).
+				documentElement.getElementsByTagName('plugin')
+		).
+			map(
 				elem => \`\${elem.getAttribute('name')}@\${elem.getAttribute('spec')}\`
-			)
-			.join('\n')
+			).
+			join('\n')
 	)" | xargs npx cordova plugin add
 
 	node -e "
