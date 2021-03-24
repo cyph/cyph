@@ -23,6 +23,20 @@ try {
 catch (_) {}
 
 try {
+	if (cordova && cordova.plugins && cordova.plugins.backgroundMode) {
+		cordova.plugins.backgroundMode.on('activate', function () {
+			try {
+				cordova.plugins.backgroundMode.disableWebViewOptimizations();
+			}
+			catch (_) {}
+		});
+
+		cordova.plugins.backgroundMode.enable();
+	}
+}
+catch (_) {}
+
+try {
 	if (cordova && cordova.plugins && cordova.plugins.iosrtc) {
 		cordova.plugins.iosrtc.registerGlobals();
 	}

@@ -22,6 +22,7 @@
 	<!-- <plugin name="cordova-call" spec="*" /> --> -->
 	<plugin name="cordova-clipboard" spec="*" />
 	<plugin name="cordova-plugin-appminimize" spec="*" />
+	<plugin name="cordova-plugin-background-mode" spec="*" />
 	<plugin name="cordova-plugin-battery-status" spec="*" />
 	<plugin name="cordova-plugin-camera" spec="*" />
 	<plugin name="cordova-plugin-chooser" spec="*" />
