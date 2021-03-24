@@ -78,6 +78,10 @@
 		<plugin name="cordova-plugin-splashscreen" spec="*" />
 		<plugin name="phonegap-plugin-local-notification" spec="*" />
 
+		<!-- Ionic webview preferences -->
+		<preference name="MixedContentMode" value="1" />
+		<preference name="Scheme" value="https" />
+
 		<preference
 			name="OverrideUserAgent"
 			value="Mozilla/5.0 (Linux; Android 7.1; Pixel XL Build/NDE63H) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.91 Mobile Safari/537.36"
@@ -255,18 +259,16 @@
 		<allow-intent href="itms:*" />
 		<allow-intent href="itms-apps:*" />
 
+		<!-- Ionic webview preferences -->
+		<preference name="WKSuspendInBackground" value="false" />
+
 		<preference name="UseSwiftLanguageVersion" value="5.0" />
 
 		<preference name="allowInlineMediaPlayback" value="true" />
 		<preference name="AllowInlineMediaPlayback" value="true" />
-		<feature name="CDVWKWebViewEngine">
-			<param name="ios-package" value="CDVWKWebViewEngine" />
-		</feature>
-		<preference name="CordovaWebViewEngine" value="CDVWKWebViewEngine" />
 		<preference name="DetectMediaTypes" value="true" />
 		<preference name="Orientation" value="all" />
 		<preference name="target-device" value="universal" />
-		<preference name="WKWebViewOnly" value="true" />
 
 		<resource-file src="GoogleService-Info.plist" />
 
