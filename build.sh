@@ -191,17 +191,6 @@ if [ "${iOS}" ] ; then
 
 	chmod +x plugins/cordova-plugin-iosrtc/extra/hooks/iosrtc-swift-support.js
 
-	# https://github.com/cordova-rtc/cordova-plugin-iosrtc/blob/master/docs/Building.md#apple-store-submission
-	if [ ! "${iOSEmulator}" ] ; then
-		cd plugins/cordova-plugin-iosrtc/extra
-		node ios_arch.js --extract
-		node ios_arch.js --device
-		node ios_arch.js --clean
-		npx cordova platform remove ios
-		npx cordova platform add ios
-		cd -
-	fi
-
 	# https://github.com/phonegap/phonegap-plugin-push/issues/2872#issuecomment-588179073
 	cat >> platforms/ios/Podfile << EndOfMessage
 		post_install do |lib|
