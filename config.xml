@@ -18,6 +18,7 @@
 
 	<icon src="res/icon/default.png" />
 
+	<plugin name="@havesource/cordova-plugin-push" spec="*" />
 	<!-- <plugin name="cordova-call" spec="*" /> --> -->
 	<plugin name="cordova-clipboard" spec="*" />
 	<plugin name="cordova-plugin-appminimize" spec="*" />
@@ -43,9 +44,6 @@
 	<plugin name="cordova-plugin-whitelist" spec="*" />
 	<plugin name="cordova-plugin-x-socialsharing" spec="*" />
 	<plugin name="ionic-plugin-deeplinks" spec="*" />
-	<plugin name="phonegap-plugin-push" spec="*">
-		<variable name="FCM_VERSION" value="17.3.0" />
-	</plugin>
 
 	<access origin="*" />
 	<allow-intent href="http://*/*" />
