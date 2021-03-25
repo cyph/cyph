@@ -61,8 +61,8 @@
 	<allow-intent href="mailto:*" />
 	<allow-intent href="geo:*" />
 
-	<preference name="android-minSdkVersion" value="22" />
-	<preference name="android-targetSdkVersion" value="29" />
+	<preference name="android-minSdkVersion" value="23" />
+	<preference name="android-targetSdkVersion" value="30" />
 	<preference name="BackgroundColor" value="#8b62d9" />
 	<preference name="deployment-target" value="11.0" />
 	<preference name="HeaderColor" value="#8b62d9" />
