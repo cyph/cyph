@@ -47,6 +47,7 @@ import {SessionService} from '../../services/session.service';
 import {StringsService} from '../../services/strings.service';
 import {trackBySelf} from '../../track-by/track-by-self';
 import {toBehaviorSubject} from '../../util/flatten-observable';
+import {sleep} from '../../util/wait/sleep';
 
 /**
  * Angular component for account compose UI.
@@ -546,13 +547,15 @@ export class AccountComposeComponent extends BaseProvider
 
 		this.sent.next(true);
 
-		/** Navigate back to schedule after 2.5s */
-		setTimeout(() => {
-			this.router.navigate(['/schedule']);
-		}, 2500);
+		/* Navigate back to schedule after 2.5s */
+		await sleep(2500);
+		await this.router.navigate(['schedule']);
 	};
 
 	constructor (
+		/** @ignore */
+		private readonly router: Router,
+
 		/** @ignore */
 		private readonly accountAppointmentsService: AccountAppointmentsService,
 
@@ -591,9 +594,6 @@ export class AccountComposeComponent extends BaseProvider
 
 		/** @see EnvService */
 		public readonly envService: EnvService,
-
-		/** @see Router */
-		public readonly router: Router,
 
 		/** @see StringsService */
 		public readonly stringsService: StringsService
