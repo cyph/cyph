@@ -1392,7 +1392,7 @@ export class StringsService extends BaseProvider {
 	)} complete.`;
 
 	/** @see StringsService */
-	public readonly sessionJoin = `Join Session`;
+	public readonly sessionJoin = `Join Secure Session`;
 
 	/** @see StringsService */
 	public readonly share = `Share`;
