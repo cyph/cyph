@@ -176,7 +176,7 @@ dev_appserver.py \
 	--host 0.0.0.0 \
 	--storage_path /tmp/cyph0 \
 	--support_datastore_emulator=True \
-	$(if [[ "${*}" == *'--disableHostCheck'* ]]; then echo -n '--enable_host_checking=False' ; fi) \
+	$(if [[ "${*}" == *'--disable-host-check'* ]]; then echo -n '--enable_host_checking=False' ; fi) \
 	${PWD}/backend/.build.yaml \
 &
 

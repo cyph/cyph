@@ -25,7 +25,7 @@ if (location.host === 'staging.cyph.healthcare') {
 
 /* Handle redirection in local env before ServiceWorker is initialized */
 
-if (env.isLocalEnv && location.pathname !== '/') {
+if (env.isLocalEnv && !env.isCordova && location.pathname !== '/') {
 	location.replace('/#' + location.pathname.slice(1));
 }
 
