@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>AD_UNIT_ID_FOR_BANNER_TEST</key>
+	<string>ca-app-pub-3940256099942544/2934735716</string>
+	<key>AD_UNIT_ID_FOR_INTERSTITIAL_TEST</key>
+	<string>ca-app-pub-3940256099942544/4411468910</string>
+	<key>CLIENT_ID</key>
+	<string>93374254789-4ueecdt884ao1jlv9t9ghsjr35bc1bsf.apps.googleusercontent.com</string>
+	<key>REVERSED_CLIENT_ID</key>
+	<string>com.googleusercontent.apps.93374254789-4ueecdt884ao1jlv9t9ghsjr35bc1bsf</string>
+	<key>API_KEY</key>
+	<string>AIzaSyCsqqRnwL1cDWlT45tGFF4uCEhPL05aw0k</string>
+	<key>GCM_SENDER_ID</key>
+	<string>93374254789</string>
+	<key>PLIST_VERSION</key>
+	<string>1</string>
+	<key>BUNDLE_ID</key>
+	<string>com.cyph.test</string>
+	<key>PROJECT_ID</key>
+	<string>cyph-test-staging</string>
+	<key>STORAGE_BUCKET</key>
+	<string>cyph-test-staging.appspot.com</string>
+	<key>IS_ADS_ENABLED</key>
+	<true></true>
+	<key>IS_ANALYTICS_ENABLED</key>
+	<false></false>
+	<key>IS_APPINVITE_ENABLED</key>
+	<false></false>
+	<key>IS_GCM_ENABLED</key>
+	<true></true>
+	<key>IS_SIGNIN_ENABLED</key>
+	<true></true>
+	<key>GOOGLE_APP_ID</key>
+	<string>1:93374254789:ios:012ea945f5e4e890</string>
+	<key>DATABASE_URL</key>
+	<string>https://cyph-test-staging.firebaseio.com</string>
+</dict>
+</plist>

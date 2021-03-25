@@ -4,6 +4,13 @@
 set -e
 cd $(cd "$(dirname "$0")" ; pwd)
 
+test=''
+if [ "${1}" == '--test' ] ; then
+	echo -e 'TEST BUILD\n\n'
+	test=true
+	shift
+fi
+
 allPlatforms=''
 android=''
 debug=''
@@ -58,6 +65,8 @@ if [ "${allPlatforms}" ] ; then
 	mv cordova-build cordova-build.electron
 	./build.sh ios "${password}" "${passwordWindows}" || exit 1
 	mv cordova-build cordova-build.ios
+	./build.sh --test androidDebug || exit 1
+	mv cordova-build cordova-build.android-test
 	mkdir -p cordova-build/build
 	cp -a cordova-build.*/build/* cordova-build/build/
 	exit
@@ -84,6 +93,31 @@ mkdir node_modules platforms plugins
 echo -e '\n\nADD PLATFORMS\n\n'
 
 sed -i "s|~|${HOME}|g" build.json
+
+packageName='cyph'
+if [ "${test}" ] ; then
+	packageName='test.cyph'
+
+	cat config.xml |
+		grep -v cordova-plugin-ionic-webview |
+		grep -v cordova-plugin-privacyscreen |
+		sed 's|<name>Cyph</name>|<name>Cyph Test</name>|g' |
+		perl -pe 's/com\.cyph\.(app|desktop)/com.cyph.test/g' |
+		perl -pe 's/(android:largeHeap="true")/\1 android:usesCleartextTraffic="true"/g' |
+		perl -pe 's/([":])(cyph|burner)\./\1staging.\2./g' \
+	> config.xml.new
+	mv config.xml.new config.xml
+
+	cat package.json |
+		sed 's|"URL_SCHEME": "cyph"|"URL_SCHEME": "cyph-test"|g' |
+		perl -pe 's/"(cyph|burner)\./"staging.\1./g' \
+	> package.json.new
+	mv package.json.new package.json
+
+	mv google-services.test.json google-services.json
+	mv GoogleService-Info.test.plist GoogleService-Info.plist
+	patch www/js/main.js main.js.test.patch
+fi
 
 npm install
 
@@ -215,7 +249,7 @@ fi
 
 if [ "${debug}" ] ; then
 	npx cordova build --debug --device || exit 1
-	cp platforms/android/app/build/outputs/apk/debug/app-debug.apk build/cyph.debug.apk
+	cp platforms/android/app/build/outputs/apk/debug/app-debug.apk build/${packageName}.debug.apk
 	exit
 fi
 
@@ -227,7 +261,7 @@ if [ "${android}" ] ; then
 		--storePassword="${password}" \
 		--password="${password}"
 
-	cp platforms/android/app/build/outputs/apk/release/app-release.apk build/cyph.apk || exit 1
+	cp platforms/android/app/build/outputs/apk/release/app-release.apk build/${packageName}.apk || exit 1
 fi
 
 if [ "${electron}" ] ; then
@@ -337,14 +371,14 @@ if [ "${electron}" ] ; then
 	"
 	cp -f build.json.bak build.json
 
-	cp -a platforms/electron/build/mas-universal/*.pkg build/cyph.pkg || exit 1
-	cp platforms/electron/build/*.appx build/cyph.appx || exit 1
-	cp platforms/electron/build/*.AppImage build/cyph.AppImage || exit 1
-	cp platforms/electron/build/*.deb build/cyph.deb || exit 1
-	cp platforms/electron/build/*.dmg build/cyph.dmg || exit 1
-	cp platforms/electron/build/*.exe build/cyph.exe || exit 1
-	cp platforms/electron/build/*.rpm build/cyph.rpm || exit 1
-	cp platforms/electron/build/*.snap build/cyph.snap || exit 1
+	cp -a platforms/electron/build/mas-universal/*.pkg build/${packageName}.pkg || exit 1
+	cp platforms/electron/build/*.appx build/${packageName}.appx || exit 1
+	cp platforms/electron/build/*.AppImage build/${packageName}.AppImage || exit 1
+	cp platforms/electron/build/*.deb build/${packageName}.deb || exit 1
+	cp platforms/electron/build/*.dmg build/${packageName}.dmg || exit 1
+	cp platforms/electron/build/*.exe build/${packageName}.exe || exit 1
+	cp platforms/electron/build/*.rpm build/${packageName}.rpm || exit 1
+	cp platforms/electron/build/*.snap build/${packageName}.snap || exit 1
 
 	node -e "
 		$(echo "${electronScript}" | sed 's|--release|--debug|g')
@@ -353,8 +387,8 @@ if [ "${electron}" ] ; then
 		build({windows: windowsExeDebug});
 	"
 
-	cp platforms/electron/build/*.dmg build/cyph.debug.dmg || exit 1
-	cp platforms/electron/build/*.exe build/cyph.debug.exe || exit 1
+	cp platforms/electron/build/*.dmg build/${packageName}.debug.dmg || exit 1
+	cp platforms/electron/build/*.exe build/${packageName}.debug.exe || exit 1
 
 	mv build.json.bak build.json
 fi
@@ -384,6 +418,6 @@ if [ "${iOS}" ] ; then
 	mv ios-debug platforms/ios/build/device/debug
 	mv ios-release platforms/ios/build/device/release
 
-	cp platforms/ios/build/device/debug/Cyph.ipa build/cyph.debug.ipa
-	cp platforms/ios/build/device/release/Cyph.ipa build/cyph.ipa
+	cp platforms/ios/build/device/debug/Cyph.ipa build/${packageName}.debug.ipa
+	cp platforms/ios/build/device/release/Cyph.ipa build/${packageName}.ipa
 fi
