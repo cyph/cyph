@@ -24,13 +24,6 @@ catch (_) {}
 
 try {
 	if (cordova && cordova.plugins && cordova.plugins.backgroundMode) {
-		cordova.plugins.backgroundMode.on('activate', function () {
-			try {
-				cordova.plugins.backgroundMode.disableWebViewOptimizations();
-			}
-			catch (_) {}
-		});
-
 		cordova.plugins.backgroundMode.enable();
 	}
 }
@@ -201,6 +194,13 @@ then(function (o) {
 
 /* Display either abortion screen or panic screen, depening on the error */
 catch(function () {
+	try {
+		if (cordova && cordova.plugins && cordova.plugins.backgroundMode) {
+			cordova.plugins.backgroundMode.disable();
+		}
+	}
+	catch (_) {}
+
 	var messageElement			= document.getElementById('websign-load-message');
 	messageElement.innerText	= config.abortText;
 

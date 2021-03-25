@@ -104,6 +104,9 @@
 			<uses-permission android:name="android.permission.CAMERA" />
 		</config-file>
 		<config-file target="AndroidManifest.xml" parent="/manifest">
+			<uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+		</config-file>
+		<config-file target="AndroidManifest.xml" parent="/manifest">
 			<uses-permission android:name="android.permission.INTERNET" />
 		</config-file>
 		<config-file target="AndroidManifest.xml" parent="/manifest">
