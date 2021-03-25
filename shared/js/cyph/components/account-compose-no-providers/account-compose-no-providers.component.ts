@@ -31,6 +31,7 @@ export class AccountComposeNoProvidersComponent extends AccountComposeComponent 
 	protected readonly hasOwnProviders: boolean = false;
 
 	constructor (
+		router: Router,
 		accountAppointmentsService: AccountAppointmentsService,
 		accountAuthService: AccountAuthService,
 		accountContactsService: AccountContactsService,
@@ -44,10 +45,10 @@ export class AccountComposeNoProvidersComponent extends AccountComposeComponent 
 		accountDatabaseService: AccountDatabaseService,
 		accountSettingsService: AccountSettingsService,
 		envService: EnvService,
-		router: Router,
 		stringsService: StringsService
 	) {
 		super(
+			router,
 			accountAppointmentsService,
 			accountAuthService,
 			accountContactsService,
@@ -61,7 +62,6 @@ export class AccountComposeNoProvidersComponent extends AccountComposeComponent 
 			accountDatabaseService,
 			accountSettingsService,
 			envService,
-			router,
 			stringsService
 		);
 	}
