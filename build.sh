@@ -108,15 +108,15 @@ echo -e '\n\nADD PLATFORMS\n\n'
 sed -i "s|~|${HOME}|g" build.json
 
 packageName='cyph'
-iOSDevelopmentIdentity='iPhone Developer'
-iOSDevelopmentProvisioningProfile='99b9abe7-e8b2-4b9c-86f7-eedb84729e38'
-iOSDistributionIdentity='iPhone Distribution'
-iOSDistributionProvisioningProfile='0b7baa74-e32d-432a-9bad-eb95ee8fdce4'
+iOSDevelopmentIdentity='Apple Development'
+iOSDevelopmentProvisioningProfile='d5b45e17-e75d-4d4e-b71d-bd569ccf1eea'
+iOSDistributionIdentity='Apple Distribution'
+iOSDistributionProvisioningProfile='3391280c-40e8-4d28-8bea-1084460c05c7'
 
 if [ "${test}" ] ; then
 	packageName='test.cyph'
-	iOSDevelopmentProvisioningProfile='fd2f14fe-b0fe-44a4-bee5-b861990f6dc4'
-	iOSDistributionProvisioningProfile='70cd529d-7156-436e-87ed-a095a2ce5efe'
+	iOSDevelopmentProvisioningProfile='24320152-d3d4-4794-8aa8-597e1808b7f5'
+	iOSDistributionProvisioningProfile='339e0323-6399-4e45-a908-263de5fc42dc'
 
 	cat config.xml |
 		grep -v cordova-plugin-privacyscreen |
