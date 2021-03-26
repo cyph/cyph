@@ -119,7 +119,6 @@ if [ "${test}" ] ; then
 	iOSDistributionProvisioningProfile='70cd529d-7156-436e-87ed-a095a2ce5efe'
 
 	cat config.xml |
-		grep -v cordova-plugin-ionic-webview |
 		grep -v cordova-plugin-privacyscreen |
 		sed 's|<name>Cyph</name>|<name>Cyph Test</name>|g' |
 		perl -pe 's/com\.cyph\.(app|desktop)/com.cyph.test/g' |
@@ -127,6 +126,13 @@ if [ "${test}" ] ; then
 		perl -pe 's/([":])(cyph|burner)\./\1staging.\2./g' \
 	> config.xml.new
 	mv config.xml.new config.xml
+
+	if [ "${android}" ] ; then
+		cat config.xml |
+			grep -v cordova-plugin-ionic-webview \
+		> config.xml.new
+		mv config.xml.new config.xml
+	fi
 
 	cat package.json |
 		sed 's|"URL_SCHEME": "cyph"|"URL_SCHEME": "cyph-test"|g' |
