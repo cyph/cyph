@@ -59,14 +59,27 @@ fi
 
 if [ "${allPlatforms}" ] ; then
 	rm -rf cordova-build* 2> /dev/null
+
 	./build.sh android "${password}" "${passwordWindows}" || exit 1
 	mv cordova-build cordova-build.android
+	./build.sh --test android "${password}" "${passwordWindows}" || exit 1
+	mv cordova-build cordova-build.android-test
+
 	./build.sh electron "${password}" "${passwordWindows}" || exit 1
 	mv cordova-build cordova-build.electron
+	./build.sh --test electron "${password}" "${passwordWindows}" || exit 1
+	mv cordova-build cordova-build.electron-test
+
 	./build.sh ios "${password}" "${passwordWindows}" || exit 1
 	mv cordova-build cordova-build.ios
+	./build.sh --test ios "${password}" "${passwordWindows}" || exit 1
+	mv cordova-build cordova-build.ios-test
+
+	./build.sh androidDebug || exit 1
+	mv cordova-build cordova-build.android-debug
 	./build.sh --test androidDebug || exit 1
-	mv cordova-build cordova-build.android-test
+	mv cordova-build cordova-build.android-debug-test
+
 	mkdir -p cordova-build/build
 	cp -a cordova-build.*/build/* cordova-build/build/
 	exit
