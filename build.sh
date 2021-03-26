@@ -95,8 +95,15 @@ echo -e '\n\nADD PLATFORMS\n\n'
 sed -i "s|~|${HOME}|g" build.json
 
 packageName='cyph'
+iOSDevelopmentIdentity='iPhone Developer'
+iOSDevelopmentProvisioningProfile='99b9abe7-e8b2-4b9c-86f7-eedb84729e38'
+iOSDistributionIdentity='iPhone Distribution'
+iOSDistributionProvisioningProfile='0b7baa74-e32d-432a-9bad-eb95ee8fdce4'
+
 if [ "${test}" ] ; then
 	packageName='test.cyph'
+	iOSDevelopmentProvisioningProfile='fd2f14fe-b0fe-44a4-bee5-b861990f6dc4'
+	iOSDistributionProvisioningProfile='70cd529d-7156-436e-87ed-a095a2ce5efe'
 
 	cat config.xml |
 		grep -v cordova-plugin-ionic-webview |
@@ -113,6 +120,8 @@ if [ "${test}" ] ; then
 		perl -pe 's/"(cyph|burner)\./"staging.\1./g' \
 	> package.json.new
 	mv package.json.new package.json
+
+	sed -i 's|macOS_Distribution|Test_macOS_Distribution|g' build.json
 
 	mv google-services.test.json google-services.json
 	mv GoogleService-Info.test.plist GoogleService-Info.plist
@@ -395,22 +404,22 @@ fi
 
 if [ "${iOS}" ] ; then
 	npx cordova build ios --debug --device \
-		--codeSignIdentity='iPhone Developer' \
+		--codeSignIdentity="${iOSDevelopmentIdentity}" \
 		--developmentTeam='SXZZ8WLPV2' \
 		--packageType='development' \
-		--provisioningProfile='99b9abe7-e8b2-4b9c-86f7-eedb84729e38'
+		--provisioningProfile="${iOSDevelopmentProvisioningProfile}"
 
-	if [ ! -f platforms/ios/build/device/Cyph.ipa ] ; then exit 1 ; fi
+	if [ ! -f platforms/ios/build/device/Cyph*.ipa ] ; then exit 1 ; fi
 
 	mv platforms/ios/build/device ios-debug
 
 	npx cordova build ios --release --device \
-		--codeSignIdentity='iPhone Distribution' \
+		--codeSignIdentity="${iOSDistributionIdentity}" \
 		--developmentTeam='SXZZ8WLPV2' \
 		--packageType='app-store' \
-		--provisioningProfile='0b7baa74-e32d-432a-9bad-eb95ee8fdce4'
+		--provisioningProfile="${iOSDistributionProvisioningProfile}"
 
-	if [ ! -f platforms/ios/build/device/Cyph.ipa ] ; then exit 1 ; fi
+	if [ ! -f platforms/ios/build/device/Cyph*.ipa ] ; then exit 1 ; fi
 
 	mv platforms/ios/build/device ios-release
 
@@ -418,6 +427,6 @@ if [ "${iOS}" ] ; then
 	mv ios-debug platforms/ios/build/device/debug
 	mv ios-release platforms/ios/build/device/release
 
-	cp platforms/ios/build/device/debug/Cyph.ipa build/${packageName}.debug.ipa
-	cp platforms/ios/build/device/release/Cyph.ipa build/${packageName}.ipa
+	cp platforms/ios/build/device/debug/Cyph*.ipa build/${packageName}.debug.ipa
+	cp platforms/ios/build/device/release/Cyph*.ipa build/${packageName}.ipa
 fi
