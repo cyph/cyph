@@ -30,6 +30,10 @@ export const deleteAndReinviteUser = async (projectId, username) => {
 
 	console.log(JSON.stringify(metadata, undefined, '\t'));
 
+	if (!metadata.internal) {
+		metadata.internal = {};
+	}
+
 	while (!metadata.internal.email) {
 		metadata.internal.email = await new Promise((resolve, reject) => {
 			read(
