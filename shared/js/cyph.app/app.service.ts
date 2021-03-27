@@ -192,12 +192,12 @@ export class AppService extends BaseProvider implements CanActivate {
 		if (this.envService.isWeb) {
 			self.addEventListener('hashchange', e => {
 				if (
-					e.oldURL
-						.split(locationData.origin)[1]
-						.match(new RegExp(`^/?#?/?${burnerRoot}(/|$)`)) ||
-					e.oldURL
-						.split(locationData.origin)[1]
-						.match(/^\/?#?\/?account-burner(\/|$)/)
+					(e.oldURL.split(locationData.origin)[1] || '').match(
+						new RegExp(`^/?#?/?${burnerRoot}(/|$)`)
+					) ||
+					(e.oldURL.split(locationData.origin)[1] || '').match(
+						/^\/?#?\/?account-burner(\/|$)/
+					)
 				) {
 					reloadWindow();
 				}
