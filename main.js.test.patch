@@ -79,7 +79,7 @@
 > 	}
 > 
 > 	var scriptRegex		= /<script[\s$>].*?<\/script>/g;
-189,192c230,298
+189,192c230,303
 < 	webSignSRI(o.packageMetadata).catch(function (err) {
 < 		document.head.innerHTML		= '';
 < 		document.body.textContent	= err;
@@ -113,8 +113,7 @@
 > 
 > 	headHTML	= headHTML
 > 		.replace(scriptRegex, '')
-> 		.replace(stylesheetRegex, '')
-> 		.replace(/<base href="."/, '<base href="' + alternateTestEnvironmentOrigin + '/"');
+> 		.replace(stylesheetRegex, '');
 > 
 > 	bodyHTML	= bodyHTML
 > 		.replace(scriptRegex, '')
@@ -142,14 +141,20 @@
 > 		scriptsPromise.then(function (scripts) {
 > 			scripts.forEach(function (script) {
 > 				var elem		= document.createElement('script');
-> 				elem.innerHTML	= script;
+> 				elem.innerHTML	= script.replace(
+> 					/\/assets\//g,
+> 					alternateTestEnvironmentOrigin + '/assets/'
+> 				);
 > 				document.body.appendChild(elem);
 > 			});
 > 		}),
 > 		stylesheetsPromise.then(function (stylesheets) {
 > 			stylesheets.forEach(function (stylesheet) {
 > 				var elem		= document.createElement('style');
-> 				elem.innerHTML	= stylesheet;
+> 				elem.innerHTML	= stylesheet.replace(
+> 					/\/assets\//g,
+> 					alternateTestEnvironmentOrigin + '/assets/'
+> 				);
 > 				document.body.appendChild(elem);
 > 			});
 > 		})
