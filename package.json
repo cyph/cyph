@@ -8,6 +8,7 @@
 		"@cyph/prettier": "*",
 		"cordova": "*",
 		"cordova-support-google-services": "https://github.com/LuisEGR/cordova-support-google-services.git",
+		"patch-package": "*",
 		"puppeteer": "*",
 		"xmldom": "*"
 	},
@@ -49,6 +50,7 @@
 		}
 	},
 	"scripts": {
+		"postinstall": "patch-package",
 		"updateDefaultCacheValues": "node scripts/update-default-cache-values.js"
 	}
 }
