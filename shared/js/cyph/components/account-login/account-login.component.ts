@@ -104,7 +104,10 @@ export class AccountLoginComponent extends BaseProvider implements OnInit {
 	/** @ignore */
 	private async postLogin () : Promise<void> {
 		try {
-			if (!this.accountDatabaseService.currentUser.value) {
+			if (
+				!this.accountDatabaseService.currentUser.value ||
+				this.destroyed.value
+			) {
 				return;
 			}
 
