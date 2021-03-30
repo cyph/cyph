@@ -23,6 +23,7 @@ import {SplitTestingService} from '../../../cyph/services/split-testing.service'
 import {StringsService} from '../../../cyph/services/strings.service';
 import {UrlSessionInitService} from '../../../cyph/services/url-session-init.service';
 import {WindowWatcherService} from '../../../cyph/services/window-watcher.service';
+import {enableBackgroundMode} from '../../../cyph/util/background-mode';
 import {filterUndefinedOperator} from '../../../cyph/util/filter';
 import {random} from '../../../cyph/util/random';
 import {sleep} from '../../../cyph/util/wait';
@@ -58,6 +59,8 @@ export class EphemeralChatRootComponent extends BaseProvider
 	/** @inheritDoc */
 	public async ngAfterViewInit () : Promise<void> {
 		await sleep(0);
+
+		enableBackgroundMode();
 
 		if (this.activatedRoute.snapshot.data.groupTest === true) {
 			this.appService.chatRootState.next(

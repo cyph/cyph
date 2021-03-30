@@ -38,6 +38,10 @@ import {NotificationService} from '../../services/notification.service';
 import {P2PWebRTCService} from '../../services/p2p-webrtc.service';
 import {SessionInitService} from '../../services/session-init.service';
 import {StringsService} from '../../services/strings.service';
+import {
+	disableBackgroundMode,
+	enableBackgroundMode
+} from '../../util/background-mode';
 import {toBehaviorSubject} from '../../util/flatten-observable';
 import {normalize} from '../../util/formatting';
 import {lockFunction} from '../../util/lock';
@@ -150,6 +154,7 @@ export class AccountChatComponent extends BaseProvider
 	public async ngOnDestroy () : Promise<void> {
 		super.ngOnDestroy();
 
+		disableBackgroundMode();
 		await this.p2pWebRTCService.close();
 		await this.accountSessionService.destroy();
 	}
@@ -158,6 +163,7 @@ export class AccountChatComponent extends BaseProvider
 	public ngOnInit () : void {
 		super.ngOnInit();
 
+		enableBackgroundMode();
 		this.accountService.transitionEnd();
 
 		const lock = lockFunction();
@@ -448,6 +454,8 @@ export class AccountChatComponent extends BaseProvider
 										beforeUnloadMessage = undefined;
 									});
 								}
+
+								enableBackgroundMode();
 
 								if (callType !== undefined && burnerSession) {
 									return this.accountChatService.setUser(
