@@ -25,7 +25,7 @@ if [ ! "${comment}" ] ; then
 	comment='commit.sh'
 fi
 
-rm .git/index.lock 2> /dev/null
+rm -rf .git/index.lock .git/hooks.tmp 2> /dev/null
 mv .git/hooks .git/hooks.tmp
 
 ./commands/keycache.sh
