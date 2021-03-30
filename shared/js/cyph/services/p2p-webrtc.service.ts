@@ -292,6 +292,19 @@ export class P2PWebRTCService extends BaseProvider
 	private async getUserMedia () : Promise<MediaStream | undefined> {
 		const {constraints} = this.outgoingStream.value;
 
+		if (
+			(this.confirmLocalVideoAccess &&
+				!(await (await this.handlers).localVideoConfirm(
+					!!constraints.video
+				))) ||
+			!(await requestPermissions(
+				...['RECORD_AUDIO', ...(constraints.video ? ['CAMERA'] : [])]
+			))
+		) {
+			debugLog(() => 'p2pWebRTCGetUserMediaCancel');
+			return undefined;
+		}
+
 		try {
 			return await (this.lastDeviceIDs.screenShare ?
 				(<any> navigator).mediaDevices.getDisplayMedia() :
@@ -631,24 +644,6 @@ export class P2PWebRTCService extends BaseProvider
 			this.cameraActivated.next(
 				!!this.outgoingStream.value.constraints.video
 			);
-
-			if (
-				(this.confirmLocalVideoAccess &&
-					!(await handlers.localVideoConfirm(
-						!!this.outgoingStream.value.constraints.video
-					))) ||
-				!(await requestPermissions(
-					...[
-						'RECORD_AUDIO',
-						...(this.outgoingStream.value.constraints.video ?
-							['CAMERA'] :
-							[])
-					]
-				))
-			) {
-				debugLog(() => 'p2pWebRTCJoinCancel');
-				return this.close();
-			}
 
 			const localStream = await this.initUserMedia();
 
