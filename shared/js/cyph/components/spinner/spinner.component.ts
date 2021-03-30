@@ -7,6 +7,7 @@ import {
 } from '@angular/core';
 import {ThemePalette} from '@angular/material/core/common-behaviors/color';
 import {ProgressSpinnerMode} from '@angular/material/progress-spinner';
+import {AnimationOptions} from 'ngx-lottie';
 import {BehaviorSubject} from 'rxjs';
 import {BaseProvider} from '../../base-provider';
 import {sleep} from '../../util/wait/sleep';
@@ -28,6 +29,21 @@ export class SpinnerComponent extends BaseProvider
 	/** Indicates whether the default Material indeterminate spinner will be used. */
 	public readonly classicIndeterminateSpinner: boolean = true;
 
+	/** @see AnimationOptions */
+	public readonly castle: AnimationOptions = {
+		path: '/assets/lottie/castle.json'
+	};
+
+	/** @see AnimationOptions */
+	public readonly castleDark: AnimationOptions = {
+		path: '/assets/lottie/castle-dark.json'
+	};
+
+	/** @see AnimationOptions */
+	public readonly cloud: AnimationOptions = {
+		path: '/assets/lottie/cloud.json'
+	};
+
 	/** @see MatProgressSpinner.color */
 	@Input() public color: ThemePalette;
 
@@ -39,6 +55,9 @@ export class SpinnerComponent extends BaseProvider
 
 	/** @see MatProgressSpinner.mode */
 	@Input() public mode: ProgressSpinnerMode = 'determinate';
+
+	/** String to select spinner animation */
+	@Input() public readonly spinner: string = '';
 
 	/** @see MatProgressSpinner.strokeWidth */
 	@Input() public strokeWidth: number | string = 10;

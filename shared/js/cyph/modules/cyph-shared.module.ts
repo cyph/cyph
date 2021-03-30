@@ -20,8 +20,10 @@ import {MatTooltipModule} from '@angular/material/tooltip';
 import {BrowserModule} from '@angular/platform-browser';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import {TextMaskModule} from 'angular2-text-mask';
+import player from 'lottie-web';
 import {NgxCaptchaModule} from 'ngx-captcha';
 import {ImageCropperModule} from 'ngx-image-cropper';
+import {LottieModule} from 'ngx-lottie';
 import {CheckoutComponent} from '../components/checkout';
 import {DialogAlertComponent} from '../components/dialog-alert';
 import {DialogConfirmComponent} from '../components/dialog-confirm';
@@ -86,6 +88,7 @@ import {DialogService} from '../services/dialog.service';
 		FormsModule,
 		HttpClientModule,
 		ImageCropperModule,
+		LottieModule,
 		MarkdownComponent,
 		MatButtonModule,
 		MatCheckboxModule,
@@ -116,6 +119,7 @@ import {DialogService} from '../services/dialog.service';
 		FormsModule,
 		HttpClientModule,
 		ImageCropperModule,
+		LottieModule.forRoot({player: playerFactory}),
 		MatButtonModule,
 		MatCheckboxModule,
 		MatChipsModule,
@@ -145,4 +149,7 @@ export class CyphSharedModule {
 
 		(<any> self).dialogService = dialogService;
 	}
+}
+export function playerFactory ()  {
+	return player;
 }

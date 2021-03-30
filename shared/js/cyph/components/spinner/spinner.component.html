@@ -1,13 +1,24 @@
-<mat-progress-spinner
-	[color]="color"
-	[diameter]="diameter"
-	[mode]="classicIndeterminateSpinner ? mode : 'determinate'"
-	[strokeWidth]="strokeWidth"
-	[value]="
-		!indeterminate ?
-			value :
-		classicIndeterminateSpinner ?
-			undefined :
-			(indeterminateValue | await) || 0
-	"
-></mat-progress-spinner>
+<div [ngSwitch]="spinner">
+	<div *ngSwitchCase="'cloud'"><ng-lottie [options]="cloud"></ng-lottie></div>
+	<div *ngSwitchCase="'castle'">
+		<ng-lottie containerClass="loading" [options]="castle"></ng-lottie>
+	</div>
+	<div *ngSwitchCase="'castleDark'">
+		<ng-lottie containerClass="loading" [options]="castleDark"></ng-lottie>
+	</div>
+	<div *ngSwitchDefault>
+		<mat-progress-spinner
+			[color]="color"
+			[diameter]="diameter"
+			[mode]="classicIndeterminateSpinner ? mode : 'determinate'"
+			[strokeWidth]="strokeWidth"
+			[value]="
+				!indeterminate ?
+					value :
+				classicIndeterminateSpinner ?
+					undefined :
+					(indeterminateValue | await) || 0
+			"
+		></mat-progress-spinner>
+	</div>
+</div>
