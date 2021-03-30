@@ -9,6 +9,8 @@ import {dompurifyHtmlSanitizer} from './dompurify-html-sanitizer.js';
 const {__dirname} = getMeta(import.meta);
 const markdownIt = new MarkdownIt();
 
+const markdownEscapeWhitelist = new Set(['accountsURL', 'accountsURLShort']);
+
 const markdownEscape = markdown =>
 	typeof markdown === 'string' ?
 		markdownEscapes.reduce((s, c) => {
@@ -50,7 +52,10 @@ export const render = (template, data, markdownOnly) => {
 		.render(
 			mustacheUnescape(template),
 			Object.entries(data || {}).reduce(
-				(o, [k, v]) => ({...o, [k]: markdownEscape(v)}),
+				(o, [k, v]) => ({
+					...o,
+					[k]: markdownEscapeWhitelist.has(k) ? v : markdownEscape(v)
+				}),
 				{}
 			)
 		)

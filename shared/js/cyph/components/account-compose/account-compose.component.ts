@@ -549,6 +549,9 @@ export class AccountComposeComponent extends BaseProvider
 
 		/* Navigate back to schedule after 2.5s */
 		await sleep(2500);
+		if (this.destroyed.value) {
+			return;
+		}
 		await this.router.navigate(['schedule']);
 	};
 

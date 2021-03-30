@@ -62,7 +62,14 @@ export const openWindow = async (
 /** Reloads window, or performs equivalent behavior depending on platform. */
 export const reloadWindow = () : void => {
 	if (env.isCordovaDesktop && typeof cordovaRequire === 'function') {
-		const {remote} = cordovaRequire('electron');
+		const remote = (() => {
+			try {
+				return cordovaRequire('@electron/remote');
+			}
+			catch {
+				return cordovaRequire('electron').remote;
+			}
+		})();
 		remote.app.relaunch();
 		remote.app.exit();
 	}
@@ -77,7 +84,14 @@ export const reloadWindow = () : void => {
 /** Closes window, or performs equivalent behavior depending on platform. */
 export const closeWindow = () : void => {
 	if (env.isCordovaDesktop && typeof cordovaRequire === 'function') {
-		const {remote} = cordovaRequire('electron');
+		const remote = (() => {
+			try {
+				return cordovaRequire('@electron/remote');
+			}
+			catch {
+				return cordovaRequire('electron').remote;
+			}
+		})();
 		remote.app.exit();
 	}
 	else if (env.isWeb) {
