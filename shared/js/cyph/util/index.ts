@@ -1,3 +1,4 @@
+export * from './background-mode';
 export * from './calendar';
 export * from './clipboard';
 export * from './compare';

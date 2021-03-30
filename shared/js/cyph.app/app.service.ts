@@ -20,6 +20,7 @@ import {DialogService} from '../cyph/services/dialog.service';
 import {EnvService} from '../cyph/services/env.service';
 import {FaviconService} from '../cyph/services/favicon.service';
 import {LocalStorageService} from '../cyph/services/local-storage.service';
+import {disableBackgroundMode} from '../cyph/util/background-mode';
 import {translate} from '../cyph/util/translate';
 import {resolvable, sleep, waitForValue} from '../cyph/util/wait';
 import {reloadWindow} from '../cyph/util/window';
@@ -86,12 +87,14 @@ export class AppService extends BaseProvider implements CanActivate {
 	/** Marks load as complete. */
 	public async loadComplete () : Promise<void> {
 		if (!this.envService.isWeb) {
+			disableBackgroundMode();
 			return;
 		}
 
 		$(document.body).addClass('load-complete');
 		await sleep(5000);
 		$('#pre-load').remove();
+		disableBackgroundMode();
 	}
 
 	/** Disables lockdown. */
