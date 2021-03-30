@@ -328,6 +328,7 @@ read -r -d '' modules <<- EOM
 	localforage
 	lodash
 	lodash-es
+	lottie-web
 	long
 	lunr
 	lz4@0.6.3
@@ -363,6 +364,7 @@ read -r -d '' modules <<- EOM
 	ngx-captcha@https://github.com/buu700/ngx-captcha-tmp
 	ngx-contextmenu
 	ngx-image-cropper
+	ngx-lottie
 	ngx-progressbar
 	ngx-scrollbar
 	ngx-teximate
