@@ -20,10 +20,10 @@ import {MatTooltipModule} from '@angular/material/tooltip';
 import {BrowserModule} from '@angular/platform-browser';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import {TextMaskModule} from 'angular2-text-mask';
-import player from 'lottie-web';
+import lottiePlayer from 'lottie-web';
 import {NgxCaptchaModule} from 'ngx-captcha';
 import {ImageCropperModule} from 'ngx-image-cropper';
-import {LottieModule} from 'ngx-lottie';
+import {LottieModule, LottiePlayerFactoryOrLoader} from 'ngx-lottie';
 import {CheckoutComponent} from '../components/checkout';
 import {DialogAlertComponent} from '../components/dialog-alert';
 import {DialogConfirmComponent} from '../components/dialog-confirm';
@@ -44,6 +44,11 @@ import {AwaitPipe} from '../pipes/await.pipe';
 import {FilterPipe} from '../pipes/filter.pipe';
 import {sharedModuleProviders} from '../providers/shared-module';
 import {DialogService} from '../services/dialog.service';
+
+/** @see LottiePlayerFactoryOrLoader */
+export const lottiePlayerFactory: LottiePlayerFactoryOrLoader = () => {
+	return lottiePlayer;
+};
 
 /**
  * Common module shared by cyph.com and CyphWebModule.
@@ -119,7 +124,7 @@ import {DialogService} from '../services/dialog.service';
 		FormsModule,
 		HttpClientModule,
 		ImageCropperModule,
-		LottieModule.forRoot({player: playerFactory}),
+		LottieModule.forRoot({player: lottiePlayerFactory}),
 		MatButtonModule,
 		MatCheckboxModule,
 		MatChipsModule,
@@ -149,7 +154,4 @@ export class CyphSharedModule {
 
 		(<any> self).dialogService = dialogService;
 	}
-}
-export function playerFactory ()  {
-	return player;
 }

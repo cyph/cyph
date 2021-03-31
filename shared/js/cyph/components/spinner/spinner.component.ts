@@ -56,8 +56,8 @@ export class SpinnerComponent extends BaseProvider
 	/** @see MatProgressSpinner.mode */
 	@Input() public mode: ProgressSpinnerMode = 'determinate';
 
-	/** String to select spinner animation */
-	@Input() public readonly spinner: string = '';
+	/** String to select spinner animation. */
+	@Input() public readonly spinner?: 'castle' | 'castleDark' | 'cloud';
 
 	/** @see MatProgressSpinner.strokeWidth */
 	@Input() public strokeWidth: number | string = 10;
