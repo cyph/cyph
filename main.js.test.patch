@@ -79,7 +79,7 @@
 > 	}
 > 
 > 	var scriptRegex		= /<script[\s$>].*?<\/script>/g;
-189,192c230,303
+189,192c230,304
 < 	webSignSRI(o.packageMetadata).catch(function (err) {
 < 		document.head.innerHTML		= '';
 < 		document.body.textContent	= err;
@@ -113,7 +113,8 @@
 > 
 > 	headHTML	= headHTML
 > 		.replace(scriptRegex, '')
-> 		.replace(stylesheetRegex, '');
+> 		.replace(stylesheetRegex, '')
+> 		.replace(/<base href=.*?>/, '');
 > 
 > 	bodyHTML	= bodyHTML
 > 		.replace(scriptRegex, '')
