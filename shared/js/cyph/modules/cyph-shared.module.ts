@@ -23,7 +23,7 @@ import {TextMaskModule} from 'angular2-text-mask';
 import lottiePlayer from 'lottie-web';
 import {NgxCaptchaModule} from 'ngx-captcha';
 import {ImageCropperModule} from 'ngx-image-cropper';
-import {LottieModule, LottiePlayerFactoryOrLoader} from 'ngx-lottie';
+import {LottieModule} from 'ngx-lottie';
 import {CheckoutComponent} from '../components/checkout';
 import {DialogAlertComponent} from '../components/dialog-alert';
 import {DialogConfirmComponent} from '../components/dialog-confirm';
@@ -46,7 +46,7 @@ import {sharedModuleProviders} from '../providers/shared-module';
 import {DialogService} from '../services/dialog.service';
 
 /** @see LottiePlayerFactoryOrLoader */
-export const lottiePlayerFactory: LottiePlayerFactoryOrLoader = () => {
+export const lottiePlayerFactory = () => {
 	return lottiePlayer;
 };
 
