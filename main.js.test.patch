@@ -64,7 +64,7 @@
 > ).
 180a212
 > 	var bodyHTML	= o.package.split('<body>')[1].split('</body>')[0];
-186,187c218,228
+186,187c218,226
 < 	document.head.innerHTML	= headHTML;
 < 	document.body.innerHTML	= o.package.split('<body>')[1].split('</body>')[0];
 ---
@@ -77,14 +77,14 @@
 > 			document.body.textContent	= err;
 > 		});
 > 	}
-> 
-> 	var scriptRegex		= /<script[\s$>].*?<\/script>/g;
-189,192c230,303
+189,192c228,311
 < 	webSignSRI(o.packageMetadata).catch(function (err) {
 < 		document.head.innerHTML		= '';
 < 		document.body.textContent	= err;
 < 	});
 ---
+> 	var scriptRegex		= /<script[\s$>].*?<\/script>/g;
+> 
 > 	var scriptsPromise	= Promise.all(
 > 		(o.package.match(scriptRegex) || []).map(function (s) {
 > 			return fetch(
@@ -115,6 +115,13 @@
 > 		.replace(scriptRegex, '')
 > 		.replace(stylesheetRegex, '');
 > 
+> 	if (device.platform === 'Android') {
+> 		headHTML	= headHTML.replace(
+> 			/<base href="."/,
+> 			'<base href="' + alternateTestEnvironmentOrigin + '/"'
+> 		);
+> 	}
+> 
 > 	bodyHTML	= bodyHTML
 > 		.replace(scriptRegex, '')
 > 		.replace(stylesheetRegex, '');
@@ -137,24 +144,25 @@
 > 		search: ''
 > 	};
 > 
+> 	function subresourceContent (s) {
+> 		return device.platform === 'Android' ? s : s.replace(
+> 			/\/assets\//g,
+> 			alternateTestEnvironmentOrigin + '/assets/'
+> 		);
+> 	}
+> 
 > 	return Promise.all([
 > 		scriptsPromise.then(function (scripts) {
 > 			scripts.forEach(function (script) {
 > 				var elem		= document.createElement('script');
-> 				elem.innerHTML	= script.replace(
-> 					/\/assets\//g,
-> 					alternateTestEnvironmentOrigin + '/assets/'
-> 				);
+> 				elem.innerHTML	= subresourceContent(script);
 > 				document.body.appendChild(elem);
 > 			});
 > 		}),
 > 		stylesheetsPromise.then(function (stylesheets) {
 > 			stylesheets.forEach(function (stylesheet) {
 > 				var elem		= document.createElement('style');
-> 				elem.innerHTML	= stylesheet.replace(
-> 					/\/assets\//g,
-> 					alternateTestEnvironmentOrigin + '/assets/'
-> 				);
+> 				elem.innerHTML	= subresourceContent(stylesheet);
 > 				document.body.appendChild(elem);
 > 			});
 > 		})
