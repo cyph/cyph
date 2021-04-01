@@ -31,9 +31,15 @@ export class Thread<T> implements IThread<T> {
 			const oldImportScripts = importScripts;
 			importScripts = script => {
 				oldImportScripts(
-					`${(<any> self).locationData.protocol}//${
-						(<any> self).locationData.host
-					}${script}?${
+					`${
+						script.startsWith(
+							`${(<any> self).locationData.protocol}//`
+						) ?
+							script :
+							`${(<any> self).locationData.protocol}//${
+								(<any> self).locationData.host
+							}${script}`
+					}?${
 						/* eslint-disable-next-line @typescript-eslint/tslint/config */
 						Date.now().toString()
 					}`
