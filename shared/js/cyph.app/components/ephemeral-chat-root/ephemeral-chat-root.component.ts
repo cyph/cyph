@@ -112,6 +112,23 @@ export class EphemeralChatRootComponent extends BaseProvider
 						stream
 					}
 				]);
+
+				const setGroupSize = (n: number) => {
+					this.p2pWebRTCService.incomingStreams.next(
+						new Array(n).fill(
+							this.p2pWebRTCService.incomingStreams.value[0]
+						)
+					);
+				};
+
+				const incrementGroupSize = () => {
+					setGroupSize(
+						this.p2pWebRTCService.incomingStreams.value.length + 1
+					);
+				};
+
+				(<any> self).incrementGroupSize = incrementGroupSize;
+				(<any> self).setGroupSize = setGroupSize;
 			}
 		}
 
