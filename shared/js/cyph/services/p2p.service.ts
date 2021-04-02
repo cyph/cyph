@@ -60,8 +60,18 @@ export class P2PService extends BaseProvider {
 		this.windowWatcherService.height,
 		this.windowWatcherService.width
 	]).pipe(
-		map(([incomingStreams, height, width]) => {
+		map(([baseIncomingStreams, height, width]) => {
 			const gridMargin = 4;
+			const incomingStreams = baseIncomingStreams.filter(o => !!o.stream);
+
+			if (incomingStreams.length < 1) {
+				return {
+					flexAmount: '100%',
+					gridMargin: `${gridMargin.toString()}px`,
+					panels: incomingStreams
+				};
+			}
+
 			const rows = Math.floor(Math.sqrt(incomingStreams.length));
 			const columns = Math.floor(
 				Math.ceil(incomingStreams.length / rows)
@@ -80,8 +90,8 @@ export class P2PService extends BaseProvider {
 					incomingStreams;
 
 			return {
-				flexAmount: flexAmount.toFixed(2),
-				gridMargin: gridMargin.toString(),
+				flexAmount: `${flexAmount.toFixed(2)}%`,
+				gridMargin: `${gridMargin.toString()}px`,
 				panels
 			};
 		})

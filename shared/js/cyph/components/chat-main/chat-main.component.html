@@ -204,23 +204,19 @@
 			*ngIf="(p2pService.galleryView | await) === true"
 		>
 			<div
-				fxLayout="row wrap"
-				fxLayout.lt-sm="column"
-				fxLayoutAlign.gt-xs="center center"
-				fxLayoutGap="4px grid"
+				[gdColumns]="
+					'repeat(auto-fill, calc(' +
+					galleryViewOptions.flexAmount +
+					' - ' +
+					galleryViewOptions.gridMargin +
+					'))'
+				"
+				[gdGap]="galleryViewOptions.gridMargin"
 				*ngIf="
 					p2pService.galleryViewOptions | await as galleryViewOptions
 				"
 			>
-				<div
-					[fxFlex.gt-xs]="
-						'calc(' +
-						galleryViewOptions.flexAmount +
-						'% - ' +
-						galleryViewOptions.gridMargin +
-						'px)'
-					"
-					fxLayoutAlign.gt-xs="space-evenly space-between"
+				<ng-container
 					*ngFor="
 						let panel of galleryViewOptions.panels;
 						trackBy: trackByIndex
@@ -237,8 +233,7 @@
 							"
 						></ng-container
 					></ng-container>
-					<div *ngIf="!panel?.stream"></div>
-				</div>
+				</ng-container>
 			</div>
 		</div>
 		<ng-template
