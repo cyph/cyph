@@ -204,14 +204,9 @@
 			*ngIf="(p2pService.galleryView | await) === true"
 		>
 			<div
-				[gdColumns]="
-					'repeat(auto-fill, calc(' +
-					galleryViewOptions.flexAmount +
-					' - ' +
-					galleryViewOptions.gridMargin +
-					'))'
-				"
-				[gdGap]="galleryViewOptions.gridMargin"
+				[gdColumns]="galleryViewOptions.gridColumns"
+				[gdGap]="galleryViewOptions.gridGap"
+				[gdRows]="galleryViewOptions.gridRows"
 				*ngIf="
 					p2pService.galleryViewOptions | await as galleryViewOptions
 				"
@@ -233,6 +228,7 @@
 							"
 						></ng-container
 					></ng-container>
+					<div *ngIf="!panel?.stream"></div>
 				</ng-container>
 			</div>
 		</div>
@@ -247,10 +243,10 @@
 				[playsinline]="true"
 				[src]="incomingStream.stream"
 				[title]="
-					incomingStream.user.username ?
-						'@' + (incomingStream.user.username || '') :
-					incomingStream.user.name ?
-						incomingStream.user.name :
+					incomingStream.user?.username ?
+						'@' + (incomingStream.user?.username || '') :
+					incomingStream.user?.name ?
+						incomingStream.user?.name :
 						undefined
 				"
 				*ngIf="!!incomingStream.stream"
@@ -342,7 +338,8 @@
 			class="me"
 			[class.ios-app]="envService.isCordovaMobileIOS"
 			[fxHide]="
-				!(p2pWebRTCService.outgoingStream | await)?.constraints?.video
+				!(p2pWebRTCService.outgoingStream | await)?.constraints
+					?.video || (p2pService.galleryView | await) === true
 			"
 			[ngDraggable]="envService.pro | await"
 			[autoplay]="true"

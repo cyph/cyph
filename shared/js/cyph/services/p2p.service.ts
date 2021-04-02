@@ -57,41 +57,30 @@ export class P2PService extends BaseProvider {
 	/** Gallery view configuration. */
 	public readonly galleryViewOptions = observableAll([
 		this.p2pWebRTCService.incomingStreams,
-		this.windowWatcherService.height,
-		this.windowWatcherService.width
+		this.p2pWebRTCService.outgoingStream
 	]).pipe(
-		map(([baseIncomingStreams, height, width]) => {
-			const gridMargin = 4;
-			const incomingStreams = baseIncomingStreams.filter(o => !!o.stream);
+		map(([incomingStreams, outgoingStream]) => {
+			const streamCount = incomingStreams.length + 1;
 
-			if (incomingStreams.length < 1) {
-				return {
-					flexAmount: '100%',
-					gridMargin: `${gridMargin.toString()}px`,
-					panels: incomingStreams
-				};
-			}
+			const rows = Math.floor(Math.sqrt(streamCount));
+			const columns = Math.ceil(streamCount / rows);
+			const totalCells = rows * columns;
 
-			const rows = Math.floor(Math.sqrt(incomingStreams.length));
-			const columns = Math.floor(
-				Math.ceil(incomingStreams.length / rows)
-			);
-			const widescreen = height * 3 < width * 2;
-			const flexAmount = widescreen ? 100 / columns : 100 / rows;
-			const totalCount = rows * columns;
+			const gridGap = '4px';
+			const maxColumnWidth = `${(100 / columns).toFixed(2)}vw`;
+			const maxRowHeight = `${(100 / rows).toFixed(2)}vh`;
 
-			const panels: (typeof incomingStreams[0] | undefined)[] =
-				totalCount > incomingStreams.length ?
-					incomingStreams.concat(
-						new Array(totalCount - incomingStreams.length).fill(
-							undefined
-						)
-					) :
-					incomingStreams;
+			const panels = (<(typeof outgoingStream | undefined)[]> (
+				incomingStreams
+			))
+				.filter(o => !!o?.stream)
+				.concat(new Array(totalCells - streamCount).fill(undefined))
+				.concat(outgoingStream);
 
 			return {
-				flexAmount: `${flexAmount.toFixed(2)}%`,
-				gridMargin: `${gridMargin.toString()}px`,
+				gridColumns: `repeat(${columns.toString()}, minmax(0, calc(${maxColumnWidth} - ${gridGap})))`,
+				gridGap,
+				gridRows: `repeat(${rows.toString()}, minmax(0, calc(${maxRowHeight} - ${gridGap})))`,
 				panels
 			};
 		})
