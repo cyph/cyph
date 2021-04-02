@@ -18,7 +18,8 @@ if (
 		'history' in self &&
 		'pushState' in (<any> self).history &&
 		'replaceState' in (<any> self).history &&
-		'MutationObserver' in self
+		'MutationObserver' in self &&
+		typeof document.createElement('div').style.grid === 'string'
 	)
 ) {
 	location.pathname = '/unsupportedbrowser';
