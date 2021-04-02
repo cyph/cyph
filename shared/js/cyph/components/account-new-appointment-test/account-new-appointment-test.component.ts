@@ -74,11 +74,6 @@ export class AccountNewAppointmentTestComponent extends BaseProvider
 			}))
 		);
 
-		await this.dialogService.alert({
-			content: this.stringsService.newAppointmentTestHostOpenAlert,
-			title: this.stringsService.newAppointmentTestTitle
-		});
-
 		if (!appointment.calendarInvite.url) {
 			return;
 		}
