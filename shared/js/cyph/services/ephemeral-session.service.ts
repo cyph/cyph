@@ -150,7 +150,7 @@ export class EphemeralSessionService extends SessionService {
 				childCastleService
 			);
 
-			childSession.remoteUsername.next(
+			childSession.remoteUserCustomName.next(
 				member.name ||
 					this.stringsService.setParameters(
 						this.stringsService.burnerGroupDefaultMemberName,
@@ -719,7 +719,7 @@ export class EphemeralSessionService extends SessionService {
 			}
 
 			if (this.envService.isTelehealth) {
-				this.remoteUsername.next(
+				this.remoteUserDefaultName.next(
 					this.state.isAlice.value ?
 						this.stringsService.patient :
 						this.stringsService.doctor
@@ -915,10 +915,10 @@ export class EphemeralSessionService extends SessionService {
 										castleService
 									);
 
-									hostSession.remoteUsername.next(
-										username ||
-											this.stringsService
-												.burnerGroupDefaultHostName
+									hostSession.remoteUsername.next(username);
+									hostSession.remoteUserCustomName.next(
+										this.stringsService
+											.burnerGroupDefaultHostName
 									);
 
 									castleService
@@ -935,7 +935,7 @@ export class EphemeralSessionService extends SessionService {
 
 								const session = this.spawn(sessionInit);
 
-								session.remoteUsername.next(
+								session.remoteUserCustomName.next(
 									member.name ||
 										this.stringsService.setParameters(
 											this.stringsService

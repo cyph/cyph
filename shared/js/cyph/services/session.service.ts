@@ -2,7 +2,7 @@
 
 import {Injectable} from '@angular/core';
 import {BehaviorSubject, Observable, of, ReplaySubject} from 'rxjs';
-import {take} from 'rxjs/operators';
+import {map, take} from 'rxjs/operators';
 import {UserLike} from '../account';
 import {BaseProvider} from '../base-provider';
 import {HandshakeSteps, IHandshakeState} from '../crypto/castle';
@@ -31,10 +31,12 @@ import {
 	RpcEvents
 } from '../session';
 import {filterUndefined, filterUndefinedOperator} from '../util/filter';
+import {toBehaviorSubject} from '../util/flatten-observable';
 import {normalize} from '../util/formatting';
 import {getOrSetDefault} from '../util/get-or-set-default';
 import {lockFunction} from '../util/lock';
 import {debugLog, debugLogError} from '../util/log';
+import {observableAll} from '../util/observable-all';
 import {deserialize, serialize} from '../util/serialization';
 import {getTimestamp} from '../util/time';
 import {uuid} from '../util/uuid';
@@ -182,9 +184,40 @@ export abstract class SessionService extends BaseProvider
 	public readonly remoteUser = resolvable<UserLike | undefined>();
 
 	/** @inheritDoc */
-	public readonly remoteUsername: BehaviorSubject<
-		string
-	> = new BehaviorSubject<string>(this.stringsService.friend);
+	public readonly remoteUserCustomName = new BehaviorSubject<
+		string | undefined
+	>(undefined);
+
+	/** @inheritDoc */
+	public readonly remoteUserDefaultName = new BehaviorSubject<string>(
+		this.stringsService.friend
+	);
+
+	/** @inheritDoc */
+	public readonly remoteUsername = new BehaviorSubject<string | undefined>(
+		undefined
+	);
+
+	/** @inheritDoc */
+	public readonly remoteUserString = toBehaviorSubject(
+		observableAll([
+			this.remoteUserCustomName,
+			this.remoteUserDefaultName,
+			this.remoteUsername
+		]).pipe(
+			map(
+				([
+					remoteUserCustomName,
+					remoteUserDefaultName,
+					remoteUsername
+				]) =>
+					remoteUsername ||
+					remoteUserCustomName ||
+					remoteUserDefaultName
+			)
+		),
+		this.remoteUserDefaultName.value
+	);
 
 	/** @see ISessionMessageData.sessionSubID */
 	public sessionSubID?: string;

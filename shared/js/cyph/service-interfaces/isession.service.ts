@@ -127,8 +127,17 @@ export interface ISessionService<
 	/** Remote user, if applicable. */
 	readonly remoteUser: IResolvable<UserLike | undefined>;
 
-	/** Remote username (e.g. "friend" or "alice"). */
-	readonly remoteUsername: BehaviorSubject<string>;
+	/** Name to use for remote user if not overridden by username (e.g. "Alice" or "Guest #1"). */
+	readonly remoteUserCustomName: BehaviorSubject<string | undefined>;
+
+	/** Name to use for remote user if not overridden by username or custom name (e.g. "friend"). */
+	readonly remoteUserDefaultName: BehaviorSubject<string>;
+
+	/** Remote username (e.g. "alice"). */
+	readonly remoteUsername: BehaviorSubject<string | undefined>;
+
+	/** Ultimate name/username string to use for remote user (e.g. "alice" or "friend"). */
+	readonly remoteUserString: BehaviorSubject<string>;
 
 	/** Returns session shared secret, if only one is set. */
 	readonly sharedSecret: string | undefined;

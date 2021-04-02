@@ -169,7 +169,7 @@ const getMetadataInternal = async (
 		authorUser = currentUser?.user;
 	}
 	else if (message.authorID === undefined) {
-		author = sessionService.remoteUsername;
+		author = sessionService.remoteUserString;
 	}
 	else {
 		const authorSubject = new BehaviorSubject<string>(message.authorID);
@@ -214,8 +214,8 @@ const getMetadataInternal = async (
 			!isNaN(groupIndex) &&
 				sessionService.group.value &&
 				sessionService.group.value[groupIndex] ?
-				sessionService.group.value[groupIndex].remoteUsername :
-				sessionService.remoteUsername
+				sessionService.group.value[groupIndex].remoteUserString :
+				sessionService.remoteUserString
 			)
 				/* eslint-disable-next-line @typescript-eslint/tslint/config */
 				.subscribe(authorSubject);

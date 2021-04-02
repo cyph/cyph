@@ -923,7 +923,8 @@ export class P2PWebRTCService extends BaseProvider
 									} :
 									{
 										name:
-											sessionService.remoteUsername.value
+											sessionService.remoteUserString
+												.value
 									}
 							}))
 						)

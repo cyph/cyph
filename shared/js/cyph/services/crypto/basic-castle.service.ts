@@ -50,12 +50,12 @@ export class BasicCastleService extends CastleService {
 					this.potassiumService,
 					this.handshakeState,
 					sessionService.sharedSecret,
-					sessionService.remoteUsername
+					sessionService.remoteUserString
 				) :
 				new RegisteredRemoteUser(
 					this.accountDatabaseService,
 					false,
-					sessionService.remoteUsername
+					sessionService.remoteUserString
 				);
 
 		await this.handshakeState.initialSecret

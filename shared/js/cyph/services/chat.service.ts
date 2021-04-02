@@ -592,7 +592,7 @@ export class ChatService extends BaseProvider {
 	protected async getAuthorID (
 		author: Observable<string>
 	) : Promise<string | undefined> {
-		if (author === this.sessionService.remoteUsername) {
+		if (author === this.sessionService.remoteUserString) {
 			return author
 				.pipe(take(1))
 				.toPromise()
@@ -604,7 +604,7 @@ export class ChatService extends BaseProvider {
 			this.sessionService.group.value &&
 			author instanceof BehaviorSubject ?
 				this.sessionService.group.value
-					.map(o => o.remoteUsername)
+					.map(o => o.remoteUserString)
 					.indexOf(author) :
 				-1;
 
@@ -800,7 +800,7 @@ export class ChatService extends BaseProvider {
 
 						if (
 							this.sessionInitService.ephemeral &&
-							author === this.sessionService.remoteUsername
+							author === this.sessionService.remoteUserString
 						) {
 							const p2pService = await this.p2pService;
 
@@ -1095,7 +1095,7 @@ export class ChatService extends BaseProvider {
 									}));
 
 									message.authorID = await this.getAuthorID(
-										this.sessionService.remoteUsername
+										this.sessionService.remoteUserString
 									);
 
 									const messageValue = await messageValues.getItem(

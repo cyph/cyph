@@ -38,12 +38,12 @@ export class AnonymousCastleService extends CastleService {
 					this.potassiumService,
 					handshakeState,
 					sessionService.sharedSecret,
-					sessionService.remoteUsername
+					sessionService.remoteUserString
 				) :
 				new RegisteredRemoteUser(
 					this.accountDatabaseService,
 					false,
-					sessionService.remoteUsername
+					sessionService.remoteUserString
 				);
 
 		this.pairwiseSession.resolve(

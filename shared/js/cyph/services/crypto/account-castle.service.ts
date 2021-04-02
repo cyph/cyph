@@ -56,7 +56,7 @@ export class AccountCastleService extends CastleService {
 				this.potassiumService,
 				anonymousHandshakeState,
 				undefined,
-				sessionService.remoteUsername
+				sessionService.remoteUserString
 			);
 
 			this.pairwiseSession.resolve(
