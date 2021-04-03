@@ -1,6 +1,6 @@
 @import '../../../../css/mixins';
 
-@mixin setFontSize($fontSize) {
+@mixin set-font-size($fontSize) {
 	.input-wrapper-inner {
 		font-size: $fontSize;
 
@@ -60,11 +60,11 @@
 	}
 
 	&:not(.small) {
-		@include setFontSize(42px);
+		@include set-font-size(42px);
 	}
 
 	&.small {
-		@include setFontSize(28px);
+		@include set-font-size(28px);
 	}
 }
 
