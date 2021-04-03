@@ -29,7 +29,6 @@ const compileSCSS = scss =>
 			input: childProcess
 				.spawnSync('sass', ['--stdin', `-I${cssRoot}`], {
 					input: `
-						@import '~bourbon/app/assets/stylesheets/bourbon';
 						${fs.readFileSync(`${cssRoot}/mixins.scss`).toString()}
 						${fs.readFileSync(`${cssRoot}/theme.scss`).toString()}
 						${scss}
