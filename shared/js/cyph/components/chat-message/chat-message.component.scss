@@ -148,7 +148,7 @@ div.author-remote .hide-content-button.mobile {
 
 :host ::ng-deep {
 	.message-item {
-		word-wrap: break-word;
+		overflow-wrap: break-word;
 		word-break: break-word;
 		padding: 7.5px 10px 5px 10px;
 		margin: 2.5px;

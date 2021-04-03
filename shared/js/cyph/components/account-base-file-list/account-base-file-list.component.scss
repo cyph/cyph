@@ -51,7 +51,8 @@ cyph-account-storage-analytics.mobile {
 
 mat-card-subtitle,
 mat-card-title {
-	@include word-wrap;
+	overflow-wrap: break-word;
+	word-break: break-all;
 }
 
 mat-card-title.truncate {

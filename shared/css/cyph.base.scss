@@ -470,7 +470,7 @@ button,
 .countdown {
 	font-family: 'Ubuntu Mono', monospace;
 	word-break: normal;
-	word-wrap: normal;
+	overflow-wrap: normal;
 }
 
 .flipped {
@@ -530,8 +530,8 @@ pre,
 code {
 	font-family: 'Ubuntu Mono', monospace;
 	white-space: pre-wrap;
-
-	@include word-wrap;
+	overflow-wrap: break-word;
+	word-break: break-all;
 }
 
 .cyph-foreground {
@@ -684,8 +684,8 @@ $nanoScrollbarWidth: 17px;
 
 		#{nanoTabGroupTarget()} {
 			height: 100%;
-
-			@include word-wrap;
+			overflow-wrap: break-word;
+			word-break: break-all;
 		}
 
 		&.edge {

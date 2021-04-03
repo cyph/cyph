@@ -1,7 +1,8 @@
 @import '../../../../css/mixins';
 
 .notes {
-	@include word-wrap;
+	overflow-wrap: break-word;
+	word-break: break-all;
 }
 
 h4.sharing-options {
