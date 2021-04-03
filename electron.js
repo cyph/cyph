@@ -51,7 +51,6 @@ function createWindow ()  {
 				{},
 				(cdvElectronSettings.browserWindow || {}).webPreferences,
 				{
-					enableRemoteModule: true,
 					preload: path.join(__dirname, 'preload.js')
 				}
 			)

@@ -37,12 +37,6 @@
 	<!-- <plugin name="cordova-plugin-geolocation" spec="*" /> -->
 	<plugin name="cordova-plugin-globalization" spec="*" />
 	<plugin name="cordova-plugin-headercolor" spec="*" />
-	<plugin name="cordova-plugin-ionic-keyboard" spec="*" />
-	<plugin name="cordova-plugin-ionic-webview" spec="*" />
-	<plugin
-		name="cordova-plugin-iosrtc"
-		spec="https://github.com/cordova-rtc/cordova-plugin-iosrtc.git"
-	/>
 	<plugin name="cordova-plugin-media-capture" spec="*" />
 	<plugin name="cordova-plugin-network-information" spec="*" />
 	<plugin name="cordova-plugin-permission" spec="*" />
@@ -81,6 +75,8 @@
 			name="cordova-plugin-contacts"
 			spec="https://github.com/expcapitaldev/cordova-plugin-contacts.git"
 		/>
+		<plugin name="cordova-plugin-ionic-keyboard" spec="*" />
+		<plugin name="cordova-plugin-ionic-webview" spec="*" />
 		<plugin name="cordova-plugin-secure-storage-echo" spec="*" />
 		<plugin name="cordova-plugin-splashscreen" spec="*" />
 		<plugin name="phonegap-plugin-local-notification" spec="*" />
@@ -259,6 +255,12 @@
 		<plugin
 			name="cordova-plugin-contacts"
 			spec="https://github.com/expcapitaldev/cordova-plugin-contacts.git"
+		/>
+		<plugin name="cordova-plugin-ionic-keyboard" spec="*" />
+		<plugin name="cordova-plugin-ionic-webview" spec="*" />
+		<plugin
+			name="cordova-plugin-iosrtc"
+			spec="https://github.com/cordova-rtc/cordova-plugin-iosrtc.git"
 		/>
 		<plugin name="cordova-plugin-network-information" spec="*" />
 		<plugin name="cordova-plugin-purchase" spec="*" />
