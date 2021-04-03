@@ -3,7 +3,7 @@
 
 /* Workaround for edge case Materialize bug */
 .sidenav[style*='translateX(-300px)'] {
-	@include transform(translateX(-105%) !important);
+	transform: translateX(-105%) !important;
 }
 
 .sidenav {

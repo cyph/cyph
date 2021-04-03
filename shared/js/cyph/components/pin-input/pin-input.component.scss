@@ -19,12 +19,10 @@
 					10.5px;
 
 				&.length-#{$i} {
-					@include transform(translateX($translateX));
+					transform: translateX($translateX);
 
 					&.text-security {
-						@include transform(
-							translate($translateX + 4.5px, -8px)
-						);
+						transform: translate($translateX + 4.5px, -8px);
 					}
 				}
 			}

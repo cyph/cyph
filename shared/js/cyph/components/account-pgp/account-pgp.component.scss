@@ -46,6 +46,6 @@ mat-tab-group {
 .fixed-fab,
 button ::ng-deep .mat-button-wrapper {
 	mat-icon svg * {
-		@include transform(scale(0.85));
+		transform: scale(0.85);
 	}
 }

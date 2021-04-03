@@ -21,8 +21,7 @@ cyph-account-contacts ::ng-deep {
 
 smd-fab-speed-dial ::ng-deep smd-fab-actions > .open {
 	opacity: 1 !important;
-
-	@include transform(scale(1) !important);
+	transform: scale(1) !important;
 }
 
 .overlay {

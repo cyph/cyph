@@ -38,12 +38,11 @@ body {
 	> .transition {
 		@media (min-width: 376px) {
 			opacity: 0;
-
-			@include animation(preloadfadeout 2s linear);
+			animation: preloadfadeout 2s linear;
 		}
 
 		+ .loading > .logo-animation * {
-			@include animation-delay(2s);
+			animation-delay: 2s;
 		}
 	}
 }
@@ -106,7 +105,7 @@ body:not(.cordova) {
 	}
 
 	> .logo-animation {
-		@include filter(drop-shadow(3px 3px 3px rgba(68, 68, 68, 0.25)));
+		filter: drop-shadow(3px 3px 3px rgba(68, 68, 68, 0.25));
 
 		&,
 		> * {
@@ -122,16 +121,15 @@ body:not(.cordova) {
 
 		&.connected,
 		> * {
-			@include animation-iteration-count(infinite !important);
+			animation-iteration-count: infinite !important;
 		}
 
 		&.connected {
-			@include animation(logoconnected 3250ms step-end);
+			animation: logoconnected 3250ms step-end;
 
 			> * {
 				opacity: 1;
-
-				@include animation(none !important);
+				animation: none !important;
 			}
 		}
 
@@ -145,8 +143,7 @@ body:not(.cordova) {
 			top: 60%;
 			left: 35%;
 			background-position: 100% 100%;
-
-			@include animation(logo0 1890ms step-end);
+			animation: logo0 1890ms step-end;
 		}
 
 		> :nth-child(2) {
@@ -155,8 +152,7 @@ body:not(.cordova) {
 			top: 60%;
 			left: 0;
 			background-position: 0 100%;
-
-			@include animation(logo1 1890ms step-end);
+			animation: logo1 1890ms step-end;
 		}
 
 		> :nth-child(3) {
@@ -165,8 +161,7 @@ body:not(.cordova) {
 			top: 35%;
 			left: 65%;
 			background-position: 100% 47%;
-
-			@include animation(logo2 1890ms step-end);
+			animation: logo2 1890ms step-end;
 		}
 
 		> :nth-child(4) {
@@ -175,8 +170,7 @@ body:not(.cordova) {
 			top: 35%;
 			left: 0;
 			background-position: 0 47%;
-
-			@include animation(logo3 1890ms step-end);
+			animation: logo3 1890ms step-end;
 		}
 
 		> :nth-child(5) {
@@ -185,8 +179,7 @@ body:not(.cordova) {
 			top: 0;
 			left: 0;
 			background-position: 0 0;
-
-			@include animation(logo4 1890ms step-end);
+			animation: logo4 1890ms step-end;
 		}
 	}
 
@@ -198,7 +191,7 @@ body:not(.cordova) {
 	}
 }
 
-@include keyframes(logoconnected) {
+@keyframes logoconnected {
 	0%,
 	38.4%,
 	53.8%,
@@ -214,7 +207,7 @@ body:not(.cordova) {
 	}
 }
 
-@include keyframes(logo0) {
+@keyframes logo0 {
 	0%,
 	100% {
 		opacity: 0;
@@ -225,7 +218,7 @@ body:not(.cordova) {
 	}
 }
 
-@include keyframes(logo1) {
+@keyframes logo1 {
 	0%,
 	95.8%,
 	100% {
@@ -237,7 +230,7 @@ body:not(.cordova) {
 	}
 }
 
-@include keyframes(logo2) {
+@keyframes logo2 {
 	0%,
 	91.5%,
 	100% {
@@ -249,7 +242,7 @@ body:not(.cordova) {
 	}
 }
 
-@include keyframes(logo3) {
+@keyframes logo3 {
 	0%,
 	87.3%,
 	100% {
@@ -261,7 +254,7 @@ body:not(.cordova) {
 	}
 }
 
-@include keyframes(logo4) {
+@keyframes logo4 {
 	0%,
 	83.1%,
 	100% {
@@ -273,7 +266,7 @@ body:not(.cordova) {
 	}
 }
 
-@include keyframes(preloadfadeout) {
+@keyframes preloadfadeout {
 	0%,
 	25% {
 		opacity: 1;
@@ -295,21 +288,20 @@ body:not(.cordova) {
 	border-radius: 50%;
 	background-color: white;
 	opacity: 0.6;
-
-	@include animation(preloadbounce 2s infinite ease-in-out);
+	animation: preloadbounce 2s infinite ease-in-out;
 }
 
 .double-bounce2 {
-	@include animation-delay(-1s);
+	animation-delay: -1s;
 }
 
-@include keyframes(preloadbounce) {
+@keyframes preloadbounce {
 	0%,
 	100% {
-		@include transform(scale(0));
+		transform: scale(0);
 	}
 
 	50% {
-		@include transform(scale(1));
+		transform: scale(1);
 	}
 }

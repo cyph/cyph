@@ -9,21 +9,17 @@ $mobileMessageBorderRadius: 5%;
 $default-white: map-get($mat-grey, 100);
 
 @mixin breathe {
-	@include animation-name(breathe !important);
-
-	@include animation-duration(3s !important);
-
-	@include animation-timing-function(ease-in-out !important);
-
-	@include animation-iteration-count(infinite !important);
+	animation-name: breathe !important;
+	animation-duration: 3s !important;
+	animation-timing-function: ease-in-out !important;
+	animation-iteration-count: infinite !important;
 }
 
 @mixin center {
 	position: absolute;
 	top: 50%;
 	left: 50%;
-
-	@include transform(translate(-50%, -50%));
+	transform: translate(-50%, -50%);
 }
 
 @mixin disabled {
@@ -42,7 +38,7 @@ $default-white: map-get($mat-grey, 100);
 }
 
 @mixin shadow {
-	@include filter(drop-shadow((-2px) 2px 2px rgba(0, 0, 0, 0.15)));
+	filter: drop-shadow((-2px) 2px 2px rgba(0, 0, 0, 0.15));
 }
 
 /* Centers cyph-spinner */
@@ -53,8 +49,7 @@ $default-white: map-get($mat-grey, 100);
 @mixin vertical-align {
 	position: relative;
 	top: 50%;
-
-	@include transform(translateY(-50%));
+	transform: translateY(-50%);
 }
 
 @mixin cyph-apply-theme($isRoot: false, $partialInversion: false) {
@@ -107,7 +102,7 @@ $default-white: map-get($mat-grey, 100);
 		.logo-animation *,
 		.logo-animation:after,
 		cyph-account .cyph-gradient {
-			@include filter($cyph-loading-animation-filter);
+			filter: $cyph-loading-animation-filter;
 		}
 	}
 

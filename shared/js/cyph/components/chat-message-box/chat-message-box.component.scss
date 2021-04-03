@@ -16,8 +16,7 @@
 			visibility: hidden !important;
 			pointer-events: none !important;
 			position: absolute !important;
-
-			@include transition(none !important);
+			transition: none !important;
 		}
 	}
 
@@ -48,7 +47,7 @@
 
 	&:not(.mobile) {
 		.message-box {
-			@include transition(height 0.35s ease-in-out);
+			transition: height 0.35s ease-in-out;
 
 			outline: none;
 			padding: 3px;

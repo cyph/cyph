@@ -1,7 +1,7 @@
 @import '../../../../css/mixins';
 
 cyph-account-contact.active ::ng-deep .contact {
-	@include filter(brightness(1.2));
+	filter: brightness(1.2);
 }
 
 :host-context(mat-bottom-sheet-container) .card-list {

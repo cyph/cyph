@@ -2,7 +2,7 @@
 
 :host,
 .menu {
-	@include transition(all 0.15s ease-out);
+	transition: all 0.15s ease-out;
 }
 
 :host > div:not(.collapsed) {
@@ -14,8 +14,7 @@
 			max-width: calc(100% - 48px);
 			position: relative;
 			left: calc(50% - 4px);
-
-			@include transform(translateX(-50%));
+			transform: translateX(-50%);
 		}
 	}
 }
@@ -32,8 +31,7 @@
 	}
 
 	cyph-account-notification-center {
-		@include transform(scale(0.75));
-
+		transform: scale(0.75);
 		right: -4px;
 		top: 0;
 	}
@@ -65,7 +63,7 @@ cyph-logo {
 	height: 150px;
 
 	&.hidden {
-		@include filter(brightness(0) invert(1) brightness(0.25));
+		filter: brightness(0) invert(1) brightness(0.25);
 	}
 }
 

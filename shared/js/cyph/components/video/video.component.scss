@@ -26,8 +26,7 @@ mat-progress-bar.audio-level {
 	bottom: calc(50% - 2px);
 	left: calc(-50% + 2px);
 	width: 100%;
-
-	@include transform(rotate(270deg));
+	transform: rotate(270deg);
 }
 
 video {

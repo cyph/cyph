@@ -99,11 +99,8 @@ body.telehealth {
 		}
 
 		cyph-logo > div {
-			@include filter(
-				brightness(0) saturate(100%) invert(31%) sepia(3%)
-					saturate(3634%) hue-rotate(194deg) brightness(88%)
-					contrast(84%) !important
-			);
+			filter: brightness(0) saturate(100%) invert(31%) sepia(3%)
+				saturate(3634%) hue-rotate(194deg) brightness(88%) contrast(84%) !important;
 		}
 
 		img.avatar {

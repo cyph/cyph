@@ -38,8 +38,7 @@
 			margin: 0;
 			top: calc(50% + 2px);
 			opacity: 0.35;
-
-			@include transform(translateY(-100%));
+			transform: translateY(-100%);
 		}
 	}
 }

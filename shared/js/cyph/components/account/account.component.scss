@@ -10,7 +10,7 @@ $mobileAppBarHeight: 56px;
 
 	@for $i from 1 to $classesToAdd + 1 {
 		._#{$i} {
-			@include animation-delay($i * $interval);
+			animation-delay: $i * $interval;
 		}
 	}
 
@@ -122,8 +122,7 @@ $mobileAppBarHeight: 56px;
 		border-width: 5px;
 		border-style: solid;
 		cursor: pointer;
-
-		@include transition(border 0.75s ease);
+		transition: border 0.75s ease;
 
 		/* Disable statuses for now */
 		border-color: rgba(0, 0, 0, 0.1) !important;
@@ -229,7 +228,7 @@ $mobileAppBarHeight: 56px;
 		}
 
 		cyph-account-contact {
-			@include transition(padding-left 150ms);
+			transition: padding-left 150ms;
 
 			&:not(.active):not(:hover) {
 				padding-left: 10px;
@@ -370,8 +369,7 @@ $mobileAppBarHeight: 56px;
 	h1.logo-text {
 		font-family: Ubuntu;
 		font-size: 32px;
-
-		@include transform(translateY(-2px));
+		transform: translateY(-2px);
 	}
 }
 
@@ -395,8 +393,7 @@ $mobileAppBarHeight: 56px;
 			margin: 0;
 			top: 50%;
 			left: 50%;
-
-			@include transform(translate(-50%, -50%) scale(0.5));
+			transform: translate(-50%, -50%) scale(0.5);
 		}
 	}
 }

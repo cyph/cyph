@@ -36,7 +36,7 @@
 	.chat-main:not(.mobile):not(.video)
 		.message-item.ui-style-default.author-app
 		.message {
-		@include transform(translateX(3em));
+		transform: translateX(3em);
 
 		p {
 			vertical-align: middle;
@@ -297,7 +297,7 @@
 		.sidebar,
 		~ cyph-chat-message-list,
 		~ .video-call-message-box {
-			@include transition(transform 0.5s ease-in-out !important);
+			transition: transform 0.5s ease-in-out !important;
 		}
 
 		cyph-logo {
@@ -307,8 +307,7 @@
 			height: 45px;
 			width: 200px;
 			opacity: 0.5;
-
-			@include filter(brightness(0) invert(1));
+			filter: brightness(0) invert(1);
 		}
 
 		&.mobile cyph-logo {
@@ -336,8 +335,7 @@
 			margin: 0;
 
 			@include center;
-
-			@include transition(none !important);
+			transition: none !important;
 		}
 
 		.me {
@@ -361,7 +359,7 @@
 				rgba(255, 255, 255, 0.5) 0 1px 2px 0;
 
 			&:hover {
-				@include transform(scale(1.1));
+				transform: scale(1.1);
 			}
 
 			&:not(.close-button) {
@@ -377,14 +375,14 @@
 			width: 100%;
 
 			button {
-				@include transform(scale(1.25));
+				transform: scale(1.25);
 
 				&[disabled] {
 					opacity: 0.5;
 				}
 
 				&:hover:not([disabled]) {
-					@include transform(scale(1.4));
+					transform: scale(1.4);
 				}
 			}
 		}
@@ -399,8 +397,7 @@
 			z-index: 10001;
 			width: 300px;
 			background-color: rgba(255, 255, 255, 0.5);
-
-			@include transform(translateX(0));
+			transform: translateX(0);
 
 			.message-item.ui-style-default {
 				&.author-app {
@@ -432,7 +429,7 @@
 		}
 
 		&:not(.sidebar-open) ~ cyph-chat-message-box .menu-button {
-			@include transform(translateX(300px) !important);
+			transform: translateX(300px) !important;
 		}
 
 		&.sidebar-open {
@@ -443,7 +440,7 @@
 			.sidebar,
 			~ cyph-chat-message-list,
 			~ .video-call-message-box {
-				@include transform(translateX(-300px) !important);
+				transform: translateX(-300px) !important;
 			}
 		}
 	}
@@ -466,16 +463,16 @@
 				.sidebar,
 				~ cyph-chat-message-list,
 				~ .video-call-message-box {
-					@include transform(translateX(-25vw) !important);
+					transform: translateX(-25vw) !important;
 				}
 
 				.me {
-					@include transform(translateX(-25vw) !important);
+					transform: translateX(-25vw) !important;
 				}
 			}
 
 			&:not(.sidebar-open) ~ cyph-chat-message-box .menu-button {
-				@include transform(translateX(25vw) !important);
+				transform: translateX(25vw) !important;
 			}
 		}
 	}
@@ -496,7 +493,7 @@
 		}
 
 		&.sidebar-open cyph-logo {
-			@include transform(translateX(0) !important);
+			transform: translateX(0) !important;
 		}
 	}
 
@@ -519,7 +516,7 @@
 		}
 
 		&:not(.sidebar-open) ~ cyph-chat-message-box .menu-button {
-			@include transform(translateX(calc(100vw - 65px)) !important);
+			transform: translateX(calc(100vw - 65px)) !important;
 		}
 
 		&.sidebar-open {
@@ -529,11 +526,11 @@
 			.sidebar,
 			~ cyph-chat-message-list,
 			~ .video-call-message-box {
-				@include transform(translateX(calc(65px - 100vw)) !important);
+				transform: translateX(calc(65px - 100vw)) !important;
 			}
 
 			.me {
-				@include transform(translateX(calc(65px - 100vw)) !important);
+				transform: translateX(calc(65px - 100vw)) !important;
 			}
 		}
 	}
@@ -561,7 +558,7 @@ mat-icon.button-on {
 	opacity: 0.5;
 
 	> mat-icon {
-		@include transform(translate(-4px, 6px));
+		transform: translate(-4px, 6px);
 	}
 
 	> span {
@@ -580,8 +577,7 @@ mat-icon.button-on {
 		top: 50%;
 		left: 0;
 		width: 100%;
-
-		@include transform(translateY(-50%));
+		transform: translateY(-50%);
 	}
 }
 
@@ -641,7 +637,7 @@ h3.timer {
 		&.mobile,
 		&:not(.mobile) {
 			> .video-call.sidebar-open .buttons {
-				@include transform(none !important);
+				transform: none !important;
 			}
 		}
 
@@ -650,7 +646,7 @@ h3.timer {
 				bottom: 15vh;
 
 				button {
-					@include transform(scale(1.75));
+					transform: scale(1.75);
 				}
 			}
 		}
@@ -660,8 +656,7 @@ h3.timer {
 				margin-left: auto;
 				margin-right: auto;
 				margin-bottom: 12vh;
-
-				@include transform(scale(2));
+				transform: scale(2);
 			}
 		}
 	}

@@ -60,11 +60,11 @@ body.primary-account-theme {
 
 	cyph-account cyph-not-found img,
 	cyph-account-home > div > cyph-logo {
-		@include filter(brightness(0.25));
+		filter: brightness(0.25);
 	}
 
 	cyph-chat-message-list .background-image {
-		@include filter(brightness(0.75));
+		filter: brightness(0.75);
 	}
 
 	.cyph-banner {

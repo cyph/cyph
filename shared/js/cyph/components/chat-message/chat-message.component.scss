@@ -137,8 +137,7 @@ div.author-remote .hide-content-button.mobile {
 		top: 50%;
 		left: 0;
 		width: 100%;
-
-		@include transform(translateY(-50%));
+		transform: translateY(-50%);
 	}
 
 	:not(.spoiler-message) {
@@ -155,8 +154,7 @@ div.author-remote .hide-content-button.mobile {
 		margin: 2.5px;
 		min-height: 0;
 		position: relative;
-
-		@include transition(opacity 0.25s linear);
+		transition: opacity 0.25s linear;
 
 		.message {
 			max-width: 100%;
@@ -289,16 +287,13 @@ div.author-remote .hide-content-button.mobile {
 			background-color: black;
 			position: absolute;
 			z-index: 5;
-
-			@include transform(scaleX(0));
-
-			@include transform-origin(top left);
+			transform: scaleX(0);
+			transform-origin: top left;
 		}
 
 		&.self-destructed .self-destruct-cover {
-			@include transform(scaleX(1));
-
-			@include transition(transform 3s cubic-bezier(0.8, 0.4, 1, 0.3));
+			transform: scaleX(1);
+			transition: transform 3s cubic-bezier(0.8, 0.4, 1, 0.3);
 		}
 
 		&.author-app .message {
@@ -379,8 +374,7 @@ div.author-remote .hide-content-button.mobile {
 		/* Temporary workaround for matTooltip issue */
 
 		touch-action: inherit !important;
-
-		@include user-select(inherit !important);
+		user-select: inherit !important;
 	}
 
 	.file-transfer .message {

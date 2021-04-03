@@ -8,11 +8,10 @@
 	overflow: hidden;
 	margin-left: auto;
 	margin-right: auto;
-
-	@include transition(filter 0s ease);
+	transition: filter 0s ease;
 
 	button {
-		@include transition(transform 0s ease);
+		transition: transform 0s ease;
 	}
 
 	&.non-clickable {
@@ -109,19 +108,19 @@
 
 .avatar {
 	&.Online {
-		@include animation-name(pulse);
+		animation-name: pulse;
 	}
 
 	&.Away {
-		@include animation-name(bounce);
+		animation-name: bounce;
 	}
 
 	&.Busy {
-		@include animation-name(pulse);
+		animation-name: pulse;
 	}
 
 	&.Offline {
-		@include animation-name(bounce);
+		animation-name: bounce;
 	}
 }
 
