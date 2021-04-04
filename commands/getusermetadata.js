@@ -136,7 +136,7 @@ export const getUserMetadata = async (projectId, username, namespace) => {
 			profileExtra.pgp &&
 			profileExtra.pgp.publicKey &&
 			profileExtra.pgp.publicKey.length > 0 ?
-				(await openpgp.key.read(profileExtra.pgp.publicKey)).keys[0]
+				(await openpgp.readKey({binaryKey: profileExtra.pgp.publicKey}))
 					.toPublic()
 					.armor()
 					.replace(/\r/g, '')
