@@ -17,7 +17,7 @@ const {
 	CyphPlans,
 	StringProto
 } = proto;
-const {normalize} = util;
+const {deserialize, normalize} = util;
 
 openpgp.config.versionstring = 'Cyph';
 openpgp.config.commentstring = 'https://www.cyph.com';
