@@ -20,7 +20,12 @@ export const ipfsGateways = memoize(async () => {
 		fs
 			.readFileSync(`${__dirname}/../shared/lib/ipfs-gateways.json`)
 			.toString()
-	).filter(s => !s.startsWith('https://:hash') && !blacklist.has(s));
+	).filter(
+		s =>
+			s.startsWith('https://') &&
+			!s.startsWith('https://:hash') &&
+			!blacklist.has(s)
+	);
 
 	return (await Promise.all(
 		gatewayURLs.map(async url => {
