@@ -30,6 +30,19 @@ export interface IP2PWebRTCService {
 		}[]
 	>;
 
+	/** Active incoming feeds. */
+	readonly incomingStreamsFiltered: Observable<
+		{
+			activeVideo: boolean;
+			constraints: MediaStreamConstraints;
+			stream: MediaStream;
+			user: {
+				name?: string;
+				username?: string;
+			};
+		}[]
+	>;
+
 	/** Usernames and/or names of current participants in call. */
 	readonly incomingStreamUsers: Observable<
 		{

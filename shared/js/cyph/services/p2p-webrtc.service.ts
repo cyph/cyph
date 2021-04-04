@@ -118,6 +118,23 @@ export class P2PWebRTCService extends BaseProvider
 	>([]);
 
 	/** @inheritDoc */
+	public readonly incomingStreamsFiltered = this.incomingStreams.pipe(
+		map(
+			incomingStreams => <
+					{
+						activeVideo: boolean;
+						constraints: MediaStreamConstraints;
+						stream: MediaStream;
+						user: {
+							name?: string;
+							username?: string;
+						};
+					}[]
+				> incomingStreams.filter(o => !!o.stream)
+		)
+	);
+
+	/** @inheritDoc */
 	public readonly incomingStreamUsers = this.incomingStreams.pipe(
 		map(incomingStreams =>
 			filterUndefined(

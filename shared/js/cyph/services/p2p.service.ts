@@ -56,7 +56,7 @@ export class P2PService extends BaseProvider {
 
 	/** Gallery view configuration. */
 	public readonly galleryViewOptions = observableAll([
-		this.p2pWebRTCService.incomingStreams,
+		this.p2pWebRTCService.incomingStreamsFiltered,
 		this.p2pWebRTCService.outgoingStream
 	]).pipe(
 		map(([incomingStreams, outgoingStream]) => {
@@ -73,7 +73,6 @@ export class P2PService extends BaseProvider {
 			const panels = (<(typeof outgoingStream | undefined)[]> (
 				incomingStreams
 			))
-				.filter(o => !!o?.stream)
 				.concat(new Array(totalCells - streamCount).fill(undefined))
 				.concat(outgoingStream);
 
