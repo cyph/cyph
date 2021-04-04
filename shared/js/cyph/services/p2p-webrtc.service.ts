@@ -314,6 +314,20 @@ export class P2PWebRTCService extends BaseProvider
 	private async getUserMedia () : Promise<MediaStream | undefined> {
 		const {constraints} = this.outgoingStream.value;
 
+		constraints.audio = constraints.audio ?
+			{
+				...(constraints.audio === true ? {} : constraints.audio),
+				echoCancellation: true
+			} :
+			false;
+
+		constraints.video = constraints.video ?
+			{
+				...(constraints.video === true ? {} : constraints.video),
+				echoCancellation: true
+			} :
+			false;
+
 		if (
 			(this.confirmLocalVideoAccess &&
 				!(await (await this.handlers).localVideoConfirm(
