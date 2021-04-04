@@ -10,8 +10,11 @@ import {
 	ViewChild
 } from '@angular/core';
 import {BehaviorSubject} from 'rxjs';
+import {map} from 'rxjs/operators';
 import {BaseProvider} from '../../base-provider';
 import {StringsService} from '../../services/strings.service';
+import {WindowWatcherService} from '../../services/window-watcher.service';
+import {observableAll} from '../../util/observable-all';
 
 /**
  * Angular component for video UI.
@@ -34,8 +37,29 @@ export class VideoComponent extends BaseProvider
 	/** @ignore */
 	private srcObjectURL?: string;
 
+	/** @ignore */
+	private readonly videoElement = new BehaviorSubject<
+		HTMLVideoElement | undefined
+	>(undefined);
+
 	/** Audio level. */
 	public readonly audioLevel = new BehaviorSubject<number>(0);
+
+	/** Audio level bar height. */
+	public readonly audioLevelBarHeight = observableAll([
+		this.videoElement,
+		this.windowWatcherService.dimensions
+	]).pipe(
+		map(([video]) =>
+			!video ?
+				'0px' :
+			video.videoWidth > 0 && video.videoHeight > 0 ?
+				`${Math.round(
+					(video.clientWidth / video.videoWidth) * video.videoHeight
+				).toString()}px` :
+				`${video.clientHeight.toString()}px`
+		)
+	);
 
 	/** @see HTMLVideoElement.autoplay */
 	@Input() public autoplay: boolean = false;
@@ -74,6 +98,7 @@ export class VideoComponent extends BaseProvider
 
 		if (!(this.video?.nativeElement instanceof HTMLVideoElement)) {
 			this.subscribeAudioLevels();
+			this.subscribeVideoElement();
 			return;
 		}
 
@@ -101,6 +126,7 @@ export class VideoComponent extends BaseProvider
 		this.video.nativeElement.muted = this.muted;
 
 		this.subscribeAudioLevels();
+		this.subscribeVideoElement();
 	}
 
 	/** @ignore */
@@ -162,6 +188,35 @@ export class VideoComponent extends BaseProvider
 		});
 	}
 
+	/** @ignore */
+	private async subscribeVideoElement () : Promise<void> {
+		const video = this.video?.nativeElement;
+
+		if (!video) {
+			this.videoElement.next(undefined);
+			return;
+		}
+
+		const f = () => {
+			this.videoElement.next(video);
+
+			if (this.video?.nativeElement === video) {
+				return;
+			}
+
+			video.removeEventListener('resize', f);
+
+			if (this.videoElement.value !== video) {
+				return;
+			}
+
+			this.videoElement.next(undefined);
+		};
+
+		f();
+		video.addEventListener('resize', f);
+	}
+
 	/** @inheritDoc */
 	public ngAfterViewInit () : void {
 		this.setVideoSrc(this.src);
@@ -183,6 +238,9 @@ export class VideoComponent extends BaseProvider
 	}
 
 	constructor (
+		/** @ignore */
+		private readonly windowWatcherService: WindowWatcherService,
+
 		/** @see StringsService */
 		public readonly stringsService: StringsService
 	) {

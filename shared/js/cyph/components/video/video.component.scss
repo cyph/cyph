@@ -23,10 +23,14 @@
 
 mat-progress-bar.audio-level {
 	position: absolute;
-	bottom: calc(50% - 2px);
-	left: calc(-50% + 2px);
-	width: 100%;
+	top: calc(50% - 2px);
+	left: calc(var(--height) / -2 - 2px);
+	width: var(--height);
 	transform: rotate(270deg);
+
+	::ng-deep mat-progress-bar-background {
+		display: none;
+	}
 }
 
 video {

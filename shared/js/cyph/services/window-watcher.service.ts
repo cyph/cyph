@@ -20,6 +20,12 @@ export class WindowWatcherService extends BaseProvider {
 		return window.innerWidth;
 	}
 
+	/** Window dimensions. */
+	public readonly dimensions: BehaviorSubject<{
+		height: number;
+		width: number;
+	}>;
+
 	/** Window height. */
 	public readonly height: BehaviorSubject<number> = new BehaviorSubject(
 		this.envService.isWeb ? this.windowHeight : 0
@@ -80,6 +86,10 @@ export class WindowWatcherService extends BaseProvider {
 
 		if (!this.envService.isWeb) {
 			/* TODO: HANDLE NATIVE */
+			this.dimensions = new BehaviorSubject<{
+				height: number;
+				width: number;
+			}>({height: 0, width: 0});
 			this.widescreen = new BehaviorSubject<boolean>(false);
 			return;
 		}
@@ -107,9 +117,17 @@ export class WindowWatcherService extends BaseProvider {
 		const isWidescreen = (height: number, width: number) =>
 			height * 3 < width * 2;
 
-		this.widescreen = toBehaviorSubject(
+		this.dimensions = toBehaviorSubject(
 			observableAll([this.height, this.width]).pipe(
-				map(([height, width]) => isWidescreen(height, width))
+				map(([height, width]) => ({height, width}))
+			),
+			{height: this.height.value, width: this.width.value},
+			this.subscriptions
+		);
+
+		this.widescreen = toBehaviorSubject(
+			this.dimensions.pipe(
+				map(({height, width}) => isWidescreen(height, width))
 			),
 			isWidescreen(this.height.value, this.width.value),
 			this.subscriptions
