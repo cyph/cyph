@@ -29,9 +29,9 @@ export class VideoComponent extends BaseProvider
 	implements AfterViewInit, OnChanges, OnDestroy {
 	/** @ignore */
 	private audioContext?: {
+		alive: boolean;
+		analyser: AnalyserNode;
 		context: AudioContext;
-		processor: ScriptProcessorNode;
-		src: MediaStreamAudioSourceNode;
 	};
 
 	/** @ignore */
@@ -87,8 +87,7 @@ export class VideoComponent extends BaseProvider
 		src?: string | MediaStream | MediaSource | Blob
 	) : void {
 		if (this.audioContext) {
-			this.audioContext.processor.disconnect();
-			this.audioContext.src.disconnect();
+			this.audioContext.alive = false;
 		}
 
 		if (this.srcObjectURL) {
@@ -145,11 +144,9 @@ export class VideoComponent extends BaseProvider
 			const context = new AudioContext();
 
 			this.audioContext = {
-				context,
-				processor: context.createScriptProcessor(2048, 1, 1),
-				src: context.createMediaStreamSource(
-					this.video.nativeElement.srcObject
-				)
+				alive: true,
+				analyser: context.createAnalyser(),
+				context
 			};
 		}
 		catch {
@@ -160,32 +157,57 @@ export class VideoComponent extends BaseProvider
 			return;
 		}
 
-		const {context, processor, src} = this.audioContext;
+		const audioContext = this.audioContext;
+		const {analyser, context} = audioContext;
 
-		src.connect(processor);
-		processor.connect(context.destination);
+		analyser.fftSize = 512;
+		analyser.minDecibels = -127;
+		analyser.maxDecibels = 0;
+		analyser.smoothingTimeConstant = 0.4;
 
-		let lastTimestamp = 0;
+		let src: MediaStreamAudioSourceNode | undefined;
 
-		processor.addEventListener('audioprocess', e => {
-			if (e.timeStamp - lastTimestamp < 100) {
+		const sub = this.videoElement.subscribe(video => {
+			src?.disconnect();
+
+			if (
+				!audioContext.alive ||
+				!(video?.srcObject instanceof MediaStream)
+			) {
 				return;
 			}
 
-			lastTimestamp = e.timeStamp;
+			src = context.createMediaStreamSource(video.srcObject);
+			src.connect(analyser);
+		});
 
-			const input = e.inputBuffer.getChannelData(0);
+		const input = new Uint8Array(analyser.frequencyBinCount);
+
+		const updateAudioLevel = () => {
+			if (!audioContext.alive) {
+				sub.unsubscribe();
+				src?.disconnect();
+				return;
+			}
+
+			analyser.getByteFrequencyData(input);
 
 			let sum = 0;
 			/* eslint-disable-next-line @typescript-eslint/prefer-for-of */
 			for (let i = 0; i < input.length; ++i) {
-				sum += input[i] * input[i];
+				sum += input[i];
 			}
 
-			const average = Math.sqrt(sum / input.length);
+			const average = sum / input.length;
 
-			this.audioLevel.next(Math.min(Math.floor(average * 1000), 100));
-		});
+			this.audioLevel.next(
+				Math.min(Math.floor((average * 100) / 127), 100)
+			);
+
+			requestAnimationFrame(updateAudioLevel);
+		};
+
+		requestAnimationFrame(updateAudioLevel);
 	}
 
 	/** @ignore */
