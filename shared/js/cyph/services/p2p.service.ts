@@ -57,18 +57,22 @@ export class P2PService extends BaseProvider {
 	/** Gallery view configuration. */
 	public readonly galleryViewOptions = observableAll([
 		this.p2pWebRTCService.incomingStreamsFiltered,
-		this.p2pWebRTCService.outgoingStream
+		this.p2pWebRTCService.outgoingStream,
+		this.windowWatcherService.widescreen
 	]).pipe(
-		map(([incomingStreams, outgoingStream]) => {
+		map(([incomingStreams, outgoingStream, widescreen]) => {
 			const streamCount = incomingStreams.length + 1;
 
-			const rows = Math.floor(Math.sqrt(streamCount));
-			const columns = Math.ceil(streamCount / rows);
-			const totalCells = rows * columns;
+			let columns = Math.floor(Math.sqrt(streamCount));
+			let rows = Math.ceil(streamCount / columns);
+			if (widescreen) {
+				[columns, rows] = [rows, columns];
+			}
 
 			const gridGap = '4px';
 			const maxColumnWidth = `${(100 / columns).toFixed(2)}vw`;
 			const maxRowHeight = `${(100 / rows).toFixed(2)}vh`;
+			const totalCells = rows * columns;
 
 			const panels = (<(typeof outgoingStream | undefined)[]> (
 				incomingStreams

@@ -1,7 +1,9 @@
 import {Inject, Injectable} from '@angular/core';
 import {BehaviorSubject} from 'rxjs';
-import {filter, take} from 'rxjs/operators';
+import {map, filter, take} from 'rxjs/operators';
 import {BaseProvider} from '../base-provider';
+import {toBehaviorSubject} from '../util/flatten-observable';
+import {observableAll} from '../util/observable-all';
 
 /**
  * Keeps track of this window.
@@ -27,6 +29,9 @@ export class WindowWatcherService extends BaseProvider {
 	public readonly visibility: BehaviorSubject<boolean> = new BehaviorSubject(
 		typeof document === 'undefined' || !document.hidden
 	);
+
+	/** Indicates whether the window aspect ratio is widescreen. */
+	public readonly widescreen: BehaviorSubject<boolean>;
 
 	/** Window width. */
 	public readonly width: BehaviorSubject<number> = new BehaviorSubject(
@@ -75,6 +80,7 @@ export class WindowWatcherService extends BaseProvider {
 
 		if (!this.envService.isWeb) {
 			/* TODO: HANDLE NATIVE */
+			this.widescreen = new BehaviorSubject<boolean>(false);
 			return;
 		}
 
@@ -97,5 +103,16 @@ export class WindowWatcherService extends BaseProvider {
 			this.height.next(this.windowHeight);
 			this.width.next(this.windowWidth);
 		});
+
+		const isWidescreen = (height: number, width: number) =>
+			height * 3 < width * 2;
+
+		this.widescreen = toBehaviorSubject(
+			observableAll([this.height, this.width]).pipe(
+				map(([height, width]) => isWidescreen(height, width))
+			),
+			isWidescreen(this.height.value, this.width.value),
+			this.subscriptions
+		);
 	}
 }
