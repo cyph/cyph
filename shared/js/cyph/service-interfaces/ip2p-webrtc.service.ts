@@ -22,6 +22,7 @@ export interface IP2PWebRTCService {
 		{
 			activeVideo: boolean;
 			constraints: MediaStreamConstraints;
+			isOutgoing: boolean;
 			stream?: MediaStream;
 			user: {
 				name?: string;
@@ -35,6 +36,7 @@ export interface IP2PWebRTCService {
 		{
 			activeVideo: boolean;
 			constraints: MediaStreamConstraints;
+			isOutgoing: boolean;
 			stream: MediaStream;
 			user: {
 				name?: string;
@@ -56,6 +58,7 @@ export interface IP2PWebRTCService {
 		{
 			activeVideo: boolean;
 			constraints: MediaStreamConstraints;
+			isOutgoing: boolean;
 			stream: MediaStream;
 			user: {
 				name?: string;
@@ -79,6 +82,7 @@ export interface IP2PWebRTCService {
 	/** Outgoing stream data. */
 	readonly outgoingStream: BehaviorSubject<{
 		constraints: MediaStreamConstraints;
+		isOutgoing: boolean;
 		stream?: MediaStream;
 	}>;
 

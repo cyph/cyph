@@ -240,7 +240,9 @@
 			<cyph-video
 				[fxShow]="show"
 				[autoplay]="true"
+				[muted]="incomingStream.isOutgoing"
 				[playsinline]="true"
+				[showAudioLevel]="incomingStream.isOutgoing"
 				[src]="incomingStream.stream"
 				[title]="
 					incomingStream.user?.username ?

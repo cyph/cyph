@@ -109,6 +109,7 @@ export class P2PWebRTCService extends BaseProvider
 		{
 			activeVideo: boolean;
 			constraints: MediaStreamConstraints;
+			isOutgoing: boolean;
 			stream?: MediaStream;
 			user: {
 				name?: string;
@@ -124,6 +125,7 @@ export class P2PWebRTCService extends BaseProvider
 					{
 						activeVideo: boolean;
 						constraints: MediaStreamConstraints;
+						isOutgoing: boolean;
 						stream: MediaStream;
 						user: {
 							name?: string;
@@ -152,6 +154,7 @@ export class P2PWebRTCService extends BaseProvider
 					{
 						activeVideo: boolean;
 						constraints: MediaStreamConstraints;
+						isOutgoing: boolean;
 						stream: MediaStream;
 						user: {
 							name?: string;
@@ -177,12 +180,14 @@ export class P2PWebRTCService extends BaseProvider
 	/** @inheritDoc */
 	public readonly outgoingStream = new BehaviorSubject<{
 		constraints: MediaStreamConstraints;
+		isOutgoing: boolean;
 		stream?: MediaStream;
 	}>({
 		constraints: {
 			audio: false,
 			video: false
-		}
+		},
+		isOutgoing: true
 	});
 
 	/** @inheritDoc */
@@ -455,7 +460,10 @@ export class P2PWebRTCService extends BaseProvider
 		}
 
 		this.incomingStreams.next([]);
-		this.outgoingStream.next({constraints: {audio: false, video: false}});
+		this.outgoingStream.next({
+			constraints: {audio: false, video: false},
+			isOutgoing: true
+		});
 		this.webRTC.next(undefined);
 
 		const handlers = await this.handlers;
@@ -931,6 +939,7 @@ export class P2PWebRTCService extends BaseProvider
 								activeVideo: false,
 								constraints: this.outgoingStream.value
 									.constraints,
+								isOutgoing: false,
 								user: sessionService.pairwiseSessionData
 									?.remoteUsername ?
 									{
