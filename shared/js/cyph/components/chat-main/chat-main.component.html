@@ -319,7 +319,10 @@
 					/>
 					<h3 class="timer">
 						<ng-template #timer>
-							{{ (p2pService.timer | await)?.timestamp | await }}
+							{{
+								((p2pService.timer | await)?.timestamp
+									| await) || '00:00'
+							}}
 						</ng-template>
 						<ng-container
 							*ngIf="p2pWebRTCService.loading | await; else timer"
@@ -501,11 +504,10 @@
 				fxLayout="row"
 				fxLayoutAlign="center center"
 				*ngIf="
-					envService.isTelehealth &&
 					!(
 						envService.isAccounts &&
-						!(p2pWebRTCService.outgoingStream | await)?.constraints
-							?.video
+						((p2pWebRTCService.incomingVideoStreams | await) || [])
+							.length < 1
 					)
 				"
 			>
