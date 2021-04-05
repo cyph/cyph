@@ -11,6 +11,7 @@ import {
 	NotificationTypes
 } from '../proto';
 import {ProFeatures, RpcEvents} from '../session';
+import {normalize} from '../util/formatting';
 import {getOrSetDefault} from '../util/get-or-set-default';
 import {lockFunction} from '../util/lock';
 import {debugLog} from '../util/log';
@@ -644,8 +645,21 @@ export class EphemeralSessionService extends SessionService {
 
 			const preparingForCallType = this.prepareForCallType();
 
+			/* API flags */
+			for (const flag of this.configService.apiFlags) {
+				if (id[0] !== flag.character) {
+					continue;
+				}
+
+				id = id.substring(1);
+				flag.set(this);
+
+				this.analyticsService.sendEvent(flag.analEvent, 'used');
+			}
+
 			if (id.indexOf('/') > -1) {
 				[username, id] = id.split('/');
+				username = normalize(username);
 
 				if (username && id === 'chat-request') {
 					const chatRequestUsername = username;
@@ -699,18 +713,6 @@ export class EphemeralSessionService extends SessionService {
 						);
 					})();
 				}
-			}
-
-			/* API flags */
-			for (const flag of this.configService.apiFlags) {
-				if (id[0] !== flag.character) {
-					continue;
-				}
-
-				id = id.substring(1);
-				flag.set(this);
-
-				this.analyticsService.sendEvent(flag.analEvent, 'used');
 			}
 
 			/* Force TURN for all scheduled meetings */
