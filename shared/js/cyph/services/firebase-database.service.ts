@@ -215,9 +215,12 @@ export class FirebaseDatabaseService extends DatabaseService {
 				}
 			);
 
-			messaging.useServiceWorker(serviceWorkerRegistration);
 			await (<any> self).Notification.requestPermission();
-			return {token: (await messaging.getToken()) || undefined};
+			return {
+				token:
+					(await messaging.getToken({serviceWorkerRegistration})) ||
+					undefined
+			};
 		})
 		.catch(() => ({}));
 
