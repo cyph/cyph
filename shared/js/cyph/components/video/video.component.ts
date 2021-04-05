@@ -199,7 +199,8 @@ export class VideoComponent extends BaseProvider
 
 			if (
 				!audioContext.alive ||
-				!(video?.srcObject instanceof MediaStream)
+				!(video?.srcObject instanceof MediaStream) ||
+				video.srcObject.getAudioTracks().length < 1
 			) {
 				return;
 			}
