@@ -3,46 +3,63 @@ import {BehaviorSubject} from 'rxjs';
 import {map, filter, take} from 'rxjs/operators';
 import {BaseProvider} from '../base-provider';
 import {toBehaviorSubject} from '../util/flatten-observable';
-import {observableAll} from '../util/observable-all';
 
 /**
  * Keeps track of this window.
  */
 @Injectable()
 export class WindowWatcherService extends BaseProvider {
-	/** @ignore */
-	private get windowHeight () : number {
-		return window.innerHeight;
-	}
-
-	/** @ignore */
-	private get windowWidth () : number {
-		return window.innerWidth;
-	}
-
 	/** Window dimensions. */
-	public readonly dimensions: BehaviorSubject<{
+	public readonly dimensions = new BehaviorSubject<{
 		height: number;
 		width: number;
-	}>;
+	}>({
+		height: this.windowHeight,
+		width: this.windowWidth
+	});
 
 	/** Window height. */
-	public readonly height: BehaviorSubject<number> = new BehaviorSubject(
-		this.envService.isWeb ? this.windowHeight : 0
+	public readonly height = toBehaviorSubject(
+		this.dimensions.pipe(map(({height}) => height)),
+		this.dimensions.value.height,
+		this.subscriptions
 	);
 
 	/** Indicates whether the window is currently visible. */
-	public readonly visibility: BehaviorSubject<boolean> = new BehaviorSubject(
+	public readonly visibility = new BehaviorSubject<boolean>(
 		typeof document === 'undefined' || !document.hidden
 	);
 
 	/** Indicates whether the window aspect ratio is widescreen. */
-	public readonly widescreen: BehaviorSubject<boolean>;
+	public readonly widescreen = toBehaviorSubject(
+		this.dimensions.pipe(
+			map(({height, width}) => this.isWidescreen(height, width))
+		),
+		this.isWidescreen(this.windowHeight, this.windowWidth),
+		this.subscriptions
+	);
 
 	/** Window width. */
-	public readonly width: BehaviorSubject<number> = new BehaviorSubject(
-		this.envService.isWeb ? this.windowWidth : 0
+	public readonly width = toBehaviorSubject(
+		this.dimensions.pipe(map(({width}) => width)),
+		this.dimensions.value.width,
+		this.subscriptions
 	);
+
+	/** @ignore */
+	private isWidescreen (height: number, width: number) : boolean {
+		return height * 3 < width * 2;
+	}
+
+	/** @ignore */
+	private get windowHeight () : number {
+		return this.envService.isWeb ? window.innerHeight : 0;
+	}
+
+	/** @ignore */
+	private get windowWidth () : number {
+		return this.envService.isWeb ? window.innerWidth : 0;
+	}
 
 	/**
 	 * Waits for the visibility to change once.
@@ -86,11 +103,6 @@ export class WindowWatcherService extends BaseProvider {
 
 		if (!this.envService.isWeb) {
 			/* TODO: HANDLE NATIVE */
-			this.dimensions = new BehaviorSubject<{
-				height: number;
-				width: number;
-			}>({height: 0, width: 0});
-			this.widescreen = new BehaviorSubject<boolean>(false);
 			return;
 		}
 
@@ -110,27 +122,10 @@ export class WindowWatcherService extends BaseProvider {
 		}
 
 		window.addEventListener('resize', () => {
-			this.height.next(this.windowHeight);
-			this.width.next(this.windowWidth);
+			this.dimensions.next({
+				height: this.windowHeight,
+				width: this.windowWidth
+			});
 		});
-
-		const isWidescreen = (height: number, width: number) =>
-			height * 3 < width * 2;
-
-		this.dimensions = toBehaviorSubject(
-			observableAll([this.height, this.width]).pipe(
-				map(([height, width]) => ({height, width}))
-			),
-			{height: this.height.value, width: this.width.value},
-			this.subscriptions
-		);
-
-		this.widescreen = toBehaviorSubject(
-			this.dimensions.pipe(
-				map(({height, width}) => isWidescreen(height, width))
-			),
-			isWidescreen(this.height.value, this.width.value),
-			this.subscriptions
-		);
 	}
 }
