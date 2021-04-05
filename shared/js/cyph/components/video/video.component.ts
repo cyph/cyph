@@ -45,20 +45,47 @@ export class VideoComponent extends BaseProvider
 	/** Audio level. */
 	public readonly audioLevel = new BehaviorSubject<number>(0);
 
-	/** Audio level bar height. */
-	public readonly audioLevelBarHeight = observableAll([
+	/** Audio level bar size and position. */
+	public readonly audioLevelBar = observableAll([
 		this.videoElement,
 		this.windowWatcherService.dimensions
 	]).pipe(
-		map(([video]) =>
-			!video ?
-				'0px' :
-			video.videoWidth > 0 && video.videoHeight > 0 ?
-				`${Math.round(
-					(video.clientWidth / video.videoWidth) * video.videoHeight
-				).toString()}px` :
-				`${video.clientHeight.toString()}px`
-		)
+		map(([video]) => {
+			if (!video) {
+				return {height: '0px', position: '0px'};
+			}
+
+			const height =
+				video.videoWidth > 0 && video.videoHeight > 0 ?
+					Math.min(
+						video.clientHeight,
+						Math.round(
+							(video.clientWidth / video.videoWidth) *
+								video.videoHeight
+						)
+					) :
+					video.clientHeight;
+
+			const width =
+				video.videoWidth > 0 && video.videoHeight > 0 ?
+					Math.min(
+						video.clientWidth,
+						Math.round(
+							(video.clientHeight / video.videoHeight) *
+								video.videoWidth
+						)
+					) :
+					video.clientWidth;
+
+			const position = Math.round(
+				(video.clientWidth - width) / 2 - height / 2 - 2
+			);
+
+			return {
+				height: `${height.toString()}px`,
+				position: `${position.toString()}px`
+			};
+		})
 	);
 
 	/** @see HTMLVideoElement.autoplay */

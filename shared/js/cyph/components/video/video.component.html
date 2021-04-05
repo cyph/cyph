@@ -6,7 +6,8 @@
 	<mat-progress-bar
 		class="audio-level"
 		mode="determinate"
-		[style.--height]="(audioLevelBarHeight | await) || '0px'"
+		[style.--height]="(audioLevelBar | await)?.height || '0px'"
+		[style.--position]="(audioLevelBar | await)?.position || '0px'"
 		[value]="(audioLevel | await) || 0"
 		*ngIf="showAudioLevel"
 	></mat-progress-bar>

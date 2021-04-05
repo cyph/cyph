@@ -24,7 +24,7 @@
 mat-progress-bar.audio-level {
 	position: absolute;
 	top: calc(50% - 2px);
-	left: calc(var(--height) / -2 - 2px);
+	left: var(--position);
 	width: var(--height);
 	transform: rotate(270deg);
 
