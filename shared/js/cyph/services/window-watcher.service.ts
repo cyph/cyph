@@ -3,6 +3,7 @@ import {BehaviorSubject} from 'rxjs';
 import {map, filter, take} from 'rxjs/operators';
 import {BaseProvider} from '../base-provider';
 import {toBehaviorSubject} from '../util/flatten-observable';
+import {sleep} from '../util/wait/sleep';
 
 /**
  * Keeps track of this window.
@@ -121,11 +122,24 @@ export class WindowWatcherService extends BaseProvider {
 			});
 		}
 
-		window.addEventListener('resize', () => {
-			this.dimensions.next({
+		let dimensionsEmission = 0;
+
+		window.addEventListener('resize', async () => {
+			const n = ++dimensionsEmission;
+			const dimensions = {
 				height: this.windowHeight,
 				width: this.windowWidth
-			});
+			};
+
+			this.dimensions.next(dimensions);
+
+			for (let i = 0; i < 3; ++i) {
+				await sleep((i + 1) * 500);
+				if (n !== dimensionsEmission) {
+					return;
+				}
+				this.dimensions.next(dimensions);
+			}
 		});
 	}
 }
