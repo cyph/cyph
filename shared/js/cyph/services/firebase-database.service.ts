@@ -170,6 +170,10 @@ export class FirebaseDatabaseService extends DatabaseService {
 				return {token: await tokenPromise};
 			}
 
+			if (!firebase.messaging.isSupported()) {
+				return {};
+			}
+
 			const app = await this.app;
 			const messaging = app.messaging();
 			const serviceWorkerRegistration = await this.workerService
