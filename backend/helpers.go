@@ -484,7 +484,7 @@ func checkIPFSGateway(gateway string, forceRetry bool) bool {
 
 		if err == nil {
 			resp, err := client.Do(req)
-			if err == nil {
+			if err == nil && resp.Header.Get("Access-Control-Allow-Origin") == "*" {
 				responseBodyBytes, err := ioutil.ReadAll(resp.Body)
 				if err == nil {
 					response := hex.EncodeToString(responseBodyBytes)
