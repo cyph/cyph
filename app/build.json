@@ -1,0 +1,30 @@
+{
+	"electron": {
+		"linux": {
+			"category": "Network",
+			"executableName": "cyph",
+			"package": ["AppImage", "deb", "rpm", "snap"]
+		},
+		"mac": {
+			"package": ["dmg", "mas"],
+			"signing": {
+				"store": {
+					"entitlements": "macos.parent.plist",
+					"entitlementsInherit": "macos.child.plist",
+					"provisioningProfile": "~/.cyph/nativereleasesigning/apple/macOS_Distribution.provisionprofile"
+				}
+			}
+		},
+		"windows": {
+			"applicationId": "Cyph.Cyph",
+			"package": ["appx", "nsis"],
+			"publisher": "CN=D116D532-5873-4FAE-9CA2-6E026A5288B7",
+			"signing": {
+				"release": {
+					"certificateSubjectName": "Cyph, Inc.",
+					"signingHashAlgorithms": ["sha256"]
+				}
+			}
+		}
+	}
+}

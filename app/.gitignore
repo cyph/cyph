@@ -1,0 +1,10 @@
+.DS_Store
+/cordova-build
+/cordova-build.android
+/cordova-build.electron
+/cordova-build.ios
+/node_modules
+/package-lock.json
+/platforms
+/plugins
+/www/cordova.js

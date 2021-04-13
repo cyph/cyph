@@ -1,0 +1,347 @@
+<?xml version='1.0' encoding='utf-8'?>
+<widget
+	id="com.cyph.desktop"
+	android-packageName="com.cyph.app"
+	ios-CFBundleIdentifier="com.cyph.app"
+	xmlns="http://www.w3.org/ns/widgets"
+	xmlns:cdv="http://cordova.apache.org/ns/1.0"
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	version="1.0.87"
+>
+	<name>Cyph</name>
+	<description>
+		Completely private voice and video chat.
+	</description>
+	<author email="hello@cyph.com" href="https://www.cyph.com">
+		Cyph, Inc.
+	</author>
+
+	<icon src="res/icon/default.png" />
+
+	<plugin name="@havesource/cordova-plugin-push" spec="*" />
+	<!-- <plugin name="cordova-call" spec="*" /> --> -->
+	<plugin name="cordova-clipboard" spec="*" />
+	<plugin name="cordova-plugin-appminimize" spec="*" />
+	<plugin name="cordova-plugin-background-mode" spec="*" />
+	<plugin name="cordova-plugin-battery-status" spec="*" />
+	<plugin name="cordova-plugin-camera" spec="*" />
+	<plugin name="cordova-plugin-chooser" spec="*" />
+	<plugin name="cordova-plugin-device" spec="*" />
+	<plugin name="cordova-plugin-dialogs" spec="*" />
+	<plugin name="cordova-plugin-file" spec="*" />
+	<plugin name="cordova-plugin-file-opener2" spec="*" />
+	<plugin
+		name="cordova-plugin-fingerprint-aio"
+		spec="https://github.com/buu700/cordova-plugin-fingerprint-aio"
+	/>
+	<!-- <plugin name="cordova-plugin-geolocation" spec="*" /> -->
+	<plugin name="cordova-plugin-globalization" spec="*" />
+	<plugin name="cordova-plugin-headercolor" spec="*" />
+	<plugin name="cordova-plugin-media-capture" spec="*" />
+	<plugin name="cordova-plugin-network-information" spec="*" />
+	<plugin name="cordova-plugin-permission" spec="*" />
+	<plugin name="cordova-plugin-privacyscreen" spec="*" />
+	<plugin name="cordova-plugin-statusbar" spec="*" />
+	<plugin name="cordova-plugin-vibration" spec="*" />
+	<plugin name="cordova-plugin-whitelist" spec="*" />
+	<plugin name="cordova-plugin-x-socialsharing" spec="*" />
+	<plugin name="ionic-plugin-deeplinks" spec="*" />
+
+	<access origin="*" />
+	<allow-intent href="http://*/*" />
+	<allow-intent href="https://*/*" />
+	<allow-intent href="tel:*" />
+	<allow-intent href="sms:*" />
+	<allow-intent href="mailto:*" />
+	<allow-intent href="geo:*" />
+
+	<preference name="android-minSdkVersion" value="23" />
+	<preference name="android-targetSdkVersion" value="30" />
+	<preference name="BackgroundColor" value="#8b62d9" />
+	<preference name="deployment-target" value="11.0" />
+	<preference name="HeaderColor" value="#8b62d9" />
+	<preference name="KeyboardDisplayRequiresUserAction" value="false" />
+	<preference name="ShowSplashScreenSpinner" value="false" />
+	<preference name="SplashScreenBackgroundColor" value="#8b62d9" />
+	<preference name="SplashScreenDelay" value="0" />
+	<preference name="StatusBarBackgroundColor" value="#673ab7" />
+	<preference name="StatusBarOverlaysWebView" value="false" />
+	<preference name="StatusBarStyle" value="lightcontent" />
+
+	<platform name="android">
+		<plugin name="cordova-plugin-androidx-adapter" spec="*" />
+		<plugin name="cordova-plugin-browsertab" spec="*" />
+		<plugin
+			name="cordova-plugin-contacts"
+			spec="https://github.com/expcapitaldev/cordova-plugin-contacts.git"
+		/>
+		<plugin name="cordova-plugin-ionic-keyboard" spec="*" />
+		<plugin name="cordova-plugin-ionic-webview" spec="*" />
+		<plugin name="cordova-plugin-secure-storage-echo" spec="*" />
+		<plugin name="cordova-plugin-splashscreen" spec="*" />
+		<plugin name="phonegap-plugin-local-notification" spec="*" />
+
+		<!-- Ionic webview preferences -->
+		<preference name="MixedContentMode" value="1" />
+		<preference name="Scheme" value="https" />
+
+		<preference
+			name="OverrideUserAgent"
+			value="Mozilla/5.0 (Linux; Android 7.1; Pixel XL Build/NDE63H) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.91 Mobile Safari/537.36"
+		/>
+
+		<preference name="StatusBarBackgroundColor" value="#8b62d9" />
+
+		<allow-intent href="market:*" />
+
+		<resource-file src="google-services.json" target="app/google-services.json" />
+
+		<config-file target="AndroidManifest.xml" parent="/manifest">
+			<uses-permission android:name="android.permission.CAMERA" />
+		</config-file>
+		<config-file target="AndroidManifest.xml" parent="/manifest">
+			<uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+		</config-file>
+		<config-file target="AndroidManifest.xml" parent="/manifest">
+			<uses-permission android:name="android.permission.INTERNET" />
+		</config-file>
+		<config-file target="AndroidManifest.xml" parent="/manifest">
+			<uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
+		</config-file>
+		<config-file target="AndroidManifest.xml" parent="/manifest">
+			<uses-permission android:name="android.permission.NFC" />
+		</config-file>
+		<config-file target="AndroidManifest.xml" parent="/manifest">
+			<uses-permission android:name="android.permission.READ_CALENDAR" />
+		</config-file>
+		<config-file target="AndroidManifest.xml" parent="/manifest">
+			<uses-permission android:name="android.permission.READ_CONTACTS" />
+		</config-file>
+		<config-file target="AndroidManifest.xml" parent="/manifest">
+			<uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+		</config-file>
+		<config-file target="AndroidManifest.xml" parent="/manifest">
+			<uses-permission android:name="android.permission.RECORD_AUDIO" />
+		</config-file>
+		<config-file target="AndroidManifest.xml" parent="/manifest">
+			<uses-permission android:name="android.permission.USE_FINGERPRINT" />
+		</config-file>
+		<config-file target="AndroidManifest.xml" parent="/manifest">
+			<uses-permission android:name="android.permission.VIBRATE" />
+		</config-file>
+		<config-file target="AndroidManifest.xml" parent="/manifest">
+			<uses-permission android:name="android.permission.WRITE_CALENDAR" />
+		</config-file>
+		<config-file target="AndroidManifest.xml" parent="/manifest">
+			<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+		</config-file>
+
+		<config-file target="AndroidManifest.xml" parent="/manifest">
+			<meta-data
+				android:name="com.google.firebase.messaging.default_notification_icon"
+				android:resource="@drawable/notification_icon"
+			/>
+		</config-file>
+		<config-file target="AndroidManifest.xml" parent="/manifest">
+			<meta-data
+				android:name="com.google.firebase.messaging.default_notification_color"
+				android:resource="@color/ic_launcher_background"
+			/>
+		</config-file>
+
+		<config-file target="AndroidManifest.xml" parent="/manifest/application/activity">
+			<intent-filter android:autoVerify="true">
+				<action android:name="android.intent.action.VIEW" />
+				<category android:name="android.intent.category.DEFAULT" />
+				<category android:name="android.intent.category.BROWSABLE" />
+				<data android:scheme="https" android:host="cyph.app" android:pathPrefix="/" />
+				<data android:scheme="https" android:host="burner.cyph.app" android:pathPrefix="/" />
+				<data android:scheme="https" android:host="cyph.audio" android:pathPrefix="/" />
+				<data android:scheme="https" android:host="cyph.im" android:pathPrefix="/" />
+				<data android:scheme="https" android:host="cyph.io" android:pathPrefix="/" />
+				<data android:scheme="https" android:host="cyph.video" android:pathPrefix="/" />
+				<data android:scheme="https" android:host="cyph.ws" android:pathPrefix="/" />
+			</intent-filter>
+		</config-file>
+
+		<edit-config
+			file="app/src/main/AndroidManifest.xml"
+			mode="merge"
+			target="/manifest/application"
+		>
+			<application android:largeHeap="true" />
+		</edit-config>
+
+		<resource-file
+			src="res/icon/android/values/ic_launcher_background.xml"
+			target="app/src/main/res/values/colors.xml"
+		/>
+
+		<icon
+			background="@color/ic_launcher_background"
+			density="ldpi"
+			foreground="res/icon/android/mipmap-mdpi/ic_launcher_foreground.png"
+		/>
+		<icon
+			background="@color/ic_launcher_background"
+			density="mdpi"
+			foreground="res/icon/android/mipmap-mdpi/ic_launcher_foreground.png"
+		/>
+		<icon
+			background="@color/ic_launcher_background"
+			density="hdpi"
+			foreground="res/icon/android/mipmap-hdpi/ic_launcher_foreground.png"
+		/>
+		<icon
+			background="@color/ic_launcher_background"
+			density="xhdpi"
+			foreground="res/icon/android/mipmap-xhdpi/ic_launcher_foreground.png"
+		/>
+		<icon
+			background="@color/ic_launcher_background"
+			density="xxhdpi"
+			foreground="res/icon/android/mipmap-xxhdpi/ic_launcher_foreground.png"
+		/>
+		<icon
+			background="@color/ic_launcher_background"
+			density="xxxhdpi"
+			foreground="res/icon/android/mipmap-xxxhdpi/ic_launcher_foreground.png"
+		/>
+
+		<resource-file
+			src="res/icon/android/drawable-mdpi/notification_icon.png"
+			target="app/src/main/res/drawable-mdpi/notification_icon.png"
+		/>
+		<resource-file
+			src="res/icon/android/drawable-hdpi/notification_icon.png"
+			target="app/src/main/res/drawable-hdpi/notification_icon.png"
+		/>
+		<resource-file
+			src="res/icon/android/drawable-xhdpi/notification_icon.png"
+			target="app/src/main/res/drawable-xhdpi/notification_icon.png"
+		/>
+		<resource-file
+			src="res/icon/android/drawable-xxhdpi/notification_icon.png"
+			target="app/src/main/res/drawable-xxhdpi/notification_icon.png"
+		/>
+
+		<splash density="land-ldpi" src="res/screen/android/drawable-land-ldpi-screen.png" />
+		<splash density="land-mdpi" src="res/screen/android/drawable-land-mdpi-screen.png" />
+		<splash density="land-hdpi" src="res/screen/android/drawable-land-hdpi-screen.png" />
+		<splash density="land-xhdpi" src="res/screen/android/drawable-land-xhdpi-screen.png" />
+		<splash density="land-xxhdpi" src="res/screen/android/drawable-land-xxhdpi-screen.png" />
+		<splash density="land-xxxhdpi" src="res/screen/android/drawable-land-xxxhdpi-screen.png" />
+		<splash density="port-ldpi" src="res/screen/android/drawable-port-ldpi-screen.png" />
+		<splash density="port-mdpi" src="res/screen/android/drawable-port-mdpi-screen.png" />
+		<splash density="port-hdpi" src="res/screen/android/drawable-port-hdpi-screen.png" />
+		<splash density="port-xhdpi" src="res/screen/android/drawable-port-xhdpi-screen.png" />
+		<splash density="port-xxhdpi" src="res/screen/android/drawable-port-xxhdpi-screen.png" />
+		<splash density="port-xxxhdpi" src="res/screen/android/drawable-port-xxxhdpi-screen.png" />
+		<splash density="ldpi" src="res/screen/android/drawable-port-ldpi-screen.png" />
+		<splash density="mdpi" src="res/screen/android/drawable-port-mdpi-screen.png" />
+		<splash density="hdpi" src="res/screen/android/drawable-port-hdpi-screen.png" />
+		<splash density="xhdpi" src="res/screen/android/drawable-port-xhdpi-screen.png" />
+		<splash density="xxhdpi" src="res/screen/android/drawable-port-xxhdpi-screen.png" />
+		<splash density="xxxhdpi" src="res/screen/android/drawable-port-xxxhdpi-screen.png" />
+	</platform>
+
+	<platform name="electron">
+		<preference name="ElectronSettingsFilePath" value="electron.json" />
+	</platform>
+
+	<platform name="ios">
+		<plugin name="cordova-plugin-add-swift-support" spec="*" />
+		<plugin name="cordova-plugin-browsertab" spec="*" />
+		<plugin
+			name="cordova-plugin-contacts"
+			spec="https://github.com/expcapitaldev/cordova-plugin-contacts.git"
+		/>
+		<plugin name="cordova-plugin-ionic-keyboard" spec="*" />
+		<plugin name="cordova-plugin-ionic-webview" spec="*" />
+		<plugin name="cordova-plugin-iosrtc" spec="*" />
+		<plugin name="cordova-plugin-network-information" spec="*" />
+		<plugin name="cordova-plugin-purchase" spec="*" />
+		<plugin name="cordova-plugin-secure-storage-echo" spec="*" />
+		<plugin name="cordova-plugin-splashscreen" spec="*" />
+		<plugin name="phonegap-plugin-local-notification" spec="*" />
+
+		<allow-intent href="itms:*" />
+		<allow-intent href="itms-apps:*" />
+
+		<!-- Ionic webview preferences -->
+		<preference name="WKSuspendInBackground" value="false" />
+
+		<preference name="UseSwiftLanguageVersion" value="5.0" />
+
+		<preference name="allowInlineMediaPlayback" value="true" />
+		<preference name="AllowInlineMediaPlayback" value="true" />
+		<preference name="DetectMediaTypes" value="true" />
+		<preference name="Orientation" value="all" />
+		<preference name="target-device" value="universal" />
+
+		<resource-file src="GoogleService-Info.plist" />
+
+		<config-file target="*-Release.plist" parent="com.apple.developer.associated-domains">
+			<array>
+				<string>applinks:cyph.app</string>
+				<string>applinks:burner.cyph.app</string>
+				<string>applinks:cyph.audio</string>
+				<string>applinks:cyph.im</string>
+				<string>applinks:cyph.io</string>
+				<string>applinks:cyph.me</string>
+				<string>applinks:cyph.video</string>
+				<string>applinks:cyph.ws</string>
+			</array>
+		</config-file>
+
+		<hook
+			type="after_platform_add"
+			src="plugins/cordova-plugin-iosrtc/extra/hooks/iosrtc-swift-support.js"
+		/>
+
+		<edit-config target="NSCameraUsageDescription" file="*-Info.plist" mode="merge">
+			<string>For end-to-end encrypted video calling between users</string>
+		</edit-config>
+		<edit-config target="NSMicrophoneUsageDescription" file="*-Info.plist" mode="merge">
+			<string>For end-to-end encrypted video calling between users</string>
+		</edit-config>
+		<edit-config target="NSPhotoLibraryUsageDescription" file="*-Info.plist" mode="merge">
+			<string>For end-to-end encrypted photo sharing and storage</string>
+		</edit-config>
+
+		<icon height="57" platform="ios" src="res/icon/ios/icon.png" width="57" />
+		<icon height="114" platform="ios" src="res/icon/ios/icon@2x.png" width="114" />
+		<icon height="40" platform="ios" src="res/icon/ios/icon-40.png" width="40" />
+		<icon height="80" platform="ios" src="res/icon/ios/icon-40@2x.png" width="80" />
+		<icon height="50" platform="ios" src="res/icon/ios/icon-50.png" width="50" />
+		<icon height="100" platform="ios" src="res/icon/ios/icon-50@2x.png" width="100" />
+		<icon height="60" platform="ios" src="res/icon/ios/icon-60.png" width="60" />
+		<icon height="120" platform="ios" src="res/icon/ios/icon-60@2x.png" width="120" />
+		<icon height="180" platform="ios" src="res/icon/ios/icon-60@3x.png" width="180" />
+		<icon height="72" platform="ios" src="res/icon/ios/icon-72.png" width="72" />
+		<icon height="144" platform="ios" src="res/icon/ios/icon-72@2x.png" width="144" />
+		<icon height="76" platform="ios" src="res/icon/ios/icon-76.png" width="76" />
+		<icon height="152" platform="ios" src="res/icon/ios/icon-76@2x.png" width="152" />
+		<icon height="83.5" platform="ios" src="res/icon/ios/icon-83.5.png" width="83.5" />
+		<icon height="167" platform="ios" src="res/icon/ios/icon-83.5@2x.png" width="167" />
+		<icon height="29" platform="ios" src="res/icon/ios/icon-small.png" width="29" />
+		<icon height="58" platform="ios" src="res/icon/ios/icon-small@2x.png" width="58" />
+		<icon height="87" platform="ios" src="res/icon/ios/icon-small@3x.png" width="87" />
+		<icon height="1024" platform="ios" src="res/icon/default.png" width="1024" />
+
+		<splash height="1136" platform="ios" src="res/screen/ios/Default-568h@2x~iphone.png" width="640" />
+		<splash height="1334" platform="ios" src="res/screen/ios/Default-667h.png" width="750" />
+		<splash height="2208" platform="ios" src="res/screen/ios/Default-736h.png" width="1242" />
+		<splash height="1242" platform="ios" src="res/screen/ios/Default-Landscape-736h.png" width="2208" />
+		<splash height="1536" platform="ios" src="res/screen/ios/Default-Landscape@2x~ipad.png" width="2048" />
+		<splash height="768" platform="ios" src="res/screen/ios/Default-Landscape~ipad.png" width="1024" />
+		<splash height="2048" platform="ios" src="res/screen/ios/Default-Portrait@2x~ipad.png" width="1536" />
+		<splash height="1024" platform="ios" src="res/screen/ios/Default-Portrait~ipad.png" width="768" />
+		<splash height="960" platform="ios" src="res/screen/ios/Default@2x~iphone.png" width="640" />
+		<splash height="480" platform="ios" src="res/screen/ios/Default~iphone.png" width="320" />
+	</platform>
+
+	<engine name="android" spec="^9" />
+	<engine name="electron" spec="git+https://github.com/buu700/cordova-electron-tmp" />
+	<engine name="ios" spec="^6" />
+</widget>

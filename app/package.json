@@ -1,0 +1,56 @@
+{
+	"name": "cyph-cordova-app",
+	"author": "Cyph, Inc. <cordova-app@cyph.com> (https://github.com/cyph)",
+	"dependencies": {
+		"electron-push-receiver": "*"
+	},
+	"devDependencies": {
+		"@cyph/prettier": "*",
+		"cordova": "*",
+		"cordova-support-google-services": "https://github.com/LuisEGR/cordova-support-google-services.git",
+		"patch-package": "*",
+		"puppeteer": "*",
+		"xmldom": "*"
+	},
+	"cordova": {
+		"plugins": {
+			"cordova-plugin-browsertab": {
+				"CUSTOM_TAB_COLOR_RGB": "#8b62d9"
+			},
+			"cordova-plugin-contacts": {
+				"CONTACTS_USAGE_DESCRIPTION": "For optional contact list import"
+			},
+			"ionic-plugin-deeplinks": {
+				"URL_SCHEME": "cyph",
+				"DEEPLINK_SCHEME": "https",
+				"DEEPLINK_HOST": "cyph.app",
+				"ANDROID_PATH_PREFIX": "/",
+				"DEEPLINK_2_SCHEME": "https",
+				"DEEPLINK_2_HOST": "burner.cyph.app",
+				"ANDROID_2_PATH_PREFIX": "/",
+				"DEEPLINK_3_SCHEME": "https",
+				"DEEPLINK_3_HOST": "cyph.audio",
+				"ANDROID_3_PATH_PREFIX": "/",
+				"DEEPLINK_4_SCHEME": "https",
+				"DEEPLINK_4_HOST": "cyph.im",
+				"ANDROID_4_PATH_PREFIX": "/",
+				"DEEPLINK_5_SCHEME": "https",
+				"DEEPLINK_5_HOST": "cyph.io",
+				"ANDROID_5_PATH_PREFIX": "/",
+				"DEEPLINK_6_SCHEME": "https",
+				"DEEPLINK_6_HOST": "cyph.me",
+				"ANDROID_6_PATH_PREFIX": "/",
+				"DEEPLINK_7_SCHEME": "https",
+				"DEEPLINK_7_HOST": "cyph.video",
+				"ANDROID_7_PATH_PREFIX": "/",
+				"DEEPLINK_8_SCHEME": "https",
+				"DEEPLINK_8_HOST": "cyph.ws",
+				"ANDROID_8_PATH_PREFIX": "/"
+			}
+		}
+	},
+	"scripts": {
+		"postinstall": "patch-package",
+		"updateDefaultCacheValues": "node scripts/update-default-cache-values.js"
+	}
+}

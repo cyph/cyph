@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "93374254789",
+    "firebase_url": "https://cyph-test-staging.firebaseio.com",
+    "project_id": "cyph-test-staging",
+    "storage_bucket": "cyph-test-staging.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:93374254789:android:012ea945f5e4e890",
+        "android_client_info": {
+          "package_name": "com.cyph.test"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "93374254789-kcndph3f41cvl0ktn5tj397gotm14onn.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCNEXXlqnveMtgVq6DkZc0JSUxIK2gLrl4"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

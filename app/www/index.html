@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset='utf-8' />
+		<meta name='google' content='notranslate' />
+		<meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no' />
+		<meta name='referrer' content='no-referrer' />
+		<meta name='msapplication-tap-highlight' content='no' />
+
+		<link rel='stylesheet' href='css/websign.css' />
+	</head>
+	<body class='cordova'>
+		<div id='websign-load'>
+			<div class='logo-animation'></div>
+
+			<div id='websign-load-message' class='message'></div>
+
+			<div id='panic-message' class='message' style='display: none'>
+				<div>
+					<h3>
+						<strong>WARNING:</strong>
+						Validation Failed
+					</h3>
+					<div class='left'>
+						<p>
+							Common reasons for this:
+						</p>
+						<ol>
+							<li>
+								You're using a non-Safari browser on iOS, such as Chrome.
+								Chrome on iOS tampers with page content.
+								<br />
+								<strong>Fix:</strong>
+								Use Cyph in Safari on iOS.
+							</li>
+							<li>
+								Your antivirus software intercepts and tampers with Internet connections.
+								<br />
+								<strong>Fix:</strong>
+								This function poses numerous security risks. Disable it.
+							</li>
+						</ol>
+					</div>
+					<p>
+						If neither of these apply to you,
+						<strong>DO NOT refresh this page or otherwise continue to use Cyph.</strong>
+						<br />
+						To reduce possible risk from malware, cease using this device entirely and
+						<strong><a
+							href='mailto:%22Ryan%20and%20Josh%22%20%3Cwebsign@cyph.com%3E?subject=I%20RECEIVED%20THE%20WEBSIGN%20WARNING&body=Hello%20Ryan%20and%20Josh%2C%0A%0A'
+						>email us immediately.</a></strong>
+						We will investigate and advise on how to proceed.
+						<strong>
+							DO NOT trust any reply that isn't signed using
+							<a
+								target='_blank'
+								href='data:text/plain;base64,LS0tLS1CRUdJTiBQR1AgUFVCTElDIEtFWSBCTE9DSy0tLS0tClZlcnNpb246IEdudVBHIHYxCkNvbW1lbnQ6IEtleSBJRCAweDM5NUQ5QzA3RTQyNEFBMDAKCm1RSU5CRmFhbHQ4QkVBQys0bHJPazExZWdja3NZRHlyYkhKMXlLNmdOTzVobHYzb1k0ZjVNOW9samhZU2xmdmoKZmJBcy9QT0dvWUtmaFZLUS9rWkx2WlcvL0QveThTUHNrUlNzZmNmUlZHdzc0MVVtdFNFQjZhQll6cExBMUJzSAprZGZQaEFGME95eFFUcGZzaVVad2plYUhLYUo2TFc0NXY2NzZuZWtzWXVUa2J1bTVMYUxacTVOSWovZUpKOVZyCnFyN0pCNm1idm1naHJIN1lQeXRNdnNUdzlVNlMzNDNucVg3QmJTTjJ1Sit1d0g0cTRRNHdzOURCc0Z5eUNaWkcKNXRlZnVTVjJrU0JGT0hmekxmQmJFanlObzRndXZ1aE5KZndUZlI3VnZwM2RkTVVFTVJLT1I1ckpnbGNKZmtLegphdWZMZXhGUkdDY0hJNm9tTGQ4Vnc1K0gxTWRSdDI2eE5qRUNxdHR3UnpzS1pVZ2JBNGlRYnRQNUdnNkRkbTdSCjhCWTBNWE9BdHNSYjB2REM2YnIzblpEV3l3dVhJaEJObHhUL2FxNkhXSXVFd0JxVXdXdkRhdW0vZnRkK3lHaG4KN3dJZFJUeW9DMnE1SXFPbTVLa3M5M2ZYZWtXa1BXWGhPeU9DeHpVdjhzMHJsV2Q4TUpidUppRGhEN2dESlBDRAo3MnAra3AzaWVzVmxaU3Ezb2dGN1BySlJuUThncS84RGx1Q0lYK1JkcGpmK1dkZWVxcjlOK21KK01tWWdCaVZYClBua0E0RGlLTG1Dc3A1UDJKRThqSWZmbDZDbWs4Rm50bTQzcUFpNFpkd0tkZFhQOWowSXI5ek5lWCtsM2R4UmIKMVhNM0xaYTBVMzM4T080cEo0aU1NVVo2VDM1OWwveDJMcTkvQlYvZmx4ay9MSVFndE9HRXluRTlrd0FSQVFBQgp0RVpTZVdGdUlFeGxjM1JsY2lBbUlFSmhjbTl1SUVwdmMyaDFZU0JEZVhKMWN5QkNiMlZvYlNBb1EzbHdhQ3dnClNXNWpMaWtnUEhkbFluTnBaMjVBWTNsd2FDNWpiMjAraVFJNEJCTUJBZ0FpQlFKV21wYmZBaHNEQmdzSkNBY0QKQWdZVkNBSUpDZ3NFRmdJREFRSWVBUUlYZ0FBS0NSQTVYWndINUNTcUFLcTlELzR3TGpiMExNU2ZxdEJUOTZFTgpMaVJNTXZVRHIzSXFWT0Jrb0JVRmNmMUtDcVhFMXlyYk5lcjlRc2hYeWdmMC9UUDgvUHIwTWZ0aEQzQ01lcGNvCmVPOHNwRGc2d2ZsLzhhVjE4MGdKZlBwL1pxUytJNHVUYzBRVUVLa2YySmZVSzNteUdmcUJWQ1o2bkRaYnRQVlcKN1pESHVZUmxBa3JhTVp3K2ZvN1l5QmlvNFJnbXg3TSs2ZmpxL3BXbmxST0NQbUNsZnhTQkpLRDN2QjFubFdPeQpuYlVlQnMxVEMrSVUyNkpIeXNRS2R1SFJCbUorUThDRzk5cWkybk9lTHNvd3A1bzhEVEdkdG8yNEpaZ0FneXJZClFsaDY3UHdIcXpMUEJCTjE2RFNzcTJjRGdKS2J4R09wY2h0Q0owSW9KK3daa3ZCeTQ0bEEvVVNyUFlNRHp4N1gKSmhzVGgxZDZxRDUwRUluRjFKeXpHUWRLOFIzclFJOHJJd1hmNTlPOGVLd0Jrd25RNzdBdWxQZTBSTVB6VDVWSwpHU3FabDlWdXc1OUxoOTlHT1QybkV0K05XUWY4RjlYcmdSeWRiSERjUjRueVB6am1kdHlpcGdVSFRPK0hCRGZICnZOTlFTVmllYnA0ZGhLRXczbjhvbzQwN0Z6SVFnVkp4T0V6SmtpdHRyV0dsei9vdnFmS05KNU9HUjVKcjRvSmQKZEZVNzZnTjdpeGFlS0l1SGdqTmIyOXJjcXE1WWVSZWJRcnFUN1RDTjNQNXdlakVzZmhVWFBkQUp2WmMzU29ESwpIMGZWTEpKY1pveTJXQTQxclZaTmh3NG80cGF0a3JSczlZaFh3bngvVXRtVmI0WGlGVmhMQnNDOGErYWFSNUxmCi9HdnpUV01IOHdFQzEzcWt4R1NJNmk5Sng3a0NEUVJXbXBiZkFSQUFxZkpTSEYwdnlEdWVkeUZVNzNtVEtjRzEKOGtCWEc0NXhGeEY5YUptRmtSUndiVnJlYUdnVlJ1b0FraGRaYldEbnNrQWpib2hEWGpCQjBhb3BzTmVPYkxqTQoxL3NQeVlQZzdQYnV4RldrUkpyV3lDUFZVcytINmRUbXBFaFZaRTFkNDh4Zlp3Y2I3cDNEMU5MOUJzN2JSYWhiCndCTW5jT1ZkLzNtQS9OdWpFdXhzMGtmbjV6V1JFK1owN2hCVHFlL21sK3FGYmR5a25tY0Z5R2lOSlVUQ0s1dWsKWXlvViswVHZsWHA3cTloZEFDYWRMdGE4dDB2QlNxTC8vVnNUTk1NR25kKzNGdnJrNnZKY3EvRHBLc3U4enpKZApxbzBGZkE0cjhQM294bWJZR0xHRi9USHdyaVVYcGJkQWl6UXNmMW5ESEtZNm9ma0Q4amhiYmE3RVBqWjU2a1JNCnFESzF6Q1hxMmE4eTJ5bDhNV0FacnRvQmI5dHlaRXp3aXJ6cDJYMHR5WUFIQnZEd29QeTdRRFEvM1F1RTdqVloKUmc3Y0RWNTQ4QzRZUldmZlYyRW5xRVlxZEQwZ1NEbGhBdFlZUFcyUnVyUGJXd0xYb3A5YXdIZG9uYXJFdUhENwpwVTVSSzUyTGlNdnZkdjlBMnRyWjdEWVA5azlReW9UQStCZ3N5NzZKTkFJMWNLWGk5ejZxeUJLRmY2TjVGR25oCmZ4anNDZm9zOUtZRXdOYUxDdzBTbEs3VVFlRkNQMlNDeXJ5VExkRmN4RTB5b0tRQXVOL0NBN3ZzQk5RcDNBWDUKU21lNWl2cXVoT1hlcmk1cWhEMTBvWmZGTk9DWTJqQkVFRFVabGpHTTl3YjliazRqemhEY3Q1RG1pcmpMemtKQgoyVEpGVG9pYUNDTVg5cFhlaFlrQUVRRUFBWWtDSHdRWUFRSUFDUVVDVnBxVzN3SWJEQUFLQ1JBNVhad0g1Q1NxCkFPQnJEL3dJRVdWVzhPSm83ZHRuc0M0Mlg0UDBzMHZRaW1ldkIvbHBkblErbWpoYnFuTjI5QUExOURDVXN3Z1IKUyt5UDdsQSttTHc2clNQZzBmbUJsMUx4R0tHR2pYbzlCY0pWd2ZFZ3cxS1NlcTdDRnpPRURMbmJ3TFROcmpycwpqY1IvSFhHY1Y2QnBJbnZvZEE3STJXK2pOd0JJSitYTWhBMkhjY1NUdlNlbnllVGIxa0YrQVBQNnNiL0JwM3VECnVucjN3dzRqM05HRis0QklBcld3ZG1SVHVsRi9WOFJGNnNHRmJKbUlTb3FEVzBWZUxjejI5aWVYWjZ4cDlVYlYKazczemhSMER5WG51bFJ2TE81bEFBbW8xdGZlcStZZWl4V21uVjh0K0M0OTlkU3JGK3owTGxldndNYzRSZ3BUQgpJYkUzT1YxUmd4cUZNcENJQnBDc0pUTnovVmg3bTYvMnJjT0twMVBmMXJKd0psbDZPaHdxNVpsbmlKQ0x1cm1ICkhjMVd3U1NobTlZMk14VUhTUENIeEc5WWRiT05VcEJ5RVFJOGVwSFY5elRCRHhONVVpZ1N5c1lLQ3hIelhoMUcKZlNCY3Bsbi8rb2Ezb1BMZ3pyazRNTDFRdkxscWordngxTk9GTVF0Z0dYWHpVdUZMQUlTbjd6UFQ3aTNKSHNaZwozdzAyMno0OWExcU9lQWpxbmo5Q0MzWFc2d1BGcmdLRjVLQ3ZoRU9aWW4zNzFHRUhPRDFSWHAyNEdKSnBDQmZkCmpqN05uZDNWNTdRdjVuOVh4MGxsWDhlR1RtZFU1MFBscmw3SEplcStySEI1d3BZSTFVVHNpUERCMjUrYmh5UEUKcTB1RXJBRDNoU2dqVU15em5FeGVnQk85VVNPaENlTTZiR0FZbmJVTjl4T1NMMWN0MGc9PQo9SXRLZQotLS0tLUVORCBQR1AgUFVCTElDIEtFWSBCTE9DSy0tLS0t'
+							>this PGP key.</a></strong>
+					</p>
+				</div>
+			</div>
+		</div>
+
+		<script src='cordova.js'></script>
+		<script src='js/init.js'></script>
+		<script src='lib/localforage.js'></script>
+		<script src='lib/supersphincs.js'></script>
+		<script src='lib/brotli.js'></script>
+		<script src='lib/fetch.js'></script>
+		<script src='js/caching-fetch.js'></script>
+		<script src='js/sri.js'></script>
+		<script src='js/keys.js'></script>
+		<script src='js/config.js'></script>
+		<script src='js/default-cache-values.js'></script>
+		<script src='js/init-cache.js'></script>
+		<script src='js/main.js'></script>
+	</body>
+</html>
