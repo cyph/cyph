@@ -64,7 +64,7 @@ fi
 if [ "${1}" == 'all' ] ; then
 	site=''
 	shift
-elif [ "${1}" == 'cyph.app' ] || [ "${1}" == 'cyph.com' ] ; then
+elif [ "${1}" == 'backend' ] || [ "${1}" == 'cyph.app' ] || [ "${1}" == 'cyph.com' ] ; then
 	site="${1}"
 	shift
 fi
@@ -179,6 +179,7 @@ dev_appserver.py \
 	$(if [[ "${*}" == *'--disable-host-check'* ]]; then echo -n '--enable_host_checking=False' ; fi) \
 	${PWD}/backend/.build.yaml \
 &
+if [ "${site}" == 'backend' ] ; then sleep Infinity ; fi
 
 ./commands/buildunbundledassets.sh \
 	$(if [ ! "${CIRCLECI}" ] && [ ! "${prodBuild}" ] ; then echo -n '--test' ; fi)
