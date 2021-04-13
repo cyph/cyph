@@ -1,0 +1,9 @@
+12,19d11
+< 	files: [
+< 		'/',
+< 		'/appcache.appcache',
+< 		'/manifest.json',
+< 		'/serviceworker.js',
+< 		'/unsupportedbrowser'
+< 	],
+< 

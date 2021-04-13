@@ -1,0 +1,87 @@
+1,50c1
+< var files	= [
+< 	'/',
+< 	'/appcache.appcache',
+< 	'/manifest.json',
+< 	'/serviceworker.js',
+< 	'/unsupportedbrowser',
+< 	'/favicon.ico',
+< 	'/img/favicon/favicon-256x256.png',
+< 	'/img/favicon/favicon-196x196.png',
+< 	'/img/favicon/favicon-192x192.png',
+< 	'/img/favicon/favicon-160x160.png',
+< 	'/img/favicon/favicon-96x96.png',
+< 	'/img/favicon/favicon-32x32.png',
+< 	'/img/favicon/favicon-16x16.png',
+< 	'/img/favicon/apple-touch-icon-180x180.png',
+< 	'/img/favicon/apple-touch-icon-152x152.png',
+< 	'/img/favicon/apple-touch-icon-144x144.png',
+< 	'/img/favicon/apple-touch-icon-120x120.png',
+< 	'/img/favicon/apple-touch-icon-114x114.png',
+< 	'/img/favicon/apple-touch-icon-76x76.png',
+< 	'/img/favicon/apple-touch-icon-72x72.png',
+< 	'/img/favicon/apple-touch-icon-60x60.png',
+< 	'/img/favicon/apple-touch-icon-57x57.png',
+< 	'/img/favicon/mask.svg',
+< 	'/img/favicon/mstile-144x144.png',
+< 	'/img/logo.white.vertical.png'
+< ].map(function (file) {
+< 	return new Request(file);
+< });
+< 
+< var urls	= files.reduce(function (o, file) { o[file.url] = true; return o; }, {});
+< 
+< var root	= files[0].url.replace(/(.*)\/$/, '$1');
+< 
+< 
+< self.addEventListener('install', function () {
+< 	Promise.all([
+< 		caches.open('cache'),
+< 		Promise.all(files.map(function (file) {
+< 			return fetch(file);
+< 		}))
+< 	]).then(function (results) {
+< 		var cache		= results[0];
+< 		var responses	= results[1];
+< 
+< 		for (var i = 0 ; i < responses.length ; ++i) {
+< 			cache.put(files[i], responses[i]);
+< 		}
+< 	});
+< });
+---
+> importScripts('lib/localforage.js');
+52,84d2
+< self.addEventListener('fetch', function (e) {
+< 	var url	= e.request.url.split('#')[0];
+< 
+< 	/* Let requests to other origins pass through */
+< 	if (url.indexOf(root) !== 0) {
+< 		return;
+< 	}
+< 
+< 	/* Redirect non-whitelisted paths in this origin */
+< 	if (!(url in urls)) {
+< 		return e.respondWith(Response.redirect(root + '/#' + url.slice(root.length + 1), 301));
+< 	}
+< 
+< 	return e.respondWith(
+< 		caches.match(e.request).then(function (cachedResponse) {
+< 			if (cachedResponse) {
+< 				return cachedResponse;
+< 			}
+< 
+< 			return Promise.all([
+< 				caches.open('cache'),
+< 				fetch(e.request.clone())
+< 			]).then(function (results) {
+< 				var cache		= results[0];
+< 				var response	= results[1];
+< 
+< 				cache.put(e.request, response.clone());
+< 
+< 				return response;
+< 			});
+< 		})
+< 	);
+< });

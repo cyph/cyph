@@ -103,6 +103,14 @@ done
 cd cordova-build
 mkdir node_modules platforms plugins
 
+cd www
+for f in $(find . -type f -name '*.patch' | perl -pe 's/^\.\/(.*)\.patch/\1/g') ; do
+	cp ../../../websign/${f} ${f}
+	patch ${f} ${f}.patch
+	rm ${f}.patch
+done
+cd ..
+
 echo -e '\n\nADD PLATFORMS\n\n'
 
 sed -i "s|~|${HOME}|g" build.json
@@ -148,6 +156,7 @@ if [ "${test}" ] ; then
 fi
 
 npm install
+npm run updateDefaultCacheValues
 
 
 initPlatform () {

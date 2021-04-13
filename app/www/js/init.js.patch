@@ -1,0 +1,4 @@
+34c34
+< 	location.pathname	= '/unsupportedbrowser';
+---
+> 	location	= 'about:blank';

@@ -1,5 +1,4 @@
 const {format} = require('@cyph/prettier');
-const childProcess = require('child_process');
 const fs = require('fs');
 const path = require('path');
 const puppeteer = require('puppeteer');
@@ -90,11 +89,8 @@ const defaultCacheValuesPath = path.join(
 
 	await browser.close();
 
-	childProcess.spawnSync(
-		'git',
-		['commit', '-m', 'updateDefaultCacheValues', defaultCacheValuesPath],
-		{stdio: 'inherit'}
-	);
-
 	process.exit();
-})().catch(() => process.exit(1));
+})().catch(err => {
+	console.error(err);
+	process.exit(1);
+});

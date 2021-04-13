@@ -1,0 +1,198 @@
+1c1,2
+< (function () {
+---
+> document.addEventListener('DOMContentLoaded', function () {
+> document.addEventListener('deviceready', function () {
+3a5,13
+> document.addEventListener('backbutton', function (e) {
+> 	if (typeof self.onbackbutton === 'function') {
+> 		self.onbackbutton(e);
+> 	}
+> });
+> 
+> self.cordovaParent	= location.toString() + '/../';
+> self.cordovaRequire	= self.require;
+> 
+6c16
+< 	navigator.serviceWorker.register('/serviceworker.js').catch(function () {});
+---
+> 	navigator.serviceWorker.register('serviceworker.js').catch(function () {});
+15,34c25,28
+< var hostSplit		= location.host.split('.');
+< var isHiddenService	= hostSplit.slice(-1)[0] === 'onion';
+< var locationString	= location.toString();
+< 
+< var packageName		=
+< 	!isHiddenService ?
+< 		location.host :
+< 	hostSplit[0] === 'app' ?
+< 		'cyph.app' :
+< 		hostSplit[0].replace(/_/g, '.')
+< ;
+< 
+< /* Set pin on www subdomain on first use, then force naked domain */
+< if (location.host.indexOf('www.') === 0) {
+< 	location.host	= location.host.replace('www.', '');
+< 	return;
+< }
+< else if (!isHiddenService && storage.isPersistent && !storage.webSignWWWPinned) {
+< 	storage.webSignWWWPinned	= true;
+< 	location.host				= 'www.' + location.host;
+---
+> try {
+> 	if (cordova && cordova.plugins && cordova.plugins.backgroundMode) {
+> 		cordova.plugins.backgroundMode.enable();
+> 	}
+35a30
+> catch (_) {}
+37,40c32,35
+< /* Different styling between the main Cyph environments and others */
+< var packageNameSplit	= packageName.split('.');
+< if (config.cyphBranches.indexOf(packageNameSplit[0]) > -1) {
+< 	packageNameSplit	= packageNameSplit.slice(1);
+---
+> try {
+> 	if (cordova && cordova.plugins && cordova.plugins.iosrtc) {
+> 		cordova.plugins.iosrtc.registerGlobals();
+> 	}
+42,43c37,53
+< if (packageNameSplit.length === 2 && packageNameSplit[0] === 'cyph') {
+< 	document.getElementById('websign-load').className	= 'cyph-branded';
+---
+> catch (_) {}
+> 
+> var isHiddenService	= false;
+> var packageName		= 'cyph.app';
+> 
+> if (storage.betaTestUser) {
+> 	packageName		= 'beta.cyph.app';
+> 
+> 	if (!storage.betaTestInitialized) {
+> 		storage.betaTestInitialized	= true;
+> 
+> 		delete storage.webSignExpires;
+> 		delete storage.webSignHashWhitelist;
+> 		delete storage.webSignPackageMetadata;
+> 		delete storage.webSignPackageName;
+> 		delete storage.webSignPackageTimestamp;
+> 	}
+168,207c178,180
+< /* Before finishing, perform self-administered
+< 	integrity check on WebSign bootstrap */
+< catch(function () {
+< 	return null;
+< }).then(function (o) {
+< 	return Promise.all([
+< 		o,
+< 		Promise.all(config.files.map(function (file) {
+< 			return fetchRetry(file).then(function (response) {
+< 				return response.text();
+< 			}).catch(function () {
+< 				return '';
+< 			});
+< 		}))
+< 	]);
+< }).then(function (results) {
+< 	var o				= results[0];
+< 	var fileContents	= results[1];
+< 
+< 	var bootstrapText	= config.files.
+< 		map(function (file, i) {
+< 			return file + ':\n\n' + fileContents[i].trim();
+< 		}).
+< 		join('\n\n\n\n\n\n')
+< 	;
+< 
+< 	return Promise.all([
+< 		o,
+< 		bootstrapText,
+< 		superSphincs.hash(bootstrapText)
+< 	]);
+< }).then(function (results) {
+< 	var o				= results[0];
+< 	var bootstrapText	= results[1];
+< 	var hash			= results[2].hex;
+< 
+< 	storage.webSignHashOld	= storage.webSignHash;
+< 	storage.webSignHash		= hash;
+< 
+< 	var hashWhitelist	= JSON.parse(storage.webSignHashWhitelist);
+---
+> /* Successfully execute package */
+> then(function (o) {
+> 	var headHTML	= o.package.split('<head>')[1].split('</head>')[0];
+209,216c182,183
+< 	if (!hashWhitelist[storage.webSignHash]) {
+< 		throw {
+< 			webSignPanic: true,
+< 			bootstrapText: bootstrapText
+< 		};
+< 	}
+< 	else if (o) {
+< 		return o;
+---
+> 	if (device.platform === 'iOS') {
+> 		headHTML	= headHTML.replace('href="/"', 'href="#"');
+219,224c186
+< 	throw null;
+< }).
+< 
+< /* Successfully execute package */
+< then(function (o) {
+< 	document.head.innerHTML	= o.package.split('<head>')[1].split('</head>')[0];
+---
+> 	document.head.innerHTML	= headHTML;
+234,271c196,200
+< catch(function (err) {
+< 	var messageElement;
+< 
+< 	if (!err || !err.webSignPanic) {
+< 		messageElement					= document.getElementById('websign-load-message');
+< 		messageElement.innerText		= config.abortText;
+< 	}
+< 	else {
+< 		messageElement					= document.getElementById('panic-message');
+< 		messageElement.style.display	= 'block';
+< 
+< 		/* Also try to warn us, though in a serious attack this may be blocked */
+< 		fetchRetry('https://mandrillapp.com/api/1.0/messages/send.json', {
+< 			method: 'POST',
+< 			headers: {
+< 				'Content-Type': 'application/json'
+< 			},
+< 			body: JSON.stringify({
+< 				key: 'HNz4JExN1MtpKz8uP2RD1Q',
+< 				message: {
+< 					from_email: 'test@mandrillapp.com',
+< 					to: [{
+< 						email: 'errors@cyph.com',
+< 						type: 'to'
+< 					}],
+< 					autotext: 'true',
+< 					subject: 'CYPH: SOMEONE JUST GOT THE WEBSIGN ERROR SCREEN LADS',
+< 					text:
+< 						navigator.language + '\n\n' +
+< 						navigator.userAgent + '\n\n' +
+< 						locationString.replace(/\/#.*/g, '') + '\n\n' +
+< 						'\n\ncurrent bootstrap hash: ' + storage.webSignHash +
+< 						'\n\nprevious bootstrap hash: ' + storage.webSignHashOld +
+< 						'\n\npackage hash: ' + storage.webSignPackageHash +
+< 						'\n\n\n\n' + err.bootstrapText
+< 				}
+< 			})
+< 		});
+---
+> catch(function () {
+> 	try {
+> 		if (cordova && cordova.plugins && cordova.plugins.backgroundMode) {
+> 			cordova.plugins.backgroundMode.disable();
+> 		}
+272a202,205
+> 	catch (_) {}
+> 
+> 	var messageElement			= document.getElementById('websign-load-message');
+> 	messageElement.innerText	= config.abortText;
+286c219
+< })();
+---
+> }); });
