@@ -104,7 +104,6 @@ app.on('activate', () => {
 	}
 });
 
-
 const menuItems = {
 	about: {
 		click: () => {
