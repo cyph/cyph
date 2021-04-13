@@ -311,7 +311,7 @@ var config = struct {
 
 	HSTSHeader: "max-age=31536000; includeSubdomains; preload",
 
-	IPFSGatewayUptimeCheckTimeout: time.Millisecond * time.Duration(1500),
+	IPFSGatewayUptimeCheckTimeout: time.Millisecond * time.Duration(3000),
 
 	IPFSGatewayUptimeCheckTTL: int64(600),
 

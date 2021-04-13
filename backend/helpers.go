@@ -475,7 +475,7 @@ func checkIPFSGateway(gateway string, forceRetry bool) bool {
 		Timeout: config.IPFSGatewayUptimeCheckTimeout,
 	}
 
-	for i := 0; result && i < 5; i++ {
+	for i := 0; result && i < 3; i++ {
 		req, err := http.NewRequest(
 			methods.GET,
 			strings.Replace(gateway, ":hash", packageData.Uptime.IPFSHash, 1),
