@@ -30,14 +30,6 @@ const defaultCacheValuesPath = path.join(
 		`
 	);
 
-	fs.writeFileSync(
-		defaultCacheValuesPath,
-		`var defaultCacheValues = {
-			localforage: {},
-			localStorage: {}
-		};`
-	);
-
 	await page.goto(`file://${__dirname}/../www/index.html`, {timeout: 0});
 
 	await page.waitForSelector('cyph-account-login');

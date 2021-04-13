@@ -1,0 +1,4 @@
+var defaultCacheValues = {
+	localforage: {},
+	localStorage: {}
+};

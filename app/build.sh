@@ -156,7 +156,10 @@ if [ "${test}" ] ; then
 fi
 
 npm install
-npm run updateDefaultCacheValues
+
+if [ ! "${test}" ] ; then
+	npm run updateDefaultCacheValues
+fi
 
 
 initPlatform () {
