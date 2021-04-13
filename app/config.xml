@@ -23,7 +23,7 @@
 	<plugin name="cordova-clipboard" spec="*" />
 	<plugin
 		name="cordova-plugin-ace"
-		spec="https://github.com/notsyncing/ace"
+		spec="https://github.com/matrozov/ace"
 	/>
 	<plugin name="cordova-plugin-appminimize" spec="*" />
 	<plugin name="cordova-plugin-background-mode" spec="*" />
