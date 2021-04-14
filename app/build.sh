@@ -117,14 +117,14 @@ sed -i "s|~|${HOME}|g" build.json
 
 packageName='cyph'
 iOSDevelopmentIdentity='Apple Development'
-iOSDevelopmentProvisioningProfile='d5b45e17-e75d-4d4e-b71d-bd569ccf1eea'
+iOSDevelopmentProvisioningProfile='6f59e786-6771-435e-9dcd-f3d142252cef'
 iOSDistributionIdentity='Apple Distribution'
-iOSDistributionProvisioningProfile='3391280c-40e8-4d28-8bea-1084460c05c7'
+iOSDistributionProvisioningProfile='a6dfd760-2d77-4a59-95af-5aa972bbcead'
 
 if [ "${test}" ] ; then
 	packageName='test.cyph'
-	iOSDevelopmentProvisioningProfile='24320152-d3d4-4794-8aa8-597e1808b7f5'
-	iOSDistributionProvisioningProfile='339e0323-6399-4e45-a908-263de5fc42dc'
+	iOSDevelopmentProvisioningProfile='172e104f-8098-4fa8-8ec9-e3a98b8973c8'
+	iOSDistributionProvisioningProfile='9ab28e3e-d0c4-42ef-9e9d-d9d71df1c2fc'
 
 	cat config.xml |
 		grep -v cordova-plugin-privacyscreen |
