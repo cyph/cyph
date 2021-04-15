@@ -11,7 +11,10 @@ import os from 'os';
 import {URL} from 'url';
 
 /* Blacklist of known bad or flagged gateways */
-const blacklist = new Set(['https://astyanax.io/ipfs/:hash']);
+const blacklist = new Set([
+	'https://astyanax.io/ipfs/:hash',
+	'https://ipfs.telos.miami/ipfs/:hash'
+]);
 
 export const ipfsGateways = memoize(async () => {
 	const lookup = maxmind.open(os.homedir() + '/.cyph/GeoIP2-City.mmdb');
