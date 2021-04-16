@@ -105,6 +105,7 @@ read -r -d '' modules <<- EOM
 	@ngxs/store
 	@opentok/client
 	@rign/angular2-filemanager
+	@stripe/stripe-js
 	@syncfusion/ej2
 	@syncfusion/ej2-angular-barcode-generator
 	@syncfusion/ej2-angular-base
@@ -416,6 +417,8 @@ read -r -d '' modules <<- EOM
 	sodiumutil
 	sphincs
 	stacktrace-js
+	stripe
+	stripe-angular
 	stylelint
 	stylelint-scss
 	supersphincs

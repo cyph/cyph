@@ -32,6 +32,7 @@
 		"nodemailer": "^4",
 		"phone-number-timezone": "*",
 		"plivo": "*",
+		"stripe": "*",
 		"twilio": "*",
 		"username-blacklist": "https://github.com/cyph/The-Big-Username-Blacklist"
 	},
