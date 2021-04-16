@@ -15,6 +15,8 @@ export const changeUserPlan = async (
 	username,
 	plan,
 	trialMonths,
+	braintreeID,
+	braintreeSubscriptionID,
 	namespace
 ) => {
 	if (typeof projectId !== 'string' || projectId.indexOf('cyph') !== 0) {
@@ -34,6 +36,11 @@ export const changeUserPlan = async (
 			'https://staging.cyph.app/';
 
 	const namespacePath = namespace.replace(/\./g, '_');
+
+	trialMonths =
+		trialMonths && !braintreeID && !braintreeSubscriptionID ?
+			parseInt(trialMonths, 10) :
+			undefined;
 
 	username = normalize(username);
 
@@ -82,26 +89,28 @@ export const changeUserPlan = async (
 		`${namespacePath}/users/${username}/internal/planTrialEnd`
 	);
 
+	const braintreeIDRef = database.ref(
+		`${namespacePath}/users/${username}/internal/braintreeID`
+	);
+
+	const braintreeSubscriptionIDRef = database.ref(
+		`${namespacePath}/users/${username}/internal/braintreeSubscriptionID`
+	);
+
 	await Promise.all([
 		setItem(namespace, `users/${username}/plan`, CyphPlan, {
 			plan: cyphPlan
 		}),
-		database
-			.ref(`${namespacePath}/users/${username}/internal/braintreeID`)
-			.remove(),
-		database
-			.ref(
-				`${namespacePath}/users/${username}/internal/braintreeSubscriptionID`
-			)
-			.remove(),
+		braintreeID ? braintreeIDRef.set(braintreeID) : braintreeIDRef.remove(),
+		braintreeSubscriptionID ?
+			braintreeSubscriptionIDRef.set(braintreeSubscriptionID) :
+			braintreeSubscriptionIDRef.remove(),
 		database
 			.ref(`${namespacePath}/users/${username}/internal/planTrialEnd`)
 			.remove(),
 		trialMonths ?
 			planTrialEndRef.set(
-				new Date().setMonth(
-					new Date().getMonth() + parseInt(trialMonths, 10)
-				)
+				new Date().setMonth(new Date().getMonth() + trialMonths)
 			) :
 			planTrialEndRef.remove(),
 		(async () => {
@@ -197,20 +206,30 @@ if (isCLI) {
 	(async () => {
 		const projectId = process.argv[2];
 
-		for (const {username, plan, trialMonths, namespace} of process
-			.argv[3] === '--users' ?
+		for (const {
+			username,
+			plan,
+			trialMonths,
+			braintreeID,
+			braintreeSubscriptionID,
+			namespace
+		} of process.argv[3] === '--users' ?
 			JSON.parse(process.argv[4]).map(username => ({
 				username,
 				plan: process.argv[5],
 				trialMonths: process.argv[6],
-				namespace: process.argv[7]
+				braintreeID: process.argv[7],
+				braintreeSubscriptionID: process.argv[8],
+				namespace: process.argv[9]
 			})) :
 			[
 				{
 					username: process.argv[3],
 					plan: process.argv[4],
 					trialMonths: process.argv[5],
-					namespace: process.argv[6]
+					braintreeID: process.argv[6],
+					braintreeSubscriptionID: process.argv[7],
+					namespace: process.argv[8]
 				}
 			]) {
 			console.log(
@@ -219,6 +238,8 @@ if (isCLI) {
 					username,
 					plan,
 					trialMonths,
+					braintreeID,
+					braintreeSubscriptionID,
 					namespace
 				)}`
 			);
