@@ -220,6 +220,12 @@
 					},
 					"reservedUsername": {
 						".validate": "newData.isString()"
+					},
+					"stripeID": {
+						".validate": "newData.isString()"
+					},
+					"stripeSubscriptionID": {
+						".validate": "newData.isString()"
 					}
 				}
 			},
@@ -1108,6 +1114,12 @@
 									".validate": "newData.isString()"
 								}
 							}
+						},
+						"stripeID": {
+							".validate": "newData.isString()"
+						},
+						"stripeSubscriptionID": {
+							".validate": "newData.isString()"
 						}
 					},
 
