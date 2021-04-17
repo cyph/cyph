@@ -15,12 +15,12 @@ installPackages () {
 	mkdir node_modules
 	npm install --ignore-scripts \
 		$(node -e "
-			const package = JSON.parse(
-				fs.readFileSync('${dir}/shared/lib/js/package.json').toString()
+			const o = JSON.parse(
+				fs.readFileSync('${dir}/shared/lib/js/package-lock.json').toString()
 			);
 
-			for (const k of Object.keys(package.dependencies).filter(package => ${1})) {
-				console.log(\`\${k}@\${package.dependencies[k]}\`);
+			for (const k of Object.keys(o.dependencies).filter(package => ${1})) {
+				console.log(\`\${k}@\${o.dependencies[k].version}\`);
 			}
 		") \
 	|| exit 1
