@@ -20,8 +20,9 @@ import (
 func main() {
 	handleFuncs("/accountstanding/{userToken}", false, Handlers{methods.GET: isAccountInGoodStanding})
 	handleFuncs("/analytics/*", false, Handlers{methods.GET: analytics, methods.POST: analytics})
-	handleFuncs("/braintree", false, Handlers{methods.GET: braintreeToken, methods.POST: braintreeCheckout})
+	handleFuncs("/braintreetoken", false, Handlers{methods.GET: braintreeToken})
 	handleFuncs("/channels/{id}", false, Handlers{methods.DELETE: channelDelete, methods.POST: channelSetup})
+	handleFuncs("/checkout", false, Handlers{methods.POST: checkout})
 	handleFuncs("/continent", false, Handlers{methods.GET: getContinent})
 	handleFuncs("/downgradeaccount/{userToken}", false, Handlers{methods.GET: downgradeAccount})
 	handleFuncs("/geolocation/{language}", false, Handlers{methods.GET: getGeolocation})
@@ -79,7 +80,147 @@ func analytics(h HandlerArgs) (interface{}, int) {
 	return resp.Body, resp.StatusCode
 }
 
-func braintreeCheckout(h HandlerArgs) (interface{}, int) {
+func braintreeToken(h HandlerArgs) (interface{}, int) {
+	token, err := braintreeInit(h).ClientToken().Generate(h.Context)
+
+	if err == nil {
+		return token, http.StatusOK
+	}
+
+	return braintreeToken(h)
+}
+
+func channelDelete(h HandlerArgs) (interface{}, int) {
+	id := sanitize(h.Vars["id"])
+
+	if !isValidCyphID(id) {
+		return "invalid ID", http.StatusForbidden
+	}
+
+	burnerChannelKey := datastoreKey("BurnerChannel", id)
+
+	emptyBurnerChannel := &BurnerChannel{
+		ChannelID: "",
+		ID:        id,
+		Timestamp: 0,
+	}
+
+	for {
+		_, err := h.Datastore.Put(h.Context, burnerChannelKey, emptyBurnerChannel)
+
+		if err == nil {
+			break
+		}
+	}
+
+	return "", http.StatusOK
+}
+
+func channelSetup(h HandlerArgs) (interface{}, int) {
+	/* Block Facebook tampering with links sent through Messenger */
+	org := getOrg(h)
+	if org == "Facebook" {
+		return "", http.StatusNotFound
+	}
+
+	id := sanitize(h.Vars["id"])
+
+	if !isValidCyphID(id) {
+		return "invalid ID", http.StatusForbidden
+	}
+
+	proFeatures := getProFeaturesFromRequest(h)
+	now := getTimestamp()
+	preAuthorizedCyph := &PreAuthorizedCyph{}
+	preAuthorizedCyphKey := datastoreKey("PreAuthorizedCyph", id)
+
+	err := h.Datastore.Get(h.Context, preAuthorizedCyphKey, preAuthorizedCyph)
+
+	/* Discard pre-authorization after two days */
+	if err == nil && now-preAuthorizedCyph.Timestamp > 172800000 {
+		h.Datastore.Delete(h.Context, preAuthorizedCyphKey)
+		return "pre-authorization expired", http.StatusForbidden
+	}
+
+	var preAuthorizedProFeatures map[string]bool
+	json.Unmarshal(preAuthorizedCyph.ProFeatures, &preAuthorizedProFeatures)
+
+	/* For now, disable pro feature check */
+	if false {
+		for feature, isRequired := range proFeatures {
+			if isRequired && !preAuthorizedProFeatures[feature] {
+				return "pro feature " + feature + " not available", http.StatusForbidden
+			}
+		}
+	}
+
+	channelID := ""
+	status := http.StatusOK
+
+	for {
+		_, transactionErr := h.Datastore.RunInTransaction(h.Context, func(datastoreTransaction *datastore.Transaction) error {
+			burnerChannel := &BurnerChannel{}
+			burnerChannelKey := datastoreKey("BurnerChannel", id)
+
+			datastoreTransaction.Get(burnerChannelKey, burnerChannel)
+
+			if now-burnerChannel.Timestamp > config.BurnerChannelExpiration {
+				burnerChannel = &BurnerChannel{}
+			}
+
+			if burnerChannel.ID != "" {
+				datastoreTransaction.Delete(preAuthorizedCyphKey)
+
+				if now-burnerChannel.Timestamp < config.NewCyphTimeout {
+					channelID = burnerChannel.ChannelID
+				}
+
+				burnerChannel.ChannelID = ""
+				burnerChannel.Timestamp = 0
+
+				/*
+					For now, clear out channel data in channelDelete instead
+
+					if _, err := datastoreTransaction.Put(burnerChannelKey, burnerChannel); err != nil {
+						datastoreTransaction.Rollback()
+						return err
+					}
+				*/
+			} else {
+				channelID = sanitize(h.Request.FormValue("channelID"))
+
+				if len(channelID) > config.MaxChannelDescriptorLength {
+					channelID = ""
+				}
+
+				if channelID != "" {
+					burnerChannel.ChannelID = channelID
+					burnerChannel.ID = id
+					burnerChannel.Timestamp = now
+
+					if _, err := datastoreTransaction.Put(burnerChannelKey, burnerChannel); err != nil {
+						datastoreTransaction.Rollback()
+						return err
+					}
+				}
+			}
+
+			return nil
+		})
+
+		if transactionErr == nil {
+			break
+		}
+	}
+
+	if channelID == "" {
+		status = http.StatusNotFound
+	}
+
+	return channelID, status
+}
+
+func checkout(h HandlerArgs) (interface{}, int) {
 	appStoreReceipt := sanitize(h.Request.PostFormValue("appStoreReceipt"))
 	bitPayInvoiceID := sanitize(h.Request.PostFormValue("bitPayInvoiceID"))
 	company := sanitize(h.Request.PostFormValue("company"))
@@ -648,146 +789,6 @@ func braintreeCheckout(h HandlerArgs) (interface{}, int) {
 	}
 
 	return "", http.StatusOK
-}
-
-func braintreeToken(h HandlerArgs) (interface{}, int) {
-	token, err := braintreeInit(h).ClientToken().Generate(h.Context)
-
-	if err == nil {
-		return token, http.StatusOK
-	}
-
-	return braintreeToken(h)
-}
-
-func channelDelete(h HandlerArgs) (interface{}, int) {
-	id := sanitize(h.Vars["id"])
-
-	if !isValidCyphID(id) {
-		return "invalid ID", http.StatusForbidden
-	}
-
-	burnerChannelKey := datastoreKey("BurnerChannel", id)
-
-	emptyBurnerChannel := &BurnerChannel{
-		ChannelID: "",
-		ID:        id,
-		Timestamp: 0,
-	}
-
-	for {
-		_, err := h.Datastore.Put(h.Context, burnerChannelKey, emptyBurnerChannel)
-
-		if err == nil {
-			break
-		}
-	}
-
-	return "", http.StatusOK
-}
-
-func channelSetup(h HandlerArgs) (interface{}, int) {
-	/* Block Facebook tampering with links sent through Messenger */
-	org := getOrg(h)
-	if org == "Facebook" {
-		return "", http.StatusNotFound
-	}
-
-	id := sanitize(h.Vars["id"])
-
-	if !isValidCyphID(id) {
-		return "invalid ID", http.StatusForbidden
-	}
-
-	proFeatures := getProFeaturesFromRequest(h)
-	now := getTimestamp()
-	preAuthorizedCyph := &PreAuthorizedCyph{}
-	preAuthorizedCyphKey := datastoreKey("PreAuthorizedCyph", id)
-
-	err := h.Datastore.Get(h.Context, preAuthorizedCyphKey, preAuthorizedCyph)
-
-	/* Discard pre-authorization after two days */
-	if err == nil && now-preAuthorizedCyph.Timestamp > 172800000 {
-		h.Datastore.Delete(h.Context, preAuthorizedCyphKey)
-		return "pre-authorization expired", http.StatusForbidden
-	}
-
-	var preAuthorizedProFeatures map[string]bool
-	json.Unmarshal(preAuthorizedCyph.ProFeatures, &preAuthorizedProFeatures)
-
-	/* For now, disable pro feature check */
-	if false {
-		for feature, isRequired := range proFeatures {
-			if isRequired && !preAuthorizedProFeatures[feature] {
-				return "pro feature " + feature + " not available", http.StatusForbidden
-			}
-		}
-	}
-
-	channelID := ""
-	status := http.StatusOK
-
-	for {
-		_, transactionErr := h.Datastore.RunInTransaction(h.Context, func(datastoreTransaction *datastore.Transaction) error {
-			burnerChannel := &BurnerChannel{}
-			burnerChannelKey := datastoreKey("BurnerChannel", id)
-
-			datastoreTransaction.Get(burnerChannelKey, burnerChannel)
-
-			if now-burnerChannel.Timestamp > config.BurnerChannelExpiration {
-				burnerChannel = &BurnerChannel{}
-			}
-
-			if burnerChannel.ID != "" {
-				datastoreTransaction.Delete(preAuthorizedCyphKey)
-
-				if now-burnerChannel.Timestamp < config.NewCyphTimeout {
-					channelID = burnerChannel.ChannelID
-				}
-
-				burnerChannel.ChannelID = ""
-				burnerChannel.Timestamp = 0
-
-				/*
-					For now, clear out channel data in channelDelete instead
-
-					if _, err := datastoreTransaction.Put(burnerChannelKey, burnerChannel); err != nil {
-						datastoreTransaction.Rollback()
-						return err
-					}
-				*/
-			} else {
-				channelID = sanitize(h.Request.FormValue("channelID"))
-
-				if len(channelID) > config.MaxChannelDescriptorLength {
-					channelID = ""
-				}
-
-				if channelID != "" {
-					burnerChannel.ChannelID = channelID
-					burnerChannel.ID = id
-					burnerChannel.Timestamp = now
-
-					if _, err := datastoreTransaction.Put(burnerChannelKey, burnerChannel); err != nil {
-						datastoreTransaction.Rollback()
-						return err
-					}
-				}
-			}
-
-			return nil
-		})
-
-		if transactionErr == nil {
-			break
-		}
-	}
-
-	if channelID == "" {
-		status = http.StatusNotFound
-	}
-
-	return channelID, status
 }
 
 func downgradeAccount(h HandlerArgs) (interface{}, int) {

@@ -53,19 +53,19 @@ const EF: any | undefined =
 })
 export class CheckoutComponent extends BaseProvider
 	implements AfterViewInit, OnChanges, OnInit {
-	/** @ignore */
-	private readonly authorization = memoize(async () =>
-		request({
-			retries: 5,
-			url: this.envService.baseUrl + 'braintree'
-		})
-	);
-
 	/** BitPay invoice ID. */
 	private bitPayInvoiceID?: Promise<string>;
 
 	/* Braintree instance. */
 	private braintreeInstance: any;
+
+	/** Braintree auth token. */
+	private readonly braintreeToken = memoize(async () =>
+		request({
+			retries: 5,
+			url: this.envService.baseUrl + 'braintreetoken'
+		})
+	);
 
 	/** Partner program transaction ID. */
 	private partnerTransactionID?: Promise<string | undefined>;
@@ -306,7 +306,7 @@ export class CheckoutComponent extends BaseProvider
 						}
 					}
 				},
-				authorization: await this.authorization(),
+				authorization: await this.braintreeToken(),
 				card: {
 					overrides: {
 						fields: {
@@ -787,7 +787,7 @@ export class CheckoutComponent extends BaseProvider
 					...(userToken !== undefined ? {userToken} : {})
 				},
 				method: 'POST',
-				url: this.envService.baseUrl + 'braintree'
+				url: this.envService.baseUrl + 'checkout'
 			});
 
 			this.analyticsService
