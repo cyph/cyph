@@ -12,6 +12,7 @@ import {
 	OnInit,
 	Output
 } from '@angular/core';
+import {loadStripe} from '@stripe/stripe-js/pure';
 import * as bitPay from 'bitpay.js';
 import * as braintreeDropIn from 'braintree-web-drop-in';
 import memoize from 'lodash-es/memoize';
@@ -69,6 +70,11 @@ export class CheckoutComponent extends BaseProvider
 
 	/** Partner program transaction ID. */
 	private partnerTransactionID?: Promise<string | undefined>;
+
+	/** Stripe instance. */
+	private readonly stripe = memoize(async () =>
+		loadStripe(this.configService.stripeAPIKey)
+	);
 
 	/** Address. */
 	@Input() public address: {
