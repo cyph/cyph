@@ -38,7 +38,7 @@ go get -u \
 	github.com/buu700/braintree-go-tmp \
 	github.com/microcosm-cc/bluemonday \
 	github.com/oschwald/geoip2-golang \
-	github.com/stripe/stripe-go/v72 \
+	github.com/stripe/stripe-go \
 	google.golang.org/api \
 	google.golang.org/api/internal \
 	google.golang.org/api/iterator \
