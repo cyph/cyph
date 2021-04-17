@@ -31,7 +31,7 @@ node -e "
 		new Set([
 			...(
 				fs
-					.readFileSync('shared/lib/js/yarn.lock')
+					.readFileSync('shared/lib/js/package-lock.json')
 					.toString()
 					.match(/\\n\"?@?[A-Za-z0-9_\\-\\.\\/]+/g) || []
 			)

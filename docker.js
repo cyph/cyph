@@ -291,8 +291,8 @@ const shellScripts = {
 			/cyph/commands/getlibs.sh
 		`,
 		condition: `
-			! cmp /cyph/shared/lib/js/yarn.lock /node_modules/yarn.lock &> /dev/null ||
-			! cmp /cyph/shared/node_modules/yarn.lock /node_modules/yarn.lock &> /dev/null
+			! cmp /cyph/shared/lib/js/package-lock.json /node_modules/package-lock.json &> /dev/null ||
+			! cmp /cyph/shared/node_modules/package-lock.json /node_modules/package-lock.json &> /dev/null
 		`
 	},
 	setup: `
@@ -552,7 +552,7 @@ const dockerBase64Files = s =>
 			'commands/updatedockerimage.sh',
 			'native/plugins.list',
 			'shared/lib/js/package.json',
-			'shared/lib/js/yarn.lock'
+			'shared/lib/js/package-lock.json'
 		]
 			.map(filePath =>
 				fs

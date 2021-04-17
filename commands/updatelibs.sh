@@ -7,14 +7,11 @@ dir="$PWD"
 
 ./commands/keycache.sh
 
-rm -rf ~/.cache/yarn 2> /dev/null
-rm ~/.yarnrc 2> /dev/null
-
-# https://github.com/yarnpkg/yarn/issues/7212#issuecomment-594889917
-cd ; yarn policies set-version 1.21.1 ; cd -
+sudo npm -g install npm || fail
+npm config set legacy-peer-deps true
 
 
-mkdir -p ~/lib/js ~/tmplib/js
+mkdir -p ~/lib/js ~/tmplib/js/node_modules
 cd ~/tmplib/js
 
 
@@ -475,104 +472,11 @@ read -r -d '' modules <<- EOM
 EOM
 
 
-# Temporary workaround for flat dependencies pending https://github.com/yarnpkg/yarn/issues/1658
-#
-# cd ..
-# yarn add semver
-# cd -
-#
-# echo {} > package.json
-#
-# script -fc "
-# 	while true ; do
-# 		answer=\"\$(node -e '
-# 			const semver = require(\"semver\");
-#
-# 			const modules = \`${modules}\`;
-#
-# 			const getPinnedVersion = package =>
-# 				(modules.match(new RegExp(
-# 					\`(^|\\\\s+)\${package}@((\\\\d|\\\\.)+)(\n|\$)\`
-# 				)) || [])[2]
-# 			;
-#
-# 			console.log(
-# 				(
-# 					fs.readFileSync(\"yarn.out\").
-# 						toString().
-# 						split(\"Unable to find a suitable version\").
-# 						slice(1)
-# 				).map(section => (
-# 					section.match(/\"[^\\n]+\" which resolved to \"[^\\n]+\"/g) || []
-# 				).
-# 					map((s, i) => {
-# 						const split = s.split(\"\\\"\");
-# 						const version = split[3];
-# 						const pinnedVersion = getPinnedVersion(split[1].split(\"@\")[0]);
-#
-# 						return {
-# 							index: i + 1,
-# 							isPinned: !!pinnedVersion && semver.satisfies(version, pinnedVersion),
-# 							version
-# 						};
-# 					}).
-# 					reduce(
-# 						(a, b) =>
-# 							a.isPinned && !b.isPinned ?
-# 								a :
-# 							b.isPinned && !a.isPinned ?
-# 								b :
-# 							semver.gt(a.version, b.version) ?
-# 								a :
-# 								b
-# 						,
-# 						{index: \"1\", version: \"0.0.0\"}
-# 					).index
-# 				).reduce(
-# 					(a, b) => a ? \`\${a}\\n\${b}\` : b,
-# 					\"\"
-# 				)
-# 			);
-# 		')\"
-#
-# 		if [ \"\${answer}\" ] ; then
-# 			echo > yarn.out
-# 			echo \"\${answer}\"
-# 		fi
-#
-# 		if [ \"\$(cat yarn.out | grep -P 'Done in \d+' 2> /dev/null)\" ] ; then
-# 			break
-# 		fi
-# 	done | bash -c '
-# 		yarn add \
-# 			--flat \
-# 			--ignore-engines \
-# 			--ignore-platform \
-# 			--ignore-scripts \
-# 			--non-interactive \
-# 			$(echo "${modules}" | tr '\n' ' ') \
-# 		|| \
-# 			touch yarn.failure
-# 	'
-# " yarn.out
-#
-# if [ -f yarn.failure ] ; then
-# 	fail
-# fi
+npm install --ignore-scripts $(echo "${modules}" | tr '\n' ' ') || fail
 
-yarn add \
-	--ignore-engines \
-	--ignore-platform \
-	--ignore-scripts \
-	--non-interactive \
-	$(echo "${modules}" | tr '\n' ' ') \
-|| \
-	fail
+rm -rf ../node_modules ../package.json ../package-lock.json 2> /dev/null
 
-rm -rf ../node_modules ../package.json ../yarn.lock yarn.failure yarn.out 2> /dev/null
-
-
-cp yarn.lock package.json ~/lib/js/
+cp package-lock.json package.json ~/lib/js/
 
 cat node_modules/tslint/package.json | grep -v tslint-test-config-non-relative > package.json.new
 mv package.json.new node_modules/tslint/package.json
@@ -590,4 +494,5 @@ wget \
 ./commands/getlibs.sh
 cyph-prettier --write shared/lib/ipfs-gateways.json
 cyph-prettier --write shared/lib/js/package.json
+cyph-prettier --write shared/lib/js/package-lock.json
 ./commands/commit.sh --gc "${@}" updatelibs

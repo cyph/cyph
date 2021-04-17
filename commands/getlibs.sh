@@ -5,17 +5,14 @@ source ~/.bashrc
 cd $(cd "$(dirname "$0")" ; pwd)/..
 dir="$PWD"
 
-rm -rf ~/.cache/yarn 2> /dev/null
-rm ~/.yarnrc 2> /dev/null
-
-# https://github.com/yarnpkg/yarn/issues/7212#issuecomment-594889917
-cd ; yarn policies set-version 1.21.1 ; cd -
+sudo npm -g install npm || exit 1
+npm config set legacy-peer-deps true
 
 
 installPackages () {
 	rm -rf node_modules 2> /dev/null
 	mkdir node_modules
-	yarn add --ignore-engines --ignore-platform --ignore-scripts --non-interactive \
+	npm install --ignore-scripts \
 		$(node -e "
 			const package = JSON.parse(
 				fs.readFileSync('${dir}/shared/lib/js/package.json').toString()
@@ -68,7 +65,7 @@ cp -a shared/lib ~/
 cd
 
 installPackages "package === 'nativescript'"
-rm package.json yarn.lock
+rm package.json package-lock.json
 ~/node_modules/.bin/tns error-reporting disable
 ~/node_modules/.bin/tns usage-reporting disable
 ~/node_modules/.bin/tns create cyph --ng --appid com.cyph.app
@@ -81,12 +78,12 @@ installPackages "
 	package.startsWith('nativescript-dev') ||
 	package.startsWith('tns')
 "
-rm yarn.lock
+rm package-lock.json
 mv package.json package.json.tmp
 sudo mv node_modules ~/native_node_modules
 mkdir node_modules
-cp ~/lib/js/package.json ~/lib/js/yarn.lock ./
-yarn install --ignore-engines --ignore-platform --non-interactive || exit 1
+cp ~/lib/js/package.json ~/lib/js/package-lock.json ./
+npm ci || exit 1
 
 # Temporary workaround for "typings.replace is not a function" bug
 sed -i \
@@ -413,12 +410,12 @@ cd ..
 cd tslint
 cat package.json | grep -v tslint-test-config-non-relative > package.json.new
 mv package.json.new package.json
-yarn install --ignore-engines --ignore-platform --ignore-scripts --non-interactive
+npm install
 cd ..
 
 # for d in @google-cloud/* firebase-admin firebase-tools nativescript ; do
 # 	cd ${d}
-# 	yarn install --ignore-engines --ignore-platform --ignore-scripts --non-interactive
+# 	npm install
 # 	cd ..
 # done
 
@@ -435,7 +432,7 @@ cd ../..
 mv js/node_modules .js.tmp/
 rm -rf js
 mv .js.tmp js
-cp js/yarn.lock js/node_modules/
+cp js/package-lock.json js/node_modules/
 
 cd
 if [ -d ${dir}/cyph.app ] ; then
@@ -452,9 +449,9 @@ rm -rf lib
 
 # Temporary workaround pending AGSE update to SuperSPHINCS v6
 if [ ! -d oldsupersphincs ] ; then
-	mkdir oldsupersphincs
+	mkdir -p oldsupersphincs/node_modules
 	cd oldsupersphincs
-	yarn add supersphincs@old
+	npm install supersphincs@old
 fi
 
 # https://next.angular.io/guide/migration-ngcc
