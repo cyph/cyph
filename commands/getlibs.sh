@@ -6,6 +6,7 @@ cd $(cd "$(dirname "$0")" ; pwd)/..
 dir="$PWD"
 
 sudo npm -g install npm || exit 1
+sudo npm -g install @mapbox/node-pre-gyp || exit 1
 npm config set legacy-peer-deps true
 
 

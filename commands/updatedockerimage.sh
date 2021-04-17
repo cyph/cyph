@@ -8,6 +8,7 @@ sudo apt-get -y --allow-downgrades upgrade
 sudo apt-get -y --allow-downgrades clean
 
 sudo npm -g install npm
+sudo npm -g install @mapbox/node-pre-gyp
 
 while [ ! -d ~/brotli ] ; do
 	git clone https://github.com/google/brotli.git ~/brotli

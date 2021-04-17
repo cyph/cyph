@@ -8,6 +8,7 @@ dir="$PWD"
 ./commands/keycache.sh
 
 sudo npm -g install npm || fail
+sudo npm -g install @mapbox/node-pre-gyp || fail
 npm config set legacy-peer-deps true
 
 
