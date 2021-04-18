@@ -7,14 +7,12 @@ dir="$PWD"
 
 ./commands/keycache.sh
 
-rm -rf ~/.cache/yarn 2> /dev/null
-rm ~/.yarnrc 2> /dev/null
-
-# https://github.com/yarnpkg/yarn/issues/7212#issuecomment-594889917
-cd ; yarn policies set-version 1.21.1 ; cd -
+sudo npm -g install npm || fail
+sudo npm -g install @mapbox/node-pre-gyp || fail
+npm config set legacy-peer-deps true
 
 
-mkdir -p ~/lib/js ~/tmplib/js
+mkdir -p ~/lib/js ~/tmplib/js/node_modules
 cd ~/tmplib/js
 
 
@@ -64,6 +62,7 @@ read -r -d '' modules <<- EOM
 	@cyph/prettier
 	@cyph/pretty-quick
 	@cyph/sdk
+	@cyph/username-blacklist
 	@firebase/app
 	@firebase/app-types
 	@firebase/auth
@@ -96,9 +95,6 @@ read -r -d '' modules <<- EOM
 	@ngx-gallery/core
 	@ngx-gallery/gallerize
 	@ngx-gallery/lightbox
-	@ngx-share/button@https://github.com/buu700/ngx-share-button-tmp
-	@ngx-share/buttons@https://github.com/buu700/ngx-share-buttons-tmp
-	@ngx-share/core@https://github.com/buu700/ngx-share-core-tmp
 	@ngxs/devtools-plugin
 	@ngxs/logger-plugin
 	@ngxs/storage-plugin
@@ -198,7 +194,6 @@ read -r -d '' modules <<- EOM
 	@types/dompurify
 	@types/dropzone
 	@types/file-saver
-	@types/fullcalendar@3.5.2
 	@types/hammerjs
 	@types/hark
 	@types/html-to-text
@@ -232,7 +227,7 @@ read -r -d '' modules <<- EOM
 	angular-speed-dial
 	angular2-draggable
 	angular2-text-mask
-	animate.css@https://github.com/daneden/animate.css
+	animate.css
 	animated-scroll-to
 	animejs
 	awesome-typescript-loader
@@ -273,7 +268,6 @@ read -r -d '' modules <<- EOM
 	eslint-plugin-prefer-arrow
 	eslint-plugin-unicorn
 	fast-crc32c
-	fast-text-encoding@https://github.com/buu700/fast-text-encoding
 	faye-websocket
 	fcm-node
 	fetch-blob
@@ -284,7 +278,6 @@ read -r -d '' modules <<- EOM
 	firebase-functions
 	firebase-server
 	firebase-tools
-	fullcalendar@3.6.1
 	glob
 	gpu.js
 	granim
@@ -338,7 +331,6 @@ read -r -d '' modules <<- EOM
 	markdown-it
 	markdown-it-emoji
 	markdown-it-sup
-	mat-video@https://github.com/buu700/mat-video-tmp
 	materialize-css
 	math-expression-evaluator
 	maxmind
@@ -355,7 +347,6 @@ read -r -d '' modules <<- EOM
 	nativescript-dev-webpack
 	nativescript-theme-core
 	ng-animate
-	ng-fullcalendar@https://github.com/buu700/ng-fullcalendar-tmp
 	ng-packagr
 	ng2-fittext
 	ng2-pdf-viewer
@@ -368,6 +359,7 @@ read -r -d '' modules <<- EOM
 	ngx-lottie
 	ngx-progressbar
 	ngx-scrollbar
+	ngx-sharebuttons@8.0.4
 	ngx-teximate
 	node-fetch
 	nodemailer@4
@@ -389,7 +381,7 @@ read -r -d '' modules <<- EOM
 	protractor@^6
 	pulltorefreshjs
 	puppeteer
-	quill@https://github.com/buu700/quill-tmp
+	quill
 	quill-delta
 	quill-delta-to-html
 	quill-markdown
@@ -411,7 +403,7 @@ read -r -d '' modules <<- EOM
 	rxjs-tslint-rules
 	sass
 	sidh
-	simple-peer@https://github.com/feross/simple-peer
+	simple-peer
 	simplebtc
 	simplewebrtc
 	sodiumutil
@@ -446,7 +438,6 @@ read -r -d '' modules <<- EOM
 	uglify-es
 	universal-analytics
 	unsemantic
-	username-blacklist@https://github.com/cyph/The-Big-Username-Blacklist
 	video.js
 	videojs-background
 	videojs-brand
@@ -456,7 +447,7 @@ read -r -d '' modules <<- EOM
 	videojs-record
 	videojs-theater-mode
 	videojs-wavesurfer
-	watermarkjs@https://github.com/brianium/watermarkjs
+	watermarkjs
 	wavesurfer.js
 	web-animations-js
 	web-social-share
@@ -475,104 +466,11 @@ read -r -d '' modules <<- EOM
 EOM
 
 
-# Temporary workaround for flat dependencies pending https://github.com/yarnpkg/yarn/issues/1658
-#
-# cd ..
-# yarn add semver
-# cd -
-#
-# echo {} > package.json
-#
-# script -fc "
-# 	while true ; do
-# 		answer=\"\$(node -e '
-# 			const semver = require(\"semver\");
-#
-# 			const modules = \`${modules}\`;
-#
-# 			const getPinnedVersion = package =>
-# 				(modules.match(new RegExp(
-# 					\`(^|\\\\s+)\${package}@((\\\\d|\\\\.)+)(\n|\$)\`
-# 				)) || [])[2]
-# 			;
-#
-# 			console.log(
-# 				(
-# 					fs.readFileSync(\"yarn.out\").
-# 						toString().
-# 						split(\"Unable to find a suitable version\").
-# 						slice(1)
-# 				).map(section => (
-# 					section.match(/\"[^\\n]+\" which resolved to \"[^\\n]+\"/g) || []
-# 				).
-# 					map((s, i) => {
-# 						const split = s.split(\"\\\"\");
-# 						const version = split[3];
-# 						const pinnedVersion = getPinnedVersion(split[1].split(\"@\")[0]);
-#
-# 						return {
-# 							index: i + 1,
-# 							isPinned: !!pinnedVersion && semver.satisfies(version, pinnedVersion),
-# 							version
-# 						};
-# 					}).
-# 					reduce(
-# 						(a, b) =>
-# 							a.isPinned && !b.isPinned ?
-# 								a :
-# 							b.isPinned && !a.isPinned ?
-# 								b :
-# 							semver.gt(a.version, b.version) ?
-# 								a :
-# 								b
-# 						,
-# 						{index: \"1\", version: \"0.0.0\"}
-# 					).index
-# 				).reduce(
-# 					(a, b) => a ? \`\${a}\\n\${b}\` : b,
-# 					\"\"
-# 				)
-# 			);
-# 		')\"
-#
-# 		if [ \"\${answer}\" ] ; then
-# 			echo > yarn.out
-# 			echo \"\${answer}\"
-# 		fi
-#
-# 		if [ \"\$(cat yarn.out | grep -P 'Done in \d+' 2> /dev/null)\" ] ; then
-# 			break
-# 		fi
-# 	done | bash -c '
-# 		yarn add \
-# 			--flat \
-# 			--ignore-engines \
-# 			--ignore-platform \
-# 			--ignore-scripts \
-# 			--non-interactive \
-# 			$(echo "${modules}" | tr '\n' ' ') \
-# 		|| \
-# 			touch yarn.failure
-# 	'
-# " yarn.out
-#
-# if [ -f yarn.failure ] ; then
-# 	fail
-# fi
+npm install -f --ignore-scripts $(echo "${modules}" | tr '\n' ' ') || fail
 
-yarn add \
-	--ignore-engines \
-	--ignore-platform \
-	--ignore-scripts \
-	--non-interactive \
-	$(echo "${modules}" | tr '\n' ' ') \
-|| \
-	fail
+rm -rf ../node_modules ../package.json ../package-lock.json 2> /dev/null
 
-rm -rf ../node_modules ../package.json ../yarn.lock yarn.failure yarn.out 2> /dev/null
-
-
-cp yarn.lock package.json ~/lib/js/
+cp package-lock.json package.json ~/lib/js/
 
 cat node_modules/tslint/package.json | grep -v tslint-test-config-non-relative > package.json.new
 mv package.json.new node_modules/tslint/package.json
@@ -588,6 +486,7 @@ wget \
 	-O shared/lib/ipfs-gateways.json
 
 ./commands/getlibs.sh
-cyph-prettier --write shared/lib/ipfs-gateways.json
-cyph-prettier --write shared/lib/js/package.json
+cyph-prettier --write shared/lib/ipfs-gateways.json || fail
+cyph-prettier --write shared/lib/js/package.json || fail
+cyph-prettier --write shared/lib/js/package-lock.json || fail
 ./commands/commit.sh --gc "${@}" updatelibs

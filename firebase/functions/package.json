@@ -3,6 +3,7 @@
 	"description": "Cloud Functions for Firebase",
 	"dependencies": {
 		"@cyph/sdk": "*",
+		"@cyph/username-blacklist": "*",
 		"@firebase/app": "*",
 		"@firebase/auth": "*",
 		"@firebase/component": "*",
@@ -33,8 +34,7 @@
 		"phone-number-timezone": "*",
 		"plivo": "*",
 		"stripe": "*",
-		"twilio": "*",
-		"username-blacklist": "https://github.com/cyph/The-Big-Username-Blacklist"
+		"twilio": "*"
 	},
 	"engines": {
 		"node": "14"

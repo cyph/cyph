@@ -48,7 +48,6 @@ import {faExclamation} from '@fortawesome/free-solid-svg-icons/faExclamation';
 import {faLink} from '@fortawesome/free-solid-svg-icons/faLink';
 import {faMinus} from '@fortawesome/free-solid-svg-icons/faMinus';
 import {faPrint} from '@fortawesome/free-solid-svg-icons/faPrint';
-import {ShareButtonsModule} from '@ngx-share/buttons';
 import {
 	RecurrenceEditorModule,
 	ScheduleAllModule
@@ -57,6 +56,9 @@ import {SplitButtonModule} from '@syncfusion/ej2-angular-splitbuttons';
 import {SmdFabSpeedDialModule} from 'angular-speed-dial';
 import {AngularDraggableModule} from 'angular2-draggable';
 import {DxFileManagerModule} from 'devextreme-angular/ui/file-manager';
+import {ShareModule} from 'ngx-sharebuttons';
+import {ShareButtonsModule} from 'ngx-sharebuttons/buttons';
+import {ShareIconsModule} from 'ngx-sharebuttons/icons';
 import {FileManagerComponent} from '../components/file-manager';
 import {SidenavComponent} from '../components/sidenav';
 import {SimpleEmojiPickerComponent} from '../components/simple-emoji-picker';
@@ -109,7 +111,9 @@ import {CyphSharedModule} from './cyph-shared.module';
 		RecurrenceEditorModule,
 		RouterModule,
 		ScheduleAllModule,
+		ShareModule,
 		ShareButtonsModule,
+		ShareIconsModule,
 		SidenavComponent,
 		SimpleEmojiPickerComponent,
 		SmdFabSpeedDialModule,
@@ -144,7 +148,9 @@ import {CyphSharedModule} from './cyph-shared.module';
 		RecurrenceEditorModule,
 		RouterModule,
 		ScheduleAllModule,
+		ShareModule,
 		ShareButtonsModule,
+		ShareIconsModule,
 		SmdFabSpeedDialModule
 	],
 	providers: webModuleProviders

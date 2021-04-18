@@ -42,9 +42,12 @@ RUN apt-get -y --allow-downgrades install \
 	libbz2-1.0:i386 \
 	libgbm-dev \
 	libgconf-2-4 \
+	libglew-dev \
+	libglu1-mesa-dev \
 	libsodium-dev \
 	libstdc++6:i386 \
 	libtool \
+	libxi-dev \
 	libxss1 \
 	mono-complete \
 	nano \
@@ -52,6 +55,7 @@ RUN apt-get -y --allow-downgrades install \
 	openjdk-11-jdk \
 	perl \
 	pinentry-curses \
+	pkg-config \
 	procps \
 	python \
 	python-docutils \

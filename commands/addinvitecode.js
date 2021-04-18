@@ -4,7 +4,7 @@ import {getMeta} from '../modules/base.js';
 const {isCLI} = getMeta(import.meta);
 
 import {proto, util} from '@cyph/sdk';
-import usernameBlacklistArray from 'username-blacklist';
+import usernameBlacklistArray from '@cyph/username-blacklist';
 import {initDatabaseService} from '../modules/database-service.js';
 
 const {BooleanProto, CyphPlans} = proto;

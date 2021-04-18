@@ -5,24 +5,22 @@ source ~/.bashrc
 cd $(cd "$(dirname "$0")" ; pwd)/..
 dir="$PWD"
 
-rm -rf ~/.cache/yarn 2> /dev/null
-rm ~/.yarnrc 2> /dev/null
-
-# https://github.com/yarnpkg/yarn/issues/7212#issuecomment-594889917
-cd ; yarn policies set-version 1.21.1 ; cd -
+sudo npm -g install npm || exit 1
+sudo npm -g install @mapbox/node-pre-gyp || exit 1
+npm config set legacy-peer-deps true
 
 
 installPackages () {
 	rm -rf node_modules 2> /dev/null
 	mkdir node_modules
-	yarn add --ignore-engines --ignore-platform --ignore-scripts --non-interactive \
+	npm install -f --ignore-scripts \
 		$(node -e "
-			const package = JSON.parse(
-				fs.readFileSync('${dir}/shared/lib/js/package.json').toString()
+			const o = JSON.parse(
+				fs.readFileSync('${dir}/shared/lib/js/package-lock.json').toString()
 			);
 
-			for (const k of Object.keys(package.dependencies).filter(package => ${1})) {
-				console.log(\`\${k}@\${package.dependencies[k]}\`);
+			for (const k of Object.keys(o.dependencies).filter(package => ${1})) {
+				console.log(\`\${k}@\${o.dependencies[k].version}\`);
 			}
 		") \
 	|| exit 1
@@ -38,7 +36,7 @@ go get -u \
 	github.com/buu700/braintree-go-tmp \
 	github.com/microcosm-cc/bluemonday \
 	github.com/oschwald/geoip2-golang \
-	github.com/stripe/stripe-go/v72 \
+	github.com/stripe/stripe-go \
 	google.golang.org/api \
 	google.golang.org/api/internal \
 	google.golang.org/api/iterator \
@@ -68,7 +66,7 @@ cp -a shared/lib ~/
 cd
 
 installPackages "package === 'nativescript'"
-rm package.json yarn.lock
+rm package.json package-lock.json
 ~/node_modules/.bin/tns error-reporting disable
 ~/node_modules/.bin/tns usage-reporting disable
 ~/node_modules/.bin/tns create cyph --ng --appid com.cyph.app
@@ -81,12 +79,12 @@ installPackages "
 	package.startsWith('nativescript-dev') ||
 	package.startsWith('tns')
 "
-rm yarn.lock
+rm package-lock.json
 mv package.json package.json.tmp
 sudo mv node_modules ~/native_node_modules
 mkdir node_modules
-cp ~/lib/js/package.json ~/lib/js/yarn.lock ./
-yarn install --ignore-engines --ignore-platform --non-interactive || exit 1
+cp ~/lib/js/package.json ~/lib/js/package-lock.json ./
+npm ci -f || exit 1
 
 # Temporary workaround for "typings.replace is not a function" bug
 sed -i \
@@ -343,9 +341,6 @@ rm -rf google-auth-library/node_modules/fast-text-encoding &> /dev/null
 # Temporary workaround for simple btc rxjs version difference
 rm -rf simplebtc/node_modules &> /dev/null
 
-# Temporary workaround for https://github.com/Jamaks/ng-fullcalendar/issues/33
-rm -rf ng-fullcalendar/node_modules &> /dev/null
-
 # Temporary workaround for unwanted font import
 for f in $(rg -l '@import url' @syncfusion | grep '\.css$') ; do
 	cat ${f} | perl -pe "s/\@import url\(.*?\);//g" > ${f}.new
@@ -354,6 +349,9 @@ done
 
 # Temporary workaround pending https://github.com/syncfusion/ej2-javascript-ui-controls/pull/86
 echo 'NSw2YzUsMjAKPCBleHBvcnQgaW50ZXJmYWNlIEFuZ3VsYXJFdmVudEVtaXR0ZXIgewo8ICAgICBzdWJzY3JpYmU/OiAoZ2VuZXJhdG9yT3JOZXh0PzogYW55LCBlcnJvcj86IGFueSwgY29tcGxldGU/OiBhbnkpID0+IGFueTsKLS0tCj4gZXhwb3J0IGludGVyZmFjZSBBbmd1bGFyRXZlbnRFbWl0dGVyPFQ+IHsKPiAgICAgY2xvc2VkOiBib29sZWFuOwo+ICAgICBoYXNFcnJvcjogYm9vbGVhbjsKPiAgICAgaXNTdG9wcGVkOiBib29sZWFuOwo+ICAgICBvYnNlcnZlcnM6IGFueVtdOwo+ICAgICB0aHJvd25FcnJvcjogYW55Owo+ICAgICBfc3Vic2NyaWJlKHN1YnNjcmliZXI6IGFueSk6IGFueTsKPiAgICAgX3RyeVN1YnNjcmliZShzdWJzY3JpYmVyOiBhbnkpOiBhbnk7Cj4gICAgIGFzT2JzZXJ2YWJsZSgpOiBhbnk7Cj4gICAgIGNvbXBsZXRlKCk6IHZvaWQ7Cj4gICAgIGVtaXQodmFsdWU/OiBUKTogdm9pZDsKPiAgICAgZXJyb3IoZXJyOiBhbnkpOiB2b2lkOwo+ICAgICBsaWZ0PF9SPihvcGVyYXRvcjogYW55KTogYW55Owo+ICAgICBuZXh0KHZhbHVlPzogVCk6IHZvaWQ7Cj4gICAgIHN1YnNjcmliZShnZW5lcmF0b3JPck5leHQ/OiBhbnksIGVycm9yPzogYW55LCBjb21wbGV0ZT86IGFueSk6IGFueTsKPiAgICAgdW5zdWJzY3JpYmUoKTogdm9pZDsKOGMyMgo8IGV4cG9ydCBkZWNsYXJlIHR5cGUgRW1pdFR5cGU8VD4gPSBBbmd1bGFyRXZlbnRFbWl0dGVyICYgKChhcmc/OiBULCAuLi5yZXN0OiBhbnlbXSkgPT4gdm9pZCk7Ci0tLQo+IGV4cG9ydCBkZWNsYXJlIHR5cGUgRW1pdFR5cGU8VD4gPSBBbmd1bGFyRXZlbnRFbWl0dGVyPFQ+ICYgKChhcmc/OiBULCAuLi5yZXN0OiBhbnlbXSkgPT4gdm9pZCk7Cg==' | base64 --decode | patch @syncfusion/ej2-base/src/base.d.ts
+
+# Temporary workaround pending Quill 2.0 (https://github.com/quilljs/quill/pull/2238)
+echo 'MTIzYTEyNAo+ICAgICAgICAgICAgIGNvbnN0IGFjY2VwdCA9ICdpbWFnZS9wbmcsIGltYWdlL2dpZiwgaW1hZ2UvanBlZywgaW1hZ2UvYm1wLCBpbWFnZS94LWljb24nOwoxMjZjMTI3CjwgICAgICAgICAgICAgZmlsZUlucHV0LnNldEF0dHJpYnV0ZSgnYWNjZXB0JywgJ2ltYWdlL3BuZywgaW1hZ2UvZ2lmLCBpbWFnZS9qcGVnLCBpbWFnZS9ibXAsIGltYWdlL3gtaWNvbicpOwotLS0KPiAgICAgICAgICAgICBmaWxlSW5wdXQuc2V0QXR0cmlidXRlKCdhY2NlcHQnLCBhY2NlcHQpOwoxMjgsMTM5YzEyOSwxNTkKPCAgICAgICAgICAgICBmaWxlSW5wdXQuYWRkRXZlbnRMaXN0ZW5lcignY2hhbmdlJywgKCkgPT4gewo8ICAgICAgICAgICAgICAgaWYgKGZpbGVJbnB1dC5maWxlcyAhPSBudWxsICYmIGZpbGVJbnB1dC5maWxlc1swXSAhPSBudWxsKSB7CjwgICAgICAgICAgICAgICAgIGxldCByZWFkZXIgPSBuZXcgRmlsZVJlYWRlcigpOwo8ICAgICAgICAgICAgICAgICByZWFkZXIub25sb2FkID0gKGUpID0+IHsKPCAgICAgICAgICAgICAgICAgICBsZXQgcmFuZ2UgPSB0aGlzLnF1aWxsLmdldFNlbGVjdGlvbih0cnVlKTsKPCAgICAgICAgICAgICAgICAgICB0aGlzLnF1aWxsLnVwZGF0ZUNvbnRlbnRzKG5ldyBEZWx0YSgpCjwgICAgICAgICAgICAgICAgICAgICAucmV0YWluKHJhbmdlLmluZGV4KQo8ICAgICAgICAgICAgICAgICAgICAgLmRlbGV0ZShyYW5nZS5sZW5ndGgpCjwgICAgICAgICAgICAgICAgICAgICAuaW5zZXJ0KHsgaW1hZ2U6IGUudGFyZ2V0LnJlc3VsdCB9KQo8ICAgICAgICAgICAgICAgICAgICwgRW1pdHRlci5zb3VyY2VzLlVTRVIpOwo8ICAgICAgICAgICAgICAgICAgIHRoaXMucXVpbGwuc2V0U2VsZWN0aW9uKHJhbmdlLmluZGV4ICsgMSwgRW1pdHRlci5zb3VyY2VzLlNJTEVOVCk7CjwgICAgICAgICAgICAgICAgICAgZmlsZUlucHV0LnZhbHVlID0gIiI7Ci0tLQo+ICAgICAgICAgICAgIGNvbnN0IHVwbG9hZEltYWdlID0gKGRhdGFVUkkpID0+IHsKPiAgICAgICAgICAgICAgIGxldCByYW5nZSA9IHRoaXMucXVpbGwuZ2V0U2VsZWN0aW9uKHRydWUpOwo+ICAgICAgICAgICAgICAgdGhpcy5xdWlsbC51cGRhdGVDb250ZW50cyhuZXcgRGVsdGEoKQo+ICAgICAgICAgICAgICAgICAucmV0YWluKHJhbmdlLmluZGV4KQo+ICAgICAgICAgICAgICAgICAuZGVsZXRlKHJhbmdlLmxlbmd0aCkKPiAgICAgICAgICAgICAgICAgLmluc2VydCh7IGltYWdlOiBkYXRhVVJJIH0pCj4gICAgICAgICAgICAgICAsIEVtaXR0ZXIuc291cmNlcy5VU0VSKTsKPiAgICAgICAgICAgICAgIHRoaXMucXVpbGwuc2V0U2VsZWN0aW9uKHJhbmdlLmluZGV4ICsgMSwgRW1pdHRlci5zb3VyY2VzLlNJTEVOVCk7Cj4gICAgICAgICAgICAgfTsKPiAgICAgICAgICAgICBpZiAoCj4gICAgICAgICAgICAgICB0eXBlb2Ygd2luZG93LmNvcmRvdmEgPT09ICdvYmplY3QnICYmCj4gICAgICAgICAgICAgICB0eXBlb2Ygd2luZG93LmNob29zZXIgPT09ICdvYmplY3QnICYmCj4gICAgICAgICAgICAgICB0eXBlb2Ygd2luZG93LmNob29zZXIuZ2V0RmlsZSA9PT0gJ2Z1bmN0aW9uJwo+ICAgICAgICAgICAgICkgewo+ICAgICAgICAgICAgICAgZmlsZUlucHV0LmFkZEV2ZW50TGlzdGVuZXIoJ2NsaWNrJywgKGUpID0+IHsKPiAgICAgICAgICAgICAgICAgZS5wcmV2ZW50RGVmYXVsdCgpOwo+ICAgICAgICAgICAgICAgICB3aW5kb3cuY2hvb3Nlci5nZXRGaWxlKGFjY2VwdCkudGhlbigoZmlsZSkgPT4gewo+ICAgICAgICAgICAgICAgICAgIGlmIChmaWxlKSB7Cj4gICAgICAgICAgICAgICAgICAgICB1cGxvYWRJbWFnZShmaWxlLmRhdGFVUkkpOwo+ICAgICAgICAgICAgICAgICAgIH0KPiAgICAgICAgICAgICAgICAgfSk7Cj4gICAgICAgICAgICAgICB9KTsKPiAgICAgICAgICAgICB9IGVsc2Ugewo+ICAgICAgICAgICAgICAgZmlsZUlucHV0LmFkZEV2ZW50TGlzdGVuZXIoJ2NoYW5nZScsICgpID0+IHsKPiAgICAgICAgICAgICAgICAgaWYgKGZpbGVJbnB1dC5maWxlcyAhPSBudWxsICYmIGZpbGVJbnB1dC5maWxlc1swXSAhPSBudWxsKSB7Cj4gICAgICAgICAgICAgICAgICAgbGV0IHJlYWRlciA9IG5ldyBGaWxlUmVhZGVyKCk7Cj4gICAgICAgICAgICAgICAgICAgcmVhZGVyLm9ubG9hZCA9IChlKSA9PiB7Cj4gICAgICAgICAgICAgICAgICAgICB1cGxvYWRJbWFnZShlLnRhcmdldC5yZXN1bHQpOwo+ICAgICAgICAgICAgICAgICAgICAgZmlsZUlucHV0LnZhbHVlID0gIiI7Cj4gICAgICAgICAgICAgICAgICAgfQo+ICAgICAgICAgICAgICAgICAgIHJlYWRlci5yZWFkQXNEYXRhVVJMKGZpbGVJbnB1dC5maWxlc1swXSk7CjE0MSwxNDNjMTYxLDE2Mgo8ICAgICAgICAgICAgICAgICByZWFkZXIucmVhZEFzRGF0YVVSTChmaWxlSW5wdXQuZmlsZXNbMF0pOwo8ICAgICAgICAgICAgICAgfQo8ICAgICAgICAgICAgIH0pOwotLS0KPiAgICAgICAgICAgICAgIH0pOwo+ICAgICAgICAgICAgIH0K' | base64 --decode | patch quill/themes/base.js
 
 # Workaround for https://github.com/DevExpress/DevExtreme/issues/15570
 for f in devextreme/dist/css/*.css ; do
@@ -413,12 +411,12 @@ cd ..
 cd tslint
 cat package.json | grep -v tslint-test-config-non-relative > package.json.new
 mv package.json.new package.json
-yarn install --ignore-engines --ignore-platform --ignore-scripts --non-interactive
+npm install
 cd ..
 
 # for d in @google-cloud/* firebase-admin firebase-tools nativescript ; do
 # 	cd ${d}
-# 	yarn install --ignore-engines --ignore-platform --ignore-scripts --non-interactive
+# 	npm install
 # 	cd ..
 # done
 
@@ -435,7 +433,7 @@ cd ../..
 mv js/node_modules .js.tmp/
 rm -rf js
 mv .js.tmp js
-cp js/yarn.lock js/node_modules/
+cp js/package-lock.json js/node_modules/
 
 cd
 if [ -d ${dir}/cyph.app ] ; then
@@ -452,9 +450,9 @@ rm -rf lib
 
 # Temporary workaround pending AGSE update to SuperSPHINCS v6
 if [ ! -d oldsupersphincs ] ; then
-	mkdir oldsupersphincs
+	mkdir -p oldsupersphincs/node_modules
 	cd oldsupersphincs
-	yarn add supersphincs@old
+	npm install supersphincs@old
 fi
 
 # https://next.angular.io/guide/migration-ngcc
