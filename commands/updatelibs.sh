@@ -95,9 +95,6 @@ read -r -d '' modules <<- EOM
 	@ngx-gallery/core
 	@ngx-gallery/gallerize
 	@ngx-gallery/lightbox
-	@ngx-share/button@https://github.com/buu700/ngx-share-button-tmp
-	@ngx-share/buttons@https://github.com/buu700/ngx-share-buttons-tmp
-	@ngx-share/core@https://github.com/buu700/ngx-share-core-tmp
 	@ngxs/devtools-plugin
 	@ngxs/logger-plugin
 	@ngxs/storage-plugin
@@ -362,6 +359,7 @@ read -r -d '' modules <<- EOM
 	ngx-lottie
 	ngx-progressbar
 	ngx-scrollbar
+	ngx-sharebuttons
 	ngx-teximate
 	node-fetch
 	nodemailer@4
