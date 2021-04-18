@@ -453,7 +453,7 @@ read -r -d '' modules <<- EOM
 	videojs-record
 	videojs-theater-mode
 	videojs-wavesurfer
-	watermarkjs@https://github.com/brianium/watermarkjs
+	watermarkjs
 	wavesurfer.js
 	web-animations-js
 	web-social-share
