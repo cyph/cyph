@@ -341,9 +341,6 @@ rm -rf google-auth-library/node_modules/fast-text-encoding &> /dev/null
 # Temporary workaround for simple btc rxjs version difference
 rm -rf simplebtc/node_modules &> /dev/null
 
-# Temporary workaround for https://github.com/Jamaks/ng-fullcalendar/issues/33
-rm -rf ng-fullcalendar/node_modules &> /dev/null
-
 # Temporary workaround for unwanted font import
 for f in $(rg -l '@import url' @syncfusion | grep '\.css$') ; do
 	cat ${f} | perl -pe "s/\@import url\(.*?\);//g" > ${f}.new

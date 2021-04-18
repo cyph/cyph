@@ -1,3 +1,5 @@
+/* Associated CSS: @import '~fullcalendar/dist/fullcalendar.min.css'; */
+
 import {
 	AfterViewInit,
 	ChangeDetectionStrategy,

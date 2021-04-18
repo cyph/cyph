@@ -197,7 +197,6 @@ read -r -d '' modules <<- EOM
 	@types/dompurify
 	@types/dropzone
 	@types/file-saver
-	@types/fullcalendar@3.5.2
 	@types/hammerjs
 	@types/hark
 	@types/html-to-text
@@ -283,7 +282,6 @@ read -r -d '' modules <<- EOM
 	firebase-functions
 	firebase-server
 	firebase-tools
-	fullcalendar@3.6.1
 	glob
 	gpu.js
 	granim
@@ -353,7 +351,6 @@ read -r -d '' modules <<- EOM
 	nativescript-dev-webpack
 	nativescript-theme-core
 	ng-animate
-	ng-fullcalendar@https://github.com/buu700/ng-fullcalendar-tmp
 	ng-packagr
 	ng2-fittext
 	ng2-pdf-viewer
