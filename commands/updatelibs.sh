@@ -473,7 +473,7 @@ read -r -d '' modules <<- EOM
 EOM
 
 
-npm install --ignore-scripts $(echo "${modules}" | tr '\n' ' ') || fail
+npm install -f --ignore-scripts $(echo "${modules}" | tr '\n' ' ') || fail
 
 rm -rf ../node_modules ../package.json ../package-lock.json 2> /dev/null
 

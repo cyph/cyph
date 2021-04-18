@@ -13,7 +13,7 @@ npm config set legacy-peer-deps true
 installPackages () {
 	rm -rf node_modules 2> /dev/null
 	mkdir node_modules
-	npm install --ignore-scripts \
+	npm install -f --ignore-scripts \
 		$(node -e "
 			const o = JSON.parse(
 				fs.readFileSync('${dir}/shared/lib/js/package-lock.json').toString()
@@ -84,7 +84,7 @@ mv package.json package.json.tmp
 sudo mv node_modules ~/native_node_modules
 mkdir node_modules
 cp ~/lib/js/package.json ~/lib/js/package-lock.json ./
-npm ci || exit 1
+npm ci -f || exit 1
 
 # Temporary workaround for "typings.replace is not a function" bug
 sed -i \
