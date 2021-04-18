@@ -408,7 +408,7 @@ read -r -d '' modules <<- EOM
 	rxjs-tslint-rules
 	sass
 	sidh
-	simple-peer@https://github.com/feross/simple-peer
+	simple-peer
 	simplebtc
 	simplewebrtc
 	sodiumutil
