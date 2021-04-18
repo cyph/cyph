@@ -71,11 +71,6 @@ export class CheckoutComponent extends BaseProvider
 	/** Partner program transaction ID. */
 	private partnerTransactionID?: Promise<string | undefined>;
 
-	/** Stripe instance. */
-	private readonly stripe = memoize(async () =>
-		loadStripe(this.configService.stripeAPIKey)
-	);
-
 	/** Address. */
 	@Input() public address: {
 		countryCode?: string;
@@ -291,6 +286,46 @@ export class CheckoutComponent extends BaseProvider
 
 		if (!this.elementRef.nativeElement || !this.envService.isWeb) {
 			/* TODO: HANDLE NATIVE */
+			return;
+		}
+
+		/* Can also handle this directly from the cyph.com JS */
+		if (this.checkoutProvider === 'stripe') {
+			const [stripe, stripeToken] = await Promise.all([
+				loadStripe(this.configService.stripeAPIKey),
+				Promise.all([this.partnerTransactionID, this.userToken]).then(
+					async ([partnerTransactionID, userToken]) =>
+						request({
+							data: {
+								amount: Math.floor(this.amount * 100),
+								subscription:
+									this.subscriptionType !== undefined,
+								url: location.toString(),
+								...(this.category !== undefined ?
+									{category: this.category} :
+									{}),
+								...(this.item !== undefined ?
+									{item: this.item} :
+									{}),
+								...(this.namespace !== undefined ?
+									{namespace: this.namespace} :
+									{}),
+								...(partnerTransactionID ?
+									{partnerTransactionID} :
+									{}),
+								...(userToken !== undefined ? {userToken} : {})
+							},
+							method: 'POST',
+							retries: 5,
+							url: this.envService.baseUrl + 'stripesession'
+						})
+				)
+			]);
+
+			if (stripe && stripeToken) {
+				await stripe.redirectToCheckout({sessionId: stripeToken});
+			}
+
 			return;
 		}
 
