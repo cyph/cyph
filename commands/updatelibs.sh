@@ -62,6 +62,7 @@ read -r -d '' modules <<- EOM
 	@cyph/prettier
 	@cyph/pretty-quick
 	@cyph/sdk
+	@cyph/username-blacklist
 	@firebase/app
 	@firebase/app-types
 	@firebase/auth
@@ -443,7 +444,6 @@ read -r -d '' modules <<- EOM
 	uglify-es
 	universal-analytics
 	unsemantic
-	username-blacklist@https://github.com/cyph/The-Big-Username-Blacklist
 	video.js
 	videojs-background
 	videojs-brand
