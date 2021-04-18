@@ -231,7 +231,7 @@ read -r -d '' modules <<- EOM
 	angular-speed-dial
 	angular2-draggable
 	angular2-text-mask
-	animate.css@https://github.com/daneden/animate.css
+	animate.css
 	animated-scroll-to
 	animejs
 	awesome-typescript-loader
