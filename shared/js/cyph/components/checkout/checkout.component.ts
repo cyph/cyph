@@ -92,6 +92,9 @@ export class CheckoutComponent extends BaseProvider
 	/** Item category ID number. */
 	@Input() public category?: number;
 
+	/** Checkout payment processor. */
+	@Input() public checkoutProvider: 'braintree' | 'stripe' = 'braintree';
+
 	/** Company. */
 	@Input() public company?: string;
 
