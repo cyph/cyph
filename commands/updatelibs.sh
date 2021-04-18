@@ -359,7 +359,7 @@ read -r -d '' modules <<- EOM
 	ngx-lottie
 	ngx-progressbar
 	ngx-scrollbar
-	ngx-sharebuttons
+	ngx-sharebuttons@8.0.4
 	ngx-teximate
 	node-fetch
 	nodemailer@4
