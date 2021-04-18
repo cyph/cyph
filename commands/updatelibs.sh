@@ -493,7 +493,7 @@ wget \
 	-O shared/lib/ipfs-gateways.json
 
 ./commands/getlibs.sh
-cyph-prettier --write shared/lib/ipfs-gateways.json
-cyph-prettier --write shared/lib/js/package.json
-cyph-prettier --write shared/lib/js/package-lock.json
+cyph-prettier --write shared/lib/ipfs-gateways.json || fail
+cyph-prettier --write shared/lib/js/package.json || fail
+cyph-prettier --write shared/lib/js/package-lock.json || fail
 ./commands/commit.sh --gc "${@}" updatelibs
