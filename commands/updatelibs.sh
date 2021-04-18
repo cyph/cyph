@@ -381,7 +381,7 @@ read -r -d '' modules <<- EOM
 	protractor@^6
 	pulltorefreshjs
 	puppeteer
-	quill@https://github.com/buu700/quill-tmp
+	quill
 	quill-delta
 	quill-delta-to-html
 	quill-markdown
