@@ -336,7 +336,6 @@ read -r -d '' modules <<- EOM
 	markdown-it
 	markdown-it-emoji
 	markdown-it-sup
-	mat-video@https://github.com/buu700/mat-video-tmp
 	materialize-css
 	math-expression-evaluator
 	maxmind
