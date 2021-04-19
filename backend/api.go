@@ -14,6 +14,8 @@ import (
 
 	"cloud.google.com/go/datastore"
 	"github.com/buu700/braintree-go-tmp"
+	"github.com/stripe/stripe-go"
+	"github.com/stripe/stripe-go/checkout/session"
 	"google.golang.org/api/iterator"
 )
 
@@ -37,6 +39,7 @@ func main() {
 	handleFuncs("/redox/credentials", false, Handlers{methods.PUT: redoxAddCredentials})
 	handleFuncs("/redox/execute", false, Handlers{methods.POST: redoxRunCommand})
 	handleFuncs("/signups", false, Handlers{methods.PUT: signUp})
+	handleFuncs("/stripesession", false, Handlers{methods.POST: stripeSession})
 	handleFuncs("/timestamp", false, Handlers{methods.GET: getTimestampHandler})
 	handleFuncs("/waitlist/invite", true, Handlers{methods.GET: rollOutWaitlistInvites})
 	handleFuncs("/warmupcloudfunctions", true, Handlers{methods.GET: warmUpCloudFunctions})
@@ -45,6 +48,8 @@ func main() {
 	handleFunc("/", false, func(h HandlerArgs) (interface{}, int) {
 		return "Welcome to Cyph, lad", http.StatusOK
 	})
+
+	stripe.Key = stripeSecretKey
 
 	port := os.Getenv("PORT")
 	if port == "" {
@@ -1381,6 +1386,118 @@ func signUp(h HandlerArgs) (interface{}, int) {
 		"")
 
 	return response, http.StatusOK
+}
+
+/* TODO: Factor out common logic with checkout */
+func stripeSession(h HandlerArgs) (interface{}, int) {
+	partnerTransactionID := sanitize(h.Request.PostFormValue("partnerTransactionID"))
+	userToken := sanitize(h.Request.PostFormValue("userToken"))
+
+	/*
+		timestamp := getTimestamp()
+
+		url, err := getURL(h.Request.PostFormValue("url"))
+		if err != nil {
+			return err.Error(), http.StatusBadRequest
+		}
+
+		namespace, err := getNamespace(h.Request.PostFormValue("namespace"))
+		if err != nil {
+			return err.Error(), http.StatusBadRequest
+		}
+	*/
+
+	/* TODO: Get correct URL for current environment */
+	url := "https://staging-dot-cyph-com-dot-cyphme.appspot.com"
+
+	username := ""
+	if userToken != "" {
+		username, _ = getUsername(userToken)
+		if username == "" {
+			return "invalid or expired token", http.StatusBadRequest
+		}
+	}
+
+	planID := ""
+	if category, err := strconv.ParseInt(sanitize(h.Request.PostFormValue("category")), 10, 64); err == nil {
+		if item, err := strconv.ParseInt(sanitize(h.Request.PostFormValue("item")), 10, 64); err == nil {
+			planID = strconv.FormatInt(category, 10) + "-" + strconv.FormatInt(item, 10)
+		}
+	}
+
+	amountString := sanitize(h.Request.PostFormValue("amount"))
+	amount, err := strconv.ParseInt(amountString, 10, 64)
+	if err != nil {
+		return err.Error(), http.StatusTeapot
+	}
+	if amount < 100 {
+		return "invalid amount", http.StatusTeapot
+	}
+
+	/* TODO: Get this and interval from plan data */
+	subscriptionString := sanitize(h.Request.PostFormValue("subscription"))
+	subscription, err := strconv.ParseBool(subscriptionString)
+	if err != nil {
+		return err.Error(), http.StatusTeapot
+	}
+	mode := stripe.CheckoutSessionModePayment
+	var recurring *stripe.CheckoutSessionLineItemPriceDataRecurringParams
+	if subscription {
+		mode = stripe.CheckoutSessionModeSubscription
+		recurring = &stripe.CheckoutSessionLineItemPriceDataRecurringParams{
+			Interval: stripe.String("month"),
+		}
+	}
+
+	plan, hasPlan := config.Plans[planID]
+	if !hasPlan {
+		return "invalid plan", http.StatusTeapot
+	}
+
+	price := plan.Price
+	priceDelta := amount - price
+
+	priceDeltaFloor := int64(0)
+	if partnerTransactionID != "" {
+		priceDeltaFloor = -price * config.PartnerDiscountRate / 100
+	}
+
+	if priceDelta < priceDeltaFloor {
+		return "insufficient payment", http.StatusTeapot
+	}
+
+	params := &stripe.CheckoutSessionParams{
+		CancelURL: stripe.String(url + "/checkout/cancel"),
+		LineItems: []*stripe.CheckoutSessionLineItemParams{
+			&stripe.CheckoutSessionLineItemParams{
+				AdjustableQuantity: &stripe.CheckoutSessionLineItemAdjustableQuantityParams{
+					Enabled: stripe.Bool(true),
+				},
+				PriceData: &stripe.CheckoutSessionLineItemPriceDataParams{
+					Currency: stripe.String(string(stripe.CurrencyUSD)),
+					ProductData: &stripe.CheckoutSessionLineItemPriceDataProductDataParams{
+						Name: stripe.String("Cyph (TODO: Add Plan Name)"),
+					},
+					Recurring:  recurring,
+					UnitAmount: stripe.Int64(amount),
+				},
+				Quantity: stripe.Int64(1),
+			},
+		},
+		Mode: stripe.String(string(mode)),
+		PaymentMethodTypes: stripe.StringSlice([]string{
+			"card",
+		}),
+		SuccessURL: stripe.String(url + "/checkout/success"),
+	}
+
+	session, err := session.New(params)
+	if err != nil {
+		log.Printf("session.New: %v", err)
+		return err.Error(), http.StatusInternalServerError
+	}
+
+	return session.ID, http.StatusOK
 }
 
 func warmUpCloudFunctions(h HandlerArgs) (interface{}, int) {
