@@ -292,7 +292,11 @@ export class CheckoutComponent extends BaseProvider
 		/* Can also handle this directly from the cyph.com JS */
 		if (this.checkoutProvider === 'stripe') {
 			const [stripe, stripeToken] = await Promise.all([
-				loadStripe(this.configService.stripeAPIKey),
+				loadStripe(
+					this.envService.environment.production ?
+						this.configService.stripe.apiKeys.prod :
+						this.configService.stripe.apiKeys.test
+				),
 				Promise.all([this.partnerTransactionID, this.userToken]).then(
 					async ([partnerTransactionID, userToken]) =>
 						request({

@@ -619,8 +619,13 @@ export class Config {
 		'1F44E' /* -1 */
 	];
 
-	/** Stripe API key. */
-	public readonly stripeAPIKey: string = 'pk_live_Z5tqxXpBQp1oSuZ0bK3fZPQH';
+	/** Stripe configuration. */
+	public readonly stripe = {
+		apiKeys: {
+			prod: 'pk_live_Z5tqxXpBQp1oSuZ0bK3fZPQH',
+			test: 'pk_test_q57rb0D1dJkZYKCaBlXTYiry'
+		}
+	};
 
 	/** @see Config.simpleEmoji */
 	public readonly simpleEmojiSet = new Set(this.simpleEmoji);
