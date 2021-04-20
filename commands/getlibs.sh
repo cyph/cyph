@@ -474,3 +474,8 @@ ng build
 ../commands/ngprojectinit.sh --deinit
 
 rm -rf ~/cyph.tmp 2> /dev/null
+
+cyph-prettier --write /node_modules/package-lock.json || exit 1
+if [ -d ${dir}/cyph.app ] ; then
+	cyph-prettier --write ${dir}/shared/node_modules/package-lock.json || exit 1
+fi
