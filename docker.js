@@ -5,6 +5,7 @@ const crypto = require('crypto');
 const fs = require('fs');
 const os = require('os');
 const path = require('path');
+const zlib = require('zlib');
 
 const cat = f => {
 	try {
@@ -555,14 +556,36 @@ const dockerBase64Files = s =>
 			'shared/lib/js/package-lock.json'
 		]
 			.map(filePath =>
-				fs
-					.readFileSync(filePath)
-					.toString()
+				zlib
+					.deflateSync(
+						filePath.endsWith('.json') ?
+							Buffer.from(
+								JSON.stringify(
+									JSON.parse(
+										fs.readFileSync(filePath).toString()
+									)
+								)
+							) :
+							fs.readFileSync(filePath)
+					)
+					.toString('base64')
 					.match(/(.|\n){1,32768}/g)
-					.map(s => Buffer.from(s).toString('base64'))
 					.map(
 						base64 =>
-							`RUN echo '${base64}' | base64 --decode >> ~/getlibs/${filePath}`
+							`RUN echo '${base64}' >> ~/getlibs/${filePath}`
+					)
+					.concat(
+						`RUN node -e "fs.writeFileSync(
+							os.homedir() + '/getlibs/${filePath}',
+							zlib.inflateSync(
+								Buffer.from(
+									fs.readFileSync(
+										os.homedir() + '/getlibs/${filePath}'
+									).toString(),
+									'base64'
+								)
+							).toString()
+						)"`.replace(/\s+/g, ' ')
 					)
 					.join('\n')
 			)
