@@ -954,23 +954,7 @@ func preAuth(h HandlerArgs) (interface{}, int) {
 		return err.Error(), http.StatusNotFound
 	}
 
-	sessionCountLimit, err := getPlanData(h, customer)
-	if err != nil {
-		return err.Error(), http.StatusInternalServerError
-	}
-
-	now := time.Now()
-	lastSession := time.Unix(customer.LastSession/1e6, 0)
-
-	if now.Year() > lastSession.Year() || now.Month() > lastSession.Month() {
-		customer.SessionCount = 0
-	}
-
-	if customer.SessionCount >= sessionCountLimit && sessionCountLimit != -1 {
-		return "session limit exceeded", http.StatusForbidden
-	}
-
-	customer.LastSession = now.UnixNano() / 1e6
+	customer.LastSession = time.Now().UnixNano() / 1e6
 	customer.SessionCount++
 
 	_, err = h.Datastore.PutMulti(
@@ -1001,11 +985,6 @@ func proUnlock(h HandlerArgs) (interface{}, int) {
 	customer, _, err := getCustomer(h)
 	if err != nil {
 		return err.Error(), http.StatusNotFound
-	}
-
-	_, err = getPlanData(h, customer)
-	if err != nil {
-		return err.Error(), http.StatusInternalServerError
 	}
 
 	json, err := json.Marshal(map[string]string{

@@ -77,10 +77,9 @@ type PackageData struct {
 
 // Plan : Subscription plan
 type Plan struct {
-	AccountsPlan      string
-	GiftPack          bool
-	Price             int64
-	SessionCountLimit int64
+	AccountsPlan string
+	GiftPack     bool
+	Price        int64
 }
 
 // PreAuthorizedCyph : Representation of an approved usage of the API
@@ -341,167 +340,113 @@ var config = struct {
 	},
 
 	Plans: map[string]Plan{
-		"0-0": Plan{
-			SessionCountLimit: -1,
-		},
 		"3-3": Plan{
-			AccountsPlan:      "MonthlyTelehealth",
-			SessionCountLimit: -1,
+			AccountsPlan: "MonthlyTelehealth",
 		},
 		"3-4": Plan{
-			AccountsPlan:      "AnnualTelehealth",
-			SessionCountLimit: -1,
+			AccountsPlan: "AnnualTelehealth",
 		},
 		"3-5": Plan{
-			AccountsPlan:      "MonthlyTelehealth",
-			SessionCountLimit: -1,
+			AccountsPlan: "MonthlyTelehealth",
 		},
 		"3-6": Plan{
-			AccountsPlan:      "AnnualTelehealth",
-			SessionCountLimit: -1,
+			AccountsPlan: "AnnualTelehealth",
 		},
 		"3-7": Plan{
-			AccountsPlan:      "MonthlyTelehealth",
-			SessionCountLimit: -1,
+			AccountsPlan: "MonthlyTelehealth",
 		},
 		"3-8": Plan{
-			AccountsPlan:      "AnnualTelehealth",
-			SessionCountLimit: -1,
+			AccountsPlan: "AnnualTelehealth",
 		},
 		"3-9": Plan{
-			AccountsPlan:      "MonthlyTelehealth",
-			SessionCountLimit: -1,
+			AccountsPlan: "MonthlyTelehealth",
 		},
 		"3-10": Plan{
-			AccountsPlan:      "AnnualTelehealth",
-			SessionCountLimit: -1,
-		},
-		"4-1": Plan{
-			SessionCountLimit: -1,
-		},
-		"4-2": Plan{
-			SessionCountLimit: -1,
-		},
-		"4-3": Plan{
-			SessionCountLimit: -1,
-		},
-		"4-4": Plan{
-			SessionCountLimit: -1,
-		},
-		"5-1": Plan{
-			SessionCountLimit: -1,
-		},
-		"5-2": Plan{
-			SessionCountLimit: -1,
+			AccountsPlan: "AnnualTelehealth",
 		},
 		"8-0": Plan{
-			AccountsPlan:      "MonthlyPremium",
-			SessionCountLimit: -1,
+			AccountsPlan: "MonthlyPremium",
 		},
 		"8-1": Plan{
-			AccountsPlan:      "AnnualPremium",
-			SessionCountLimit: -1,
+			AccountsPlan: "AnnualPremium",
 		},
 		"8-2": Plan{
-			AccountsPlan:      "MonthlyTelehealth",
-			SessionCountLimit: -1,
+			AccountsPlan: "MonthlyTelehealth",
 		},
 		"8-3": Plan{
-			AccountsPlan:      "AnnualTelehealth",
-			SessionCountLimit: -1,
+			AccountsPlan: "AnnualTelehealth",
 		},
 		"8-4": Plan{
-			AccountsPlan:      "MonthlyPlatinum",
-			SessionCountLimit: -1,
+			AccountsPlan: "MonthlyPlatinum",
 		},
 		"8-5": Plan{
-			AccountsPlan:      "AnnualPlatinum",
-			SessionCountLimit: -1,
+			AccountsPlan: "AnnualPlatinum",
 		},
 		"8-6": Plan{
-			AccountsPlan:      "MonthlySupporter",
-			SessionCountLimit: -1,
+			AccountsPlan: "MonthlySupporter",
 		},
 		"8-7": Plan{
-			AccountsPlan:      "AnnualSupporter",
-			SessionCountLimit: -1,
+			AccountsPlan: "AnnualSupporter",
 		},
 		"8-8": Plan{
-			AccountsPlan:      "MonthlyBusiness",
-			SessionCountLimit: -1,
+			AccountsPlan: "MonthlyBusiness",
 		},
 		"8-9": Plan{
-			AccountsPlan:      "AnnualBusiness",
-			SessionCountLimit: -1,
+			AccountsPlan: "AnnualBusiness",
 		},
 		"10-1": Plan{
-			AccountsPlan:      "LifetimePlatinum",
-			Price:             10000,
-			SessionCountLimit: -1,
+			AccountsPlan: "LifetimePlatinum",
+			Price:        10000,
 		},
 		"11-1": Plan{
-			AccountsPlan:      "MonthlyBusiness",
-			SessionCountLimit: -1,
+			AccountsPlan: "MonthlyBusiness",
 		},
 		"11-2": Plan{
-			AccountsPlan:      "AnnualBusiness",
-			SessionCountLimit: -1,
+			AccountsPlan: "AnnualBusiness",
 		},
 		"11-3": Plan{
-			AccountsPlan:      "MonthlyBusiness",
-			SessionCountLimit: -1,
+			AccountsPlan: "MonthlyBusiness",
 		},
 		"11-4": Plan{
-			AccountsPlan:      "AnnualBusiness",
-			SessionCountLimit: -1,
+			AccountsPlan: "AnnualBusiness",
 		},
 		"11-5": Plan{
-			AccountsPlan:      "MonthlyBusiness",
-			SessionCountLimit: -1,
+			AccountsPlan: "MonthlyBusiness",
 		},
 		"11-6": Plan{
-			AccountsPlan:      "AnnualBusiness",
-			SessionCountLimit: -1,
+			AccountsPlan: "AnnualBusiness",
 		},
 		"11-7": Plan{
-			AccountsPlan:      "MonthlyBusiness",
-			SessionCountLimit: -1,
+			AccountsPlan: "MonthlyBusiness",
 		},
 		"11-8": Plan{
-			AccountsPlan:      "AnnualBusiness",
-			SessionCountLimit: -1,
+			AccountsPlan: "AnnualBusiness",
 		},
 		"12-0": Plan{
-			AccountsPlan:      "AnnualSupporter",
-			SessionCountLimit: -1,
+			AccountsPlan: "AnnualSupporter",
 		},
 		"12-1": Plan{
-			AccountsPlan:      "MonthlyPlatinum",
-			SessionCountLimit: -1,
+			AccountsPlan: "MonthlyPlatinum",
 		},
 		"13-1": Plan{
-			AccountsPlan:      "[{\"plan\": \"AnnualSupporter\", \"quantity\": 10, \"trialMonths\": 18}]",
-			GiftPack:          true,
-			Price:             1500,
-			SessionCountLimit: -1,
+			AccountsPlan: "[{\"plan\": \"AnnualSupporter\", \"quantity\": 10, \"trialMonths\": 18}]",
+			GiftPack:     true,
+			Price:        1500,
 		},
 		"13-2": Plan{
-			AccountsPlan:      "[{\"plan\": \"AnnualPremium\", \"quantity\": 5, \"trialMonths\": 30}]",
-			GiftPack:          true,
-			Price:             4500,
-			SessionCountLimit: -1,
+			AccountsPlan: "[{\"plan\": \"AnnualPremium\", \"quantity\": 5, \"trialMonths\": 30}]",
+			GiftPack:     true,
+			Price:        4500,
 		},
 		"13-3": Plan{
-			AccountsPlan:      "[{\"plan\": \"AnnualPlatinum\", \"quantity\": 2, \"trialMonths\": 42}]",
-			GiftPack:          true,
-			Price:             15000,
-			SessionCountLimit: -1,
+			AccountsPlan: "[{\"plan\": \"AnnualPlatinum\", \"quantity\": 2, \"trialMonths\": 42}]",
+			GiftPack:     true,
+			Price:        15000,
 		},
 		"13-4": Plan{
-			AccountsPlan:      "[{\"plan\": \"AnnualSupporter\", \"quantity\": 10, \"trialMonths\": 18}, {\"plan\": \"AnnualPremium\", \"quantity\": 5, \"trialMonths\": 30}, {\"plan\": \"AnnualPlatinum\", \"quantity\": 2, \"trialMonths\": 42}]",
-			GiftPack:          true,
-			Price:             17500,
-			SessionCountLimit: -1,
+			AccountsPlan: "[{\"plan\": \"AnnualSupporter\", \"quantity\": 10, \"trialMonths\": 18}, {\"plan\": \"AnnualPremium\", \"quantity\": 5, \"trialMonths\": 30}, {\"plan\": \"AnnualPlatinum\", \"quantity\": 2, \"trialMonths\": 42}]",
+			GiftPack:     true,
+			Price:        17500,
 		},
 	},
 
