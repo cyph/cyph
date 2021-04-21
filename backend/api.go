@@ -41,6 +41,7 @@ func main() {
 	handleFuncs("/redox/execute", false, Handlers{methods.POST: redoxRunCommand})
 	handleFuncs("/signups", false, Handlers{methods.PUT: signUp})
 	handleFuncs("/stripe/session", false, Handlers{methods.POST: stripeSession})
+	handleFuncs("/stripe/webhook", false, Handlers{methods.POST: stripeWebhook})
 	handleFuncs("/timestamp", false, Handlers{methods.GET: getTimestampHandler})
 	handleFuncs("/waitlist/invite", true, Handlers{methods.GET: rollOutWaitlistInvites})
 	handleFuncs("/warmupcloudfunctions", true, Handlers{methods.GET: warmUpCloudFunctions})
@@ -1485,11 +1486,36 @@ func stripeSession(h HandlerArgs) (interface{}, int) {
 
 	session, err := stripeSessionAPI.New(params)
 	if err != nil {
-		log.Printf("stripeSessionAPI.New: %v", err)
+		log.Println(fmt.Errorf("stripeSessionAPI.New: %v", err))
 		return err.Error(), http.StatusInternalServerError
 	}
 
 	return session.ID, http.StatusOK
+}
+
+/* TODO: Factor out common logic with checkout */
+func stripeWebhook(h HandlerArgs) (interface{}, int) {
+	requestBodyBytes, err := ioutil.ReadAll(h.Request.Body)
+	if err != nil {
+		log.Println(fmt.Errorf("stripeWebHookBadPayload: %v", err))
+		return err.Error(), http.StatusInternalServerError
+	}
+
+	/* Temporary, for testing */
+	sendMail(
+		"balls@cyph.com",
+		"Stripe Webhook Test: "+string(time.Now().UnixNano()),
+		string(requestBodyBytes),
+		"",
+	)
+
+	event := stripe.Event{}
+	if err := json.Unmarshal(requestBodyBytes, &event); err != nil {
+		log.Println(fmt.Errorf("stripeWebHookBadJSON: %v", err))
+		return err.Error(), http.StatusInternalServerError
+	}
+
+	return event, http.StatusOK
 }
 
 func warmUpCloudFunctions(h HandlerArgs) (interface{}, int) {
