@@ -1,6 +1,5 @@
 /* eslint-disable max-lines */
 
-import {SubscriptionTypes} from './checkout';
 import {ISessionService} from './service-interfaces/isession.service';
 
 /**
@@ -130,7 +129,7 @@ export class Config {
 						name?: string;
 						offerID?: number;
 						perUser?: boolean;
-						subscriptionType?: SubscriptionTypes;
+						subscriptionType?: 'annual' | 'monthly';
 					};
 				};
 				namespace?: string;
@@ -147,7 +146,7 @@ export class Config {
 						individualSubscriptions: true,
 						name: 'Business (Annual)',
 						perUser: true,
-						subscriptionType: SubscriptionTypes.annual
+						subscriptionType: 'annual'
 					},
 					annualPlatinum: {
 						amount: 324,
@@ -155,7 +154,7 @@ export class Config {
 						individualSubscriptions: true,
 						name: 'Platinum (Annual)',
 						perUser: true,
-						subscriptionType: SubscriptionTypes.annual
+						subscriptionType: 'annual'
 					},
 					annualPremium: {
 						amount: 108,
@@ -163,7 +162,7 @@ export class Config {
 						individualSubscriptions: true,
 						name: 'Premium (Annual)',
 						perUser: true,
-						subscriptionType: SubscriptionTypes.annual
+						subscriptionType: 'annual'
 					},
 					annualSupporter: {
 						amount: 36,
@@ -171,7 +170,7 @@ export class Config {
 						individualSubscriptions: true,
 						name: 'Supporter (Annual)',
 						perUser: true,
-						subscriptionType: SubscriptionTypes.annual
+						subscriptionType: 'annual'
 					},
 					annualTelehealth: {
 						amount: 420,
@@ -179,7 +178,7 @@ export class Config {
 						individualSubscriptions: true,
 						name: 'Telehealth (Annual)',
 						perUser: true,
-						subscriptionType: SubscriptionTypes.annual
+						subscriptionType: 'annual'
 					},
 					monthlyBusiness: {
 						amount: 20,
@@ -187,7 +186,7 @@ export class Config {
 						individualSubscriptions: true,
 						name: 'Business (Monthly)',
 						perUser: true,
-						subscriptionType: SubscriptionTypes.monthly
+						subscriptionType: 'monthly'
 					},
 					monthlyPlatinum: {
 						amount: 48,
@@ -201,7 +200,7 @@ export class Config {
 						individualSubscriptions: true,
 						name: 'Platinum (Monthly)',
 						perUser: true,
-						subscriptionType: SubscriptionTypes.monthly
+						subscriptionType: 'monthly'
 					},
 					monthlyPremium: {
 						amount: 12,
@@ -209,7 +208,7 @@ export class Config {
 						individualSubscriptions: true,
 						name: 'Premium (Monthly)',
 						perUser: true,
-						subscriptionType: SubscriptionTypes.monthly
+						subscriptionType: 'monthly'
 					},
 					monthlySupporter: {
 						amount: 6,
@@ -217,7 +216,7 @@ export class Config {
 						individualSubscriptions: true,
 						name: 'Supporter (Monthly)',
 						perUser: true,
-						subscriptionType: SubscriptionTypes.annual
+						subscriptionType: 'annual'
 					},
 					monthlyTelehealth: {
 						amount: 50,
@@ -225,7 +224,7 @@ export class Config {
 						individualSubscriptions: true,
 						name: 'Telehealth (Monthly)',
 						perUser: true,
-						subscriptionType: SubscriptionTypes.monthly
+						subscriptionType: 'monthly'
 					}
 				}
 			},
@@ -238,7 +237,7 @@ export class Config {
 						individualSubscriptions: true,
 						name: 'Business (Annual)',
 						perUser: true,
-						subscriptionType: SubscriptionTypes.annual
+						subscriptionType: 'annual'
 					},
 					g7xxm0r: {
 						amount: 12,
@@ -246,7 +245,7 @@ export class Config {
 						individualSubscriptions: true,
 						name: 'Business (Monthly)',
 						perUser: true,
-						subscriptionType: SubscriptionTypes.monthly
+						subscriptionType: 'monthly'
 					},
 					largeAnnual: {
 						amount: 84,
@@ -255,7 +254,7 @@ export class Config {
 						minUsers: 50,
 						name: 'Business (Annual)',
 						perUser: true,
-						subscriptionType: SubscriptionTypes.annual
+						subscriptionType: 'annual'
 					},
 					largeMonthly: {
 						amount: 9,
@@ -264,7 +263,7 @@ export class Config {
 						minUsers: 50,
 						name: 'Business (Monthly)',
 						perUser: true,
-						subscriptionType: SubscriptionTypes.monthly
+						subscriptionType: 'monthly'
 					},
 					mediumAnnual: {
 						amount: 108,
@@ -274,7 +273,7 @@ export class Config {
 						minUsers: 10,
 						name: 'Business (Annual)',
 						perUser: true,
-						subscriptionType: SubscriptionTypes.annual
+						subscriptionType: 'annual'
 					},
 					mediumMonthly: {
 						amount: 12,
@@ -284,7 +283,7 @@ export class Config {
 						minUsers: 10,
 						name: 'Business (Monthly)',
 						perUser: true,
-						subscriptionType: SubscriptionTypes.monthly
+						subscriptionType: 'monthly'
 					},
 					smallAnnual: {
 						amount: 120,
@@ -293,7 +292,7 @@ export class Config {
 						maxUsers: 9,
 						name: 'Business (Annual)',
 						perUser: true,
-						subscriptionType: SubscriptionTypes.annual
+						subscriptionType: 'annual'
 					},
 					smallMonthly: {
 						amount: 14,
@@ -302,7 +301,7 @@ export class Config {
 						maxUsers: 9,
 						name: 'Business (Monthly)',
 						perUser: true,
-						subscriptionType: SubscriptionTypes.monthly
+						subscriptionType: 'monthly'
 					}
 				}
 			},
@@ -318,22 +317,22 @@ export class Config {
 					businessAnnual: {
 						amount: 588,
 						id: 4,
-						subscriptionType: SubscriptionTypes.annual
+						subscriptionType: 'annual'
 					},
 					businessMonthly: {
 						amount: 99,
 						id: 3,
-						subscriptionType: SubscriptionTypes.monthly
+						subscriptionType: 'monthly'
 					},
 					proAnnual: {
 						amount: 168,
 						id: 2,
-						subscriptionType: SubscriptionTypes.annual
+						subscriptionType: 'annual'
 					},
 					proMonthly: {
 						amount: 29,
 						id: 1,
-						subscriptionType: SubscriptionTypes.monthly
+						subscriptionType: 'monthly'
 					}
 				}
 			},
@@ -356,7 +355,7 @@ export class Config {
 						individualSubscriptions: true,
 						name: 'Supporter (Annual)',
 						perUser: true,
-						subscriptionType: SubscriptionTypes.annual
+						subscriptionType: 'annual'
 					},
 					monthlyPlatinum: {
 						amount: 17.76,
@@ -364,7 +363,7 @@ export class Config {
 						individualSubscriptions: true,
 						name: 'Platinum (Monthly)',
 						perUser: true,
-						subscriptionType: SubscriptionTypes.monthly
+						subscriptionType: 'monthly'
 					}
 				}
 			},
@@ -375,13 +374,13 @@ export class Config {
 						amount: 168,
 						id: 2,
 						perUser: true,
-						subscriptionType: SubscriptionTypes.annual
+						subscriptionType: 'annual'
 					},
 					monthly: {
 						amount: 29,
 						id: 1,
 						perUser: true,
-						subscriptionType: SubscriptionTypes.monthly
+						subscriptionType: 'monthly'
 					}
 				},
 				namespace: 'video.cyph.healthcare'
@@ -416,11 +415,11 @@ export class Config {
 				items: {
 					annual: {
 						id: 2,
-						subscriptionType: SubscriptionTypes.annual
+						subscriptionType: 'annual'
 					},
 					monthly: {
 						id: 1,
-						subscriptionType: SubscriptionTypes.monthly
+						subscriptionType: 'monthly'
 					}
 				}
 			},
@@ -434,7 +433,7 @@ export class Config {
 						minUsers: 50,
 						name: 'Telehealth (Annual)',
 						perUser: true,
-						subscriptionType: SubscriptionTypes.annual
+						subscriptionType: 'annual'
 					},
 					covidLargeMonthly: {
 						amount: 15,
@@ -443,7 +442,7 @@ export class Config {
 						minUsers: 50,
 						name: 'Telehealth (Monthly)',
 						perUser: true,
-						subscriptionType: SubscriptionTypes.monthly
+						subscriptionType: 'monthly'
 					},
 					covidMediumAnnual: {
 						amount: 192,
@@ -453,7 +452,7 @@ export class Config {
 						minUsers: 10,
 						name: 'Telehealth (Annual)',
 						perUser: true,
-						subscriptionType: SubscriptionTypes.annual
+						subscriptionType: 'annual'
 					},
 					covidMediumMonthly: {
 						amount: 20,
@@ -463,7 +462,7 @@ export class Config {
 						minUsers: 10,
 						name: 'Telehealth (Monthly)',
 						perUser: true,
-						subscriptionType: SubscriptionTypes.monthly
+						subscriptionType: 'monthly'
 					},
 					covidSmallAnnual: {
 						amount: 216,
@@ -472,7 +471,7 @@ export class Config {
 						maxUsers: 9,
 						name: 'Telehealth (Annual)',
 						perUser: true,
-						subscriptionType: SubscriptionTypes.annual
+						subscriptionType: 'annual'
 					},
 					covidSmallMonthly: {
 						amount: 25,
@@ -481,7 +480,7 @@ export class Config {
 						maxUsers: 9,
 						name: 'Telehealth (Monthly)',
 						perUser: true,
-						subscriptionType: SubscriptionTypes.monthly
+						subscriptionType: 'monthly'
 					},
 					erw8ib3: {
 						amount: 108,
@@ -490,7 +489,7 @@ export class Config {
 						name: 'Telehealth (Annual)',
 						offerID: 3,
 						perUser: true,
-						subscriptionType: SubscriptionTypes.annual
+						subscriptionType: 'annual'
 					},
 					g7xxm0r: {
 						amount: 12,
@@ -499,7 +498,7 @@ export class Config {
 						name: 'Telehealth (Monthly)',
 						offerID: 2,
 						perUser: true,
-						subscriptionType: SubscriptionTypes.monthly
+						subscriptionType: 'monthly'
 					}
 				}
 			},
@@ -510,13 +509,13 @@ export class Config {
 						amount: 250,
 						id: 1,
 						perUser: true,
-						subscriptionType: SubscriptionTypes.monthly
+						subscriptionType: 'monthly'
 					},
 					smallPractice: {
 						amount: 1000,
 						id: 2,
 						perUser: true,
-						subscriptionType: SubscriptionTypes.monthly
+						subscriptionType: 'monthly'
 					}
 				},
 				namespace: 'video.cyph.healthcare'

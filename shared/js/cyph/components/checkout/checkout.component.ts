@@ -19,7 +19,6 @@ import memoize from 'lodash-es/memoize';
 import {BehaviorSubject, of} from 'rxjs';
 import {map} from 'rxjs/operators';
 import {BaseProvider} from '../../base-provider';
-import {SubscriptionTypes} from '../../checkout';
 import {MaybePromise} from '../../maybe-promise-type';
 import {AffiliateService} from '../../services/affiliate.service';
 import {AnalyticsService} from '../../services/analytics.service';
@@ -203,11 +202,8 @@ export class CheckoutComponent extends BaseProvider
 	/** Spinner to set while performing checkout. */
 	@Input() public spinner?: BehaviorSubject<boolean>;
 
-	/** @see SubscriptionTypes */
-	@Input() public subscriptionType?: SubscriptionTypes;
-
-	/** @see SubscriptionTypes */
-	public readonly subscriptionTypes = SubscriptionTypes;
+	/** Subscription type for purchase. */
+	@Input() public subscriptionType?: 'annual' | 'monthly';
 
 	/** Indicates whether checkout is complete. */
 	public readonly success = new BehaviorSubject<boolean>(false);
@@ -585,14 +581,10 @@ export class CheckoutComponent extends BaseProvider
 			this.perUser = <any> this.perUser === 'true';
 		}
 		if (
-			/* eslint-disable-next-line @typescript-eslint/tslint/config */
-			typeof this.subscriptionType === 'string' &&
-			this.subscriptionType
+			<any> this.subscriptionType !== 'annual' &&
+			<any> this.subscriptionType !== 'monthly'
 		) {
-			this.subscriptionType = parseFloat(this.subscriptionType);
-			if (isNaN(this.subscriptionType)) {
-				this.subscriptionType = undefined;
-			}
+			this.subscriptionType = undefined;
 		}
 
 		this.updateUserOptions();
@@ -684,7 +676,7 @@ export class CheckoutComponent extends BaseProvider
 										{
 											subscription:
 												this.subscriptionType ===
-												SubscriptionTypes.annual ?
+												'annual' ?
 													this.stringsService
 														.checkoutSubscriptionAnnual :
 													this.stringsService

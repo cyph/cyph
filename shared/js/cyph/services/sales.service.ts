@@ -1,7 +1,7 @@
 import {Injectable} from '@angular/core';
 import {BehaviorSubject, ReplaySubject} from 'rxjs';
 import {BaseProvider} from '../base-provider';
-import {IInAppPurchaseComponent} from '../checkout/iin-app-purchasecomponent';
+import {IInAppPurchaseComponent} from '../checkout/iin-app-purchase.component';
 import {MaybePromise} from '../maybe-promise-type';
 import {BooleanProto} from '../proto';
 import {observableAll} from '../util/observable-all';
