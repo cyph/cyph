@@ -1449,7 +1449,7 @@ func stripeSession(h HandlerArgs) (interface{}, int) {
 	}
 
 	params := &stripe.CheckoutSessionParams{
-		CancelURL: stripe.String(websiteURL + "/checkout/cancel"),
+		CancelURL: stripe.String(websiteURL),
 		LineItems: []*stripe.CheckoutSessionLineItemParams{
 			&stripe.CheckoutSessionLineItemParams{
 				AdjustableQuantity: &stripe.CheckoutSessionLineItemAdjustableQuantityParams{
