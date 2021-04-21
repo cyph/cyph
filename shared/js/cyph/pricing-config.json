@@ -1,0 +1,413 @@
+{
+	"categories": {
+		"accounts": {
+			"id": 8,
+			"items": {
+				"annualBusiness": {
+					"accountsPlan": "AnnualBusiness",
+					"amount": 168,
+					"id": 9,
+					"individualSubscriptions": true,
+					"name": "Business (Annual)",
+					"perUser": true,
+					"subscriptionType": "annual"
+				},
+				"annualPlatinum": {
+					"accountsPlan": "AnnualPlatinum",
+					"amount": 324,
+					"id": 5,
+					"individualSubscriptions": true,
+					"name": "Platinum (Annual)",
+					"perUser": true,
+					"subscriptionType": "annual"
+				},
+				"annualPremium": {
+					"accountsPlan": "AnnualPremium",
+					"amount": 108,
+					"id": 1,
+					"individualSubscriptions": true,
+					"name": "Premium (Annual)",
+					"perUser": true,
+					"subscriptionType": "annual"
+				},
+				"annualSupporter": {
+					"accountsPlan": "AnnualSupporter",
+					"amount": 36,
+					"id": 7,
+					"individualSubscriptions": true,
+					"name": "Supporter (Annual)",
+					"perUser": true,
+					"subscriptionType": "annual"
+				},
+				"annualTelehealth": {
+					"accountsPlan": "AnnualTelehealth",
+					"amount": 420,
+					"id": 3,
+					"individualSubscriptions": true,
+					"name": "Telehealth (Annual)",
+					"perUser": true,
+					"subscriptionType": "annual"
+				},
+				"monthlyBusiness": {
+					"accountsPlan": "MonthlyBusiness",
+					"amount": 20,
+					"id": 8,
+					"individualSubscriptions": true,
+					"name": "Business (Monthly)",
+					"perUser": true,
+					"subscriptionType": "monthly"
+				},
+				"monthlyPlatinum": {
+					"accountsPlan": "MonthlyPlatinum",
+					"amount": 48,
+					"id": 4,
+					"inAppPurchaseConfig": {
+						"alias": "Monthly Platinum",
+						"amount": 69,
+						"id": "MonthlyPlatinum",
+						"type": "PAID_SUBSCRIPTION"
+					},
+					"individualSubscriptions": true,
+					"name": "Platinum (Monthly)",
+					"perUser": true,
+					"subscriptionType": "monthly"
+				},
+				"monthlyPremium": {
+					"accountsPlan": "MonthlyPremium",
+					"amount": 12,
+					"id": 0,
+					"individualSubscriptions": true,
+					"name": "Premium (Monthly)",
+					"perUser": true,
+					"subscriptionType": "monthly"
+				},
+				"monthlySupporter": {
+					"accountsPlan": "MonthlySupporter",
+					"amount": 6,
+					"id": 6,
+					"individualSubscriptions": true,
+					"name": "Supporter (Monthly)",
+					"perUser": true,
+					"subscriptionType": "annual"
+				},
+				"monthlyTelehealth": {
+					"accountsPlan": "MonthlyTelehealth",
+					"amount": 50,
+					"id": 2,
+					"individualSubscriptions": true,
+					"name": "Telehealth (Monthly)",
+					"perUser": true,
+					"subscriptionType": "monthly"
+				}
+			}
+		},
+		"business": {
+			"id": 11,
+			"items": {
+				"erw8ib3": {
+					"accountsPlan": "AnnualBusiness",
+					"amount": 108,
+					"id": 8,
+					"individualSubscriptions": true,
+					"name": "Business (Annual)",
+					"perUser": true,
+					"subscriptionType": "annual"
+				},
+				"g7xxm0r": {
+					"accountsPlan": "MonthlyBusiness",
+					"amount": 12,
+					"id": 7,
+					"individualSubscriptions": true,
+					"name": "Business (Monthly)",
+					"perUser": true,
+					"subscriptionType": "monthly"
+				},
+				"largeAnnual": {
+					"accountsPlan": "AnnualBusiness",
+					"amount": 84,
+					"id": 6,
+					"individualSubscriptions": true,
+					"minUsers": 50,
+					"name": "Business (Annual)",
+					"perUser": true,
+					"subscriptionType": "annual"
+				},
+				"largeMonthly": {
+					"accountsPlan": "MonthlyBusiness",
+					"amount": 9,
+					"id": 5,
+					"individualSubscriptions": true,
+					"minUsers": 50,
+					"name": "Business (Monthly)",
+					"perUser": true,
+					"subscriptionType": "monthly"
+				},
+				"mediumAnnual": {
+					"accountsPlan": "AnnualBusiness",
+					"amount": 108,
+					"id": 4,
+					"individualSubscriptions": true,
+					"maxUsers": 49,
+					"minUsers": 10,
+					"name": "Business (Annual)",
+					"perUser": true,
+					"subscriptionType": "annual"
+				},
+				"mediumMonthly": {
+					"accountsPlan": "MonthlyBusiness",
+					"amount": 12,
+					"id": 3,
+					"individualSubscriptions": true,
+					"maxUsers": 49,
+					"minUsers": 10,
+					"name": "Business (Monthly)",
+					"perUser": true,
+					"subscriptionType": "monthly"
+				},
+				"smallAnnual": {
+					"accountsPlan": "AnnualBusiness",
+					"amount": 120,
+					"id": 2,
+					"individualSubscriptions": true,
+					"maxUsers": 9,
+					"name": "Business (Annual)",
+					"perUser": true,
+					"subscriptionType": "annual"
+				},
+				"smallMonthly": {
+					"accountsPlan": "MonthlyBusiness",
+					"amount": 14,
+					"id": 1,
+					"individualSubscriptions": true,
+					"maxUsers": 9,
+					"name": "Business (Monthly)",
+					"perUser": true,
+					"subscriptionType": "monthly"
+				}
+			}
+		},
+		"donation": {"id": 10000, "items": {"donation": {"id": 0}}},
+		"ephemeral": {
+			"id": 4,
+			"items": {
+				"businessAnnual": {
+					"amount": 588,
+					"id": 4,
+					"subscriptionType": "annual"
+				},
+				"businessMonthly": {
+					"amount": 99,
+					"id": 3,
+					"subscriptionType": "monthly"
+				},
+				"proAnnual": {
+					"amount": 168,
+					"id": 2,
+					"subscriptionType": "annual"
+				},
+				"proMonthly": {
+					"amount": 29,
+					"id": 1,
+					"subscriptionType": "monthly"
+				}
+			}
+		},
+		"flashSale": {
+			"id": 10,
+			"items": {
+				"lifetimePlatinum": {
+					"accountsPlan": "LifetimePlatinum",
+					"amount": 100,
+					"id": 1,
+					"name": "Lifetime Platinum (Flash Sale)"
+				}
+			}
+		},
+		"freedomSale": {
+			"id": 12,
+			"items": {
+				"annualSupporter": {
+					"accountsPlan": "AnnualSupporter",
+					"amount": 17.76,
+					"id": 0,
+					"individualSubscriptions": true,
+					"name": "Supporter (Annual)",
+					"perUser": true,
+					"subscriptionType": "annual"
+				},
+				"monthlyPlatinum": {
+					"accountsPlan": "MonthlyPlatinum",
+					"amount": 17.76,
+					"id": 1,
+					"individualSubscriptions": true,
+					"name": "Platinum (Monthly)",
+					"perUser": true,
+					"subscriptionType": "monthly"
+				}
+			}
+		},
+		"hint": {
+			"id": 5,
+			"items": {
+				"annual": {
+					"amount": 168,
+					"id": 2,
+					"perUser": true,
+					"subscriptionType": "annual"
+				},
+				"monthly": {
+					"amount": 29,
+					"id": 1,
+					"perUser": true,
+					"subscriptionType": "monthly"
+				}
+			},
+			"namespace": "video.cyph.healthcare"
+		},
+		"holidaySale": {
+			"id": 13,
+			"items": {
+				"giftPackA": {
+					"accountsPlan": "[{\"plan\": \"AnnualSupporter\", \"quantity\": 10, \"trialMonths\": 18}]",
+					"amount": 15,
+					"giftPack": true,
+					"id": 1,
+					"name": "10x 1-Year Supporter Gift Pack"
+				},
+				"giftPackB": {
+					"accountsPlan": "[{\"plan\": \"AnnualPremium\", \"quantity\": 5, \"trialMonths\": 30}]",
+					"amount": 45,
+					"giftPack": true,
+					"id": 2,
+					"name": "5x 2-Year Premium Gift Pack"
+				},
+				"giftPackC": {
+					"accountsPlan": "[{\"plan\": \"AnnualPlatinum\", \"quantity\": 2, \"trialMonths\": 42}]",
+					"amount": 150,
+					"giftPack": true,
+					"id": 3,
+					"name": "2x 3-Year Platinum Gift Pack"
+				},
+				"giftPackD": {
+					"accountsPlan": "[{\"plan\": \"AnnualSupporter\", \"quantity\": 10, \"trialMonths\": 18}, {\"plan\": \"AnnualPremium\", \"quantity\": 5, \"trialMonths\": 30}, {\"plan\": \"AnnualPlatinum\", \"quantity\": 2, \"trialMonths\": 42}]",
+					"amount": 175,
+					"giftPack": true,
+					"id": 4,
+					"name": "Gift Pack Ultimate Bundle"
+				}
+			}
+		},
+		"subscription": {
+			"id": 1,
+			"items": {
+				"annual": {"id": 2, "subscriptionType": "annual"},
+				"monthly": {"id": 1, "subscriptionType": "monthly"}
+			}
+		},
+		"telehealth": {
+			"id": 3,
+			"items": {
+				"covidLargeAnnual": {
+					"accountsPlan": "AnnualTelehealth",
+					"amount": 120,
+					"id": 8,
+					"individualSubscriptions": true,
+					"minUsers": 50,
+					"name": "Telehealth (Annual)",
+					"perUser": true,
+					"subscriptionType": "annual"
+				},
+				"covidLargeMonthly": {
+					"accountsPlan": "MonthlyTelehealth",
+					"amount": 15,
+					"id": 7,
+					"individualSubscriptions": true,
+					"minUsers": 50,
+					"name": "Telehealth (Monthly)",
+					"perUser": true,
+					"subscriptionType": "monthly"
+				},
+				"covidMediumAnnual": {
+					"accountsPlan": "AnnualTelehealth",
+					"amount": 192,
+					"id": 6,
+					"individualSubscriptions": true,
+					"maxUsers": 49,
+					"minUsers": 10,
+					"name": "Telehealth (Annual)",
+					"perUser": true,
+					"subscriptionType": "annual"
+				},
+				"covidMediumMonthly": {
+					"accountsPlan": "MonthlyTelehealth",
+					"amount": 20,
+					"id": 5,
+					"individualSubscriptions": true,
+					"maxUsers": 49,
+					"minUsers": 10,
+					"name": "Telehealth (Monthly)",
+					"perUser": true,
+					"subscriptionType": "monthly"
+				},
+				"covidSmallAnnual": {
+					"accountsPlan": "AnnualTelehealth",
+					"amount": 216,
+					"id": 4,
+					"individualSubscriptions": true,
+					"maxUsers": 9,
+					"name": "Telehealth (Annual)",
+					"perUser": true,
+					"subscriptionType": "annual"
+				},
+				"covidSmallMonthly": {
+					"accountsPlan": "MonthlyTelehealth",
+					"amount": 25,
+					"id": 3,
+					"individualSubscriptions": true,
+					"maxUsers": 9,
+					"name": "Telehealth (Monthly)",
+					"perUser": true,
+					"subscriptionType": "monthly"
+				},
+				"erw8ib3": {
+					"accountsPlan": "AnnualTelehealth",
+					"amount": 108,
+					"id": 10,
+					"individualSubscriptions": true,
+					"name": "Telehealth (Annual)",
+					"offerID": 3,
+					"perUser": true,
+					"subscriptionType": "annual"
+				},
+				"g7xxm0r": {
+					"accountsPlan": "MonthlyTelehealth",
+					"amount": 12,
+					"id": 9,
+					"individualSubscriptions": true,
+					"name": "Telehealth (Monthly)",
+					"offerID": 2,
+					"perUser": true,
+					"subscriptionType": "monthly"
+				}
+			}
+		},
+		"telehealthPro": {
+			"id": 6,
+			"items": {
+				"singlePractitioner": {
+					"amount": 250,
+					"id": 1,
+					"perUser": true,
+					"subscriptionType": "monthly"
+				},
+				"smallPractice": {
+					"amount": 1000,
+					"id": 2,
+					"perUser": true,
+					"subscriptionType": "monthly"
+				}
+			},
+			"namespace": "video.cyph.healthcare"
+		}
+	}
+}

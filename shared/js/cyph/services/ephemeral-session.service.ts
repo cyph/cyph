@@ -10,7 +10,7 @@ import {
 	IBurnerGroupMemberInitiator,
 	NotificationTypes
 } from '../proto';
-import {ProFeatures, RpcEvents} from '../session';
+import {RpcEvents} from '../session';
 import {normalize} from '../util/formatting';
 import {getOrSetDefault} from '../util/get-or-set-default';
 import {lockFunction} from '../util/lock';
@@ -542,16 +542,6 @@ export class EphemeralSessionService extends SessionService {
 	}
 
 	/** @inheritDoc */
-	public get proFeatures () : ProFeatures {
-		return new ProFeatures(
-			this.apiFlags.disableP2P,
-			this.apiFlags.modestBranding,
-			this.sessionInitService.callType === 'video',
-			this.sessionInitService.callType === 'audio'
-		);
-	}
-
-	/** @inheritDoc */
 	public spawn (
 		sessionInitService: SessionInitService = this.sessionInitService.spawn(),
 		castleService: CastleService = this.castleService.spawn()
@@ -794,8 +784,7 @@ export class EphemeralSessionService extends SessionService {
 			const getChannelID = async () =>
 				request({
 					data: {
-						channelID: maybeChannelID,
-						proFeatures: this.proFeatures
+						channelID: maybeChannelID
 					},
 					debug: getChannelIDRequestDebug,
 					method: 'POST',

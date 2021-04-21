@@ -14,14 +14,18 @@ import (
 
 	"cloud.google.com/go/datastore"
 	"github.com/buu700/braintree-go-tmp"
+	"github.com/stripe/stripe-go"
+	stripeSessionAPI "github.com/stripe/stripe-go/checkout/session"
+	stripeSubscriptionAPI "github.com/stripe/stripe-go/sub"
 	"google.golang.org/api/iterator"
 )
 
 func main() {
 	handleFuncs("/accountstanding/{userToken}", false, Handlers{methods.GET: isAccountInGoodStanding})
 	handleFuncs("/analytics/*", false, Handlers{methods.GET: analytics, methods.POST: analytics})
-	handleFuncs("/braintree", false, Handlers{methods.GET: braintreeToken, methods.POST: braintreeCheckout})
+	handleFuncs("/braintree/token", false, Handlers{methods.GET: braintreeToken})
 	handleFuncs("/channels/{id}", false, Handlers{methods.DELETE: channelDelete, methods.POST: channelSetup})
+	handleFuncs("/checkout", false, Handlers{methods.POST: checkout})
 	handleFuncs("/continent", false, Handlers{methods.GET: getContinent})
 	handleFuncs("/downgradeaccount/{userToken}", false, Handlers{methods.GET: downgradeAccount})
 	handleFuncs("/geolocation/{language}", false, Handlers{methods.GET: getGeolocation})
@@ -36,6 +40,8 @@ func main() {
 	handleFuncs("/redox/credentials", false, Handlers{methods.PUT: redoxAddCredentials})
 	handleFuncs("/redox/execute", false, Handlers{methods.POST: redoxRunCommand})
 	handleFuncs("/signups", false, Handlers{methods.PUT: signUp})
+	handleFuncs("/stripe/session", false, Handlers{methods.POST: stripeSession})
+	handleFuncs("/stripe/webhook", false, Handlers{methods.POST: stripeWebhook})
 	handleFuncs("/timestamp", false, Handlers{methods.GET: getTimestampHandler})
 	handleFuncs("/waitlist/invite", true, Handlers{methods.GET: rollOutWaitlistInvites})
 	handleFuncs("/warmupcloudfunctions", true, Handlers{methods.GET: warmUpCloudFunctions})
@@ -44,6 +50,8 @@ func main() {
 	handleFunc("/", false, func(h HandlerArgs) (interface{}, int) {
 		return "Welcome to Cyph, lad", http.StatusOK
 	})
+
+	stripe.Key = stripeSecretKey
 
 	port := os.Getenv("PORT")
 	if port == "" {
@@ -79,7 +87,134 @@ func analytics(h HandlerArgs) (interface{}, int) {
 	return resp.Body, resp.StatusCode
 }
 
-func braintreeCheckout(h HandlerArgs) (interface{}, int) {
+func braintreeToken(h HandlerArgs) (interface{}, int) {
+	token, err := braintreeInit(h).ClientToken().Generate(h.Context)
+
+	if err == nil {
+		return token, http.StatusOK
+	}
+
+	return braintreeToken(h)
+}
+
+func channelDelete(h HandlerArgs) (interface{}, int) {
+	id := sanitize(h.Vars["id"])
+
+	if !isValidCyphID(id) {
+		return "invalid ID", http.StatusForbidden
+	}
+
+	burnerChannelKey := datastoreKey("BurnerChannel", id)
+
+	emptyBurnerChannel := &BurnerChannel{
+		ChannelID: "",
+		ID:        id,
+		Timestamp: 0,
+	}
+
+	for {
+		_, err := h.Datastore.Put(h.Context, burnerChannelKey, emptyBurnerChannel)
+
+		if err == nil {
+			break
+		}
+	}
+
+	return "", http.StatusOK
+}
+
+func channelSetup(h HandlerArgs) (interface{}, int) {
+	/* Block Facebook tampering with links sent through Messenger */
+	org := getOrg(h)
+	if org == "Facebook" {
+		return "", http.StatusNotFound
+	}
+
+	id := sanitize(h.Vars["id"])
+
+	if !isValidCyphID(id) {
+		return "invalid ID", http.StatusForbidden
+	}
+
+	now := getTimestamp()
+	preAuthorizedCyph := &PreAuthorizedCyph{}
+	preAuthorizedCyphKey := datastoreKey("PreAuthorizedCyph", id)
+
+	err := h.Datastore.Get(h.Context, preAuthorizedCyphKey, preAuthorizedCyph)
+
+	/* Discard pre-authorization after two days */
+	if err == nil && now-preAuthorizedCyph.Timestamp > 172800000 {
+		h.Datastore.Delete(h.Context, preAuthorizedCyphKey)
+		return "pre-authorization expired", http.StatusForbidden
+	}
+
+	channelID := ""
+	status := http.StatusOK
+
+	for {
+		_, transactionErr := h.Datastore.RunInTransaction(h.Context, func(datastoreTransaction *datastore.Transaction) error {
+			burnerChannel := &BurnerChannel{}
+			burnerChannelKey := datastoreKey("BurnerChannel", id)
+
+			datastoreTransaction.Get(burnerChannelKey, burnerChannel)
+
+			if now-burnerChannel.Timestamp > config.BurnerChannelExpiration {
+				burnerChannel = &BurnerChannel{}
+			}
+
+			if burnerChannel.ID != "" {
+				datastoreTransaction.Delete(preAuthorizedCyphKey)
+
+				if now-burnerChannel.Timestamp < config.NewCyphTimeout {
+					channelID = burnerChannel.ChannelID
+				}
+
+				burnerChannel.ChannelID = ""
+				burnerChannel.Timestamp = 0
+
+				/*
+					For now, clear out channel data in channelDelete instead
+
+					if _, err := datastoreTransaction.Put(burnerChannelKey, burnerChannel); err != nil {
+						datastoreTransaction.Rollback()
+						return err
+					}
+				*/
+			} else {
+				channelID = sanitize(h.Request.FormValue("channelID"))
+
+				if len(channelID) > config.MaxChannelDescriptorLength {
+					channelID = ""
+				}
+
+				if channelID != "" {
+					burnerChannel.ChannelID = channelID
+					burnerChannel.ID = id
+					burnerChannel.Timestamp = now
+
+					if _, err := datastoreTransaction.Put(burnerChannelKey, burnerChannel); err != nil {
+						datastoreTransaction.Rollback()
+						return err
+					}
+				}
+			}
+
+			return nil
+		})
+
+		if transactionErr == nil {
+			break
+		}
+	}
+
+	if channelID == "" {
+		status = http.StatusNotFound
+	}
+
+	return channelID, status
+}
+
+func checkout(h HandlerArgs) (interface{}, int) {
 	appStoreReceipt := sanitize(h.Request.PostFormValue("appStoreReceipt"))
 	bitPayInvoiceID := sanitize(h.Request.PostFormValue("bitPayInvoiceID"))
 	company := sanitize(h.Request.PostFormValue("company"))
@@ -165,6 +300,10 @@ func braintreeCheckout(h HandlerArgs) (interface{}, int) {
 			planID = strconv.FormatInt(category, 10) + "-" + strconv.FormatInt(item, 10)
 		}
 	}
+	plan, hasPlan := plans[planID]
+	if !hasPlan {
+		return "invalid plan", http.StatusTeapot
+	}
 
 	amountString := sanitize(h.Request.PostFormValue("amount"))
 	amount, err := strconv.ParseInt(amountString, 10, 64)
@@ -175,11 +314,7 @@ func braintreeCheckout(h HandlerArgs) (interface{}, int) {
 		return "invalid amount", http.StatusTeapot
 	}
 
-	subscriptionString := sanitize(h.Request.PostFormValue("subscription"))
-	subscription, err := strconv.ParseBool(subscriptionString)
-	if err != nil {
-		return err.Error(), http.StatusTeapot
-	}
+	subscription := plan.SubscriptionType != ""
 
 	subscriptionCountString := sanitize(h.Request.PostFormValue("subscriptionCount"))
 	subscriptionCount, err := strconv.ParseInt(subscriptionCountString, 10, 64)
@@ -265,13 +400,13 @@ func braintreeCheckout(h HandlerArgs) (interface{}, int) {
 				return err.Error(), http.StatusTeapot
 			}
 
-			plan, err := bt.Plan().Find(h.Context, planID)
+			btPlan, err := bt.Plan().Find(h.Context, planID)
 
 			if err != nil {
 				return err.Error(), http.StatusTeapot
 			}
 
-			price := braintreeDecimalToCents(plan.Price)
+			price := braintreeDecimalToCents(btPlan.Price)
 			priceDelta := amount - price
 
 			priceDeltaFloor := int64(0)
@@ -437,7 +572,7 @@ func braintreeCheckout(h HandlerArgs) (interface{}, int) {
 			}
 		}
 	} else {
-		if plan, hasPlan := config.Plans[planID]; hasPlan && plan.Price > amount {
+		if plan.Price > amount {
 			return "insufficient payment", http.StatusTeapot
 		}
 
@@ -565,7 +700,7 @@ func braintreeCheckout(h HandlerArgs) (interface{}, int) {
 		"\nPlan ID: " + planID +
 		"\nAmount: " + amountString +
 		"\nInvite Code: " + inviteCode +
-		"\nSubscription: " + subscriptionString +
+		"\nSubscription: " + plan.SubscriptionType +
 		"\nSubscription count: " + subscriptionCountString +
 		"\nCompany: " + company +
 		"\nName: " + name +
@@ -574,10 +709,8 @@ func braintreeCheckout(h HandlerArgs) (interface{}, int) {
 		"\n\n" + txLog +
 		""), "")
 
-	plan, hasPlan := config.Plans[planID]
-
-	if success && hasPlan && plan.AccountsPlan != "" {
-		_inviteCode, oldBraintreeSubscriptionID, welcomeLetter, err := generateInvite(email, name, plan.AccountsPlan, appStoreReceipt, braintreeIDs, braintreeSubscriptionIDs, inviteCode, username, plan.GiftPack, true)
+	if success && plan.AccountsPlan != "" {
+		_inviteCode, oldBraintreeSubscriptionID, welcomeLetter, err := generateInvite(email, name, plan.AccountsPlan, appStoreReceipt, braintreeIDs, braintreeSubscriptionIDs, []string{}, inviteCode, username, plan.GiftPack, true, false)
 
 		inviteCode := _inviteCode
 
@@ -587,7 +720,7 @@ func braintreeCheckout(h HandlerArgs) (interface{}, int) {
 				"\nPlan ID: " + planID +
 				"\nAmount: " + amountString +
 				"\nInvite Code: " + inviteCode +
-				"\nSubscription: " + subscriptionString +
+				"\nSubscription: " + plan.SubscriptionType +
 				"\nSubscription count: " + subscriptionCountString +
 				"\nCompany: " + company +
 				"\nName: " + name +
@@ -615,7 +748,7 @@ func braintreeCheckout(h HandlerArgs) (interface{}, int) {
 		return "", http.StatusInternalServerError
 	}
 
-	if subscription && hasPlan {
+	if subscription {
 		sendMail(email, "Cyph Purchase Confirmation", "", ""+
 			"<p>Welcome to Cyph "+name+", and thanks for signing up!</p>"+
 			"<p style='text-align: left'>"+
@@ -650,150 +783,13 @@ func braintreeCheckout(h HandlerArgs) (interface{}, int) {
 	return "", http.StatusOK
 }
 
-func braintreeToken(h HandlerArgs) (interface{}, int) {
-	token, err := braintreeInit(h).ClientToken().Generate(h.Context)
-
-	if err == nil {
-		return token, http.StatusOK
-	}
-
-	return braintreeToken(h)
-}
-
-func channelDelete(h HandlerArgs) (interface{}, int) {
-	id := sanitize(h.Vars["id"])
-
-	if !isValidCyphID(id) {
-		return "invalid ID", http.StatusForbidden
-	}
-
-	burnerChannelKey := datastoreKey("BurnerChannel", id)
-
-	emptyBurnerChannel := &BurnerChannel{
-		ChannelID: "",
-		ID:        id,
-		Timestamp: 0,
-	}
-
-	for {
-		_, err := h.Datastore.Put(h.Context, burnerChannelKey, emptyBurnerChannel)
-
-		if err == nil {
-			break
-		}
-	}
-
-	return "", http.StatusOK
-}
-
-func channelSetup(h HandlerArgs) (interface{}, int) {
-	/* Block Facebook tampering with links sent through Messenger */
-	org := getOrg(h)
-	if org == "Facebook" {
-		return "", http.StatusNotFound
-	}
-
-	id := sanitize(h.Vars["id"])
-
-	if !isValidCyphID(id) {
-		return "invalid ID", http.StatusForbidden
-	}
-
-	proFeatures := getProFeaturesFromRequest(h)
-	now := getTimestamp()
-	preAuthorizedCyph := &PreAuthorizedCyph{}
-	preAuthorizedCyphKey := datastoreKey("PreAuthorizedCyph", id)
-
-	err := h.Datastore.Get(h.Context, preAuthorizedCyphKey, preAuthorizedCyph)
-
-	/* Discard pre-authorization after two days */
-	if err == nil && now-preAuthorizedCyph.Timestamp > 172800000 {
-		h.Datastore.Delete(h.Context, preAuthorizedCyphKey)
-		return "pre-authorization expired", http.StatusForbidden
-	}
-
-	var preAuthorizedProFeatures map[string]bool
-	json.Unmarshal(preAuthorizedCyph.ProFeatures, &preAuthorizedProFeatures)
-
-	/* For now, disable pro feature check */
-	if false {
-		for feature, isRequired := range proFeatures {
-			if isRequired && !preAuthorizedProFeatures[feature] {
-				return "pro feature " + feature + " not available", http.StatusForbidden
-			}
-		}
-	}
-
-	channelID := ""
-	status := http.StatusOK
-
-	for {
-		_, transactionErr := h.Datastore.RunInTransaction(h.Context, func(datastoreTransaction *datastore.Transaction) error {
-			burnerChannel := &BurnerChannel{}
-			burnerChannelKey := datastoreKey("BurnerChannel", id)
-
-			datastoreTransaction.Get(burnerChannelKey, burnerChannel)
-
-			if now-burnerChannel.Timestamp > config.BurnerChannelExpiration {
-				burnerChannel = &BurnerChannel{}
-			}
-
-			if burnerChannel.ID != "" {
-				datastoreTransaction.Delete(preAuthorizedCyphKey)
-
-				if now-burnerChannel.Timestamp < config.NewCyphTimeout {
-					channelID = burnerChannel.ChannelID
-				}
-
-				burnerChannel.ChannelID = ""
-				burnerChannel.Timestamp = 0
-
-				/*
-					For now, clear out channel data in channelDelete instead
-
-					if _, err := datastoreTransaction.Put(burnerChannelKey, burnerChannel); err != nil {
-						datastoreTransaction.Rollback()
-						return err
-					}
-				*/
-			} else {
-				channelID = sanitize(h.Request.FormValue("channelID"))
-
-				if len(channelID) > config.MaxChannelDescriptorLength {
-					channelID = ""
-				}
-
-				if channelID != "" {
-					burnerChannel.ChannelID = channelID
-					burnerChannel.ID = id
-					burnerChannel.Timestamp = now
-
-					if _, err := datastoreTransaction.Put(burnerChannelKey, burnerChannel); err != nil {
-						datastoreTransaction.Rollback()
-						return err
-					}
-				}
-			}
-
-			return nil
-		})
-
-		if transactionErr == nil {
-			break
-		}
-	}
-
-	if channelID == "" {
-		status = http.StatusNotFound
-	}
-
-	return channelID, status
-}
-
 func downgradeAccount(h HandlerArgs) (interface{}, int) {
 	userToken := sanitize(h.Vars["userToken"])
 
-	appStoreReceipt, braintreeSubscriptionID, _ := downgradeAccountHelper(userToken, false)
+	appStoreReceipt, braintreeSubscriptionID, stripeData, _ := downgradeAccountHelper(
+		userToken,
+		false,
+	)
 
 	if appStoreReceipt != "" {
 		_, err := getAppStoreTransactionData(appStoreReceipt)
@@ -804,6 +800,13 @@ func downgradeAccount(h HandlerArgs) (interface{}, int) {
 		}
 
 		return "cannot cancel App Store subscription server-side", http.StatusInternalServerError
+	}
+
+	if stripeData != nil {
+		_, err := stripeSubscriptionAPI.Cancel(stripeData.SubscriptionID, nil)
+		if err != nil {
+			return err.Error(), http.StatusInternalServerError
+		}
 	}
 
 	if braintreeSubscriptionID == "" {
@@ -883,7 +886,7 @@ func getTimestampHandler(h HandlerArgs) (interface{}, int) {
 func isAccountInGoodStanding(h HandlerArgs) (interface{}, int) {
 	userToken := sanitize(h.Vars["userToken"])
 
-	appStoreReceipt, braintreeSubscriptionID, planTrialEnd, _ := getBraintreeSubscriptionID(userToken)
+	appStoreReceipt, braintreeSubscriptionID, planTrialEnd, stripeData, _ := getSubscriptionData(userToken)
 
 	/* Check trial against current timestamp if applicable */
 
@@ -896,6 +899,21 @@ func isAccountInGoodStanding(h HandlerArgs) (interface{}, int) {
 	if appStoreReceipt != "" {
 		_, err := getAppStoreTransactionData(appStoreReceipt)
 		return err == nil, http.StatusOK
+	}
+
+	/* Check Stripe, if applicable */
+
+	if stripeData != nil {
+		stripeSub, err := stripeSubscriptionAPI.Get(stripeData.SubscriptionID, nil)
+		if err != nil {
+			return true, http.StatusOK
+		}
+
+		if stripeSub.Status == "active" {
+			return true, http.StatusOK
+		}
+
+		return false, http.StatusOK
 	}
 
 	/*
@@ -911,12 +929,12 @@ func isAccountInGoodStanding(h HandlerArgs) (interface{}, int) {
 
 	bt := braintreeInit(h)
 
-	sub, err := bt.Subscription().Find(h.Context, braintreeSubscriptionID)
+	btSub, err := bt.Subscription().Find(h.Context, braintreeSubscriptionID)
 	if err != nil {
 		return true, http.StatusOK
 	}
 
-	if sub.Status == braintree.SubscriptionStatusActive || sub.Status == braintree.SubscriptionStatusPending {
+	if btSub.Status == braintree.SubscriptionStatusActive || btSub.Status == braintree.SubscriptionStatusPending {
 		return true, http.StatusOK
 	}
 
@@ -935,29 +953,8 @@ func preAuth(h HandlerArgs) (interface{}, int) {
 		return err.Error(), http.StatusNotFound
 	}
 
-	proFeatures, sessionCountLimit, err := getPlanData(h, customer)
-	if err != nil {
-		return err.Error(), http.StatusInternalServerError
-	}
-
-	now := time.Now()
-	lastSession := time.Unix(customer.LastSession/1e6, 0)
-
-	if now.Year() > lastSession.Year() || now.Month() > lastSession.Month() {
-		customer.SessionCount = 0
-	}
-
-	if customer.SessionCount >= sessionCountLimit && sessionCountLimit != -1 {
-		return "session limit exceeded", http.StatusForbidden
-	}
-
-	customer.LastSession = now.UnixNano() / 1e6
+	customer.LastSession = time.Now().UnixNano() / 1e6
 	customer.SessionCount++
-
-	proFeaturesJSON, err := json.Marshal(proFeatures)
-	if err != nil {
-		return err.Error(), http.StatusInternalServerError
-	}
 
 	_, err = h.Datastore.PutMulti(
 		h.Context,
@@ -968,9 +965,8 @@ func preAuth(h HandlerArgs) (interface{}, int) {
 		[]interface{}{
 			customer,
 			&PreAuthorizedCyph{
-				ID:          id,
-				ProFeatures: proFeaturesJSON,
-				Timestamp:   customer.LastSession,
+				ID:        id,
+				Timestamp: customer.LastSession,
 			},
 		},
 	)
@@ -988,11 +984,6 @@ func proUnlock(h HandlerArgs) (interface{}, int) {
 	customer, _, err := getCustomer(h)
 	if err != nil {
 		return err.Error(), http.StatusNotFound
-	}
-
-	_, _, err = getPlanData(h, customer)
-	if err != nil {
-		return err.Error(), http.StatusInternalServerError
 	}
 
 	json, err := json.Marshal(map[string]string{
@@ -1311,7 +1302,7 @@ func rollOutWaitlistInvites(h HandlerArgs) (interface{}, int) {
 			break
 		}
 
-		_, _, _, err = generateInvite(betaSignup.Email, betaSignup.Name, "", "", []string{""}, []string{""}, "", "", false, false)
+		_, _, _, err = generateInvite(betaSignup.Email, betaSignup.Name, "", "", []string{""}, []string{""}, []string{}, "", "", false, false, false)
 
 		if err != nil {
 			log.Printf("Failed to invite %s in rollOutWaitlistInvites: %v", betaSignup.Email, err)
@@ -1380,6 +1371,151 @@ func signUp(h HandlerArgs) (interface{}, int) {
 		"")
 
 	return response, http.StatusOK
+}
+
+/* TODO: Factor out common logic with checkout */
+func stripeSession(h HandlerArgs) (interface{}, int) {
+	partnerTransactionID := sanitize(h.Request.PostFormValue("partnerTransactionID"))
+	userToken := sanitize(h.Request.PostFormValue("userToken"))
+
+	/*
+		timestamp := getTimestamp()
+
+		url, err := getURL(h.Request.PostFormValue("url"))
+		if err != nil {
+			return err.Error(), http.StatusBadRequest
+		}
+
+		namespace, err := getNamespace(h.Request.PostFormValue("namespace"))
+		if err != nil {
+			return err.Error(), http.StatusBadRequest
+		}
+	*/
+
+	username := ""
+	if userToken != "" {
+		username, _ = getUsername(userToken)
+		if username == "" {
+			return "invalid or expired token", http.StatusBadRequest
+		}
+	}
+
+	planID := ""
+	if category, err := strconv.ParseInt(sanitize(h.Request.PostFormValue("category")), 10, 64); err == nil {
+		if item, err := strconv.ParseInt(sanitize(h.Request.PostFormValue("item")), 10, 64); err == nil {
+			planID = strconv.FormatInt(category, 10) + "-" + strconv.FormatInt(item, 10)
+		}
+	}
+	plan, hasPlan := plans[planID]
+	if !hasPlan {
+		return "invalid plan", http.StatusTeapot
+	}
+
+	amountString := sanitize(h.Request.PostFormValue("amount"))
+	amount, err := strconv.ParseInt(amountString, 10, 64)
+	if err != nil {
+		return err.Error(), http.StatusTeapot
+	}
+	if amount < 100 {
+		return "invalid amount", http.StatusTeapot
+	}
+
+	interval := ""
+	if plan.SubscriptionType == "monthly" {
+		interval = "month"
+	} else if plan.SubscriptionType == "annual" {
+		interval = "year"
+	}
+
+	mode := stripe.CheckoutSessionModePayment
+	var recurring *stripe.CheckoutSessionLineItemPriceDataRecurringParams
+
+	if interval != "" {
+		mode = stripe.CheckoutSessionModeSubscription
+		recurring = &stripe.CheckoutSessionLineItemPriceDataRecurringParams{
+			Interval: stripe.String(interval),
+		}
+	}
+
+	price := plan.Price
+	priceDelta := amount - price
+
+	priceDeltaFloor := int64(0)
+	if partnerTransactionID != "" {
+		priceDeltaFloor = -price * config.PartnerDiscountRate / 100
+	}
+
+	if priceDelta < priceDeltaFloor {
+		return "insufficient payment", http.StatusTeapot
+	}
+
+	adjustableQuantity := &stripe.CheckoutSessionLineItemAdjustableQuantityParams{
+		Enabled: stripe.Bool(true),
+	}
+	quantity := stripe.Int64(1)
+	if plan.MaxUsers > 0 {
+		adjustableQuantity.Maximum = stripe.Int64(plan.MaxUsers)
+	}
+	if plan.MinUsers > 0 {
+		adjustableQuantity.Minimum = stripe.Int64(plan.MinUsers)
+		quantity = adjustableQuantity.Minimum
+	}
+
+	params := &stripe.CheckoutSessionParams{
+		CancelURL: stripe.String(websiteURL),
+		LineItems: []*stripe.CheckoutSessionLineItemParams{
+			&stripe.CheckoutSessionLineItemParams{
+				AdjustableQuantity: adjustableQuantity,
+				PriceData: &stripe.CheckoutSessionLineItemPriceDataParams{
+					Currency: stripe.String(string(stripe.CurrencyUSD)),
+					ProductData: &stripe.CheckoutSessionLineItemPriceDataProductDataParams{
+						Name: stripe.String("Cyph " + plan.Name),
+					},
+					Recurring:  recurring,
+					UnitAmount: stripe.Int64(amount),
+				},
+				Quantity: quantity,
+			},
+		},
+		Mode: stripe.String(string(mode)),
+		PaymentMethodTypes: stripe.StringSlice([]string{
+			"card",
+		}),
+		SuccessURL: stripe.String(websiteURL + "/checkout/success"),
+	}
+
+	session, err := stripeSessionAPI.New(params)
+	if err != nil {
+		log.Println(fmt.Errorf("stripeSessionAPI.New: %v", err))
+		return err.Error(), http.StatusInternalServerError
+	}
+
+	return session.ID, http.StatusOK
+}
+
+/* TODO: Factor out common logic with checkout */
+func stripeWebhook(h HandlerArgs) (interface{}, int) {
+	requestBodyBytes, err := ioutil.ReadAll(h.Request.Body)
+	if err != nil {
+		log.Println(fmt.Errorf("stripeWebHookBadPayload: %v", err))
+		return err.Error(), http.StatusInternalServerError
+	}
+
+	/* Temporary, for testing */
+	sendMail(
+		"balls@cyph.com",
+		"Stripe Webhook Test: "+string(time.Now().UnixNano()),
+		string(requestBodyBytes),
+		"",
+	)
+
+	event := stripe.Event{}
+	if err := json.Unmarshal(requestBodyBytes, &event); err != nil {
+		log.Println(fmt.Errorf("stripeWebHookBadJSON: %v", err))
+		return err.Error(), http.StatusInternalServerError
+	}
+
+	return event, http.StatusOK
 }
 
 func warmUpCloudFunctions(h HandlerArgs) (interface{}, int) {

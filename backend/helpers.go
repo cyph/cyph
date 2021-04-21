@@ -65,7 +65,26 @@ var methods = struct {
 	"CONNECT",
 }
 
-var apiNamespace = strings.Split(strings.Split(config.RootURL, "/")[2], ":")[0]
+var appURL = func() string {
+	if appengine.IsDevAppServer() {
+		return "http://localhost:42002"
+	}
+	return os.Getenv("APP_URL")
+}()
+var backendURL = func() string {
+	if appengine.IsDevAppServer() {
+		return "http://localhost:42000"
+	}
+	return os.Getenv("BACKEND_URL")
+}()
+var websiteURL = func() string {
+	if appengine.IsDevAppServer() {
+		return "http://localhost:43000"
+	}
+	return os.Getenv("WEBSITE_URL")
+}()
+
+var apiNamespace = strings.Split(strings.Split(backendURL, "/")[2], ":")[0]
 
 var router = mux.NewRouter()
 var isRouterActive = false
@@ -109,6 +128,8 @@ var firebaseFunctionURL = "https://" +
 
 var twilioSID = os.Getenv("TWILIO_SID")
 var twilioAuthToken = os.Getenv("TWILIO_AUTH_TOKEN")
+
+var stripeSecretKey = os.Getenv("STRIPE_SECRET_KEY")
 
 var braintreeMerchantID = os.Getenv("BRAINTREE_MERCHANT_ID")
 var braintreePublicKey = os.Getenv("BRAINTREE_PUBLIC_KEY")
@@ -202,6 +223,21 @@ var packages = func() map[string]PackageData {
 	}
 
 	var o map[string]PackageData
+	err = json.Unmarshal(b, &o)
+	if err != nil {
+		panic(err)
+	}
+
+	return o
+}()
+
+var plans = func() map[string]Plan {
+	b, err := ioutil.ReadFile("plans.json")
+	if err != nil {
+		panic(err)
+	}
+
+	var o map[string]Plan
 	err = json.Unmarshal(b, &o)
 	if err != nil {
 		panic(err)
@@ -319,17 +355,6 @@ func geolocate(h HandlerArgs) (string, string, string, string, string, string, s
 	}
 
 	return continent, continentCode, country, countryCode, city, postalCode, analID, firebaseRegion
-}
-
-func getProFeaturesFromRequest(h HandlerArgs) map[string]bool {
-	return map[string]bool{
-		"disableP2P":     sanitize(h.Request.PostFormValue("proFeatures[disableP2P]")) == "true",
-		"modestBranding": sanitize(h.Request.PostFormValue("proFeatures[modestBranding]")) == "true",
-		"nativeCrypto":   sanitize(h.Request.PostFormValue("proFeatures[nativeCrypto]")) == "true",
-		"telehealth":     sanitize(h.Request.PostFormValue("proFeatures[telehealth]")) == "true",
-		"video":          sanitize(h.Request.PostFormValue("proFeatures[video]")) == "true",
-		"voice":          sanitize(h.Request.PostFormValue("proFeatures[voice]")) == "true",
-	}
 }
 
 func getSignupFromRequest(h HandlerArgs) (BetaSignup, map[string]interface{}) {
@@ -533,7 +558,50 @@ func braintreeInit(h HandlerArgs) *braintree.Braintree {
 	return bt
 }
 
-func downgradeAccountHelper(userToken string, removeAppStoreReceiptRef bool) (string, string, error) {
+func getStripeData(responseBody map[string]interface{}) *StripeData {
+	stripeData := &StripeData{}
+
+	if responseBodyStripe, ok := responseBody["stripe"]; ok {
+		switch responseBodyStripeData := responseBodyStripe.(type) {
+		case map[string]interface{}:
+			if data, ok := responseBodyStripeData["admin"]; ok {
+				switch v := data.(type) {
+				case bool:
+					stripeData.Admin = v
+				}
+			}
+
+			if data, ok := responseBodyStripeData["customerID"]; ok {
+				switch v := data.(type) {
+				case string:
+					stripeData.CustomerID = v
+				}
+			}
+
+			if data, ok := responseBodyStripeData["subscriptionID"]; ok {
+				switch v := data.(type) {
+				case string:
+					stripeData.SubscriptionID = v
+				}
+			}
+
+			if data, ok := responseBodyStripeData["subscriptionItemID"]; ok {
+				switch v := data.(type) {
+				case string:
+					stripeData.SubscriptionItemID = v
+				}
+			}
+		}
+	}
+
+	if stripeData.CustomerID == "" || stripeData.SubscriptionID == "" || stripeData.SubscriptionItemID == "" {
+		return nil
+	}
+
+	return stripeData
+}
+
+func downgradeAccountHelper(userToken string, removeAppStoreReceiptRef bool) (string, string, *StripeData, error) {
 	body, _ := json.Marshal(map[string]interface{}{
 		"namespace":                "cyph.ws",
 		"removeAppStoreReceiptRef": removeAppStoreReceiptRef,
@@ -553,18 +621,18 @@ func downgradeAccountHelper(userToken string, removeAppStoreReceiptRef bool) (st
 
 	resp, err := client.Do(req)
 	if err != nil {
-		return "", "", err
+		return "", "", nil, err
 	}
 
 	responseBodyBytes, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
-		return "", "", err
+		return "", "", nil, err
 	}
 
 	var responseBody map[string]interface{}
 	err = json.Unmarshal(responseBodyBytes, &responseBody)
 	if err != nil {
-		return "", "", err
+		return "", "", nil, err
 	}
 
 	appStoreReceipt := ""
@@ -583,22 +651,26 @@ func downgradeAccountHelper(userToken string, removeAppStoreReceiptRef bool) (st
 		}
 	}
 
-	return appStoreReceipt, braintreeSubscriptionID, nil
+	stripeData := getStripeData(responseBody)
+
+	return appStoreReceipt, braintreeSubscriptionID, stripeData, nil
 }
 
-func generateInvite(email, name, plan, appStoreReceipt string, braintreeIDs, braintreeSubscriptionIDs []string, inviteCode, username string, giftPack, purchased bool) (string, string, string, error) {
+func generateInvite(email, name, plan, appStoreReceipt string, customerIDs, subscriptionIDs, subscriptionItemIDs []string, inviteCode, username string, giftPack, purchased, useStripe bool) (string, string, string, error) {
 	body, _ := json.Marshal(map[string]interface{}{
-		"appStoreReceipt":          appStoreReceipt,
-		"braintreeIDs":             strings.Join(braintreeIDs, "\n"),
-		"braintreeSubscriptionIDs": strings.Join(braintreeSubscriptionIDs, "\n"),
-		"email":                    email,
-		"giftPack":                 giftPack,
-		"inviteCode":               inviteCode,
-		"name":                     name,
-		"namespace":                "cyph.ws",
-		"plan":                     plan,
-		"purchased":                purchased,
-		"username":                 username,
+		"appStoreReceipt":     appStoreReceipt,
+		"customerIDs":         strings.Join(customerIDs, "\n"),
+		"email":               email,
+		"giftPack":            giftPack,
+		"inviteCode":          inviteCode,
+		"name":                name,
+		"namespace":           "cyph.ws",
+		"plan":                plan,
+		"purchased":           purchased,
+		"subscriptionIDs":     strings.Join(subscriptionIDs, "\n"),
+		"subscriptionItemIDs": strings.Join(subscriptionItemIDs, "\n"),
+		"username":            username,
+		"useStripe":           useStripe,
 	})
 
 	client := &http.Client{}
@@ -635,11 +707,11 @@ func generateInvite(email, name, plan, appStoreReceipt string, braintreeIDs, bra
 		}
 	}
 
-	oldBraintreeSubscriptionID := ""
-	if data, ok := responseBody["oldBraintreeSubscriptionID"]; ok {
+	oldSubscriptionID := ""
+	if data, ok := responseBody["oldSubscriptionID"]; ok {
 		switch v := data.(type) {
 		case string:
-			oldBraintreeSubscriptionID = v
+			oldSubscriptionID = v
 		}
 	}
 
@@ -651,10 +723,10 @@ func generateInvite(email, name, plan, appStoreReceipt string, braintreeIDs, bra
 		}
 	}
 
-	return inviteCode, oldBraintreeSubscriptionID, welcomeLetter, nil
+	return inviteCode, oldSubscriptionID, welcomeLetter, nil
 }
 
-func getBraintreeSubscriptionID(userToken string) (string, string, int64, error) {
+func getSubscriptionData(userToken string) (string, string, int64, *StripeData, error) {
 	body, _ := json.Marshal(map[string]interface{}{
 		"namespace": "cyph.ws",
 		"userToken": userToken,
@@ -664,7 +736,7 @@ func getBraintreeSubscriptionID(userToken string) (string, string, int64, error)
 
 	req, _ := http.NewRequest(
 		methods.POST,
-		firebaseFunctionURL+"getBraintreeSubscriptionID",
+		firebaseFunctionURL+"getSubscriptionData",
 		bytes.NewBuffer(body),
 	)
 
@@ -673,18 +745,18 @@ func getBraintreeSubscriptionID(userToken string) (string, string, int64, error)
 
 	resp, err := client.Do(req)
 	if err != nil {
-		return "", "", 0, err
+		return "", "", 0, nil, err
 	}
 
 	responseBodyBytes, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
-		return "", "", 0, err
+		return "", "", 0, nil, err
 	}
 
 	var responseBody map[string]interface{}
 	err = json.Unmarshal(responseBodyBytes, &responseBody)
 	if err != nil {
-		return "", "", 0, err
+		return "", "", 0, nil, err
 	}
 
 	appStoreReceipt := ""
@@ -711,7 +783,9 @@ func getBraintreeSubscriptionID(userToken string) (string, string, int64, error)
 		}
 	}
 
-	return appStoreReceipt, braintreeSubscriptionID, planTrialEnd, nil
+	stripeData := getStripeData(responseBody)
+
+	return appStoreReceipt, braintreeSubscriptionID, planTrialEnd, stripeData, nil
 }
 
 func getUsername(userToken string) (string, error) {
@@ -1251,69 +1325,4 @@ func sendMail(to string, subject string, text string, html string) {
 	if err != nil {
 		log.Println(fmt.Errorf("Failed to send email: %v", err))
 	}
-}
-
-func getPlanData(h HandlerArgs, customer *Customer) (map[string]bool, int64, error) {
-	proFeatures := map[string]bool{}
-	sessionCountLimit := int64(0)
-	plans := []Plan{}
-
-	if customer.BraintreeID != "" {
-		bt := braintreeInit(h)
-		braintreeCustomer, err := bt.Customer().Find(h.Context, customer.BraintreeID)
-
-		if err != nil {
-			return proFeatures, sessionCountLimit, err
-		}
-		subscriptions := []*braintree.Subscription{}
-
-		if braintreeCustomer.CreditCards != nil {
-			for i := range braintreeCustomer.CreditCards.CreditCard {
-				creditCard := braintreeCustomer.CreditCards.CreditCard[i]
-				for j := range creditCard.Subscriptions.Subscription {
-					subscriptions = append(subscriptions, creditCard.Subscriptions.Subscription[j])
-				}
-			}
-		}
-
-		if braintreeCustomer.PayPalAccounts != nil {
-			for i := range braintreeCustomer.PayPalAccounts.PayPalAccount {
-				payPalAccount := braintreeCustomer.PayPalAccounts.PayPalAccount[i]
-				for j := range payPalAccount.Subscriptions.Subscription {
-					subscriptions = append(subscriptions, payPalAccount.Subscriptions.Subscription[j])
-				}
-			}
-		}
-
-		for i := range subscriptions {
-			subscription := subscriptions[i]
-
-			if subscription.Status != braintree.SubscriptionStatusActive {
-				continue
-			}
-
-			plan, ok := config.Plans[subscription.PlanId]
-			if !ok {
-				continue
-			}
-
-			plans = append(plans, plan)
-		}
-	}
-
-	for i := range plans {
-		plan := plans[i]
-
-		for feature, isAvailable := range plan.ProFeatures {
-			if isAvailable {
-				proFeatures[feature] = true
-			}
-		}
-
-		if plan.SessionCountLimit > sessionCountLimit || plan.SessionCountLimit == -1 {
-			sessionCountLimit = plan.SessionCountLimit
-		}
-	}
-
-	return proFeatures, sessionCountLimit, nil
 }

@@ -1,1 +1,1 @@
-export * from './enums';
+export * from './iin-app-purchase.component';

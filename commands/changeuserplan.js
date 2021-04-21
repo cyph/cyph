@@ -6,6 +6,7 @@ const {isCLI} = getMeta(import.meta);
 import {configService as config, proto, util} from '@cyph/sdk';
 import {initDatabaseService} from '../modules/database-service.js';
 import {sendMail} from './email.js';
+import {cancelSubscriptions} from './subscriptions.js';
 
 const {CyphPlan, CyphPlans, CyphPlanTypes} = proto;
 const {readableByteLength, normalize, readableID, titleize} = util;
@@ -15,8 +16,7 @@ export const changeUserPlan = async (
 	username,
 	plan,
 	trialMonths,
-	braintreeID,
-	braintreeSubscriptionID,
+	paymentInfo,
 	namespace
 ) => {
 	if (typeof projectId !== 'string' || projectId.indexOf('cyph') !== 0) {
@@ -37,9 +37,26 @@ export const changeUserPlan = async (
 
 	const namespacePath = namespace.replace(/\./g, '_');
 
+	paymentInfo =
+		paymentInfo && typeof paymentInfo === 'string' ?
+			JSON.parse(paymentInfo) :
+			paymentInfo;
+	paymentInfo =
+		paymentInfo &&
+		typeof paymentInfo === 'object' &&
+		Object.keys(paymentInfo).length > 0 ?
+			paymentInfo :
+			undefined;
+
 	trialMonths =
-		trialMonths && !braintreeID && !braintreeSubscriptionID ?
-			parseInt(trialMonths, 10) :
+		!trialMonths || paymentInfo ?
+			undefined :
+		typeof trialMonths === 'number' ?
+			trialMonths :
+			parseInt(trialMonths, 10);
+	trialMonths =
+		typeof trialMonths === 'number' && trialMonths > 0 ?
+			trialMonths :
 			undefined;
 
 	username = normalize(username);
@@ -55,38 +72,8 @@ export const changeUserPlan = async (
 
 	const cyphPlan = CyphPlans[plan];
 
-	const [appStoreReceipt, email, name, oldPlan] = await Promise.all([
-		database
-			.ref(`${namespacePath}/users/${username}/internal/appStoreReceipt`)
-			.once('value')
-			.then(o => o.val()),
-		database
-			.ref(`${namespacePath}/users/${username}/internal/email`)
-			.once('value')
-			.then(o => o.val()),
-		database
-			.ref(`${namespacePath}/users/${username}/internal/name`)
-			.once('value')
-			.then(o => o.val()),
-		getItem(namespace, `users/${username}/plan`, CyphPlan)
-			.then(o => o.plan)
-			.catch(() => CyphPlans.Free)
-	]);
-
-	if (cyphPlan === oldPlan) {
-		throw new Error(`User already has plan "${plan}".`);
-	}
-
-	if (appStoreReceipt) {
-		throw new Error(`Cancelling App Store subscription unsupported.`);
-	}
-
-	const planConfig = config.planConfig[cyphPlan];
-	const oldPlanConfig = config.planConfig[oldPlan];
-	const isUpgrade = planConfig.rank > oldPlanConfig.rank;
-
-	const planTrialEndRef = database.ref(
-		`${namespacePath}/users/${username}/internal/planTrialEnd`
+	const appStoreReceiptRef = database.ref(
+		`${namespacePath}/users/${username}/internal/appStoreReceipt`
 	);
 
 	const braintreeIDRef = database.ref(
@@ -97,14 +84,93 @@ export const changeUserPlan = async (
 		`${namespacePath}/users/${username}/internal/braintreeSubscriptionID`
 	);
 
+	const stripeRef = database.ref(
+		`${namespacePath}/users/${username}/internal/stripe`
+	);
+
+	const [email, name, oldPlan, oldPaymentInfo] = await Promise.all([
+		database
+			.ref(`${namespacePath}/users/${username}/internal/email`)
+			.once('value')
+			.then(o => o.val()),
+		database
+			.ref(`${namespacePath}/users/${username}/internal/name`)
+			.once('value')
+			.then(o => o.val()),
+		getItem(namespace, `users/${username}/plan`, CyphPlan)
+			.then(o => o.plan)
+			.catch(() => CyphPlans.Free),
+		Promise.all([
+			appStoreReceiptRef.once('value').then(o => o.val()),
+			braintreeIDRef.once('value').then(o => o.val()),
+			braintreeSubscriptionIDRef.once('value').then(o => o.val()),
+			stripeRef.once('value').then(o => o.val())
+		]).then(
+			([
+				appStoreReceipt,
+				braintreeID,
+				braintreeSubscriptionID,
+				stripe
+			]) => ({
+				appStoreReceipt,
+				braintreeID,
+				braintreeSubscriptionID,
+				stripe
+			})
+		)
+	]);
+
+	if (cyphPlan === oldPlan) {
+		throw new Error(`User already has plan "${plan}".`);
+	}
+
+	await cancelSubscriptions({
+		apple:
+			oldPaymentInfo.appStoreReceipt &&
+			oldPaymentInfo.appStoreReceipt !== paymentInfo.appStoreReceipt ?
+				oldPaymentInfo.appStoreReceipt :
+				undefined,
+		braintree:
+			oldPaymentInfo.braintreeSubscriptionID &&
+			oldPaymentInfo.braintreeSubscriptionID !==
+				paymentInfo.braintreeSubscriptionID ?
+				oldPaymentInfo.braintreeSubscriptionID :
+				undefined,
+		stripe:
+			oldPaymentInfo.stripe &&
+			oldPaymentInfo.stripe.subscriptionID &&
+			oldPaymentInfo.stripe.subscriptionID !==
+				(paymentInfo.stripe || {}).subscriptionID ?
+				oldPaymentInfo.stripe.subscriptionID :
+				undefined
+	});
+
+	const planConfig = config.planConfig[cyphPlan];
+	const oldPlanConfig = config.planConfig[oldPlan];
+	const isUpgrade = planConfig.rank > oldPlanConfig.rank;
+
+	const planTrialEndRef = database.ref(
+		`${namespacePath}/users/${username}/internal/planTrialEnd`
+	);
+
 	await Promise.all([
 		setItem(namespace, `users/${username}/plan`, CyphPlan, {
 			plan: cyphPlan
 		}),
-		braintreeID ? braintreeIDRef.set(braintreeID) : braintreeIDRef.remove(),
-		braintreeSubscriptionID ?
-			braintreeSubscriptionIDRef.set(braintreeSubscriptionID) :
+		paymentInfo.appStoreReceipt ?
+			appStoreReceiptRef.set(paymentInfo.appStoreReceipt) :
+			appStoreReceiptRef.remove(),
+		paymentInfo.braintreeID ?
+			braintreeIDRef.set(paymentInfo.braintreeID) :
+			braintreeIDRef.remove(),
+		paymentInfo.braintreeSubscriptionID ?
+			braintreeSubscriptionIDRef.set(
+				paymentInfo.braintreeSubscriptionID
+			) :
 			braintreeSubscriptionIDRef.remove(),
+		paymentInfo.stripe ?
+			stripeRef.set(paymentInfo.stripe) :
+			stripeRef.remove(),
 		database
 			.ref(`${namespacePath}/users/${username}/internal/planTrialEnd`)
 			.remove(),
@@ -210,26 +276,23 @@ if (isCLI) {
 			username,
 			plan,
 			trialMonths,
-			braintreeID,
-			braintreeSubscriptionID,
+			paymentInfo,
 			namespace
 		} of process.argv[3] === '--users' ?
 			JSON.parse(process.argv[4]).map(username => ({
 				username,
 				plan: process.argv[5],
 				trialMonths: process.argv[6],
-				braintreeID: process.argv[7],
-				braintreeSubscriptionID: process.argv[8],
-				namespace: process.argv[9]
+				paymentInfo: process.argv[7],
+				namespace: process.argv[8]
 			})) :
 			[
 				{
 					username: process.argv[3],
 					plan: process.argv[4],
 					trialMonths: process.argv[5],
-					braintreeID: process.argv[6],
-					braintreeSubscriptionID: process.argv[7],
-					namespace: process.argv[8]
+					paymentInfo: process.argv[6],
+					namespace: process.argv[7]
 				}
 			]) {
 			console.log(
@@ -238,8 +301,7 @@ if (isCLI) {
 					username,
 					plan,
 					trialMonths,
-					braintreeID,
-					braintreeSubscriptionID,
+					paymentInfo,
 					namespace
 				)}`
 			);

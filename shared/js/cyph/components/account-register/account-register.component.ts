@@ -19,7 +19,6 @@ import {filter, map, take} from 'rxjs/operators';
 import {xkcdPassphrase} from 'xkcd-passphrase';
 import {usernameMask} from '../../account';
 import {BaseProvider} from '../../base-provider';
-import {SubscriptionTypes} from '../../checkout';
 import {AccountNewDeviceActivationComponent} from '../../components/account-new-device-activation';
 import {InAppPurchaseComponent} from '../../components/in-app-purchase';
 import {emailPattern, emailRegex} from '../../email-pattern';
@@ -250,9 +249,6 @@ export class AccountRegisterComponent extends BaseProvider
 	@Output() public readonly submitPIN = new EventEmitter<
 		{isCustom: boolean; value: string} | undefined
 	>();
-
-	/** @see SubscriptionTypes */
-	public readonly subscriptionTypes = SubscriptionTypes;
 
 	/** Form tab index. */
 	public readonly tabIndex = new BehaviorSubject<number>(0);

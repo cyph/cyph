@@ -59,7 +59,8 @@ export const register = onCall(
 			inviterUsername,
 			keybaseUsername,
 			planTrialEnd,
-			reservedUsername
+			reservedUsername,
+			stripe
 		} = inviteData;
 		const plan =
 			inviteData.plan in CyphPlans ? inviteData.plan : CyphPlans.Free;
@@ -166,6 +167,11 @@ export const register = onCall(
 						`${namespace}/users/${username}/internal/braintreeSubscriptionID`
 					)
 					.set(braintreeSubscriptionID),
+			!stripe ?
+				undefined :
+				database
+					.ref(`${namespace}/users/${username}/internal/stripe`)
+					.set(stripe),
 			!inviterUsername ?
 				undefined :
 				removeItem(

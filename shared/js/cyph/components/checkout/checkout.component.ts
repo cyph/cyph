@@ -12,13 +12,13 @@ import {
 	OnInit,
 	Output
 } from '@angular/core';
+import {loadStripe} from '@stripe/stripe-js/pure';
 import * as bitPay from 'bitpay.js';
 import * as braintreeDropIn from 'braintree-web-drop-in';
 import memoize from 'lodash-es/memoize';
 import {BehaviorSubject, of} from 'rxjs';
 import {map} from 'rxjs/operators';
 import {BaseProvider} from '../../base-provider';
-import {SubscriptionTypes} from '../../checkout';
 import {MaybePromise} from '../../maybe-promise-type';
 import {AffiliateService} from '../../services/affiliate.service';
 import {AnalyticsService} from '../../services/analytics.service';
@@ -53,19 +53,19 @@ const EF: any | undefined =
 })
 export class CheckoutComponent extends BaseProvider
 	implements AfterViewInit, OnChanges, OnInit {
-	/** @ignore */
-	private readonly authorization = memoize(async () =>
-		request({
-			retries: 5,
-			url: this.envService.baseUrl + 'braintree'
-		})
-	);
-
 	/** BitPay invoice ID. */
 	private bitPayInvoiceID?: Promise<string>;
 
 	/* Braintree instance. */
 	private braintreeInstance: any;
+
+	/** Braintree auth token. */
+	private readonly braintreeToken = memoize(async () =>
+		request({
+			retries: 5,
+			url: this.envService.baseUrl + 'braintree/token'
+		})
+	);
 
 	/** Partner program transaction ID. */
 	private partnerTransactionID?: Promise<string | undefined>;
@@ -85,6 +85,9 @@ export class CheckoutComponent extends BaseProvider
 
 	/** Item category ID number. */
 	@Input() public category?: number;
+
+	/** Checkout payment processor. */
+	@Input() public checkoutProvider: 'braintree' | 'stripe' = 'braintree';
 
 	/** Company. */
 	@Input() public company?: string;
@@ -199,11 +202,8 @@ export class CheckoutComponent extends BaseProvider
 	/** Spinner to set while performing checkout. */
 	@Input() public spinner?: BehaviorSubject<boolean>;
 
-	/** @see SubscriptionTypes */
-	@Input() public subscriptionType?: SubscriptionTypes;
-
-	/** @see SubscriptionTypes */
-	public readonly subscriptionTypes = SubscriptionTypes;
+	/** Subscription type for purchase. */
+	@Input() public subscriptionType?: 'annual' | 'monthly';
 
 	/** Indicates whether checkout is complete. */
 	public readonly success = new BehaviorSubject<boolean>(false);
@@ -285,6 +285,48 @@ export class CheckoutComponent extends BaseProvider
 			return;
 		}
 
+		/* Can also handle this directly from the cyph.com JS */
+		if (this.checkoutProvider === 'stripe') {
+			const [stripe, stripeToken] = await Promise.all([
+				loadStripe(
+					this.envService.environment.production ?
+						this.configService.stripe.apiKeys.prod :
+						this.configService.stripe.apiKeys.test
+				),
+				Promise.all([this.partnerTransactionID, this.userToken]).then(
+					async ([partnerTransactionID, userToken]) =>
+						request({
+							data: {
+								amount: Math.floor(this.amount * 100),
+								url: location.toString(),
+								...(this.category !== undefined ?
+									{category: this.category} :
+									{}),
+								...(this.item !== undefined ?
+									{item: this.item} :
+									{}),
+								...(this.namespace !== undefined ?
+									{namespace: this.namespace} :
+									{}),
+								...(partnerTransactionID ?
+									{partnerTransactionID} :
+									{}),
+								...(userToken !== undefined ? {userToken} : {})
+							},
+							method: 'POST',
+							retries: 5,
+							url: this.envService.baseUrl + 'stripe/session'
+						})
+				)
+			]);
+
+			if (stripe && stripeToken) {
+				await stripe.redirectToCheckout({sessionId: stripeToken});
+			}
+
+			return;
+		}
+
 		await sleep(0);
 
 		this.complete.next(false);
@@ -306,7 +348,7 @@ export class CheckoutComponent extends BaseProvider
 						}
 					}
 				},
-				authorization: await this.authorization(),
+				authorization: await this.braintreeToken(),
 				card: {
 					overrides: {
 						fields: {
@@ -537,14 +579,10 @@ export class CheckoutComponent extends BaseProvider
 			this.perUser = <any> this.perUser === 'true';
 		}
 		if (
-			/* eslint-disable-next-line @typescript-eslint/tslint/config */
-			typeof this.subscriptionType === 'string' &&
-			this.subscriptionType
+			<any> this.subscriptionType !== 'annual' &&
+			<any> this.subscriptionType !== 'monthly'
 		) {
-			this.subscriptionType = parseFloat(this.subscriptionType);
-			if (isNaN(this.subscriptionType)) {
-				this.subscriptionType = undefined;
-			}
+			this.subscriptionType = undefined;
 		}
 
 		this.updateUserOptions();
@@ -636,7 +674,7 @@ export class CheckoutComponent extends BaseProvider
 										{
 											subscription:
 												this.subscriptionType ===
-												SubscriptionTypes.annual ?
+												'annual' ?
 													this.stringsService
 														.checkoutSubscriptionAnnual :
 													this.stringsService
@@ -747,7 +785,6 @@ export class CheckoutComponent extends BaseProvider
 									0)
 					),
 					creditCard,
-					subscription: this.subscriptionType !== undefined,
 					subscriptionCount:
 						this.subscriptionType === undefined ?
 							0 :
@@ -787,7 +824,7 @@ export class CheckoutComponent extends BaseProvider
 					...(userToken !== undefined ? {userToken} : {})
 				},
 				method: 'POST',
-				url: this.envService.baseUrl + 'braintree'
+				url: this.envService.baseUrl + 'checkout'
 			});
 
 			this.analyticsService

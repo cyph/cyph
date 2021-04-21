@@ -33,6 +33,7 @@ type Customer struct {
 	APIKey          string
 	AppStoreReceipt string `datastore:",noindex"`
 	BraintreeID     string
+	StripeData      StripeData
 	Company         string
 	Email           string
 	LastSession     int64
@@ -74,20 +75,21 @@ type PackageData struct {
 	Uptime    IPFSGatewayUptimeData
 }
 
-// Plan : Braintree plan
+// Plan : Subscription plan
 type Plan struct {
-	AccountsPlan      string
-	GiftPack          bool
-	Price             int64
-	ProFeatures       map[string]bool
-	SessionCountLimit int64
+	AccountsPlan     string
+	GiftPack         bool
+	MaxUsers         int64
+	MinUsers         int64
+	Price            int64
+	Name             string
+	SubscriptionType string
 }
 
 // PreAuthorizedCyph : Representation of an approved usage of the API
 type PreAuthorizedCyph struct {
-	ID          string
-	ProFeatures []byte
-	Timestamp   int64
+	ID        string
+	Timestamp int64
 }
 
 // RedoxAuth : Current Redox auth data
@@ -113,6 +115,14 @@ type RedoxRequestLog struct {
 	Response     string
 	Timestamp    int64
 	Username     string
+}
+
+// StripeData : Stripe subscription data
+type StripeData struct {
+	Admin              bool
+	CustomerID         string
+	SubscriptionID     string
+	SubscriptionItemID string
 }
 
 var empty = struct{}{}
@@ -158,8 +168,6 @@ var config = struct {
 	PartnerConversionURL          string
 	PartnerDiscountRate           int64
 	PlanAppleIDs                  map[string]string
-	Plans                         map[string]Plan
-	RootURL                       string
 }{
 	AllowedCyphIDs: regexp.MustCompile("[A-Za-z0-9_-]+$"),
 
@@ -222,9 +230,9 @@ var config = struct {
 		"checkInviteCode",
 		"downgradeAccount",
 		"generateInvite",
-		"getBraintreeSubscriptionID",
 		"getCastleSessionID",
 		"getReactions",
+		"getSubscriptionData",
 		"getUserToken",
 		"openUserToken",
 		"register",
@@ -332,491 +340,4 @@ var config = struct {
 	PlanAppleIDs: map[string]string{
 		"MonthlyPlatinum": "8-4",
 	},
-
-	Plans: map[string]Plan{
-		"0-0": Plan{
-			ProFeatures: map[string]bool{
-				"disableP2P":     true,
-				"modestBranding": true,
-				"nativeCrypto":   true,
-				"telehealth":     true,
-				"video":          true,
-				"voice":          true,
-			},
-			SessionCountLimit: -1,
-		},
-		"3-3": Plan{
-			AccountsPlan: "MonthlyTelehealth",
-			ProFeatures: map[string]bool{
-				"disableP2P":     false,
-				"modestBranding": false,
-				"nativeCrypto":   false,
-				"telehealth":     true,
-				"video":          true,
-				"voice":          true,
-			},
-			SessionCountLimit: -1,
-		},
-		"3-4": Plan{
-			AccountsPlan: "AnnualTelehealth",
-			ProFeatures: map[string]bool{
-				"disableP2P":     false,
-				"modestBranding": false,
-				"nativeCrypto":   false,
-				"telehealth":     true,
-				"video":          true,
-				"voice":          true,
-			},
-			SessionCountLimit: -1,
-		},
-		"3-5": Plan{
-			AccountsPlan: "MonthlyTelehealth",
-			ProFeatures: map[string]bool{
-				"disableP2P":     false,
-				"modestBranding": false,
-				"nativeCrypto":   false,
-				"telehealth":     true,
-				"video":          true,
-				"voice":          true,
-			},
-			SessionCountLimit: -1,
-		},
-		"3-6": Plan{
-			AccountsPlan: "AnnualTelehealth",
-			ProFeatures: map[string]bool{
-				"disableP2P":     false,
-				"modestBranding": false,
-				"nativeCrypto":   false,
-				"telehealth":     true,
-				"video":          true,
-				"voice":          true,
-			},
-			SessionCountLimit: -1,
-		},
-		"3-7": Plan{
-			AccountsPlan: "MonthlyTelehealth",
-			ProFeatures: map[string]bool{
-				"disableP2P":     false,
-				"modestBranding": false,
-				"nativeCrypto":   false,
-				"telehealth":     true,
-				"video":          true,
-				"voice":          true,
-			},
-			SessionCountLimit: -1,
-		},
-		"3-8": Plan{
-			AccountsPlan: "AnnualTelehealth",
-			ProFeatures: map[string]bool{
-				"disableP2P":     false,
-				"modestBranding": false,
-				"nativeCrypto":   false,
-				"telehealth":     true,
-				"video":          true,
-				"voice":          true,
-			},
-			SessionCountLimit: -1,
-		},
-		"3-9": Plan{
-			AccountsPlan: "MonthlyTelehealth",
-			ProFeatures: map[string]bool{
-				"disableP2P":     false,
-				"modestBranding": false,
-				"nativeCrypto":   false,
-				"telehealth":     true,
-				"video":          true,
-				"voice":          true,
-			},
-			SessionCountLimit: -1,
-		},
-		"3-10": Plan{
-			AccountsPlan: "AnnualTelehealth",
-			ProFeatures: map[string]bool{
-				"disableP2P":     false,
-				"modestBranding": false,
-				"nativeCrypto":   false,
-				"telehealth":     true,
-				"video":          true,
-				"voice":          true,
-			},
-			SessionCountLimit: -1,
-		},
-		"4-1": Plan{
-			ProFeatures: map[string]bool{
-				"disableP2P":     false,
-				"modestBranding": false,
-				"nativeCrypto":   false,
-				"telehealth":     false,
-				"video":          true,
-				"voice":          true,
-			},
-			SessionCountLimit: -1,
-		},
-		"4-2": Plan{
-			ProFeatures: map[string]bool{
-				"disableP2P":     false,
-				"modestBranding": false,
-				"nativeCrypto":   false,
-				"telehealth":     false,
-				"video":          true,
-				"voice":          true,
-			},
-			SessionCountLimit: -1,
-		},
-		"4-3": Plan{
-			ProFeatures: map[string]bool{
-				"disableP2P":     false,
-				"modestBranding": false,
-				"nativeCrypto":   false,
-				"telehealth":     false,
-				"video":          true,
-				"voice":          true,
-			},
-			SessionCountLimit: -1,
-		},
-		"4-4": Plan{
-			ProFeatures: map[string]bool{
-				"disableP2P":     false,
-				"modestBranding": false,
-				"nativeCrypto":   false,
-				"telehealth":     false,
-				"video":          true,
-				"voice":          true,
-			},
-			SessionCountLimit: -1,
-		},
-		"5-1": Plan{
-			ProFeatures: map[string]bool{
-				"disableP2P":     false,
-				"modestBranding": true,
-				"nativeCrypto":   false,
-				"telehealth":     false,
-				"video":          true,
-				"voice":          true,
-			},
-			SessionCountLimit: -1,
-		},
-		"5-2": Plan{
-			ProFeatures: map[string]bool{
-				"disableP2P":     false,
-				"modestBranding": true,
-				"nativeCrypto":   false,
-				"telehealth":     false,
-				"video":          true,
-				"voice":          true,
-			},
-			SessionCountLimit: -1,
-		},
-		"8-0": Plan{
-			AccountsPlan: "MonthlyPremium",
-			ProFeatures: map[string]bool{
-				"disableP2P":     false,
-				"modestBranding": false,
-				"nativeCrypto":   false,
-				"telehealth":     false,
-				"video":          true,
-				"voice":          true,
-			},
-			SessionCountLimit: -1,
-		},
-		"8-1": Plan{
-			AccountsPlan: "AnnualPremium",
-			ProFeatures: map[string]bool{
-				"disableP2P":     false,
-				"modestBranding": false,
-				"nativeCrypto":   false,
-				"telehealth":     false,
-				"video":          true,
-				"voice":          true,
-			},
-			SessionCountLimit: -1,
-		},
-		"8-2": Plan{
-			AccountsPlan: "MonthlyTelehealth",
-			ProFeatures: map[string]bool{
-				"disableP2P":     false,
-				"modestBranding": false,
-				"nativeCrypto":   false,
-				"telehealth":     true,
-				"video":          true,
-				"voice":          true,
-			},
-			SessionCountLimit: -1,
-		},
-		"8-3": Plan{
-			AccountsPlan: "AnnualTelehealth",
-			ProFeatures: map[string]bool{
-				"disableP2P":     false,
-				"modestBranding": false,
-				"nativeCrypto":   false,
-				"telehealth":     true,
-				"video":          true,
-				"voice":          true,
-			},
-			SessionCountLimit: -1,
-		},
-		"8-4": Plan{
-			AccountsPlan: "MonthlyPlatinum",
-			ProFeatures: map[string]bool{
-				"disableP2P":     false,
-				"modestBranding": false,
-				"nativeCrypto":   false,
-				"telehealth":     false,
-				"video":          true,
-				"voice":          true,
-			},
-			SessionCountLimit: -1,
-		},
-		"8-5": Plan{
-			AccountsPlan: "AnnualPlatinum",
-			ProFeatures: map[string]bool{
-				"disableP2P":     false,
-				"modestBranding": false,
-				"nativeCrypto":   false,
-				"telehealth":     false,
-				"video":          true,
-				"voice":          true,
-			},
-			SessionCountLimit: -1,
-		},
-		"8-6": Plan{
-			AccountsPlan: "MonthlySupporter",
-			ProFeatures: map[string]bool{
-				"disableP2P":     false,
-				"modestBranding": false,
-				"nativeCrypto":   false,
-				"telehealth":     false,
-				"video":          true,
-				"voice":          true,
-			},
-			SessionCountLimit: -1,
-		},
-		"8-7": Plan{
-			AccountsPlan: "AnnualSupporter",
-			ProFeatures: map[string]bool{
-				"disableP2P":     false,
-				"modestBranding": false,
-				"nativeCrypto":   false,
-				"telehealth":     false,
-				"video":          true,
-				"voice":          true,
-			},
-			SessionCountLimit: -1,
-		},
-		"8-8": Plan{
-			AccountsPlan: "MonthlyBusiness",
-			ProFeatures: map[string]bool{
-				"disableP2P":     false,
-				"modestBranding": false,
-				"nativeCrypto":   false,
-				"telehealth":     false,
-				"video":          true,
-				"voice":          true,
-			},
-			SessionCountLimit: -1,
-		},
-		"8-9": Plan{
-			AccountsPlan: "AnnualBusiness",
-			ProFeatures: map[string]bool{
-				"disableP2P":     false,
-				"modestBranding": false,
-				"nativeCrypto":   false,
-				"telehealth":     false,
-				"video":          true,
-				"voice":          true,
-			},
-			SessionCountLimit: -1,
-		},
-		"10-1": Plan{
-			AccountsPlan: "LifetimePlatinum",
-			Price:        10000,
-			ProFeatures: map[string]bool{
-				"disableP2P":     false,
-				"modestBranding": false,
-				"nativeCrypto":   false,
-				"telehealth":     false,
-				"video":          true,
-				"voice":          true,
-			},
-			SessionCountLimit: -1,
-		},
-		"11-1": Plan{
-			AccountsPlan: "MonthlyBusiness",
-			ProFeatures: map[string]bool{
-				"disableP2P":     false,
-				"modestBranding": false,
-				"nativeCrypto":   false,
-				"telehealth":     false,
-				"video":          true,
-				"voice":          true,
-			},
-			SessionCountLimit: -1,
-		},
-		"11-2": Plan{
-			AccountsPlan: "AnnualBusiness",
-			ProFeatures: map[string]bool{
-				"disableP2P":     false,
-				"modestBranding": false,
-				"nativeCrypto":   false,
-				"telehealth":     false,
-				"video":          true,
-				"voice":          true,
-			},
-			SessionCountLimit: -1,
-		},
-		"11-3": Plan{
-			AccountsPlan: "MonthlyBusiness",
-			ProFeatures: map[string]bool{
-				"disableP2P":     false,
-				"modestBranding": false,
-				"nativeCrypto":   false,
-				"telehealth":     false,
-				"video":          true,
-				"voice":          true,
-			},
-			SessionCountLimit: -1,
-		},
-		"11-4": Plan{
-			AccountsPlan: "AnnualBusiness",
-			ProFeatures: map[string]bool{
-				"disableP2P":     false,
-				"modestBranding": false,
-				"nativeCrypto":   false,
-				"telehealth":     false,
-				"video":          true,
-				"voice":          true,
-			},
-			SessionCountLimit: -1,
-		},
-		"11-5": Plan{
-			AccountsPlan: "MonthlyBusiness",
-			ProFeatures: map[string]bool{
-				"disableP2P":     false,
-				"modestBranding": false,
-				"nativeCrypto":   false,
-				"telehealth":     false,
-				"video":          true,
-				"voice":          true,
-			},
-			SessionCountLimit: -1,
-		},
-		"11-6": Plan{
-			AccountsPlan: "AnnualBusiness",
-			ProFeatures: map[string]bool{
-				"disableP2P":     false,
-				"modestBranding": false,
-				"nativeCrypto":   false,
-				"telehealth":     false,
-				"video":          true,
-				"voice":          true,
-			},
-			SessionCountLimit: -1,
-		},
-		"11-7": Plan{
-			AccountsPlan: "MonthlyBusiness",
-			ProFeatures: map[string]bool{
-				"disableP2P":     false,
-				"modestBranding": false,
-				"nativeCrypto":   false,
-				"telehealth":     false,
-				"video":          true,
-				"voice":          true,
-			},
-			SessionCountLimit: -1,
-		},
-		"11-8": Plan{
-			AccountsPlan: "AnnualBusiness",
-			ProFeatures: map[string]bool{
-				"disableP2P":     false,
-				"modestBranding": false,
-				"nativeCrypto":   false,
-				"telehealth":     false,
-				"video":          true,
-				"voice":          true,
-			},
-			SessionCountLimit: -1,
-		},
-		"12-0": Plan{
-			AccountsPlan: "AnnualSupporter",
-			ProFeatures: map[string]bool{
-				"disableP2P":     false,
-				"modestBranding": false,
-				"nativeCrypto":   false,
-				"telehealth":     false,
-				"video":          true,
-				"voice":          true,
-			},
-			SessionCountLimit: -1,
-		},
-		"12-1": Plan{
-			AccountsPlan: "MonthlyPlatinum",
-			ProFeatures: map[string]bool{
-				"disableP2P":     false,
-				"modestBranding": false,
-				"nativeCrypto":   false,
-				"telehealth":     false,
-				"video":          true,
-				"voice":          true,
-			},
-			SessionCountLimit: -1,
-		},
-		"13-1": Plan{
-			AccountsPlan: "[{\"plan\": \"AnnualSupporter\", \"quantity\": 10, \"trialMonths\": 18}]",
-			GiftPack:     true,
-			Price:        1500,
-			ProFeatures: map[string]bool{
-				"disableP2P":     false,
-				"modestBranding": false,
-				"nativeCrypto":   false,
-				"telehealth":     false,
-				"video":          true,
-				"voice":          true,
-			},
-			SessionCountLimit: -1,
-		},
-		"13-2": Plan{
-			AccountsPlan: "[{\"plan\": \"AnnualPremium\", \"quantity\": 5, \"trialMonths\": 30}]",
-			GiftPack:     true,
-			Price:        4500,
-			ProFeatures: map[string]bool{
-				"disableP2P":     false,
-				"modestBranding": false,
-				"nativeCrypto":   false,
-				"telehealth":     false,
-				"video":          true,
-				"voice":          true,
-			},
-			SessionCountLimit: -1,
-		},
-		"13-3": Plan{
-			AccountsPlan: "[{\"plan\": \"AnnualPlatinum\", \"quantity\": 2, \"trialMonths\": 42}]",
-			GiftPack:     true,
-			Price:        15000,
-			ProFeatures: map[string]bool{
-				"disableP2P":     false,
-				"modestBranding": false,
-				"nativeCrypto":   false,
-				"telehealth":     false,
-				"video":          true,
-				"voice":          true,
-			},
-			SessionCountLimit: -1,
-		},
-		"13-4": Plan{
-			AccountsPlan: "[{\"plan\": \"AnnualSupporter\", \"quantity\": 10, \"trialMonths\": 18}, {\"plan\": \"AnnualPremium\", \"quantity\": 5, \"trialMonths\": 30}, {\"plan\": \"AnnualPlatinum\", \"quantity\": 2, \"trialMonths\": 42}]",
-			GiftPack:     true,
-			Price:        17500,
-			ProFeatures: map[string]bool{
-				"disableP2P":     false,
-				"modestBranding": false,
-				"nativeCrypto":   false,
-				"telehealth":     false,
-				"video":          true,
-				"voice":          true,
-			},
-			SessionCountLimit: -1,
-		},
-	},
-
-	RootURL: "http://localhost:42000",
 }

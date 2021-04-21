@@ -212,16 +212,10 @@
 					<span *ngIf="subscriptionType === undefined" cyphTranslate
 						>payment</span
 					>
-					<span
-						*ngIf="subscriptionType === subscriptionTypes.annual"
-						cyphTranslate
-					>
+					<span *ngIf="subscriptionType === 'annual'" cyphTranslate>
 						annual subscription
 					</span>
-					<span
-						*ngIf="subscriptionType === subscriptionTypes.monthly"
-						cyphTranslate
-					>
+					<span *ngIf="subscriptionType === 'monthly'" cyphTranslate>
 						monthly subscription
 					</span>
 				</span>

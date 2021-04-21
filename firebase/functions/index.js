@@ -53,18 +53,16 @@ exports.generateInvite = onRequest(async (...args) =>
 	(await importFunction('generate-invite')).generateInvite(...args)
 );
 
-exports.getBraintreeSubscriptionID = onRequest(async (...args) =>
-	(await importFunction(
-		'get-braintree-subscription-id'
-	)).getBraintreeSubscriptionID(...args)
-);
-
 exports.getCastleSessionID = onRequest(async (...args) =>
 	(await importFunction('get-castle-session-id')).getCastleSessionID(...args)
 );
 
 exports.getReactions = onRequest(async (...args) =>
 	(await importFunction('get-reactions')).getReactions(...args)
+);
+
+exports.getSubscriptionData = onRequest(async (...args) =>
+	(await importFunction('get-subscription-data')).getSubscriptionData(...args)
 );
 
 exports.getUserToken = onRequest(async (...args) =>

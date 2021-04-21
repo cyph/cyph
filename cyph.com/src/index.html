@@ -11,6 +11,7 @@
 			self.createCheckout = ({
 				amount = 12,
 				category = 8,
+				checkoutProvider = 'braintree',
 				individualSubscriptions = true,
 				item = 0,
 				itemName = 'Monthly Premium',
@@ -29,6 +30,7 @@
 
 				checkout.setAttribute('amount', amount);
 				checkout.setAttribute('category', category);
+				checkout.setAttribute('checkout-provider', checkoutProvider);
 				checkout.setAttribute(
 					'individual-subscriptions',
 					individualSubscriptions

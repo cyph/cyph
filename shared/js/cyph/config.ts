@@ -1,6 +1,6 @@
 /* eslint-disable max-lines */
 
-import {SubscriptionTypes} from './checkout';
+import pricingConfig from './pricing-config.json';
 import {ISessionService} from './service-interfaces/isession.service';
 
 /**
@@ -115,8 +115,10 @@ export class Config {
 				id: number;
 				items: {
 					[item: string]: {
+						accountsPlan?: string;
 						amount?: number;
 						extraUserDiscount?: number;
+						giftPack?: boolean;
 						id: number;
 						inAppPurchaseConfig?: {
 							alias: string;
@@ -130,399 +132,13 @@ export class Config {
 						name?: string;
 						offerID?: number;
 						perUser?: boolean;
-						subscriptionType?: SubscriptionTypes;
+						subscriptionType?: 'annual' | 'monthly';
 					};
 				};
 				namespace?: string;
 			};
 		};
-	} = {
-		categories: {
-			accounts: {
-				id: 8,
-				items: {
-					annualBusiness: {
-						amount: 168,
-						id: 9,
-						individualSubscriptions: true,
-						name: 'Business (Annual)',
-						perUser: true,
-						subscriptionType: SubscriptionTypes.annual
-					},
-					annualPlatinum: {
-						amount: 324,
-						id: 5,
-						individualSubscriptions: true,
-						name: 'Platinum (Annual)',
-						perUser: true,
-						subscriptionType: SubscriptionTypes.annual
-					},
-					annualPremium: {
-						amount: 108,
-						id: 1,
-						individualSubscriptions: true,
-						name: 'Premium (Annual)',
-						perUser: true,
-						subscriptionType: SubscriptionTypes.annual
-					},
-					annualSupporter: {
-						amount: 36,
-						id: 7,
-						individualSubscriptions: true,
-						name: 'Supporter (Annual)',
-						perUser: true,
-						subscriptionType: SubscriptionTypes.annual
-					},
-					annualTelehealth: {
-						amount: 420,
-						id: 3,
-						individualSubscriptions: true,
-						name: 'Telehealth (Annual)',
-						perUser: true,
-						subscriptionType: SubscriptionTypes.annual
-					},
-					monthlyBusiness: {
-						amount: 20,
-						id: 8,
-						individualSubscriptions: true,
-						name: 'Business (Monthly)',
-						perUser: true,
-						subscriptionType: SubscriptionTypes.monthly
-					},
-					monthlyPlatinum: {
-						amount: 48,
-						id: 4,
-						inAppPurchaseConfig: {
-							alias: 'Monthly Platinum',
-							amount: 69,
-							id: 'MonthlyPlatinum',
-							type: 'PAID_SUBSCRIPTION'
-						},
-						individualSubscriptions: true,
-						name: 'Platinum (Monthly)',
-						perUser: true,
-						subscriptionType: SubscriptionTypes.monthly
-					},
-					monthlyPremium: {
-						amount: 12,
-						id: 0,
-						individualSubscriptions: true,
-						name: 'Premium (Monthly)',
-						perUser: true,
-						subscriptionType: SubscriptionTypes.monthly
-					},
-					monthlySupporter: {
-						amount: 6,
-						id: 6,
-						individualSubscriptions: true,
-						name: 'Supporter (Monthly)',
-						perUser: true,
-						subscriptionType: SubscriptionTypes.annual
-					},
-					monthlyTelehealth: {
-						amount: 50,
-						id: 2,
-						individualSubscriptions: true,
-						name: 'Telehealth (Monthly)',
-						perUser: true,
-						subscriptionType: SubscriptionTypes.monthly
-					}
-				}
-			},
-			business: {
-				id: 11,
-				items: {
-					erw8ib3: {
-						amount: 108,
-						id: 8,
-						individualSubscriptions: true,
-						name: 'Business (Annual)',
-						perUser: true,
-						subscriptionType: SubscriptionTypes.annual
-					},
-					g7xxm0r: {
-						amount: 12,
-						id: 7,
-						individualSubscriptions: true,
-						name: 'Business (Monthly)',
-						perUser: true,
-						subscriptionType: SubscriptionTypes.monthly
-					},
-					largeAnnual: {
-						amount: 84,
-						id: 6,
-						individualSubscriptions: true,
-						minUsers: 50,
-						name: 'Business (Annual)',
-						perUser: true,
-						subscriptionType: SubscriptionTypes.annual
-					},
-					largeMonthly: {
-						amount: 9,
-						id: 5,
-						individualSubscriptions: true,
-						minUsers: 50,
-						name: 'Business (Monthly)',
-						perUser: true,
-						subscriptionType: SubscriptionTypes.monthly
-					},
-					mediumAnnual: {
-						amount: 108,
-						id: 4,
-						individualSubscriptions: true,
-						maxUsers: 49,
-						minUsers: 10,
-						name: 'Business (Annual)',
-						perUser: true,
-						subscriptionType: SubscriptionTypes.annual
-					},
-					mediumMonthly: {
-						amount: 12,
-						id: 3,
-						individualSubscriptions: true,
-						maxUsers: 49,
-						minUsers: 10,
-						name: 'Business (Monthly)',
-						perUser: true,
-						subscriptionType: SubscriptionTypes.monthly
-					},
-					smallAnnual: {
-						amount: 120,
-						id: 2,
-						individualSubscriptions: true,
-						maxUsers: 9,
-						name: 'Business (Annual)',
-						perUser: true,
-						subscriptionType: SubscriptionTypes.annual
-					},
-					smallMonthly: {
-						amount: 14,
-						id: 1,
-						individualSubscriptions: true,
-						maxUsers: 9,
-						name: 'Business (Monthly)',
-						perUser: true,
-						subscriptionType: SubscriptionTypes.monthly
-					}
-				}
-			},
-			donation: {
-				id: 10000,
-				items: {
-					donation: {id: 0}
-				}
-			},
-			ephemeral: {
-				id: 4,
-				items: {
-					businessAnnual: {
-						amount: 588,
-						id: 4,
-						subscriptionType: SubscriptionTypes.annual
-					},
-					businessMonthly: {
-						amount: 99,
-						id: 3,
-						subscriptionType: SubscriptionTypes.monthly
-					},
-					proAnnual: {
-						amount: 168,
-						id: 2,
-						subscriptionType: SubscriptionTypes.annual
-					},
-					proMonthly: {
-						amount: 29,
-						id: 1,
-						subscriptionType: SubscriptionTypes.monthly
-					}
-				}
-			},
-			flashSale: {
-				id: 10,
-				items: {
-					lifetimePlatinum: {
-						amount: 100,
-						id: 1,
-						name: 'Lifetime Platinum (Flash Sale)'
-					}
-				}
-			},
-			freedomSale: {
-				id: 12,
-				items: {
-					annualSupporter: {
-						amount: 17.76,
-						id: 0,
-						individualSubscriptions: true,
-						name: 'Supporter (Annual)',
-						perUser: true,
-						subscriptionType: SubscriptionTypes.annual
-					},
-					monthlyPlatinum: {
-						amount: 17.76,
-						id: 1,
-						individualSubscriptions: true,
-						name: 'Platinum (Monthly)',
-						perUser: true,
-						subscriptionType: SubscriptionTypes.monthly
-					}
-				}
-			},
-			hint: {
-				id: 5,
-				items: {
-					annual: {
-						amount: 168,
-						id: 2,
-						perUser: true,
-						subscriptionType: SubscriptionTypes.annual
-					},
-					monthly: {
-						amount: 29,
-						id: 1,
-						perUser: true,
-						subscriptionType: SubscriptionTypes.monthly
-					}
-				},
-				namespace: 'video.cyph.healthcare'
-			},
-			holidaySale: {
-				id: 13,
-				items: {
-					giftPackA: {
-						amount: 15,
-						id: 1,
-						name: '10x 1-Year Supporter Gift Pack'
-					},
-					giftPackB: {
-						amount: 45,
-						id: 2,
-						name: '5x 2-Year Premium Gift Pack'
-					},
-					giftPackC: {
-						amount: 150,
-						id: 3,
-						name: '2x 3-Year Platinum Gift Pack'
-					},
-					giftPackD: {
-						amount: 175,
-						id: 4,
-						name: 'Gift Pack Ultimate Bundle'
-					}
-				}
-			},
-			subscription: {
-				id: 1,
-				items: {
-					annual: {
-						id: 2,
-						subscriptionType: SubscriptionTypes.annual
-					},
-					monthly: {
-						id: 1,
-						subscriptionType: SubscriptionTypes.monthly
-					}
-				}
-			},
-			telehealth: {
-				id: 3,
-				items: {
-					covidLargeAnnual: {
-						amount: 120,
-						id: 8,
-						individualSubscriptions: true,
-						minUsers: 50,
-						name: 'Telehealth (Annual)',
-						perUser: true,
-						subscriptionType: SubscriptionTypes.annual
-					},
-					covidLargeMonthly: {
-						amount: 15,
-						id: 7,
-						individualSubscriptions: true,
-						minUsers: 50,
-						name: 'Telehealth (Monthly)',
-						perUser: true,
-						subscriptionType: SubscriptionTypes.monthly
-					},
-					covidMediumAnnual: {
-						amount: 192,
-						id: 6,
-						individualSubscriptions: true,
-						maxUsers: 49,
-						minUsers: 10,
-						name: 'Telehealth (Annual)',
-						perUser: true,
-						subscriptionType: SubscriptionTypes.annual
-					},
-					covidMediumMonthly: {
-						amount: 20,
-						id: 5,
-						individualSubscriptions: true,
-						maxUsers: 49,
-						minUsers: 10,
-						name: 'Telehealth (Monthly)',
-						perUser: true,
-						subscriptionType: SubscriptionTypes.monthly
-					},
-					covidSmallAnnual: {
-						amount: 216,
-						id: 4,
-						individualSubscriptions: true,
-						maxUsers: 9,
-						name: 'Telehealth (Annual)',
-						perUser: true,
-						subscriptionType: SubscriptionTypes.annual
-					},
-					covidSmallMonthly: {
-						amount: 25,
-						id: 3,
-						individualSubscriptions: true,
-						maxUsers: 9,
-						name: 'Telehealth (Monthly)',
-						perUser: true,
-						subscriptionType: SubscriptionTypes.monthly
-					},
-					erw8ib3: {
-						amount: 108,
-						id: 10,
-						individualSubscriptions: true,
-						name: 'Telehealth (Annual)',
-						offerID: 3,
-						perUser: true,
-						subscriptionType: SubscriptionTypes.annual
-					},
-					g7xxm0r: {
-						amount: 12,
-						id: 9,
-						individualSubscriptions: true,
-						name: 'Telehealth (Monthly)',
-						offerID: 2,
-						perUser: true,
-						subscriptionType: SubscriptionTypes.monthly
-					}
-				}
-			},
-			telehealthPro: {
-				id: 6,
-				items: {
-					singlePractitioner: {
-						amount: 250,
-						id: 1,
-						perUser: true,
-						subscriptionType: SubscriptionTypes.monthly
-					},
-					smallPractice: {
-						amount: 1000,
-						id: 2,
-						perUser: true,
-						subscriptionType: SubscriptionTypes.monthly
-					}
-				},
-				namespace: 'video.cyph.healthcare'
-			}
-		}
-	};
+	} = <any> pricingConfig;
 
 	/**
 	 * Characters used by util/readableID (includes all alphanumeric
@@ -618,6 +234,14 @@ export class Config {
 		'1F621' /* rage */,
 		'1F44E' /* -1 */
 	];
+
+	/** Stripe configuration. */
+	public readonly stripe = {
+		apiKeys: {
+			prod: 'pk_live_Z5tqxXpBQp1oSuZ0bK3fZPQH',
+			test: 'pk_test_q57rb0D1dJkZYKCaBlXTYiry'
+		}
+	};
 
 	/** @see Config.simpleEmoji */
 	public readonly simpleEmojiSet = new Set(this.simpleEmoji);

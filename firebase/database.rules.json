@@ -220,6 +220,20 @@
 					},
 					"reservedUsername": {
 						".validate": "newData.isString()"
+					},
+					"stripe": {
+						"admin": {
+							".validate": "newData.isBoolean()"
+						},
+						"customerID": {
+							".validate": "newData.isString()"
+						},
+						"subscriptionID": {
+							".validate": "newData.isString()"
+						},
+						"subscriptionItemID": {
+							".validate": "newData.isString()"
+						}
 					}
 				}
 			},
@@ -1107,6 +1121,20 @@
 								"id": {
 									".validate": "newData.isString()"
 								}
+							}
+						},
+						"stripe": {
+							"admin": {
+								".validate": "newData.isBoolean()"
+							},
+							"customerID": {
+								".validate": "newData.isString()"
+							},
+							"subscriptionID": {
+								".validate": "newData.isString()"
+							},
+							"subscriptionItemID": {
+								".validate": "newData.isString()"
 							}
 						}
 					},

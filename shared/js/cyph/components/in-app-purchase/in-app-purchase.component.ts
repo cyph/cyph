@@ -7,7 +7,7 @@ import {
 import {FormControl} from '@angular/forms';
 import {BehaviorSubject} from 'rxjs';
 import {BaseProvider} from '../../base-provider';
-import {IInAppPurchaseComponent} from '../../checkout/iin-app-purchasecomponent';
+import {IInAppPurchaseComponent} from '../../checkout/iin-app-purchase.component';
 import {CheckoutComponent} from '../../components/checkout';
 import {MaybePromise} from '../../maybe-promise-type';
 import {AccountService} from '../../services/account.service';
