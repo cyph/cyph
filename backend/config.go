@@ -33,6 +33,7 @@ type Customer struct {
 	APIKey          string
 	AppStoreReceipt string `datastore:",noindex"`
 	BraintreeID     string
+	StripeData      StripeData
 	Company         string
 	Email           string
 	LastSession     int64
@@ -74,7 +75,7 @@ type PackageData struct {
 	Uptime    IPFSGatewayUptimeData
 }
 
-// Plan : Braintree plan
+// Plan : Subscription plan
 type Plan struct {
 	AccountsPlan      string
 	GiftPack          bool
@@ -113,6 +114,14 @@ type RedoxRequestLog struct {
 	Response     string
 	Timestamp    int64
 	Username     string
+}
+
+// StripeData : Stripe subscription data
+type StripeData struct {
+	Admin              bool
+	CustomerID         string
+	SubscriptionID     string
+	SubscriptionItemID string
 }
 
 var empty = struct{}{}

@@ -535,7 +535,50 @@ func braintreeInit(h HandlerArgs) *braintree.Braintree {
 	return bt
 }
 
-func downgradeAccountHelper(userToken string, removeAppStoreReceiptRef bool) (string, string, error) {
+func getStripeData(responseBody map[string]interface{}) *StripeData {
+	stripeData := &StripeData{}
+
+	if responseBodyStripe, ok := responseBody["stripe"]; ok {
+		switch responseBodyStripeData := responseBodyStripe.(type) {
+		case map[string]interface{}:
+			if data, ok := responseBodyStripeData["admin"]; ok {
+				switch v := data.(type) {
+				case bool:
+					stripeData.Admin = v
+				}
+			}
+
+			if data, ok := responseBodyStripeData["customerID"]; ok {
+				switch v := data.(type) {
+				case string:
+					stripeData.CustomerID = v
+				}
+			}
+
+			if data, ok := responseBodyStripeData["subscriptionID"]; ok {
+				switch v := data.(type) {
+				case string:
+					stripeData.SubscriptionID = v
+				}
+			}
+
+			if data, ok := responseBodyStripeData["subscriptionItemID"]; ok {
+				switch v := data.(type) {
+				case string:
+					stripeData.SubscriptionItemID = v
+				}
+			}
+		}
+	}
+
+	if stripeData.CustomerID == "" || stripeData.SubscriptionID == "" || stripeData.SubscriptionItemID == "" {
+		return nil
+	}
+
+	return stripeData
+}
+
+func downgradeAccountHelper(userToken string, removeAppStoreReceiptRef bool) (string, string, *StripeData, error) {
 	body, _ := json.Marshal(map[string]interface{}{
 		"namespace":                "cyph.ws",
 		"removeAppStoreReceiptRef": removeAppStoreReceiptRef,
@@ -555,18 +598,18 @@ func downgradeAccountHelper(userToken string, removeAppStoreReceiptRef bool) (st
 
 	resp, err := client.Do(req)
 	if err != nil {
-		return "", "", err
+		return "", "", nil, err
 	}
 
 	responseBodyBytes, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
-		return "", "", err
+		return "", "", nil, err
 	}
 
 	var responseBody map[string]interface{}
 	err = json.Unmarshal(responseBodyBytes, &responseBody)
 	if err != nil {
-		return "", "", err
+		return "", "", nil, err
 	}
 
 	appStoreReceipt := ""
@@ -585,22 +628,26 @@ func downgradeAccountHelper(userToken string, removeAppStoreReceiptRef bool) (st
 		}
 	}
 
-	return appStoreReceipt, braintreeSubscriptionID, nil
+	stripeData := getStripeData(responseBody)
+
+	return appStoreReceipt, braintreeSubscriptionID, stripeData, nil
 }
 
-func generateInvite(email, name, plan, appStoreReceipt string, braintreeIDs, braintreeSubscriptionIDs []string, inviteCode, username string, giftPack, purchased bool) (string, string, string, error) {
+func generateInvite(email, name, plan, appStoreReceipt string, customerIDs, subscriptionIDs, subscriptionItemIDs []string, inviteCode, username string, giftPack, purchased, useStripe bool) (string, string, string, error) {
 	body, _ := json.Marshal(map[string]interface{}{
-		"appStoreReceipt":          appStoreReceipt,
-		"braintreeIDs":             strings.Join(braintreeIDs, "\n"),
-		"braintreeSubscriptionIDs": strings.Join(braintreeSubscriptionIDs, "\n"),
-		"email":                    email,
-		"giftPack":                 giftPack,
-		"inviteCode":               inviteCode,
-		"name":                     name,
-		"namespace":                "cyph.ws",
-		"plan":                     plan,
-		"purchased":                purchased,
-		"username":                 username,
+		"appStoreReceipt":     appStoreReceipt,
+		"customerIDs":         strings.Join(customerIDs, "\n"),
+		"email":               email,
+		"giftPack":            giftPack,
+		"inviteCode":          inviteCode,
+		"name":                name,
+		"namespace":           "cyph.ws",
+		"plan":                plan,
+		"purchased":           purchased,
+		"subscriptionIDs":     strings.Join(subscriptionIDs, "\n"),
+		"subscriptionItemIDs": strings.Join(subscriptionItemIDs, "\n"),
+		"username":            username,
+		"useStripe":           useStripe,
 	})
 
 	client := &http.Client{}
@@ -637,11 +684,11 @@ func generateInvite(email, name, plan, appStoreReceipt string, braintreeIDs, bra
 		}
 	}
 
-	oldBraintreeSubscriptionID := ""
-	if data, ok := responseBody["oldBraintreeSubscriptionID"]; ok {
+	oldSubscriptionID := ""
+	if data, ok := responseBody["oldSubscriptionID"]; ok {
 		switch v := data.(type) {
 		case string:
-			oldBraintreeSubscriptionID = v
+			oldSubscriptionID = v
 		}
 	}
 
@@ -653,10 +700,10 @@ func generateInvite(email, name, plan, appStoreReceipt string, braintreeIDs, bra
 		}
 	}
 
-	return inviteCode, oldBraintreeSubscriptionID, welcomeLetter, nil
+	return inviteCode, oldSubscriptionID, welcomeLetter, nil
 }
 
-func getSubscriptionData(userToken string) (string, string, int64, error) {
+func getSubscriptionData(userToken string) (string, string, int64, *StripeData, error) {
 	body, _ := json.Marshal(map[string]interface{}{
 		"namespace": "cyph.ws",
 		"userToken": userToken,
@@ -675,18 +722,18 @@ func getSubscriptionData(userToken string) (string, string, int64, error) {
 
 	resp, err := client.Do(req)
 	if err != nil {
-		return "", "", 0, err
+		return "", "", 0, nil, err
 	}
 
 	responseBodyBytes, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
-		return "", "", 0, err
+		return "", "", 0, nil, err
 	}
 
 	var responseBody map[string]interface{}
 	err = json.Unmarshal(responseBodyBytes, &responseBody)
 	if err != nil {
-		return "", "", 0, err
+		return "", "", 0, nil, err
 	}
 
 	appStoreReceipt := ""
@@ -713,7 +760,9 @@ func getSubscriptionData(userToken string) (string, string, int64, error) {
 		}
 	}
 
-	return appStoreReceipt, braintreeSubscriptionID, planTrialEnd, nil
+	stripeData := getStripeData(responseBody)
+
+	return appStoreReceipt, braintreeSubscriptionID, planTrialEnd, stripeData, nil
 }
 
 func getUsername(userToken string) (string, error) {

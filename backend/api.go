@@ -15,7 +15,8 @@ import (
 	"cloud.google.com/go/datastore"
 	"github.com/buu700/braintree-go-tmp"
 	"github.com/stripe/stripe-go"
-	"github.com/stripe/stripe-go/checkout/session"
+	stripeSessionAPI "github.com/stripe/stripe-go/checkout/session"
+	stripeSubscriptionAPI "github.com/stripe/stripe-go/sub"
 	"google.golang.org/api/iterator"
 )
 
@@ -723,7 +724,7 @@ func checkout(h HandlerArgs) (interface{}, int) {
 	plan, hasPlan := config.Plans[planID]
 
 	if success && hasPlan && plan.AccountsPlan != "" {
-		_inviteCode, oldBraintreeSubscriptionID, welcomeLetter, err := generateInvite(email, name, plan.AccountsPlan, appStoreReceipt, braintreeIDs, braintreeSubscriptionIDs, inviteCode, username, plan.GiftPack, true)
+		_inviteCode, oldBraintreeSubscriptionID, welcomeLetter, err := generateInvite(email, name, plan.AccountsPlan, appStoreReceipt, braintreeIDs, braintreeSubscriptionIDs, []string{}, inviteCode, username, plan.GiftPack, true, false)
 
 		inviteCode := _inviteCode
 
@@ -799,7 +800,10 @@ func checkout(h HandlerArgs) (interface{}, int) {
 func downgradeAccount(h HandlerArgs) (interface{}, int) {
 	userToken := sanitize(h.Vars["userToken"])
 
-	appStoreReceipt, braintreeSubscriptionID, _ := downgradeAccountHelper(userToken, false)
+	appStoreReceipt, braintreeSubscriptionID, stripeData, _ := downgradeAccountHelper(
+		userToken,
+		false,
+	)
 
 	if appStoreReceipt != "" {
 		_, err := getAppStoreTransactionData(appStoreReceipt)
@@ -810,6 +814,13 @@ func downgradeAccount(h HandlerArgs) (interface{}, int) {
 		}
 
 		return "cannot cancel App Store subscription server-side", http.StatusInternalServerError
+	}
+
+	if stripeData != nil {
+		_, err := stripeSubscriptionAPI.Cancel(stripeData.SubscriptionID, nil)
+		if err != nil {
+			return err.Error(), http.StatusInternalServerError
+		}
 	}
 
 	if braintreeSubscriptionID == "" {
@@ -889,7 +900,7 @@ func getTimestampHandler(h HandlerArgs) (interface{}, int) {
 func isAccountInGoodStanding(h HandlerArgs) (interface{}, int) {
 	userToken := sanitize(h.Vars["userToken"])
 
-	appStoreReceipt, braintreeSubscriptionID, planTrialEnd, _ := getSubscriptionData(userToken)
+	appStoreReceipt, braintreeSubscriptionID, planTrialEnd, stripeData, _ := getSubscriptionData(userToken)
 
 	/* Check trial against current timestamp if applicable */
 
@@ -902,6 +913,21 @@ func isAccountInGoodStanding(h HandlerArgs) (interface{}, int) {
 	if appStoreReceipt != "" {
 		_, err := getAppStoreTransactionData(appStoreReceipt)
 		return err == nil, http.StatusOK
+	}
+
+	/* Check Stripe, if applicable */
+
+	if stripeData != nil {
+		stripeSub, err := stripeSubscriptionAPI.Get(stripeData.SubscriptionID, nil)
+		if err != nil {
+			return true, http.StatusOK
+		}
+
+		if stripeSub.Status == "active" {
+			return true, http.StatusOK
+		}
+
+		return false, http.StatusOK
 	}
 
 	/*
@@ -917,12 +943,12 @@ func isAccountInGoodStanding(h HandlerArgs) (interface{}, int) {
 
 	bt := braintreeInit(h)
 
-	sub, err := bt.Subscription().Find(h.Context, braintreeSubscriptionID)
+	btSub, err := bt.Subscription().Find(h.Context, braintreeSubscriptionID)
 	if err != nil {
 		return true, http.StatusOK
 	}
 
-	if sub.Status == braintree.SubscriptionStatusActive || sub.Status == braintree.SubscriptionStatusPending {
+	if btSub.Status == braintree.SubscriptionStatusActive || btSub.Status == braintree.SubscriptionStatusPending {
 		return true, http.StatusOK
 	}
 
@@ -1317,7 +1343,7 @@ func rollOutWaitlistInvites(h HandlerArgs) (interface{}, int) {
 			break
 		}
 
-		_, _, _, err = generateInvite(betaSignup.Email, betaSignup.Name, "", "", []string{""}, []string{""}, "", "", false, false)
+		_, _, _, err = generateInvite(betaSignup.Email, betaSignup.Name, "", "", []string{""}, []string{""}, []string{}, "", "", false, false, false)
 
 		if err != nil {
 			log.Printf("Failed to invite %s in rollOutWaitlistInvites: %v", betaSignup.Email, err)
@@ -1491,9 +1517,9 @@ func stripeSession(h HandlerArgs) (interface{}, int) {
 		SuccessURL: stripe.String(url + "/checkout/success"),
 	}
 
-	session, err := session.New(params)
+	session, err := stripeSessionAPI.New(params)
 	if err != nil {
-		log.Printf("session.New: %v", err)
+		log.Printf("stripeSessionAPI.New: %v", err)
 		return err.Error(), http.StatusInternalServerError
 	}
 

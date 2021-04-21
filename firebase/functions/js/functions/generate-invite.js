@@ -14,13 +14,18 @@ const {readableID, titleize} = util;
 export const generateInvite = onRequest(true, async (req, res, namespace) => {
 	const {accountsURL} = namespaces[namespace];
 	const appStoreReceipt = req.body.appStoreReceipt;
-	const braintreeIDs = validateInput(
-		(req.body.braintreeIDs || '').split('\n'),
+	const customerIDs = validateInput(
+		(req.body.customerIDs || '').split('\n'),
 		undefined,
 		true
 	);
-	const braintreeSubscriptionIDs = validateInput(
-		(req.body.braintreeSubscriptionIDs || '').split('\n'),
+	const subscriptionIDs = validateInput(
+		(req.body.subscriptionIDs || '').split('\n'),
+		undefined,
+		true
+	);
+	const subscriptionItemIDs = validateInput(
+		(req.body.subscriptionItemIDs || '').split('\n'),
 		undefined,
 		true
 	);
@@ -38,11 +43,13 @@ export const generateInvite = onRequest(true, async (req, res, namespace) => {
 	const purchased = !!req.body.purchased;
 	let username = validateInput(req.body.username, undefined, true);
 	const userToken = validateInput(req.body.userToken, undefined, true);
-	let oldBraintreeSubscriptionID = '';
+	const useStripe = !!req.body.useStripe;
+	let oldSubscriptionID = '';
 
 	if (username || userToken) {
-		const braintreeID = braintreeIDs.shift();
-		const braintreeSubscriptionID = braintreeSubscriptionIDs.shift();
+		const customerID = customerIDs.shift();
+		const subscriptionID = subscriptionIDs.shift();
+		const subscriptionItemID = subscriptionItemIDs.shift();
 
 		if (!username) {
 			username = (await tokens.open(
@@ -55,26 +62,31 @@ export const generateInvite = onRequest(true, async (req, res, namespace) => {
 		const appStoreReceiptRef = database.ref(
 			`${internalURL}/appStoreReceipt`
 		);
-		const braintreeIDRef = database.ref(`${internalURL}/braintreeID`);
-		const braintreeSubscriptionIDRef = database.ref(
-			`${internalURL}/braintreeSubscriptionID`
+		const customerIDRef = database.ref(
+			useStripe ?
+				`${internalURL}/stripe/customerID` :
+				`${internalURL}/braintreeID`
 		);
+		const subscriptionIDRef = database.ref(
+			useStripe ?
+				`${internalURL}/stripe/subscriptionID` :
+				`${internalURL}/braintreeSubscriptionID`
+		);
+		const subscriptionItemIDRef = useStripe ?
+			database.ref(`${internalURL}/stripe/subscriptionItemID`) :
+			undefined;
 		const planTrialEndRef = database.ref(`${internalURL}/planTrialEnd`);
 		const emailRef = database.ref(`${internalURL}/email`);
 
-		const [
-			_oldBraintreeSubscriptionID,
-			userEmail,
-			oldPlan
-		] = await Promise.all([
-			braintreeSubscriptionIDRef.once('value').then(o => o.val()),
+		const [_oldSubscriptionID, userEmail, oldPlan] = await Promise.all([
+			subscriptionIDRef.once('value').then(o => o.val()),
 			emailRef.once('value').then(o => o.val()),
 			getItem(namespace, `users/${username}/plan`, CyphPlan)
 				.catch(() => undefined)
 				.then(o => (o && o.plan in CyphPlans ? o.plan : CyphPlans.Free))
 		]);
 
-		oldBraintreeSubscriptionID = _oldBraintreeSubscriptionID;
+		oldSubscriptionID = _oldSubscriptionID;
 
 		const oldPlanConfig = config.planConfig[oldPlan];
 		const isUpgrade = planConfig.rank > oldPlanConfig.rank;
@@ -84,12 +96,15 @@ export const generateInvite = onRequest(true, async (req, res, namespace) => {
 			appStoreReceipt ?
 				appStoreReceiptRef.set(appStoreReceipt) :
 				appStoreReceiptRef.remove(),
-			braintreeID ?
-				braintreeIDRef.set(braintreeID) :
-				braintreeIDRef.remove(),
-			braintreeSubscriptionID ?
-				braintreeSubscriptionIDRef.set(braintreeSubscriptionID) :
-				braintreeSubscriptionIDRef.remove(),
+			customerID ? customerIDRef.set(customerID) : customerIDRef.remove(),
+			subscriptionID ?
+				subscriptionIDRef.set(subscriptionID) :
+				subscriptionIDRef.remove(),
+			!subscriptionItemIDRef ?
+				undefined :
+			subscriptionItemID ?
+				subscriptionItemIDRef.set(subscriptionItemID) :
+				subscriptionItemIDRef.remove(),
 			planTrialEndRef.remove(),
 			(async () => {
 				if (planConfig.initialInvites === undefined) {
@@ -149,8 +164,9 @@ export const generateInvite = onRequest(true, async (req, res, namespace) => {
 	}
 
 	if (preexistingInviteCode) {
-		const braintreeID = braintreeIDs.shift();
-		const braintreeSubscriptionID = braintreeSubscriptionIDs.shift();
+		const customerID = customerIDs.shift();
+		const subscriptionID = subscriptionIDs.shift();
+		const subscriptionItemID = subscriptionItemIDs.shift();
 
 		const preexistingInviteCodeRef = database.ref(
 			`${namespace}/inviteCodes/${preexistingInviteCode}`
@@ -165,13 +181,18 @@ export const generateInvite = onRequest(true, async (req, res, namespace) => {
 
 		await preexistingInviteCodeRef.set({
 			...preexistingInviteCodeData,
+			...(useStripe ?
+				{stripe: {customerID, subscriptionID, subscriptionItemID}} :
+				{
+					braintreeID: customerID,
+					braintreeSubscriptionID: subscriptionID
+				}),
 			appStoreReceipt,
-			braintreeID,
-			braintreeSubscriptionID,
 			plan
 		});
 
-		oldBraintreeSubscriptionID =
+		oldSubscriptionID = useStripe ?
+			(preexistingInviteCodeData.stripe || {}).subscriptionID :
 			preexistingInviteCodeData.braintreeSubscriptionID;
 	}
 
@@ -192,7 +213,7 @@ export const generateInvite = onRequest(true, async (req, res, namespace) => {
 					o.trialMonths :
 					undefined
 		})) :
-		[{braintreeIDs, braintreeSubscriptionIDs, plan}];
+		[{customerIDs, plan, subscriptionIDs, subscriptionItemIDs}];
 
 	const inviteCodeGroups = await Promise.all(
 		planGroups.map(async planGroup => ({
@@ -200,82 +221,101 @@ export const generateInvite = onRequest(true, async (req, res, namespace) => {
 				new Array(
 					planGroup.quantity !== undefined ?
 						planGroup.quantity :
-					planGroup.braintreeIDs &&
-						planGroup.braintreeSubscriptionIDs ?
+					planGroup.customerIDs && planGroup.subscriptionIDs ?
 						Math.min(
-							planGroup.braintreeIDs.length,
-							planGroup.braintreeSubscriptionIDs.length
+							planGroup.customerIDs.length,
+							planGroup.subscriptionIDs.length
 						) :
 						0
 				)
 					.fill(0)
 					.map((_, i) =>
 						planGroup.quantity === undefined &&
-						planGroup.braintreeIDs &&
-						planGroup.braintreeSubscriptionIDs ?
+						planGroup.customerIDs &&
+						planGroup.subscriptionIDs ?
 							[
-								planGroup.braintreeIDs[i],
-								planGroup.braintreeSubscriptionIDs[i]
+								planGroup.customerIDs[i],
+								planGroup.subscriptionIDs[i],
+								(planGroup.subscriptionItemIDs || [])[i]
 							] :
 							[]
 					)
-					.map(async ([braintreeID, braintreeSubscriptionID], i) => {
-						const inviteCode = readableID(15);
+					.map(
+						async (
+							[customerID, subscriptionID, subscriptionItemID],
+							i
+						) => {
+							const inviteCode = readableID(15);
 
-						await Promise.all([
-							database
-								.ref(`${namespace}/inviteCodes/${inviteCode}`)
-								.set({
-									inviterUsername: '',
-									plan: planGroup.plan,
-									...(braintreeID ? {braintreeID} : {}),
-									...(braintreeSubscriptionID ?
-										{braintreeSubscriptionID} :
-										{}),
-									...(i === 0 && email ? {email} : {}),
-									...(!isNaN(planGroup.planTrialEnd) ?
-										{planTrialEnd: planGroup.planTrialEnd} :
-										{})
-								}),
-							email ?
+							await Promise.all([
 								database
 									.ref(
-										`${namespace}/inviteCodeEmailAddresses/${Buffer.from(
-											email
-										).toString('hex')}/${inviteCode}`
+										`${namespace}/inviteCodes/${inviteCode}`
 									)
-									.set({inviterUsername: ''}) :
-								undefined,
-							i === 0 &&
-							email &&
-							mailchimp &&
-							mailchimpCredentials &&
-							mailchimpCredentials.listIDs &&
-							mailchimpCredentials.listIDs.pendingInvites ?
-								addToMailingList(
-									mailchimpCredentials.listIDs.pendingInvites,
-									email,
-									{
-										FNAME: firstName,
-										ICODE: inviteCode,
-										LNAME: lastName,
-										PLAN: CyphPlans[planGroup.plan],
-										TRIAL: !!planGroup.planTrialEnd
-									}
-								)
-									.then(async mailingListID =>
-										database
-											.ref(
-												`${namespace}/pendingInvites/${inviteCode}`
-											)
-											.set(mailingListID)
+									.set({
+										...(useStripe ?
+											{
+												stripe: {
+													customerID,
+													subscriptionID,
+													subscriptionItemID
+												}
+											} :
+											{
+												braintreeID: customerID,
+												braintreeSubscriptionID: subscriptionID
+											}),
+										...(i === 0 && email ? {email} : {}),
+										...(!isNaN(planGroup.planTrialEnd) ?
+											{
+												planTrialEnd:
+													planGroup.planTrialEnd
+											} :
+											{}),
+										inviterUsername: '',
+										plan: planGroup.plan
+									}),
+								email ?
+									database
+										.ref(
+											`${namespace}/inviteCodeEmailAddresses/${Buffer.from(
+												email
+											).toString('hex')}/${inviteCode}`
+										)
+										.set({inviterUsername: ''}) :
+									undefined,
+								i === 0 &&
+								email &&
+								mailchimp &&
+								mailchimpCredentials &&
+								mailchimpCredentials.listIDs &&
+								mailchimpCredentials.listIDs.pendingInvites ?
+									addToMailingList(
+										mailchimpCredentials.listIDs
+											.pendingInvites,
+										email,
+										{
+											FNAME: firstName,
+											ICODE: inviteCode,
+											LNAME: lastName,
+											PLAN: CyphPlans[planGroup.plan],
+											TRIAL: !!planGroup.planTrialEnd
+										}
 									)
-									.catch(() => {}) :
-								undefined
-						]);
+										.then(async mailingListID =>
+											database
+												.ref(
+													`${namespace}/pendingInvites/${inviteCode}`
+												)
+												.set(mailingListID)
+										)
+										.catch(() => {}) :
+									undefined
+							]);
 
-						return inviteCode;
-					})
+							return inviteCode;
+						}
+					)
 			),
 			planGroup
 		}))
@@ -287,7 +327,7 @@ export const generateInvite = onRequest(true, async (req, res, namespace) => {
 
 	return {
 		inviteCode: inviteCodes.length < 1 ? '' : inviteCodes[0],
-		oldBraintreeSubscriptionID,
+		oldSubscriptionID,
 		welcomeLetter:
 			inviteCodes.length < 1 ?
 				'' :

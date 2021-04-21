@@ -42,10 +42,16 @@ export const downgradeAccount = onRequest(true, async (req, res, namespace) => {
 		`${internalURL}/braintreeSubscriptionID`
 	);
 	const planTrialEndRef = database.ref(`${internalURL}/planTrialEnd`);
+	const stripeRef = database.ref(`${internalURL}/stripe`);
 
-	const [appStoreReceipt, braintreeSubscriptionID] = await Promise.all([
+	const [
+		appStoreReceipt,
+		braintreeSubscriptionID,
+		stripe
+	] = await Promise.all([
 		appStoreReceiptRef.once('value').then(o => o.val() || ''),
-		braintreeSubscriptionIDRef.once('value').then(o => o.val() || '')
+		braintreeSubscriptionIDRef.once('value').then(o => o.val() || ''),
+		stripeRef.once('value').then(o => o.val() || {})
 	]);
 
 	await Promise.all([
@@ -53,10 +59,15 @@ export const downgradeAccount = onRequest(true, async (req, res, namespace) => {
 		braintreeIDRef.remove(),
 		braintreeSubscriptionIDRef.remove(),
 		planTrialEndRef.remove(),
+		stripeRef.remove(),
 		setItem(namespace, `users/${username}/plan`, CyphPlan, {
 			plan: CyphPlans.Free
 		})
 	]);
 
-	return {appStoreReceipt, braintreeSubscriptionID};
+	return {
+		appStoreReceipt,
+		braintreeSubscriptionID,
+		stripe
+	};
 });
