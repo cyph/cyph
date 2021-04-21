@@ -16,7 +16,7 @@ export const addProCode = async (
 	email
 ) => {
 	throw new Error(
-		'Non-functional for now. Codes can be obtained via Braintree checkout.'
+		'Non-functional for now. Codes can be obtained via checkout.'
 	);
 
 	if (typeof projectId !== 'string' || projectId.indexOf('cyph') !== 0) {

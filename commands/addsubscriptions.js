@@ -4,52 +4,14 @@ import {getMeta} from '../modules/base.js';
 const {isCLI} = getMeta(import.meta);
 
 import {util} from '@cyph/sdk';
-import braintree from 'braintree';
-import fs from 'fs';
-import memoize from 'lodash-es/memoize.js';
-import os from 'os';
 import read from 'read';
 import {getUserMetadata} from './getusermetadata.js';
 import {inviteUser} from './inviteuser.js';
+import {cloneSubscription} from './subscriptions.js';
 
-const {normalize, uuid} = util;
+const {normalize} = util;
 
 const namespace = 'cyph.ws';
-
-const vars = fs
-	.readFileSync(os.homedir() + '/.cyph/backend.vars.prod')
-	.toString()
-	.split('\n')
-	.map(line =>
-		line
-			.split(':')
-			.map((s, i) => (i === 0 ? s.trim() : s.trim().slice(1, -1)))
-	)
-	.reduce((o, [k, v]) => ({...o, [k]: v}), {});
-
-const gateway = new braintree.BraintreeGateway({
-	environment: braintree.Environment.Production,
-	merchantId: vars.BRAINTREE_MERCHANT_ID,
-	privateKey: vars.BRAINTREE_PRIVATE_KEY,
-	publicKey: vars.BRAINTREE_PUBLIC_KEY
-});
-
-const getSubscription = memoize(async subscriptionID =>
-	gateway.subscription.find(subscriptionID)
-);
-
-const cloneSubscription = async subscriptionID => {
-	const subscription = await getSubscription(subscriptionID);
-
-	return (await gateway.subscription.create({
-		addOns: subscription.addOns,
-		discounts: subscription.discounts,
-		id: uuid(),
-		paymentMethodToken: subscription.paymentMethodToken,
-		planId: subscription.planId,
-		price: subscription.price
-	})).subscription.id;
-};
 
 export const addSubscriptions = async (projectId, username, count) => {
 	username = normalize(username);
@@ -73,8 +35,12 @@ export const addSubscriptions = async (projectId, username, count) => {
 	console.log(JSON.stringify(metadata, undefined, '\t'));
 
 	if (
-		!metadata.internal.braintreeID ||
-		!metadata.internal.braintreeSubscriptionID
+		!(
+			(metadata.internal.braintreeID &&
+				metadata.internal.braintreeSubscriptionID) ||
+			(metadata.internal.stripe &&
+				metadata.internal.stripe.subscriptionID)
+		)
 	) {
 		throw new Error('Invalid subscription data.');
 	}
@@ -115,6 +81,18 @@ export const addSubscriptions = async (projectId, username, count) => {
 		});
 	}
 
+	const subscriptionIDs = new Array(count).fill(0).map(
+		metadata.internal.stripe && metadata.internal.stripe.subscriptionID ?
+			async () =>
+				cloneSubscription({
+					stripe: metadata.internal.stripe.subscriptionID
+				}) :
+			async () =>
+				cloneSubscription({
+					braintree: metadata.internal.braintreeSubscriptionID
+				})
+	);
+
 	const inviteCodes = await inviteUser(
 		projectId,
 		metadata.internal.email,
@@ -123,12 +101,17 @@ export const addSubscriptions = async (projectId, username, count) => {
 		undefined,
 		0,
 		count,
-		async () => ({
-			braintreeID: metadata.internal.braintreeID,
-			braintreeSubscriptionID: await cloneSubscription(
-				metadata.internal.braintreeSubscriptionID
-			)
-		})
+		metadata.internal.stripe && metadata.internal.stripe.subscriptionID ?
+			async () => ({
+				stripe: {
+					...metadata.internal.stripe,
+					subscriptionID: await subscriptionIDs.shift()
+				}
+			}) :
+			async () => ({
+				braintreeID: metadata.internal.braintreeID,
+				braintreeSubscriptionID: await subscriptionIDs.shift()
+			})
 	);
 
 	console.log(

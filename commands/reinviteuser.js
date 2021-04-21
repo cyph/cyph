@@ -91,6 +91,11 @@ export const reinviteUser = async (projectId, username) => {
 		0,
 		1,
 		{
+			...(metadata.internal.appStoreReceipt ?
+				{
+					appStoreReceipt: metadata.internal.appStoreReceipt
+				} :
+				{}),
 			...(metadata.internal.braintreeID ?
 				{
 					braintreeID: metadata.internal.braintreeID
@@ -100,6 +105,11 @@ export const reinviteUser = async (projectId, username) => {
 				{
 					braintreeSubscriptionID:
 						metadata.internal.braintreeSubscriptionID
+				} :
+				{}),
+			...(metadata.internal.stripe ?
+				{
+					stripe: metadata.internal.stripe
 				} :
 				{}),
 			...(metadata.profileExtra.pgp &&

@@ -3,74 +3,15 @@
 import {getMeta} from '../modules/base.js';
 const {isCLI} = getMeta(import.meta);
 
-import braintree from 'braintree';
-import fs from 'fs';
-import os from 'os';
+import * as subscriptions from './subscriptions.js';
 
-const vars = fs
-	.readFileSync(os.homedir() + '/.cyph/backend.vars.prod')
-	.toString()
-	.split('\n')
-	.map(line =>
-		line
-			.split(':')
-			.map((s, i) => (i === 0 ? s.trim() : s.trim().slice(1, -1)))
-	)
-	.reduce((o, [k, v]) => ({...o, [k]: v}), {});
-
-const gateway = new braintree.BraintreeGateway({
-	environment: braintree.Environment.Production,
-	merchantId: vars.BRAINTREE_MERCHANT_ID,
-	privateKey: vars.BRAINTREE_PRIVATE_KEY,
-	publicKey: vars.BRAINTREE_PUBLIC_KEY
-});
-
-const refundTransaction = async ({id, status, type}) => {
-	if (type === 'credit') {
-		return;
-	}
-
-	if (
-		status === 'authorized' ||
-		status === 'settlement_pending' ||
-		status === 'submitted_for_settlement'
-	) {
-		await gateway.transaction.void(id);
-	}
-	else if (status === 'settled' || status === 'settling') {
-		await gateway.transaction.refund(id);
-	}
-};
-
-const refundSubscription = async subscriptionID => {
-	const subscription = await gateway.subscription.find(subscriptionID);
-
-	if (subscription.status[0] !== 'Active') {
-		return;
-	}
-
-	await Promise.all(
-		subscription.transactions.map(async o =>
-			refundTransaction({
-				id: o.transaction[0].id[0],
-				status: o.transaction[0].status[0],
-				type: o.transaction[0].type[0]
-			})
-		)
-	);
-
-	await gateway.subscription.cancel(subscriptionID);
-};
-
-export const refundSubscriptions = async subscriptionIDs => {
-	for (const subscriptionID of subscriptionIDs) {
-		await refundSubscription(subscriptionID);
-	}
-};
+export const refundSubscriptions = subscriptions.refundSubscriptions;
 
 if (isCLI) {
 	(async () => {
-		await refundSubscriptions(process.argv.slice(2));
+		await refundSubscriptions(
+			...process.argv.slice(2).map(s => JSON.parse(s))
+		);
 		console.log('done');
 		process.exit(0);
 	})().catch(err => {

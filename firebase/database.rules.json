@@ -221,11 +221,19 @@
 					"reservedUsername": {
 						".validate": "newData.isString()"
 					},
-					"stripeID": {
-						".validate": "newData.isString()"
-					},
-					"stripeSubscriptionID": {
-						".validate": "newData.isString()"
+					"stripe": {
+						"admin": {
+							".validate": "newData.isBoolean()"
+						},
+						"customerID": {
+							".validate": "newData.isString()"
+						},
+						"subscriptionID": {
+							".validate": "newData.isString()"
+						},
+						"subscriptionItemID": {
+							".validate": "newData.isString()"
+						}
 					}
 				}
 			},
@@ -1115,11 +1123,19 @@
 								}
 							}
 						},
-						"stripeID": {
-							".validate": "newData.isString()"
-						},
-						"stripeSubscriptionID": {
-							".validate": "newData.isString()"
+						"stripe": {
+							"admin": {
+								".validate": "newData.isBoolean()"
+							},
+							"customerID": {
+								".validate": "newData.isString()"
+							},
+							"subscriptionID": {
+								".validate": "newData.isString()"
+							},
+							"subscriptionItemID": {
+								".validate": "newData.isString()"
+							}
 						}
 					},
 
