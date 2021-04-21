@@ -20,6 +20,8 @@ export const backendPlans = memoize(() => {
 				{
 					accountsPlan: item.accountsPlan || '',
 					giftPack: item.giftPack === true,
+					maxUsers: item.maxUsers || 0,
+					minUsers: item.minUsers || 0,
 					name: item.name || '',
 					price: Math.floor((item.amount || 0) * 100),
 					subscriptionType: item.subscriptionType || ''

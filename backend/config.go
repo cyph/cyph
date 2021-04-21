@@ -79,6 +79,8 @@ type PackageData struct {
 type Plan struct {
 	AccountsPlan     string
 	GiftPack         bool
+	MaxUsers         int64
+	MinUsers         int64
 	Price            int64
 	Name             string
 	SubscriptionType string

@@ -1448,13 +1448,23 @@ func stripeSession(h HandlerArgs) (interface{}, int) {
 		return "insufficient payment", http.StatusTeapot
 	}
 
+	adjustableQuantity := &stripe.CheckoutSessionLineItemAdjustableQuantityParams{
+		Enabled: stripe.Bool(true),
+	}
+	quantity := stripe.Int64(1)
+	if plan.MaxUsers > 0 {
+		adjustableQuantity.Maximum = stripe.Int64(plan.MaxUsers)
+	}
+	if plan.MinUsers > 0 {
+		adjustableQuantity.Minimum = stripe.Int64(plan.MinUsers)
+		quantity = adjustableQuantity.Minimum
+	}
+
 	params := &stripe.CheckoutSessionParams{
 		CancelURL: stripe.String(websiteURL),
 		LineItems: []*stripe.CheckoutSessionLineItemParams{
 			&stripe.CheckoutSessionLineItemParams{
-				AdjustableQuantity: &stripe.CheckoutSessionLineItemAdjustableQuantityParams{
-					Enabled: stripe.Bool(true),
-				},
+				AdjustableQuantity: adjustableQuantity,
 				PriceData: &stripe.CheckoutSessionLineItemPriceDataParams{
 					Currency: stripe.String(string(stripe.CurrencyUSD)),
 					ProductData: &stripe.CheckoutSessionLineItemPriceDataProductDataParams{
@@ -1463,7 +1473,7 @@ func stripeSession(h HandlerArgs) (interface{}, int) {
 					Recurring:  recurring,
 					UnitAmount: stripe.Int64(amount),
 				},
-				Quantity: stripe.Int64(1),
+				Quantity: quantity,
 			},
 		},
 		Mode: stripe.String(string(mode)),
