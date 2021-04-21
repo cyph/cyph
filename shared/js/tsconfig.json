@@ -38,6 +38,7 @@
 			"stream": ["js/externals/stream"],
 			"vm": ["js/externals/vm"]
 		},
+		"resolveJsonModule": true,
 		"skipLibCheck": true,
 		"sourceMap": false,
 		"strict": true,
