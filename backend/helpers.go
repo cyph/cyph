@@ -323,17 +323,6 @@ func geolocate(h HandlerArgs) (string, string, string, string, string, string, s
 	return continent, continentCode, country, countryCode, city, postalCode, analID, firebaseRegion
 }
 
-func getProFeaturesFromRequest(h HandlerArgs) map[string]bool {
-	return map[string]bool{
-		"disableP2P":     sanitize(h.Request.PostFormValue("proFeatures[disableP2P]")) == "true",
-		"modestBranding": sanitize(h.Request.PostFormValue("proFeatures[modestBranding]")) == "true",
-		"nativeCrypto":   sanitize(h.Request.PostFormValue("proFeatures[nativeCrypto]")) == "true",
-		"telehealth":     sanitize(h.Request.PostFormValue("proFeatures[telehealth]")) == "true",
-		"video":          sanitize(h.Request.PostFormValue("proFeatures[video]")) == "true",
-		"voice":          sanitize(h.Request.PostFormValue("proFeatures[voice]")) == "true",
-	}
-}
-
 func getSignupFromRequest(h HandlerArgs) (BetaSignup, map[string]interface{}) {
 	_, _, country, countryCode, _, _, _, _ := geolocate(h)
 
@@ -1304,8 +1293,7 @@ func sendMail(to string, subject string, text string, html string) {
 	}
 }
 
-func getPlanData(h HandlerArgs, customer *Customer) (map[string]bool, int64, error) {
-	proFeatures := map[string]bool{}
+func getPlanData(h HandlerArgs, customer *Customer) (int64, error) {
 	sessionCountLimit := int64(0)
 	plans := []Plan{}
 
@@ -1314,7 +1302,7 @@ func getPlanData(h HandlerArgs, customer *Customer) (map[string]bool, int64, err
 		braintreeCustomer, err := bt.Customer().Find(h.Context, customer.BraintreeID)
 
 		if err != nil {
-			return proFeatures, sessionCountLimit, err
+			return sessionCountLimit, err
 		}
 		subscriptions := []*braintree.Subscription{}
 
@@ -1355,16 +1343,10 @@ func getPlanData(h HandlerArgs, customer *Customer) (map[string]bool, int64, err
 	for i := range plans {
 		plan := plans[i]
 
-		for feature, isAvailable := range plan.ProFeatures {
-			if isAvailable {
-				proFeatures[feature] = true
-			}
-		}
-
 		if plan.SessionCountLimit > sessionCountLimit || plan.SessionCountLimit == -1 {
 			sessionCountLimit = plan.SessionCountLimit
 		}
 	}
 
-	return proFeatures, sessionCountLimit, nil
+	return sessionCountLimit, nil
 }

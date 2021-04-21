@@ -135,7 +135,6 @@ func channelSetup(h HandlerArgs) (interface{}, int) {
 		return "invalid ID", http.StatusForbidden
 	}
 
-	proFeatures := getProFeaturesFromRequest(h)
 	now := getTimestamp()
 	preAuthorizedCyph := &PreAuthorizedCyph{}
 	preAuthorizedCyphKey := datastoreKey("PreAuthorizedCyph", id)
@@ -146,18 +145,6 @@ func channelSetup(h HandlerArgs) (interface{}, int) {
 	if err == nil && now-preAuthorizedCyph.Timestamp > 172800000 {
 		h.Datastore.Delete(h.Context, preAuthorizedCyphKey)
 		return "pre-authorization expired", http.StatusForbidden
-	}
-
-	var preAuthorizedProFeatures map[string]bool
-	json.Unmarshal(preAuthorizedCyph.ProFeatures, &preAuthorizedProFeatures)
-
-	/* For now, disable pro feature check */
-	if false {
-		for feature, isRequired := range proFeatures {
-			if isRequired && !preAuthorizedProFeatures[feature] {
-				return "pro feature " + feature + " not available", http.StatusForbidden
-			}
-		}
 	}
 
 	channelID := ""
@@ -967,7 +954,7 @@ func preAuth(h HandlerArgs) (interface{}, int) {
 		return err.Error(), http.StatusNotFound
 	}
 
-	proFeatures, sessionCountLimit, err := getPlanData(h, customer)
+	sessionCountLimit, err := getPlanData(h, customer)
 	if err != nil {
 		return err.Error(), http.StatusInternalServerError
 	}
@@ -986,11 +973,6 @@ func preAuth(h HandlerArgs) (interface{}, int) {
 	customer.LastSession = now.UnixNano() / 1e6
 	customer.SessionCount++
 
-	proFeaturesJSON, err := json.Marshal(proFeatures)
-	if err != nil {
-		return err.Error(), http.StatusInternalServerError
-	}
-
 	_, err = h.Datastore.PutMulti(
 		h.Context,
 		[]*datastore.Key{
@@ -1000,9 +982,8 @@ func preAuth(h HandlerArgs) (interface{}, int) {
 		[]interface{}{
 			customer,
 			&PreAuthorizedCyph{
-				ID:          id,
-				ProFeatures: proFeaturesJSON,
-				Timestamp:   customer.LastSession,
+				ID:        id,
+				Timestamp: customer.LastSession,
 			},
 		},
 	)
@@ -1022,7 +1003,7 @@ func proUnlock(h HandlerArgs) (interface{}, int) {
 		return err.Error(), http.StatusNotFound
 	}
 
-	_, _, err = getPlanData(h, customer)
+	_, err = getPlanData(h, customer)
 	if err != nil {
 		return err.Error(), http.StatusInternalServerError
 	}

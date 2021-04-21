@@ -13,7 +13,6 @@ import {
 	CastleEvents,
 	ISessionMessageAdditionalData,
 	ISessionMessageData,
-	ProFeatures,
 	RpcEvents
 } from '../session';
 import {IP2PWebRTCService} from './ip2p-webrtc.service';
@@ -117,9 +116,6 @@ export interface ISessionService<
 
 	/** Error message of last prepareForCallType invocation, if applicable. */
 	readonly prepareForCallTypeError: BehaviorSubject<string | undefined>;
-
-	/** @see ProFeatures */
-	readonly proFeatures: ProFeatures;
 
 	/** Resolves when service is ready. */
 	readonly ready: IResolvable<true>;

@@ -27,7 +27,6 @@ import {
 	EventManager,
 	ISessionMessageAdditionalData,
 	ISessionMessageData,
-	ProFeatures,
 	RpcEvents
 } from '../session';
 import {filterUndefined, filterUndefinedOperator} from '../util/filter';
@@ -970,11 +969,6 @@ export abstract class SessionService extends BaseProvider
 		}
 		(<any> data).initial = initial;
 		return <any> data;
-	}
-
-	/** @inheritDoc */
-	public get proFeatures () : ProFeatures {
-		return new ProFeatures();
 	}
 
 	/** @inheritDoc */
