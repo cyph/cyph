@@ -23,7 +23,7 @@ import (
 func main() {
 	handleFuncs("/accountstanding/{userToken}", false, Handlers{methods.GET: isAccountInGoodStanding})
 	handleFuncs("/analytics/*", false, Handlers{methods.GET: analytics, methods.POST: analytics})
-	handleFuncs("/braintreetoken", false, Handlers{methods.GET: braintreeToken})
+	handleFuncs("/braintree/token", false, Handlers{methods.GET: braintreeToken})
 	handleFuncs("/channels/{id}", false, Handlers{methods.DELETE: channelDelete, methods.POST: channelSetup})
 	handleFuncs("/checkout", false, Handlers{methods.POST: checkout})
 	handleFuncs("/continent", false, Handlers{methods.GET: getContinent})
@@ -40,7 +40,7 @@ func main() {
 	handleFuncs("/redox/credentials", false, Handlers{methods.PUT: redoxAddCredentials})
 	handleFuncs("/redox/execute", false, Handlers{methods.POST: redoxRunCommand})
 	handleFuncs("/signups", false, Handlers{methods.PUT: signUp})
-	handleFuncs("/stripesession", false, Handlers{methods.POST: stripeSession})
+	handleFuncs("/stripe/session", false, Handlers{methods.POST: stripeSession})
 	handleFuncs("/timestamp", false, Handlers{methods.GET: getTimestampHandler})
 	handleFuncs("/waitlist/invite", true, Handlers{methods.GET: rollOutWaitlistInvites})
 	handleFuncs("/warmupcloudfunctions", true, Handlers{methods.GET: warmUpCloudFunctions})

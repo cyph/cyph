@@ -63,7 +63,7 @@ export class CheckoutComponent extends BaseProvider
 	private readonly braintreeToken = memoize(async () =>
 		request({
 			retries: 5,
-			url: this.envService.baseUrl + 'braintreetoken'
+			url: this.envService.baseUrl + 'braintree/token'
 		})
 	);
 
@@ -315,7 +315,7 @@ export class CheckoutComponent extends BaseProvider
 							},
 							method: 'POST',
 							retries: 5,
-							url: this.envService.baseUrl + 'stripesession'
+							url: this.envService.baseUrl + 'stripe/session'
 						})
 				)
 			]);
