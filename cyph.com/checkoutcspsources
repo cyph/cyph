@@ -1,5 +1,7 @@
 bitpay.com
+braintree-api.com
 payments.braintree-api.com
+braintreegateway.com
 assets.braintreegateway.com
 partner-api.cyph.com
 google.com
@@ -7,3 +9,5 @@ pay.google.com
 gstatic.com
 paypal.com
 paypalobjects.com
+stripe.com
+js.stripe.com
