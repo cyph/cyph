@@ -571,7 +571,7 @@ func checkout(h HandlerArgs) (interface{}, int) {
 			}
 		}
 	} else {
-		if plan, hasPlan := config.Plans[planID]; hasPlan && plan.Price > amount {
+		if plan, hasPlan := plans[planID]; hasPlan && plan.Price > amount {
 			return "insufficient payment", http.StatusTeapot
 		}
 
@@ -708,7 +708,7 @@ func checkout(h HandlerArgs) (interface{}, int) {
 		"\n\n" + txLog +
 		""), "")
 
-	plan, hasPlan := config.Plans[planID]
+	plan, hasPlan := plans[planID]
 
 	if success && hasPlan && plan.AccountsPlan != "" {
 		_inviteCode, oldBraintreeSubscriptionID, welcomeLetter, err := generateInvite(email, name, plan.AccountsPlan, appStoreReceipt, braintreeIDs, braintreeSubscriptionIDs, []string{}, inviteCode, username, plan.GiftPack, true, false)
@@ -1435,7 +1435,7 @@ func stripeSession(h HandlerArgs) (interface{}, int) {
 		}
 	}
 
-	plan, hasPlan := config.Plans[planID]
+	plan, hasPlan := plans[planID]
 	if !hasPlan {
 		return "invalid plan", http.StatusTeapot
 	}

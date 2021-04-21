@@ -115,8 +115,10 @@ export class Config {
 				id: number;
 				items: {
 					[item: string]: {
+						accountsPlan?: string;
 						amount?: number;
 						extraUserDiscount?: number;
+						giftPack?: boolean;
 						id: number;
 						inAppPurchaseConfig?: {
 							alias: string;

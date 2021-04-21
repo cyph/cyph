@@ -169,6 +169,8 @@ if [ -d ~/.cyph ] && [ -f ~/.cyph/backend.vars ] && [ ! "${CIRCLECI}" ] ; then
 	fi
 fi
 
+./commands/backendplans.js backend/plans.json
+
 dev_appserver.py \
 	--skip_sdk_update_check \
 	--port 42000 \

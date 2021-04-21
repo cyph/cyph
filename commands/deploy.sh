@@ -619,6 +619,7 @@ if \
 	[ "${site}" == 'backend' ] || \
 	[ "${site}" == 'websign' ] \
 ; then
+	./commands/backendplans.js backend/plans.json
 	./commands/ipfsgateways.js backend/ipfs-gateways.json
 	./commands/packagedatabase.js backend/packages.json
 

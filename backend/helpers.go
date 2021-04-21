@@ -212,6 +212,21 @@ var packages = func() map[string]PackageData {
 	return o
 }()
 
+var plans = func() map[string]Plan {
+	b, err := ioutil.ReadFile("plans.json")
+	if err != nil {
+		panic(err)
+	}
+
+	var o map[string]Plan
+	err = json.Unmarshal(b, &o)
+	if err != nil {
+		panic(err)
+	}
+
+	return o
+}()
+
 func datastoreKey(kind string, name string) *datastore.Key {
 	key := datastore.NameKey(kind, name, nil)
 	key.Namespace = apiNamespace

@@ -77,9 +77,11 @@ type PackageData struct {
 
 // Plan : Subscription plan
 type Plan struct {
-	AccountsPlan string
-	GiftPack     bool
-	Price        int64
+	AccountsPlan     string
+	GiftPack         bool
+	Price            int64
+	Name             string
+	SubscriptionType string
 }
 
 // PreAuthorizedCyph : Representation of an approved usage of the API
@@ -164,7 +166,6 @@ var config = struct {
 	PartnerConversionURL          string
 	PartnerDiscountRate           int64
 	PlanAppleIDs                  map[string]string
-	Plans                         map[string]Plan
 	RootURL                       string
 }{
 	AllowedCyphIDs: regexp.MustCompile("[A-Za-z0-9_-]+$"),
@@ -337,117 +338,6 @@ var config = struct {
 
 	PlanAppleIDs: map[string]string{
 		"MonthlyPlatinum": "8-4",
-	},
-
-	Plans: map[string]Plan{
-		"3-3": Plan{
-			AccountsPlan: "MonthlyTelehealth",
-		},
-		"3-4": Plan{
-			AccountsPlan: "AnnualTelehealth",
-		},
-		"3-5": Plan{
-			AccountsPlan: "MonthlyTelehealth",
-		},
-		"3-6": Plan{
-			AccountsPlan: "AnnualTelehealth",
-		},
-		"3-7": Plan{
-			AccountsPlan: "MonthlyTelehealth",
-		},
-		"3-8": Plan{
-			AccountsPlan: "AnnualTelehealth",
-		},
-		"3-9": Plan{
-			AccountsPlan: "MonthlyTelehealth",
-		},
-		"3-10": Plan{
-			AccountsPlan: "AnnualTelehealth",
-		},
-		"8-0": Plan{
-			AccountsPlan: "MonthlyPremium",
-		},
-		"8-1": Plan{
-			AccountsPlan: "AnnualPremium",
-		},
-		"8-2": Plan{
-			AccountsPlan: "MonthlyTelehealth",
-		},
-		"8-3": Plan{
-			AccountsPlan: "AnnualTelehealth",
-		},
-		"8-4": Plan{
-			AccountsPlan: "MonthlyPlatinum",
-		},
-		"8-5": Plan{
-			AccountsPlan: "AnnualPlatinum",
-		},
-		"8-6": Plan{
-			AccountsPlan: "MonthlySupporter",
-		},
-		"8-7": Plan{
-			AccountsPlan: "AnnualSupporter",
-		},
-		"8-8": Plan{
-			AccountsPlan: "MonthlyBusiness",
-		},
-		"8-9": Plan{
-			AccountsPlan: "AnnualBusiness",
-		},
-		"10-1": Plan{
-			AccountsPlan: "LifetimePlatinum",
-			Price:        10000,
-		},
-		"11-1": Plan{
-			AccountsPlan: "MonthlyBusiness",
-		},
-		"11-2": Plan{
-			AccountsPlan: "AnnualBusiness",
-		},
-		"11-3": Plan{
-			AccountsPlan: "MonthlyBusiness",
-		},
-		"11-4": Plan{
-			AccountsPlan: "AnnualBusiness",
-		},
-		"11-5": Plan{
-			AccountsPlan: "MonthlyBusiness",
-		},
-		"11-6": Plan{
-			AccountsPlan: "AnnualBusiness",
-		},
-		"11-7": Plan{
-			AccountsPlan: "MonthlyBusiness",
-		},
-		"11-8": Plan{
-			AccountsPlan: "AnnualBusiness",
-		},
-		"12-0": Plan{
-			AccountsPlan: "AnnualSupporter",
-		},
-		"12-1": Plan{
-			AccountsPlan: "MonthlyPlatinum",
-		},
-		"13-1": Plan{
-			AccountsPlan: "[{\"plan\": \"AnnualSupporter\", \"quantity\": 10, \"trialMonths\": 18}]",
-			GiftPack:     true,
-			Price:        1500,
-		},
-		"13-2": Plan{
-			AccountsPlan: "[{\"plan\": \"AnnualPremium\", \"quantity\": 5, \"trialMonths\": 30}]",
-			GiftPack:     true,
-			Price:        4500,
-		},
-		"13-3": Plan{
-			AccountsPlan: "[{\"plan\": \"AnnualPlatinum\", \"quantity\": 2, \"trialMonths\": 42}]",
-			GiftPack:     true,
-			Price:        15000,
-		},
-		"13-4": Plan{
-			AccountsPlan: "[{\"plan\": \"AnnualSupporter\", \"quantity\": 10, \"trialMonths\": 18}, {\"plan\": \"AnnualPremium\", \"quantity\": 5, \"trialMonths\": 30}, {\"plan\": \"AnnualPlatinum\", \"quantity\": 2, \"trialMonths\": 42}]",
-			GiftPack:     true,
-			Price:        17500,
-		},
 	},
 
 	RootURL: "http://localhost:42000",
