@@ -65,7 +65,26 @@ var methods = struct {
 	"CONNECT",
 }
 
-var apiNamespace = strings.Split(strings.Split(config.RootURL, "/")[2], ":")[0]
+var appURL = func() string {
+	if appengine.IsDevAppServer() {
+		return "http://localhost:42002"
+	}
+	return os.Getenv("APP_URL")
+}()
+var backendURL = func() string {
+	if appengine.IsDevAppServer() {
+		return "http://localhost:42000"
+	}
+	return os.Getenv("BACKEND_URL")
+}()
+var websiteURL = func() string {
+	if appengine.IsDevAppServer() {
+		return "http://localhost:43000"
+	}
+	return os.Getenv("WEBSITE_URL")
+}()
+
+var apiNamespace = strings.Split(strings.Split(backendURL, "/")[2], ":")[0]
 
 var router = mux.NewRouter()
 var isRouterActive = false

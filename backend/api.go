@@ -1391,9 +1391,6 @@ func stripeSession(h HandlerArgs) (interface{}, int) {
 		}
 	*/
 
-	/* TODO: Get correct URL for current environment */
-	url := "https://staging-dot-cyph-com-dot-cyphme.appspot.com"
-
 	username := ""
 	if userToken != "" {
 		username, _ = getUsername(userToken)
@@ -1452,7 +1449,7 @@ func stripeSession(h HandlerArgs) (interface{}, int) {
 	}
 
 	params := &stripe.CheckoutSessionParams{
-		CancelURL: stripe.String(url + "/checkout/cancel"),
+		CancelURL: stripe.String(websiteURL + "/checkout/cancel"),
 		LineItems: []*stripe.CheckoutSessionLineItemParams{
 			&stripe.CheckoutSessionLineItemParams{
 				AdjustableQuantity: &stripe.CheckoutSessionLineItemAdjustableQuantityParams{
@@ -1473,7 +1470,7 @@ func stripeSession(h HandlerArgs) (interface{}, int) {
 		PaymentMethodTypes: stripe.StringSlice([]string{
 			"card",
 		}),
-		SuccessURL: stripe.String(url + "/checkout/success"),
+		SuccessURL: stripe.String(websiteURL + "/checkout/success"),
 	}
 
 	session, err := stripeSessionAPI.New(params)

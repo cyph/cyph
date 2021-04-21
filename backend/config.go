@@ -166,7 +166,6 @@ var config = struct {
 	PartnerConversionURL          string
 	PartnerDiscountRate           int64
 	PlanAppleIDs                  map[string]string
-	RootURL                       string
 }{
 	AllowedCyphIDs: regexp.MustCompile("[A-Za-z0-9_-]+$"),
 
@@ -339,6 +338,4 @@ var config = struct {
 	PlanAppleIDs: map[string]string{
 		"MonthlyPlatinum": "8-4",
 	},
-
-	RootURL: "http://localhost:42000",
 }
