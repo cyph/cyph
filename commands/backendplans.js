@@ -6,7 +6,7 @@ const {__dirname, isCLI} = getMeta(import.meta);
 import fs from 'fs';
 import memoize from 'lodash-es/memoize.js';
 
-export const backendPlans = memoize(async () => {
+export const backendPlans = memoize(() => {
 	const pricingConfig = JSON.parse(
 		fs
 			.readFileSync(`${__dirname}/../shared/js/cyph/pricing-config.json`)
@@ -31,16 +31,14 @@ export const backendPlans = memoize(async () => {
 });
 
 if (isCLI) {
-	(async () => {
-		const output = JSON.stringify(await backendPlans());
+	const output = JSON.stringify(backendPlans());
 
-		if (process.argv[2]) {
-			fs.writeFileSync(process.argv[2], output);
-		}
-		else {
-			console.log(output);
-		}
+	if (process.argv[2]) {
+		fs.writeFileSync(process.argv[2], output);
+	}
+	else {
+		console.log(output);
+	}
 
-		process.exit(0);
-	})();
+	process.exit(0);
 }

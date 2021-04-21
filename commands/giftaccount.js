@@ -1,17 +1,13 @@
 #!/usr/bin/env node
 
 import {getMeta} from '../modules/base.js';
-const {__dirname, isCLI} = getMeta(import.meta);
+const {isCLI} = getMeta(import.meta);
 
 import {configService as config, util} from '@cyph/sdk';
-import fs from 'fs';
 import {addInviteCode} from './addinvitecode.js';
+import {backendPlans} from './backendplans.js';
 
 const {titleize} = util;
-
-const configGoText = fs
-	.readFileSync(__dirname + '/../backend/config.go')
-	.toString();
 
 export const giftAccount = async (projectId, checkoutURL) => {
 	/* TODO: Handle other cases */
@@ -29,12 +25,9 @@ export const giftAccount = async (projectId, checkoutURL) => {
 	const category = config.pricingConfig.categories[categoryName];
 	const item = category.items[itemName];
 
-	const accountsPlan = JSON.parse(
-		configGoText
-			.split(`"${category.id.toString()}-${item.id.toString()}": Plan`)[1]
-			.split('AccountsPlan: ')[1]
-			.split(',\n')[0]
-	);
+	const accountsPlan = backendPlans()[
+		`${category.id.toString()}-${item.id.toString()}`
+	].accountsPlan;
 
 	const plans = accountsPlan.startsWith('[') ?
 		JSON.parse(accountsPlan) :
