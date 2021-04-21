@@ -486,7 +486,16 @@ wget \
 	-O shared/lib/ipfs-gateways.json
 
 ./commands/getlibs.sh
+
 cyph-prettier --write shared/lib/ipfs-gateways.json || fail
 cyph-prettier --write shared/lib/js/package.json || fail
 cyph-prettier --write shared/lib/js/package-lock.json || fail
+
+rm */go.mod */go.sum 2> /dev/null
+find . -maxdepth 2 -type f -name .go.mod -exec bash -c '
+	cd $(echo "{}" | sed "s|/.go.mod||")
+	cp .go.mod go.mod
+	go mod tidy
+' \;
+
 ./commands/commit.sh --gc "${@}" updatelibs

@@ -13,8 +13,6 @@ nohup.out
 *.orig
 documentation
 firebase-debug.log
-go.mod
-go.sum
 npm-debug.log
 node_modules
 Dockerfile.tmp

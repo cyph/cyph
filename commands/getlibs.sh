@@ -28,24 +28,10 @@ installPackages () {
 
 
 rm -rf "${GOPATH}"
-go get -u \
-	cloud.google.com/go/datastore \
-	github.com/buu700/mustache-tmp \
-	github.com/gorilla/context \
-	github.com/gorilla/mux \
-	github.com/buu700/braintree-go-tmp \
-	github.com/microcosm-cc/bluemonday \
-	github.com/oschwald/geoip2-golang \
-	github.com/stripe/stripe-go \
-	google.golang.org/api \
-	google.golang.org/api/internal \
-	google.golang.org/api/iterator \
-	google.golang.org/appengine \
-	google.golang.org/appengine/datastore \
-	google.golang.org/appengine/mail \
-	google.golang.org/appengine/memcache \
-	google.golang.org/appengine/urlfetch \
-	google.golang.org/grpc
+find . -maxdepth 2 -type f -name .go.mod -exec bash -c '
+	cd $(echo "{}" | sed "s|/.go.mod||")
+	go mod download
+' \;
 
 
 nativePlugins="$(cat native/plugins.list)"
