@@ -298,8 +298,6 @@ export class CheckoutComponent extends BaseProvider
 						request({
 							data: {
 								amount: Math.floor(this.amount * 100),
-								subscription:
-									this.subscriptionType !== undefined,
 								url: location.toString(),
 								...(this.category !== undefined ?
 									{category: this.category} :
@@ -787,7 +785,6 @@ export class CheckoutComponent extends BaseProvider
 									0)
 					),
 					creditCard,
-					subscription: this.subscriptionType !== undefined,
 					subscriptionCount:
 						this.subscriptionType === undefined ?
 							0 :

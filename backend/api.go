@@ -299,6 +299,10 @@ func checkout(h HandlerArgs) (interface{}, int) {
 			planID = strconv.FormatInt(category, 10) + "-" + strconv.FormatInt(item, 10)
 		}
 	}
+	plan, hasPlan := plans[planID]
+	if !hasPlan {
+		return "invalid plan", http.StatusTeapot
+	}
 
 	amountString := sanitize(h.Request.PostFormValue("amount"))
 	amount, err := strconv.ParseInt(amountString, 10, 64)
@@ -309,11 +313,7 @@ func checkout(h HandlerArgs) (interface{}, int) {
 		return "invalid amount", http.StatusTeapot
 	}
 
-	subscriptionString := sanitize(h.Request.PostFormValue("subscription"))
-	subscription, err := strconv.ParseBool(subscriptionString)
-	if err != nil {
-		return err.Error(), http.StatusTeapot
-	}
+	subscription := plan.SubscriptionType != ""
 
 	subscriptionCountString := sanitize(h.Request.PostFormValue("subscriptionCount"))
 	subscriptionCount, err := strconv.ParseInt(subscriptionCountString, 10, 64)
@@ -399,13 +399,13 @@ func checkout(h HandlerArgs) (interface{}, int) {
 				return err.Error(), http.StatusTeapot
 			}
 
-			plan, err := bt.Plan().Find(h.Context, planID)
+			btPlan, err := bt.Plan().Find(h.Context, planID)
 
 			if err != nil {
 				return err.Error(), http.StatusTeapot
 			}
 
-			price := braintreeDecimalToCents(plan.Price)
+			price := braintreeDecimalToCents(btPlan.Price)
 			priceDelta := amount - price
 
 			priceDeltaFloor := int64(0)
@@ -571,7 +571,7 @@ func checkout(h HandlerArgs) (interface{}, int) {
 			}
 		}
 	} else {
-		if plan, hasPlan := plans[planID]; hasPlan && plan.Price > amount {
+		if plan.Price > amount {
 			return "insufficient payment", http.StatusTeapot
 		}
 
@@ -699,7 +699,7 @@ func checkout(h HandlerArgs) (interface{}, int) {
 		"\nPlan ID: " + planID +
 		"\nAmount: " + amountString +
 		"\nInvite Code: " + inviteCode +
-		"\nSubscription: " + subscriptionString +
+		"\nSubscription: " + plan.SubscriptionType +
 		"\nSubscription count: " + subscriptionCountString +
 		"\nCompany: " + company +
 		"\nName: " + name +
@@ -708,9 +708,7 @@ func checkout(h HandlerArgs) (interface{}, int) {
 		"\n\n" + txLog +
 		""), "")
 
-	plan, hasPlan := plans[planID]
-
-	if success && hasPlan && plan.AccountsPlan != "" {
+	if success && plan.AccountsPlan != "" {
 		_inviteCode, oldBraintreeSubscriptionID, welcomeLetter, err := generateInvite(email, name, plan.AccountsPlan, appStoreReceipt, braintreeIDs, braintreeSubscriptionIDs, []string{}, inviteCode, username, plan.GiftPack, true, false)
 
 		inviteCode := _inviteCode
@@ -721,7 +719,7 @@ func checkout(h HandlerArgs) (interface{}, int) {
 				"\nPlan ID: " + planID +
 				"\nAmount: " + amountString +
 				"\nInvite Code: " + inviteCode +
-				"\nSubscription: " + subscriptionString +
+				"\nSubscription: " + plan.SubscriptionType +
 				"\nSubscription count: " + subscriptionCountString +
 				"\nCompany: " + company +
 				"\nName: " + name +
@@ -749,7 +747,7 @@ func checkout(h HandlerArgs) (interface{}, int) {
 		return "", http.StatusInternalServerError
 	}
 
-	if subscription && hasPlan {
+	if subscription {
 		sendMail(email, "Cyph Purchase Confirmation", "", ""+
 			"<p>Welcome to Cyph "+name+", and thanks for signing up!</p>"+
 			"<p style='text-align: left'>"+
@@ -1410,6 +1408,10 @@ func stripeSession(h HandlerArgs) (interface{}, int) {
 			planID = strconv.FormatInt(category, 10) + "-" + strconv.FormatInt(item, 10)
 		}
 	}
+	plan, hasPlan := plans[planID]
+	if !hasPlan {
+		return "invalid plan", http.StatusTeapot
+	}
 
 	amountString := sanitize(h.Request.PostFormValue("amount"))
 	amount, err := strconv.ParseInt(amountString, 10, 64)
@@ -1420,24 +1422,21 @@ func stripeSession(h HandlerArgs) (interface{}, int) {
 		return "invalid amount", http.StatusTeapot
 	}
 
-	/* TODO: Get this and interval from plan data */
-	subscriptionString := sanitize(h.Request.PostFormValue("subscription"))
-	subscription, err := strconv.ParseBool(subscriptionString)
-	if err != nil {
-		return err.Error(), http.StatusTeapot
-	}
-	mode := stripe.CheckoutSessionModePayment
-	var recurring *stripe.CheckoutSessionLineItemPriceDataRecurringParams
-	if subscription {
-		mode = stripe.CheckoutSessionModeSubscription
-		recurring = &stripe.CheckoutSessionLineItemPriceDataRecurringParams{
-			Interval: stripe.String("month"),
-		}
+	interval := ""
+	if plan.SubscriptionType == "monthly" {
+		interval = "month"
+	} else if plan.SubscriptionType == "annual" {
+		interval = "year"
 	}
 
-	plan, hasPlan := plans[planID]
-	if !hasPlan {
-		return "invalid plan", http.StatusTeapot
+	mode := stripe.CheckoutSessionModePayment
+	var recurring *stripe.CheckoutSessionLineItemPriceDataRecurringParams
+
+	if interval != "" {
+		mode = stripe.CheckoutSessionModeSubscription
+		recurring = &stripe.CheckoutSessionLineItemPriceDataRecurringParams{
+			Interval: stripe.String(interval),
+		}
 	}
 
 	price := plan.Price
@@ -1462,7 +1461,7 @@ func stripeSession(h HandlerArgs) (interface{}, int) {
 				PriceData: &stripe.CheckoutSessionLineItemPriceDataParams{
 					Currency: stripe.String(string(stripe.CurrencyUSD)),
 					ProductData: &stripe.CheckoutSessionLineItemPriceDataProductDataParams{
-						Name: stripe.String("Cyph (TODO: Add Plan Name)"),
+						Name: stripe.String("Cyph " + plan.Name),
 					},
 					Recurring:  recurring,
 					UnitAmount: stripe.Int64(amount),
