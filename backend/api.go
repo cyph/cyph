@@ -14,9 +14,9 @@ import (
 
 	"cloud.google.com/go/datastore"
 	"github.com/buu700/braintree-go-tmp"
-	"github.com/stripe/stripe-go"
-	stripeSessionAPI "github.com/stripe/stripe-go/checkout/session"
-	stripeSubscriptionAPI "github.com/stripe/stripe-go/sub"
+	"github.com/stripe/stripe-go/v72"
+	stripeSessionAPI "github.com/stripe/stripe-go/v72/checkout/session"
+	stripeSubscriptionAPI "github.com/stripe/stripe-go/v72/sub"
 	"google.golang.org/api/iterator"
 )
 
@@ -442,7 +442,7 @@ func checkout(h HandlerArgs) (interface{}, int) {
 					if priceDelta > 0 {
 						subscriptionRequest.AddOns = &braintree.ModificationsRequest{
 							Add: []braintree.AddModificationRequest{
-								braintree.AddModificationRequest{
+								{
 									InheritedFromID: "addon",
 									ModificationRequest: braintree.ModificationRequest{
 										Amount:       braintree.NewDecimal(priceDelta, 2),
@@ -454,7 +454,7 @@ func checkout(h HandlerArgs) (interface{}, int) {
 					} else if priceDelta < 0 {
 						subscriptionRequest.Discounts = &braintree.ModificationsRequest{
 							Add: []braintree.AddModificationRequest{
-								braintree.AddModificationRequest{
+								{
 									InheritedFromID: "discount",
 									ModificationRequest: braintree.ModificationRequest{
 										Amount:       braintree.NewDecimal(priceDelta*-1, 2),
@@ -610,7 +610,7 @@ func checkout(h HandlerArgs) (interface{}, int) {
 			}
 
 			price := int64(0)
-			invoicePriceDynamic, _ := invoice["price"]
+			invoicePriceDynamic := invoice["price"]
 			switch invoicePrice := invoicePriceDynamic.(type) {
 			case float64:
 				price = int64(invoicePrice)
@@ -1210,7 +1210,7 @@ func redoxRunCommand(h HandlerArgs) (interface{}, int) {
 			return err.Error(), http.StatusInternalServerError
 		}
 
-		accessTokenDynamic, _ := body["accessToken"]
+		accessTokenDynamic := body["accessToken"]
 		switch accessToken := accessTokenDynamic.(type) {
 		case string:
 			redoxAuth.AccessToken = accessToken
@@ -1218,7 +1218,7 @@ func redoxRunCommand(h HandlerArgs) (interface{}, int) {
 			return "invalid Redox auth data", http.StatusInternalServerError
 		}
 
-		expiresDynamic, _ := body["expires"]
+		expiresDynamic := body["expires"]
 		switch expires := expiresDynamic.(type) {
 		case string:
 			expiryTimestamp, _ := time.Parse(time.RFC3339, expires)
@@ -1227,7 +1227,7 @@ func redoxRunCommand(h HandlerArgs) (interface{}, int) {
 			return "invalid Redox auth data", http.StatusInternalServerError
 		}
 
-		refreshTokenDynamic, _ := body["refreshToken"]
+		refreshTokenDynamic := body["refreshToken"]
 		switch refreshToken := refreshTokenDynamic.(type) {
 		case string:
 			redoxAuth.RefreshToken = refreshToken
@@ -1464,7 +1464,7 @@ func stripeSession(h HandlerArgs) (interface{}, int) {
 	params := &stripe.CheckoutSessionParams{
 		CancelURL: stripe.String(websiteURL),
 		LineItems: []*stripe.CheckoutSessionLineItemParams{
-			&stripe.CheckoutSessionLineItemParams{
+			{
 				AdjustableQuantity: adjustableQuantity,
 				PriceData: &stripe.CheckoutSessionLineItemPriceDataParams{
 					Currency: stripe.String(string(stripe.CurrencyUSD)),
@@ -1504,7 +1504,7 @@ func stripeWebhook(h HandlerArgs) (interface{}, int) {
 	/* Temporary, for testing */
 	sendMail(
 		"balls@cyph.com",
-		"Stripe Webhook Test: "+string(time.Now().UnixNano()),
+		"Stripe Webhook Test: "+fmt.Sprint(time.Now().UnixNano()),
 		string(requestBodyBytes),
 		"",
 	)

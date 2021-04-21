@@ -65,12 +65,14 @@ var methods = struct {
 	"CONNECT",
 }
 
+/*
 var appURL = func() string {
 	if appengine.IsDevAppServer() {
 		return "http://localhost:42002"
 	}
 	return os.Getenv("APP_URL")
 }()
+*/
 var backendURL = func() string {
 	if appengine.IsDevAppServer() {
 		return "http://localhost:42000"
@@ -183,13 +185,13 @@ var ipfsGatewayURLs = func() []IPFSGatewayData {
 
 var ipfsGateways = func() map[string][]string {
 	gateways := map[string][]string{
-		"af": []string{},
-		"an": []string{},
-		"as": []string{},
-		"eu": []string{},
-		"na": []string{},
-		"oc": []string{},
-		"sa": []string{},
+		"af": {},
+		"an": {},
+		"as": {},
+		"eu": {},
+		"na": {},
+		"oc": {},
+		"sa": {},
 	}
 
 	if appengine.IsDevAppServer() {
@@ -898,7 +900,7 @@ func getAppStoreTransactionDataInternal(appStoreReceipt string, sandbox bool) (s
 	}
 
 	if status != 0 {
-		return "", errors.New("Error status: " + string(status))
+		return "", errors.New("Error status: " + fmt.Sprint(status))
 	}
 
 	receiptData := map[string]interface{}{}
@@ -1189,9 +1191,11 @@ func initHandler(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+/*
 func nullHandler(h HandlerArgs) (interface{}, int) {
 	return nil, http.StatusOK
 }
+*/
 
 func sanitize(s string, params ...int) string {
 	sanitized := sanitizer.Sanitize(s)
@@ -1239,6 +1243,7 @@ func getURL(maybeURL string) (string, error) {
 	return o.Scheme + "://" + o.Host, nil
 }
 
+/*
 func parseURL(maybeURL string) (*url.URL, error) {
 	parsedURL, err := url.Parse(maybeURL)
 
@@ -1248,6 +1253,7 @@ func parseURL(maybeURL string) (*url.URL, error) {
 
 	return parsedURL, nil
 }
+*/
 
 func getTimestamp() int64 {
 	return time.Now().UnixNano() / 1e6
@@ -1272,7 +1278,7 @@ func sendMail(to string, subject string, text string, html string) {
 	body, err := emailTemplate.Render(map[string]interface{}{"html": html, "lines": lines})
 
 	if err != nil {
-		log.Println(fmt.Errorf("Failed to render email body: %v", err))
+		log.Println(fmt.Errorf("failed to render email body: %v", err))
 	}
 
 	emailLog := map[string]string{
@@ -1283,9 +1289,9 @@ func sendMail(to string, subject string, text string, html string) {
 	}
 
 	if b, err := json.Marshal(emailLog); err == nil {
-		log.Println("Sending email: %v", string(b))
+		log.Printf("sending email: %v", string(b))
 	} else {
-		log.Println(fmt.Errorf("Failed to log outgoing email."))
+		log.Println(fmt.Errorf("failed to log outgoing email"))
 	}
 
 	mailTo := []string{to, emailFrom}
@@ -1323,6 +1329,6 @@ func sendMail(to string, subject string, text string, html string) {
 	}
 
 	if err != nil {
-		log.Println(fmt.Errorf("Failed to send email: %v", err))
+		log.Println(fmt.Errorf("failed to send email: %v", err))
 	}
 }
