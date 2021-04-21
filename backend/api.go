@@ -889,7 +889,7 @@ func getTimestampHandler(h HandlerArgs) (interface{}, int) {
 func isAccountInGoodStanding(h HandlerArgs) (interface{}, int) {
 	userToken := sanitize(h.Vars["userToken"])
 
-	appStoreReceipt, braintreeSubscriptionID, planTrialEnd, _ := getBraintreeSubscriptionID(userToken)
+	appStoreReceipt, braintreeSubscriptionID, planTrialEnd, _ := getSubscriptionData(userToken)
 
 	/* Check trial against current timestamp if applicable */
 

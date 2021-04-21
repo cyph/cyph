@@ -3,7 +3,7 @@ import {namespaces} from '../namespaces.js';
 import * as tokens from '../tokens.js';
 import {validateInput} from '../validation.js';
 
-export const getBraintreeSubscriptionID = onRequest(
+export const getSubscriptionData = onRequest(
 	true,
 	async (req, res, namespace) => {
 		const {accountsURL} = namespaces[namespace];

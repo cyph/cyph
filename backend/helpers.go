@@ -656,7 +656,7 @@ func generateInvite(email, name, plan, appStoreReceipt string, braintreeIDs, bra
 	return inviteCode, oldBraintreeSubscriptionID, welcomeLetter, nil
 }
 
-func getBraintreeSubscriptionID(userToken string) (string, string, int64, error) {
+func getSubscriptionData(userToken string) (string, string, int64, error) {
 	body, _ := json.Marshal(map[string]interface{}{
 		"namespace": "cyph.ws",
 		"userToken": userToken,
@@ -666,7 +666,7 @@ func getBraintreeSubscriptionID(userToken string) (string, string, int64, error)
 
 	req, _ := http.NewRequest(
 		methods.POST,
-		firebaseFunctionURL+"getBraintreeSubscriptionID",
+		firebaseFunctionURL+"getSubscriptionData",
 		bytes.NewBuffer(body),
 	)
 
