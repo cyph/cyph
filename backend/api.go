@@ -17,6 +17,7 @@ import (
 	"github.com/stripe/stripe-go/v72"
 	stripeSessionAPI "github.com/stripe/stripe-go/v72/checkout/session"
 	stripeSubscriptionAPI "github.com/stripe/stripe-go/v72/sub"
+	stripeWebhookAPI "github.com/stripe/stripe-go/v72/webhook"
 	"google.golang.org/api/iterator"
 )
 
@@ -1507,9 +1508,13 @@ func stripeWebhook(h HandlerArgs) (interface{}, int) {
 		return err.Error(), http.StatusInternalServerError
 	}
 
-	event := stripe.Event{}
-	if err := json.Unmarshal(requestBodyBytes, &event); err != nil {
-		log.Println(fmt.Errorf("stripeWebHookBadJSON: %v", err))
+	event, err := stripeWebhookAPI.ConstructEvent(
+		requestBodyBytes,
+		h.Request.Header.Get("Stripe-Signature"),
+		stripeWebhookSecret,
+	)
+	if err != nil {
+		log.Println(fmt.Errorf("stripeWebHookBadSignature: %v", err))
 		return err.Error(), http.StatusInternalServerError
 	}
 
