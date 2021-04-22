@@ -765,6 +765,8 @@ then
 				}
 			};
 
+			export const stripeSecretKey = $(getBackendVar STRIPE_SECRET_KEY);
+
 			export const twilioCredentials = {
 				authToken: $(getBackendVar TWILIO_AUTH_TOKEN),
 				from: $(getBackendVar TWILIO_FROM),

@@ -47,7 +47,7 @@ export const downgradeAccount = onRequest(true, async (req, res, namespace) => {
 	const [
 		appStoreReceipt,
 		braintreeSubscriptionID,
-		stripe
+		stripeData
 	] = await Promise.all([
 		appStoreReceiptRef.once('value').then(o => o.val() || ''),
 		braintreeSubscriptionIDRef.once('value').then(o => o.val() || ''),
@@ -68,6 +68,6 @@ export const downgradeAccount = onRequest(true, async (req, res, namespace) => {
 	return {
 		appStoreReceipt,
 		braintreeSubscriptionID,
-		stripe
+		stripe: stripeData
 	};
 });

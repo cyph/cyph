@@ -31,7 +31,7 @@ export const getSubscriptionData = onRequest(
 			appStoreReceipt,
 			braintreeSubscriptionID,
 			planTrialEnd,
-			stripe
+			stripeData
 		] = await Promise.all([
 			appStoreReceiptRef.once('value').then(o => o.val() || ''),
 			braintreeSubscriptionIDRef.once('value').then(o => o.val() || ''),
@@ -39,6 +39,11 @@ export const getSubscriptionData = onRequest(
 			stripeRef.once('value').then(o => o.val() || {})
 		]);
 
-		return {appStoreReceipt, braintreeSubscriptionID, planTrialEnd, stripe};
+		return {
+			appStoreReceipt,
+			braintreeSubscriptionID,
+			planTrialEnd,
+			stripe: stripeData
+		};
 	}
 );

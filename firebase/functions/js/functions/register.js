@@ -11,6 +11,7 @@ import {
 	setItem
 } from '../init.js';
 import {mailchimp, removeFromMailingList} from '../mailchimp.js';
+import {stripe} from '../stripe.js';
 
 const {BinaryProto, BooleanProto, CyphPlan, CyphPlans, StringProto} = proto;
 const {normalize} = util;
@@ -60,7 +61,7 @@ export const register = onCall(
 			keybaseUsername,
 			planTrialEnd,
 			reservedUsername,
-			stripe
+			stripeData
 		} = inviteData;
 		const plan =
 			inviteData.plan in CyphPlans ? inviteData.plan : CyphPlans.Free;
@@ -167,11 +168,11 @@ export const register = onCall(
 						`${namespace}/users/${username}/internal/braintreeSubscriptionID`
 					)
 					.set(braintreeSubscriptionID),
-			!stripe ?
+			!stripeData ?
 				undefined :
 				database
 					.ref(`${namespace}/users/${username}/internal/stripe`)
-					.set(stripe),
+					.set(stripeData),
 			!inviterUsername ?
 				undefined :
 				removeItem(
@@ -199,6 +200,11 @@ export const register = onCall(
 						)}`
 					)
 					.remove() :
+				undefined,
+			stripeData ?
+				stripe.subscriptionItems.update(stripeData.subscriptionItemID, {
+					metadata: {username}
+				}) :
 				undefined,
 			pendingInviteRef
 				.once('value')
