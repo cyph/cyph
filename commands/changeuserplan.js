@@ -138,10 +138,10 @@ export const changeUserPlan = async (
 				undefined,
 		stripe:
 			oldPaymentInfo.stripe &&
-			oldPaymentInfo.stripe.subscriptionID &&
-			oldPaymentInfo.stripe.subscriptionID !==
-				(paymentInfo.stripe || {}).subscriptionID ?
-				oldPaymentInfo.stripe.subscriptionID :
+			oldPaymentInfo.stripe.subscriptionItemID &&
+			oldPaymentInfo.stripe.subscriptionItemID !==
+				(paymentInfo.stripe || {}).subscriptionItemID ?
+				oldPaymentInfo.stripe.subscriptionItemID :
 				undefined
 	});
 

@@ -39,7 +39,9 @@ export const addSubscriptions = async (projectId, username, count) => {
 			(metadata.internal.braintreeID &&
 				metadata.internal.braintreeSubscriptionID) ||
 			(metadata.internal.stripe &&
-				metadata.internal.stripe.subscriptionID)
+				metadata.internal.stripe.customerID &&
+				metadata.internal.stripe.subscriptionID &&
+				metadata.internal.stripe.subscriptionItemID)
 		)
 	) {
 		throw new Error('Invalid subscription data.');
@@ -82,10 +84,11 @@ export const addSubscriptions = async (projectId, username, count) => {
 	}
 
 	const subscriptionIDs = new Array(count).fill(0).map(
-		metadata.internal.stripe && metadata.internal.stripe.subscriptionID ?
+		metadata.internal.stripe &&
+			metadata.internal.stripe.subscriptionItemID ?
 			async () =>
 				cloneSubscription({
-					stripe: metadata.internal.stripe.subscriptionID
+					stripe: metadata.internal.stripe.subscriptionItemID
 				}) :
 			async () =>
 				cloneSubscription({
@@ -101,11 +104,12 @@ export const addSubscriptions = async (projectId, username, count) => {
 		undefined,
 		0,
 		count,
-		metadata.internal.stripe && metadata.internal.stripe.subscriptionID ?
+		metadata.internal.stripe &&
+			metadata.internal.stripe.subscriptionItemID ?
 			async () => ({
 				stripe: {
 					...metadata.internal.stripe,
-					subscriptionID: await subscriptionIDs.shift()
+					subscriptionItemID: await subscriptionIDs.shift()
 				}
 			}) :
 			async () => ({

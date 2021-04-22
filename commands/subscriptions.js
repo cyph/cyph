@@ -87,6 +87,10 @@ const stripeCancelSubscription = async subscriptionID => {
 	await stripe.subscriptions.del(subscriptionID);
 };
 
+const stripeCancelSubscriptionItem = async subscriptionItemID => {
+	await stripe.subscriptionItems.del(subscriptionItemID);
+};
+
 const stripeCloneSubscription = async subscriptionID => {
 	const subscription = await stripe.subscriptions.retrieve(subscriptionID);
 
@@ -105,6 +109,25 @@ const stripeCloneSubscription = async subscriptionID => {
 	})).id;
 };
 
+const stripeCloneSubscriptionItem = async subscriptionItemID => {
+	const subscriptionItem = await stripe.subscriptionItems.retrieve(
+		subscriptionItemID
+	);
+
+	return (await stripe.subscriptions.create({
+		price_data: {
+			currency: subscriptionItem.price.currency,
+			product: subscriptionItem.price.product.id,
+			recurring: {
+				interval: subscriptionItem.price.recurring.interval
+			},
+			unit_amount: subscriptionItem.price.unit_amount
+		},
+		quantity: 1,
+		subscription: subscriptionItem.subscription
+	})).id;
+};
+
 const stripeRefundSubscription = async subscriptionID => {
 	throw new Error('Not implemented.');
 
@@ -120,6 +143,10 @@ const stripeRefundSubscription = async subscriptionID => {
 	await stripeCancelSubscription(subscriptionID);
 };
 
+const stripeRefundSubscriptionItem = async subscriptionItemID => {
+	throw new Error('Not implemented.');
+};
+
 export const cancelSubscriptions = async (...subscriptions) => {
 	for (const o of subscriptions) {
 		if (o.apple) {
@@ -129,7 +156,7 @@ export const cancelSubscriptions = async (...subscriptions) => {
 			await braintreeCancelSubscription(o.braintree);
 		}
 		if (o.stripe) {
-			await stripeCancelSubscription(o.stripe);
+			await stripeCancelSubscriptionItem(o.stripe);
 		}
 	}
 };
@@ -142,7 +169,7 @@ export const cloneSubscription = async ({apple, braintree, stripe}) => {
 		return braintreeCloneSubscription(braintree);
 	}
 	else if (stripe) {
-		return stripeCloneSubscription(stripe);
+		return stripeCloneSubscriptionItem(stripe);
 	}
 
 	throw new Error('Not implemented.');
@@ -157,7 +184,7 @@ export const refundSubscriptions = async (...subscriptions) => {
 			await braintreeRefundSubscription(o.braintree);
 		}
 		if (o.stripe) {
-			await stripeRefundSubscription(o.stripe);
+			await stripeRefundSubscriptionItem(o.stripe);
 		}
 	}
 };
