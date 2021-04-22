@@ -20,6 +20,7 @@ import (
 	stripeSubscriptionItemAPI "github.com/stripe/stripe-go/v72/subitem"
 	stripeWebhookAPI "github.com/stripe/stripe-go/v72/webhook"
 	"google.golang.org/api/iterator"
+	"google.golang.org/appengine/taskqueue"
 )
 
 func main() {
@@ -44,6 +45,7 @@ func main() {
 	handleFuncs("/signups", false, Handlers{methods.PUT: signUp})
 	handleFuncs("/stripe/session", false, Handlers{methods.POST: stripeSession})
 	handleFuncs("/stripe/webhook", false, Handlers{methods.POST: stripeWebhook})
+	handleFuncs("/stripe/webhook/worker", false, Handlers{methods.POST: stripeWebhookWorker})
 	handleFuncs("/timestamp", false, Handlers{methods.GET: getTimestampHandler})
 	handleFuncs("/waitlist/invite", true, Handlers{methods.GET: rollOutWaitlistInvites})
 	handleFuncs("/warmupcloudfunctions", true, Handlers{methods.GET: warmUpCloudFunctions})
@@ -1506,8 +1508,9 @@ func stripeWebhook(h HandlerArgs) (interface{}, int) {
 	requestBodyBytes, err := ioutil.ReadAll(
 		http.MaxBytesReader(h.Writer, h.Request.Body, int64(65536)),
 	)
+
 	if err != nil {
-		log.Println(fmt.Errorf("stripeWebHookBadPayload: %v", err))
+		log.Println(fmt.Errorf("stripeWebhookBadPayload: %v", err))
 		return err.Error(), http.StatusInternalServerError
 	}
 
@@ -1516,8 +1519,9 @@ func stripeWebhook(h HandlerArgs) (interface{}, int) {
 		h.Request.Header.Get("Stripe-Signature"),
 		stripeWebhookSecret,
 	)
+
 	if err != nil {
-		log.Println(fmt.Errorf("stripeWebHookBadSignature: %v", err))
+		log.Println(fmt.Errorf("stripeWebhookBadSignature: %v", err))
 		return err.Error(), http.StatusInternalServerError
 	}
 
@@ -1525,20 +1529,43 @@ func stripeWebhook(h HandlerArgs) (interface{}, int) {
 		return "", http.StatusOK
 	}
 
-	var checkoutSession stripe.CheckoutSession
-	err = json.Unmarshal(event.Data.Raw, &checkoutSession)
-	if err != nil {
-		log.Println(fmt.Errorf("stripeWebHookBadRawData: %v", err))
+	task := taskqueue.NewPOSTTask(
+		"/stripe/webhook/worker",
+		map[string][]string{"requestBody": {string(requestBodyBytes)}},
+	)
+
+	if _, err := taskqueue.Add(h.Context, task, ""); err != nil {
+		log.Println(fmt.Errorf("stripeWorkerInitFailure: %v", err))
 		return err.Error(), http.StatusInternalServerError
 	}
 
-	txLog := string(requestBodyBytes)
+	return "", http.StatusOK
+}
+
+func stripeWebhookWorker(h HandlerArgs) (interface{}, int) {
+	requestBody := h.Request.FormValue("requestBody")
+	if requestBody == "" {
+		log.Println("stripeWebhookEmptyRequest")
+		return "empty request body", http.StatusInternalServerError
+	}
+
+	event := stripe.Event{}
+	if err := json.Unmarshal([]byte(requestBody), &event); err != nil {
+		log.Println(fmt.Errorf("stripeWebhookBadJSON: %v", err))
+		return err.Error(), http.StatusInternalServerError
+	}
+
+	var checkoutSession stripe.CheckoutSession
+	if err := json.Unmarshal(event.Data.Raw, &checkoutSession); err != nil {
+		log.Println(fmt.Errorf("stripeWebhookBadRawData: %v", err))
+		return err.Error(), http.StatusInternalServerError
+	}
 
 	customerID := checkoutSession.Subscription.Customer.ID
 	subscriptionID := checkoutSession.Subscription.ID
 
 	if len(checkoutSession.Subscription.Items.Data) != 1 {
-		log.Println(fmt.Errorf("stripeWebHookBadItemList: %v", subscriptionID))
+		log.Println(fmt.Errorf("stripeWebhookBadItemList: %v", subscriptionID))
 		return "subcription must have only one item", http.StatusInternalServerError
 	}
 
@@ -1565,7 +1592,7 @@ func stripeWebhook(h HandlerArgs) (interface{}, int) {
 	}
 
 	if partnerTransactionID != "" {
-		err = trackPartnerConversion(h, partnerOrderID, partnerTransactionID, amount)
+		err := trackPartnerConversion(h, partnerOrderID, partnerTransactionID, amount)
 		if err != nil {
 			subject = "PARTNER CONVERSION FAILURE: " + subject
 		}
@@ -1584,7 +1611,7 @@ func stripeWebhook(h HandlerArgs) (interface{}, int) {
 			"\nSubscription ID: " + subscriptionID +
 			"\nSubscription Item ID: " + originalSubscriptionItem.ID +
 			"\nError: " + errorMessage +
-			"\n\n" + txLog +
+			"\n\n" + requestBody +
 			""), "")
 
 		return errorMessage, http.StatusInternalServerError
@@ -1602,7 +1629,7 @@ func stripeWebhook(h HandlerArgs) (interface{}, int) {
 		"\nName: " + name +
 		"\nEmail: " + email +
 		"\nPartner transaction ID: " + partnerTransactionID +
-		"\n\n" + txLog +
+		"\n\n" + requestBody +
 		""), "")
 
 	customerIDs := []string{}
@@ -1611,14 +1638,12 @@ func stripeWebhook(h HandlerArgs) (interface{}, int) {
 	newSubscriptionIDCount := int(quantity - 1)
 	single := stripe.Int64(1)
 
-	_, err = stripeSubscriptionItemAPI.Update(
+	if _, err := stripeSubscriptionItemAPI.Update(
 		originalSubscriptionItem.ID,
 		&stripe.SubscriptionItemParams{
 			Quantity: single,
 		},
-	)
-
-	if err != nil {
+	); err != nil {
 		return sendFailureEmail("ITEM UPDATE FAILED", err.Error())
 	}
 
