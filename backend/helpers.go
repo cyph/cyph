@@ -27,6 +27,8 @@ import (
 	"github.com/gorilla/mux"
 	"github.com/microcosm-cc/bluemonday"
 	"github.com/oschwald/geoip2-golang"
+	"github.com/stripe/stripe-go/v72"
+	stripeProductAPI "github.com/stripe/stripe-go/v72/product"
 	"google.golang.org/appengine"
 )
 
@@ -602,6 +604,30 @@ func getStripeData(responseBody map[string]interface{}) *StripeData {
 	}
 
 	return stripeData
+}
+
+func getStripeProduct(planID string) string {
+	plan, hasPlan := plans[planID]
+	if !hasPlan {
+		return ""
+	}
+
+	name := "Cyph " + plan.Name
+
+	product, err := stripeProductAPI.Get(planID, nil)
+
+	if err != nil {
+		stripeProductAPI.New(&stripe.ProductParams{
+			ID:   stripe.String(planID),
+			Name: stripe.String(name),
+		})
+	} else if product.Name != name {
+		stripeProductAPI.Update(planID, &stripe.ProductParams{
+			Name: stripe.String(name),
+		})
+	}
+
+	return planID
 }
 
 func downgradeAccountHelper(userToken string, removeAppStoreReceiptRef bool) (string, string, *StripeData, error) {

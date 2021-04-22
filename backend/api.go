@@ -1473,10 +1473,8 @@ func stripeSession(h HandlerArgs) (interface{}, int) {
 			{
 				AdjustableQuantity: adjustableQuantity,
 				PriceData: &stripe.CheckoutSessionLineItemPriceDataParams{
-					Currency: stripe.String(string(stripe.CurrencyUSD)),
-					ProductData: &stripe.CheckoutSessionLineItemPriceDataProductDataParams{
-						Name: stripe.String("Cyph " + plan.Name),
-					},
+					Currency:   stripe.String(string(stripe.CurrencyUSD)),
+					Product:    stripe.String(getStripeProduct(planID)),
 					Recurring:  recurring,
 					UnitAmount: stripe.Int64(amount),
 				},
