@@ -17,6 +17,8 @@ import (
 	"github.com/buu700/braintree-go-tmp"
 	"github.com/stripe/stripe-go/v72"
 	stripeSessionAPI "github.com/stripe/stripe-go/v72/checkout/session"
+	stripeCustomerAPI "github.com/stripe/stripe-go/v72/customer"
+	stripePaymentMethodAPI "github.com/stripe/stripe-go/v72/paymentmethod"
 	stripeSubscriptionAPI "github.com/stripe/stripe-go/v72/sub"
 	stripeSubscriptionItemAPI "github.com/stripe/stripe-go/v72/subitem"
 	stripeWebhookAPI "github.com/stripe/stripe-go/v72/webhook"
@@ -1614,11 +1616,31 @@ func stripeWebhookWorker(h HandlerArgs) (interface{}, int) {
 		return "subcription must have only one item", http.StatusInternalServerError
 	}
 
-	originalSubscriptionItem := subscription.Items.Data[0]
-
 	customerID := subscription.Customer.ID
-	email := subscription.Customer.Email
-	name := subscription.Customer.Name
+	customer, err := stripeCustomerAPI.Get(customerID, nil)
+	if err != nil {
+		log.Println(fmt.Errorf("stripeWebhookMissingCustomer: %v", err))
+		return err.Error(), http.StatusInternalServerError
+	}
+
+	email := customer.Email
+	name := customer.Name
+
+	paymentMethodIter := stripePaymentMethodAPI.List(&stripe.PaymentMethodListParams{
+		Customer: stripe.String(customer.ID),
+		Type:     stripe.String("card"),
+	})
+	for name == "" && paymentMethodIter.Next() {
+		name = paymentMethodIter.PaymentMethod().BillingDetails.Name
+	}
+
+	if customer.Name == "" && name != "" {
+		stripeCustomerAPI.Update(customerID, &stripe.CustomerParams{
+			Name: stripe.String(name),
+		})
+	}
+
+	originalSubscriptionItem := subscription.Items.Data[0]
 
 	quantity := subscription.Quantity
 	quantityString := strconv.FormatInt(quantity, 10)
