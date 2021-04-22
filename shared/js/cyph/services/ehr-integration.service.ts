@@ -22,6 +22,7 @@ export class EHRIntegrationService extends BaseProvider {
 				redoxSecret,
 				username
 			},
+			/* eslint-disable-next-line @typescript-eslint/naming-convention */
 			headers: {Authorization: cyphAdminKey},
 			method: 'PUT',
 			url: this.envService.baseUrl + 'redox/credentials'
