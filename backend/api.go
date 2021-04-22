@@ -808,7 +808,7 @@ func downgradeAccount(h HandlerArgs) (interface{}, int) {
 	}
 
 	if stripeData != nil {
-		_, err := stripeSubscriptionAPI.Cancel(stripeData.SubscriptionID, nil)
+		_, err := stripeSubscriptionItemAPI.Del(stripeData.SubscriptionItemID, nil)
 		if err != nil {
 			return err.Error(), http.StatusInternalServerError
 		}
@@ -909,16 +909,21 @@ func isAccountInGoodStanding(h HandlerArgs) (interface{}, int) {
 	/* Check Stripe, if applicable */
 
 	if stripeData != nil {
+		stripeSubItem, err := stripeSubscriptionItemAPI.Get(stripeData.SubscriptionItemID, nil)
+		if err != nil {
+			return true, http.StatusOK
+		}
+
+		if stripeSubItem.Deleted || stripeSubItem.Subscription != stripeData.SubscriptionID {
+			return false, http.StatusOK
+		}
+
 		stripeSub, err := stripeSubscriptionAPI.Get(stripeData.SubscriptionID, nil)
 		if err != nil {
 			return true, http.StatusOK
 		}
 
-		if stripeSub.Status == "active" {
-			return true, http.StatusOK
-		}
-
-		return false, http.StatusOK
+		return stripeSub.Status == "active", http.StatusOK
 	}
 
 	/*
@@ -939,11 +944,7 @@ func isAccountInGoodStanding(h HandlerArgs) (interface{}, int) {
 		return true, http.StatusOK
 	}
 
-	if btSub.Status == braintree.SubscriptionStatusActive || btSub.Status == braintree.SubscriptionStatusPending {
-		return true, http.StatusOK
-	}
-
-	return false, http.StatusOK
+	return btSub.Status == braintree.SubscriptionStatusActive || btSub.Status == braintree.SubscriptionStatusPending, http.StatusOK
 }
 
 func preAuth(h HandlerArgs) (interface{}, int) {
