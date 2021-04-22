@@ -1502,7 +1502,9 @@ func stripeSession(h HandlerArgs) (interface{}, int) {
 
 /* TODO: Factor out common logic with checkout */
 func stripeWebhook(h HandlerArgs) (interface{}, int) {
-	requestBodyBytes, err := ioutil.ReadAll(h.Request.Body)
+	requestBodyBytes, err := ioutil.ReadAll(
+		http.MaxBytesReader(h.Writer, h.Request.Body, int64(65536)),
+	)
 	if err != nil {
 		log.Println(fmt.Errorf("stripeWebHookBadPayload: %v", err))
 		return err.Error(), http.StatusInternalServerError
