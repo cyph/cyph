@@ -266,7 +266,7 @@ func isValidCyphID(id string) bool {
 func generateRandomID() string {
 	bytes := make([]byte, config.APIKeyByteLength)
 	if _, err := rand.Read(bytes); err != nil {
-		return ""
+		panic(err)
 	}
 
 	return hex.EncodeToString(bytes)
