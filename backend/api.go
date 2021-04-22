@@ -17,6 +17,7 @@ import (
 	"github.com/stripe/stripe-go/v72"
 	stripeSessionAPI "github.com/stripe/stripe-go/v72/checkout/session"
 	stripeSubscriptionAPI "github.com/stripe/stripe-go/v72/sub"
+	stripeSubscriptionItemAPI "github.com/stripe/stripe-go/v72/subitem"
 	stripeWebhookAPI "github.com/stripe/stripe-go/v72/webhook"
 	"google.golang.org/api/iterator"
 )
@@ -1536,13 +1537,12 @@ func stripeWebhook(h HandlerArgs) (interface{}, int) {
 	customerID := checkoutSession.Subscription.Customer.ID
 	subscriptionID := checkoutSession.Subscription.ID
 
-	if len(checkoutSession.Subscription.Items.Data) < 1 {
-		log.Println(fmt.Errorf("stripeWebHookNoItems: %v", subscriptionID))
-		return "no items", http.StatusInternalServerError
+	if len(checkoutSession.Subscription.Items.Data) != 1 {
+		log.Println(fmt.Errorf("stripeWebHookBadItemList: %v", subscriptionID))
+		return "subcription must have only one item", http.StatusInternalServerError
 	}
 
-	subscriptionItem := checkoutSession.Subscription.Items.Data[0]
-	subscriptionItemID := subscriptionItem.ID
+	originalSubscriptionItem := checkoutSession.Subscription.Items.Data[0]
 
 	email := checkoutSession.Subscription.Customer.Email
 	name := checkoutSession.Subscription.Customer.Name
@@ -1550,7 +1550,7 @@ func stripeWebhook(h HandlerArgs) (interface{}, int) {
 	quantity := checkoutSession.Subscription.Quantity
 	quantityString := strconv.FormatInt(quantity, 10)
 
-	amount := subscriptionItem.Price.UnitAmount * quantity
+	amount := originalSubscriptionItem.Price.UnitAmount * quantity
 	amountString := strconv.FormatInt(amount, 10)
 
 	planID := checkoutSession.Subscription.Metadata["planID"]
@@ -1571,19 +1571,27 @@ func stripeWebhook(h HandlerArgs) (interface{}, int) {
 		}
 	}
 
-	if planID == "" || !hasPlan {
-		sendMail("hello+sales-checkout-failure@cyph.com", "MISSING PLAN: "+subject, ("" +
+	sendFailureEmail := func(subjectPrefix, errorMessage string) (interface{}, int) {
+		sendMail("hello+sales-checkout-failure@cyph.com", subjectPrefix+": "+subject, ("" +
 			"\nPlan ID: " + planID +
+			"\nAmount: " + amountString +
+			"\nSubscription: " + plan.SubscriptionType +
 			"\nQuantity: " + quantityString +
 			"\nName: " + name +
 			"\nEmail: " + email +
-			"\nCustomer IDs: " + customerID +
-			"\nSubscription IDs: " + subscriptionID +
-			"\nSubscription Item IDs: " + subscriptionItemID +
+			"\nAccounts Plan: " + plan.AccountsPlan +
+			"\nCustomer ID: " + customerID +
+			"\nSubscription ID: " + subscriptionID +
+			"\nSubscription Item ID: " + originalSubscriptionItem.ID +
+			"\nError: " + errorMessage +
 			"\n\n" + txLog +
 			""), "")
 
-		return err.Error(), http.StatusInternalServerError
+		return errorMessage, http.StatusInternalServerError
+	}
+
+	if planID == "" || !hasPlan {
+		return sendFailureEmail("MISSING PLAN", "no plan ID in metadata")
 	}
 
 	sendMail("hello+sales-notifications@cyph.com", subject, ("" +
@@ -1597,25 +1605,53 @@ func stripeWebhook(h HandlerArgs) (interface{}, int) {
 		"\n\n" + txLog +
 		""), "")
 
-	inviteCode, oldSubscriptionID, _, err := generateInvite(email, name, plan.AccountsPlan, "", []string{customerID}, []string{subscriptionID}, []string{subscriptionItemID}, "", "", plan.GiftPack, true, true)
+	customerIDs := []string{}
+	subscriptionIDs := []string{}
+	subscriptionItemIDs := []string{}
+	newSubscriptionIDCount := int(quantity - 1)
+	single := stripe.Int64(1)
+
+	_, err = stripeSubscriptionItemAPI.Update(
+		originalSubscriptionItem.ID,
+		&stripe.SubscriptionItemParams{
+			Quantity: single,
+		},
+	)
 
 	if err != nil {
-		sendMail("hello+sales-invite-failure@cyph.com", "INVITE FAILED: "+subject, ("" +
-			"\nPlan ID: " + planID +
-			"\nAmount: " + amountString +
-			"\nInvite Code: " + inviteCode +
-			"\nSubscription: " + plan.SubscriptionType +
-			"\nQuantity: " + quantityString +
-			"\nName: " + name +
-			"\nEmail: " + email +
-			"\nAccounts Plan: " + plan.AccountsPlan +
-			"\nCustomer IDs: " + customerID +
-			"\nSubscription IDs: " + subscriptionID +
-			"\nSubscription Item IDs: " + subscriptionItemID +
-			"\n\n" + txLog +
-			""), "")
+		return sendFailureEmail("ITEM UPDATE FAILED", err.Error())
+	}
 
-		return err.Error(), http.StatusInternalServerError
+	for i := 0; i < newSubscriptionIDCount; i++ {
+		subscriptionItem, err := stripeSubscriptionItemAPI.New(&stripe.SubscriptionItemParams{
+			PriceData: &stripe.SubscriptionItemPriceDataParams{
+				Currency: (*string)(&originalSubscriptionItem.Price.Currency),
+				Product:  &originalSubscriptionItem.Price.Product.ID,
+				Recurring: &stripe.SubscriptionItemPriceDataRecurringParams{
+					Interval: (*string)(&originalSubscriptionItem.Price.Recurring.Interval),
+				},
+				UnitAmount: &originalSubscriptionItem.Price.UnitAmount,
+			},
+			Quantity:     single,
+			Subscription: &originalSubscriptionItem.Subscription,
+		})
+
+		if err != nil {
+			return sendFailureEmail("ITEM ADD FAILED", err.Error())
+		}
+
+		customerIDs = append(customerIDs, customerID)
+		subscriptionIDs = append(subscriptionIDs, subscriptionID)
+		subscriptionItemIDs = append(subscriptionItemIDs, subscriptionItem.ID)
+	}
+
+	inviteCode, oldSubscriptionID, _, err := generateInvite(email, name, plan.AccountsPlan, "", customerIDs, subscriptionIDs, subscriptionItemIDs, "", "", plan.GiftPack, true, true)
+
+	if err != nil {
+		return sendFailureEmail(
+			"INVITE FAILED",
+			err.Error()+" (invite code: "+inviteCode+")",
+		)
 	}
 
 	if oldSubscriptionID != "" {
