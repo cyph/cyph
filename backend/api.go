@@ -1585,29 +1585,52 @@ func stripeWebhookWorker(h HandlerArgs) (interface{}, int) {
 		return err.Error(), http.StatusInternalServerError
 	}
 
-	customerID := checkoutSession.Subscription.Customer.ID
 	subscriptionID := checkoutSession.Subscription.ID
+	subscription, err := stripeSubscriptionAPI.Get(subscriptionID, nil)
+	if err != nil {
+		log.Println(fmt.Errorf("stripeWebhookMissingSubscription: %v", err))
+		return err.Error(), http.StatusInternalServerError
+	}
 
-	if len(checkoutSession.Subscription.Items.Data) != 1 {
+	if subscription.Metadata["processed"] != "" {
+		return "", http.StatusOK
+	}
+
+	pid := generateRandomID()
+	subscriptionUpdateParams := &stripe.SubscriptionParams{}
+	subscriptionUpdateParams.AddMetadata("processed", pid)
+	subscription, err = stripeSubscriptionAPI.Update(subscriptionID, subscriptionUpdateParams)
+
+	if err != nil {
+		log.Println(fmt.Errorf("stripeWebhookSubscriptionClaimError: %v", err))
+		return err.Error(), http.StatusInternalServerError
+	}
+
+	if subscription.Metadata["processed"] != pid {
+		return "", http.StatusOK
+	}
+
+	if len(subscription.Items.Data) != 1 {
 		log.Println(fmt.Errorf("stripeWebhookBadItemList: %v", subscriptionID))
 		return "subcription must have only one item", http.StatusInternalServerError
 	}
 
-	originalSubscriptionItem := checkoutSession.Subscription.Items.Data[0]
+	originalSubscriptionItem := subscription.Items.Data[0]
 
-	email := checkoutSession.Subscription.Customer.Email
-	name := checkoutSession.Subscription.Customer.Name
+	customerID := subscription.Customer.ID
+	email := subscription.Customer.Email
+	name := subscription.Customer.Name
 
-	quantity := checkoutSession.Subscription.Quantity
+	quantity := subscription.Quantity
 	quantityString := strconv.FormatInt(quantity, 10)
 
 	amount := originalSubscriptionItem.Price.UnitAmount * quantity
 	amountString := strconv.FormatInt(amount, 10)
 
-	planID := checkoutSession.Subscription.Metadata["planID"]
+	planID := subscription.Metadata["planID"]
 	plan, hasPlan := plans[planID]
 
-	partnerTransactionID := checkoutSession.Subscription.Metadata["partnerTransactionID"]
+	partnerTransactionID := subscription.Metadata["partnerTransactionID"]
 	partnerOrderID := subscriptionID
 
 	subject := "SALE: " + name + " <" + email + ">, $" + strconv.FormatInt(amount/100, 10)
