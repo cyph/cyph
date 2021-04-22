@@ -17,7 +17,7 @@ export const addSubscriptions = async (projectId, username, count) => {
 	username = normalize(username);
 
 	if (isNaN(count)) {
-		throw new Error('Invalid subscription count.');
+		throw new Error('Invalid quantity.');
 	}
 
 	if (typeof projectId !== 'string' || projectId.indexOf('cyph') !== 0) {

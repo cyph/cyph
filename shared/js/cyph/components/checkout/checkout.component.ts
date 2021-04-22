@@ -785,7 +785,7 @@ export class CheckoutComponent extends BaseProvider
 									0)
 					),
 					creditCard,
-					subscriptionCount:
+					quantity:
 						this.subscriptionType === undefined ?
 							0 :
 						this.individualSubscriptions && this.perUser ?

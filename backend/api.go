@@ -317,18 +317,18 @@ func checkout(h HandlerArgs) (interface{}, int) {
 
 	subscription := plan.SubscriptionType != ""
 
-	subscriptionCountString := sanitize(h.Request.PostFormValue("subscriptionCount"))
-	subscriptionCount, err := strconv.ParseInt(subscriptionCountString, 10, 64)
+	quantityString := sanitize(h.Request.PostFormValue("quantity"))
+	quantity, err := strconv.ParseInt(quantityString, 10, 64)
 	if err != nil {
 		return err.Error(), http.StatusTeapot
 	}
-	if subscriptionCount < 0 || (subscription && subscriptionCount < 1) {
-		return "invalid subscription count", http.StatusTeapot
+	if quantity < 0 || (subscription && quantity < 1) {
+		return "invalid quantity", http.StatusTeapot
 	}
 
 	totalAmount := amount
 	if subscription {
-		totalAmount = amount * subscriptionCount
+		totalAmount = amount * quantity
 	}
 
 	bt := braintreeInit(h)
@@ -429,11 +429,11 @@ func checkout(h HandlerArgs) (interface{}, int) {
 				SuccessStatus           bool
 			}
 
-			subscriptionResults := make(chan SubscriptionResult, subscriptionCount)
+			subscriptionResults := make(chan SubscriptionResult, quantity)
 
 			/* De-parallelized to work around "Too Many Requests (429)" error */
 			go func() {
-				for i := 0; i < int(subscriptionCount); i++ {
+				for i := 0; i < int(quantity); i++ {
 					subscriptionRequest := &braintree.SubscriptionRequest{
 						Id:                 generateRandomID(),
 						PaymentMethodToken: paymentMethod.GetToken(),
@@ -492,7 +492,7 @@ func checkout(h HandlerArgs) (interface{}, int) {
 				}
 			}()
 
-			for i := 0; i < int(subscriptionCount); i++ {
+			for i := 0; i < int(quantity); i++ {
 				subscriptionResult := <-subscriptionResults
 
 				if subscriptionResult.Error != nil {
@@ -702,7 +702,7 @@ func checkout(h HandlerArgs) (interface{}, int) {
 		"\nAmount: " + amountString +
 		"\nInvite Code: " + inviteCode +
 		"\nSubscription: " + plan.SubscriptionType +
-		"\nSubscription count: " + subscriptionCountString +
+		"\nQuantity: " + quantityString +
 		"\nCompany: " + company +
 		"\nName: " + name +
 		"\nEmail: " + email +
@@ -722,7 +722,7 @@ func checkout(h HandlerArgs) (interface{}, int) {
 				"\nAmount: " + amountString +
 				"\nInvite Code: " + inviteCode +
 				"\nSubscription: " + plan.SubscriptionType +
-				"\nSubscription count: " + subscriptionCountString +
+				"\nQuantity: " + quantityString +
 				"\nCompany: " + company +
 				"\nName: " + name +
 				"\nEmail: " + email +
@@ -1547,10 +1547,10 @@ func stripeWebhook(h HandlerArgs) (interface{}, int) {
 	email := checkoutSession.Subscription.Customer.Email
 	name := checkoutSession.Subscription.Customer.Name
 
-	subscriptionCount := checkoutSession.Subscription.Quantity
-	subscriptionCountString := strconv.FormatInt(subscriptionCount, 10)
+	quantity := checkoutSession.Subscription.Quantity
+	quantityString := strconv.FormatInt(quantity, 10)
 
-	amount := subscriptionItem.Price.UnitAmount * subscriptionCount
+	amount := subscriptionItem.Price.UnitAmount * quantity
 	amountString := strconv.FormatInt(amount, 10)
 
 	planID := checkoutSession.Subscription.Metadata["planID"]
@@ -1574,7 +1574,7 @@ func stripeWebhook(h HandlerArgs) (interface{}, int) {
 	if planID == "" || !hasPlan {
 		sendMail("hello+sales-checkout-failure@cyph.com", "MISSING PLAN: "+subject, ("" +
 			"\nPlan ID: " + planID +
-			"\nSubscription count: " + subscriptionCountString +
+			"\nQuantity: " + quantityString +
 			"\nName: " + name +
 			"\nEmail: " + email +
 			"\nCustomer IDs: " + customerID +
@@ -1590,7 +1590,7 @@ func stripeWebhook(h HandlerArgs) (interface{}, int) {
 		"\nPlan ID: " + planID +
 		"\nAmount: " + amountString +
 		"\nSubscription: " + plan.SubscriptionType +
-		"\nSubscription count: " + subscriptionCountString +
+		"\nQuantity: " + quantityString +
 		"\nName: " + name +
 		"\nEmail: " + email +
 		"\nPartner transaction ID: " + partnerTransactionID +
@@ -1605,7 +1605,7 @@ func stripeWebhook(h HandlerArgs) (interface{}, int) {
 			"\nAmount: " + amountString +
 			"\nInvite Code: " + inviteCode +
 			"\nSubscription: " + plan.SubscriptionType +
-			"\nSubscription count: " + subscriptionCountString +
+			"\nQuantity: " + quantityString +
 			"\nName: " + name +
 			"\nEmail: " + email +
 			"\nAccounts Plan: " + plan.AccountsPlan +
