@@ -1481,6 +1481,12 @@ func stripeSession(h HandlerArgs) (interface{}, int) {
 		PaymentMethodTypes: stripe.StringSlice([]string{
 			"card",
 		}),
+		SubscriptionData: &stripe.CheckoutSessionSubscriptionDataParams{
+			Metadata: map[string]string{
+				"partnerTransactionID": partnerTransactionID,
+				"planID":               planID,
+			},
+		},
 		SuccessURL: stripe.String(websiteURL + "/checkout/success"),
 	}
 
@@ -1501,21 +1507,118 @@ func stripeWebhook(h HandlerArgs) (interface{}, int) {
 		return err.Error(), http.StatusInternalServerError
 	}
 
-	/* Temporary, for testing */
-	sendMail(
-		"balls@cyph.com",
-		"Stripe Webhook Test: "+fmt.Sprint(time.Now().UnixNano()),
-		string(requestBodyBytes),
-		"",
-	)
-
 	event := stripe.Event{}
 	if err := json.Unmarshal(requestBodyBytes, &event); err != nil {
 		log.Println(fmt.Errorf("stripeWebHookBadJSON: %v", err))
 		return err.Error(), http.StatusInternalServerError
 	}
 
-	return event, http.StatusOK
+	if event.Type != "checkout.session.completed" {
+		return "", http.StatusOK
+	}
+
+	var checkoutSession stripe.CheckoutSession
+	err = json.Unmarshal(event.Data.Raw, &checkoutSession)
+	if err != nil {
+		log.Println(fmt.Errorf("stripeWebHookBadRawData: %v", err))
+		return err.Error(), http.StatusInternalServerError
+	}
+
+	txLog := string(requestBodyBytes)
+
+	customerID := checkoutSession.Subscription.Customer.ID
+	subscriptionID := checkoutSession.Subscription.ID
+
+	if len(checkoutSession.Subscription.Items.Data) < 1 {
+		log.Println(fmt.Errorf("stripeWebHookNoItems: %v", subscriptionID))
+		return "no items", http.StatusInternalServerError
+	}
+
+	subscriptionItem := checkoutSession.Subscription.Items.Data[0]
+	subscriptionItemID := subscriptionItem.ID
+
+	email := checkoutSession.Subscription.Customer.Email
+	name := checkoutSession.Subscription.Customer.Name
+
+	subscriptionCount := checkoutSession.Subscription.Quantity
+	subscriptionCountString := strconv.FormatInt(subscriptionCount, 10)
+
+	amount := subscriptionItem.Price.UnitAmount * subscriptionCount
+	amountString := strconv.FormatInt(amount, 10)
+
+	planID := checkoutSession.Subscription.Metadata["planID"]
+	plan, hasPlan := plans[planID]
+
+	partnerTransactionID := checkoutSession.Subscription.Metadata["partnerTransactionID"]
+	partnerOrderID := subscriptionID
+
+	subject := "SALE: " + name + " <" + email + ">, $" + strconv.FormatInt(amount/100, 10)
+	if !isProd {
+		subject = "[sandbox] " + subject
+	}
+
+	if partnerTransactionID != "" {
+		err = trackPartnerConversion(h, partnerOrderID, partnerTransactionID, amount)
+		if err != nil {
+			subject = "PARTNER CONVERSION FAILURE: " + subject
+		}
+	}
+
+	if planID == "" || !hasPlan {
+		sendMail("hello+sales-checkout-failure@cyph.com", "MISSING PLAN: "+subject, ("" +
+			"\nPlan ID: " + planID +
+			"\nSubscription count: " + subscriptionCountString +
+			"\nName: " + name +
+			"\nEmail: " + email +
+			"\nCustomer IDs: " + customerID +
+			"\nSubscription IDs: " + subscriptionID +
+			"\nSubscription Item IDs: " + subscriptionItemID +
+			"\n\n" + txLog +
+			""), "")
+
+		return err.Error(), http.StatusInternalServerError
+	}
+
+	sendMail("hello+sales-notifications@cyph.com", subject, ("" +
+		"\nPlan ID: " + planID +
+		"\nAmount: " + amountString +
+		"\nSubscription: " + plan.SubscriptionType +
+		"\nSubscription count: " + subscriptionCountString +
+		"\nName: " + name +
+		"\nEmail: " + email +
+		"\nPartner transaction ID: " + partnerTransactionID +
+		"\n\n" + txLog +
+		""), "")
+
+	inviteCode, oldSubscriptionID, _, err := generateInvite(email, name, plan.AccountsPlan, "", []string{customerID}, []string{subscriptionID}, []string{subscriptionItemID}, "", "", plan.GiftPack, true, true)
+
+	if err != nil {
+		sendMail("hello+sales-invite-failure@cyph.com", "INVITE FAILED: "+subject, ("" +
+			"\nPlan ID: " + planID +
+			"\nAmount: " + amountString +
+			"\nInvite Code: " + inviteCode +
+			"\nSubscription: " + plan.SubscriptionType +
+			"\nSubscription count: " + subscriptionCountString +
+			"\nName: " + name +
+			"\nEmail: " + email +
+			"\nAccounts Plan: " + plan.AccountsPlan +
+			"\nCustomer IDs: " + customerID +
+			"\nSubscription IDs: " + subscriptionID +
+			"\nSubscription Item IDs: " + subscriptionItemID +
+			"\n\n" + txLog +
+			""), "")
+
+		return err.Error(), http.StatusInternalServerError
+	}
+
+	if oldSubscriptionID != "" {
+		_, err := stripeSubscriptionAPI.Cancel(oldSubscriptionID, nil)
+		if err != nil {
+			return err.Error(), http.StatusInternalServerError
+		}
+	}
+
+	return "", http.StatusOK
 }
 
 func warmUpCloudFunctions(h HandlerArgs) (interface{}, int) {
