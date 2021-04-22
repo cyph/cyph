@@ -31,6 +31,7 @@ rm -rf "${GOPATH}"
 find . -maxdepth 2 -type f -name .go.mod -exec bash -c '
 	cd $(echo "{}" | sed "s|/.go.mod||")
 	go mod download
+	go get -u ./...
 ' \;
 
 
