@@ -1005,7 +1005,7 @@ func proUnlock(h HandlerArgs) (interface{}, int) {
 }
 
 func redoxAddCredentials(h HandlerArgs) (interface{}, int) {
-	if sanitize(h.Request.PostFormValue("cyphAdminKey")) != cyphAdminKey {
+	if h.Request.Header.Get("Authorization") != cyphAdminKey {
 		return "", http.StatusForbidden
 	}
 
@@ -1539,16 +1539,19 @@ func stripeWebhook(h HandlerArgs) (interface{}, int) {
 	taskRequest := &tasksProto.CreateTaskRequest{
 		Parent: config.TaskQueuePath,
 		Task: &tasksProto.Task{
-			MessageType: &tasksProto.Task_AppEngineHttpRequest{
-				AppEngineHttpRequest: &tasksProto.AppEngineHttpRequest{
-					HttpMethod:  tasksProto.HttpMethod_POST,
-					RelativeUri: "/stripe/webhook/worker",
+			MessageType: &tasksProto.Task_HttpRequest{
+				HttpRequest: &tasksProto.HttpRequest{
+					Headers: map[string]string{
+						"Authorization": cyphAdminKey,
+					},
+					HttpMethod: tasksProto.HttpMethod_POST,
+					Url:        backendURL + "/stripe/webhook/worker",
 				},
 			},
 		},
 	}
 
-	taskRequest.Task.GetAppEngineHttpRequest().Body = requestBodyBytes
+	taskRequest.Task.GetHttpRequest().Body = requestBodyBytes
 
 	if _, err := taskClient.CreateTask(h.Context, taskRequest); err != nil {
 		log.Println(fmt.Errorf("stripeWorkerInitFailure: %v", err))
@@ -1559,8 +1562,8 @@ func stripeWebhook(h HandlerArgs) (interface{}, int) {
 }
 
 func stripeWebhookWorker(h HandlerArgs) (interface{}, int) {
-	if h.Request.Header.Get("X-Appengine-Taskname") == "" {
-		return "", http.StatusOK
+	if h.Request.Header.Get("Authorization") != cyphAdminKey {
+		return "", http.StatusForbidden
 	}
 
 	requestBodyBytes, err := ioutil.ReadAll(h.Request.Body)

@@ -18,11 +18,11 @@ export class EHRIntegrationService extends BaseProvider {
 	) : Promise<string> {
 		return request({
 			data: {
-				cyphAdminKey,
 				redoxAPIKey: redoxApiKey,
 				redoxSecret,
 				username
 			},
+			headers: {Authorization: cyphAdminKey},
 			method: 'PUT',
 			url: this.envService.baseUrl + 'redox/credentials'
 		});

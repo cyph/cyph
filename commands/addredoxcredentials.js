@@ -53,6 +53,7 @@ export const addRedoxCredentials = async (
 		.toString()
 		.split('CYPH_ADMIN_KEY')[1]
 		.split("'")[1];
+
 	for (let i = 0; i < 10; ++i) {
 		const browser = await puppeteer.launch();
 		const page = await browser.newPage();
