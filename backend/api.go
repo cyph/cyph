@@ -12,6 +12,7 @@ import (
 	"strings"
 	"time"
 
+	cloudtasks "cloud.google.com/go/cloudtasks/apiv2"
 	"cloud.google.com/go/datastore"
 	"github.com/buu700/braintree-go-tmp"
 	"github.com/stripe/stripe-go/v72"
@@ -20,7 +21,7 @@ import (
 	stripeSubscriptionItemAPI "github.com/stripe/stripe-go/v72/subitem"
 	stripeWebhookAPI "github.com/stripe/stripe-go/v72/webhook"
 	"google.golang.org/api/iterator"
-	"google.golang.org/appengine/taskqueue"
+	tasksProto "google.golang.org/genproto/googleapis/cloud/tasks/v2"
 )
 
 func main() {
@@ -1529,12 +1530,27 @@ func stripeWebhook(h HandlerArgs) (interface{}, int) {
 		return "", http.StatusOK
 	}
 
-	task := taskqueue.NewPOSTTask(
-		"/stripe/webhook/worker",
-		map[string][]string{"requestBody": {string(requestBodyBytes)}},
-	)
+	taskClient, err := cloudtasks.NewClient(h.Context)
+	if err != nil {
+		log.Println(fmt.Errorf("stripeTaskClientFailure: %v", err))
+		return err.Error(), http.StatusInternalServerError
+	}
 
-	if _, err := taskqueue.Add(h.Context, task, ""); err != nil {
+	taskRequest := &tasksProto.CreateTaskRequest{
+		Parent: config.TaskQueuePath,
+		Task: &tasksProto.Task{
+			MessageType: &tasksProto.Task_AppEngineHttpRequest{
+				AppEngineHttpRequest: &tasksProto.AppEngineHttpRequest{
+					HttpMethod:  tasksProto.HttpMethod_POST,
+					RelativeUri: "/stripe/webhook/worker",
+				},
+			},
+		},
+	}
+
+	taskRequest.Task.GetAppEngineHttpRequest().Body = requestBodyBytes
+
+	if _, err := taskClient.CreateTask(h.Context, taskRequest); err != nil {
 		log.Println(fmt.Errorf("stripeWorkerInitFailure: %v", err))
 		return err.Error(), http.StatusInternalServerError
 	}
@@ -1543,14 +1559,19 @@ func stripeWebhook(h HandlerArgs) (interface{}, int) {
 }
 
 func stripeWebhookWorker(h HandlerArgs) (interface{}, int) {
-	requestBody := h.Request.FormValue("requestBody")
-	if requestBody == "" {
-		log.Println("stripeWebhookEmptyRequest")
-		return "empty request body", http.StatusInternalServerError
+	if h.Request.Header.Get("X-Appengine-Taskname") == "" {
+		return "", http.StatusOK
 	}
 
+	requestBodyBytes, err := ioutil.ReadAll(h.Request.Body)
+	if err != nil {
+		log.Println(fmt.Errorf("stripeWebhookWorkerBadPayload: %v", err))
+		return err.Error(), http.StatusInternalServerError
+	}
+	requestBody := string(requestBodyBytes)
+
 	event := stripe.Event{}
-	if err := json.Unmarshal([]byte(requestBody), &event); err != nil {
+	if err := json.Unmarshal(requestBodyBytes, &event); err != nil {
 		log.Println(fmt.Errorf("stripeWebhookBadJSON: %v", err))
 		return err.Error(), http.StatusInternalServerError
 	}

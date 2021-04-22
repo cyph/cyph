@@ -16,11 +16,6 @@ handlers:
   secure: always
   # default_headers Cache-Control X-Frame-Options Content-Security-Policy
 
-- url: /webhook/worker/.*
-  script: auto
-  login: admin
-  secure: always
-
 - url: /test.webm
   static_files: test.webm
   upload: test.webm

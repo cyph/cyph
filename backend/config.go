@@ -168,6 +168,7 @@ var config = struct {
 	PartnerConversionURL          string
 	PartnerDiscountRate           int64
 	PlanAppleIDs                  map[string]string
+	TaskQueuePath                 string
 }{
 	AllowedCyphIDs: regexp.MustCompile("[A-Za-z0-9_-]+$"),
 
@@ -340,4 +341,6 @@ var config = struct {
 	PlanAppleIDs: map[string]string{
 		"MonthlyPlatinum": "8-4",
 	},
+
+	TaskQueuePath: "projects/cyphme/locations/us-central1/queues/default",
 }
