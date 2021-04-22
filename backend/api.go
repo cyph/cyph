@@ -1698,15 +1698,17 @@ func stripeWebhookWorker(h HandlerArgs) (interface{}, int) {
 	for i := 0; i < newSubscriptionIDCount; i++ {
 		subscriptionItem, err := stripeSubscriptionItemAPI.New(&stripe.SubscriptionItemParams{
 			PriceData: &stripe.SubscriptionItemPriceDataParams{
-				Currency: (*string)(&originalSubscriptionItem.Price.Currency),
-				Product:  &originalSubscriptionItem.Price.Product.ID,
+				Currency: stripe.String(string(originalSubscriptionItem.Price.Currency)),
+				Product:  stripe.String(originalSubscriptionItem.Price.Product.ID),
 				Recurring: &stripe.SubscriptionItemPriceDataRecurringParams{
-					Interval: (*string)(&originalSubscriptionItem.Price.Recurring.Interval),
+					Interval: stripe.String(
+						string(originalSubscriptionItem.Price.Recurring.Interval),
+					),
 				},
-				UnitAmount: &originalSubscriptionItem.Price.UnitAmount,
+				UnitAmount: stripe.Int64(originalSubscriptionItem.Price.UnitAmount),
 			},
 			Quantity:     single,
-			Subscription: &originalSubscriptionItem.Subscription,
+			Subscription: stripe.String(originalSubscriptionItem.Subscription),
 		})
 
 		if err != nil {
