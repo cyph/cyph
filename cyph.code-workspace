@@ -1,0 +1,23 @@
+{
+	"folders": [
+		{
+			"path": "."
+		},
+		{
+			"path": "app"
+		},
+		{
+			"path": "backend"
+		},
+		{
+			"path": "firebase/functions"
+		},
+		{
+			"path": "shared/js"
+		}
+	],
+	"settings": {
+		"typescript.tsdk": "shared/node_modules/typescript/lib",
+		"workbench.colorCustomizations": {}
+	}
+}
