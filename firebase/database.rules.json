@@ -222,9 +222,6 @@
 						".validate": "newData.isString()"
 					},
 					"stripe": {
-						"admin": {
-							".validate": "newData.isBoolean()"
-						},
 						"customerID": {
 							".validate": "newData.isString()"
 						},
@@ -1124,9 +1121,6 @@
 							}
 						},
 						"stripe": {
-							"admin": {
-								".validate": "newData.isBoolean()"
-							},
 							"customerID": {
 								".validate": "newData.isString()"
 							},

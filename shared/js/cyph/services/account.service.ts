@@ -101,6 +101,9 @@ export class AccountService extends BaseProvider {
 	/** @ignore */
 	private readonly uiReadyResolved = new Subject<void>();
 
+	/** Indicates whether this user is the billing admin of their account. */
+	public readonly accountBillingAdmin = new BehaviorSubject<boolean>(false);
+
 	/** Indicates whether account is in good standing. */
 	public readonly accountGoodStanding = new BehaviorSubject<boolean>(true);
 
@@ -336,26 +339,40 @@ export class AccountService extends BaseProvider {
 	}
 
 	/** @ignore */
-	private async updateAccountGoodStanding (
+	private async updateAccountBillingStatus (
 		onlyIfFalse: boolean = false
 	) : Promise<void> {
 		await this.accountGoodStandingLock(async () => {
-			if (onlyIfFalse && this.accountGoodStanding.value) {
-				return;
-			}
-
 			const userToken = await this.getUserToken();
 
-			this.accountGoodStanding.next(
-				!userToken ?
-					true :
-					(await request({
-						retries: 5,
-						url:
-							this.envService.baseUrl +
-							`accountstanding/${userToken}`
-					}).catch(() => 'true')) === 'true'
-			);
+			await Promise.all([
+				(async () => {
+					this.accountBillingAdmin.next(
+						(await request({
+							retries: 5,
+							url:
+								this.envService.baseUrl +
+								`billingadmin/${userToken}`
+						}).catch(() => 'true')) === 'true'
+					);
+				})(),
+				(async () => {
+					if (onlyIfFalse && this.accountGoodStanding.value) {
+						return;
+					}
+
+					this.accountGoodStanding.next(
+						!userToken ?
+							true :
+							(await request({
+								retries: 5,
+								url:
+									this.envService.baseUrl +
+									`accountstanding/${userToken}`
+							}).catch(() => 'true')) === 'true'
+					);
+				})()
+			]);
 		});
 	}
 
@@ -659,14 +676,14 @@ export class AccountService extends BaseProvider {
 
 		this.subscriptions.push(
 			watchDateChange(true).subscribe(async () =>
-				this.updateAccountGoodStanding()
+				this.updateAccountBillingStatus()
 			)
 		);
 
 		this.subscriptions.push(
 			this.windowWatcherService.visibility
 				.pipe(filter(b => b))
-				.subscribe(async () => this.updateAccountGoodStanding(true))
+				.subscribe(async () => this.updateAccountBillingStatus(true))
 		);
 
 		this.subscriptions.push(

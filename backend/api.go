@@ -30,6 +30,7 @@ import (
 func main() {
 	handleFuncs("/accountstanding/{userToken}", false, Handlers{methods.GET: isAccountInGoodStanding})
 	handleFuncs("/analytics/*", false, Handlers{methods.GET: analytics, methods.POST: analytics})
+	handleFuncs("/billingadmin/{userToken}", false, Handlers{methods.GET: isAccountBillingAdmin})
 	handleFuncs("/braintree/token", false, Handlers{methods.GET: braintreeToken})
 	handleFuncs("/channels/{id}", false, Handlers{methods.DELETE: channelDelete, methods.POST: channelSetup})
 	handleFuncs("/checkout", false, Handlers{methods.POST: checkout})
@@ -892,6 +893,12 @@ func getTimestampHandler(h HandlerArgs) (interface{}, int) {
 	return strconv.FormatInt(getTimestamp(), 10), http.StatusOK
 }
 
+func isAccountBillingAdmin(h HandlerArgs) (interface{}, int) {
+	userToken := sanitize(h.Vars["userToken"])
+	isBillingAdmin, _, _ := isStripeBillingAdmin(userToken)
+	return isBillingAdmin, http.StatusOK
+}
+
 func isAccountInGoodStanding(h HandlerArgs) (interface{}, int) {
 	userToken := sanitize(h.Vars["userToken"])
 
@@ -1388,25 +1395,12 @@ func stripeBillingPortal(h HandlerArgs) (interface{}, int) {
 	userToken := sanitize(h.Request.PostFormValue("userToken"))
 
 	if userToken != "" {
-		_, _, userEmail, _, stripeData, username, _ := getSubscriptionData(userToken)
-
-		if username == "" {
-			return "invalid or expired token", http.StatusBadRequest
-		}
-		if stripeData == nil {
-			return "unsupported payment method", http.StatusBadRequest
-		}
-		if userEmail == "" {
-			return "no email address for user", http.StatusBadRequest
-		}
-
-		customer, err := stripeCustomerAPI.Get(stripeData.CustomerID, nil)
+		_, stripeData, err := isStripeBillingAdmin(userToken)
 		if err != nil {
 			return err.Error(), http.StatusInternalServerError
 		}
-
-		if !compareEmails(customer.Email, userEmail) {
-			return "user is not the billing admin", http.StatusBadRequest
+		if stripeData == nil {
+			return "unsupported payment method", http.StatusInternalServerError
 		}
 
 		billingSession, err := stripeBillingSessionAPI.New(&stripe.BillingPortalSessionParams{

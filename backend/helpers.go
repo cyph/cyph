@@ -28,6 +28,7 @@ import (
 	"github.com/microcosm-cc/bluemonday"
 	"github.com/oschwald/geoip2-golang"
 	"github.com/stripe/stripe-go/v72"
+	stripeCustomerAPI "github.com/stripe/stripe-go/v72/customer"
 	stripeProductAPI "github.com/stripe/stripe-go/v72/product"
 	"google.golang.org/appengine"
 )
@@ -628,6 +629,34 @@ func getStripeProduct(planID string) string {
 	}
 
 	return planID
+}
+
+func isStripeBillingAdmin(userToken string) (bool, *StripeData, error) {
+	_, _, userEmail, _, stripeData, username, err := getSubscriptionData(userToken)
+
+	if err != nil {
+		return false, stripeData, err
+	}
+	if stripeData == nil {
+		return true, nil, nil
+	}
+	if username == "" {
+		return false, stripeData, errors.New("invalid or expired token")
+	}
+	if userEmail == "" {
+		return false, stripeData, errors.New("no email address for user")
+	}
+
+	customer, err := stripeCustomerAPI.Get(stripeData.CustomerID, nil)
+	if err != nil {
+		return false, stripeData, err
+	}
+
+	if !compareEmails(customer.Email, userEmail) {
+		return false, stripeData, errors.New("user is not the billing admin")
+	}
+
+	return true, stripeData, nil
 }
 
 func downgradeAccountHelper(userToken string, removeAppStoreReceiptRef bool) (string, string, *StripeData, error) {
