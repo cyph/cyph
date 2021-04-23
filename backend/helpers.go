@@ -755,7 +755,7 @@ func generateInvite(email, name, plan, appStoreReceipt string, customerIDs, subs
 	return inviteCode, oldSubscriptionID, welcomeLetter, nil
 }
 
-func getSubscriptionData(userToken string) (string, string, int64, *StripeData, error) {
+func getSubscriptionData(userToken string) (string, string, string, int64, *StripeData, string, error) {
 	body, _ := json.Marshal(map[string]interface{}{
 		"namespace": "cyph.ws",
 		"userToken": userToken,
@@ -774,18 +774,18 @@ func getSubscriptionData(userToken string) (string, string, int64, *StripeData, 
 
 	resp, err := client.Do(req)
 	if err != nil {
-		return "", "", 0, nil, err
+		return "", "", "", 0, nil, "", err
 	}
 
 	responseBodyBytes, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
-		return "", "", 0, nil, err
+		return "", "", "", 0, nil, "", err
 	}
 
 	var responseBody map[string]interface{}
 	err = json.Unmarshal(responseBodyBytes, &responseBody)
 	if err != nil {
-		return "", "", 0, nil, err
+		return "", "", "", 0, nil, "", err
 	}
 
 	appStoreReceipt := ""
@@ -804,6 +804,14 @@ func getSubscriptionData(userToken string) (string, string, int64, *StripeData, 
 		}
 	}
 
+	email := ""
+	if data, ok := responseBody["email"]; ok {
+		switch v := data.(type) {
+		case string:
+			email = v
+		}
+	}
+
 	planTrialEnd := int64(0)
 	if data, ok := responseBody["planTrialEnd"]; ok {
 		switch v := data.(type) {
@@ -814,7 +822,15 @@ func getSubscriptionData(userToken string) (string, string, int64, *StripeData, 
 
 	stripeData := getStripeData(responseBody)
 
-	return appStoreReceipt, braintreeSubscriptionID, planTrialEnd, stripeData, nil
+	username := ""
+	if data, ok := responseBody["username"]; ok {
+		switch v := data.(type) {
+		case string:
+			username = v
+		}
+	}
+
+	return appStoreReceipt, braintreeSubscriptionID, email, planTrialEnd, stripeData, username, nil
 }
 
 func getUsername(userToken string) (string, error) {
@@ -1292,6 +1308,13 @@ func getFileText(path string) string {
 		panic(err)
 	}
 	return string(b)
+}
+
+func compareEmails(a, b string) bool {
+	a = strings.TrimSpace(strings.ToLower(a))
+	b = strings.TrimSpace(strings.ToLower(b))
+
+	return a != "" && a == b
 }
 
 func sendMail(to string, subject string, text string, html string) {

@@ -116,6 +116,23 @@
 					>)
 				</ng-container>
 			</div>
+			<div
+				*ngIf="
+					(accountSettingsService.plan | await) !== cyphPlans.Free &&
+					!configService.planConfig[
+						(accountSettingsService.plan | await) || cyphPlans.Free
+					].lifetime
+				"
+			>
+				<a
+					(click)="
+						salesService.openBillingPortal(
+							accountService.getUserToken(loading)
+						)
+					"
+					><strong cyphTranslate>Open Billing Portal</strong></a
+				>
+			</div>
 			<div></div>
 
 			<div fxLayoutAlign="center">

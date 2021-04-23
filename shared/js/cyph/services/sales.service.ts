@@ -5,6 +5,7 @@ import {IInAppPurchaseComponent} from '../checkout/iin-app-purchase.component';
 import {MaybePromise} from '../maybe-promise-type';
 import {BooleanProto} from '../proto';
 import {observableAll} from '../util/observable-all';
+import {request} from '../util/request';
 import {openWindow} from '../util/window';
 import {AccountSettingsService} from './account-settings.service';
 import {ConfigService} from './config.service';
@@ -61,6 +62,25 @@ export class SalesService extends BaseProvider {
 			BooleanProto,
 			true
 		);
+	}
+
+	/** Redirects to billing portal. */
+	public async openBillingPortal (
+		userToken: MaybePromise<string | undefined>
+	) : Promise<void> {
+		userToken = await userToken;
+
+		const url = userToken ?
+			await request({
+				data: {
+					userToken
+				},
+				method: 'POST',
+				url: this.envService.baseUrl + 'stripe/billingportal'
+			}).catch(() => undefined) :
+			undefined;
+
+		await openWindow(url || `${this.envService.homeUrl}billing-portal`);
 	}
 
 	/** Redirects to mobile app. */

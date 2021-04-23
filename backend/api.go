@@ -16,6 +16,7 @@ import (
 	"cloud.google.com/go/datastore"
 	"github.com/buu700/braintree-go-tmp"
 	"github.com/stripe/stripe-go/v72"
+	stripeBillingSessionAPI "github.com/stripe/stripe-go/v72/billingportal/session"
 	stripeSessionAPI "github.com/stripe/stripe-go/v72/checkout/session"
 	stripeCustomerAPI "github.com/stripe/stripe-go/v72/customer"
 	stripePaymentMethodAPI "github.com/stripe/stripe-go/v72/paymentmethod"
@@ -46,6 +47,7 @@ func main() {
 	handleFuncs("/redox/credentials", false, Handlers{methods.PUT: redoxAddCredentials})
 	handleFuncs("/redox/execute", false, Handlers{methods.POST: redoxRunCommand})
 	handleFuncs("/signups", false, Handlers{methods.PUT: signUp})
+	handleFuncs("/stripe/billingportal", false, Handlers{methods.POST: stripeBillingPortal})
 	handleFuncs("/stripe/session", false, Handlers{methods.POST: stripeSession})
 	handleFuncs("/stripe/webhook", false, Handlers{methods.POST: stripeWebhook})
 	handleFuncs("/stripe/webhook/worker", false, Handlers{methods.POST: stripeWebhookWorker})
@@ -893,7 +895,7 @@ func getTimestampHandler(h HandlerArgs) (interface{}, int) {
 func isAccountInGoodStanding(h HandlerArgs) (interface{}, int) {
 	userToken := sanitize(h.Vars["userToken"])
 
-	appStoreReceipt, braintreeSubscriptionID, planTrialEnd, stripeData, _ := getSubscriptionData(userToken)
+	appStoreReceipt, braintreeSubscriptionID, _, planTrialEnd, stripeData, _, _ := getSubscriptionData(userToken)
 
 	/* Check trial against current timestamp if applicable */
 
@@ -1379,6 +1381,88 @@ func signUp(h HandlerArgs) (interface{}, int) {
 		"")
 
 	return response, http.StatusOK
+}
+
+func stripeBillingPortal(h HandlerArgs) (interface{}, int) {
+	email := sanitize(h.Request.PostFormValue("email"))
+	userToken := sanitize(h.Request.PostFormValue("userToken"))
+
+	if userToken != "" {
+		_, _, userEmail, _, stripeData, username, _ := getSubscriptionData(userToken)
+
+		if username == "" {
+			return "invalid or expired token", http.StatusBadRequest
+		}
+		if stripeData == nil {
+			return "unsupported payment method", http.StatusBadRequest
+		}
+		if userEmail == "" {
+			return "no email address for user", http.StatusBadRequest
+		}
+
+		customer, err := stripeCustomerAPI.Get(stripeData.CustomerID, nil)
+		if err != nil {
+			return err.Error(), http.StatusInternalServerError
+		}
+
+		if !compareEmails(customer.Email, userEmail) {
+			return "user is not the billing admin", http.StatusBadRequest
+		}
+
+		billingSession, err := stripeBillingSessionAPI.New(&stripe.BillingPortalSessionParams{
+			Customer: stripe.String(stripeData.CustomerID),
+		})
+
+		if err != nil {
+			return err.Error(), http.StatusInternalServerError
+		}
+		if billingSession.URL == "" {
+			return "could not retrieve billing portal URL", http.StatusInternalServerError
+		}
+
+		return billingSession.URL, http.StatusOK
+	}
+
+	if email == "" {
+		return "no email address", http.StatusBadRequest
+	}
+
+	customersIter := stripeCustomerAPI.List(&stripe.CustomerListParams{
+		Email: stripe.String(email),
+	})
+
+	billingSessionURLs := []string{}
+
+	for customersIter.Next() {
+		billingSession, err := stripeBillingSessionAPI.New(&stripe.BillingPortalSessionParams{
+			Customer: stripe.String(customersIter.Customer().ID),
+		})
+
+		if err != nil || billingSession.URL == "" {
+			continue
+		}
+
+		billingSessionURLs = append(billingSessionURLs, billingSession.URL)
+	}
+
+	if len(billingSessionURLs) < 1 {
+		return "", http.StatusOK
+	}
+
+	body := "<p><a href=\"" + billingSessionURLs[0] + "\">Click here to access your billing portal.</a></p>"
+
+	if len(billingSessionURLs) > 1 {
+		body = "<p>You have access to the following billing portals:</p><p><ul>"
+		for i := range billingSessionURLs {
+			billingSessionURL := billingSessionURLs[i]
+			body += "<li><a href=\"" + billingSessionURL + "\">" + billingSessionURL + "</a></li>"
+		}
+		body += "</ul></p>"
+	}
+
+	sendMail(email, "Cyph Billing Portal", "", body)
+
+	return "", http.StatusOK
 }
 
 /* TODO: Factor out common logic with checkout */
