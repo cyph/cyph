@@ -12,7 +12,8 @@ import {
 	CyphPlans,
 	IAccountSetupChecklist,
 	InvertedBooleanProto,
-	StringArrayProto
+	StringArrayProto,
+	StringProto
 } from '../proto';
 import {cacheObservable} from '../util/flatten-observable';
 import {resolvedResolvable} from '../util/wait';
@@ -32,6 +33,17 @@ export class AccountSettingsService extends BaseProvider {
 	private readonly setupChecklistInternal = this.accountDatabaseService.getAsyncValue<
 		IAccountSetupChecklist
 	>('setupChecklist', AccountSetupChecklist);
+
+	/** User's email address. */
+	public readonly email = this.accountDatabaseService.getAsyncValue(
+		'email',
+		StringProto,
+		SecurityModels.unprotected,
+		undefined,
+		undefined,
+		undefined,
+		this.subscriptions
+	);
 
 	/** User-set flags to enable/disable features. */
 	public readonly featureFlags = {

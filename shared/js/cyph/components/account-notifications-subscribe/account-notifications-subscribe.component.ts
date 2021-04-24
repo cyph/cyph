@@ -1,12 +1,10 @@
-import {ChangeDetectionStrategy, Component} from '@angular/core';
+import {ChangeDetectionStrategy, Component, OnInit} from '@angular/core';
 import {ActivatedRoute} from '@angular/router';
 import {Observable} from 'rxjs';
 import {mergeMap} from 'rxjs/operators';
-import {SecurityModels} from '../../account/enums';
 import {BaseProvider} from '../../base-provider';
-import {IAsyncValue} from '../../iasync-value';
-import {StringProto} from '../../proto';
-import {AccountDatabaseService} from '../../services/crypto/account-database.service';
+import {AccountSettingsService} from '../../services/account-settings.service';
+import {AccountService} from '../../services/account.service';
 import {StringsService} from '../../services/strings.service';
 import {observableAll} from '../../util/observable-all';
 
@@ -19,16 +17,8 @@ import {observableAll} from '../../util/observable-all';
 	styleUrls: ['./account-notifications-subscribe.component.scss'],
 	templateUrl: './account-notifications-subscribe.component.html'
 })
-export class AccountNotificationsSubscribeComponent extends BaseProvider {
-	/** @ignore */
-	private readonly email: IAsyncValue<
-		string
-	> = this.accountDatabaseService.getAsyncValue(
-		'email',
-		StringProto,
-		SecurityModels.unprotected
-	);
-
+export class AccountNotificationsSubscribeComponent extends BaseProvider
+	implements OnInit {
 	/** Subscription status. */
 	public readonly status: Observable<{
 		email?: string;
@@ -44,29 +34,44 @@ export class AccountNotificationsSubscribeComponent extends BaseProvider {
 				{email?: string}
 			]) => {
 				if (unsubscribe) {
-					const oldEmail = await this.email
+					const oldEmail = await this.accountSettingsService.email
 						.getValue()
 						.catch(() => '');
-					await this.email.setValue('');
+					await this.accountSettingsService.email.setValue('');
 					return {email: oldEmail, unsubscribed: true};
 				}
 
 				if (email) {
-					await this.email.setValue(email);
+					await this.accountSettingsService.email.setValue(email);
 					return {email, subscribed: true};
 				}
 
-				return {email: await this.email.getValue().catch(() => '')};
+				return {
+					email: await this.accountSettingsService.email
+						.getValue()
+						.catch(() => '')
+				};
 			}
 		)
 	);
+
+	/** @inheritDoc */
+	public ngOnInit () : void {
+		super.ngOnInit();
+
+		this.accountService.resolveUiReady();
+		this.accountService.transitionEnd();
+	}
 
 	constructor (
 		/** @ignore */
 		private readonly activatedRoute: ActivatedRoute,
 
 		/** @ignore */
-		private readonly accountDatabaseService: AccountDatabaseService,
+		private readonly accountService: AccountService,
+
+		/** @ignore */
+		private readonly accountSettingsService: AccountSettingsService,
 
 		/** @see StringsService */
 		public readonly stringsService: StringsService

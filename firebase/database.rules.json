@@ -744,6 +744,20 @@
 						}
 					},
 
+					"emailVerified": {
+						".write": false,
+
+						"data": {
+							".validate": "newData.isString()"
+						},
+						"hash": {
+							".validate": "newData.isString()"
+						},
+						"timestamp": {
+							".validate": "newData.val() === now"
+						}
+					},
+
 					"encryptionKeyPair": {
 						"data": {
 							".validate": "newData.isString()"
@@ -1076,6 +1090,9 @@
 							".validate": "newData.isString()"
 						},
 						"email": {
+							".validate": "newData.isString()"
+						},
+						"emailVerified": {
 							".validate": "newData.isString()"
 						},
 						"keybaseUsername": {

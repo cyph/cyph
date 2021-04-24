@@ -404,6 +404,15 @@ export class StringsService extends BaseProvider {
 	public readonly emailOptional = `Email (optional)`;
 
 	/** @see StringsService */
+	public readonly emailUnverified = `Email (unverified)`;
+
+	/** @see StringsService */
+	public readonly emailVerified = `Email (verified)`;
+
+	/** @see StringsService */
+	public readonly emailVerifyError = `Initiating email verification failed. Please try again later.`;
+
+	/** @see StringsService */
 	public readonly emojiPick = `Pick your emoji…`;
 
 	/** @see StringsService */

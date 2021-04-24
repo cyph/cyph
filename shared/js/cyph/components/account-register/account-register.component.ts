@@ -777,7 +777,9 @@ export class AccountRegisterComponent extends BaseProvider
 							this.lockScreenPassword.value
 					},
 					this.name.value,
-					this.email.value,
+					this.email.value ?
+						this.email.value.trim().toLowerCase() :
+						undefined,
 					this.inviteCode.value,
 					this.pgp.value ?
 						{
@@ -850,7 +852,7 @@ export class AccountRegisterComponent extends BaseProvider
 		try {
 			success = await this.signupService
 				.submit({
-					email: this.email.value,
+					email: this.email.value.trim().toLowerCase(),
 					name: this.name.value,
 					usernameRequest: this.username.value
 				})

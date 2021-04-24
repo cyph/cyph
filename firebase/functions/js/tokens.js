@@ -23,6 +23,10 @@ export const create = async (
 };
 
 export const open = async (token, key) => {
+	if (!token) {
+		throw new Error('Missing token.');
+	}
+
 	const payload = msgpack.decode(
 		await potassium.secretBox.open(Buffer.from(token, 'hex'), key)
 	);

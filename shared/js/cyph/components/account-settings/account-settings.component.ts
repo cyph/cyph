@@ -68,19 +68,26 @@ export class AccountSettingsComponent extends BaseProvider implements OnInit {
 		this.subscriptions
 	);
 
-	/** Email address. */
-	public readonly email = this.accountDatabaseService.getAsyncValue(
-		'email',
-		StringProto,
-		SecurityModels.unprotected,
-		undefined,
-		undefined,
-		undefined,
-		this.subscriptions
-	);
-
 	/** @see emailPattern */
 	public readonly emailPattern = emailPattern;
+
+	/** Indicates whether this user's email address is verified. */
+	public readonly emailVerified = observableAll([
+		this.accountSettingsService.email.watch(),
+		this.accountDatabaseService.watch(
+			'emailVerified',
+			StringProto,
+			SecurityModels.unprotected,
+			undefined,
+			undefined,
+			this.subscriptions
+		)
+	]).pipe(
+		map(
+			([email, {value: emailVerified}]) =>
+				!!email && email === emailVerified
+		)
+	);
 
 	/** Gets session data to activate new device. */
 	public readonly getNewDeviceSessionData = memoize(
@@ -270,7 +277,7 @@ export class AccountSettingsComponent extends BaseProvider implements OnInit {
 			profileVisible,
 			{name, realUsername}
 		] = await Promise.all([
-			this.email.getValue(),
+			this.accountSettingsService.email.getValue(),
 			this.profileVisible.getValue(),
 			user.accountUserProfile.getValue(),
 			this.accountService.getUserToken()
@@ -308,7 +315,7 @@ export class AccountSettingsComponent extends BaseProvider implements OnInit {
 		this.loading.next(true);
 
 		const data = this.data.value;
-		const email = data.modified.email.trim();
+		const email = data.modified.email.trim().toLowerCase();
 		const name = data.modified.name.trim();
 		const profileVisible = data.modified.profileVisible;
 		const realUsername = data.modified.realUsername.trim();
@@ -316,7 +323,7 @@ export class AccountSettingsComponent extends BaseProvider implements OnInit {
 		await Promise.all([
 			data.current.email === email ?
 				undefined :
-				this.email.setValue(email),
+				this.accountSettingsService.email.setValue(email),
 			data.current.profileVisible === profileVisible ?
 				undefined :
 				this.profileVisible.setValue(profileVisible),
@@ -405,6 +412,26 @@ export class AccountSettingsComponent extends BaseProvider implements OnInit {
 			usernamePattern:
 				data.usernamePattern || this.data.value.usernamePattern
 		});
+	}
+
+	/** Initializes email address verification process. */
+	public async verifyEmail () : Promise<void> {
+		this.loading.next(true);
+
+		try {
+			await this.accountDatabaseService.callFunction('verifyEmail');
+		}
+		catch {
+			this.dialogService
+				.toast(
+					this.stringsService.emailVerifyError,
+					undefined,
+					this.stringsService.ok
+				)
+				.catch(() => {});
+		}
+
+		this.loading.next(false);
 	}
 
 	constructor (

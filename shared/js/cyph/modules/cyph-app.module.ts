@@ -8,6 +8,7 @@ import {AccountChatComponent} from '../components/account-chat';
 import {AccountChatMessageBoxComponent} from '../components/account-chat-message-box';
 import {AccountComposeComponent} from '../components/account-compose';
 import {AccountComposeNoProvidersComponent} from '../components/account-compose-no-providers';
+import {AccountConfirmEmailComponent} from '../components/account-confirm-email';
 import {AccountContactComponent} from '../components/account-contact';
 import {AccountContactsComponent} from '../components/account-contacts';
 import {AccountContactsSearchComponent} from '../components/account-contacts-search';
@@ -84,6 +85,7 @@ import {CyphCommonModule} from './cyph-common.module';
 		AccountComponent,
 		AccountComposeComponent,
 		AccountComposeNoProvidersComponent,
+		AccountConfirmEmailComponent,
 		AccountContactComponent,
 		AccountContactsComponent,
 		AccountContactsSearchComponent,
@@ -143,6 +145,7 @@ import {CyphCommonModule} from './cyph-common.module';
 		AccountComponent,
 		AccountComposeComponent,
 		AccountComposeNoProvidersComponent,
+		AccountConfirmEmailComponent,
 		AccountContactComponent,
 		AccountContactsComponent,
 		AccountContactsSearchComponent,

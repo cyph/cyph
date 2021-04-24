@@ -154,3 +154,11 @@ exports.userRegisterConfirmed = database
 exports.usernameBlacklisted = onRequest(async (...args) =>
 	(await importFunction('username-blacklisted')).usernameBlacklisted(...args)
 );
+
+exports.verifyEmail = onRequest(async (...args) =>
+	(await importFunction('verify-email')).verifyEmail(...args)
+);
+
+exports.verifyEmailConfirm = onRequest(async (...args) =>
+	(await importFunction('verify-email-confirm')).verifyEmailConfirm(...args)
+);

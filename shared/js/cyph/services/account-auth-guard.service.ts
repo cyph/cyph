@@ -18,6 +18,7 @@ export class AccountAuthGuardService extends BaseProvider
 	/** @ignore */
 	private readonly anonymouslyAccessibleRoutes: string[] = [
 		'404',
+		'cancel-email',
 		'compose',
 		'download',
 		'post',

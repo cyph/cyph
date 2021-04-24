@@ -23,7 +23,7 @@ export const getSubscriptionData = onRequest(
 			`${internalURL}/braintreeSubscriptionID`
 		);
 
-		const emailRef = database.ref(`${internalURL}/email`);
+		const emailVerifiedRef = database.ref(`${internalURL}/emailVerified`);
 
 		const planTrialEndRef = database.ref(`${internalURL}/planTrialEnd`);
 
@@ -32,13 +32,13 @@ export const getSubscriptionData = onRequest(
 		const [
 			appStoreReceipt,
 			braintreeSubscriptionID,
-			email,
+			emailVerified,
 			planTrialEnd,
 			stripeData
 		] = await Promise.all([
 			appStoreReceiptRef.once('value').then(o => o.val() || ''),
 			braintreeSubscriptionIDRef.once('value').then(o => o.val() || ''),
-			emailRef.once('value').then(o => o.val() || ''),
+			emailVerifiedRef.once('value').then(o => o.val() || ''),
 			planTrialEndRef.once('value').then(o => o.val() || 0),
 			stripeRef.once('value').then(o => o.val() || {})
 		]);
@@ -46,7 +46,7 @@ export const getSubscriptionData = onRequest(
 		return {
 			appStoreReceipt,
 			braintreeSubscriptionID,
-			email,
+			email: emailVerified,
 			planTrialEnd,
 			stripe: stripeData,
 			username

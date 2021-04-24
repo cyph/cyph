@@ -39,14 +39,38 @@
 			<mat-form-field>
 				<input
 					matInput
-					cyphTranslate
 					[ngModel]="(data | await)?.modified?.email || ''"
 					(ngModelChange)="updateData({modified: {email: $event}})"
 					name="email"
 					type="email"
 					[pattern]="emailPattern"
-					placeholder="Email"
+					[placeholder]="
+						!(data | await)?.modified?.email ||
+						(data | await)?.current?.email !==
+							(data | await)?.modified?.email ||
+						(emailVerified | await) === undefined ?
+							stringsService.email :
+						(emailVerified | await) ?
+							stringsService.emailVerified :
+							stringsService.emailUnverified
+					"
 				/>
+				<button
+					mat-button
+					cyphTranslate
+					matSuffix
+					class="email-verify-button"
+					color="warn"
+					(click)="verifyEmail()"
+					[class.visibility-hidden]="
+						!(data | await)?.modified?.email ||
+						(data | await)?.current?.email !==
+							(data | await)?.modified?.email ||
+						(emailVerified | await) !== false
+					"
+				>
+					Verify
+				</button>
 			</mat-form-field>
 
 			<div></div>

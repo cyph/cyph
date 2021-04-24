@@ -1,0 +1,33 @@
+<div
+	fxFlexFill
+	fxLayout="column"
+	fxLayoutAlign="center center"
+	*ngIf="state | await as o"
+>
+	<div cyphTranslate *ngIf="o?.error === true; else failure">
+		An error occurred. Please try again later.
+	</div>
+
+	<ng-template #failure>
+		<ng-container *ngIf="o?.success === false; else verificationConfirmed">
+			<div cyphTranslate>
+				This link is expired.
+			</div>
+		</ng-container>
+	</ng-template>
+
+	<ng-template #verificationConfirmed>
+		<ng-container *ngIf="o?.approve === true; else verificationCancelled">
+			<div cyphTranslate>
+				Your email address has been confirmed. Thank you!
+			</div>
+		</ng-container>
+	</ng-template>
+
+	<ng-template #verificationCancelled>
+		<div cyphTranslate>
+			Verification cancelled. Your email address has been removed from
+			this account.
+		</div>
+	</ng-template>
+</div>

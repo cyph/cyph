@@ -6,6 +6,7 @@ import {AccountAfterRegisterComponent} from '../components/account-after-registe
 import {AccountAppointmentAgendaComponent} from '../components/account-appointment-agenda';
 import {AccountChatComponent} from '../components/account-chat';
 import {AccountComposeComponent} from '../components/account-compose';
+import {AccountConfirmEmailComponent} from '../components/account-confirm-email';
 import {AccountContactsComponent} from '../components/account-contacts';
 import {AccountDownloadComponent} from '../components/account-download';
 import {AccountEhrAccessComponent} from '../components/account-ehr-access';
@@ -178,6 +179,11 @@ export const account: Route = {
 				ephemeralSubSession: true
 			}
 		},
+		{
+			path: 'cancel-email/:token',
+			component: AccountConfirmEmailComponent,
+			data: {approve: false}
+		},
 		{path: 'checklist', component: AccountSetupChecklistComponent},
 		{
 			path: 'compose',
@@ -196,6 +202,11 @@ export const account: Route = {
 				messageType: ChatMessageValue.Types.Quill,
 				sendQuillAsNote: true
 			}
+		},
+		{
+			path: 'confirm-email/:token',
+			component: AccountConfirmEmailComponent,
+			data: {approve: true}
 		},
 		{path: 'contacts', component: AccountContactsComponent},
 		{path: 'contacts/:username', component: AccountContactsComponent},
