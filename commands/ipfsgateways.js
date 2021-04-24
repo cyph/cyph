@@ -13,6 +13,7 @@ import {URL} from 'url';
 /* Blacklist of known bad or flagged gateways */
 const blacklist = new Set([
 	'https://astyanax.io/ipfs/:hash',
+	'https://ipfs.overpi.com/ipfs/:hash',
 	'https://ipfs.telos.miami/ipfs/:hash'
 ]);
 
