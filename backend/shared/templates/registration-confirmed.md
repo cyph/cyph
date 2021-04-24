@@ -1,6 +1,6 @@
 Congratulations {{name}}, your account is now activated!
 
-Sign in at [{{accountsURLShort}}login]({{accountsURL}}login}).
+Sign in at [{{accountsURLShort}}login]({{accountsURL}}login).
 
 {{#primaryNamespace}}
 [![Android](https://i.imgur.com/tKxAJxm.png)](https://play.google.com/store/apps/details?id=com.cyph.app)
