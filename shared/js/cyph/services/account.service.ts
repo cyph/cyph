@@ -896,6 +896,7 @@ export class AccountService extends BaseProvider {
 		super();
 
 		this.accountContactsService.interstitial = this.interstitial;
+		this.salesService.setAccountBillingAdmin(this.accountBillingAdmin);
 
 		this.localStorageService
 			.getItem('AccountService.menuExpanded', BooleanProto)

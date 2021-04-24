@@ -660,6 +660,12 @@ func isStripeBillingAdmin(userToken string) (bool, *StripeData, error) {
 }
 
 func downgradeAccountHelper(userToken string, removeAppStoreReceiptRef bool) (string, string, *StripeData, error) {
+	isBillingAdmin, _, err := isStripeBillingAdmin(userToken)
+
+	if !isBillingAdmin {
+		return "", "", nil, err
+	}
+
 	body, _ := json.Marshal(map[string]interface{}{
 		"namespace":                "cyph.ws",
 		"removeAppStoreReceiptRef": removeAppStoreReceiptRef,

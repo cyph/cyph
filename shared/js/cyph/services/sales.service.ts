@@ -6,6 +6,7 @@ import {MaybePromise} from '../maybe-promise-type';
 import {BooleanProto} from '../proto';
 import {observableAll} from '../util/observable-all';
 import {request} from '../util/request';
+import {resolvable} from '../util/wait/resolvable';
 import {openWindow} from '../util/window';
 import {AccountSettingsService} from './account-settings.service';
 import {ConfigService} from './config.service';
@@ -17,6 +18,11 @@ import {StringsService} from './strings.service';
 /** Service for handling anything sales-related. */
 @Injectable()
 export class SalesService extends BaseProvider {
+	/** @see AccountService.accountBillingAdmin */
+	private readonly accountBillingAdmin = resolvable<
+		BehaviorSubject<boolean>
+	>();
+
 	/** @ignore */
 	private readonly canOpenMobileApp =
 		!this.envService.isCordova &&
@@ -30,6 +36,9 @@ export class SalesService extends BaseProvider {
 	public readonly registerUpsellBanner = new BehaviorSubject<boolean>(
 		!this.envService.isTelehealth
 	);
+
+	/** @see AccountService.accountBillingAdmin */
+	public readonly setAccountBillingAdmin = this.accountBillingAdmin.resolve;
 
 	/** Indicates whether upselling is allowed. */
 	public readonly upsellAllowed = new ReplaySubject<boolean>();
@@ -169,29 +178,35 @@ export class SalesService extends BaseProvider {
 			this.mobileAppBanner.next(false);
 		}
 
-		this.subscriptions.push(
-			this.accountSettingsService.plan.subscribe(plan => {
-				this.upsellAllowed.next(
-					!this.envService.isTelehealth &&
-						this.configService.planConfig[plan].upsell &&
-						!this.envService.noInAppPurchasesReferenceAllowed
-				);
-			})
-		);
+		(async () => {
+			this.subscriptions.push(
+				observableAll([
+					await this.accountBillingAdmin,
+					this.accountSettingsService.plan
+				]).subscribe(([accountBillingAdmin, plan]) => {
+					this.upsellAllowed.next(
+						accountBillingAdmin &&
+							!this.envService.isTelehealth &&
+							this.configService.planConfig[plan].upsell &&
+							!this.envService.noInAppPurchasesReferenceAllowed
+					);
+				})
+			);
 
-		this.subscriptions.push(
-			observableAll([
-				this.localStorageService.watch(
-					'disableUpsellBanner',
-					BooleanProto,
-					this.subscriptions
-				),
-				this.upsellAllowed
-			]).subscribe(([disableUpsellBanner, upsellAllowed]) => {
-				this.upsellBanner.next(
-					!disableUpsellBanner.value && upsellAllowed
-				);
-			})
-		);
+			this.subscriptions.push(
+				observableAll([
+					this.localStorageService.watch(
+						'disableUpsellBanner',
+						BooleanProto,
+						this.subscriptions
+					),
+					this.upsellAllowed
+				]).subscribe(([disableUpsellBanner, upsellAllowed]) => {
+					this.upsellBanner.next(
+						!disableUpsellBanner.value && upsellAllowed
+					);
+				})
+			);
+		})();
 	}
 }

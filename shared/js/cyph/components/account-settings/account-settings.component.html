@@ -84,7 +84,8 @@
 						!configService.planConfig[
 							(accountSettingsService.plan | await) ||
 								cyphPlans.Free
-						].lifetime
+						].lifetime &&
+						(accountService.accountBillingAdmin | await) === true
 					"
 				>
 					&ngsp; (<a
