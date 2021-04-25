@@ -1,4 +1,4 @@
-import {database, getTokenKey, setItem} from './init.js';
+import {database, getTokenKey, notify, setItem} from './init.js';
 import * as tokens from './tokens.js';
 
 export const sendVerificationEmail = async (namespace, username) => {
