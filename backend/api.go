@@ -19,6 +19,7 @@ import (
 	stripeBillingSessionAPI "github.com/stripe/stripe-go/v72/billingportal/session"
 	stripeSessionAPI "github.com/stripe/stripe-go/v72/checkout/session"
 	stripeCustomerAPI "github.com/stripe/stripe-go/v72/customer"
+	stripePaymentIntentAPI "github.com/stripe/stripe-go/v72/paymentintent"
 	stripePaymentMethodAPI "github.com/stripe/stripe-go/v72/paymentmethod"
 	stripeSubscriptionAPI "github.com/stripe/stripe-go/v72/sub"
 	stripeSubscriptionItemAPI "github.com/stripe/stripe-go/v72/subitem"
@@ -1499,13 +1500,34 @@ func stripeSession(h HandlerArgs) (interface{}, int) {
 		interval = "year"
 	}
 
+	metadata := map[string]string{
+		"partnerTransactionID": partnerTransactionID,
+		"planID":               planID,
+	}
+
+	adjustableQuantity := &stripe.CheckoutSessionLineItemAdjustableQuantityParams{
+		Enabled: stripe.Bool(true),
+	}
 	mode := stripe.CheckoutSessionModePayment
 	var recurring *stripe.CheckoutSessionLineItemPriceDataRecurringParams
+	var paymentIntentData *stripe.CheckoutSessionPaymentIntentDataParams
+	var subscriptioData *stripe.CheckoutSessionSubscriptionDataParams
 
 	if interval != "" {
 		mode = stripe.CheckoutSessionModeSubscription
+
 		recurring = &stripe.CheckoutSessionLineItemPriceDataRecurringParams{
 			Interval: stripe.String(interval),
+		}
+
+		subscriptioData = &stripe.CheckoutSessionSubscriptionDataParams{
+			Metadata: metadata,
+		}
+	} else {
+		adjustableQuantity.Enabled = stripe.Bool(false)
+
+		paymentIntentData = &stripe.CheckoutSessionPaymentIntentDataParams{
+			Metadata: metadata,
 		}
 	}
 
@@ -1521,9 +1543,6 @@ func stripeSession(h HandlerArgs) (interface{}, int) {
 		return "insufficient payment", http.StatusTeapot
 	}
 
-	adjustableQuantity := &stripe.CheckoutSessionLineItemAdjustableQuantityParams{
-		Enabled: stripe.Bool(true),
-	}
 	quantity := stripe.Int64(1)
 	if plan.MaxUsers > 0 {
 		adjustableQuantity.Maximum = stripe.Int64(plan.MaxUsers)
@@ -1547,17 +1566,13 @@ func stripeSession(h HandlerArgs) (interface{}, int) {
 				Quantity: quantity,
 			},
 		},
-		Mode: stripe.String(string(mode)),
+		Mode:              stripe.String(string(mode)),
+		PaymentIntentData: paymentIntentData,
 		PaymentMethodTypes: stripe.StringSlice([]string{
 			"card",
 		}),
-		SubscriptionData: &stripe.CheckoutSessionSubscriptionDataParams{
-			Metadata: map[string]string{
-				"partnerTransactionID": partnerTransactionID,
-				"planID":               planID,
-			},
-		},
-		SuccessURL: stripe.String(websiteURL + "/checkout/success"),
+		SubscriptionData: subscriptioData,
+		SuccessURL:       stripe.String(websiteURL + "/checkout/success"),
 	}
 
 	session, err := stripeSessionAPI.New(params)
@@ -1650,37 +1665,71 @@ func stripeWebhookWorker(h HandlerArgs) (interface{}, int) {
 		return err.Error(), http.StatusInternalServerError
 	}
 
-	subscriptionID := checkoutSession.Subscription.ID
-	subscription, err := stripeSubscriptionAPI.Get(subscriptionID, nil)
-	if err != nil {
-		log.Println(fmt.Errorf("stripeWebhookMissingSubscription: %v", err))
-		return err.Error(), http.StatusInternalServerError
+	customerID := ""
+	var metadata map[string]string
+	partnerOrderID := ""
+	paymentIntentID := ""
+	var paymentIntent *stripe.PaymentIntent
+	var subscription *stripe.Subscription
+	subscriptionID := ""
+
+	if checkoutSession.Subscription != nil {
+		subscriptionID = checkoutSession.Subscription.ID
+		subscription, err = stripeSubscriptionAPI.Get(subscriptionID, nil)
+		if err != nil {
+			log.Println(fmt.Errorf("stripeWebhookMissingSubscription: %v", err))
+			return err.Error(), http.StatusInternalServerError
+		}
+
+		customerID = subscription.Customer.ID
+		metadata = subscription.Metadata
+		partnerOrderID = subscriptionID
+	} else if checkoutSession.PaymentIntent != nil {
+		paymentIntentID := checkoutSession.PaymentIntent.ID
+		paymentIntent, err := stripePaymentIntentAPI.Get(paymentIntentID, nil)
+		if err != nil {
+			log.Println(fmt.Errorf("stripeWebhookMissingPaymentIntent: %v", err))
+			return err.Error(), http.StatusInternalServerError
+		}
+
+		customerID = paymentIntent.Customer.ID
+		metadata = paymentIntent.Metadata
+		partnerOrderID = paymentIntentID
+	} else {
+		log.Println("stripeWebhookMissingSubscriptionOrPaymentIntent")
+		return "missing subscription or payment intent", http.StatusInternalServerError
 	}
 
-	if subscription.Metadata["processed"] != "" {
+	if metadata["processed"] != "" {
 		return "", http.StatusOK
 	}
 
 	pid := generateRandomID()
-	subscriptionUpdateParams := &stripe.SubscriptionParams{}
-	subscriptionUpdateParams.AddMetadata("processed", pid)
-	subscription, err = stripeSubscriptionAPI.Update(subscriptionID, subscriptionUpdateParams)
+
+	if subscription != nil {
+		subscriptionUpdateParams := &stripe.SubscriptionParams{}
+		subscriptionUpdateParams.AddMetadata("processed", pid)
+		subscription, err = stripeSubscriptionAPI.Update(subscriptionID, subscriptionUpdateParams)
+	} else {
+		paymentIntentUpdateParams := &stripe.PaymentIntentParams{}
+		paymentIntentUpdateParams.AddMetadata("processed", pid)
+		paymentIntent, err = stripePaymentIntentAPI.Update(paymentIntentID, paymentIntentUpdateParams)
+	}
 
 	if err != nil {
-		log.Println(fmt.Errorf("stripeWebhookSubscriptionClaimError: %v", err))
+		log.Println(fmt.Errorf("stripeWebhookClaimError: %v", err))
 		return err.Error(), http.StatusInternalServerError
 	}
 
-	if subscription.Metadata["processed"] != pid {
+	if metadata["processed"] != pid {
 		return "", http.StatusOK
 	}
 
-	if len(subscription.Items.Data) != 1 {
+	if subscription != nil && len(subscription.Items.Data) != 1 {
 		log.Println(fmt.Errorf("stripeWebhookBadItemList: %v", subscriptionID))
 		return "subcription must have only one item", http.StatusInternalServerError
 	}
 
-	customerID := subscription.Customer.ID
 	customer, err := stripeCustomerAPI.Get(customerID, nil)
 	if err != nil {
 		log.Println(fmt.Errorf("stripeWebhookMissingCustomer: %v", err))
@@ -1704,19 +1753,25 @@ func stripeWebhookWorker(h HandlerArgs) (interface{}, int) {
 		})
 	}
 
-	originalSubscriptionItem := subscription.Items.Data[0]
+	amount := int64(0)
+	originalSubscriptionItem := &stripe.SubscriptionItem{}
+	quantity := int64(1)
 
-	quantity := subscription.Quantity
+	if subscription != nil {
+		originalSubscriptionItem = subscription.Items.Data[0]
+		quantity = subscription.Quantity
+		amount = originalSubscriptionItem.Price.UnitAmount * quantity
+	} else {
+		amount = paymentIntent.Amount
+	}
+
+	amountString := strconv.FormatInt(amount, 10)
 	quantityString := strconv.FormatInt(quantity, 10)
 
-	amount := originalSubscriptionItem.Price.UnitAmount * quantity
-	amountString := strconv.FormatInt(amount, 10)
-
-	planID := subscription.Metadata["planID"]
+	planID := metadata["planID"]
 	plan, hasPlan := plans[planID]
 
-	partnerTransactionID := subscription.Metadata["partnerTransactionID"]
-	partnerOrderID := subscriptionID
+	partnerTransactionID := metadata["partnerTransactionID"]
 
 	subject := "SALE: " + name + " <" + email + ">, $" + strconv.FormatInt(amount/100, 10)
 	if !isProd {
@@ -1767,41 +1822,44 @@ func stripeWebhookWorker(h HandlerArgs) (interface{}, int) {
 	customerIDs := []string{}
 	subscriptionIDs := []string{}
 	subscriptionItemIDs := []string{}
-	newSubscriptionIDCount := int(quantity - 1)
-	single := stripe.Int64(1)
 
-	if _, err := stripeSubscriptionItemAPI.Update(
-		originalSubscriptionItem.ID,
-		&stripe.SubscriptionItemParams{
-			Quantity: single,
-		},
-	); err != nil {
-		return sendFailureEmail("ITEM UPDATE FAILED", err.Error())
-	}
+	if subscription != nil {
+		newSubscriptionIDCount := int(quantity - 1)
+		single := stripe.Int64(1)
 
-	for i := 0; i < newSubscriptionIDCount; i++ {
-		subscriptionItem, err := stripeSubscriptionItemAPI.New(&stripe.SubscriptionItemParams{
-			PriceData: &stripe.SubscriptionItemPriceDataParams{
-				Currency: stripe.String(string(originalSubscriptionItem.Price.Currency)),
-				Product:  stripe.String(originalSubscriptionItem.Price.Product.ID),
-				Recurring: &stripe.SubscriptionItemPriceDataRecurringParams{
-					Interval: stripe.String(
-						string(originalSubscriptionItem.Price.Recurring.Interval),
-					),
-				},
-				UnitAmount: stripe.Int64(originalSubscriptionItem.Price.UnitAmount),
+		if _, err := stripeSubscriptionItemAPI.Update(
+			originalSubscriptionItem.ID,
+			&stripe.SubscriptionItemParams{
+				Quantity: single,
 			},
-			Quantity:     single,
-			Subscription: stripe.String(originalSubscriptionItem.Subscription),
-		})
-
-		if err != nil {
-			return sendFailureEmail("ITEM ADD FAILED", err.Error())
+		); err != nil {
+			return sendFailureEmail("ITEM UPDATE FAILED", err.Error())
 		}
 
-		customerIDs = append(customerIDs, customerID)
-		subscriptionIDs = append(subscriptionIDs, subscriptionID)
-		subscriptionItemIDs = append(subscriptionItemIDs, subscriptionItem.ID)
+		for i := 0; i < newSubscriptionIDCount; i++ {
+			subscriptionItem, err := stripeSubscriptionItemAPI.New(&stripe.SubscriptionItemParams{
+				PriceData: &stripe.SubscriptionItemPriceDataParams{
+					Currency: stripe.String(string(originalSubscriptionItem.Price.Currency)),
+					Product:  stripe.String(originalSubscriptionItem.Price.Product.ID),
+					Recurring: &stripe.SubscriptionItemPriceDataRecurringParams{
+						Interval: stripe.String(
+							string(originalSubscriptionItem.Price.Recurring.Interval),
+						),
+					},
+					UnitAmount: stripe.Int64(originalSubscriptionItem.Price.UnitAmount),
+				},
+				Quantity:     single,
+				Subscription: stripe.String(originalSubscriptionItem.Subscription),
+			})
+
+			if err != nil {
+				return sendFailureEmail("ITEM ADD FAILED", err.Error())
+			}
+
+			customerIDs = append(customerIDs, customerID)
+			subscriptionIDs = append(subscriptionIDs, subscriptionID)
+			subscriptionItemIDs = append(subscriptionItemIDs, subscriptionItem.ID)
+		}
 	}
 
 	inviteCode, oldSubscriptionID, _, err := generateInvite(email, name, plan.AccountsPlan, "", customerIDs, subscriptionIDs, subscriptionItemIDs, "", "", plan.GiftPack, true, true)
