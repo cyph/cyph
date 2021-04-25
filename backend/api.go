@@ -1572,7 +1572,7 @@ func stripeSession(h HandlerArgs) (interface{}, int) {
 			"card",
 		}),
 		SubscriptionData: subscriptioData,
-		SuccessURL:       stripe.String(websiteURL + "/checkout/success"),
+		SuccessURL:       stripe.String(websiteURL + "/checkout-success"),
 	}
 
 	session, err := stripeSessionAPI.New(params)
