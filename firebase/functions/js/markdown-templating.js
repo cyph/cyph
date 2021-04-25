@@ -9,7 +9,11 @@ import {dompurifyHtmlSanitizer} from './dompurify-html-sanitizer.js';
 const {__dirname} = getMeta(import.meta);
 const markdownIt = new MarkdownIt();
 
-const markdownEscapeWhitelist = new Set(['accountsURL', 'accountsURLShort']);
+const markdownEscapeWhitelist = new Set([
+	'accountsURL',
+	'accountsURLShort',
+	'email'
+]);
 
 const markdownEscape = markdown =>
 	typeof markdown === 'string' ?

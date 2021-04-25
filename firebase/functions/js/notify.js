@@ -17,7 +17,8 @@ export const initNotify = (database, messaging) => ({
 		eventDetails,
 		pushNotificationOptions,
 		preferPush,
-		emailOnly
+		emailOnly,
+		noUnsubscribe
 	) => {
 		subject = dompurifyHtmlSanitizer.sanitize(subject);
 		text =
@@ -36,7 +37,8 @@ export const initNotify = (database, messaging) => ({
 				username,
 				subject,
 				text,
-				eventDetails
+				eventDetails,
+				noUnsubscribe
 			);
 
 		const notifyMessage = async () =>

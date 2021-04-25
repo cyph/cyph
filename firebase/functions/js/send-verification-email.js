@@ -6,11 +6,13 @@ export const sendVerificationEmail = async (namespace, username) => {
 	const internalURL = `${userURL}/internal`;
 	const emailRef = database.ref(`${internalURL}/email`);
 	const emailVerifiedRef = database.ref(`${internalURL}/emailVerified`);
+	const nameRef = database.ref(`${internalURL}/name`);
 	const realUsernameRef = database.ref(`${internalURL}/realUsername`);
 
-	let [email, emailVerified, realUsername] = await Promise.all([
+	let [email, emailVerified, name, realUsername] = await Promise.all([
 		emailRef.once('value').then(o => o.val()),
 		emailVerifiedRef.once('value').then(o => o.val()),
+		nameRef.once('value').then(o => o.val()),
 		realUsernameRef.once('value').then(o => o.val() || username)
 	]);
 
@@ -27,24 +29,26 @@ export const sendVerificationEmail = async (namespace, username) => {
 		return;
 	}
 
+	const {token} = await tokens.create(
+		{
+			emailVerification: {
+				email,
+				username
+			}
+		},
+		await getTokenKey(namespace),
+		/* Link expires after a month */
+		2592000000
+	);
+
 	await notify(
 		namespace,
-		username,
+		{email, name},
 		'Verify your email for Cyph',
 		{
 			data: {
 				email,
-				token: await tokens.create(
-					{
-						emailVerification: {
-							email,
-							username
-						}
-					},
-					await getTokenKey(namespace),
-					/* Link expires after a month */
-					2592000000
-				),
+				token,
 				username: realUsername
 			},
 			templateName: 'email-verification'
@@ -52,6 +56,7 @@ export const sendVerificationEmail = async (namespace, username) => {
 		undefined,
 		undefined,
 		undefined,
+		true,
 		true
 	);
 };

@@ -325,7 +325,8 @@ export const sendEmail = async (
 	username,
 	subject,
 	text,
-	eventDetails
+	eventDetails,
+	noUnsubscribe
 ) => {
 	const to = await getEmailAddress(database, namespace, username);
 
@@ -348,6 +349,7 @@ export const sendEmail = async (
 		text,
 		eventDetails,
 		eventInviter,
-		namespaces[namespace].accountsURL
+		namespaces[namespace].accountsURL,
+		noUnsubscribe
 	);
 };
