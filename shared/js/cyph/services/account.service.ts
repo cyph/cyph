@@ -353,7 +353,7 @@ export class AccountService extends BaseProvider {
 							url:
 								this.envService.baseUrl +
 								`billingadmin/${userToken}`
-						}).catch(() => 'true')) === 'true'
+						}).catch(() => 'false')) === 'true'
 					);
 				})(),
 				(async () => {
