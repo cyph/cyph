@@ -706,7 +706,7 @@ func checkout(h HandlerArgs) (interface{}, int) {
 		}
 	}
 
-	sendMail("hello+sales-notifications@cyph.com", subject, ("" +
+	sendEmail("hello+sales-notifications@cyph.com", subject, ("" +
 		"Nonce: " + nonce +
 		"\nPlan ID: " + planID +
 		"\nAmount: " + amountString +
@@ -726,7 +726,7 @@ func checkout(h HandlerArgs) (interface{}, int) {
 		inviteCode := _inviteCode
 
 		if err != nil {
-			sendMail("hello+sales-invite-failure@cyph.com", "INVITE FAILED: "+subject, ("" +
+			sendEmail("hello+sales-invite-failure@cyph.com", "INVITE FAILED: "+subject, ("" +
 				"Nonce: " + nonce +
 				"\nPlan ID: " + planID +
 				"\nAmount: " + amountString +
@@ -760,7 +760,7 @@ func checkout(h HandlerArgs) (interface{}, int) {
 	}
 
 	if subscription {
-		sendMail(email, "Cyph Purchase Confirmation", "", ""+
+		sendEmail(email, "Cyph Purchase Confirmation", "", ""+
 			"<p>Welcome to Cyph "+name+", and thanks for signing up!</p>"+
 			"<p style='text-align: left'>"+
 			"Your access code is:&nbsp;&nbsp;"+
@@ -776,7 +776,7 @@ func checkout(h HandlerArgs) (interface{}, int) {
 	}
 
 	if planID == "10000-0" {
-		sendMail(email, "Thank You!", "", ""+
+		sendEmail(email, "Thank You!", "", ""+
 			"<p>Thanks so much for your donation "+name+"!</p>"+
 			"<p>"+
 			"Your support means a lot to us, and helps ensure "+
@@ -785,7 +785,7 @@ func checkout(h HandlerArgs) (interface{}, int) {
 			"</p>"+
 			"")
 	} else {
-		sendMail(email, "Cyph Purchase Confirmation", "", ""+
+		sendEmail(email, "Cyph Purchase Confirmation", "", ""+
 			"<p>Welcome to Cyph "+name+", and thanks for signing up!</p>"+
 			"<p>We'll follow up as soon as we have an update on your order.</p>"+
 			"")
@@ -1383,7 +1383,7 @@ func signUp(h HandlerArgs) (interface{}, int) {
 		return err.Error(), http.StatusInternalServerError
 	}
 
-	sendMail(betaSignup.Email, "Thanks for your interest in Cyph!", "", ""+
+	sendEmail(betaSignup.Email, "Thanks for your interest in Cyph!", "", ""+
 		"<p>Thank you! You've been added to the Cyph beta waitlist. We'll notify you when your invitation is ready.</p>"+
 		"<p>If you have any questions, comments, or concerns, please email <a href=\"mailto:support@cyph.com\">support@cyph.com</a>.</p>"+
 		"")
@@ -1455,7 +1455,7 @@ func stripeBillingPortal(h HandlerArgs) (interface{}, int) {
 		body += "</ul></p>"
 	}
 
-	sendMail(email, "Cyph Billing Portal", "", body)
+	sendEmail(email, "Cyph Billing Portal", "", body)
 
 	return "", http.StatusOK
 }
@@ -1791,7 +1791,7 @@ func stripeWebhookWorker(h HandlerArgs) (interface{}, int) {
 	}
 
 	sendFailureEmail := func(subjectPrefix, errorMessage string) (interface{}, int) {
-		sendMail("hello+sales-checkout-failure@cyph.com", subjectPrefix+": "+subject, ("" +
+		sendEmail("hello+sales-checkout-failure@cyph.com", subjectPrefix+": "+subject, ("" +
 			"\nPlan ID: " + planID +
 			"\nAmount: " + amountString +
 			"\nSubscription: " + plan.SubscriptionType +
@@ -1813,7 +1813,7 @@ func stripeWebhookWorker(h HandlerArgs) (interface{}, int) {
 		return sendFailureEmail("MISSING PLAN", "no plan ID in metadata")
 	}
 
-	sendMail("hello+sales-notifications@cyph.com", subject, ("" +
+	sendEmail("hello+sales-notifications@cyph.com", subject, ("" +
 		"\nPlan ID: " + planID +
 		"\nAmount: " + amountString +
 		"\nSubscription: " + plan.SubscriptionType +

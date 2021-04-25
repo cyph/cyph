@@ -4,7 +4,7 @@ import {toQueryString} from './serialization';
 import {openWindow} from './window';
 
 /** Sends an email to the Cyph team. "@cyph.com" may be omitted from to. */
-export const email = async (
+export const sendEmail = async (
 	to: string = 'hello',
 	subject: string = 'New Cyph Email',
 	message: string = '',

@@ -68,7 +68,7 @@ const recurrenceDayToString = dayOfWeek =>
 const recurrenceFrequencyToString = frequency =>
 	CalendarRecurrenceRules.Frequency[frequency].toUpperCase();
 
-export const sendMailInternal = async (
+export const sendEmailInternal = async (
 	to,
 	subject,
 	text,
@@ -290,10 +290,10 @@ export const sendMailInternal = async (
 
 	if (mailObject) {
 		try {
-			await transporter.sendMail(mailObject);
+			await transporter.sendEmail(mailObject);
 		}
 		catch (_) {
-			await transporterBackup.sendMail(mailObject);
+			await transporterBackup.sendEmail(mailObject);
 		}
 	}
 
@@ -319,7 +319,7 @@ export const sendMailInternal = async (
  *     string
  * )} text
  */
-export const sendMail = async (
+export const sendEmail = async (
 	database,
 	namespace,
 	username,
@@ -342,7 +342,7 @@ export const sendMail = async (
 			) :
 			undefined;
 
-	await sendMailInternal(
+	await sendEmailInternal(
 		to,
 		subject,
 		text,

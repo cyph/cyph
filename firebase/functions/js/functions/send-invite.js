@@ -1,6 +1,6 @@
 import {configService as config, proto, util} from '@cyph/sdk';
 import {mailchimpCredentials} from '../cyph-admin-vars.js';
-import {sendMailInternal} from '../email.js';
+import {sendEmailInternal} from '../email.js';
 import {getInviteTemplateData} from '../get-invite-template-data.js';
 import {
 	database,
@@ -99,7 +99,7 @@ export const sendInvite = onCall(async (data, namespace, getUsername) => {
 				.set({inviterUsername}) :
 			undefined,
 		email &&
-			sendMailInternal(
+			sendEmailInternal(
 				email,
 				`${inviterName} (@${inviterRealUsername}) Has Invited You to Cyph!` +
 					(inviteData.planTrialEnd ?

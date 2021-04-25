@@ -105,7 +105,7 @@ export const changeInviteCode = async (
 	TODO: Consider adding an email notification.
 
 	if (email) {
-		await sendMail(
+		await sendEmail(
 			!email ? undefined : !name ? email : `${name} <${email}>`,
 			isUpgrade ? 'Cyph Status Upgrade!' : 'Your Cyph Status',
 			{

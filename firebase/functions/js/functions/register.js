@@ -1,6 +1,6 @@
 import {configService as config, proto, util} from '@cyph/sdk';
 import {mailchimpCredentials} from '../cyph-admin-vars.js';
-import {sendMailInternal} from '../email.js';
+import {sendEmailInternal} from '../email.js';
 import {
 	admin,
 	auth,
@@ -242,7 +242,7 @@ export const register = onCall(
 				timestamp: admin.database.ServerValue.TIMESTAMP,
 				uid: userRecord.uid
 			}),
-			sendMailInternal(
+			sendEmailInternal(
 				'user-registrations@cyph.com',
 				`${
 					testEnvName ?

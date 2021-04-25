@@ -6,7 +6,7 @@ const {isCLI} = getMeta(import.meta);
 import {configService as config, proto, util} from '@cyph/sdk';
 import {initDatabaseService} from '../modules/database-service.js';
 import {addInviteCode} from './addinvitecode.js';
-import {sendMail} from './email.js';
+import {sendEmail} from './email.js';
 import {addToMailingList, mailingListIDs, splitName} from './mailchimp.js';
 
 const {CyphPlans, CyphPlanTypes} = proto;
@@ -76,7 +76,7 @@ export const inviteUser = async (
 		catch {}
 	}
 
-	await sendMail(
+	await sendEmail(
 		!email ? undefined : !name ? email : `${name} <${email}>`,
 		"You've Been Invited to Cyph!" +
 			(cyphPlan === CyphPlans.Free ?

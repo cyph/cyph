@@ -1,4 +1,4 @@
-import {sendMail} from '../email.js';
+import {sendEmail} from '../email.js';
 import {getBurnerLink} from '../get-burner-link.js';
 import {database, getSMSCredentials, onCall} from '../init.js';
 import {sendSMS} from '../sms.js';
@@ -29,7 +29,7 @@ export const burnerInvite = onCall(async (data, namespace, getUsername) => {
 
 	await Promise.all([
 		email &&
-			sendMail(
+			sendEmail(
 				database,
 				namespace,
 				name ? {email, name} : email,

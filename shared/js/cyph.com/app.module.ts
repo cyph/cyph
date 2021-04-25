@@ -18,7 +18,7 @@ import {CyphSharedModule} from '../cyph/modules/cyph-shared.module';
 import {AnalyticsService} from '../cyph/services/analytics.service';
 import {ConfigService} from '../cyph/services/config.service';
 import {StringsService} from '../cyph/services/strings.service';
-import {email} from '../cyph/util/email';
+import {sendEmail} from '../cyph/util/email';
 import {resolveStaticServices} from '../cyph/util/static-services';
 
 /**
@@ -52,7 +52,7 @@ export class AppModule implements DoBootstrap {
 
 		(<any> self).cyphAnalytics = analyticsService;
 		(<any> self).cyphConfig = configService;
-		(<any> self).sendEmail = email;
+		(<any> self).sendEmail = sendEmail;
 
 		resolveStaticServices({
 			domSanitizer,

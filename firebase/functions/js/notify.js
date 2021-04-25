@@ -1,7 +1,7 @@
 import {util} from '@cyph/sdk';
 import admin from 'firebase-admin';
 import {dompurifyHtmlSanitizer} from './dompurify-html-sanitizer.js';
-import {sendMail} from './email.js';
+import {sendEmail} from './email.js';
 import {sendMessage} from './messaging.js';
 
 const {normalize} = util;
@@ -25,7 +25,7 @@ export const initNotify = (database, messaging) => ({
 				text;
 
 		const notifyMail = async () =>
-			sendMail(
+			sendEmail(
 				database,
 				namespace,
 				username,

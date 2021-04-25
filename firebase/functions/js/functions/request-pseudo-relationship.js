@@ -1,5 +1,5 @@
 import {proto, util} from '@cyph/sdk';
-import {sendMailInternal} from '../email.js';
+import {sendEmailInternal} from '../email.js';
 import {database, getName, getRealUsername, onCall, setItem} from '../init.js';
 import {namespaces} from '../namespaces.js';
 import {validateEmail, validateInput} from '../validation.js';
@@ -39,7 +39,7 @@ export const requestPseudoRelationship = onCall(
 					state: AccountContactState.States.OutgoingRequest
 				}
 			),
-			sendMailInternal(
+			sendEmailInternal(
 				email,
 				`${titleize(
 					contactString

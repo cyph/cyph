@@ -1,7 +1,7 @@
 import {configService as config, proto, util} from '@cyph/sdk';
 import {mailchimpCredentials} from '../cyph-admin-vars.js';
 import {getInviteTemplateData} from '../get-invite-template-data.js';
-import {sendMailInternal} from '../email.js';
+import {sendEmailInternal} from '../email.js';
 import {database, getItem, getTokenKey, onRequest, setItem} from '../init.js';
 import {addToMailingList, mailchimp, splitName} from '../mailchimp.js';
 import {namespaces} from '../namespaces.js';
@@ -151,7 +151,7 @@ export const generateInvite = onRequest(true, async (req, res, namespace) => {
 		]);
 
 		if (userEmail) {
-			await sendMailInternal(
+			await sendEmailInternal(
 				userEmail,
 				isUpgrade ? 'Cyph Status Upgrade!' : 'Your Cyph Status',
 				{
@@ -343,7 +343,7 @@ export const generateInvite = onRequest(true, async (req, res, namespace) => {
 		welcomeLetter:
 			inviteCodes.length < 1 ?
 				'' :
-				await sendMailInternal(
+				await sendEmailInternal(
 					email,
 					(purchased ?
 						'Cyph Purchase Confirmation' :

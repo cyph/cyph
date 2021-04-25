@@ -12,7 +12,7 @@ import {ConfigService} from '../../services/config.service';
 import {EnvService} from '../../services/env.service';
 import {StringsService} from '../../services/strings.service';
 import {trackBySelf} from '../../track-by/track-by-self';
-import {email} from '../../util/email';
+import {sendEmail} from '../../util/email';
 
 /**
  * Angular component for contact form UI.
@@ -73,7 +73,7 @@ export class ContactComponent extends BaseProvider implements OnInit {
 
 	/** Sends email. */
 	public send () : void {
-		email(
+		sendEmail(
 			this.to,
 			this.subject,
 			this.message,

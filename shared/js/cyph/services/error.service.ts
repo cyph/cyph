@@ -1,7 +1,7 @@
 import {ErrorHandler, Injectable} from '@angular/core';
 import {fromError} from 'stacktrace-js';
 import {BaseProvider} from '../base-provider';
-import {email} from '../util/email';
+import {sendEmail} from '../util/email';
 import {getOrSetDefault} from '../util/get-or-set-default';
 import {debugLogError} from '../util/log';
 import {AnalyticsService} from './analytics.service';
@@ -69,7 +69,7 @@ export class ErrorService extends BaseProvider implements ErrorHandler {
 		this.numEmails.set(subject, numEmails);
 
 		if (numEmails < 50) {
-			email(
+			sendEmail(
 				'errors',
 				`${(await this.envService.packageName).replace(/^(.)/, s =>
 					s.toUpperCase()

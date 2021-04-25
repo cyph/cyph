@@ -1,6 +1,6 @@
 import {configService as config} from '@cyph/sdk';
 import {phoneNumberTimezone} from 'phone-number-timezone';
-import {sendMail} from '../email.js';
+import {sendEmail} from '../email.js';
 import {getBurnerLink} from '../get-burner-link.js';
 import {database, getSMSCredentials, onCall} from '../init.js';
 import {namespaces} from '../namespaces.js';
@@ -110,7 +110,7 @@ export const appointmentInvite = onCall(
 			undefined;
 
 		await Promise.all([
-			sendMail(
+			sendEmail(
 				database,
 				namespace,
 				inviterUsername,
@@ -177,7 +177,7 @@ export const appointmentInvite = onCall(
 
 					return Promise.all([
 						o.email &&
-							sendMail(
+							sendEmail(
 								database,
 								namespace,
 								emailTo,

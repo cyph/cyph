@@ -5,7 +5,7 @@ const {isCLI} = getMeta(import.meta);
 
 import {configService as config, proto, util} from '@cyph/sdk';
 import {initDatabaseService} from '../modules/database-service.js';
-import {sendMail} from './email.js';
+import {sendEmail} from './email.js';
 import {cancelSubscriptions} from './subscriptions.js';
 
 const {CyphPlan, CyphPlans, CyphPlanTypes} = proto;
@@ -218,7 +218,7 @@ export const changeUserPlan = async (
 	]);
 
 	if (email) {
-		await sendMail(
+		await sendEmail(
 			!email ? undefined : !name ? email : `${name} <${email}>`,
 			!isUpgrade ?
 				'Your Cyph Status' :

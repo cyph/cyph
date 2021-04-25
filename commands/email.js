@@ -49,4 +49,4 @@ fs.writeFileSync(
 );
 fs.writeFileSync(`${tmp}/namespaces.js`, 'export const namespaces = {};');
 
-export const sendMail = (await import(`${tmp}/index.js`)).sendMailInternal;
+export const sendEmail = (await import(`${tmp}/index.js`)).sendEmailInternal;
