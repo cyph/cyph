@@ -232,10 +232,10 @@ for f in $(find . -name '*.html') ; do node -e "(async () => {
 
 			fs.writeFileSync(path, content);
 		}).concat(\$(
-			'amp-img[src]:not([src^=\"/static_wordpress\"]):not([src^=\"${fullDestinationURL}\"]), ' +
-			'img[src]:not([src^=\"/static_wordpress\"]):not([src^=\"${fullDestinationURL}\"]), ' +
-			'script[src]:not([src^=\"/static_wordpress\"]):not([src^=\"${fullDestinationURL}\"]):not([type=\"application/ld+json\"]), ' +
-			'link[rel=\"stylesheet\"][href]:not([href^=\"/static_wordpress\"]):not([href^=\"${fullDestinationURL}\"])'
+			'amp-img[src]:not([src^=\"/static_wordpress\"]):not([src^=\"${fullDestinationURL}\"]):not([data-remote-subresource]), ' +
+			'img[src]:not([src^=\"/static_wordpress\"]):not([src^=\"${fullDestinationURL}\"]):not([data-remote-subresource]), ' +
+			'script[src]:not([src^=\"/static_wordpress\"]):not([src^=\"${fullDestinationURL}\"]):not([type=\"application/ld+json\"]):not([data-remote-subresource]), ' +
+			'link[rel=\"stylesheet\"][href]:not([href^=\"/static_wordpress\"]):not([href^=\"${fullDestinationURL}\"]):not([data-remote-subresource])'
 		).toArray().concat(
 			/* Workaround for Supsystic table plugin dynamically generating this client-side */
 			\$('<link href=\"https://fonts.googleapis.com/css?family=Ubuntu\" />')
