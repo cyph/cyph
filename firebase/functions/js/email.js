@@ -290,10 +290,10 @@ export const sendEmailInternal = async (
 
 	if (mailObject) {
 		try {
-			await transporter.sendEmail(mailObject);
+			await transporter.sendMail(mailObject);
 		}
 		catch (_) {
-			await transporterBackup.sendEmail(mailObject);
+			await transporterBackup.sendMail(mailObject);
 		}
 	}
 

@@ -16,13 +16,18 @@ export const initNotify = (database, messaging) => ({
 		text,
 		eventDetails,
 		pushNotificationOptions,
-		preferPush
+		preferPush,
+		emailOnly
 	) => {
 		subject = dompurifyHtmlSanitizer.sanitize(subject);
 		text =
 			typeof text === 'string' ?
 				dompurifyHtmlSanitizer.sanitize(text) :
 				text;
+
+		if (emailOnly) {
+			preferPush = false;
+		}
 
 		const notifyMail = async () =>
 			sendEmail(
@@ -33,15 +38,19 @@ export const initNotify = (database, messaging) => ({
 				text,
 				eventDetails
 			);
+
 		const notifyMessage = async () =>
-			sendMessage(
-				database,
-				messaging,
-				namespace,
-				username,
-				subject,
-				pushNotificationOptions
-			);
+			!emailOnly ?
+				sendMessage(
+					database,
+					messaging,
+					namespace,
+					username,
+					subject,
+					pushNotificationOptions
+				) :
+				undefined;
+
 		if (!preferPush || eventDetails) {
 			await Promise.all([notifyMail(), notifyMessage()]);
 			return;

@@ -27,22 +27,31 @@ export const sendVerificationEmail = async (namespace, username) => {
 		return;
 	}
 
-	await notify(namespace, username, 'Verify your email for Cyph', {
-		data: {
-			email,
-			token: await tokens.create(
-				{
-					emailVerification: {
-						email,
-						username
-					}
-				},
-				await getTokenKey(namespace),
-				/* Link expires after a month */
-				2592000000
-			),
-			username: realUsername
+	await notify(
+		namespace,
+		username,
+		'Verify your email for Cyph',
+		{
+			data: {
+				email,
+				token: await tokens.create(
+					{
+						emailVerification: {
+							email,
+							username
+						}
+					},
+					await getTokenKey(namespace),
+					/* Link expires after a month */
+					2592000000
+				),
+				username: realUsername
+			},
+			templateName: 'email-verification'
 		},
-		templateName: 'email-verification'
-	});
+		undefined,
+		undefined,
+		undefined,
+		true
+	);
 };
