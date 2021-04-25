@@ -7,6 +7,7 @@ import {Analytics} from '../cyph/analytics';
 import {config} from '../cyph/config';
 import {envDeploy} from '../cyph/env-deploy';
 import {sendEmailInternal} from '../cyph/util/email/internal';
+import {openWindowInternal} from '../cyph/util/window/internal';
 
 const analytics = new Analytics();
 analytics.setUID();
@@ -17,9 +18,8 @@ analytics.setUID();
 
 (<any> self).cyphEnv = envDeploy;
 
-(<any> (
-	self
-)).sendEmail = sendEmailInternal(
+(<any> self).sendEmail = sendEmailInternal(
 	async (o: {data?: any; method?: string; url: string}) =>
-		(<any> self).jQuery.ajax(o)
+		(<any> self).jQuery.ajax(o),
+	openWindowInternal
 );

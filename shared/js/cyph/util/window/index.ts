@@ -1,6 +1,7 @@
-import {env} from '../env';
-import {MaybePromise} from '../maybe-promise-type';
-import {filterUndefined} from './filter/base';
+import {env} from '../../env';
+import {MaybePromise} from '../../maybe-promise-type';
+import {filterUndefined} from '../filter/base';
+import {openWindowInternal} from './internal';
 
 /** Opens the specified URL in a new window. */
 export const openWindow = async (
@@ -47,16 +48,7 @@ export const openWindow = async (
 	}
 	catch {}
 
-	if (sameWindow && !env.isCordova) {
-		location.href = url;
-		return;
-	}
-
-	const a = document.createElement('a');
-	a.href = url;
-	a.target = '_blank';
-	a.rel = 'noopener';
-	a.click();
+	await openWindowInternal(url, sameWindow && !env.isCordova);
 };
 
 /** Reloads window, or performs equivalent behavior depending on platform. */

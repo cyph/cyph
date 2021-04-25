@@ -1,10 +1,11 @@
 import {envDeploy} from '../../env-deploy';
+import {MaybePromise} from '../../maybe-promise-type';
 import {toQueryString} from '../serialization/query-string';
-import {openWindow} from '../window';
 
 /** @see sendEmail */
 export const sendEmailInternal = (
-	request: (o: {data?: any; method?: string; url: string}) => Promise<any>
+	request: (o: {data?: any; method?: string; url: string}) => Promise<any>,
+	openWindow: (url: string) => MaybePromise<void>
 ) => async (
 	to: string = 'hello',
 	subject: string = 'New Cyph Email',
