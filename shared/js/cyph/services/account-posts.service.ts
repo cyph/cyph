@@ -27,7 +27,7 @@ import {
 	StringArrayProto,
 	StringProto
 } from '../proto';
-import {filterUndefined} from '../util/filter';
+import {filterUndefined} from '../util/filter/base';
 import {toBehaviorSubject} from '../util/flatten-observable';
 import {normalize, normalizeArray} from '../util/formatting';
 import {getOrSetDefault} from '../util/get-or-set-default';

@@ -26,7 +26,7 @@ cd cyph.com
 ../commands/buildunbundledassets.sh
 ../commands/prodbuild.sh --configuration prod
 
-cp ../shared/assets/js/standalone/analytics.js dist/
+cp ../shared/assets/js/standalone/cyph.com.js dist/
 cp ../shared/assets/js/standalone/global.js dist/
 cp ../shared/assets/node_modules/core-js-bundle/minified.js dist/
 cp ../shared/assets/node_modules/tslib/tslib.js dist/

@@ -17,6 +17,7 @@ import {CheckoutComponent} from '../cyph/components/checkout';
 import {CyphSharedModule} from '../cyph/modules/cyph-shared.module';
 import {AnalyticsService} from '../cyph/services/analytics.service';
 import {ConfigService} from '../cyph/services/config.service';
+import {EnvService} from '../cyph/services/env.service';
 import {StringsService} from '../cyph/services/strings.service';
 import {sendEmail} from '../cyph/util/email';
 import {resolveStaticServices} from '../cyph/util/static-services';
@@ -43,6 +44,7 @@ export class AppModule implements DoBootstrap {
 		ngZone: NgZone,
 		analyticsService: AnalyticsService,
 		configService: ConfigService,
+		envService: EnvService,
 		stringsService: StringsService,
 
 		/** @ignore */
@@ -52,6 +54,7 @@ export class AppModule implements DoBootstrap {
 
 		(<any> self).cyphAnalytics = analyticsService;
 		(<any> self).cyphConfig = configService;
+		(<any> self).cyphEnv = envService;
 		(<any> self).sendEmail = sendEmail;
 
 		resolveStaticServices({

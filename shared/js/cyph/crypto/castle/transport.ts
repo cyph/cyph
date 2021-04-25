@@ -1,7 +1,7 @@
 import {Observable} from 'rxjs';
 import {ISessionService} from '../../service-interfaces/isession.service';
 import {CastleEvents} from '../../session/enums';
-import {filterUndefined} from '../../util/filter';
+import {filterUndefined} from '../../util/filter/base';
 import {debugLog} from '../../util/log';
 import {potassiumUtil} from '../potassium/potassium-util';
 

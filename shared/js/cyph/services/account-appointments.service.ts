@@ -25,7 +25,7 @@ import {
 	serializeRecurrenceExclusions,
 	serializeRecurrenceRule
 } from '../util/calendar';
-import {filterUndefined} from '../util/filter';
+import {filterUndefined} from '../util/filter/base';
 import {observableAll} from '../util/observable-all';
 import {timestampToDateNoSeconds, watchTimestamp} from '../util/time';
 import {readableID, uuid} from '../util/uuid';

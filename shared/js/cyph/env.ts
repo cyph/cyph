@@ -15,9 +15,6 @@ import {toInt} from './util/formatting';
  */
 export class Env extends EnvDeploy {
 	/** @ignore */
-	private static readonly UA: string = navigatorData.userAgent.toLowerCase();
-
-	/** @ignore */
 	private readonly useBaseUrl: boolean =
 		!!environment.customBuild || environment.local;
 
@@ -131,9 +128,6 @@ export class Env extends EnvDeploy {
 		projectId: environment.firebase.project,
 		storageBucket: `${environment.firebase.project}.appspot.com`
 	};
-
-	/** Complete (lowercase) language code, e.g. "en-us". */
-	public readonly fullLanguage: string = Env.languageInternal.toLowerCase();
 
 	/** Number of available logical CPU cores. */
 	public readonly hardwareConcurrency: number;
@@ -256,20 +250,6 @@ export class Env extends EnvDeploy {
 	/** Indicates whether this is a WebKit/Blink browser. */
 	public readonly isWebKit: boolean;
 
-	/** Normalized language code, used for translations. */
-	public readonly language: string = (() => {
-		const language = this.fullLanguage.split('-')[0];
-
-		/* Consistency in special cases */
-		return language === 'nb' ?
-			'no' :
-		this.fullLanguage === 'zh-tw' ?
-			'zh-cht' :
-		language === 'zh' ?
-			'zh-chs' :
-			language;
-	})();
-
 	/** Indicates whether in-app purchases are blocked. */
 	public readonly noInAppPurchasesAllowed: boolean;
 
@@ -329,9 +309,6 @@ export class Env extends EnvDeploy {
 			(environment.customBuild !== undefined &&
 				environment.customBuild.config.telehealthTheme === true)
 	);
-
-	/** Current user agent (lowercase). */
-	public readonly userAgent: string = Env.UA;
 
 	/** Paths to WebSign subresources. */
 	public readonly webSignPaths = {

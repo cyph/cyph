@@ -21,7 +21,7 @@ import {AccountUserLookupService} from '../../services/account-user-lookup.servi
 import {AccountService} from '../../services/account.service';
 import {EnvService} from '../../services/env.service';
 import {StringsService} from '../../services/strings.service';
-import {filterUndefined} from '../../util/filter';
+import {filterUndefined} from '../../util/filter/base';
 import {SearchBarComponent} from '../search-bar';
 
 /**

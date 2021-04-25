@@ -8,6 +8,9 @@ import {config} from './config';
  */
 export class EnvDeploy {
 	/** @ignore */
+	protected static readonly UA: string = navigatorData.userAgent.toLowerCase();
+
+	/** @ignore */
 	public static readonly languageInternal: string =
 		navigatorData.language ||
 		(<any> navigatorData).userLanguage ||
@@ -100,6 +103,26 @@ export class EnvDeploy {
 
 	/** Firebase-related config. */
 	// public readonly localFirebaseDatabaseURL: string = `ws://${`${locationData.hostname}.`.replace(/(localhost|127\.0\.0\.1|0\.0\.0\.0)\.$/, '127.0.1')}:44000`;
+
+	/** Complete (lowercase) language code, e.g. "en-us". */
+	public readonly fullLanguage: string = EnvDeploy.languageInternal.toLowerCase();
+
+	/** Normalized language code, used for translations. */
+	public readonly language: string = (() => {
+		const language = this.fullLanguage.split('-')[0];
+
+		/* Consistency in special cases */
+		return language === 'nb' ?
+			'no' :
+		this.fullLanguage === 'zh-tw' ?
+			'zh-cht' :
+		language === 'zh' ?
+			'zh-chs' :
+			language;
+	})();
+
+	/** Current user agent (lowercase). */
+	public readonly userAgent: string = EnvDeploy.UA;
 
 	constructor () {
 		this._cyphImUrl = this.isOnion ?

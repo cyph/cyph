@@ -12,7 +12,7 @@ import {
 	LocalStorageValue
 } from '../proto';
 import {DataManagerService} from '../service-interfaces/data-manager.service';
-import {filterUndefined} from '../util/filter';
+import {filterUndefined} from '../util/filter/base';
 import {getOrSetDefault} from '../util/get-or-set-default';
 import {debugLog} from '../util/log';
 import {deserialize, serialize} from '../util/serialization';

@@ -1,6 +1,6 @@
 import {env} from '../env';
 import {MaybePromise} from '../maybe-promise-type';
-import {filterUndefined} from './filter';
+import {filterUndefined} from './filter/base';
 
 /** Opens the specified URL in a new window. */
 export const openWindow = async (

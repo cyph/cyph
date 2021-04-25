@@ -4,7 +4,7 @@ import {switchMap} from 'rxjs/operators';
 import {User} from '../account';
 import {BaseProvider} from '../base-provider';
 import {AccountUserTypes} from '../proto';
-import {filterUndefined} from '../util/filter';
+import {filterUndefined} from '../util/filter/base';
 import {toBehaviorSubject} from '../util/flatten-observable';
 import {normalize} from '../util/formatting';
 import {getOrSetDefault} from '../util/get-or-set-default';

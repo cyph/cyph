@@ -22,7 +22,7 @@ import {EnvService} from '../../services/env.service';
 import {StringsService} from '../../services/strings.service';
 import {trackByIndex} from '../../track-by/track-by-index';
 import {trackBySelf} from '../../track-by/track-by-self';
-import {filterUndefined} from '../../util/filter';
+import {filterUndefined} from '../../util/filter/base';
 import {toFloat, toInt} from '../../util/formatting';
 import {getOrSetDefault} from '../../util/get-or-set-default';
 import {saveFile} from '../../util/save-file';

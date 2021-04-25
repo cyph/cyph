@@ -1,18 +1,8 @@
 import {Observable} from 'rxjs';
 import {filter} from 'rxjs/operators';
-import {MaybePromise} from '../maybe-promise-type';
-import {compareValues} from './compare';
+import {compareValues} from '../compare';
 
-/** Filters asynchronously. */
-export const filterAsync = async <T>(
-	arr: T[],
-	f: (value: T) => MaybePromise<boolean>
-) : Promise<T[]> =>
-	(await Promise.all(
-		arr.map(async value => ({filter: await f(value), value}))
-	))
-		.filter(o => o.filter)
-		.map(o => o.value);
+export * from './base';
 
 /** rxjs operator that filters out consecutive duplicate values. */
 export const filterDuplicatesOperator = <T>() : ((
@@ -33,11 +23,6 @@ export const filterEmptyOperator = <T>() =>
 	<(source: Observable<T | undefined | void>) => Observable<T>> (
 		filter<T>(t => !!t)
 	);
-
-/** Filters out undefined values. */
-/* eslint-disable-next-line @typescript-eslint/tslint/config */
-export const filterUndefined = <T>(arr: (T | undefined | void)[]) : T[] =>
-	<T[]> arr.filter(t => t !== undefined);
 
 /** rxjs operator that filters out undefined values. */
 export const filterUndefinedOperator = <T>() =>

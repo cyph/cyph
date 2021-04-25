@@ -66,7 +66,7 @@ nodeModulesAssets="$(
 typescriptAssets="$(
 	{
 		echo cyph/crypto/native-web-crypto-polyfill;
-		echo standalone/analytics;
+		echo standalone/cyph.com;
 		echo standalone/node-polyfills;
 		if [ "${libpotassium}" ] ; then echo cyph/crypto/potassium/index ; fi;
 		grep -roP "importScripts\('/assets/js/.*?\.js'\)" shared/js |

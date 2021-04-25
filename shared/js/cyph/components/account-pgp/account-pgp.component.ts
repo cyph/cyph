@@ -25,7 +25,7 @@ import {EnvService} from '../../services/env.service';
 import {StringsService} from '../../services/strings.service';
 import {trackBySelf} from '../../track-by/track-by-self';
 import {copyToClipboard} from '../../util/clipboard';
-import {filterUndefined} from '../../util/filter';
+import {filterUndefined} from '../../util/filter/base';
 import {debugLogError} from '../../util/log';
 
 /**

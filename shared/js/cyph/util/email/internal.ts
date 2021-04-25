@@ -1,10 +1,11 @@
-import {env} from '../env';
-import {request} from './request';
-import {toQueryString} from './serialization';
-import {openWindow} from './window';
+import {envDeploy} from '../../env-deploy';
+import {toQueryString} from '../serialization/query-string';
+import {openWindow} from '../window';
 
-/** Sends an email to the Cyph team. "@cyph.com" may be omitted from to. */
-export const sendEmail = async (
+/** @see sendEmail */
+export const sendEmailInternal = (
+	request: (o: {data?: any; method?: string; url: string}) => Promise<any>
+) => async (
 	to: string = 'hello',
 	subject: string = 'New Cyph Email',
 	message: string = '',
@@ -18,8 +19,8 @@ export const sendEmail = async (
 	);
 
 	message = (
-		`${message}\n\n\n---\n\n${env.userAgent}\n\n` +
-		`${env.language}\n\n${locationData.href}`
+		`${message}\n\n\n---\n\n${envDeploy.userAgent}\n\n` +
+		`${envDeploy.language}\n\n${locationData.href}`
 	).replace(/\/#.*/g, '');
 
 	to = to.replace('@cyph.com', '') + '@cyph.com';
