@@ -1462,6 +1462,7 @@ func stripeBillingPortal(h HandlerArgs) (interface{}, int) {
 
 /* TODO: Factor out common logic with checkout */
 func stripeSession(h HandlerArgs) (interface{}, int) {
+	inviteCode := sanitize(h.Request.PostFormValue("inviteCode"))
 	partnerTransactionID := sanitize(h.Request.PostFormValue("partnerTransactionID"))
 	userToken := sanitize(h.Request.PostFormValue("userToken"))
 
@@ -1501,8 +1502,10 @@ func stripeSession(h HandlerArgs) (interface{}, int) {
 	}
 
 	metadata := map[string]string{
+		"inviteCode":           inviteCode,
 		"partnerTransactionID": partnerTransactionID,
 		"planID":               planID,
+		"username":             username,
 	}
 
 	adjustableQuantity := &stripe.CheckoutSessionLineItemAdjustableQuantityParams{
@@ -1771,7 +1774,9 @@ func stripeWebhookWorker(h HandlerArgs) (interface{}, int) {
 	planID := metadata["planID"]
 	plan, hasPlan := plans[planID]
 
+	inviteCode := metadata["inviteCode"]
 	partnerTransactionID := metadata["partnerTransactionID"]
+	username := metadata["username"]
 
 	subject := "SALE: " + name + " <" + email + ">, $" + strconv.FormatInt(amount/100, 10)
 	if !isProd {
@@ -1862,7 +1867,7 @@ func stripeWebhookWorker(h HandlerArgs) (interface{}, int) {
 		}
 	}
 
-	inviteCode, oldSubscriptionID, _, err := generateInvite(email, name, plan.AccountsPlan, "", customerIDs, subscriptionIDs, subscriptionItemIDs, "", "", plan.GiftPack, true, true)
+	inviteCode, oldSubscriptionID, _, err := generateInvite(email, name, plan.AccountsPlan, "", customerIDs, subscriptionIDs, subscriptionItemIDs, inviteCode, username, plan.GiftPack, true, true)
 
 	if err != nil {
 		return sendFailureEmail(

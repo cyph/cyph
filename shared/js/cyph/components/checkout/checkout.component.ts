@@ -293,8 +293,8 @@ export class CheckoutComponent extends BaseProvider
 						this.configService.stripe.apiKeys.prod :
 						this.configService.stripe.apiKeys.test
 				),
-				Promise.all([this.partnerTransactionID, this.userToken]).then(
-					async ([partnerTransactionID, userToken]) =>
+				Promise.all([this.inviteCode, this.partnerTransactionID, this.userToken]).then(
+					async ([inviteCode, partnerTransactionID, userToken]) =>
 						request({
 							data: {
 								amount: Math.floor(this.amount * 100),
@@ -302,6 +302,7 @@ export class CheckoutComponent extends BaseProvider
 								...(this.category !== undefined ?
 									{category: this.category} :
 									{}),
+								...(inviteCode !== undefined ? {inviteCode} : {}),
 								...(this.item !== undefined ?
 									{item: this.item} :
 									{}),
