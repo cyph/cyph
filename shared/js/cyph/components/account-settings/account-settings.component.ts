@@ -425,7 +425,7 @@ export class AccountSettingsComponent extends BaseProvider implements OnInit {
 			this.dialogService
 				.toast(
 					this.stringsService.emailVerifyError,
-					undefined,
+					0,
 					this.stringsService.ok
 				)
 				.catch(() => {});

@@ -337,7 +337,7 @@ export class AccountPGPComponent extends BaseProvider implements OnInit {
 							)
 						}
 					),
-					undefined,
+					0,
 					this.stringsService.ok
 				)
 				.catch(() => {});
@@ -403,7 +403,7 @@ export class AccountPGPComponent extends BaseProvider implements OnInit {
 							)
 						}
 					),
-					undefined,
+					0,
 					this.stringsService.ok
 				)
 				.catch(() => {});
