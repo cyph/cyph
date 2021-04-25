@@ -30,6 +30,12 @@ handlers:
   secure: always
   # default_headers Cache-Control
 
+- url: /checkoutv1[/]?
+  static_files: checkoutv1/index.html
+  upload: checkoutv1/index.html
+  secure: always
+  # default_headers Cache-Control
+
 - url: /pricing[/]?
   static_files: pricing/index.html
   upload: pricing/index.html

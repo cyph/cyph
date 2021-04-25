@@ -147,7 +147,11 @@ if [ ! "${simple}" ] || [ "${simpleProdBuild}" ] ; then
 		perl -pe 's/^(.*)$/https:\/\/\1 https:\/\/*.\1/g' |
 		tr '\n' ' '
 	)"
-	cyphComCheckoutCSPSources="bitcoin: bitcoincash: $(cat cyph.com/checkoutcspsources |
+	cyphComCheckoutCSPSources="$(cat cyph.com/checkoutcspsources |
+		perl -pe 's/^(.*)$/https:\/\/\1 https:\/\/*.\1/g' |
+		tr '\n' ' '
+	)"
+	cyphComCheckoutV1CSPSources="bitcoin: bitcoincash: $(cat cyph.com/checkoutv1cspsources |
 		perl -pe 's/^(.*)$/https:\/\/\1 https:\/\/*.\1/g' |
 		tr '\n' ' '
 	)"
@@ -173,6 +177,8 @@ if [ ! "${simple}" ] || [ "${simpleProdBuild}" ] ; then
 		perl -pe 's/(\/pricing\[\/\]\?.*?script-src )/\1'"'"'unsafe-inline'"'"' /g' |
 		perl -pe 's/(\/checkout\[\/\]\?.*?child-src )(.*?connect-src )(.*?frame-src )(.*?img-src )(.*?script-src )/\1☼\2☼\3☼\4☼\5☼'"'"'unsafe-inline'"'"' /g' |
 		sed "s|☼|${cyphComCheckoutCSPSources}|g" |
+		perl -pe 's/(\/checkoutv1\[\/\]\?.*?child-src )(.*?connect-src )(.*?frame-src )(.*?img-src )(.*?script-src )/\1☼\2☼\3☼\4☼\5☼'"'"'unsafe-inline'"'"' /g' |
+		sed "s|☼|${cyphComCheckoutV1CSPSources}|g" |
 		tr '☁' '\n' |
 		sed "s|Cache-Control: private, max-age=31536000|Cache-Control: public, max-age=31536000|g" \
 	> cyph.com/new.yaml
