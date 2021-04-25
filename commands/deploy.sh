@@ -1105,8 +1105,9 @@ fi
 # Push out latest package data
 if [ "${websign}" ] && ( [ "${test}" ] || [ "${debug}" ] || [ "${betaProd}" ] ) ; then
 	mv ~/.build ~/.build.test
+	touch ~/.noupdaterepos
 	cd ~/.cyph/repos/internal
-	git checkout prod
+	git checkout public
 	git pull
 	./commands/deploy.sh --prod --fast --site backend
 fi

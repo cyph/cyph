@@ -19,6 +19,10 @@ export const updateRepos = async () => {
 		stdio: 'inherit'
 	});
 
+	if (fs.existsSync(`${os.homedir()}/.noupdaterepos`)) {
+		return;
+	}
+
 	const repoRoot = `${os.homedir()}/.cyph/repos`;
 
 	for (const repo of ['cdn', 'chat-widget', 'custom-builds', 'internal']) {
@@ -79,7 +83,7 @@ export const updateRepos = async () => {
 					!customBuilds.has(d)
 			)
 			.map(d => d.replace(/\.cyph\.app$/, ''))
-			.concat('prod')
+			.concat(['prod', 'public'])
 	);
 
 	const outdatedBranches = childProcess

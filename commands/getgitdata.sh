@@ -24,7 +24,8 @@ cat <<- EOM
 	branch="$(
 		git describe --tags --exact-match 2> /dev/null || git branch |
 			awk '/^\*/{print $2}' |
-			tr '[:upper:]' '[:lower:]'
+			tr '[:upper:]' '[:lower:]' |
+			sed 's/^public$/prod/'
 	)"
 
 	username="$(
