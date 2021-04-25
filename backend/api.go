@@ -1464,20 +1464,6 @@ func stripeSession(h HandlerArgs) (interface{}, int) {
 	partnerTransactionID := sanitize(h.Request.PostFormValue("partnerTransactionID"))
 	userToken := sanitize(h.Request.PostFormValue("userToken"))
 
-	/*
-		timestamp := getTimestamp()
-
-		url, err := getURL(h.Request.PostFormValue("url"))
-		if err != nil {
-			return err.Error(), http.StatusBadRequest
-		}
-
-		namespace, err := getNamespace(h.Request.PostFormValue("namespace"))
-		if err != nil {
-			return err.Error(), http.StatusBadRequest
-		}
-	*/
-
 	username := ""
 	if userToken != "" {
 		username, _ = getUsername(userToken)
