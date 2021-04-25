@@ -166,6 +166,8 @@ var analIDs = func() map[string]string {
 	return o
 }()
 
+var cloudFunctionRoutes = strings.Split(getFileText("cloudfunctions.list"), "\n")
+
 var ipfsGatewayUptimeChecks = map[string]IPFSGatewayUptimeCheckData{}
 
 var ipfsGatewayURLs = func() []IPFSGatewayData {

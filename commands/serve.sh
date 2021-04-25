@@ -170,6 +170,7 @@ if [ -d ~/.cyph ] && [ -f ~/.cyph/backend.vars ] && [ ! "${CIRCLECI}" ] ; then
 fi
 
 ./commands/backendplans.js backend/plans.json
+./commands/cloudfunctions.js backend/cloudfunctions.list
 
 dev_appserver.py \
 	--skip_sdk_update_check \

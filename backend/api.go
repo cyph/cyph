@@ -1898,8 +1898,8 @@ func warmUpCloudFunctions(h HandlerArgs) (interface{}, int) {
 			project := config.FirebaseProjects[j]
 
 			go func() {
-				for k := range config.CloudFunctionRoutes {
-					route := config.CloudFunctionRoutes[k]
+				for k := range cloudFunctionRoutes {
+					route := cloudFunctionRoutes[k]
 
 					client := &http.Client{}
 
