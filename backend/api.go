@@ -1676,7 +1676,7 @@ func stripeWebhookWorker(h HandlerArgs) (interface{}, int) {
 	var subscription *stripe.Subscription
 	subscriptionID := ""
 
-	if checkoutSession.Subscription != nil {
+	if checkoutSession.Subscription != nil && checkoutSession.Subscription.ID != "" {
 		subscriptionID = checkoutSession.Subscription.ID
 		subscription, err = stripeSubscriptionAPI.Get(subscriptionID, nil)
 		if err != nil {
@@ -1687,7 +1687,7 @@ func stripeWebhookWorker(h HandlerArgs) (interface{}, int) {
 		customerID = subscription.Customer.ID
 		metadata = subscription.Metadata
 		partnerOrderID = subscriptionID
-	} else if checkoutSession.PaymentIntent != nil {
+	} else if checkoutSession.PaymentIntent != nil && checkoutSession.PaymentIntent.ID != "" {
 		paymentIntentID = checkoutSession.PaymentIntent.ID
 		paymentIntent, err = stripePaymentIntentAPI.Get(paymentIntentID, nil)
 		if err != nil {
