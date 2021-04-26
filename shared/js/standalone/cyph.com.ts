@@ -7,6 +7,7 @@ import {Analytics} from '../cyph/analytics';
 import {config} from '../cyph/config';
 import {envDeploy} from '../cyph/env-deploy';
 import {sendEmailInternal} from '../cyph/util/email/internal';
+import {resolvable} from '../cyph/util/wait/resolvable';
 import {openWindowInternal} from '../cyph/util/window/internal';
 
 const analytics = new Analytics();
@@ -17,6 +18,8 @@ analytics.setUID();
 (<any> self).cyphConfig = config;
 
 (<any> self).cyphEnv = envDeploy;
+
+(<any> self).resolvable = resolvable;
 
 (<any> self).sendEmail = sendEmailInternal(
 	async (o: {data?: any; method?: string; url: string}) =>

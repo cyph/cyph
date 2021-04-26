@@ -21,6 +21,7 @@ import {EnvService} from '../cyph/services/env.service';
 import {StringsService} from '../cyph/services/strings.service';
 import {sendEmail} from '../cyph/util/email';
 import {resolveStaticServices} from '../cyph/util/static-services';
+import {resolvable} from '../cyph/util/wait/resolvable';
 
 /**
  * Angular module for Cyph home page.
@@ -55,6 +56,7 @@ export class AppModule implements DoBootstrap {
 		(<any> self).cyphAnalytics = analyticsService;
 		(<any> self).cyphConfig = configService;
 		(<any> self).cyphEnv = envService;
+		(<any> self).resolvable = resolvable;
 		(<any> self).sendEmail = sendEmail;
 
 		resolveStaticServices({
