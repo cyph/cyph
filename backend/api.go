@@ -1688,8 +1688,8 @@ func stripeWebhookWorker(h HandlerArgs) (interface{}, int) {
 		metadata = subscription.Metadata
 		partnerOrderID = subscriptionID
 	} else if checkoutSession.PaymentIntent != nil {
-		paymentIntentID := checkoutSession.PaymentIntent.ID
-		paymentIntent, err := stripePaymentIntentAPI.Get(paymentIntentID, nil)
+		paymentIntentID = checkoutSession.PaymentIntent.ID
+		paymentIntent, err = stripePaymentIntentAPI.Get(paymentIntentID, nil)
 		if err != nil {
 			log.Println(fmt.Errorf("stripeWebhookMissingPaymentIntent: %v", err))
 			return err.Error(), http.StatusInternalServerError
@@ -1722,6 +1722,12 @@ func stripeWebhookWorker(h HandlerArgs) (interface{}, int) {
 	if err != nil {
 		log.Println(fmt.Errorf("stripeWebhookClaimError: %v", err))
 		return err.Error(), http.StatusInternalServerError
+	}
+
+	if subscription != nil {
+		metadata = subscription.Metadata
+	} else {
+		metadata = paymentIntent.Metadata
 	}
 
 	if metadata["processed"] != pid {
