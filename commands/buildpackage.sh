@@ -215,8 +215,9 @@ if [ "${test}" ] ; then
 		echo "  WEBSITE_URL: 'https://${version}-dot-cyph-com-dot-cyphme.appspot.com'" >> backend/app.yaml
 	fi
 
-	ls */*.yaml shared/js/cyph/env-deploy.ts | xargs -I% sed -i "s|api.cyph.com|${version}-dot-cyphme.appspot.com|g" %
-	ls */*.yaml shared/js/cyph/env-deploy.ts | xargs -I% sed -i "s|www.cyph.com|${version}-dot-cyph-com-dot-cyphme.appspot.com|g" %
+	ls */*.yaml shared/js/cyph/env-deploy.ts | xargs -I% sed -i "s|api\.cyph\.com|${version}-dot-cyphme.appspot.com|g" %
+	ls */*.yaml shared/js/cyph/env-deploy.ts | xargs -I% sed -i "s|partner-${version}-dot-cyphme\.appspot\.com|partner-api.cyph.com|g" %
+	ls */*.yaml shared/js/cyph/env-deploy.ts | xargs -I% sed -i "s|www\.cyph\.com|${version}-dot-cyph-com-dot-cyphme.appspot.com|g" %
 	sed -i "s|${defaultHost}42000|https://${version}-dot-cyphme.appspot.com|g" shared/js/cyph/env-deploy.ts
 	sed -i "s|${defaultHost}42001|https://${version}-dot-cyph-com-dot-cyphme.appspot.com|g" shared/js/cyph/env-deploy.ts
 	sed -i "s|${defaultHost}43000|https://${version}-dot-cyph-com-dot-cyphme.appspot.com|g" shared/js/cyph/env-deploy.ts

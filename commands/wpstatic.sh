@@ -429,6 +429,9 @@ if [ ! "${prod}" ] ; then
 		's|api\.cyph\.com|staging-dot-cyphme.appspot.com|g' \
 		wp-content/themes/Zephyr-Cyph-Child/*/*.js
 	sed -i \
+		's|partner-staging-dot-cyphme\.appspot\.com|partner-api.cyph.com|g' \
+		wp-content/themes/Zephyr-Cyph-Child/*/*.js
+	sed -i \
 		's|www\.cyph\.com|staging-dot-cyph-com-dot-cyphme.appspot.com|g' \
 		wp-content/themes/Zephyr-Cyph-Child/*/*.js
 	sed -i \
