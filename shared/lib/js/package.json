@@ -69,6 +69,7 @@
 		"@google-cloud/storage": "^5.8.3",
 		"@ignatiusmb/scramble": "^3.0.1",
 		"@isomorphic-git/lightning-fs": "^4.4.1",
+		"@msgpack/msgpack": "^2.6.0",
 		"@ngrx/core": "^1.2.0",
 		"@ngrx/effects": "^11.1.0",
 		"@ngrx/router-store": "^11.1.0",
