@@ -18,9 +18,13 @@ import {StringsService} from './strings.service';
 /** Service for handling anything sales-related. */
 @Injectable()
 export class SalesService extends BaseProvider {
-	/** @see AccountService.accountBillingAdmin */
-	private readonly accountBillingAdmin = resolvable<
-		BehaviorSubject<boolean>
+	/** @see AccountService.accountBillingStatus */
+	private readonly accountBillingStatus = resolvable<
+		BehaviorSubject<{
+			admin: boolean;
+			goodStanding: boolean;
+			stripe: boolean;
+		}>
 	>();
 
 	/** @ignore */
@@ -37,8 +41,8 @@ export class SalesService extends BaseProvider {
 		!this.envService.isTelehealth
 	);
 
-	/** @see AccountService.accountBillingAdmin */
-	public readonly setAccountBillingAdmin = this.accountBillingAdmin.resolve;
+	/** @see AccountService.accountBillingStatus */
+	public readonly setAccountBillingStatus = this.accountBillingStatus.resolve;
 
 	/** Indicates whether upselling is allowed. */
 	public readonly upsellAllowed = new ReplaySubject<boolean>();
@@ -181,11 +185,11 @@ export class SalesService extends BaseProvider {
 		(async () => {
 			this.subscriptions.push(
 				observableAll([
-					await this.accountBillingAdmin,
+					await this.accountBillingStatus,
 					this.accountSettingsService.plan
-				]).subscribe(([accountBillingAdmin, plan]) => {
+				]).subscribe(([accountBillingStatus, plan]) => {
 					this.upsellAllowed.next(
-						accountBillingAdmin &&
+						accountBillingStatus.admin &&
 							!this.envService.isTelehealth &&
 							this.configService.planConfig[plan].upsell &&
 							!this.envService.noInAppPurchasesReferenceAllowed

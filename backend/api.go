@@ -29,9 +29,8 @@ import (
 )
 
 func main() {
-	handleFuncs("/accountstanding/{userToken}", false, Handlers{methods.GET: isAccountInGoodStanding})
 	handleFuncs("/analytics/*", false, Handlers{methods.GET: analytics, methods.POST: analytics})
-	handleFuncs("/billingadmin/{userToken}", false, Handlers{methods.GET: isAccountBillingAdmin})
+	handleFuncs("/billingstatus/{userToken}", false, Handlers{methods.GET: getBillingStatus})
 	handleFuncs("/braintree/token", false, Handlers{methods.GET: braintreeToken})
 	handleFuncs("/channels/{id}", false, Handlers{methods.DELETE: channelDelete, methods.POST: channelSetup})
 	handleFuncs("/checkout", false, Handlers{methods.POST: checkout})
@@ -834,6 +833,21 @@ func downgradeAccount(h HandlerArgs) (interface{}, int) {
 	return true, http.StatusOK
 }
 
+func getBillingStatus(h HandlerArgs) (interface{}, int) {
+	userToken := sanitize(h.Vars["userToken"])
+
+	appStoreReceipt, braintreeSubscriptionID, userEmail, planTrialEnd, stripeData, username, _ := getSubscriptionData(userToken)
+
+	billingAdmin, _ := isStripeBillingAdminInternal(userEmail, stripeData, username)
+	goodStanding := isAccountInGoodStanding(h, appStoreReceipt, braintreeSubscriptionID, planTrialEnd, stripeData)
+
+	return &BillingStatus{
+		Admin:      billingAdmin,
+		GoodStatus: goodStanding,
+		Stripe:     stripeData != nil,
+	}, http.StatusOK
+}
+
 func getContinent(h HandlerArgs) (interface{}, int) {
 	_, continentCode, _, _, _, _, _, _ := geolocate(h)
 	return continentCode, http.StatusOK
@@ -892,71 +906,6 @@ func getPackageTimestamp(h HandlerArgs) (interface{}, int) {
 
 func getTimestampHandler(h HandlerArgs) (interface{}, int) {
 	return strconv.FormatInt(getTimestamp(), 10), http.StatusOK
-}
-
-func isAccountBillingAdmin(h HandlerArgs) (interface{}, int) {
-	userToken := sanitize(h.Vars["userToken"])
-	isBillingAdmin, _, _ := isStripeBillingAdmin(userToken)
-	return isBillingAdmin, http.StatusOK
-}
-
-func isAccountInGoodStanding(h HandlerArgs) (interface{}, int) {
-	userToken := sanitize(h.Vars["userToken"])
-
-	appStoreReceipt, braintreeSubscriptionID, _, planTrialEnd, stripeData, _, _ := getSubscriptionData(userToken)
-
-	/* Check trial against current timestamp if applicable */
-
-	if planTrialEnd != 0 {
-		return planTrialEnd > getTimestamp(), http.StatusOK
-	}
-
-	/* Check App Store receipt, if applicable */
-
-	if appStoreReceipt != "" {
-		_, err := getAppStoreTransactionData(appStoreReceipt)
-		return err == nil, http.StatusOK
-	}
-
-	/* Check Stripe, if applicable */
-
-	if stripeData != nil {
-		stripeSubItem, err := stripeSubscriptionItemAPI.Get(stripeData.SubscriptionItemID, nil)
-		if err != nil {
-			return true, http.StatusOK
-		}
-
-		if stripeSubItem.Deleted || stripeSubItem.Subscription != stripeData.SubscriptionID {
-			return false, http.StatusOK
-		}
-
-		stripeSub, err := stripeSubscriptionAPI.Get(stripeData.SubscriptionID, nil)
-		if err != nil {
-			return true, http.StatusOK
-		}
-
-		return stripeSub.Status == "active", http.StatusOK
-	}
-
-	/*
-		If no subscription ID, assume free or lifetime plan.
-
-		In error cases, err on the side of false negatives
-		rather than false positives.
-	*/
-
-	if braintreeSubscriptionID == "" {
-		return true, http.StatusOK
-	}
-
-	bt := braintreeInit(h)
-
-	btSub, err := bt.Subscription().Find(h.Context, braintreeSubscriptionID)
-	if err != nil {
-		return true, http.StatusOK
-	}
-
-	return btSub.Status == braintree.SubscriptionStatusActive || btSub.Status == braintree.SubscriptionStatusPending, http.StatusOK
 }
 
 func preAuth(h HandlerArgs) (interface{}, int) {

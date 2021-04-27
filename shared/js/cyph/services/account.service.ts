@@ -29,7 +29,7 @@ import {lockFunction} from '../util/lock';
 import {debugLog} from '../util/log';
 import {observableAll} from '../util/observable-all';
 import {arraySum} from '../util/reducers';
-import {request} from '../util/request';
+import {request, requestJSON} from '../util/request';
 import {getTimestamp, getTimeString, watchDateChange} from '../util/time';
 import {translate} from '../util/translate';
 import {resolvable, retryUntilSuccessful, sleep} from '../util/wait';
@@ -61,7 +61,7 @@ export class AccountService extends BaseProvider {
 	private readonly _UI_READY = resolvable();
 
 	/** @ignore */
-	private readonly accountGoodStandingLock = lockFunction();
+	private readonly billingStatusLock = lockFunction();
 
 	/** @ignore */
 	private readonly headerInternal = new BehaviorSubject<{
@@ -101,17 +101,22 @@ export class AccountService extends BaseProvider {
 	/** @ignore */
 	private readonly uiReadyResolved = new Subject<void>();
 
-	/** Indicates whether this user is the billing admin of their account. */
-	public readonly accountBillingAdmin = new BehaviorSubject<boolean>(false);
-
-	/** Indicates whether account is in good standing. */
-	public readonly accountGoodStanding = new BehaviorSubject<boolean>(true);
-
 	/** Indicates whether automatic updates should be applied. */
 	public readonly autoUpdate = new BehaviorSubject<boolean>(true);
 
 	/** Timeout before automatic update is applied. */
 	public readonly autoUpdateTimeout = 300000;
+
+	/** Indicates billing status of this account. */
+	public readonly billingStatus = new BehaviorSubject<{
+		admin: boolean;
+		goodStanding: boolean;
+		stripe: boolean;
+	}>({
+		admin: false,
+		goodStanding: true,
+		stripe: false
+	});
 
 	/** Email address to use for new pseudo-account. */
 	public readonly fromEmail = new BehaviorSubject<string>('');
@@ -339,40 +344,26 @@ export class AccountService extends BaseProvider {
 	}
 
 	/** @ignore */
-	private async updateAccountBillingStatus (
+	private async updateBillingStatus (
 		onlyIfFalse: boolean = false
 	) : Promise<void> {
-		await this.accountGoodStandingLock(async () => {
+		await this.billingStatusLock(async () => {
 			const userToken = await this.getUserToken();
 
-			await Promise.all([
-				(async () => {
-					this.accountBillingAdmin.next(
-						(await request({
-							retries: 5,
-							url:
-								this.envService.baseUrl +
-								`billingadmin/${userToken}`
-						}).catch(() => 'false')) === 'true'
-					);
-				})(),
-				(async () => {
-					if (onlyIfFalse && this.accountGoodStanding.value) {
-						return;
-					}
+			const billingStatus = await requestJSON({
+				retries: 5,
+				url: this.envService.baseUrl + `billingadmin/${userToken}`
+			}).catch(() => ({}));
 
-					this.accountGoodStanding.next(
-						!userToken ?
-							true :
-							(await request({
-								retries: 5,
-								url:
-									this.envService.baseUrl +
-									`accountstanding/${userToken}`
-							}).catch(() => 'true')) === 'true'
-					);
-				})()
-			]);
+			if (onlyIfFalse && this.billingStatus.value.goodStanding) {
+				return;
+			}
+
+			this.billingStatus.next({
+				admin: billingStatus?.Admin === true,
+				goodStanding: billingStatus?.GoodStanding === true,
+				stripe: billingStatus?.Stripe === true
+			});
 		});
 	}
 
@@ -676,14 +667,14 @@ export class AccountService extends BaseProvider {
 
 		this.subscriptions.push(
 			watchDateChange(true).subscribe(async () =>
-				this.updateAccountBillingStatus()
+				this.updateBillingStatus()
 			)
 		);
 
 		this.subscriptions.push(
 			this.windowWatcherService.visibility
 				.pipe(filter(b => b))
-				.subscribe(async () => this.updateAccountBillingStatus(true))
+				.subscribe(async () => this.updateBillingStatus(true))
 		);
 
 		this.subscriptions.push(
@@ -896,7 +887,7 @@ export class AccountService extends BaseProvider {
 		super();
 
 		this.accountContactsService.interstitial = this.interstitial;
-		this.salesService.setAccountBillingAdmin(this.accountBillingAdmin);
+		this.salesService.setAccountBillingStatus(this.billingStatus);
 
 		this.localStorageService
 			.getItem('AccountService.menuExpanded', BooleanProto)

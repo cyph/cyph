@@ -382,7 +382,8 @@
 				<h3
 					class="cyph-banner alert"
 					*ngIf="
-						(accountService.accountGoodStanding | await) === false;
+						(accountService.billingStatus | await)?.goodStanding ===
+							false;
 						else unverifiedAccountBanner
 					"
 				>
@@ -393,7 +394,7 @@
 					<span
 						cyphTranslate
 						*ngIf="
-							(accountService.accountBillingAdmin | await) ===
+							(accountService.billingStatus | await)?.admin ===
 								false;
 							else paymentDetailsUI
 						"
@@ -455,7 +456,8 @@
 				[class.full-height]="fullHeight | await"
 				[class.padding]="(fullWidth | await) === false"
 				[class.ui-disabled]="
-					(accountService.accountGoodStanding | await) === false
+					(accountService.billingStatus | await)?.goodStanding ===
+					false
 				"
 				ngClass.lt-md="small"
 				ngClass.md="medium"

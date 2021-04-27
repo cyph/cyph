@@ -21,6 +21,13 @@ type BetaSignup struct {
 	UsernameRequest string
 }
 
+// BillingStatus : Customer billing status
+type BillingStatus struct {
+	Admin      bool
+	GoodStatus bool
+	Stripe     bool
+}
+
 // BurnerChannel : Burner channel
 type BurnerChannel struct {
 	ChannelID string

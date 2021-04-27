@@ -109,7 +109,7 @@
 							(accountSettingsService.plan | await) ||
 								cyphPlans.Free
 						].lifetime &&
-						(accountService.accountBillingAdmin | await) === true
+						(accountService.billingStatus | await)?.admin === true
 					"
 				>
 					&ngsp; (<a

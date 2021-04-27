@@ -30,6 +30,8 @@ import (
 	"github.com/stripe/stripe-go/v72"
 	stripeCustomerAPI "github.com/stripe/stripe-go/v72/customer"
 	stripeProductAPI "github.com/stripe/stripe-go/v72/product"
+	stripeSubscriptionAPI "github.com/stripe/stripe-go/v72/sub"
+	stripeSubscriptionItemAPI "github.com/stripe/stripe-go/v72/subitem"
 	"google.golang.org/appengine"
 )
 
@@ -628,30 +630,36 @@ func getStripeProduct(planID string) string {
 
 func isStripeBillingAdmin(userToken string) (bool, *StripeData, error) {
 	_, _, userEmail, _, stripeData, username, err := getSubscriptionData(userToken)
-
 	if err != nil {
 		return false, stripeData, err
 	}
+
+	billingAdmin, err := isStripeBillingAdminInternal(userEmail, stripeData, username)
+
+	return billingAdmin, stripeData, err
+}
+
+func isStripeBillingAdminInternal(userEmail string, stripeData *StripeData, username string) (bool, error) {
 	if stripeData == nil {
-		return true, nil, nil
+		return true, nil
 	}
 	if username == "" {
-		return false, stripeData, errors.New("invalid or expired token")
+		return false, errors.New("invalid or expired token")
 	}
 	if userEmail == "" {
-		return false, stripeData, errors.New("no email address for user")
+		return false, errors.New("no email address for user")
 	}
 
 	customer, err := stripeCustomerAPI.Get(stripeData.CustomerID, nil)
 	if err != nil {
-		return false, stripeData, err
+		return false, err
 	}
 
 	if !compareEmails(customer.Email, userEmail) {
-		return false, stripeData, errors.New("user is not the billing admin")
+		return false, errors.New("user is not the billing admin")
 	}
 
-	return true, stripeData, nil
+	return true, nil
 }
 
 func downgradeAccountHelper(userToken string, removeAppStoreReceiptRef bool) (string, string, *StripeData, error) {
@@ -1078,6 +1086,61 @@ func getTwilioToken(h HandlerArgs) map[string]interface{} {
 	}
 
 	return getTwilioToken(h)
+}
+
+func isAccountInGoodStanding(h HandlerArgs, appStoreReceipt, braintreeSubscriptionID string, planTrialEnd int64, stripeData *StripeData) bool {
+	/* Check trial against current timestamp if applicable */
+
+	if planTrialEnd != 0 {
+		return planTrialEnd > getTimestamp()
+	}
+
+	/* Check App Store receipt, if applicable */
+
+	if appStoreReceipt != "" {
+		_, err := getAppStoreTransactionData(appStoreReceipt)
+		return err == nil
+	}
+
+	/* Check Stripe, if applicable */
+
+	if stripeData != nil {
+		stripeSubItem, err := stripeSubscriptionItemAPI.Get(stripeData.SubscriptionItemID, nil)
+		if err != nil {
+			return true
+		}
+
+		if stripeSubItem.Deleted || stripeSubItem.Subscription != stripeData.SubscriptionID {
+			return false
+		}
+
+		stripeSub, err := stripeSubscriptionAPI.Get(stripeData.SubscriptionID, nil)
+		if err != nil {
+			return true
+		}
+
+		return stripeSub.Status == "active"
+	}
+
+	/*
+		If no subscription ID, assume free or lifetime plan.
+
+		In error cases, err on the side of false negatives
+		rather than false positives.
+	*/
+
+	if braintreeSubscriptionID == "" {
+		return true
+	}
+
+	bt := braintreeInit(h)
+
+	btSub, err := bt.Subscription().Find(h.Context, braintreeSubscriptionID)
+	if err != nil {
+		return true
+	}
+
+	return btSub.Status == braintree.SubscriptionStatusActive || btSub.Status == braintree.SubscriptionStatusPending
 }
 
 func verifyRecaptchaResponse(recaptchaResponse string) bool {
