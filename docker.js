@@ -833,11 +833,15 @@ initPromise.then(() => {
 
 	pullUpdates(
 		isProdAGSEDeploy ||
+			args.command === 'addlib' ||
 			args.command === 'getlibs' ||
 			args.command === 'updatelibs' ||
 			args.command === 'verify'
 	)
 		.then(() => {
+			if (args.command === 'addlib') {
+				return editImage(shellScripts.command);
+			}
 			if (args.command === 'getlibs') {
 				return;
 			}
