@@ -19,6 +19,7 @@ eval "$(parseArgs \
 	--opt-bool simple-websign-prod-build \
 	--opt site \
 	--opt-bool skip-beta \
+	--opt-bool skip-firebase \
 	--opt-bool skip-website \
 	--opt-bool wp-promote \
 )"
@@ -49,6 +50,7 @@ skipBeta=''
 prodAndBeta=''
 debug=''
 debugProdBuild=''
+skipFirebase=''
 skipWebsite=''
 test=true
 websign=true
@@ -115,6 +117,10 @@ fi
 
 if [ "${_arg_site}" ] ; then
 	site="${_arg_site}"
+fi
+
+if [ "${_arg_skip_firebase}" == 'on' ] ; then
+	skipFirebase=true
 fi
 
 if [ "${_arg_skip_website}" == 'on' ] ; then
@@ -681,6 +687,7 @@ cd ~/.build
 # Firebase deployment
 if \
 	( [ ! "${site}" ] || [ "${site}" == 'firebase' ] ) && \
+	[ ! "${skipFirebase}" ] && \
 	[ ! "${simple}" ] && \
 	[ ! "${betaProd}" ] && \
 	[ ! "${debug}" ]
