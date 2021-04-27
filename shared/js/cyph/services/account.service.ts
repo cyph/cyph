@@ -361,7 +361,7 @@ export class AccountService extends BaseProvider {
 
 			this.billingStatus.next({
 				admin: billingStatus?.Admin === true,
-				goodStanding: billingStatus?.GoodStanding === true,
+				goodStanding: billingStatus?.GoodStanding !== false,
 				stripe: billingStatus?.Stripe === true
 			});
 		});
