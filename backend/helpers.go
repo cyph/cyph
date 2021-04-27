@@ -572,13 +572,6 @@ func getStripeData(responseBody map[string]interface{}) *StripeData {
 	if responseBodyStripe, ok := responseBody["stripe"]; ok {
 		switch responseBodyStripeData := responseBodyStripe.(type) {
 		case map[string]interface{}:
-			if data, ok := responseBodyStripeData["admin"]; ok {
-				switch v := data.(type) {
-				case bool:
-					stripeData.Admin = v
-				}
-			}
-
 			if data, ok := responseBodyStripeData["customerID"]; ok {
 				switch v := data.(type) {
 				case string:

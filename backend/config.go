@@ -119,7 +119,6 @@ type RedoxRequestLog struct {
 
 // StripeData : Stripe subscription data
 type StripeData struct {
-	Admin              bool
 	CustomerID         string
 	SubscriptionID     string
 	SubscriptionItemID string
