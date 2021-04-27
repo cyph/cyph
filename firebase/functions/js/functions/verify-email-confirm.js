@@ -1,5 +1,7 @@
 import {proto} from '@cyph/sdk';
+import {mailchimpCredentials} from '../cyph-admin-vars.js';
 import {database, getTokenKey, onCall, removeItem, setItem} from '../init.js';
+import {mailchimp, removeFromMailingList} from '../mailchimp.js';
 import * as tokens from '../tokens.js';
 
 const {StringProto} = proto;
@@ -47,7 +49,15 @@ export const verifyEmailConfirm = onCall(
 				emailRef.remove(),
 				emailVerifiedRef.remove(),
 				removeItem(namespace, `users/${username}/email`),
-				removeItem(namespace, `users/${username}/emailVerified`)
+				removeItem(namespace, `users/${username}/emailVerified`),
+				mailchimp &&
+					mailchimpCredentials &&
+					mailchimpCredentials.listIDs &&
+					mailchimpCredentials.listIDs.users &&
+					removeFromMailingList(
+						mailchimpCredentials.listIDs.users,
+						email
+					)
 			]);
 
 			await notify(
