@@ -61,7 +61,7 @@ export const register = onCall(
 			keybaseUsername,
 			planTrialEnd,
 			reservedUsername,
-			stripeData
+			stripe: stripeData
 		} = inviteData;
 		const plan =
 			inviteData.plan in CyphPlans ? inviteData.plan : CyphPlans.Free;
