@@ -25,7 +25,7 @@
 	</ng-template>
 
 	<ng-template #verificationCancelled>
-		<div cyphTranslate>
+		<div cyphTranslate *ngIf="o?.approve === false">
 			Verification cancelled. Your email address has been removed from
 			this account.
 		</div>
