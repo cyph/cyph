@@ -352,7 +352,7 @@ export class AccountService extends BaseProvider {
 
 			const billingStatus = await requestJSON({
 				retries: 5,
-				url: this.envService.baseUrl + `billingadmin/${userToken}`
+				url: this.envService.baseUrl + `billingstatus/${userToken}`
 			}).catch(() => ({}));
 
 			if (onlyIfFalse && this.billingStatus.value.goodStanding) {
