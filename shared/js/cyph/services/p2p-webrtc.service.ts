@@ -2,7 +2,6 @@
 
 import {Injectable} from '@angular/core';
 import * as hark from 'hark';
-import * as msgpack from 'msgpack-lite';
 import * as RecordRTC from 'recordrtc';
 import {BehaviorSubject, Observable, Subject} from 'rxjs';
 import {map, take} from 'rxjs/operators';
@@ -19,7 +18,11 @@ import {lockFunction} from '../util/lock';
 import {debugLog, debugLogError} from '../util/log';
 import {requestPermissions} from '../util/permissions';
 import {request} from '../util/request';
-import {parse} from '../util/serialization';
+import {
+	dynamicDeserialize,
+	dynamicSerializeBytes,
+	parse
+} from '../util/serialization';
 import {uuid} from '../util/uuid';
 import {resolvable, retryUntilSuccessful} from '../util/wait';
 import {AnalyticsService} from './analytics.service';
@@ -804,7 +807,7 @@ export class P2PWebRTCService extends BaseProvider
 
 				peer.on('data', data => {
 					try {
-						const o = msgpack.decode(data);
+						const o = dynamicDeserialize(data);
 
 						debugLog(() => ({webRTC: {data: o, peerIndex: i}}));
 
@@ -851,7 +854,7 @@ export class P2PWebRTCService extends BaseProvider
 					sessionService.send([
 						RpcEvents.p2p,
 						{
-							bytes: msgpack.encode(message)
+							bytes: dynamicSerializeBytes(message)
 						}
 					]);
 				});
@@ -1054,7 +1057,7 @@ export class P2PWebRTCService extends BaseProvider
 			this.sessionService.send([
 				RpcEvents.p2pRequest,
 				{
-					bytes: msgpack.encode(p2pSessionData)
+					bytes: dynamicSerializeBytes(p2pSessionData)
 				}
 			]),
 			this.join(p2pSessionData)
@@ -1245,7 +1248,7 @@ export class P2PWebRTCService extends BaseProvider
 					const peer = peerResolvers?.slice(-2)[0].value;
 					await Promise.resolve(
 						peer?.send(
-							msgpack.encode({
+							dynamicSerializeBytes({
 								audio: !!this.outgoingStream.value.constraints
 									.audio,
 								video: !!this.outgoingStream.value.constraints
@@ -1320,7 +1323,7 @@ export class P2PWebRTCService extends BaseProvider
 					async newEvents => {
 						const p2pSessionData =
 							newEvents[0]?.bytes &&
-							msgpack.decode(newEvents[0]?.bytes);
+							dynamicDeserialize(newEvents[0]?.bytes);
 
 						if (
 							!(
@@ -1376,7 +1379,8 @@ export class P2PWebRTCService extends BaseProvider
 
 								for (const o of newEvents) {
 									const message =
-										o?.bytes && msgpack.decode(o.bytes);
+										o?.bytes && dynamicDeserialize(o.bytes);
+
 									if (!message) {
 										continue;
 									}

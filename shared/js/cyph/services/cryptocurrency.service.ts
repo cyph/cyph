@@ -3,7 +3,6 @@
 import {Injectable} from '@angular/core';
 import memoize from 'lodash-es/memoize';
 import throttle from 'lodash-es/throttle';
-import * as msgpack from 'msgpack-lite';
 import {BehaviorSubject, Observable, Subject, timer} from 'rxjs';
 import {catchError, switchMap} from 'rxjs/operators';
 import {
@@ -25,6 +24,7 @@ import {
 } from '../proto';
 import {asyncToObservable} from '../util/flatten-observable';
 import {saveFile} from '../util/save-file';
+import {dynamicDeserialize, dynamicSerializeBytes} from '../util/serialization';
 import {AnalyticsService} from './analytics.service';
 import {ConfigService} from './config.service';
 import {LocalStorageService} from './local-storage.service';
@@ -72,7 +72,7 @@ export class CryptocurrencyService extends BaseProvider {
 				simpleBTCWallet: SimpleBTCWallet
 			) : Promise<Transaction[]> => {
 				try {
-					return msgpack.decode(
+					return dynamicDeserialize(
 						await this.localStorageService.getItem(
 							this.cache.transactionHistory._getKey(
 								simpleBTCWallet
@@ -92,7 +92,7 @@ export class CryptocurrencyService extends BaseProvider {
 				this.localStorageService.setItem(
 					this.cache.transactionHistory._getKey(simpleBTCWallet),
 					BinaryProto,
-					msgpack.encode(transactions)
+					dynamicSerializeBytes(transactions)
 				);
 
 				return transactions;
@@ -268,7 +268,7 @@ export class CryptocurrencyService extends BaseProvider {
 			> throttle(async () => getExchangeRates(bitcoinCash), 600000),
 			getItem: async () : Promise<Record<string, number>> => {
 				try {
-					return msgpack.decode(
+					return dynamicDeserialize(
 						await this.localStorageService.getItem(key, BinaryProto)
 					);
 				}
@@ -280,7 +280,7 @@ export class CryptocurrencyService extends BaseProvider {
 				this.localStorageService.setItem(
 					key,
 					BinaryProto,
-					msgpack.encode(exchangeRates)
+					dynamicSerializeBytes(exchangeRates)
 				);
 
 				return exchangeRates;

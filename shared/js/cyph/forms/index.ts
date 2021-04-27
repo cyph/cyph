@@ -1,7 +1,7 @@
 /* eslint-disable max-lines */
 
-import * as msgpack from 'msgpack-lite';
 import {Form, IForm} from '../proto';
+import {dynamicSerializeBytes} from '../util/serialization';
 
 /** Convenience method for extracting a value from an IForm object. */
 /* eslint-disable-next-line @typescript-eslint/unbound-method */
@@ -154,7 +154,7 @@ export const newFormElement = <
 			fileName: o?.fileName,
 			id: o?.id,
 			label: o?.label,
-			mask: o?.mask && msgpack.encode(o.mask),
+			mask: o?.mask && dynamicSerializeBytes(o.mask),
 			max: o?.max,
 			mediaType: o?.mediaType,
 			min: o?.min,

@@ -10,7 +10,6 @@ import {
 } from '@angular/core';
 import memoize from 'lodash-es/memoize';
 import * as mexp from 'math-expression-evaluator';
-import * as msgpack from 'msgpack-lite';
 import {BehaviorSubject} from 'rxjs';
 import {BaseProvider} from '../../base-provider';
 import {emailPattern} from '../../email-pattern';
@@ -26,7 +25,7 @@ import {filterUndefined} from '../../util/filter/base';
 import {toFloat, toInt} from '../../util/formatting';
 import {getOrSetDefault} from '../../util/get-or-set-default';
 import {saveFile} from '../../util/save-file';
-import {parse} from '../../util/serialization';
+import {dynamicDeserialize, parse} from '../../util/serialization';
 import {timestampToDate} from '../../util/time';
 import {uuid} from '../../util/uuid';
 
@@ -328,7 +327,7 @@ export class DynamicFormComponent extends BaseProvider implements OnInit {
 
 		return getOrSetDefault(this.maskCache, maskBytes, () =>
 			maskBytes !== this.maskDefaultKey ?
-				msgpack.decode(maskBytes) :
+				dynamicDeserialize(maskBytes) :
 				{mask: false}
 		);
 	}

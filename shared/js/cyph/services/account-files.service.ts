@@ -6,7 +6,6 @@ import {SafeUrl} from '@angular/platform-browser';
 import {Router} from '@angular/router';
 import * as htmlToText from 'html-to-text';
 import memoize from 'lodash-es/memoize';
-import * as msgpack from 'msgpack-lite';
 import {DeltaOperation} from 'quill';
 import Delta from 'quill-delta';
 import {QuillDeltaToHtmlConverter} from 'quill-delta-to-html';
@@ -71,7 +70,12 @@ import {debugLog, debugLogError} from '../util/log';
 import {observableAll} from '../util/observable-all';
 import {arraySum} from '../util/reducers';
 import {saveFile} from '../util/save-file';
-import {deserialize, serialize} from '../util/serialization';
+import {
+	deserialize,
+	dynamicDeserialize,
+	dynamicSerializeBytes,
+	serialize
+} from '../util/serialization';
 import {getTimestamp} from '../util/time';
 import {uuid} from '../util/uuid';
 import {awaitAsync, resolvable, sleep} from '../util/wait';
@@ -1294,7 +1298,7 @@ export class AccountFilesService extends BaseProvider {
 
 	/** @ignore */
 	private decodeQuill (bytes: Uint8Array) : any {
-		const o = bytes.length > 0 ? msgpack.decode(bytes) : undefined;
+		const o = bytes.length > 0 ? dynamicDeserialize(bytes) : undefined;
 
 		return typeof o === 'object' ?
 			{
@@ -1324,7 +1328,7 @@ export class AccountFilesService extends BaseProvider {
 
 	/** @ignore */
 	private encodeQuill (o: IQuillDelta | IQuillRange) : Uint8Array {
-		return msgpack.encode({
+		return dynamicSerializeBytes({
 			...('clientID' in o ? {clientID: o.clientID} : {}),
 			...('index' in o ? {index: o.index} : {}),
 			...('length' in o ? {length: o.length} : {}),

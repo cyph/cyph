@@ -292,7 +292,7 @@
 						[
 							"JSON",
 							"parse",
-							"Prefer util.deserialize (typed/validated), msgpack.decode (dynamic), or util.parse (for JSON interop)"
+							"Prefer util.deserialize (typed/validated), util.dynamicDeserialize (dynamic), or util.parse (for JSON interop)"
 						],
 						{
 							"name": "fetch",
@@ -301,7 +301,7 @@
 						[
 							"JSON",
 							"stringify",
-							"Prefer util.serialize (typed/validated), msgpack.encode (dynamic), or util.stringify (for JSON interop)"
+							"Prefer util.serialize (typed/validated), util.dynamicSerialize (dynamic), or util.stringify (for JSON interop)"
 						],
 						["localStorage", "getItem", "Use LocalStorageService"],
 						[

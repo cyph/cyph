@@ -2,7 +2,6 @@
 
 import {Inject, Injectable, Optional} from '@angular/core';
 import memoize from 'lodash-es/memoize';
-import * as msgpack from 'msgpack-lite';
 import {BehaviorSubject, interval, Observable} from 'rxjs';
 /* eslint-disable-next-line @typescript-eslint/tslint/config */
 import {map, switchMap, take, takeWhile} from 'rxjs/operators';
@@ -64,6 +63,7 @@ import {getOrSetDefault} from '../util/get-or-set-default';
 import {lock, lockFunction} from '../util/lock';
 import {debugLog, debugLogError, debugLogTime} from '../util/log';
 import {observableAll} from '../util/observable-all';
+import {dynamicDeserialize, dynamicSerializeBytes} from '../util/serialization';
 import {getTimestamp} from '../util/time';
 import {uuid} from '../util/uuid';
 import {resolvable, retryUntilSuccessful, sleep} from '../util/wait';
@@ -1334,7 +1334,7 @@ export class ChatService extends BaseProvider {
 					{
 						...this.chat.currentMessage,
 						quill: this.chat.currentMessage.quill ?
-							msgpack.encode({
+							dynamicSerializeBytes({
 								ops: this.chat.currentMessage.quill.ops
 							}) :
 							undefined
@@ -1429,9 +1429,9 @@ export class ChatService extends BaseProvider {
 
 			case ChatMessageValue.Types.Quill:
 				value.quill = message?.quill ?
-					msgpack.encode({ops: message.quill.ops}) :
+					dynamicSerializeBytes({ops: message.quill.ops}) :
 				this.chat.currentMessage.quill ?
-					msgpack.encode({
+					dynamicSerializeBytes({
 						ops: this.chat.currentMessage.quill.ops
 					}) :
 					undefined;
@@ -1798,7 +1798,7 @@ export class ChatService extends BaseProvider {
 										ops:
 											messageLiveValue.quill instanceof
 											Uint8Array ?
-												msgpack.decode(
+												dynamicDeserialize(
 													messageLiveValue.quill
 												) :
 												[]
@@ -1838,7 +1838,7 @@ export class ChatService extends BaseProvider {
 													pendingMessage.message.quill
 														.length > 0 ?
 														{
-															ops: msgpack.decode(
+															ops: dynamicDeserialize(
 																pendingMessage
 																	.message
 																	.quill

@@ -187,7 +187,6 @@
 @types/long
 @types/markdown-it
 @types/materialize-css
-@types/msgpack-lite
 @types/node
 @types/openpgp
 @types/pdfjs-dist
@@ -320,7 +319,6 @@ mceliece
 microlight-string
 mkdirp
 moment
-msgpack-lite
 mustache
 nativescript-angular@^10
 nativescript-css-loader

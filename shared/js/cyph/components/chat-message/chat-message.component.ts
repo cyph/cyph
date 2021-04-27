@@ -17,7 +17,6 @@ import {
 import {MatMenuTrigger} from '@angular/material/menu';
 import Hammer from 'hammerjs';
 import * as $ from 'jquery';
-import * as msgpack from 'msgpack-lite';
 import {BehaviorSubject} from 'rxjs';
 import {filter, take} from 'rxjs/operators';
 import {BaseProvider} from '../../base-provider';
@@ -39,6 +38,7 @@ import {WindowWatcherService} from '../../services/window-watcher.service';
 import {trackBySelf} from '../../track-by/track-by-self';
 import {copyToClipboard} from '../../util/clipboard';
 import {readableByteLength} from '../../util/formatting';
+import {dynamicDeserialize} from '../../util/serialization';
 import {sleep} from '../../util/wait';
 
 /**
@@ -322,7 +322,7 @@ export class ChatMessageComponent extends BaseProvider
 
 		this.quill.next(
 			this.message.value?.quill && this.message.value.quill.length > 0 ?
-				msgpack.decode(this.message.value.quill) :
+				dynamicDeserialize(this.message.value.quill) :
 				undefined
 		);
 

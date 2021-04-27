@@ -1,5 +1,5 @@
 import {potassiumService as potassium} from '@cyph/sdk';
-import msgpack from 'msgpack-lite';
+import msgpack from '@msgpack/msgpack';
 
 export const keyBytes = potassium.secretBox.keyBytes;
 

@@ -1,8 +1,11 @@
-import * as msgpack from 'msgpack-lite';
 import {env} from '../env';
 import {MaybePromise} from '../maybe-promise-type';
 import {lockFunction} from './lock';
-import {prettyPrint} from './serialization/json';
+import {
+	dynamicDeserialize,
+	dynamicSerializeBytes,
+	prettyPrint
+} from './serialization';
 
 const logs: {
 	args: any[];
@@ -39,7 +42,7 @@ const debugLogInternal = async (
 	let argsString: string | undefined;
 
 	try {
-		argsCopy = msgpack.decode(msgpack.encode(args));
+		argsCopy = dynamicDeserialize(dynamicSerializeBytes(args));
 		argsString =
 			argsCopy.length > 1 ?
 				prettyPrint(argsCopy) :

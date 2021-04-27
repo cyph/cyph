@@ -1,4 +1,4 @@
-import * as msgpack from 'msgpack-lite';
+import * as msgpack from '@msgpack/msgpack';
 import {potassiumUtil} from '../../crypto/potassium/potassium-util';
 import {IProto} from '../../iproto';
 
@@ -26,13 +26,17 @@ export const serialize = async <T>(
 	return o instanceof Uint8Array ? o : o.finish();
 };
 
-/** Deserializes arbitrary data from a base64 string. */
+/** Deserializes arbitrary data from a base64 string or bytes. */
 export const dynamicDeserialize = (bytes: Uint8Array | string) : any => {
 	const o = msgpack.decode(potassiumUtil.fromBase64(bytes));
 	/* eslint-disable-next-line no-null/no-null */
 	return o === null ? undefined : o;
 };
 
+/** Serializes arbitrary data to bytes. */
+export const dynamicSerializeBytes = (data: any) : Uint8Array =>
+	msgpack.encode(data);
+
 /** Serializes arbitrary data to a base64 string. */
 export const dynamicSerialize = (data: any) : string =>
-	potassiumUtil.toBase64(msgpack.encode(data));
+	potassiumUtil.toBase64(dynamicSerializeBytes(data));
