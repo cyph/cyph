@@ -146,6 +146,14 @@ export const certSign = async (projectId, standalone, namespace) => {
 		const agsePublicSigningKeys = getPublicKeys();
 
 		const issuanceHistory = await (async () => {
+			if (testSign) {
+				return {
+					publicSigningKeyHashes: {},
+					timestamp: 0,
+					usernames: {}
+				};
+			}
+
 			const lastIssuanceTimestampLocal = parseFloat(
 				fs.readFileSync(lastIssuanceTimestampPath).toString()
 			);
@@ -222,6 +230,7 @@ export const certSign = async (projectId, standalone, namespace) => {
 		}));
 
 		if (
+			!testSign &&
 			Object.keys(issuanceHistory.usernames).length < 1 &&
 			(await readInput(
 				`Init AGSE-PKI issuance history from scratch? [y/N]`
