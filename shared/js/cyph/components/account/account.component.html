@@ -396,11 +396,28 @@
 						*ngIf="
 							(accountService.billingStatus | await)?.admin ===
 								false;
-							else paymentDetailsUI
+							else billingPortalUI
 						"
 					>
 						Please contact your billing administrator.
 					</span>
+					<ng-template #billingPortalUI>
+						<a
+							cyphTranslate
+							(click)="
+								salesService.openBillingPortal(
+									accountService.getUserToken(
+										accountService.interstitial
+									)
+								)
+							"
+							*ngIf="
+								(accountService.billingStatus | await)?.stripe;
+								else paymentDetailsUI
+							"
+							>Please update your payment details.</a
+						>
+					</ng-template>
 					<ng-template #paymentDetailsUI>
 						<a
 							cyphTranslate
