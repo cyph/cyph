@@ -67,6 +67,7 @@
 @google-cloud/storage
 @ignatiusmb/scramble
 @isomorphic-git/lightning-fs
+@msgpack/msgpack
 @ngrx/core
 @ngrx/effects
 @ngrx/router-store
