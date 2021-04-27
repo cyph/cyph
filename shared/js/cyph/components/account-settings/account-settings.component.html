@@ -109,7 +109,7 @@
 							(accountSettingsService.plan | await) ||
 								cyphPlans.Free
 						].lifetime &&
-						(accountService.billingStatus | await)?.admin === true
+						(accountService.billingStatus | await)?.admin
 					"
 				>
 					&ngsp; (<a
@@ -143,6 +143,7 @@
 			</div>
 			<div
 				*ngIf="
+					(accountService.billingStatus | await)?.stripe &&
 					(accountSettingsService.plan | await) !== cyphPlans.Free &&
 					!configService.planConfig[
 						(accountSettingsService.plan | await) || cyphPlans.Free
