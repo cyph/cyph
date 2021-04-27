@@ -393,7 +393,8 @@
 					<span
 						cyphTranslate
 						*ngIf="
-							accountService.accountBillingAdmin | await;
+							(accountService.accountBillingAdmin | await) ===
+								false;
 							else paymentDetailsUI
 						"
 					>
