@@ -1,0 +1,501 @@
+#!/bin/bash
+
+
+cd $(cd "$(dirname "$0")" ; pwd)/..
+dir="$PWD"
+
+
+./commands/keycache.sh
+
+sudo npm -g install npm || fail
+sudo npm -g install @mapbox/node-pre-gyp || fail
+npm config set legacy-peer-deps true
+
+
+mkdir -p ~/lib/js ~/tmplib/js/node_modules
+cd ~/tmplib/js
+
+
+read -r -d '' modules <<- EOM
+	@agm/core
+	@angular/animations
+	@angular/bazel
+	@angular/cdk
+	@angular/cdk-experimental
+	@angular/cli
+	@angular/common
+	@angular/compiler
+	@angular/compiler-cli
+	@angular/core
+	@angular/elements
+	@angular/fire
+	@angular/flex-layout
+	@angular/forms
+	@angular/material
+	@angular/platform-browser
+	@angular/platform-browser-dynamic
+	@angular/platform-server
+	@angular/platform-webworker
+	@angular/platform-webworker-dynamic
+	@angular/router
+	@angular/service-worker
+	@angular-devkit/architect
+	@angular-devkit/architect-cli
+	@angular-devkit/build-ng-packagr
+	@angular-devkit/core
+	@angular-devkit/build-angular
+	@angular-devkit/build-optimizer
+	@angular-devkit/build-webpack
+	@angular-devkit/schematics
+	@angular-devkit/schematics-cli
+	@asymmetrik/ngx-leaflet
+	@beezleeart/ngx-filemanager
+	@compodoc/compodoc
+	@covalent/core
+	@covalent/dynamic-forms
+	@covalent/highlight
+	@covalent/http
+	@covalent/markdown
+	@ctrl/ngx-emoji-mart
+	@ctrl/ngx-rightclick
+	@cyph/burner-sdk
+	@cyph/prettier
+	@cyph/pretty-quick
+	@cyph/sdk
+	@cyph/username-blacklist
+	@firebase/app
+	@firebase/app-types
+	@firebase/auth
+	@firebase/auth-types
+	@firebase/component
+	@firebase/database
+	@firebase/database-types
+	@firebase/firestore
+	@firebase/firestore-types
+	@firebase/functions
+	@firebase/functions-types
+	@firebase/messaging
+	@firebase/messaging-types
+	@firebase/storage
+	@firebase/storage-types
+	@fortawesome/angular-fontawesome
+	@fortawesome/fontawesome-free
+	@fortawesome/free-brands-svg-icons
+	@fortawesome/free-solid-svg-icons
+	@fortawesome/fontawesome-svg-core
+	@google-cloud/storage
+	@ignatiusmb/scramble
+	@isomorphic-git/lightning-fs
+	@ngrx/core
+	@ngrx/effects
+	@ngrx/router-store
+	@ngrx/store
+	@ngrx/store-devtools
+	@ngtools/webpack
+	@ngx-gallery/core
+	@ngx-gallery/gallerize
+	@ngx-gallery/lightbox
+	@ngxs/devtools-plugin
+	@ngxs/logger-plugin
+	@ngxs/storage-plugin
+	@ngxs/store
+	@opentok/client
+	@rign/angular2-filemanager
+	@stripe/stripe-js
+	@syncfusion/ej2
+	@syncfusion/ej2-angular-barcode-generator
+	@syncfusion/ej2-angular-base
+	@syncfusion/ej2-angular-buttons
+	@syncfusion/ej2-angular-calendars
+	@syncfusion/ej2-angular-charts
+	@syncfusion/ej2-angular-circulargauge
+	@syncfusion/ej2-angular-diagrams
+	@syncfusion/ej2-angular-documenteditor
+	@syncfusion/ej2-angular-dropdowns
+	@syncfusion/ej2-angular-filemanager
+	@syncfusion/ej2-angular-gantt
+	@syncfusion/ej2-angular-grids
+	@syncfusion/ej2-angular-heatmap
+	@syncfusion/ej2-angular-inplace-editor
+	@syncfusion/ej2-angular-inputs
+	@syncfusion/ej2-angular-kanban
+	@syncfusion/ej2-angular-layouts
+	@syncfusion/ej2-angular-lineargauge
+	@syncfusion/ej2-angular-lists
+	@syncfusion/ej2-angular-maps
+	@syncfusion/ej2-angular-navigations
+	@syncfusion/ej2-angular-notifications
+	@syncfusion/ej2-angular-pdfviewer
+	@syncfusion/ej2-angular-pivotview
+	@syncfusion/ej2-angular-popups
+	@syncfusion/ej2-angular-progressbar
+	@syncfusion/ej2-angular-querybuilder
+	@syncfusion/ej2-angular-richtexteditor
+	@syncfusion/ej2-angular-schedule
+	@syncfusion/ej2-angular-splitbuttons
+	@syncfusion/ej2-angular-spreadsheet
+	@syncfusion/ej2-angular-treegrid
+	@syncfusion/ej2-angular-treemap
+	@syncfusion/ej2-barcode-generator
+	@syncfusion/ej2-base
+	@syncfusion/ej2-buttons
+	@syncfusion/ej2-calendars
+	@syncfusion/ej2-charts
+	@syncfusion/ej2-circulargauge
+	@syncfusion/ej2-compression
+	@syncfusion/ej2-data
+	@syncfusion/ej2-diagrams
+	@syncfusion/ej2-documenteditor
+	@syncfusion/ej2-drawings
+	@syncfusion/ej2-dropdowns
+	@syncfusion/ej2-excel-export
+	@syncfusion/ej2-file-utils
+	@syncfusion/ej2-filemanager
+	@syncfusion/ej2-gantt
+	@syncfusion/ej2-grids
+	@syncfusion/ej2-heatmap
+	@syncfusion/ej2-icons
+	@syncfusion/ej2-inplace-editor
+	@syncfusion/ej2-inputs
+	@syncfusion/ej2-kanban
+	@syncfusion/ej2-layouts
+	@syncfusion/ej2-lineargauge
+	@syncfusion/ej2-lists
+	@syncfusion/ej2-maps
+	@syncfusion/ej2-navigations
+	@syncfusion/ej2-notifications
+	@syncfusion/ej2-office-chart
+	@syncfusion/ej2-pdf-export
+	@syncfusion/ej2-pdfviewer
+	@syncfusion/ej2-pivotview
+	@syncfusion/ej2-popups
+	@syncfusion/ej2-progressbar
+	@syncfusion/ej2-querybuilder
+	@syncfusion/ej2-richtexteditor
+	@syncfusion/ej2-schedule
+	@syncfusion/ej2-splitbuttons
+	@syncfusion/ej2-spreadsheet
+	@syncfusion/ej2-svg-base
+	@syncfusion/ej2-treegrid
+	@syncfusion/ej2-treemap
+	@taiga-ui/addon-charts
+	@taiga-ui/addon-commerce
+	@taiga-ui/addon-editor
+	@taiga-ui/addon-mobile
+	@taiga-ui/addon-table
+	@taiga-ui/addon-tablebars
+	@taiga-ui/cdk
+	@taiga-ui/core
+	@taiga-ui/icons
+	@taiga-ui/kit
+	@types/animejs
+	@types/braintree-web
+	@types/country-list
+	@types/dompurify
+	@types/dropzone
+	@types/file-saver
+	@types/hammerjs
+	@types/hark
+	@types/html-to-text
+	@types/intro.js
+	@types/jasmine
+	@types/jquery
+	@types/jspdf
+	@types/lodash-es
+	@types/long
+	@types/markdown-it
+	@types/materialize-css
+	@types/msgpack-lite
+	@types/node
+	@types/openpgp
+	@types/pdfjs-dist
+	@types/pdfkit
+	@types/pulltorefreshjs
+	@types/quill
+	@types/simple-peer
+	@types/stacktrace-js
+	@types/universal-analytics
+	@types/video.js
+	@typescript-eslint/eslint-plugin
+	@typescript-eslint/eslint-plugin-tslint
+	@typescript-eslint/parser
+	@typescript-eslint/typescript-estree
+	@webcomponents/custom-elements
+	@yaga/leaflet-ng2
+	angular-fittext
+	angular-material-clock-time-picker
+	angular-speed-dial
+	angular2-draggable
+	angular2-text-mask
+	animate.css
+	animated-scroll-to
+	animejs
+	awesome-typescript-loader
+	babel-core
+	babel-preset-env
+	babel-preset-es2015
+	bitpay.js
+	bourbon
+	braintree
+	braintree-web
+	braintree-web-drop-in
+	cheerio@1.0.0-rc.3
+	clean-css-cli
+	clipboard-polyfill@^2
+	codelyzer
+	comlink
+	core-js
+	core-js-bundle
+	core-js-pure
+	cornerstone-core
+	cors
+	country-list
+	crypto-browserify
+	csv
+	csv-parse
+	csv-stringify
+	d3
+	datauri
+	devextreme
+	devextreme-angular
+	dompurify
+	dope-qr
+	dropzone
+	dwv
+	eslint
+	eslint-plugin-import
+	eslint-plugin-no-null
+	eslint-plugin-prefer-arrow
+	eslint-plugin-unicorn
+	fast-crc32c
+	faye-websocket
+	fcm-node
+	fetch-blob
+	fg-loadcss
+	file-saver
+	firebase
+	firebase-admin
+	firebase-functions
+	firebase-server
+	firebase-tools
+	glob
+	gpu.js
+	granim
+	gulp
+	hammerjs
+	hark
+	highlight.js
+	html-minifier
+	html-to-text
+	html2canvas
+	htmlencode
+	htmllint
+	husky
+	ical-generator@~0.2
+	image-type
+	intro.js
+	isomorphic-git
+	jasmine-core
+	jasmine-spec-reporter
+	jquery
+	jquery-appear-original
+	jsdoc@3.5.5
+	jsdom
+	jspdf
+	jsqr
+	karma
+	karma-chrome-launcher
+	karma-cli
+	karma-coverage-istanbul-reporter
+	karma-jasmine
+	karma-jasmine-html-reporter
+	konami
+	lamejs
+	lazy
+	leaflet
+	libpotassium
+	libsodium
+	libsodium-sumo
+	libsodium-wrappers
+	libsodium-wrappers-sumo
+	libvorbis.js
+	localforage
+	lodash
+	lodash-es
+	lottie-web
+	long
+	lunr
+	lz4@0.6.3
+	mailchimp-api-v3
+	markdown-escapes
+	markdown-it
+	markdown-it-emoji
+	markdown-it-sup
+	materialize-css
+	math-expression-evaluator
+	maxmind
+	mceliece
+	microlight-string
+	mkdirp
+	moment
+	msgpack-lite
+	mustache
+	nativescript@^6
+	nativescript-angular@^10
+	nativescript-css-loader
+	nativescript-dev-typescript
+	nativescript-dev-webpack
+	nativescript-theme-core
+	ng-animate
+	ng-packagr
+	ng2-fittext
+	ng2-pdf-viewer
+	ng2-truncate
+	ngx-bar-rating
+	ngx-build-plus
+	ngx-captcha@https://github.com/buu700/ngx-captcha-tmp
+	ngx-contextmenu
+	ngx-image-cropper
+	ngx-lottie
+	ngx-progressbar
+	ngx-scrollbar
+	ngx-sharebuttons@8.0.4
+	ngx-teximate
+	node-fetch
+	nodemailer@4
+	notify-cli
+	ntru
+	openpgp
+	opentok
+	opn
+	opus-recorder
+	parchment
+	pdfjs-dist
+	pdfkit
+	pdf-lib
+	pinch-zoom-js
+	prettier
+	primeng
+	promise-semaphore
+	protobufjs@6.8.8
+	protractor@^6
+	pulltorefreshjs
+	puppeteer
+	quill
+	quill-delta
+	quill-delta-to-html
+	quill-markdown
+	read
+	readable-stream
+	recorder.js
+	recordrtc
+	reflect-metadata
+	request
+	resize-observer-polyfill
+	retire@^2
+	rlwe
+	rrule
+	rsvp
+	run-node
+	rxfire
+	rxjs
+	rxjs-tslint@0.1.5
+	rxjs-tslint-rules
+	sass
+	sidh
+	simple-peer
+	simplebtc
+	simplewebrtc
+	sodiumutil
+	sphincs
+	stacktrace-js
+	stripe
+	stripe-angular
+	stylelint
+	stylelint-scss
+	supersphincs
+	tab-indent
+	terser
+	terser-webpack-plugin@^4
+	text-mask-addons
+	textillate
+	tns-android
+	tns-core-modules
+	tns-core-modules-widgets
+	tns-ios
+	tns-platform-declarations
+	ts-node
+	tslib
+	tslint
+	tslint-consistent-codestyle
+	tslint-eslint-rules
+	tslint-immutable
+	tslint-microsoft-contrib
+	tsutils
+	typedoc
+	typescript@4.1
+	u2f-api-polyfill
+	uglify-es
+	universal-analytics
+	unsemantic
+	video.js
+	videojs-background
+	videojs-brand
+	videojs-bug
+	videojs-hotkeys
+	videojs-playlist
+	videojs-record
+	videojs-theater-mode
+	videojs-wavesurfer
+	watermarkjs
+	wavesurfer.js
+	web-animations-js
+	web-social-share
+	webix
+	webpack@^4
+	webpack-cli@^3
+	webrtc-adapter
+	webrtcsupport
+	webrtc-troubleshoot
+	whatwg-fetch
+	wowjs
+	xhr2
+	xkcd-passphrase
+	zone.js
+	$(cat ${dir}/native/plugins.list)
+EOM
+
+
+npm install -f --ignore-scripts $(echo "${modules}" | tr '\n' ' ') || fail
+
+rm -rf ../node_modules ../package.json ../package-lock.json 2> /dev/null
+
+cp package-lock.json package.json ~/lib/js/
+
+cat node_modules/tslint/package.json | grep -v tslint-test-config-non-relative > package.json.new
+mv package.json.new node_modules/tslint/package.json
+
+
+cd "${dir}"
+rm -rf shared/lib
+mv ~/lib shared/
+rm -rf ~/tmplib
+
+wget \
+	https://github.com/ipfs/public-gateway-checker/raw/master/gateways.json \
+	-O shared/lib/ipfs-gateways.json
+
+./commands/getlibs.sh
+
+cyph-prettier --write shared/lib/ipfs-gateways.json || fail
+cyph-prettier --write shared/lib/js/package.json || fail
+cyph-prettier --write shared/lib/js/package-lock.json || fail
+
+rm */go.mod */go.sum 2> /dev/null
+find . -maxdepth 2 -type f -name .go.mod -exec bash -c '
+	cd $(echo "{}" | sed "s|/.go.mod||")
+	cp .go.mod go.mod
+	go mod tidy
+' \;
+
+./commands/commit.sh --gc "${@}" updatelibs
