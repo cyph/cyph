@@ -28,6 +28,8 @@ export const verifyEmailConfirm = onCall(
 		const internalURL = `${userURL}/internal`;
 		const emailRef = database.ref(`${internalURL}/email`);
 		const emailVerifiedRef = database.ref(`${internalURL}/emailVerified`);
+		const nameRef = database.ref(`${internalURL}/name`);
+		const realUsernameRef = database.ref(`${internalURL}/realUsername`);
 
 		const [email, emailVerified] = await Promise.all([
 			emailRef.once('value').then(o => o.val()),
@@ -39,12 +41,32 @@ export const verifyEmailConfirm = onCall(
 		}
 
 		if (!approve) {
-			await Promise.all([
+			const [name, realUsername] = await Promise.all([
+				nameRef.once('value').then(o => o.val()),
+				realUsernameRef.once('value').then(o => o.val() || username),
 				emailRef.remove(),
 				emailVerifiedRef.remove(),
 				removeItem(namespace, `users/${username}/email`),
 				removeItem(namespace, `users/${username}/emailVerified`)
 			]);
+
+			await notify(
+				namespace,
+				{email, name},
+				'Cyph email verification cancelled',
+				{
+					data: {
+						email,
+						username: realUsername
+					},
+					templateName: 'email-verification-cancellation'
+				},
+				undefined,
+				undefined,
+				undefined,
+				true,
+				true
+			);
 		}
 		else if (email !== emailVerified) {
 			await Promise.all([
