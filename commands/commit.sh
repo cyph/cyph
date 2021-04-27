@@ -43,6 +43,9 @@ fi
 
 # Automated cleanup and beautification
 
+cat packages.list | sort | uniq > packages.list.new
+mv packages.list.new packages.list
+
 find . -type f -name '*.go' | grep -v github.com | xargs -I% gofmt -w "%"
 
 find shared/css shared/js \
