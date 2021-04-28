@@ -1784,7 +1784,7 @@ func stripeWebhookWorker(h HandlerArgs) (interface{}, int) {
 	subscriptionItemIDs := []string{}
 
 	if subscription != nil {
-		newSubscriptionIDCount := int(quantity - 1)
+		newSubscriptionItemIDCount := int(quantity - 1)
 		single := stripe.Int64(1)
 
 		if _, err := stripeSubscriptionItemAPI.Update(
@@ -1796,7 +1796,7 @@ func stripeWebhookWorker(h HandlerArgs) (interface{}, int) {
 			return sendFailureEmail("ITEM UPDATE FAILED", err.Error())
 		}
 
-		for i := 0; i < newSubscriptionIDCount; i++ {
+		for i := 0; i < newSubscriptionItemIDCount; i++ {
 			subscriptionItem, err := stripeSubscriptionItemAPI.New(&stripe.SubscriptionItemParams{
 				PriceData: &stripe.SubscriptionItemPriceDataParams{
 					Currency: stripe.String(string(originalSubscriptionItem.Price.Currency)),
