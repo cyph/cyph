@@ -842,9 +842,9 @@ func getBillingStatus(h HandlerArgs) (interface{}, int) {
 	goodStanding := isAccountInGoodStanding(h, appStoreReceipt, braintreeSubscriptionID, planTrialEnd, stripeData)
 
 	return &BillingStatus{
-		Admin:      billingAdmin,
-		GoodStatus: goodStanding,
-		Stripe:     stripeData != nil,
+		Admin:        billingAdmin,
+		GoodStanding: goodStanding,
+		Stripe:       stripeData != nil,
 	}, http.StatusOK
 }
 

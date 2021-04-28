@@ -23,9 +23,9 @@ type BetaSignup struct {
 
 // BillingStatus : Customer billing status
 type BillingStatus struct {
-	Admin      bool
-	GoodStatus bool
-	Stripe     bool
+	Admin        bool
+	GoodStanding bool
+	Stripe       bool
 }
 
 // BurnerChannel : Burner channel
