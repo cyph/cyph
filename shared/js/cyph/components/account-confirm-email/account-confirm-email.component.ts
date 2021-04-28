@@ -58,13 +58,14 @@ export class AccountConfirmEmailComponent extends BaseProvider
 							})
 							.catch(() => undefined);
 
+						this.accountService.interstitial.next(false);
+
 						if (typeof success !== 'boolean') {
 							this.state.next({error: true});
 							return;
 						}
 
 						this.state.next({approve, success});
-						this.accountService.interstitial.next(false);
 					})
 			)
 		);
