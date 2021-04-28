@@ -343,30 +343,6 @@ export class AccountService extends BaseProvider {
 		return this.routeChanges.value;
 	}
 
-	/** @ignore */
-	private async updateBillingStatus (
-		onlyIfFalse: boolean = false
-	) : Promise<void> {
-		await this.billingStatusLock(async () => {
-			const userToken = await this.getUserToken();
-
-			const billingStatus = await requestJSON({
-				retries: 5,
-				url: this.envService.baseUrl + `billingstatus/${userToken}`
-			}).catch(() => ({}));
-
-			if (onlyIfFalse && this.billingStatus.value.goodStanding) {
-				return;
-			}
-
-			this.billingStatus.next({
-				admin: billingStatus?.Admin === true,
-				goodStanding: billingStatus?.GoodStanding !== false,
-				stripe: billingStatus?.Stripe === true
-			});
-		});
-	}
-
 	/** Activated route data combined with that of child. */
 	public combinedRouteData (
 		activatedRoute: ActivatedRoute
@@ -576,6 +552,30 @@ export class AccountService extends BaseProvider {
 	public async transitionEnd () : Promise<void> {
 		await sleep(0);
 		this.transitionInternal.next(false);
+	}
+
+	/** Updates billing status. */
+	public async updateBillingStatus (
+		onlyIfBadStanding: boolean = false
+	) : Promise<void> {
+		if (onlyIfBadStanding && this.billingStatus.value.goodStanding) {
+			return;
+		}
+
+		await this.billingStatusLock(async () => {
+			const userToken = await this.getUserToken();
+
+			const billingStatus = await requestJSON({
+				retries: 5,
+				url: this.envService.baseUrl + `billingstatus/${userToken}`
+			}).catch(() => ({}));
+
+			this.billingStatus.next({
+				admin: billingStatus?.Admin === true,
+				goodStanding: billingStatus?.GoodStanding !== false,
+				stripe: billingStatus?.Stripe === true
+			});
+		});
 	}
 
 	/** Runs on user login. */

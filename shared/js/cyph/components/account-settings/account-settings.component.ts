@@ -302,6 +302,12 @@ export class AccountSettingsComponent extends BaseProvider implements OnInit {
 				.join('')
 		});
 
+		this.subscriptions.push(
+			this.emailVerified.subscribe(async () =>
+				this.accountService.updateBillingStatus()
+			)
+		);
+
 		this.loading.next(false);
 	}
 
