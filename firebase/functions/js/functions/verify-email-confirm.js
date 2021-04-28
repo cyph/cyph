@@ -1,6 +1,13 @@
 import {proto} from '@cyph/sdk';
 import {mailchimpCredentials} from '../cyph-admin-vars.js';
-import {database, getTokenKey, onCall, removeItem, setItem} from '../init.js';
+import {
+	database,
+	getTokenKey,
+	notify,
+	onCall,
+	removeItem,
+	setItem
+} from '../init.js';
 import {mailchimp, removeFromMailingList} from '../mailchimp.js';
 import * as tokens from '../tokens.js';
 

@@ -12,6 +12,7 @@ import {
 } from '../init.js';
 import {mailchimp, removeFromMailingList} from '../mailchimp.js';
 import {stripe} from '../stripe.js';
+import {validateEmail} from '../validation.js';
 
 const {BinaryProto, BooleanProto, CyphPlan, CyphPlans, StringProto} = proto;
 const {normalize} = util;
@@ -21,7 +22,6 @@ export const register = onCall(
 		const {
 			altMasterKey,
 			certificateRequest,
-			email,
 			encryptionKeyPair,
 			inviteCode,
 			loginData,
@@ -36,6 +36,8 @@ export const register = onCall(
 			signingKeyPair,
 			username
 		} = data || {};
+
+		const email = validateEmail(data.email, true);
 
 		if (
 			typeof inviteCode !== 'string' ||

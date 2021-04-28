@@ -8,7 +8,7 @@ import {
 	removeItem,
 	setItem
 } from '../init.js';
-import {validateInput} from '../validation.js';
+import {validateInput, validateEmail} from '../validation.js';
 
 const {AccountContactState, StringProto} = proto;
 const {titleize} = util;
@@ -30,7 +30,7 @@ export const acceptPseudoRelationship = onCall(
 		);
 
 		const alice = relationshipVal.aliceUsername;
-		const email = relationshipVal.bobEmail;
+		const email = validateEmail(relationshipVal.bobEmail, true);
 		const name = relationshipVal.bobName;
 
 		if (!alice || !bob || !email || !name) {

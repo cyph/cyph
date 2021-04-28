@@ -5,6 +5,7 @@ import {getBurnerLink} from '../get-burner-link.js';
 import {database, getSMSCredentials, onCall} from '../init.js';
 import {namespaces} from '../namespaces.js';
 import {sendSMS} from '../sms.js';
+import {validateEmail} from '../validation.js';
 
 export const appointmentInvite = onCall(
 	async (data, namespace, getUsername) => {
@@ -26,7 +27,7 @@ export const appointmentInvite = onCall(
 
 		const members = ((data.to || {}).members || [])
 			.map(o => ({
-				email: (o.email || '').trim(),
+				email: validateEmail(o.email, true),
 				id: (o.id || '').trim(),
 				name: (o.name || '').trim(),
 				phoneNumber: (o.phoneNumber || '').trim()

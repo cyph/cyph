@@ -1,7 +1,8 @@
-import {database, getTokenKey, notify, setItem} from './init.js';
+import {database, getTokenKey, notify, removeItem, setItem} from './init.js';
 import * as tokens from './tokens.js';
+import {validateEmail} from './validation.js';
 
-export const sendVerificationEmail = async (namespace, username) => {
+export const sendVerificationEmail = async (namespace, username, newEmail) => {
 	const userURL = `${namespace}/users/${username}`;
 	const internalURL = `${userURL}/internal`;
 	const emailRef = database.ref(`${internalURL}/email`);
@@ -9,20 +10,34 @@ export const sendVerificationEmail = async (namespace, username) => {
 	const nameRef = database.ref(`${internalURL}/name`);
 	const realUsernameRef = database.ref(`${internalURL}/realUsername`);
 
-	let [email, emailVerified, name, realUsername] = await Promise.all([
+	const [emailRaw, emailVerified, name, realUsername] = await Promise.all([
 		emailRef.once('value').then(o => o.val()),
 		emailVerifiedRef.once('value').then(o => o.val()),
 		nameRef.once('value').then(o => o.val()),
 		realUsernameRef.once('value').then(o => o.val() || username)
 	]);
 
-	if (email && email !== email.trim().toLowerCase()) {
-		email = email.trim().toLowerCase();
+	const email =
+		validateEmail(newEmail, true) || validateEmail(emailRaw, true);
 
-		await Promise.all([
-			emailRef.set(email),
-			setItem(namespace, `users/${username}/email`, StringProto, email)
-		]);
+	if (email !== emailRaw) {
+		if (email) {
+			await Promise.all([
+				emailRef.set(email),
+				setItem(
+					namespace,
+					`users/${username}/email`,
+					StringProto,
+					email
+				)
+			]);
+		}
+		else {
+			await Promise.all([
+				emailRef.remove(),
+				removeItem(namespace, `users/${username}/email`)
+			]);
+		}
 	}
 
 	if (!email || email === emailVerified) {

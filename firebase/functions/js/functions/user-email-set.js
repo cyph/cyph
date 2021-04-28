@@ -1,6 +1,5 @@
 import {proto} from '@cyph/sdk';
 import {mailchimpCredentials} from '../cyph-admin-vars.js';
-import {emailRegex} from '../email-regex.js';
 import {
 	database,
 	getItem,
@@ -11,6 +10,7 @@ import {
 } from '../init.js';
 import {addToMailingList, mailchimp, splitName} from '../mailchimp.js';
 import {sendVerificationEmail} from '../send-verification-email.js';
+import {validateEmail} from '../validation.js';
 
 const {CyphPlan, CyphPlans, StringProto} = proto;
 
@@ -39,7 +39,7 @@ export const userEmailSet = async ({after: data}, {params}) => {
 			.then(o => o.val())
 	]);
 
-	const email = emailRaw.trim().toLowerCase();
+	const email = validateEmail(emailRaw, true);
 
 	const emailVerifiedUpdate = (async () => {
 		const emailVerified = await emailVerifiedRef
@@ -60,7 +60,7 @@ export const userEmailSet = async ({after: data}, {params}) => {
 		]);
 	})();
 
-	if (email && emailRegex.test(email)) {
+	if (email) {
 		await Promise.all([
 			emailVerifiedUpdate,
 			emailRef.set(email),

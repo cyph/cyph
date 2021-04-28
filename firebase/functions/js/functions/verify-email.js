@@ -8,5 +8,5 @@ export const verifyEmail = onCall(async (data, namespace, getUsername) => {
 		throw new Error('User not authenticated.');
 	}
 
-	await sendVerificationEmail(namespace, username);
+	await sendVerificationEmail(namespace, username, data.email);
 });
