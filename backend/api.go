@@ -1779,8 +1779,8 @@ func stripeWebhookWorker(h HandlerArgs) (interface{}, int) {
 		"\n\n" + requestBody +
 		""), "")
 
-	customerIDs := []string{}
-	subscriptionIDs := []string{}
+	customerIDs := []string{customerID}
+	subscriptionIDs := []string{subscriptionID}
 	subscriptionItemIDs := []string{originalSubscriptionItem.ID}
 
 	if subscription != nil {
