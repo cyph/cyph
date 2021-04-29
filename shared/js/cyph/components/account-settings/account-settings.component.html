@@ -151,6 +151,11 @@
 				"
 			>
 				<a
+					mat-button
+					cyphTranslate
+					[disabled]="(emailVerified | await) !== true"
+					matTooltip="To access the billing portal, first confirm your email address"
+					[matTooltipDisabled]="(emailVerified | await) === true"
 					(click)="
 						salesService.openBillingPortal(
 							accountService.getUserToken(loading)
