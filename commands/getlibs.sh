@@ -462,7 +462,7 @@ ng build
 
 rm -rf ~/cyph.tmp 2> /dev/null
 
-cyph-prettier --write /node_modules/package-lock.json || exit 1
+cyph-prettier --write /node_modules/package-lock.json 2> /dev/null
 if [ -d ${dir}/cyph.app ] ; then
-	cyph-prettier --write ${dir}/shared/node_modules/package-lock.json || exit 1
+	cyph-prettier --write ${dir}/shared/node_modules/package-lock.json 2> /dev/null
 fi
