@@ -1377,7 +1377,7 @@ func stripeBillingPortal(h HandlerArgs) (interface{}, int) {
 
 	billingSessionURLs := []string{}
 
-	for customersIter.Next() {
+	for customersIter.Err() == nil && customersIter.Next() {
 		billingSession, err := stripeBillingSessionAPI.New(&stripe.BillingPortalSessionParams{
 			Customer: stripe.String(customersIter.Customer().ID),
 		})
