@@ -1,11 +1,14 @@
 const cors = require('cors')({origin: true});
 const functions = require('firebase-functions');
-const functionBuilder = functions.runWith({
-	memory: functions.config().project.id === 'cyphme' ? '1GB' : '256MB',
-	timeoutSeconds: 60
-});
-const {database} = functionBuilder;
-const {https} = functionBuilder.region(
+
+const functionBuilder = () =>
+	functions.runWith({
+		memory: functions.config().project.id === 'cyphme' ? '1GB' : '256MB',
+		timeoutSeconds: 60
+	});
+
+const {database} = functionBuilder();
+const {https} = functionBuilder().region(
 	'asia-northeast1',
 	'australia-southeast1',
 	'europe-west1',
