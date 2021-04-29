@@ -108,9 +108,11 @@ export const generateInvite = onRequest(true, async (req, res, namespace) => {
 				subscriptionItemIDRef.remove(),
 			planTrialEndRef.remove(),
 			useStripe && subscriptionItemID ?
-				stripe.subscriptionItems.update(subscriptionItemID, {
-					metadata: {username}
-				}) :
+				stripe.subscriptionItems
+					.update(subscriptionItemID, {
+						metadata: {username}
+					})
+					.catch(() => {}) :
 				undefined,
 			(async () => {
 				if (planConfig.initialInvites === undefined) {
@@ -291,10 +293,11 @@ export const generateInvite = onRequest(true, async (req, res, namespace) => {
 										.set({inviterUsername: ''}) :
 									undefined,
 								useStripe && subscriptionItemID ?
-									stripe.subscriptionItems.update(
-										subscriptionItemID,
-										{metadata: {inviteCode}}
-									) :
+									stripe.subscriptionItems
+										.update(subscriptionItemID, {
+											metadata: {inviteCode}
+										})
+										.catch(() => {}) :
 									undefined,
 								i === 0 &&
 								email &&

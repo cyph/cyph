@@ -204,9 +204,11 @@ export const register = onCall(
 					.remove() :
 				undefined,
 			stripeData ?
-				stripe.subscriptionItems.update(stripeData.subscriptionItemID, {
-					metadata: {username}
-				}) :
+				stripe.subscriptionItems
+					.update(stripeData.subscriptionItemID, {
+						metadata: {username}
+					})
+					.catch(() => {}) :
 				undefined,
 			pendingInviteRef
 				.once('value')
