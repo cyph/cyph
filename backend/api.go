@@ -1354,7 +1354,8 @@ func stripeBillingPortal(h HandlerArgs) (interface{}, int) {
 		}
 
 		billingSession, err := stripeBillingSessionAPI.New(&stripe.BillingPortalSessionParams{
-			Customer: stripe.String(stripeData.CustomerID),
+			Customer:  stripe.String(stripeData.CustomerID),
+			ReturnURL: stripe.String(appURL + "/settings"),
 		})
 
 		if err != nil {

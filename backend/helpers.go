@@ -70,14 +70,12 @@ var methods = struct {
 	"CONNECT",
 }
 
-/*
 var appURL = func() string {
 	if appengine.IsDevAppServer() {
 		return "http://localhost:42002"
 	}
 	return os.Getenv("APP_URL")
 }()
-*/
 var backendURL = func() string {
 	if appengine.IsDevAppServer() {
 		return "http://localhost:42000"

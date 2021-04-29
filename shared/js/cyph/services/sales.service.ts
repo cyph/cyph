@@ -93,7 +93,10 @@ export class SalesService extends BaseProvider {
 			}).catch(() => undefined) :
 			undefined;
 
-		await openWindow(url || `${this.envService.homeUrl}billing-portal`);
+		await openWindow(
+			url || `${this.envService.homeUrl}billing-portal`,
+			!this.envService.isCordova
+		);
 	}
 
 	/** Redirects to mobile app. */
