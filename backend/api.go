@@ -1389,10 +1389,6 @@ func stripeBillingPortal(h HandlerArgs) (interface{}, int) {
 		billingSessionURLs = append(billingSessionURLs, billingSession.URL)
 	}
 
-	if len(billingSessionURLs) < 1 {
-		return "", http.StatusOK
-	}
-
 	body := "<p><a href=\"" + billingSessionURLs[0] + "\">Click here to access your billing portal.</a></p>"
 
 	if len(billingSessionURLs) > 1 {
@@ -1402,6 +1398,10 @@ func stripeBillingPortal(h HandlerArgs) (interface{}, int) {
 			body += "<li><a href=\"" + billingSessionURL + "\">" + billingSessionURL + "</a></li>"
 		}
 		body += "</ul></p>"
+	}
+
+	if len(billingSessionURLs) < 1 {
+		body = "<p>Unfortunately, you do not have access to the billing portal. Please contact your billing administrator.</p>"
 	}
 
 	sendEmail(email, "Cyph Billing Portal", "", body)
