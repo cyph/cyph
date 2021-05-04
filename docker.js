@@ -661,6 +661,19 @@ if (isWindows && needAGSE) {
 let exitCleanup = () => {};
 let initPromise = Promise.resolve();
 
+const removeDirectory = dir => {
+	if (!fs.existsSync(dir)) {
+		return;
+	}
+
+	if (typeof fs.rmSync === 'function') {
+		fs.rmSync(dir, {recursive: true});
+	}
+	else {
+		fs.rmdirSync(dir, {recursive: true});
+	}
+};
+
 const make = () => {
 	killEverything();
 
@@ -701,10 +714,7 @@ const make = () => {
 			])
 		)
 		.then(() => {
-			if (fs.existsSync('shared/node_modules')) {
-				fs.rmdirSync('shared/node_modules', {recursive: true});
-			}
-
+			removeDirectory('shared/node_modules');
 			return dockerCP('/node_modules', 'shared/node_modules');
 		})
 		.then(() => huskySetup());
