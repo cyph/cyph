@@ -318,6 +318,10 @@ const backup = () => {
 		return;
 	}
 
+	if (!fs.existsSync(backupDir)) {
+		fs.mkdirSync(backupDir);
+	}
+
 	for (const d of fs.readdirSync(backupDir).filter(d => d !== '.git')) {
 		spawn('rm', ['-rf', path.join(backupDir, d)]);
 	}
