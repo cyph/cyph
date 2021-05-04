@@ -612,26 +612,31 @@ const updateCircleCI = () => {
 		)
 	);
 
-	return spawnAsync('docker', [
-		'build',
-		'-t',
-		'cyph/circleci:latest',
-		'-f',
-		'Dockerfile.tmp',
-		'.'
-	])
+	return Promise.resolve(
+		dockerCredentials ?
+			spawnAsync('docker', [
+				'login',
+				'-u',
+				dockerCredentials.username,
+				'-p',
+				dockerCredentials.password
+			]) :
+			undefined
+	)
 		.then(() =>
-			dockerCredentials ?
-				spawnAsync('docker', [
-					'login',
-					'-u',
-					dockerCredentials.username,
-					'-p',
-					dockerCredentials.password
-				]) :
-				undefined
+			spawnAsync('docker', [
+				'buildx',
+				'build',
+				'--push',
+				'--platform',
+				'linux/amd64',
+				'-t',
+				'cyph/circleci:latest',
+				'-f',
+				'Dockerfile.tmp',
+				'.'
+			])
 		)
-		.then(() => spawnAsync('docker', ['push', 'cyph/circleci:latest']))
 		.then(() => {
 			fs.unlinkSync('Dockerfile.tmp');
 		})
