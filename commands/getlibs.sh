@@ -465,7 +465,8 @@ ng build
 
 rm -rf ~/cyph.tmp 2> /dev/null
 
-cyph-prettier --write /node_modules/package-lock.json 2> /dev/null
-if [ -d ${dir}/cyph.app ] ; then
-	cyph-prettier --write ${dir}/shared/node_modules/package-lock.json 2> /dev/null
-fi
+# Prettier throws `[error] No matching files.` when targeting files inside node_modules
+mv /node_modules/package-lock.json ./
+cyph-prettier --write package-lock.json
+cp -f package-lock.json ${dir}/shared/node_modules/package-lock.json 2> /dev/null
+mv package-lock.json /node_modules/
