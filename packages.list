@@ -378,7 +378,7 @@ rrule
 rsvp
 run-node
 rxfire
-rxjs
+rxjs@^6
 rxjs-tslint-rules
 rxjs-tslint@0.1.5
 sass
