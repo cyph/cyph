@@ -71,9 +71,6 @@ for component in app-engine-go beta cloud-datastore-emulator ; do
 done
 
 source ~/google-cloud-sdk/path.bash.inc
-
 gcloud components update --quiet
-
-echo | haxelib update > /dev/null
 
 touch ~/.updated

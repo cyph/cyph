@@ -33,7 +33,6 @@ RUN apt-get -y --allow-downgrades install \
 	g++ \
 	git \
 	golang-go \
-	haxe \
 	htop \
 	imagemagick \
 	inotify-tools \
@@ -46,7 +45,6 @@ RUN apt-get -y --allow-downgrades install \
 	libtool \
 	libxi-dev \
 	libxss1 \
-	mono-complete \
 	nano \
 	nodejs \
 	openjdk-11-jdk \
@@ -146,13 +144,6 @@ RUN rm ~/*.tar.gz
 #	; \
 #	rm -rf $ANDROID_HOME/balls; \
 #'
-
-RUN mkdir ~/haxelib
-RUN haxelib setup ~/haxelib
-RUN haxelib install hxcpp
-RUN haxelib install hxcs
-RUN haxelib install hxjava
-RUN haxelib install hxnodejs
 
 RUN rm -rf ~/.gnupg
 
