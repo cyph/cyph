@@ -430,9 +430,6 @@ if [ -d ${dir}/cyph.app ] ; then
 	rm -rf ${dir}/shared/lib ${dir}/shared/node_modules 2> /dev/null
 	rsync -rL lib ${dir}/shared/
 	mv ${dir}/shared/lib/js/node_modules ${dir}/shared/
-	sudo mv lib/js/node_modules /
-	sudo chmod -R 777 /node_modules
-	rm -rf lib
 fi
 sudo mv lib/js/node_modules /
 sudo chmod -R 777 /node_modules
