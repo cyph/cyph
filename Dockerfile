@@ -29,7 +29,7 @@ RUN apt-get -y --allow-downgrades install \
 	devscripts \
 	dos2unix \
 	expect \
-	gcc-8 \
+	gcc \
 	g++ \
 	git \
 	golang-go \
@@ -55,8 +55,9 @@ RUN apt-get -y --allow-downgrades install \
 	pkg-config \
 	procps \
 	python \
-	python-docutils \
-	python-pip \
+	python3 \
+	python3-docutils \
+	python3-pip \
 	ripgrep \
 	rpm \
 	rsync \
