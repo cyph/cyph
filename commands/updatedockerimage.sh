@@ -59,6 +59,8 @@ if [ ! -d ~/.ipfs ] ; then
 fi
 
 
+go install github.com/mitranim/gow@latest
+
 # app-engine-go currently fails on ARM, but the others work
 for component in app-engine-go beta cloud-datastore-emulator ; do
 	~/google-cloud-sdk/install.sh \

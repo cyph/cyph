@@ -171,7 +171,7 @@ fi
 ./commands/backendplans.js backend/plans.json
 ./commands/cloudfunctions.js backend/cloudfunctions.list
 
-# TODO: Handle host checks and watching for changes
+# TODO: Handle host checks
 gcloud beta emulators datastore start --no-store-on-disk --host-port 0.0.0.0:6000 &
 bash -c "
 	cd backend
@@ -186,7 +186,7 @@ bash -c "
 			.map(s => s.trim().split(':'))
 			.map(([k, v]) => 'export ' + k + '=' + v.trim()).join('\n')
 	)")
-	go run *.go
+	gow run *.go
 " &
 if [ "${site}" == 'backend' ] ; then sleep Infinity ; fi
 
