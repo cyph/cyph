@@ -65,7 +65,7 @@ nodeModulesAssets="$(
 
 typescriptAssets="$(
 	{
-		echo cyph/crypto/native-web-crypto-polyfill;
+		# NATIVESCRIPT: echo cyph/crypto/native-web-crypto-polyfill;
 		echo standalone/cyph.com;
 		echo standalone/node-polyfills;
 		if [ "${libpotassium}" ] ; then echo cyph/crypto/potassium/index ; fi;
