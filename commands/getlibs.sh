@@ -76,6 +76,8 @@ mkdir node_modules
 cp ~/lib/js/package.json ~/lib/js/package-lock.json ./
 npm ci -f || exit 1
 
+cp -f package-lock.json ~/
+
 # Temporary workaround for "typings.replace is not a function" bug
 sed -i \
 	"s/\!typings/\!typings || typeof typings.replace \!== 'function'/g" \
@@ -423,7 +425,6 @@ cd ../..
 mv js/node_modules .js.tmp/
 rm -rf js
 mv .js.tmp js
-cp js/package-lock.json js/node_modules/
 
 cd
 if [ -d ${dir}/cyph.app ] ; then
@@ -460,10 +461,11 @@ fi
 ng build
 ../commands/ngprojectinit.sh --deinit
 
-rm -rf ~/cyph.tmp 2> /dev/null
-
-# Prettier throws `[error] No matching files.` when targeting files inside node_modules
-mv /node_modules/package-lock.json ./
-cyph-prettier --write package-lock.json
-cp -f package-lock.json ${dir}/shared/node_modules/package-lock.json 2> /dev/null
+cd ..
+mv ~/package-lock.json ./
+cyph-prettier --write package-lock.json || exit 1
+cp -f package-lock.json ${dir}/shared/node_modules/ 2> /dev/null
 mv package-lock.json /node_modules/
+
+cd
+rm -rf ~/cyph.tmp 2> /dev/null
