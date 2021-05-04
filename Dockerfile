@@ -1,4 +1,4 @@
-FROM debian:buster
+FROM debian:bullseye
 
 LABEL Name="cyph"
 
@@ -12,7 +12,7 @@ RUN apt-get -y --allow-downgrades install \
 	lsb-release \
 	software-properties-common
 
-RUN echo "deb https://deb.nodesource.com/node_14.x buster main" >> /etc/apt/sources.list
+RUN echo "deb https://deb.nodesource.com/node_14.x bullseye main" >> /etc/apt/sources.list
 RUN echo 'deb https://dl.yarnpkg.com/debian/ stable main' >> /etc/apt/sources.list
 RUN curl -s https://deb.nodesource.com/gpgkey/nodesource.gpg.key | apt-key add -
 RUN curl -s https://dl.yarnpkg.com/debian/pubkey.gpg | apt-key add -
