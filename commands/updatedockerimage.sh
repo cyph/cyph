@@ -59,11 +59,14 @@ if [ ! -d ~/.ipfs ] ; then
 fi
 
 
-~/google-cloud-sdk/install.sh \
-	--additional-components app-engine-go cloud-datastore-emulator \
-	--command-completion false \
-	--path-update false \
-	--usage-reporting false
+# app-engine-go currently fails on ARM, but the others work
+for component in app-engine-go beta cloud-datastore-emulator ; do
+	~/google-cloud-sdk/install.sh \
+		--additional-components ${component} \
+		--command-completion false \
+		--path-update false \
+		--usage-reporting false
+done
 
 source ~/google-cloud-sdk/path.bash.inc
 

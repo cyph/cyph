@@ -32,7 +32,6 @@ import (
 	stripeProductAPI "github.com/stripe/stripe-go/v72/product"
 	stripeSubscriptionAPI "github.com/stripe/stripe-go/v72/sub"
 	stripeSubscriptionItemAPI "github.com/stripe/stripe-go/v72/subitem"
-	"google.golang.org/appengine"
 )
 
 // HandlerArgs : Arguments to Handler
@@ -70,20 +69,22 @@ var methods = struct {
 	"CONNECT",
 }
 
+var isLocalEnv = os.Getenv("LOCAL_ENV") == "true"
+
 var appURL = func() string {
-	if appengine.IsDevAppServer() {
+	if isLocalEnv {
 		return "http://localhost:42002"
 	}
 	return os.Getenv("APP_URL")
 }()
 var backendURL = func() string {
-	if appengine.IsDevAppServer() {
+	if isLocalEnv {
 		return "http://localhost:42000"
 	}
 	return os.Getenv("BACKEND_URL")
 }()
 var websiteURL = func() string {
-	if appengine.IsDevAppServer() {
+	if isLocalEnv {
 		return "http://localhost:43000"
 	}
 	return os.Getenv("WEBSITE_URL")
@@ -151,7 +152,7 @@ var everflowToken = os.Getenv("EVERFLOW_TOKEN")
 var analIDs = func() map[string]string {
 	o := map[string]string{}
 
-	if appengine.IsDevAppServer() {
+	if isLocalEnv {
 		return o
 	}
 
@@ -171,7 +172,7 @@ var cloudFunctionRoutes = strings.Split(getFileText("cloudfunctions.list"), "\n"
 var ipfsGatewayUptimeChecks = map[string]IPFSGatewayUptimeCheckData{}
 
 var ipfsGatewayURLs = func() []IPFSGatewayData {
-	if appengine.IsDevAppServer() {
+	if isLocalEnv {
 		return []IPFSGatewayData{}
 	}
 
@@ -200,7 +201,7 @@ var ipfsGateways = func() map[string][]string {
 		"sa": {},
 	}
 
-	if appengine.IsDevAppServer() {
+	if isLocalEnv {
 		return gateways
 	}
 
@@ -221,7 +222,7 @@ var ipfsGateways = func() map[string][]string {
 }()
 
 var packages = func() map[string]PackageData {
-	if appengine.IsDevAppServer() {
+	if isLocalEnv {
 		return map[string]PackageData{}
 	}
 
@@ -294,7 +295,7 @@ func generateAPIKey(h HandlerArgs, kind string) (string, *datastore.Key, error) 
 }
 
 func geolocate(h HandlerArgs) (string, string, string, string, string, string, string, string) {
-	if appengine.IsDevAppServer() {
+	if isLocalEnv {
 		return config.DummyContinent,
 			config.DummyContinentCode,
 			config.DummyCountry,
@@ -399,7 +400,7 @@ func getSignupFromRequest(h HandlerArgs) (BetaSignup, map[string]interface{}) {
 }
 
 func getOrg(h HandlerArgs) string {
-	if appengine.IsDevAppServer() {
+	if isLocalEnv {
 		return config.DummyOrg
 	}
 
@@ -1257,7 +1258,7 @@ func handleFuncs(pattern string, cron bool, handlers Handlers) {
 				responseCode = http.StatusOK
 			} else {
 				projectID := datastore.DetectProjectID
-				if appengine.IsDevAppServer() {
+				if isLocalEnv {
 					projectID = "test"
 				}
 
@@ -1317,7 +1318,7 @@ func initHandler(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Public-Key-Pins", config.HPKPHeader)
 	w.Header().Set("Strict-Transport-Security", config.HSTSHeader)
 
-	if ok || strings.HasSuffix(origin, ".pki.ws") || strings.HasSuffix(origin, ".cyph.ws") || strings.HasSuffix(origin, ".cyph.app") || appengine.IsDevAppServer() {
+	if ok || strings.HasSuffix(origin, ".pki.ws") || strings.HasSuffix(origin, ".cyph.ws") || strings.HasSuffix(origin, ".cyph.app") || isLocalEnv {
 		w.Header().Add("Access-Control-Allow-Origin", "*")
 		w.Header().Add("Access-Control-Allow-Credentials", "true")
 		w.Header().Add("Access-Control-Allow-Headers", config.AllowedHeaders)

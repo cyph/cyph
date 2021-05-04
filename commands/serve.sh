@@ -155,7 +155,6 @@ ngserve () {
 # node /node_modules/.bin/firebase-server -p 44000 &
 
 cp -f backend/app.yaml backend/.build.yaml
-sed -i 's/runtime: go11[0-9]/runtime: go111/g' backend/.build.yaml # temporary workaround
 
 # External services (e.g. Twilio) unsupported in CircleCI for now, until needed
 if [ -d ~/.cyph ] && [ -f ~/.cyph/backend.vars ] && [ ! "${CIRCLECI}" ] ; then
@@ -172,16 +171,23 @@ fi
 ./commands/backendplans.js backend/plans.json
 ./commands/cloudfunctions.js backend/cloudfunctions.list
 
-dev_appserver.py \
-	--skip_sdk_update_check \
-	--port 42000 \
-	--admin_port 6000 \
-	--host 0.0.0.0 \
-	--storage_path /tmp/cyph0 \
-	--support_datastore_emulator=True \
-	$(if [[ "${*}" == *'--disable-host-check'* ]]; then echo -n '--enable_host_checking=False' ; fi) \
-	${PWD}/backend/.build.yaml \
-&
+# TODO: Handle host checks and watching for changes
+gcloud beta emulators datastore start --no-store-on-disk --host-port 0.0.0.0:6000 &
+bash -c "
+	cd backend
+	export DATASTORE_EMULATOR_HOST=0.0.0.0:6000
+	export LOCAL_ENV=true
+	export PORT=42000
+	$(node -e "console.log(
+		fs.readFileSync('backend/.build.yaml').toString()
+			.split('env_variables:')[1]
+			.trim()
+			.split('\n')
+			.map(s => s.trim().split(':'))
+			.map(([k, v]) => 'export ' + k + '=' + v.trim()).join('\n')
+	)")
+	go run *.go
+" &
 if [ "${site}" == 'backend' ] ; then sleep Infinity ; fi
 
 ./commands/buildunbundledassets.sh \
