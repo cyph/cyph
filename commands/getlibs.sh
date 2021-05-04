@@ -35,7 +35,7 @@ find . -maxdepth 2 -type f -name .go.mod -exec bash -c '
 ' \;
 
 
-nativePlugins="$(cat native/plugins.list)"
+# NATIVESCRIPT: nativePlugins="$(cat native/plugins.list)"
 
 sudo rm -rf \
 	/node_modules \
@@ -52,23 +52,26 @@ cp -a shared/lib ~/
 
 cd
 
-installPackages "package === 'nativescript'"
-rm package.json package-lock.json
-~/node_modules/.bin/tns error-reporting disable
-~/node_modules/.bin/tns usage-reporting disable
-~/node_modules/.bin/tns create cyph --ng --appid com.cyph.app
+mkdir cyph
+# NATIVESCRIPT: installPackages "package === 'nativescript'"
+# NATIVESCRIPT: rm -rf cyph package.json package-lock.json
+# NATIVESCRIPT: ~/node_modules/.bin/tns error-reporting disable
+# NATIVESCRIPT: ~/node_modules/.bin/tns usage-reporting disable
+# NATIVESCRIPT: ~/node_modules/.bin/tns create cyph --ng --appid com.cyph.app
+
 cd cyph
-git init
-for plugin in ${nativePlugins} ; do
-	~/node_modules/.bin/tns plugin add ${plugin} < /dev/null || exit 1
-done
-installPackages "
-	package.startsWith('nativescript-dev') ||
-	package.startsWith('tns')
-"
-rm package-lock.json
-mv package.json package.json.tmp
-sudo mv node_modules ~/native_node_modules
+# NATIVESCRIPT: git init
+# NATIVESCRIPT: for plugin in ${nativePlugins} ; do
+# NATIVESCRIPT: 	~/node_modules/.bin/tns plugin add ${plugin} < /dev/null || exit 1
+# NATIVESCRIPT: done
+# NATIVESCRIPT: installPackages "
+# NATIVESCRIPT: 	package.startsWith('nativescript-dev') ||
+# NATIVESCRIPT: 	package.startsWith('tns')
+# NATIVESCRIPT: "
+# NATIVESCRIPT: rm package-lock.json
+# NATIVESCRIPT: mv package.json package.json.tmp
+# NATIVESCRIPT: sudo mv node_modules ~/native_node_modules
+
 mkdir node_modules
 cp ~/lib/js/package.json ~/lib/js/package-lock.json ./
 npm ci -f || exit 1
@@ -78,12 +81,12 @@ sed -i \
 	"s/\!typings/\!typings || typeof typings.replace \!== 'function'/g" \
 	node_modules/@angular/compiler-cli/ngcc/src/packages/entry_point.js
 
-rm -rf ~/node_modules
+rm -rf ~/node_modules 2> /dev/null
 mv node_modules ~/
-mv ~/native_node_modules ./node_modules
-mv package.json.tmp package.json
+# NATIVESCRIPT: mv ~/native_node_modules ./node_modules
+# NATIVESCRIPT: mv package.json.tmp package.json
 cd
-mv cyph ~/lib/native
+# NATIVESCRIPT: mv cyph ~/lib/native
 
 
 cd ~/lib

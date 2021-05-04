@@ -320,12 +320,12 @@ microlight-string
 mkdirp
 moment
 mustache
-nativescript-angular@^10
-nativescript-css-loader
-nativescript-dev-typescript
-nativescript-dev-webpack
-nativescript-theme-core
-nativescript@^6
+# NATIVESCRIPT: nativescript-angular@^10
+# NATIVESCRIPT: nativescript-css-loader
+# NATIVESCRIPT: nativescript-dev-typescript
+# NATIVESCRIPT: nativescript-dev-webpack
+# NATIVESCRIPT: nativescript-theme-core
+# NATIVESCRIPT: nativescript@^6
 ng-animate
 ng-packagr
 ng2-fittext
@@ -399,11 +399,11 @@ terser
 terser-webpack-plugin@^4
 text-mask-addons
 textillate
-tns-android
-tns-core-modules
-tns-core-modules-widgets
-tns-ios
-tns-platform-declarations
+# NATIVESCRIPT: tns-android
+# NATIVESCRIPT: tns-core-modules
+# NATIVESCRIPT: tns-core-modules-widgets
+# NATIVESCRIPT: tns-ios
+# NATIVESCRIPT: tns-platform-declarations
 ts-node
 tslib
 tslint

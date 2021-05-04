@@ -15,12 +15,8 @@ npm config set legacy-peer-deps true
 mkdir -p ~/lib/js ~/tmplib/js/node_modules
 cd ~/tmplib/js
 
-
-read -r -d '' modules <<- EOM
-	$(cat ${dir}/packages.list)
-	$(cat ${dir}/native/plugins.list)
-EOM
-
+modules="$(cat ${dir}/packages.list | grep -vP '^#')"
+# NATIVESCRIPT: modules="${modules}$(echo ; cat ${dir}/native/plugins.list)"
 
 npm install -f --ignore-scripts $(echo "${modules}" | tr '\n' ' ') || fail
 

@@ -11,6 +11,6 @@ cat >> ~/.bashrc <<- EOM
 	fi
 EOM
 
-source ~/.bashrc
-tns error-reporting disable
-tns usage-reporting disable
+# NATIVESCRIPT: source ~/.bashrc
+# NATIVESCRIPT: tns error-reporting disable
+# NATIVESCRIPT: tns usage-reporting disable

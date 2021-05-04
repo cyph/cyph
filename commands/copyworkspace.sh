@@ -21,7 +21,7 @@ for d in cyph.app cyph.com sdk ; do
 	../commands/ngprojectinit.sh
 done
 
-cd "${dir}/shared/js/native/js"
-for d in $(ls | grep -v standalone) ; do rm ${d} ; cp -a ../../${d} ${d} ; done
-cd standalone
-for f in * ; do rm ${f} ; cp ../../../standalone/${f} ./ ; done
+# NATIVESCRIPT: cd "${dir}/shared/js/native/js"
+# NATIVESCRIPT: for d in $(ls | grep -v standalone) ; do rm ${d} ; cp -a ../../${d} ${d} ; done
+# NATIVESCRIPT: cd standalone
+# NATIVESCRIPT: for f in * ; do rm ${f} ; cp ../../../standalone/${f} ./ ; done
