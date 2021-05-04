@@ -6,16 +6,18 @@ RUN apt-get -y --allow-downgrades update
 RUN apt-get -y --allow-downgrades install \
 	apt-transport-https \
 	apt-utils \
+	ca-certificates \
 	curl \
 	gnupg \
 	lsb-release \
 	software-properties-common
 
-RUN dpkg --add-architecture i386
 RUN echo "deb https://deb.nodesource.com/node_14.x buster main" >> /etc/apt/sources.list
 RUN echo 'deb https://dl.yarnpkg.com/debian/ stable main' >> /etc/apt/sources.list
+RUN echo 'deb https://packages.cloud.google.com/apt cloud-sdk main' >> /etc/apt/sources.list
 RUN curl -s https://deb.nodesource.com/gpgkey/nodesource.gpg.key | apt-key add -
 RUN curl -s https://dl.yarnpkg.com/debian/pubkey.gpg | apt-key add -
+RUN curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | apt-key add -
 
 RUN apt-get -y --allow-downgrades update
 RUN apt-get -y --allow-downgrades upgrade
@@ -24,6 +26,7 @@ RUN apt-get -y --allow-downgrades install \
 	autoconf \
 	automake \
 	build-essential \
+	chromium \
 	cmake \
 	devscripts \
 	dos2unix \
@@ -32,20 +35,17 @@ RUN apt-get -y --allow-downgrades install \
 	g++ \
 	git \
 	golang-go \
+	google-cloud-sdk \
 	haxe \
 	htop \
 	imagemagick \
 	inotify-tools \
 	jq \
-	lib32ncurses6 \
-	lib32z1 \
-	libbz2-1.0:i386 \
 	libgbm-dev \
 	libgconf-2-4 \
 	libglew-dev \
 	libglu1-mesa-dev \
 	libsodium-dev \
-	libstdc++6:i386 \
 	libtool \
 	libxi-dev \
 	libxss1 \
@@ -120,12 +120,6 @@ RUN chmod 700 /home/gibson/.bashrc
 USER gibson
 ENV HOME /home/gibson
 
-
-RUN wget \
-	https://dl.google.com/dl/cloudsdk/channels/rapid/downloads/google-cloud-sdk-250.0.0-linux-x86_64.tar.gz \
-	-O ~/gcloud-sdk.tar.gz
-RUN ls ~/*.tar.gz | xargs -I% tar xvzf % -C ~
-RUN rm ~/*.tar.gz
 
 #RUN mkdir ~/androidsdk
 #RUN wget https://dl.google.com/android/repository/tools_r25.2.5-linux.zip -O ~/androidsdk.zip
