@@ -43,7 +43,9 @@ wget "$(
 		.assets |
 		map(
 			.browser_download_url |
-			select(endswith("linux-amd64.tar.gz"))
+			select(endswith("linux-$(
+				if [ "$(arch)" == aarch64 ] ; then echo arm64 ; else echo amd64 ; fi
+			).tar.gz"))
 		)[0]
 	'
 )" -O go-ipfs.tar.gz

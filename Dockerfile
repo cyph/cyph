@@ -14,10 +14,8 @@ RUN apt-get -y --allow-downgrades install \
 
 RUN echo "deb https://deb.nodesource.com/node_14.x buster main" >> /etc/apt/sources.list
 RUN echo 'deb https://dl.yarnpkg.com/debian/ stable main' >> /etc/apt/sources.list
-RUN echo 'deb https://packages.cloud.google.com/apt cloud-sdk main' >> /etc/apt/sources.list
 RUN curl -s https://deb.nodesource.com/gpgkey/nodesource.gpg.key | apt-key add -
 RUN curl -s https://dl.yarnpkg.com/debian/pubkey.gpg | apt-key add -
-RUN curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | apt-key add -
 
 RUN apt-get -y --allow-downgrades update
 RUN apt-get -y --allow-downgrades upgrade
@@ -35,7 +33,6 @@ RUN apt-get -y --allow-downgrades install \
 	g++ \
 	git \
 	golang-go \
-	google-cloud-sdk \
 	haxe \
 	htop \
 	imagemagick \
@@ -120,6 +117,14 @@ RUN chmod 700 /home/gibson/.bashrc
 USER gibson
 ENV HOME /home/gibson
 
+
+RUN wget \
+	https://dl.google.com/dl/cloudsdk/channels/rapid/downloads/google-cloud-sdk-338.0.0-linux-$( \
+		if [ "$(arch)" == aarch64 ] ; then echo arm ; else echo x86_64 ; fi \
+	).tar.gz \
+	-O ~/gcloud-sdk.tar.gz
+RUN ls ~/*.tar.gz | xargs -I% tar xvzf % -C ~
+RUN rm ~/*.tar.gz
 
 #RUN mkdir ~/androidsdk
 #RUN wget https://dl.google.com/android/repository/tools_r25.2.5-linux.zip -O ~/androidsdk.zip
