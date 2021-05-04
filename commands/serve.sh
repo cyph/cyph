@@ -172,12 +172,15 @@ fi
 ./commands/cloudfunctions.js backend/cloudfunctions.list
 
 # TODO: Handle host checks
-gcloud beta emulators datastore start --no-store-on-disk --host-port 0.0.0.0:6000 &
+export DATASTORE_EMULATOR_HOST=0.0.0.0:6000
+gcloud beta emulators datastore start \
+	--host-port ${DATASTORE_EMULATOR_HOST} \
+	--no-store-on-disk \
+&
 bash -c "
 	cd backend
-	export DATASTORE_EMULATOR_HOST=0.0.0.0:6000
 	export LOCAL_ENV=true
-	export PORT=42000
+	export PORT=45000
 	$(node -e "console.log(
 		fs.readFileSync('backend/.build.yaml').toString()
 			.split('env_variables:')[1]
@@ -186,7 +189,7 @@ bash -c "
 			.map(s => s.trim().split(':'))
 			.map(([k, v]) => 'export ' + k + '=' + v.trim()).join('\n')
 	)")
-	gow run *.go
+	gin --all -i -p 42000 -a \${PORT} run *.go
 " &
 if [ "${site}" == 'backend' ] ; then sleep Infinity ; fi
 
