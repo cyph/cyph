@@ -736,7 +736,7 @@ then
 
 	cd functions
 
-	npm install
+	npm ci
 
 	cp ../../modules/*.js ~/.cyph/email-credentials.js js/
 	html-minifier --collapse-whitespace --minify-css --remove-comments js/email.html -o js/email.html

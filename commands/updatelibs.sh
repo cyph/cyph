@@ -43,6 +43,16 @@ cyph-prettier --write shared/lib/ipfs-gateways.json || fail
 cyph-prettier --write shared/lib/js/package.json || fail
 cyph-prettier --write shared/lib/js/package-lock.json || fail
 
+firebaseFunctionsTmp=$(mktemp -d)
+mkdir -p ${firebaseFunctionsTmp}/functions/node_modules
+cd ${firebaseFunctionsTmp}/functions
+cp ${dir}/firebase/functions/package.json ./
+npm install
+mv package-lock.json ${dir}/firebase/functions/
+cd ${dir}
+rm -rf ${firebaseFunctionsTmp}
+cyph-prettier --write firebase/functions/package-lock.json || fail
+
 rm */go.mod */go.sum 2> /dev/null
 find . -maxdepth 2 -type f -name .go.mod -exec bash -c '
 	cd $(echo "{}" | sed "s|/.go.mod||")
