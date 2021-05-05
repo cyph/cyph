@@ -1,7 +1,7 @@
 import {IAppointment, IAccountFileRecord} from '../proto/types';
 import {ISchedulerObjectBase} from './ischeduler-object-base';
 
-/** Data for SyncFusion scheduler component. */
+/** Data for Syncfusion scheduler component. */
 export interface ISchedulerObject extends ISchedulerObjectBase {
 	/** @see IAppointment */
 	/* eslint-disable-next-line @typescript-eslint/naming-convention */

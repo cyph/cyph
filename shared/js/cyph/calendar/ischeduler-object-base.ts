@@ -1,4 +1,4 @@
-/** Base data for SyncFusion scheduler component. */
+/** Base data for Syncfusion scheduler component. */
 export interface ISchedulerObjectBase {
 	/** Description. */
 	/* eslint-disable-next-line @typescript-eslint/naming-convention */
