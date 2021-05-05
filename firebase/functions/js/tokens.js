@@ -1,5 +1,6 @@
-import {potassiumService as potassium} from '@cyph/sdk';
-import msgpack from '@msgpack/msgpack';
+import {potassiumService as potassium, util} from '@cyph/sdk';
+
+const {dynamicDeserialize, dynamicSerializeBytes} = util;
 
 export const keyBytes = potassium.secretBox.keyBytes;
 
@@ -15,7 +16,7 @@ export const create = async (
 		expires: expires - expiryPadding,
 		token: Buffer.from(
 			await potassium.secretBox.seal(
-				msgpack.encode({...payload, expires}),
+				dynamicSerializeBytes({...payload, expires}),
 				key
 			)
 		).toString('hex')
@@ -27,7 +28,7 @@ export const open = async (token, key) => {
 		throw new Error('Missing token.');
 	}
 
-	const payload = msgpack.decode(
+	const payload = dynamicDeserialize(
 		await potassium.secretBox.open(Buffer.from(token, 'hex'), key)
 	);
 
