@@ -32,6 +32,7 @@ import {EnvService} from '../../services/env.service';
 import {StringsService} from '../../services/strings.service';
 import {WindowWatcherService} from '../../services/window-watcher.service';
 import {parseRecurrenceRule} from '../../util/calendar';
+import {decodeHTML} from '../../util/serialization/html-encoding';
 import {getDateTimeString} from '../../util/time';
 import {uuid} from '../../util/uuid';
 import {openWindow} from '../../util/window';
@@ -120,6 +121,13 @@ export class AccountAppointmentAgendaComponent extends BaseProvider
 
 	/** Edit appointment. */
 	private async appointmentEdit (data: ISchedulerObject) : Promise<void> {
+		/* Workaround for Syncfusion bug */
+		for (const [k, v] of Array.from(Object.entries(data))) {
+			if (typeof v === 'string') {
+				(<any> data)[k] = decodeHTML(v);
+			}
+		}
+
 		const oldAppointment = data.Appointment;
 
 		const reset = (message: string) => {

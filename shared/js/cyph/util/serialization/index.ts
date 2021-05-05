@@ -8,6 +8,7 @@ import {
 import {potassiumUtil} from '../../crypto/potassium/potassium-util';
 import {IProto} from '../../iproto';
 
+export * from './html-encoding';
 export * from './json';
 export * from './query-string';
 
