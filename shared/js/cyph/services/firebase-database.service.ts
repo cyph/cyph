@@ -1848,8 +1848,7 @@ export class FirebaseDatabaseService extends DatabaseService {
 							localLock(async () => {
 								if (
 									snapshot?.key &&
-									typeof (snapshot.val() || {}).hash !==
-										'string'
+									typeof snapshot.val()?.hash !== 'string'
 								) {
 									return onChildAdded(
 										await this.waitForValue(
@@ -1976,8 +1975,8 @@ export class FirebaseDatabaseService extends DatabaseService {
 									async () : Promise<void> => {
 										if (
 											snapshot?.key &&
-											typeof (snapshot.val() || {})
-												.hash !== 'string'
+											typeof snapshot.val()?.hash !==
+												'string'
 										) {
 											return onChildAdded(
 												await this.waitForValue(

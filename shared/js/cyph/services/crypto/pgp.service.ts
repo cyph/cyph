@@ -148,8 +148,7 @@ export class PGPService extends BaseProvider {
 
 								const expirationTime = await publicKey.getExpirationTime();
 
-								const userID =
-									(publicKey.users[0] || {}).userId || {};
+								const userID = publicKey.users[0]?.userId || {};
 
 								return {
 									comment: userID.comment,

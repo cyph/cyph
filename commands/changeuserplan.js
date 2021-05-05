@@ -127,20 +127,18 @@ export const changeUserPlan = async (
 	await cancelSubscriptions({
 		apple:
 			oldPaymentInfo.appStoreReceipt &&
-			oldPaymentInfo.appStoreReceipt !== paymentInfo.appStoreReceipt ?
+			oldPaymentInfo.appStoreReceipt !== paymentInfo?.appStoreReceipt ?
 				oldPaymentInfo.appStoreReceipt :
 				undefined,
 		braintree:
 			oldPaymentInfo.braintreeSubscriptionID &&
 			oldPaymentInfo.braintreeSubscriptionID !==
-				paymentInfo.braintreeSubscriptionID ?
+				paymentInfo?.braintreeSubscriptionID ?
 				oldPaymentInfo.braintreeSubscriptionID :
 				undefined,
 		stripe:
-			oldPaymentInfo.stripe &&
-			oldPaymentInfo.stripe.subscriptionItemID &&
-			oldPaymentInfo.stripe.subscriptionItemID !==
-				(paymentInfo.stripe || {}).subscriptionItemID ?
+			oldPaymentInfo.stripe?.subscriptionItemID !==
+			paymentInfo?.stripe?.subscriptionItemID ?
 				oldPaymentInfo.stripe.subscriptionItemID :
 				undefined
 	});
@@ -157,19 +155,19 @@ export const changeUserPlan = async (
 		setItem(namespace, `users/${username}/plan`, CyphPlan, {
 			plan: cyphPlan
 		}),
-		paymentInfo.appStoreReceipt ?
-			appStoreReceiptRef.set(paymentInfo.appStoreReceipt) :
+		paymentInfo?.appStoreReceipt ?
+			appStoreReceiptRef.set(paymentInfo?.appStoreReceipt) :
 			appStoreReceiptRef.remove(),
-		paymentInfo.braintreeID ?
-			braintreeIDRef.set(paymentInfo.braintreeID) :
+		paymentInfo?.braintreeID ?
+			braintreeIDRef.set(paymentInfo?.braintreeID) :
 			braintreeIDRef.remove(),
-		paymentInfo.braintreeSubscriptionID ?
+		paymentInfo?.braintreeSubscriptionID ?
 			braintreeSubscriptionIDRef.set(
-				paymentInfo.braintreeSubscriptionID
+				paymentInfo?.braintreeSubscriptionID
 			) :
 			braintreeSubscriptionIDRef.remove(),
-		paymentInfo.stripe ?
-			stripeRef.set(paymentInfo.stripe) :
+		paymentInfo?.stripe ?
+			stripeRef.set(paymentInfo?.stripe) :
 			stripeRef.remove(),
 		database
 			.ref(`${namespacePath}/users/${username}/internal/planTrialEnd`)

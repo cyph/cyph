@@ -112,7 +112,7 @@ while [ ! -f index.html ] ; do
 			await page.waitForSelector('#generate:not(.hide)');
 
 			const url = await page.evaluate(() =>
-				(document.querySelectorAll('a[href*=\".zip\"]')[0] || {}).href
+				document.querySelector('a[href*=\".zip\"]')?.href
 			);
 
 			if (!url) {

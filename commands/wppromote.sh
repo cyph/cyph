@@ -58,7 +58,7 @@ command="$(node -e "(async () => {
 	await page.waitForSelector('a[href\$=\".wpress\"]');
 
 	const url = await page.evaluate(() =>
-		(document.querySelectorAll('a[href\$=\".wpress\"]')[0] || {}).href
+		document.querySelector('a[href\$=\".wpress\"]')?.href
 	);
 
 	const cookies =
