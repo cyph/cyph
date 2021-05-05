@@ -330,6 +330,10 @@ done
 # Temporary workaround for broken dependency
 rm -rf google-auth-library/node_modules/fast-text-encoding &> /dev/null
 
+# Temporary workaround pending https://github.com/ashi009/node-fast-crc32c/pull/28
+echo 'Y29uc3Qge2NyYzMyY30gPSByZXF1aXJlKCdAbm9kZS1ycy9jcmMzMicpOwoKbW9kdWxlLmV4cG9ydHMgPSB7CiAgY2FsY3VsYXRlOiBjcmMzMmMsCn07Cg==' | base64 --decode > fast-crc32c/impls/rs_crc32c.js
+echo 'MWEyLDMKPiAgIGNvbnN0IG9zID0gcmVxdWlyZSgnb3MnKTsKPiAgIGNvbnN0IGlzWDg2ID0gbmV3IFNldChbJ2lhMzInLCAneDMyJywgJ3g2NCddKS5oYXMob3MuYXJjaCgpKTsKM2M1LDYKPCAgICAgJy4vaW1wbHMvc3NlNF9jcmMzMmMnLAotLS0KPiAgICAgLi4uKGlzWDg2ID8gWycuL2ltcGxzL3NzZTRfY3JjMzJjJ10gOiBbXSksCj4gICAgICcuL2ltcGxzL3JzX2NyYzMyYycsCg==' | base64 --decode | patch fast-crc32c/loader.js
+
 # Temporary workaround for simple btc rxjs version difference
 rm -rf simplebtc/node_modules &> /dev/null
 
