@@ -9,6 +9,7 @@ export const decodeHTML = (s: string) : string => {
 		throw new Error('Not implemented.');
 	}
 
+	/* eslint-disable-next-line @typescript-eslint/tslint/config */
 	textarea.innerHTML = s;
 	return textarea.value;
 };
