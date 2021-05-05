@@ -1,5 +1,7 @@
 module api
 
+go 1.15
+
 require (
 	cloud.google.com/go v0.81.0
 	cloud.google.com/go/datastore v1.5.0
@@ -9,7 +11,6 @@ require (
 	github.com/microcosm-cc/bluemonday v1.0.9
 	github.com/oschwald/geoip2-golang v1.5.0
 	github.com/stripe/stripe-go/v72 v72.43.0
-	google.golang.org/api v0.45.0
-	google.golang.org/appengine v1.6.7
-	google.golang.org/genproto v0.0.0-20210427215850-f767ed18ee4d
+	google.golang.org/api v0.46.0
+	google.golang.org/genproto v0.0.0-20210504143626-3b2ad6ccc450
 )
