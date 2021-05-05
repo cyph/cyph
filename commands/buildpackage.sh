@@ -294,7 +294,7 @@ else
 fi
 
 if [ -d nakedredirect ] ; then
-	cp backend/config.go nakedredirect/
+	cp -f backend/config.go nakedredirect/
 fi
 
 
