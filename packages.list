@@ -81,6 +81,7 @@
 @ngxs/logger-plugin
 @ngxs/storage-plugin
 @ngxs/store
+@node-rs/crc32
 @opentok/client
 @rign/angular2-filemanager
 @stripe/stripe-js
