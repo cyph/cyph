@@ -293,10 +293,6 @@ else
 	sed -i "s|${defaultHost}43000/root/||g" shared/js/cyph/env-deploy.ts
 fi
 
-if [ -d nakedredirect ] ; then
-	cp -f backend/config.go nakedredirect/
-fi
-
 
 # wpstatic + cache busting
 if [ "${cacheBustedProjects}" ] ; then
