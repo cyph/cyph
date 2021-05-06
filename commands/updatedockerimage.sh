@@ -39,15 +39,15 @@ emsdk activate latest-upstream
 cd
 rm -rf go-ipfs go-ipfs.tar.gz 2> /dev/null
 wget "$(
-	curl -s https://api.github.com/repos/ipfs/go-ipfs/releases/latest | jq -r '
+	curl -s https://api.github.com/repos/ipfs/go-ipfs/releases/latest | jq -r "
 		.assets |
 		map(
 			.browser_download_url |
-			select(endswith("linux-$(
+			select(endswith(\"linux-$(
 				if [ "$(arch)" == aarch64 ] ; then echo arm64 ; else echo amd64 ; fi
-			).tar.gz"))
+			).tar.gz\"))
 		)[0]
-	'
+	"
 )" -O go-ipfs.tar.gz
 tar xvzf go-ipfs.tar.gz
 cd go-ipfs
