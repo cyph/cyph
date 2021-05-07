@@ -20,8 +20,15 @@ function fetchRetry (url, options, timeout, retries, retryDelay) {
 }
 
 function fetchWithTimeout (url, options, timeout) {
+	function fetchHandler (o) {
+		if (!o.ok) {
+			throw new Error('Request failure: ' + url);
+		}
+		return o;
+	}
+
 	if (!timeout) {
-		return fetch(url, options);
+		return fetch(url, options).then(fetchHandler);
 	}
 
 	var abortController	= typeof AbortController !== 'undefined' ?
@@ -42,7 +49,7 @@ function fetchWithTimeout (url, options, timeout) {
 	return Promise.race([
 		fetch(url, options).then(function (o) {
 			clearTimeout(timeoutID);
-			return o;
+			return fetchHandler(o);
 		}),
 		new Promise(function (_, reject) {
 			timeoutID	= setTimeout(
