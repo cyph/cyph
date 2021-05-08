@@ -24,6 +24,7 @@ import (
 	"cloud.google.com/go/datastore"
 	"github.com/buu700/braintree-go-tmp"
 	"github.com/buu700/mustache-tmp"
+	gorillaHandlers "github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
 	"github.com/microcosm-cc/bluemonday"
 	"github.com/oschwald/geoip2-golang"
@@ -1225,7 +1226,7 @@ func handleFunc(pattern string, cron bool, handler Handler) {
 
 func handleFuncs(pattern string, cron bool, handlers Handlers) {
 	if !isRouterActive {
-		http.Handle("/", router)
+		http.Handle("/", gorillaHandlers.RecoveryHandler()(router))
 
 		isRouterActive = true
 	}
@@ -1294,6 +1295,12 @@ func handleFuncs(pattern string, cron bool, handlers Handlers) {
 				} else if b, err := json.Marshal(responseBody); err == nil {
 					output = string(b)
 					w.Header().Set("Content-Type", "application/json")
+				}
+
+				if responseBodyErr, ok := responseBody.(error); ok {
+					log.Printf("Error: %v", responseBodyErr)
+				} else {
+					log.Printf("Response: %s", output)
 				}
 
 				fmt.Fprint(w, output)
