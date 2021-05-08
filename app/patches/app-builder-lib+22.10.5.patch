@@ -26,3 +26,25 @@ index 41e067c..4e8d5d6 100644
  // __ts-babel@6.0.4
  //# sourceMappingURL=macPackager.js.map
 \ No newline at end of file
+diff --git a/node_modules/app-builder-lib/out/util/yarn.js b/node_modules/app-builder-lib/out/util/yarn.js
+index 0182f9e..e2812b4 100644
+--- a/node_modules/app-builder-lib/out/util/yarn.js
++++ b/node_modules/app-builder-lib/out/util/yarn.js
+@@ -125,7 +125,7 @@ function installDependencies(appDir, options) {
+     appDir
+   }, `installing production dependencies`);
+ 
+-  let execPath = process.env.npm_execpath || process.env.NPM_CLI_JS;
++  let execPath = require('child_process').spawnSync('which', ['npm']).stdout.toString().trim();
+   const execArgs = ["install"];
+   const npmUserAgent = process.env["npm_config_user_agent"];
+   const isYarn2 = npmUserAgent != null && npmUserAgent.startsWith("yarn/2.");
+@@ -194,7 +194,7 @@ async function rebuild(appDir, options) {
+     platform: options.platform || process.platform,
+     arch: options.arch || process.arch,
+     additionalArgs: options.additionalArgs,
+-    execPath: process.env.npm_execpath || process.env.NPM_CLI_JS,
++    execPath: require('child_process').spawnSync('which', ['npm']).stdout.toString().trim(),
+     buildFromSource: options.buildFromSource === true
+   };
+   const env = getGypEnv(options.frameworkInfo, configuration.platform, configuration.arch, options.buildFromSource === true);
