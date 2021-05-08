@@ -355,24 +355,22 @@ if [ "${electron}" ] ; then
 					[
 						'run',
 						'-it',
-						'--privileged=true',
-						...['.cyph', '.ssh', ['.gnupg', '.gnupg.original']].map(dir => [
-							'-v',
-							\`\${
-								path.join(
-									os.homedir(),
-									typeof dir === 'string' ? dir : dir[0]
-								)
-							}:/home/gibson/\${
-								typeof dir === 'string' ? dir : dir[1]
-							}\`
-						]).flat(),
 						'-v',
-						\`\${process.cwd()}:/cyph\`,
-						'cyph/dev',
+						\`\${process.cwd()}:/build\`,
+						'snapcore/snapcraft:stable',
 						'bash',
 						'-c',
-						'cd /cyph ; ' +
+						'cd /build ; ' +
+							'apt-get update ; ' +
+							'apt-get install -y curl apt-transport-https lsb-release ; ' +
+							'echo \"deb https://deb.nodesource.com/node_14.x \$(' +
+								'grep DISTRIB_CODENAME /etc/lsb-release | ' +
+								'tr \\'=\\' \\' \\' | ' +
+								'awk \\'{print \$2}\\'' +
+							') main\" >> /etc/apt/sources.list ; ' +
+							'curl -s https://deb.nodesource.com/gpgkey/nodesource.gpg.key | apt-key add - ; ' +
+							'apt-get update ; ' +
+							'apt-get install -y nodejs ; ' +
 							'npx cordova telemetry off ; ' +
 							'npx cordova build electron --release'
 					],
@@ -417,12 +415,14 @@ if [ "${electron}" ] ; then
 
 	cp -a platforms/electron/build/mas-universal/*.pkg build/${packageName}.pkg || exit 1
 	cp platforms/electron/build/*.appx build/${packageName}.appx || exit 1
-	cp platforms/electron/build/*.AppImage build/${packageName}.AppImage || exit 1
-	cp platforms/electron/build/*.deb build/${packageName}.deb || exit 1
+	# cp platforms/electron/build/*.AppImage build/${packageName}.AppImage || exit 1
+	# cp platforms/electron/build/*.deb build/${packageName}.deb || exit 1
 	cp platforms/electron/build/*.dmg build/${packageName}.dmg || exit 1
 	cp platforms/electron/build/*.exe build/${packageName}.exe || exit 1
-	cp platforms/electron/build/*.rpm build/${packageName}.rpm || exit 1
-	cp platforms/electron/build/*.snap build/${packageName}.snap || exit 1
+	# cp platforms/electron/build/*.rpm build/${packageName}.rpm || exit 1
+	cp platforms/electron/build/*_amd64.snap build/${packageName}.amd64.snap || exit 1
+	cp platforms/electron/build/*_arm64.snap build/${packageName}.arm64.snap || exit 1
+	cp platforms/electron/build/*_armhf.snap build/${packageName}.armhf.snap || exit 1
 
 	node -e "
 		$(echo "${electronScript}" | sed 's|--release|--debug|g')

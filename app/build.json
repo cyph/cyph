@@ -1,9 +1,10 @@
 {
 	"electron": {
 		"linux": {
+			"arch": ["arm64", "armv7l", "x64"],
 			"category": "Network",
 			"executableName": "cyph",
-			"package": ["AppImage", "deb", "rpm", "snap"]
+			"package": ["snap"]
 		},
 		"mac": {
 			"package": ["dmg", "mas"],
