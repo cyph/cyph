@@ -158,7 +158,7 @@ fi
 npm install
 
 if [ ! "${test}" ] ; then
-	npm run updateDefaultCacheValues
+	while ! npm run updateDefaultCacheValues ; do echo 'Retrying' ; done
 fi
 
 
