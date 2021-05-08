@@ -370,7 +370,9 @@ if [ "${electron}" ] ; then
 						'cyph/dev',
 						'bash',
 						'-c',
-						'cd /cyph ; npx cordova build electron --release'
+						'cd /cyph ; ' +
+							'npx cordova telemetry off ; ' +
+							'npx cordova build electron --release'
 					],
 					{stdio: 'inherit'}
 				);
