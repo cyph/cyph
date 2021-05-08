@@ -219,6 +219,8 @@ initPlatform () {
 		{stdio: 'inherit'}
 	).status)" ; done
 
+	node node_modules/patch-package/index.js
+
 	node -e "
 		const oldPackageJSON = JSON.parse(fs.readFileSync('package.json.old').toString());
 		const packageJSON = JSON.parse(fs.readFileSync('package.json').toString());
