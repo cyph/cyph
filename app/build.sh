@@ -257,7 +257,7 @@ if [ "${iOS}" ] ; then
 	fi
 
 	if ! which pod > /dev/null ; then
-		gem install cocoapods
+		brew install cocoapods
 	fi
 
 	npm install xcode
