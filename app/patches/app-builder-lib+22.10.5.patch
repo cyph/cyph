@@ -11,6 +11,19 @@ index 69f6a10..4ac26e7 100644
  exports.appleCertificatePrefixes = appleCertificatePrefixes;
  
  function isSignAllowed(isPrintWarn = true) {
+diff --git a/node_modules/app-builder-lib/out/codeSign/windowsCodeSign.js b/node_modules/app-builder-lib/out/codeSign/windowsCodeSign.js
+index a379ba4..b8d2c24 100644
+--- a/node_modules/app-builder-lib/out/codeSign/windowsCodeSign.js
++++ b/node_modules/app-builder-lib/out/codeSign/windowsCodeSign.js
+@@ -356,7 +356,7 @@ function getWinSignTool(vendorPath) {
+   if (isOldWin6()) {
+     return path.join(vendorPath, "windows-6", "signtool.exe");
+   } else {
+-    return path.join(vendorPath, "windows-10", process.arch, "signtool.exe");
++    return path.join(vendorPath, "windows-10", "x64", "signtool.exe");
+   }
+ }
+ 
 diff --git a/node_modules/app-builder-lib/out/macPackager.js b/node_modules/app-builder-lib/out/macPackager.js
 index 41e067c..4e8d5d6 100644
 --- a/node_modules/app-builder-lib/out/macPackager.js
@@ -27,7 +40,7 @@ index 41e067c..4e8d5d6 100644
  //# sourceMappingURL=macPackager.js.map
 \ No newline at end of file
 diff --git a/node_modules/app-builder-lib/out/util/yarn.js b/node_modules/app-builder-lib/out/util/yarn.js
-index 0182f9e..e2812b4 100644
+index 0182f9e..fb3f6d6 100644
 --- a/node_modules/app-builder-lib/out/util/yarn.js
 +++ b/node_modules/app-builder-lib/out/util/yarn.js
 @@ -125,7 +125,7 @@ function installDependencies(appDir, options) {
