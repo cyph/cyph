@@ -60,6 +60,7 @@ type CustomerEmail struct {
 // IPFSGatewayData : Data on an IPFS gateway
 type IPFSGatewayData struct {
 	ContinentCode string
+	SupportsIPv6  bool
 	URL           string
 }
 

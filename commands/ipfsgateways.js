@@ -24,22 +24,30 @@ export const ipfsGateways = memoize(async () => {
 		fs
 			.readFileSync(`${__dirname}/../shared/lib/ipfs-gateways.json`)
 			.toString()
-	).filter(
-		s =>
-			s.startsWith('https://') &&
-			!s.startsWith('https://:hash') &&
-			!blacklist.has(s)
-	);
+	)
+		.filter(
+			s =>
+				s.startsWith('https://') &&
+				!s.startsWith('https://:hash') &&
+				!blacklist.has(s)
+		)
+		.map(url => ({
+			host: new URL(url.replace(':hash.ipfs.', '')).host,
+			url
+		}));
 
 	return (await Promise.all(
-		gatewayURLs.map(async url => {
+		gatewayURLs.map(async ({host, url}) => {
 			try {
+				const [v4IPs, v6IPs] = await Promise.all([
+					dns.promises.resolve(host).catch(() => []),
+					dns.promises.resolve6(host).catch(() => [])
+				]);
+
 				return Array.from(
 					new Set(
 						await Promise.all(
-							(await dns.promises.resolve(
-								new URL(url.replace(':hash.ipfs.', '')).host
-							)).map(async ip =>
+							[...v4IPs, ...v6IPs].map(async ip =>
 								(
 									(await lookup).get(ip) || {
 										continent: {code: 'na'}
@@ -50,6 +58,7 @@ export const ipfsGateways = memoize(async () => {
 					)
 				).map(continentCode => ({
 					continentCode,
+					supportsIPv6: v6IPs.length > 0,
 					url
 				}));
 			}

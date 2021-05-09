@@ -63,13 +63,17 @@ func main() {
 
 	stripe.Key = stripeSecretKey
 
+	if isProd {
+		go func() {
+			checkAllIPFSGateways(false, false)
+		}()
+	}
+
 	port := os.Getenv("PORT")
 	if port == "" {
 		port = "443"
 	}
 	log.Fatal(http.ListenAndServe(fmt.Sprintf(":%s", port), nil))
-
-	checkAllIPFSGateways(false)
 }
 
 func analytics(h HandlerArgs) (interface{}, int) {
@@ -887,7 +891,7 @@ func getPackage(h HandlerArgs) (interface{}, int) {
 	_, continentCode, _, _, _, _, _, _ := geolocate(h)
 
 	return map[string]interface{}{
-		"gateways":  getIPFSGateways(continentCode),
+		"gateways":  getIPFSGateways(continentCode, isIPv6Request(h)),
 		"package":   packageData.Package,
 		"timestamp": packageData.Timestamp,
 	}, http.StatusOK

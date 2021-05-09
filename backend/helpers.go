@@ -19,6 +19,7 @@ import (
 	"os"
 	"strconv"
 	"strings"
+	"sync"
 	"time"
 
 	"cloud.google.com/go/datastore"
@@ -171,6 +172,7 @@ var analIDs = func() map[string]string {
 var cloudFunctionRoutes = strings.Split(getFileText("cloudfunctions.list"), "\n")
 
 var ipfsGatewayUptimeChecks = map[string]IPFSGatewayUptimeCheckData{}
+var ipfsGatewayUptimeChecksLock = sync.Mutex{}
 
 var ipfsGatewayURLs = func() []IPFSGatewayData {
 	if isLocalEnv {
@@ -190,6 +192,9 @@ var ipfsGatewayURLs = func() []IPFSGatewayData {
 
 	return gatewayURLs
 }()
+
+var ipfsGatewaysIPv6Support = map[string]bool{}
+var ipfsGatewayURLsLength = len(ipfsGatewayURLs)
 
 var ipfsGateways = func() map[string][]string {
 	gateways := map[string][]string{
@@ -211,12 +216,7 @@ var ipfsGateways = func() map[string][]string {
 		url := ipfsGatewayURLs[i].URL
 
 		gateways[continentCode] = append(gateways[continentCode], url)
-	}
-
-	for k := range gateways {
-		if len(gateways[k]) < 1 {
-			gateways[k] = gateways[config.DefaultContinentCode]
-		}
+		ipfsGatewaysIPv6Support[url] = ipfsGatewayURLs[i].SupportsIPv6
 	}
 
 	return gateways
@@ -427,28 +427,36 @@ func getIPString(h HandlerArgs) string {
 	return ip
 }
 
-func getIPFSGateways(continentCode string) []string {
+func isIPv6Request(h HandlerArgs) bool {
+	ip := net.ParseIP(getIPString(h))
+	return ip.To4() == nil
+}
+
+func getIPFSGateways(continentCode string, ipv6Only bool) []string {
 	backupContinentCode := config.DefaultContinentCode
 	if backupContinentCode == continentCode {
 		backupContinentCode = config.DefaultContinentCodeBackup
 	}
 
-	checkAllIPFSGateways(false)
+	getGateways := func() []string {
+		return append(
+			getIPFSGatewaysInternal(continentCode, ipv6Only),
+			getIPFSGatewaysInternal(backupContinentCode, ipv6Only)...,
+		)
+	}
 
-	gateways := append(
-		getIPFSGatewaysInternal(continentCode),
-		getIPFSGatewaysInternal(backupContinentCode)...,
-	)
+	checkAllIPFSGateways(false, ipv6Only)
+	gateways := getGateways()
 
 	if len(gateways) < 1 {
-		checkAllIPFSGateways(true)
-		return getIPFSGateways(continentCode)
+		checkAllIPFSGateways(true, ipv6Only)
+		gateways = getGateways()
 	}
 
 	return gateways
 }
 
-func getIPFSGatewaysInternal(continentCode string) []string {
+func getIPFSGatewaysInternal(continentCode string, ipv6Only bool) []string {
 	now := time.Now().Unix()
 
 	allGateways := ipfsGateways[continentCode]
@@ -457,13 +465,25 @@ func getIPFSGatewaysInternal(continentCode string) []string {
 	for i := range allGateways {
 		gateway := allGateways[i]
 
-		if uptimeCheck, ok := ipfsGatewayUptimeChecks[gateway]; ok && uptimeCheck.Result && config.IPFSGatewayUptimeCheckTTL > (now-uptimeCheck.Timestamp) {
+		if ipv6Only && !ipfsGatewaysIPv6Support[gateway] {
+			continue
+		}
+
+		ipfsGatewayUptimeChecksLock.Lock()
+		uptimeCheck, ok := ipfsGatewayUptimeChecks[gateway]
+		ipfsGatewayUptimeChecksLock.Unlock()
+
+		if ok && uptimeCheck.Result && config.IPFSGatewayUptimeCheckTTL > (now-uptimeCheck.Timestamp) {
 			gateways = append(gateways, gateway)
 		}
 	}
 
 	if len(gateways) < 1 {
-		return gateways
+		if continentCode == config.DefaultContinentCode {
+			return gateways
+		}
+
+		return getIPFSGatewaysInternal(config.DefaultContinentCode, ipv6Only)
 	}
 
 	index := nonSecureRandom.Intn(len(gateways))
@@ -474,23 +494,23 @@ func getIPFSGatewaysInternal(continentCode string) []string {
 	)
 }
 
-func checkAllIPFSGateways(forceRetry bool) {
-	uptimeResults := make(chan bool, len(ipfsGatewayURLs))
+func checkAllIPFSGateways(forceRetry bool, ipv6Only bool) {
+	uptimeResults := make(chan bool, ipfsGatewayURLsLength)
 
 	for i := range ipfsGatewayURLs {
 		gateway := ipfsGatewayURLs[i].URL
 
 		go func() {
-			uptimeResults <- checkIPFSGateway(gateway, forceRetry)
+			uptimeResults <- checkIPFSGateway(gateway, forceRetry, ipv6Only)
 		}()
 	}
 
-	for range ipfsGatewayURLs {
+	for i := 0; i < ipfsGatewayURLsLength; i++ {
 		<-uptimeResults
 	}
 }
 
-func checkIPFSGateway(gateway string, forceRetry bool) bool {
+func checkIPFSGateway(gateway string, forceRetry bool, ipv6Only bool) bool {
 	packageData := packages[config.DefaultPackage]
 
 	if packageData.Uptime.IPFSHash == "" {
@@ -498,19 +518,22 @@ func checkIPFSGateway(gateway string, forceRetry bool) bool {
 	}
 
 	if !forceRetry {
+		ipfsGatewayUptimeChecksLock.Lock()
 		uptimeCheck, ok := ipfsGatewayUptimeChecks[gateway]
+		ipfsGatewayUptimeChecksLock.Unlock()
+
 		if ok && config.IPFSGatewayUptimeCheckTTL > (time.Now().Unix()-uptimeCheck.Timestamp) {
 			return uptimeCheck.Result
 		}
 	}
 
-	result := true
+	result := false
 
 	client := &http.Client{
 		Timeout: config.IPFSGatewayUptimeCheckTimeout,
 	}
 
-	for i := 0; result && i < 3; i++ {
+	for i := 0; !result && i < 3; i++ {
 		req, err := http.NewRequest(
 			methods.GET,
 			strings.Replace(gateway, ":hash", packageData.Uptime.IPFSHash, 1),
@@ -524,19 +547,19 @@ func checkIPFSGateway(gateway string, forceRetry bool) bool {
 				if err == nil {
 					response := hex.EncodeToString(responseBodyBytes)
 					if response == packageData.Uptime.IntegrityHash {
-						continue
+						result = true
 					}
 				}
 			}
 		}
-
-		result = false
 	}
 
+	ipfsGatewayUptimeChecksLock.Lock()
 	ipfsGatewayUptimeChecks[gateway] = IPFSGatewayUptimeCheckData{
 		Result:    result,
 		Timestamp: time.Now().Unix(),
 	}
+	ipfsGatewayUptimeChecksLock.Unlock()
 
 	return result
 }
