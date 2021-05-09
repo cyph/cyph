@@ -372,18 +372,24 @@ if [ "${electron}" ] ; then
 							'apt-get update ; ' +
 							'apt-get install -y nodejs ; ' +
 							'npx cordova telemetry off ; ' +
-							'npx cordova build electron --release'
+							'while true ; do npx cordova build electron --release && break ; done'
 					],
 					{stdio: 'inherit'}
 				);
 				return;
 			}
 
-			child_process.spawnSync(
-				'npx',
-				['cordova', 'build', 'electron', '--release'],
-				{stdio: 'inherit'}
-			);
+			while (true) {
+				const {status} = child_process.spawnSync(
+					'npx',
+					['cordova', 'build', 'electron', '--release'],
+					{stdio: 'inherit'}
+				);
+
+				if (status === 0) {
+					break;
+				}
+			}
 		};
 
 		// Workraound for Cordova oversight
