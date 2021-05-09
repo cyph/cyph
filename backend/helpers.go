@@ -1298,9 +1298,9 @@ func handleFuncs(pattern string, cron bool, handlers Handlers) {
 				}
 
 				if responseBodyErr, ok := responseBody.(error); ok {
-					log.Printf("Error: %v", responseBodyErr)
+					log.Println(fmt.Errorf("error: %v", responseBodyErr))
 				} else {
-					log.Printf("Response: %s", output)
+					log.Printf("response: %s", output)
 				}
 
 				fmt.Fprint(w, output)
