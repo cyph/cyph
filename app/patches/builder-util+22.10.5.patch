@@ -1,0 +1,13 @@
+diff --git a/node_modules/builder-util/out/DebugLogger.js b/node_modules/builder-util/out/DebugLogger.js
+index e90ec24..aed9d83 100644
+--- a/node_modules/builder-util/out/DebugLogger.js
++++ b/node_modules/builder-util/out/DebugLogger.js
+@@ -56,7 +56,7 @@ class DebugLogger {
+     }
+ 
+     if (Array.isArray(o[lastName])) {
+-      o[lastName].push(value);
++      o[lastName] = [...o[lastName], value];
+     } else {
+       o[lastName] = value;
+     }
