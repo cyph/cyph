@@ -1,7 +1,7 @@
 {
 	"electron": {
 		"linux": {
-			"arch": ["arm64", "armv7l", "x64"],
+			"arch": ["armv7l", "x64"],
 			"category": "Network",
 			"executableName": "cyph",
 			"package": ["snap"]

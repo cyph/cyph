@@ -421,7 +421,7 @@ if [ "${electron}" ] ; then
 	cp platforms/electron/build/*.exe build/${packageName}.exe || exit 1
 	# cp platforms/electron/build/*.rpm build/${packageName}.rpm || exit 1
 	cp platforms/electron/build/*_amd64.snap build/${packageName}.amd64.snap || exit 1
-	cp platforms/electron/build/*_arm64.snap build/${packageName}.arm64.snap || exit 1
+	# cp platforms/electron/build/*_arm64.snap build/${packageName}.arm64.snap || exit 1
 	cp platforms/electron/build/*_armhf.snap build/${packageName}.armhf.snap || exit 1
 
 	node -e "
