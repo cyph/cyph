@@ -65,7 +65,10 @@ func main() {
 
 	if isProd {
 		go func() {
-			checkAllIPFSGateways(false, false)
+			for {
+				checkAllIPFSGateways()
+				time.Sleep(config.IPFSGatewayUptimeCheckTTL)
+			}
 		}()
 	}
 

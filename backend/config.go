@@ -169,7 +169,7 @@ var config = struct {
 	FirebaseRegions            []string
 	HPKPHeader                 string
 	HSTSHeader                 string
-	IPFSGatewayUptimeCheckTTL  int64
+	IPFSGatewayUptimeCheckTTL  time.Duration
 	MaxChannelDescriptorLength int
 	MaxSignupValueLength       int
 	NewCyphTimeout             int64
@@ -328,7 +328,7 @@ var config = struct {
 
 	HSTSHeader: "max-age=31536000; includeSubdomains; preload",
 
-	IPFSGatewayUptimeCheckTTL: int64(1800),
+	IPFSGatewayUptimeCheckTTL: time.Millisecond * time.Duration(1800),
 
 	MaxChannelDescriptorLength: 150,
 
