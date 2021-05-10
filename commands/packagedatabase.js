@@ -16,9 +16,37 @@ const repoPath = `${os.homedir()}/.cyph/repos/cdn`;
 const options = {cwd: repoPath};
 const globOptions = {cwd: repoPath, symlinks: true};
 
-const minimumSupportedMbps = 0.5;
+const clientMaximumAllowedLatency = 5000;
+const clientMinimumSupportedMbps = 0.5;
+const serverMaximumAllowedLatency = 1500;
+const serverMinimumSupportedMbps = 10;
 
 const getFiles = memoize(pattern => glob(pattern, globOptions));
+
+const getSubresourceTimeouts = (
+	packageName,
+	maximumAllowedLatency,
+	minimumSupportedMbps
+) =>
+	getFiles(`${packageName}/**/*.ipfs`)
+		.map(ipfs => `${ipfs.slice(0, -5)}.br`)
+		.map(br => [
+			br.slice(packageName.length + 1, -3),
+			Math.round(
+				(fs.statSync(path.join(repoPath, br)).size /
+					((1024 * 1024) / 8) /
+					minimumSupportedMbps) *
+					1000 +
+					maximumAllowedLatency
+			)
+		])
+		.reduce(
+			(subresources, [subresource, timeout]) => ({
+				...subresources,
+				[subresource]: timeout
+			}),
+			{}
+		);
 
 export const packageDatabase = () => {
 	updateRepos();
@@ -41,25 +69,10 @@ export const packageDatabase = () => {
 						options
 					)
 					.stdout.toString()
-			) || 0,
-			fs.existsSync(path.join(repoPath, pkg.slice(0, -6) + 'pkg.ipfs')) ?
-				{
-					integrityHash: fs
-						.readFileSync(
-							path.join(repoPath, pkg.slice(0, -6) + 'pkg.br')
-						)
-						.toString('hex'),
-					ipfsHash: fs
-						.readFileSync(
-							path.join(repoPath, pkg.slice(0, -6) + 'pkg.ipfs')
-						)
-						.toString()
-						.trim()
-				} :
-				{}
+			) || 0
 		])
 		.reduce(
-			(packages, [packageName, root, timestamp, uptime]) => ({
+			(packages, [packageName, root, timestamp]) => ({
 				...packages,
 				[packageName]: {
 					package: {
@@ -79,30 +92,43 @@ export const packageDatabase = () => {
 								}),
 								{}
 							),
-						subresourceTimeouts: getFiles(
-							`${packageName}/**/*.ipfs`
+						subresourceTimeouts: getSubresourceTimeouts(
+							packageName,
+							clientMaximumAllowedLatency,
+							clientMinimumSupportedMbps
 						)
-							.map(ipfs => `${ipfs.slice(0, -5)}.br`)
-							.map(br => [
-								br.slice(packageName.length + 1, -3),
-								Math.round(
-									(fs.statSync(path.join(repoPath, br)).size /
-										((1024 * 1024) / 8) /
-										minimumSupportedMbps) *
-										1000 +
-										5000
-								)
-							])
-							.reduce(
-								(subresources, [subresource, timeout]) => ({
-									...subresources,
-									[subresource]: timeout
-								}),
-								{}
-							)
 					},
 					timestamp,
-					uptime
+					uptime: Array.from(
+						Object.entries(
+							getSubresourceTimeouts(
+								packageName,
+								serverMaximumAllowedLatency,
+								serverMinimumSupportedMbps
+							)
+						)
+					).map(([subresource, timeout]) => ({
+						expectedResponseSize: fs
+							.readFileSync(
+								path.join(
+									repoPath,
+									packageName,
+									`${subresource}.br`
+								)
+							)
+							.toString('hex').length,
+						ipfsHash: fs
+							.readFileSync(
+								path.join(
+									repoPath,
+									packageName,
+									`${subresource}.ipfs`
+								)
+							)
+							.toString()
+							.trim(),
+						timeout
+					}))
 				}
 			}),
 			{}

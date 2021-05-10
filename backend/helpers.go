@@ -513,7 +513,7 @@ func checkAllIPFSGateways(forceRetry bool, ipv6Only bool) {
 func checkIPFSGateway(gateway string, forceRetry bool, ipv6Only bool) bool {
 	packageData := packages[config.DefaultPackage]
 
-	if packageData.Uptime.IPFSHash == "" {
+	if len(packageData.Uptime) < 1 {
 		return true
 	}
 
@@ -527,30 +527,40 @@ func checkIPFSGateway(gateway string, forceRetry bool, ipv6Only bool) bool {
 		}
 	}
 
-	result := false
+	result := true
 
-	client := &http.Client{
-		Timeout: config.IPFSGatewayUptimeCheckTimeout,
-	}
+	for i := range packageData.Uptime {
+		uptime := packageData.Uptime[i]
 
-	for i := 0; !result && i < 3; i++ {
-		req, err := http.NewRequest(
-			methods.GET,
-			strings.Replace(gateway, ":hash", packageData.Uptime.IPFSHash, 1),
-			nil,
-		)
+		client := &http.Client{
+			Timeout: time.Millisecond * uptime.Timeout,
+		}
 
-		if err == nil {
-			resp, err := client.Do(req)
-			if err == nil && resp.Header.Get("Access-Control-Allow-Origin") == "*" {
-				responseBodyBytes, err := ioutil.ReadAll(resp.Body)
-				if err == nil {
-					response := hex.EncodeToString(responseBodyBytes)
-					if response == packageData.Uptime.IntegrityHash {
-						result = true
+		for j := 0; result && j < 3; j++ {
+			req, err := http.NewRequest(
+				methods.GET,
+				strings.Replace(gateway, ":hash", uptime.IPFSHash, 1),
+				nil,
+			)
+
+			if err == nil {
+				resp, err := client.Do(req)
+				if err == nil && resp.Header.Get("Access-Control-Allow-Origin") == "*" {
+					responseBodyBytes, err := ioutil.ReadAll(resp.Body)
+					if err == nil {
+						response := hex.EncodeToString(responseBodyBytes)
+						if len(response) == uptime.ExpectedResponseSize {
+							break
+						}
 					}
 				}
 			}
+
+			result = false
+		}
+
+		if !result {
+			break
 		}
 	}
 

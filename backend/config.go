@@ -72,15 +72,16 @@ type IPFSGatewayUptimeCheckData struct {
 
 // IPFSGatewayUptimeData : Data used to check whether a gateway is working
 type IPFSGatewayUptimeData struct {
-	IntegrityHash string
-	IPFSHash      string
+	ExpectedResponseSize int
+	IPFSHash             string
+	Timeout              time.Duration
 }
 
 // PackageData : Data for an application package
 type PackageData struct {
 	Package   interface{}
 	Timestamp int64
-	Uptime    IPFSGatewayUptimeData
+	Uptime    []IPFSGatewayUptimeData
 }
 
 // Plan : Subscription plan
@@ -135,47 +136,46 @@ type StripeData struct {
 var empty = struct{}{}
 
 var config = struct {
-	AllowedCyphIDs                *regexp.Regexp
-	AllowedCyphIDLength           int
-	AllowedHeaders                string
-	AllowedMethods                string
-	AllowedHosts                  map[string]none
-	AnalID                        string
-	APIKeyByteLength              int
-	BitPayToken                   string
-	BurnerChannelExpiration       int64
-	CacheControlHeader            string
-	CloudFunctionRoutes           []string
-	ContinentFirebaseRegions      map[string]string
-	Continents                    map[string]none
-	DefaultContinent              string
-	DefaultContinentCode          string
-	DefaultContinentCodeBackup    string
-	DefaultFirebaseRegion         string
-	DefaultLanguageCode           string
-	DefaultPackage                string
-	DummyAnalID                   string
-	DummyCity                     string
-	DummyContinent                string
-	DummyContinentCode            string
-	DummyCountry                  string
-	DummyCountryCode              string
-	DummyPostalCode               string
-	DummyOrg                      string
-	EmailAddress                  string
-	FirebaseProjects              []string
-	FirebaseRegions               []string
-	HPKPHeader                    string
-	HSTSHeader                    string
-	IPFSGatewayUptimeCheckTimeout time.Duration
-	IPFSGatewayUptimeCheckTTL     int64
-	MaxChannelDescriptorLength    int
-	MaxSignupValueLength          int
-	NewCyphTimeout                int64
-	PartnerConversionURL          string
-	PartnerDiscountRate           int64
-	PlanAppleIDs                  map[string]string
-	TaskQueuePath                 string
+	AllowedCyphIDs             *regexp.Regexp
+	AllowedCyphIDLength        int
+	AllowedHeaders             string
+	AllowedMethods             string
+	AllowedHosts               map[string]none
+	AnalID                     string
+	APIKeyByteLength           int
+	BitPayToken                string
+	BurnerChannelExpiration    int64
+	CacheControlHeader         string
+	CloudFunctionRoutes        []string
+	ContinentFirebaseRegions   map[string]string
+	Continents                 map[string]none
+	DefaultContinent           string
+	DefaultContinentCode       string
+	DefaultContinentCodeBackup string
+	DefaultFirebaseRegion      string
+	DefaultLanguageCode        string
+	DefaultPackage             string
+	DummyAnalID                string
+	DummyCity                  string
+	DummyContinent             string
+	DummyContinentCode         string
+	DummyCountry               string
+	DummyCountryCode           string
+	DummyPostalCode            string
+	DummyOrg                   string
+	EmailAddress               string
+	FirebaseProjects           []string
+	FirebaseRegions            []string
+	HPKPHeader                 string
+	HSTSHeader                 string
+	IPFSGatewayUptimeCheckTTL  int64
+	MaxChannelDescriptorLength int
+	MaxSignupValueLength       int
+	NewCyphTimeout             int64
+	PartnerConversionURL       string
+	PartnerDiscountRate        int64
+	PlanAppleIDs               map[string]string
+	TaskQueuePath              string
 }{
 	AllowedCyphIDs: regexp.MustCompile("[A-Za-z0-9_-]+$"),
 
@@ -327,9 +327,7 @@ var config = struct {
 
 	HSTSHeader: "max-age=31536000; includeSubdomains; preload",
 
-	IPFSGatewayUptimeCheckTimeout: time.Millisecond * time.Duration(3000),
-
-	IPFSGatewayUptimeCheckTTL: int64(600),
+	IPFSGatewayUptimeCheckTTL: int64(1800),
 
 	MaxChannelDescriptorLength: 150,
 
