@@ -108,15 +108,13 @@ export const packageDatabase = () => {
 							)
 						)
 					).map(([subresource, timeout]) => ({
-						expectedResponseSize: fs
-							.readFileSync(
-								path.join(
-									repoPath,
-									packageName,
-									`${subresource}.br`
-								)
+						expectedResponseSize: fs.readFileSync(
+							path.join(
+								repoPath,
+								packageName,
+								`${subresource}.br`
 							)
-							.toString('hex').length,
+						).length,
 						ipfsHash: fs
 							.readFileSync(
 								path.join(
