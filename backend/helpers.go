@@ -557,8 +557,12 @@ func checkIPFSGateway(gateway string, retryIfFailed bool, ipv6Only bool) bool {
 
 			if err == nil {
 				resp, err := client.Do(req)
-				if err == nil && resp.Header.Get("Access-Control-Allow-Origin") == "*" {
+
+				if err == nil &&
+					resp.StatusCode == http.StatusOK &&
+					resp.Header.Get("Access-Control-Allow-Origin") == "*" {
 					responseBodyBytes, err := ioutil.ReadAll(resp.Body)
+
 					if err == nil && len(responseBodyBytes) == uptime.ExpectedResponseSize {
 						break
 					}
