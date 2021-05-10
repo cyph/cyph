@@ -78,9 +78,12 @@ function webSignSRI_Process (packageMetadata) {
 
 				return content;
 			}).catch(function () {
-				var ipfsHash	= packageMetadata.package.subresources[
-					path.replace(/^\//, '')
-				];
+				var subresource	= path.replace(/^\//, '');
+				var ipfsHash	= packageMetadata.package.subresources[subresource];
+				var timeout		=
+					(packageMetadata.package.subresourceTimeouts || {})[subresource] ||
+					60000
+				;
 
 				if (!ipfsHash) {
 					throw new Error('IPFS hash not found.');
@@ -95,7 +98,7 @@ function webSignSRI_Process (packageMetadata) {
 							ipfsHash
 						),
 						undefined,
-						60000
+						timeout
 					).then(function (response) {
 						return response.blob();
 					}).then(fromBlob).then(function (bytes) {
