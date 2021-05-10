@@ -18,8 +18,8 @@ const globOptions = {cwd: repoPath, symlinks: true};
 
 const clientMaximumAllowedLatency = 5000;
 const clientMinimumSupportedMbps = 0.5;
-const serverMaximumAllowedLatency = 1500;
-const serverMinimumSupportedMbps = 10;
+const serverMaximumAllowedLatency = 2500;
+const serverMinimumSupportedMbps = 1;
 
 const getFiles = memoize(pattern => glob(pattern, globOptions));
 
@@ -134,11 +134,14 @@ export const packageDatabase = memoize(() => {
 });
 
 if (isCLI) {
-	if (process.argv[2]) {
-		fs.writeFileSync(process.argv[2], JSON.stringify(packageDatabase()));
+	const file = process.argv[2];
+	const output = JSON.stringify(packageDatabase());
+
+	if (file) {
+		fs.writeFileSync(file, output);
 	}
 	else {
-		console.log(JSON.stringify(packageDatabase()));
+		console.log(output);
 	}
 
 	process.exit(0);

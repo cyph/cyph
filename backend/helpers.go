@@ -513,7 +513,9 @@ func checkIPFSGateway(gateway string) bool {
 			Timeout: time.Millisecond * uptime.Timeout,
 		}
 
-		for j := 0; result && j < 3; j++ {
+		innerResult := false
+
+		for j := 0; !innerResult && j < 3; j++ {
 			req, err := http.NewRequest(
 				methods.GET,
 				strings.Replace(gateway, ":hash", uptime.IPFSHash, 1),
@@ -529,15 +531,17 @@ func checkIPFSGateway(gateway string) bool {
 					responseBodyBytes, err := ioutil.ReadAll(resp.Body)
 
 					if err == nil && len(responseBodyBytes) == uptime.ExpectedResponseSize {
-						break
+						innerResult = true
+						continue
 					}
 				}
 			}
 
-			result = false
+			time.Sleep(time.Millisecond * time.Duration(1000))
 		}
 
-		if !result {
+		if !innerResult {
+			result = false
 			break
 		}
 	}

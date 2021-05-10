@@ -8,7 +8,9 @@ import fs from 'fs';
 import memoize from 'lodash-es/memoize.js';
 import maxmind from 'maxmind';
 import os from 'os';
+import Semaphore from 'promise-semaphore';
 import {URL} from 'url';
+import {promisify} from 'util';
 import {fetch} from './fetch.js';
 import {packageDatabase} from './packagedatabase.js';
 
@@ -19,32 +21,42 @@ const blacklist = new Set([
 	'https://ipfs.telos.miami/ipfs/:hash'
 ]);
 
-const uptimeCheck = async gateway => {
-	const {uptime} = packageDatabase()['cyph.app'];
-	let result = true;
+const uptimeSemaphore = new Semaphore({rooms: 2});
+const uptimeCheck = memoize(async gateway =>
+	uptimeSemaphore.add(async () => {
+		const {uptime} = packageDatabase()['cyph.app'];
 
-	for (const {expectedResponseSize, ipfsHash, timeout} of uptime) {
-		for (let i = 0; result && i < 3; ++i) {
-			const res = await fetch(gateway.replace(':hash', ipfsHash), {
-				timeout
-			}).catch(() => undefined);
+		for (const {expectedResponseSize, ipfsHash, timeout} of uptime) {
+			let innerResult = false;
 
-			const body = await res?.buffer();
+			for (let i = 0; !innerResult && i < 3; ++i) {
+				try {
+					const body = await fetch(
+						gateway.replace(':hash', ipfsHash),
+						{
+							timeout
+						},
+						'buffer'
+					);
 
-			if (body && body.length === expectedResponseSize) {
-				break;
+					if (body.length === expectedResponseSize) {
+						innerResult = true;
+						continue;
+					}
+
+					await promisify(setTimeout)(1000);
+				}
+				catch {}
 			}
 
-			result = false;
+			if (!innerResult) {
+				return {result: false};
+			}
 		}
 
-		if (!result) {
-			break;
-		}
-	}
-
-	return {result};
-};
+		return {result: true};
+	})
+);
 
 export const ipfsGateways = memoize(async () => {
 	const lookup = maxmind.open(os.homedir() + '/.cyph/GeoIP2-City.mmdb');
@@ -103,15 +115,19 @@ export const ipfsGateways = memoize(async () => {
 
 if (isCLI) {
 	(async () => {
+		const file = process.argv[2];
 		const output = JSON.stringify(await ipfsGateways());
 
-		if (process.argv[2]) {
-			fs.writeFileSync(process.argv[2], output);
+		if (file) {
+			fs.writeFileSync(file, output);
 		}
 		else {
 			console.log(output);
 		}
 
 		process.exit(0);
-	})();
+	})().catch(err => {
+		console.error(err);
+		process.exit(1);
+	});
 }
