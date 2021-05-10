@@ -171,9 +171,6 @@ var analIDs = func() map[string]string {
 
 var cloudFunctionRoutes = strings.Split(getFileText("cloudfunctions.list"), "\n")
 
-var ipfsGatewayUptimeChecks = map[string]IPFSGatewayUptimeCheckData{}
-var ipfsGatewayUptimeChecksLock = sync.Mutex{}
-
 var ipfsGatewayURLs = func() []IPFSGatewayData {
 	if isLocalEnv {
 		return []IPFSGatewayData{}
@@ -220,6 +217,18 @@ var ipfsGateways = func() map[string][]string {
 	}
 
 	return gateways
+}()
+
+var ipfsGatewayUptimeChecks = map[string]IPFSGatewayUptimeCheckData{}
+var ipfsGatewayUptimeChecksLock = sync.Mutex{}
+
+var ipfsGatewayUptimeCheckLocks = func() map[string]*sync.Mutex {
+	locks := map[string]*sync.Mutex{}
+	for i := range ipfsGatewayURLs {
+		gateway := ipfsGatewayURLs[i].URL
+		locks[gateway] = &sync.Mutex{}
+	}
+	return locks
 }()
 
 var packages = func() map[string]PackageData {
@@ -511,6 +520,9 @@ func checkAllIPFSGateways(forceRetry bool, ipv6Only bool) {
 }
 
 func checkIPFSGateway(gateway string, forceRetry bool, ipv6Only bool) bool {
+	ipfsGatewayUptimeCheckLocks[gateway].Lock()
+	defer ipfsGatewayUptimeCheckLocks[gateway].Unlock()
+
 	packageData := packages[config.DefaultPackage]
 
 	if len(packageData.Uptime) < 1 {
