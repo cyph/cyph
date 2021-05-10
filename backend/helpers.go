@@ -503,14 +503,14 @@ func getIPFSGatewaysInternal(continentCode string, ipv6Only bool) []string {
 	)
 }
 
-func checkAllIPFSGateways(forceRetry bool, ipv6Only bool) {
+func checkAllIPFSGateways(retryIfFailed bool, ipv6Only bool) {
 	uptimeResults := make(chan bool, ipfsGatewayURLsLength)
 
 	for i := range ipfsGatewayURLs {
 		gateway := ipfsGatewayURLs[i].URL
 
 		go func() {
-			uptimeResults <- checkIPFSGateway(gateway, forceRetry, ipv6Only)
+			uptimeResults <- checkIPFSGateway(gateway, retryIfFailed, ipv6Only)
 		}()
 	}
 
@@ -519,7 +519,7 @@ func checkAllIPFSGateways(forceRetry bool, ipv6Only bool) {
 	}
 }
 
-func checkIPFSGateway(gateway string, forceRetry bool, ipv6Only bool) bool {
+func checkIPFSGateway(gateway string, retryIfFailed bool, ipv6Only bool) bool {
 	ipfsGatewayUptimeCheckLocks[gateway].Lock()
 	defer ipfsGatewayUptimeCheckLocks[gateway].Unlock()
 
@@ -529,14 +529,14 @@ func checkIPFSGateway(gateway string, forceRetry bool, ipv6Only bool) bool {
 		return true
 	}
 
-	if !forceRetry {
-		ipfsGatewayUptimeChecksLock.Lock()
-		uptimeCheck, ok := ipfsGatewayUptimeChecks[gateway]
-		ipfsGatewayUptimeChecksLock.Unlock()
+	ipfsGatewayUptimeChecksLock.Lock()
+	uptimeCheck, ok := ipfsGatewayUptimeChecks[gateway]
+	ipfsGatewayUptimeChecksLock.Unlock()
 
-		if ok && config.IPFSGatewayUptimeCheckTTL > (time.Now().Unix()-uptimeCheck.Timestamp) {
-			return uptimeCheck.Result
-		}
+	if ok &&
+		(!retryIfFailed || uptimeCheck.Result) &&
+		config.IPFSGatewayUptimeCheckTTL > (time.Now().Unix()-uptimeCheck.Timestamp) {
+		return uptimeCheck.Result
 	}
 
 	result := true
