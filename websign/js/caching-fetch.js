@@ -1,4 +1,4 @@
-function fetchRetry (url, options, timeout, retries, retryDelay) {
+function fetchRetry (url, options, responseType, timeout, retries, retryDelay) {
 	if (retries === undefined) {
 		retries		= 5;
 	}
@@ -6,7 +6,7 @@ function fetchRetry (url, options, timeout, retries, retryDelay) {
 		retryDelay	= 500;
 	}
 
-	return fetchWithTimeout(url, options, timeout).catch(function (err) {
+	return fetchWithTimeout(url, options, responseType, timeout).catch(function (err) {
 		if (retries < 1) {
 			return Promise.reject(err);
 		}
@@ -14,17 +14,18 @@ function fetchRetry (url, options, timeout, retries, retryDelay) {
 		return new Promise(function (resolve) {
 			setTimeout(resolve, retryDelay);
 		}).then(function () {
-			return fetchRetry(url, options, timeout, retries - 1, retryDelay);
+			return fetchRetry(url, options, responseType, timeout, retries - 1, retryDelay);
 		});
 	});
 }
 
-function fetchWithTimeout (url, options, timeout) {
+function fetchWithTimeout (url, options, responseType, timeout) {
 	function fetchHandler (o) {
 		if (!o.ok) {
 			throw new Error('Request failure: ' + url);
 		}
-		return o;
+
+		return o[responseType || 'text']();
 	}
 
 	if (!timeout) {
@@ -47,9 +48,9 @@ function fetchWithTimeout (url, options, timeout) {
 	var timeoutID;
 
 	return Promise.race([
-		fetch(url, options).then(function (o) {
+		fetch(url, options).then(fetchHandler).then(function (o) {
 			clearTimeout(timeoutID);
-			return fetchHandler(o);
+			return o;
 		}),
 		new Promise(function (_, reject) {
 			timeoutID	= setTimeout(
@@ -79,9 +80,7 @@ function cachingFetch (url) {
 			return value;
 		}
 
-		return fetchRetry(url).then(function (response) {
-			return response.text();
-		}).then(function (s) {
+		return fetchRetry(url).then(function (s) {
 			var value	= s.trim();
 			localforage.setItem(key, value).catch(function () {});
 			return value;

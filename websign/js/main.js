@@ -51,10 +51,9 @@ Promise.resolve().then(function () {
 		return fetchRetry(
 			config.packageURL + packageName,
 			undefined,
+			undefined,
 			45000
-		).then(function (response) {
-			return response.text();
-		}).then(function (s) {
+		).then(function (s) {
 			var packageMetadata	= JSON.parse(s);
 
 			if (
@@ -75,10 +74,9 @@ Promise.resolve().then(function () {
 	return fetchRetry(
 		config.packageTimestampURL + packageName,
 		undefined,
+		undefined,
 		15000
-	).then(function (response) {
-		return response.text();
-	}).then(function (s) {
+	).then(function (s) {
 		var timestamp	= parseInt(s, 10);
 
 		return timestamp > oldPackageMetadata.timestamp ?

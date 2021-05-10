@@ -98,10 +98,9 @@ function webSignSRI_Process (packageMetadata) {
 							ipfsHash
 						),
 						undefined,
+						'blob',
 						timeout
-					).then(function (response) {
-						return response.blob();
-					}).then(fromBlob).then(function (bytes) {
+					).then(fromBlob).then(function (bytes) {
 						var content	=
 							superSphincs._sodiumUtil.to_string(
 								BrotliDecode(bytes)

@@ -55,16 +55,16 @@
 > }) :
 > 
 > 
-176c204,207
+174c202,205
 < }).
 ---
 > })
 > 
 > 
 > ).
-180a212
+178a210
 > 	var bodyHTML	= o.package.split('<body>')[1].split('</body>')[0];
-186,187c218,228
+184,185c216,226
 < 	document.head.innerHTML	= headHTML;
 < 	document.body.innerHTML	= o.package.split('<body>')[1].split('</body>')[0];
 ---
@@ -79,7 +79,7 @@
 > 	}
 > 
 > 	var scriptRegex		= /<script[\s$>].*?<\/script>/g;
-189,192c230,304
+187,190c228,302
 < 	webSignSRI(o.packageMetadata).catch(function (err) {
 < 		document.head.innerHTML		= '';
 < 		document.body.textContent	= err;

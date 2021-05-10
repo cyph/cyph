@@ -76,7 +76,7 @@
 > 		delete storage.webSignPackageName;
 > 		delete storage.webSignPackageTimestamp;
 > 	}
-168,207c178,180
+166,205c176,178
 < /* Before finishing, perform self-administered
 < 	integrity check on WebSign bootstrap */
 < catch(function () {
@@ -121,7 +121,7 @@
 > /* Successfully execute package */
 > then(function (o) {
 > 	var headHTML	= o.package.split('<head>')[1].split('</head>')[0];
-209,216c182,183
+207,214c180,181
 < 	if (!hashWhitelist[storage.webSignHash]) {
 < 		throw {
 < 			webSignPanic: true,
@@ -133,7 +133,7 @@
 ---
 > 	if (device.platform === 'iOS') {
 > 		headHTML	= headHTML.replace('href="/"', 'href="#"');
-219,224c186
+217,222c184
 < 	throw null;
 < }).
 < 
@@ -142,7 +142,7 @@
 < 	document.head.innerHTML	= o.package.split('<head>')[1].split('</head>')[0];
 ---
 > 	document.head.innerHTML	= headHTML;
-234,271c196,200
+232,269c194,198
 < catch(function (err) {
 < 	var messageElement;
 < 
@@ -187,12 +187,12 @@
 > 		if (cordova && cordova.plugins && cordova.plugins.backgroundMode) {
 > 			cordova.plugins.backgroundMode.disable();
 > 		}
-272a202,205
+270a200,203
 > 	catch (_) {}
 > 
 > 	var messageElement			= document.getElementById('websign-load-message');
 > 	messageElement.innerText	= config.abortText;
-286c219
+284c217
 < })();
 ---
 > }); });
