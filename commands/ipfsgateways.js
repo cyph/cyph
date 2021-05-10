@@ -15,10 +15,7 @@ import {fetch} from './fetch.js';
 import {packageDatabase} from './packagedatabase.js';
 
 /* Blacklist of known bad or flagged gateways */
-const blacklist = new Set([
-	'https://astyanax.io/ipfs/:hash',
-	'https://ipfs.telos.miami/ipfs/:hash'
-]);
+const blacklist = new Set(['https://astyanax.io/ipfs/:hash']);
 
 const uptimeSemaphore = new Semaphore({rooms: 2});
 const uptimeCheck = memoize(async gateway =>
