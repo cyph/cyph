@@ -9,6 +9,8 @@ import memoize from 'lodash-es/memoize.js';
 import maxmind from 'maxmind';
 import os from 'os';
 import {URL} from 'url';
+import {fetch} from './fetch.js';
+import {packageDatabase} from './packagedatabase.js';
 
 /* Blacklist of known bad or flagged gateways */
 const blacklist = new Set([
@@ -16,6 +18,35 @@ const blacklist = new Set([
 	'https://ipfs.overpi.com/ipfs/:hash',
 	'https://ipfs.telos.miami/ipfs/:hash'
 ]);
+
+const timestamp = Math.floor(Date.now() / 1000);
+
+const uptimeCheck = async gateway => {
+	const {uptime} = packageDatabase()['cyph.app'];
+	let result = true;
+
+	for (const {expectedResponseSize, ipfsHash, timeout} of uptime) {
+		for (let i = 0; result && i < 3; ++i) {
+			const res = await fetch(gateway.replace(':hash', ipfsHash), {
+				timeout
+			}).catch(() => undefined);
+
+			const body = await res?.buffer();
+
+			if (body && body.length === expectedResponseSize) {
+				break;
+			}
+
+			result = false;
+		}
+
+		if (!result) {
+			break;
+		}
+	}
+
+	return {result, timestamp};
+};
 
 export const ipfsGateways = memoize(async () => {
 	const lookup = maxmind.open(os.homedir() + '/.cyph/GeoIP2-City.mmdb');
@@ -44,23 +75,26 @@ export const ipfsGateways = memoize(async () => {
 					dns.promises.resolve6(host).catch(() => [])
 				]);
 
-				return Array.from(
-					new Set(
-						await Promise.all(
-							[...v4IPs, ...v6IPs].map(async ip =>
-								(
-									(await lookup).get(ip) || {
-										continent: {code: 'na'}
-									}
-								).continent.code.toLowerCase()
+				return Promise.all(
+					Array.from(
+						new Set(
+							await Promise.all(
+								[...v4IPs, ...v6IPs].map(async ip =>
+									(
+										(await lookup).get(ip) || {
+											continent: {code: 'na'}
+										}
+									).continent.code.toLowerCase()
+								)
 							)
 						)
-					)
-				).map(continentCode => ({
-					continentCode,
-					supportsIPv6: v6IPs.length > 0,
-					url
-				}));
+					).map(async continentCode => ({
+						continentCode,
+						supportsIPv6: v6IPs.length > 0,
+						uptimeCheck: await uptimeCheck(url),
+						url
+					}))
+				);
 			}
 			catch {
 				return [];

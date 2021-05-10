@@ -48,7 +48,7 @@ const getSubresourceTimeouts = (
 			{}
 		);
 
-export const packageDatabase = () => {
+export const packageDatabase = memoize(() => {
 	updateRepos();
 
 	return getFiles('**/pkg.gz')
@@ -131,7 +131,7 @@ export const packageDatabase = () => {
 			}),
 			{}
 		);
-};
+});
 
 if (isCLI) {
 	if (process.argv[2]) {

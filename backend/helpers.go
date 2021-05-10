@@ -191,6 +191,8 @@ var ipfsGatewayURLs = func() []IPFSGatewayData {
 }()
 
 var ipfsGatewaysIPv6Support = map[string]bool{}
+var ipfsGatewayUptimeChecks = map[string]IPFSGatewayUptimeCheckData{}
+var ipfsGatewayUptimeChecksLock = sync.Mutex{}
 var ipfsGatewayURLsLength = len(ipfsGatewayURLs)
 
 var ipfsGateways = func() map[string][]string {
@@ -210,17 +212,16 @@ var ipfsGateways = func() map[string][]string {
 
 	for i := range ipfsGatewayURLs {
 		continentCode := ipfsGatewayURLs[i].ContinentCode
+		uptimeCheck := ipfsGatewayURLs[i].UptimeCheck
 		url := ipfsGatewayURLs[i].URL
 
 		gateways[continentCode] = append(gateways[continentCode], url)
 		ipfsGatewaysIPv6Support[url] = ipfsGatewayURLs[i].SupportsIPv6
+		ipfsGatewayUptimeChecks[url] = uptimeCheck
 	}
 
 	return gateways
 }()
-
-var ipfsGatewayUptimeChecks = map[string]IPFSGatewayUptimeCheckData{}
-var ipfsGatewayUptimeChecksLock = sync.Mutex{}
 
 var ipfsGatewayUptimeCheckLocks = func() map[string]*sync.Mutex {
 	locks := map[string]*sync.Mutex{}

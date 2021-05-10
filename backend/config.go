@@ -61,6 +61,7 @@ type CustomerEmail struct {
 type IPFSGatewayData struct {
 	ContinentCode string
 	SupportsIPv6  bool
+	UptimeCheck   IPFSGatewayUptimeCheckData
 	URL           string
 }
 

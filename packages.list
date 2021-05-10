@@ -204,6 +204,7 @@
 @typescript-eslint/typescript-estree
 @webcomponents/custom-elements
 @yaga/leaflet-ng2
+abort-controller
 angular-fittext
 angular-material-clock-time-picker
 angular-speed-dial
