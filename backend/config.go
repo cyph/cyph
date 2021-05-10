@@ -67,8 +67,7 @@ type IPFSGatewayData struct {
 
 // IPFSGatewayUptimeCheckData : Data on whether a gateway is working
 type IPFSGatewayUptimeCheckData struct {
-	Result    bool
-	Timestamp int64
+	Result bool
 }
 
 // IPFSGatewayUptimeData : Data used to check whether a gateway is working

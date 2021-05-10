@@ -555,8 +555,7 @@ func checkIPFSGateway(gateway string) bool {
 	ipfsGatewayUptimeChecksLock.Lock()
 	defer ipfsGatewayUptimeChecksLock.Unlock()
 	ipfsGatewayUptimeChecks[gateway] = IPFSGatewayUptimeCheckData{
-		Result:    result,
-		Timestamp: time.Now().Unix(),
+		Result: result,
 	}
 
 	return result

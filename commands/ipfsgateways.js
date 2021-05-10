@@ -19,8 +19,6 @@ const blacklist = new Set([
 	'https://ipfs.telos.miami/ipfs/:hash'
 ]);
 
-const timestamp = Math.floor(Date.now() / 1000);
-
 const uptimeCheck = async gateway => {
 	const {uptime} = packageDatabase()['cyph.app'];
 	let result = true;
@@ -45,7 +43,7 @@ const uptimeCheck = async gateway => {
 		}
 	}
 
-	return {result, timestamp};
+	return {result};
 };
 
 export const ipfsGateways = memoize(async () => {
