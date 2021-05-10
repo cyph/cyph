@@ -76,7 +76,7 @@
 > 		delete storage.webSignPackageName;
 > 		delete storage.webSignPackageTimestamp;
 > 	}
-166,205c176,178
+166,203c176,178
 < /* Before finishing, perform self-administered
 < 	integrity check on WebSign bootstrap */
 < catch(function () {
@@ -85,9 +85,7 @@
 < 	return Promise.all([
 < 		o,
 < 		Promise.all(config.files.map(function (file) {
-< 			return fetchRetry(file).then(function (response) {
-< 				return response.text();
-< 			}).catch(function () {
+< 			return fetchRetry(file).catch(function () {
 < 				return '';
 < 			});
 < 		}))
@@ -121,7 +119,7 @@
 > /* Successfully execute package */
 > then(function (o) {
 > 	var headHTML	= o.package.split('<head>')[1].split('</head>')[0];
-207,214c180,181
+205,212c180,181
 < 	if (!hashWhitelist[storage.webSignHash]) {
 < 		throw {
 < 			webSignPanic: true,
@@ -133,7 +131,7 @@
 ---
 > 	if (device.platform === 'iOS') {
 > 		headHTML	= headHTML.replace('href="/"', 'href="#"');
-217,222c184
+215,220c184
 < 	throw null;
 < }).
 < 
@@ -142,7 +140,7 @@
 < 	document.head.innerHTML	= o.package.split('<head>')[1].split('</head>')[0];
 ---
 > 	document.head.innerHTML	= headHTML;
-232,269c194,198
+230,267c194,198
 < catch(function (err) {
 < 	var messageElement;
 < 
@@ -187,12 +185,12 @@
 > 		if (cordova && cordova.plugins && cordova.plugins.backgroundMode) {
 > 			cordova.plugins.backgroundMode.disable();
 > 		}
-270a200,203
+268a200,203
 > 	catch (_) {}
 > 
 > 	var messageElement			= document.getElementById('websign-load-message');
 > 	messageElement.innerText	= config.abortText;
-284c217
+282c217
 < })();
 ---
 > }); });

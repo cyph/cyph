@@ -171,9 +171,7 @@ catch(function () {
 	return Promise.all([
 		o,
 		Promise.all(config.files.map(function (file) {
-			return fetchRetry(file).then(function (response) {
-				return response.text();
-			}).catch(function () {
+			return fetchRetry(file).catch(function () {
 				return '';
 			});
 		}))
