@@ -54,7 +54,7 @@ const uptimeCheck = memoize(async gateway =>
 	})
 );
 
-export const ipfsGateways = memoize(async () => {
+export const ipfsGateways = memoize(async skipUptimeCheck => {
 	const lookup = maxmind.open(os.homedir() + '/.cyph/GeoIP2-City.mmdb');
 
 	const gatewayURLs = JSON.parse(
@@ -97,7 +97,9 @@ export const ipfsGateways = memoize(async () => {
 					).map(async continentCode => ({
 						continentCode,
 						supportsIPv6: v6IPs.length > 0,
-						uptimeCheck: await uptimeCheck(url),
+						uptimeCheck: skipUptimeCheck ?
+							undefined :
+							await uptimeCheck(url),
 						url
 					}))
 				);
@@ -111,8 +113,9 @@ export const ipfsGateways = memoize(async () => {
 
 if (isCLI) {
 	(async () => {
-		const file = process.argv[2];
-		const output = JSON.stringify(await ipfsGateways());
+		const skipUptimeCheck = process.argv[2] === '--skip-uptime-check';
+		const file = skipUptimeCheck ? undefined : process.argv[2];
+		const output = JSON.stringify(await ipfsGateways(skipUptimeCheck));
 
 		if (file) {
 			fs.writeFileSync(file, output);

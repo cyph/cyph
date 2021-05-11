@@ -99,7 +99,7 @@ export ipfsGatewaysCache=""
 ipfsGateways () {
 	if [ ! "${ipfsGatewaysCache}" ] ; then
 		ipfsGatewaysCache="$(node -e "console.log(
-			$(/cyph/commands/ipfsgateways.js).map(o => o.url).join('\\n')
+			$(/cyph/commands/ipfsgateways.js --skip-uptime-check).map(o => o.url).join('\\n')
 		)")"
 	fi
 
