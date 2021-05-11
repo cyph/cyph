@@ -181,7 +181,7 @@ var config = struct {
 
 	AllowedCyphIDLength: 7,
 
-	AllowedHeaders: "Access-Control-Request-Method,Authorization,X-Forwarded-For",
+	AllowedHeaders: "Access-Control-Request-Method,Authorization,X-Forwarded-For,X-IPv6-Only",
 
 	AllowedMethods: "GET,HEAD,POST,PUT,DELETE,OPTIONS",
 
