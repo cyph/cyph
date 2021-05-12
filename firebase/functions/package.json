@@ -32,7 +32,7 @@
 		"markdown-it": "*",
 		"mustache": "*",
 		"node": "14",
-		"nodemailer": "^4",
+		"nodemailer": "^6",
 		"phone-number-timezone": "*",
 		"plivo": "*",
 		"stripe": "*",
