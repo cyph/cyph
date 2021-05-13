@@ -206,7 +206,6 @@
 @yaga/leaflet-ng2
 abort-controller
 angular-fittext
-angular-material-clock-time-picker
 angular-speed-dial
 angular2-draggable
 angular2-text-mask
@@ -343,6 +342,7 @@ ngx-captcha@https://github.com/buu700/ngx-captcha-tmp
 ngx-contextmenu
 ngx-image-cropper
 ngx-lottie
+ngx-material-timepicker
 ngx-progressbar
 ngx-scrollbar
 ngx-sharebuttons@8.0.4
