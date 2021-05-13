@@ -33,7 +33,7 @@ const exec = command =>
 		.trim();
 
 const open = url =>
-	require(path.join(__dirname, 'shared', 'node_modules', 'opn'))(url);
+	require(path.join(__dirname, 'shared', 'node_modules', 'open'))(url);
 
 const spawn = (command, args, cwd, env) =>
 	(
