@@ -194,7 +194,6 @@
 @types/quill
 @types/shelljs
 @types/simple-peer
-@types/stacktrace-js
 @types/universal-analytics
 @types/video.js
 @types/winbox
