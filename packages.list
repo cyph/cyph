@@ -401,6 +401,7 @@ stylelint
 stylelint-scss
 supersphincs
 tab-indent
+tailwindcss
 terser
 terser-webpack-plugin@^5
 text-mask-addons
