@@ -424,7 +424,7 @@ tsutils
 typedoc
 typescript@~4.2
 u2f-api-polyfill
-uglify-es
+uglify-js
 universal-analytics
 unsemantic
 video.js
