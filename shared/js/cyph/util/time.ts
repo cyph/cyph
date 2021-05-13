@@ -16,13 +16,13 @@ import {sleep} from './wait';
 /** @ignore */
 const stringFormats = {
 	date: {
-		day: 'numeric',
-		hour: 'numeric',
-		minute: 'numeric',
-		month: 'short',
-		year: 'numeric'
+		day: <'numeric'> 'numeric',
+		hour: <'numeric'> 'numeric',
+		minute: <'numeric'> 'numeric',
+		month: <'short'> 'short',
+		year: <'numeric'> 'numeric'
 	},
-	time: {hour: 'numeric', minute: 'numeric'}
+	time: {hour: <'numeric'> 'numeric', minute: <'numeric'> 'numeric'}
 };
 
 /** @ignore */
