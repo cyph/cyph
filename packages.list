@@ -365,7 +365,7 @@ prettier
 primeng
 promise-semaphore
 protobufjs
-protractor@^6
+protractor
 pulltorefreshjs
 puppeteer
 quill
@@ -379,7 +379,7 @@ recordrtc
 reflect-metadata
 request
 resize-observer-polyfill
-retire@^2
+retire
 rlwe
 rrule
 rsvp
