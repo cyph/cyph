@@ -194,6 +194,7 @@
 @types/pdfkit
 @types/pulltorefreshjs
 @types/quill
+@types/shelljs
 @types/simple-peer
 @types/stacktrace-js
 @types/universal-analytics
@@ -385,6 +386,7 @@ rxjs@^6
 rxjs-tslint-rules
 rxjs-tslint@0.1.5
 sass
+shelljs
 sidh
 simple-peer
 simplebtc
