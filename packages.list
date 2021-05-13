@@ -274,7 +274,7 @@ html2canvas
 htmlencode
 htmllint
 husky
-ical-generator@~0.2
+ical-generator
 image-type
 intro.js
 isomorphic-git
@@ -344,7 +344,7 @@ ngx-scrollbar
 ngx-sharebuttons@8.0.4
 ngx-teximate
 node-fetch
-nodemailer@4
+nodemailer
 notify-cli
 ntru
 openpgp

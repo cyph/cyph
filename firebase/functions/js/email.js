@@ -268,7 +268,7 @@ export const sendEmailInternal = async (
 									{url: eventDetails.url} :
 									{})
 							}],
-						method: cancelEvent ? 'cancel' : 'request',
+						method: cancelEvent ? 'CANCEL' : 'REQUEST',
 						prodId: '//cyph.com//cyph-appointment-scheduler//EN'
 					})
 						.toString()
