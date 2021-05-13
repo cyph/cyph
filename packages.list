@@ -359,7 +359,7 @@ pinch-zoom-js
 prettier
 primeng
 promise-semaphore
-protobufjs@6.8.8
+protobufjs
 protractor@^6
 pulltorefreshjs
 puppeteer
