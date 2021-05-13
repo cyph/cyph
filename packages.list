@@ -398,7 +398,7 @@ stylelint-scss
 supersphincs
 tab-indent
 terser
-terser-webpack-plugin@^4
+terser-webpack-plugin@^5
 text-mask-addons
 textillate
 # NATIVESCRIPT: tns-android
@@ -434,8 +434,8 @@ wavesurfer.js
 web-animations-js
 web-social-share
 webix
-webpack-cli@^3
-webpack@^4
+webpack-cli@^4
+webpack@^5
 webrtc-adapter
 webrtc-troubleshoot
 webrtcsupport
