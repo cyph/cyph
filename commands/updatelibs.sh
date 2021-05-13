@@ -38,7 +38,7 @@ wget \
 	https://github.com/ipfs/public-gateway-checker/raw/master/gateways.json \
 	-O shared/lib/ipfs-gateways.json
 
-./commands/getlibs.sh
+./commands/getlibs.sh --skip-node-modules
 
 cyph-prettier --write shared/lib/ipfs-gateways.json || fail
 cyph-prettier --write shared/lib/js/package.json || fail

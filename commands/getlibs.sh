@@ -2,8 +2,18 @@
 
 
 source ~/.bashrc
+
+
+eval "$(parseArgs \
+	--opt-bool skip-node-modules \
+)"
+
+
 cd $(cd "$(dirname "$0")" ; pwd)/..
 dir="$PWD"
+
+
+skipNodeModules="$(getBoolArg ${_arg_skip_node_modules})"
 
 sudo npm -g install npm || exit 1
 sudo npm -g install @mapbox/node-pre-gyp || exit 1
@@ -433,9 +443,14 @@ mv .js.tmp js
 
 cd
 if [ -d ${dir}/cyph.app ] ; then
-	rm -rf ${dir}/shared/lib ${dir}/shared/node_modules 2> /dev/null
-	rsync -rL lib ${dir}/shared/
-	mv ${dir}/shared/lib/js/node_modules ${dir}/shared/
+	if [ "${skipNodeModules}" ] ; then
+		rm -rf ${dir}/shared/lib 2> /dev/null
+		rsync -rL --exclude node_modules lib ${dir}/shared/
+	else
+		rm -rf ${dir}/shared/lib ${dir}/shared/node_modules 2> /dev/null
+		rsync -rL lib ${dir}/shared/
+		mv ${dir}/shared/lib/js/node_modules ${dir}/shared/
+	fi
 fi
 sudo mv lib/js/node_modules /
 sudo chmod -R 777 /node_modules
