@@ -215,7 +215,6 @@ animejs
 awesome-typescript-loader
 babel-core
 babel-preset-env
-babel-preset-es2015
 bitpay.js
 bourbon
 braintree
