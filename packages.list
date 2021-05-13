@@ -199,6 +199,7 @@
 @types/stacktrace-js
 @types/universal-analytics
 @types/video.js
+@types/winbox
 @typescript-eslint/eslint-plugin
 @typescript-eslint/eslint-plugin-tslint
 @typescript-eslint/parser
@@ -443,6 +444,7 @@ webrtc-adapter
 webrtc-troubleshoot
 webrtcsupport
 whatwg-fetch
+winbox
 wowjs
 xhr2
 xkcd-passphrase
