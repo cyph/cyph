@@ -30,7 +30,6 @@
 @angular/router
 @angular/service-worker
 @asymmetrik/ngx-leaflet
-@beezleeart/ngx-filemanager
 @compodoc/compodoc
 @covalent/core
 @covalent/dynamic-forms
@@ -83,7 +82,6 @@
 @ngxs/store
 @node-rs/crc32
 @opentok/client
-@rign/angular2-filemanager
 @stripe/stripe-js
 @syncfusion/ej2
 @syncfusion/ej2-angular-barcode-generator
