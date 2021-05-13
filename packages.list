@@ -415,7 +415,6 @@ textillate
 # NATIVESCRIPT: tns-platform-declarations
 ts-node
 tslib
-tslint
 tslint-consistent-codestyle
 tslint-eslint-rules
 tslint-immutable
