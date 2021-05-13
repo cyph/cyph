@@ -76,10 +76,6 @@
 > 		delete storage.webSignPackageName;
 > 		delete storage.webSignPackageTimestamp;
 > 	}
-53c63
-< 			undefined,
----
-> 			device.platform === 'iOS' ? {headers: {'X-IPv6-Only': true}} : undefined,
 166,203c176,178
 < /* Before finishing, perform self-administered
 < 	integrity check on WebSign bootstrap */
@@ -123,23 +119,22 @@
 > /* Successfully execute package */
 > then(function (o) {
 > 	var headHTML	= o.package.split('<head>')[1].split('</head>')[0];
-205,209c180,181
+205,212c180,181
 < 	if (!hashWhitelist[storage.webSignHash]) {
 < 		throw {
 < 			webSignPanic: true,
 < 			bootstrapText: bootstrapText
 < 		};
+< 	}
+< 	else if (o) {
+< 		return o;
 ---
 > 	if (device.platform === 'iOS') {
 > 		headHTML	= headHTML.replace('href="/"', 'href="#"');
-211,216d182
-< 	else if (o) {
-< 		return o;
-< 	}
-< 
+215,220c184
 < 	throw null;
 < }).
-218,220c184
+< 
 < /* Successfully execute package */
 < then(function (o) {
 < 	document.head.innerHTML	= o.package.split('<head>')[1].split('</head>')[0];

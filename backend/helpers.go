@@ -437,11 +437,6 @@ func getIPString(h HandlerArgs) string {
 }
 
 func isIPv6Request(h HandlerArgs) bool {
-	forceIPv6Only := h.Request.Header.Get("X-IPv6-Only") != ""
-	if forceIPv6Only {
-		return true
-	}
-
 	ip := net.ParseIP(getIPString(h))
 	return ip.To4() == nil
 }
