@@ -10,6 +10,7 @@ dir="$PWD"
 sudo npm -g install npm || fail
 sudo npm -g install @mapbox/node-pre-gyp || fail
 npm config set legacy-peer-deps true
+rm -rf ~/.npm
 
 
 mkdir -p ~/lib/js ~/tmplib/js/node_modules
