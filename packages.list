@@ -1,3 +1,14 @@
+# NATIVESCRIPT: nativescript-angular@^10
+# NATIVESCRIPT: nativescript-css-loader
+# NATIVESCRIPT: nativescript-dev-typescript
+# NATIVESCRIPT: nativescript-dev-webpack
+# NATIVESCRIPT: nativescript-theme-core
+# NATIVESCRIPT: nativescript@^6
+# NATIVESCRIPT: tns-android
+# NATIVESCRIPT: tns-core-modules
+# NATIVESCRIPT: tns-core-modules-widgets
+# NATIVESCRIPT: tns-ios
+# NATIVESCRIPT: tns-platform-declarations
 @agm/core
 @angular-devkit/architect
 @angular-devkit/architect-cli
@@ -211,6 +222,7 @@ angular2-text-mask
 animate.css
 animated-scroll-to
 animejs
+assert-browserify
 awesome-typescript-loader
 babel-core
 babel-preset-env
@@ -323,12 +335,6 @@ minimist
 mkdirp
 moment
 mustache
-# NATIVESCRIPT: nativescript-angular@^10
-# NATIVESCRIPT: nativescript-css-loader
-# NATIVESCRIPT: nativescript-dev-typescript
-# NATIVESCRIPT: nativescript-dev-webpack
-# NATIVESCRIPT: nativescript-theme-core
-# NATIVESCRIPT: nativescript@^6
 ng-animate
 ng-packagr
 ng2-fittext
@@ -349,9 +355,9 @@ node-fetch
 nodemailer
 notify-cli
 ntru
+open
 openpgp
 opentok
-open
 opus-recorder
 parchment
 pdf-lib
@@ -381,9 +387,9 @@ rrule
 rsvp
 run-node
 rxfire
-rxjs@^6
 rxjs-tslint-rules
 rxjs-tslint@0.1.5
+rxjs@^6
 sass
 shelljs
 sidh
@@ -404,11 +410,6 @@ terser
 terser-webpack-plugin@^5
 text-mask-addons
 textillate
-# NATIVESCRIPT: tns-android
-# NATIVESCRIPT: tns-core-modules
-# NATIVESCRIPT: tns-core-modules-widgets
-# NATIVESCRIPT: tns-ios
-# NATIVESCRIPT: tns-platform-declarations
 ts-node
 tslib
 tslint-consistent-codestyle
