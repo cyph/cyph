@@ -476,10 +476,12 @@ else
 	cd ~/cyph.tmp/cyph.app
 fi
 
-../commands/protobuf.sh
-../commands/ngprojectinit.sh
-ng build
-../commands/ngprojectinit.sh --deinit
+if [ ! "${skipNodeModules}" ] ; then
+	../commands/protobuf.sh
+	../commands/ngprojectinit.sh
+	ng build
+	../commands/ngprojectinit.sh --deinit
+fi
 
 cd ..
 mv ~/package-lock.json ./
