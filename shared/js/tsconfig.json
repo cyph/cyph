@@ -27,6 +27,7 @@
 			"core-js/es7/reflect": [
 				"../node_modules/core-js/proposals/reflect-metadata"
 			],
+			"assert": ["js/externals/assert"],
 			"crypto": ["js/externals/crypto"],
 			"debug": ["js/externals/debug"],
 			"faye-websocket": ["js/externals/faye-websocket"],
