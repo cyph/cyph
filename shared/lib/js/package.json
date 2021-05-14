@@ -213,6 +213,7 @@
 		"animate.css": "^4.1.1",
 		"animated-scroll-to": "^2.2.0",
 		"animejs": "^3.2.1",
+		"assert-browserify": "^2.0.0",
 		"awesome-typescript-loader": "^5.2.1",
 		"babel-core": "^6.26.3",
 		"babel-preset-env": "^1.7.0",
