@@ -399,6 +399,7 @@ simplewebrtc
 sodiumutil
 sphincs
 stacktrace-js
+stream-browserify
 stripe
 stripe-angular
 stylelint
