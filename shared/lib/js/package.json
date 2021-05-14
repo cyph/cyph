@@ -390,6 +390,7 @@
 		"sodiumutil": "^2.0.1",
 		"sphincs": "^2.4.1",
 		"stacktrace-js": "^2.0.2",
+		"stream-browserify": "^3.0.0",
 		"stripe": "^8.148.0",
 		"stripe-angular": "^1.7.0",
 		"stylelint": "^13.13.1",
