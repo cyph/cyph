@@ -13,5 +13,5 @@ require (
 	github.com/oschwald/geoip2-golang v1.5.0
 	github.com/stripe/stripe-go/v72 v72.45.0
 	google.golang.org/api v0.46.0
-	google.golang.org/genproto v0.0.0-20210510173355-fb37daa5cd7a
+	google.golang.org/genproto v0.0.0-20210513213006-bf773b8c8384
 )
