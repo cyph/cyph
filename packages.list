@@ -224,8 +224,6 @@ animated-scroll-to
 animejs
 assert-browserify
 awesome-typescript-loader
-babel-core
-babel-preset-env
 bitpay.js
 bourbon
 braintree
