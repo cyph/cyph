@@ -282,6 +282,7 @@ do
 done
 
 for anyType in \
+	assert-browserify \
 	crypto-browserify \
 	readable-stream \
 	stream-browserify
