@@ -466,7 +466,9 @@ fi
 # https://next.angular.io/guide/migration-ngcc
 cd /
 rm -rf node_modules/@covalent node_modules/ng2-truncate # entry-point compile errors
-ngcc --properties es2015 browser module main --first-only --create-ivy-entry-points
+if [ ! "${skipNodeModules}" ] ; then
+	ngcc --properties es2015 browser module main --first-only --create-ivy-entry-points
+fi
 
 # Quick workaround for incomplete compilation in ngcc command
 if [ -d ${dir}/cyph.app ] ; then
