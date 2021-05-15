@@ -3,6 +3,8 @@ dist
 docs
 documentation
 serviceworker.js
+/app/cordova-build
+/app/cordova-build.*
 /cyph.app/src/js
 /shared/lib/native
 /shared/js/native/js
