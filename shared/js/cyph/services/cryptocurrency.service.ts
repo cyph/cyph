@@ -218,9 +218,8 @@ export class CryptocurrencyService extends BaseProvider {
 
 			const simpleBTCWallet = this.getSimpleBTCWallet(wallet);
 
-			const transactionsObservable: Observable<Transaction[]> = simpleBTCWallet
-				.watchTransactionHistory()
-				.pipe(
+			const transactionsObservable: Observable<Transaction[]> =
+				simpleBTCWallet.watchTransactionHistory().pipe(
 					catchError(() => {
 						this.blockchainFetchError.next(true);
 						return asyncToObservable(
@@ -245,9 +244,7 @@ export class CryptocurrencyService extends BaseProvider {
 	);
 
 	/** @ignore */
-	private getExchangeRatesCache (
-		bitcoinCash: boolean
-	) : {
+	private getExchangeRatesCache (bitcoinCash: boolean) : {
 		getExchangeRates: () => Promise<{
 			[currencyCode: string]: number;
 		}>;

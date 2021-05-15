@@ -19,13 +19,14 @@ import {StringsService} from './strings.service';
 @Injectable()
 export class SalesService extends BaseProvider {
 	/** @see AccountService.accountBillingStatus */
-	private readonly accountBillingStatus = resolvable<
-		BehaviorSubject<{
-			admin: boolean;
-			goodStanding: boolean;
-			stripe: boolean;
-		}>
-	>();
+	private readonly accountBillingStatus =
+		resolvable<
+			BehaviorSubject<{
+				admin: boolean;
+				goodStanding: boolean;
+				stripe: boolean;
+			}>
+		>();
 
 	/** @ignore */
 	private readonly canOpenMobileApp =

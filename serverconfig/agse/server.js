@@ -66,7 +66,8 @@ const validator = require('validator');
 		typeof o === 'string' ||
 		(o &&
 			(o.isUint8Array || (binaryHashSupport && o.isBinaryHash)) &&
-			(typeof o.data === 'string' && validator.isBase64(o.data)));
+			typeof o.data === 'string' &&
+			validator.isBase64(o.data));
 	let keyData;
 	while (!keyData) {
 		try {
@@ -120,12 +121,16 @@ const validator = require('validator');
 					if (!rsaKeyData) {
 						rsaKeyData = {
 							privateKey: keys.private.rsa,
-							publicKeyString: (await superSphincs.exportKeys({
-								publicKey: (await superSphincs.importKeys(
-									keys,
-									rsaPassword
-								)).publicKey
-							})).public.rsa
+							publicKeyString: (
+								await superSphincs.exportKeys({
+									publicKey: (
+										await superSphincs.importKeys(
+											keys,
+											rsaPassword
+										)
+									).publicKey
+								})
+							).public.rsa
 						};
 					}
 				}
@@ -135,12 +140,16 @@ const validator = require('validator');
 					if (!sphincsKeyData) {
 						sphincsKeyData = {
 							privateKey: keys.private.sphincs,
-							publicKeyString: (await superSphincs.exportKeys({
-								publicKey: (await superSphincs.importKeys(
-									keys,
-									sphincsPassword
-								)).publicKey
-							})).public.sphincs
+							publicKeyString: (
+								await superSphincs.exportKeys({
+									publicKey: (
+										await superSphincs.importKeys(
+											keys,
+											sphincsPassword
+										)
+									).publicKey
+								})
+							).public.sphincs
 						};
 					}
 				}

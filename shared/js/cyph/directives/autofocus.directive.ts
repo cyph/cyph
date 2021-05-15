@@ -17,8 +17,10 @@ import {sleep, waitForIterable} from '../util/wait';
 @Directive({
 	selector: '[cyphAutofocus]'
 })
-export class AutofocusDirective extends BaseProvider
-	implements OnChanges, OnInit {
+export class AutofocusDirective
+	extends BaseProvider
+	implements OnChanges, OnInit
+{
 	/** @ignore */
 	private static readonly loadComplete: Promise<void> = waitForIterable(() =>
 		$('body.load-complete')

@@ -21,8 +21,10 @@ import {trackByID} from '../../track-by/track-by-id';
 	styleUrls: ['./account-post-list.component.scss'],
 	templateUrl: './account-post-list.component.html'
 })
-export class AccountPostListComponent extends BaseProvider
-	implements OnChanges {
+export class AccountPostListComponent
+	extends BaseProvider
+	implements OnChanges
+{
 	/** List of posts from this user. */
 	@Input() public author?: User;
 

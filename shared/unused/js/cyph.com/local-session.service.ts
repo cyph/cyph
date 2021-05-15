@@ -115,9 +115,11 @@ export class LocalSessionService extends SessionService {
 			});
 
 			this.chatData.channelOutgoing.next(
-				(await this.newMessages([
-					[events.cyphertext, {bytes: cyphertext}]
-				]))[0]
+				(
+					await this.newMessages([
+						[events.cyphertext, {bytes: cyphertext}]
+					])
+				)[0]
 			);
 			this.chatData.channelOutgoing.next(message);
 		}

@@ -30,9 +30,9 @@ export const {
 } = initDatabaseService(
 	{
 		...functions.config(),
-		fcmServerKey: (await promisify(fs.readFile)(
-			__dirname + '/fcm-server-key'
-		))
+		fcmServerKey: (
+			await promisify(fs.readFile)(__dirname + '/fcm-server-key')
+		)
 			.toString()
 			.trim()
 	},
@@ -49,9 +49,11 @@ export const getRealUsername = async (namespace, username) => {
 	}
 
 	try {
-		const realUsername = (await database
-			.ref(`${namespace}/users/${username}/internal/realUsername`)
-			.once('value')).val();
+		const realUsername = (
+			await database
+				.ref(`${namespace}/users/${username}/internal/realUsername`)
+				.once('value')
+		).val();
 		if (realUsername) {
 			return realUsername;
 		}
@@ -67,9 +69,11 @@ export const getName = async (namespace, username) => {
 	}
 
 	try {
-		const name = (await database
-			.ref(`${namespace}/users/${username}/internal/name`)
-			.once('value')).val();
+		const name = (
+			await database
+				.ref(`${namespace}/users/${username}/internal/name`)
+				.once('value')
+		).val();
 		if (name) {
 			return name;
 		}
@@ -85,14 +89,16 @@ export const getSMSCredentials = async (namespace, username) => {
 			return;
 		}
 
-		return (await database
-			.ref(
-				`${namespace.replace(
-					/\./g,
-					'_'
-				)}/users/${username}/internal/smsCredentials`
-			)
-			.once('value')).val();
+		return (
+			await database
+				.ref(
+					`${namespace.replace(
+						/\./g,
+						'_'
+					)}/users/${username}/internal/smsCredentials`
+				)
+				.once('value')
+		).val();
 	}
 	catch {}
 };
@@ -118,9 +124,11 @@ export const isUsernameBlacklisted = async (
 ) =>
 	!(reservedUsername && username === normalize(reservedUsername)) &&
 	(usernameBlacklist.has(username) ||
-		(await database
-			.ref(`${namespace}/reservedUsernames/${username}`)
-			.once('value')).exists());
+		(
+			await database
+				.ref(`${namespace}/reservedUsernames/${username}`)
+				.once('value')
+		).exists());
 
 export const onCall = f => async (req, res) => {
 	let data;

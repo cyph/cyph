@@ -60,8 +60,10 @@ import {waitForValue} from '../../util/wait';
 	styleUrls: ['./account-base-file-list.component.scss'],
 	templateUrl: './account-base-file-list.component.html'
 })
-export class AccountBaseFileListComponent extends BaseProvider
-	implements OnChanges, OnInit {
+export class AccountBaseFileListComponent
+	extends BaseProvider
+	implements OnChanges, OnInit
+{
 	/** @ignore */
 	private readonly filterFunctionSubject = new BehaviorSubject<
 		((o: IAccountFileRecord) => boolean) | undefined
@@ -122,11 +124,10 @@ export class AccountBaseFileListComponent extends BaseProvider
 	public readonly getFilterFunction = memoize((incoming: boolean = false) =>
 		observableAll([this.currentDirectory, this.filterFunctionSubject]).pipe(
 			map(
-				([currentDirectory, filterFunction]) => (
-					o: IAccountFileRecord
-				) =>
-					(filterFunction === undefined || filterFunction(o)) &&
-					(incoming || (o.parentPath || '') === currentDirectory)
+				([currentDirectory, filterFunction]) =>
+					(o: IAccountFileRecord) =>
+						(filterFunction === undefined || filterFunction(o)) &&
+						(incoming || (o.parentPath || '') === currentDirectory)
 			)
 		)
 	);
@@ -207,19 +208,23 @@ export class AccountBaseFileListComponent extends BaseProvider
 							(await this.pgpService.getPrivateKeyArmor(
 								pgpKey.keyPair?.privateKey
 							)) || '',
-							`${pgpKey.pgpMetadata.fingerprint ||
-								record.name}.priv.asc`
+							`${
+								pgpKey.pgpMetadata.fingerprint || record.name
+							}.priv.asc`
 						) :
 					undefined,
 				savePublicKey: async () =>
 					saveFile(
-						(await this.pgpService.getPublicKeyMetadata(
-							!potassiumUtil.isEmpty(pgpKey.publicKey) ?
-								pgpKey.publicKey :
-								pgpKey.keyPair?.publicKey
-						)).publicKey || '',
-						`${pgpKey.pgpMetadata.fingerprint ||
-							record.name}.pub.asc`
+						(
+							await this.pgpService.getPublicKeyMetadata(
+								!potassiumUtil.isEmpty(pgpKey.publicKey) ?
+									pgpKey.publicKey :
+									pgpKey.keyPair?.publicKey
+							)
+						).publicKey || '',
+						`${
+							pgpKey.pgpMetadata.fingerprint || record.name
+						}.pub.asc`
 					)
 			};
 		}
@@ -478,8 +483,9 @@ export class AccountBaseFileListComponent extends BaseProvider
 			`${this.envService.cyphDownloadUrl}${
 				this.envService.cyphDownloadUrl.indexOf('#') > -1 ? '' : '#'
 			}${
-				(await this.accountDatabaseService.getCurrentUser()).user
-					.username
+				(
+					await this.accountDatabaseService.getCurrentUser()
+				).user.username
 			}/${await this.accountDownloadService.share(o.record.id)}`,
 			this.stringsService.downloadShareSuccess
 		);

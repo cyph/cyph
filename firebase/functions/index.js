@@ -23,9 +23,9 @@ const onRequest = f =>
 	https.onRequest((req, res) => cors(req, res, async () => f(req, res)));
 
 exports.acceptPseudoRelationship = onRequest(async (...args) =>
-	(await importFunction(
-		'accept-pseudo-relationship'
-	)).acceptPseudoRelationship(...args)
+	(
+		await importFunction('accept-pseudo-relationship')
+	).acceptPseudoRelationship(...args)
 );
 
 exports.appointmentInvite = onRequest(async (...args) =>
@@ -93,15 +93,15 @@ exports.register = onRequest(async (...args) =>
 );
 
 exports.rejectPseudoRelationship = onRequest(async (...args) =>
-	(await importFunction(
-		'reject-pseudo-relationship'
-	)).rejectPseudoRelationship(...args)
+	(
+		await importFunction('reject-pseudo-relationship')
+	).rejectPseudoRelationship(...args)
 );
 
 exports.requestPseudoRelationship = onRequest(async (...args) =>
-	(await importFunction(
-		'request-pseudo-relationship'
-	)).requestPseudoRelationship(...args)
+	(
+		await importFunction('request-pseudo-relationship')
+	).requestPseudoRelationship(...args)
 );
 
 exports.resetCastleSessionID = onRequest(async (...args) =>

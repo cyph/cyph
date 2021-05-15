@@ -61,8 +61,10 @@ import {sleep} from '../../util/wait';
 	styleUrls: ['./account-chat.component.scss'],
 	templateUrl: './account-chat.component.html'
 })
-export class AccountChatComponent extends BaseProvider
-	implements OnDestroy, OnInit {
+export class AccountChatComponent
+	extends BaseProvider
+	implements OnDestroy, OnInit
+{
 	/** @ignore */
 	private initiatedAppointmentID?: string;
 
@@ -103,12 +105,13 @@ export class AccountChatComponent extends BaseProvider
 	public readonly chatMessageValueTypes = ChatMessageValue.Types;
 
 	/** Indicates whether call is pending or not yet loaded. */
-	public readonly initialCallPending = this.p2pWebRTCService.initialCallPending.pipe(
-		map(
-			initialCallPending =>
-				initialCallPending && !this.sessionInitService.ephemeral
-		)
-	);
+	public readonly initialCallPending =
+		this.p2pWebRTCService.initialCallPending.pipe(
+			map(
+				initialCallPending =>
+					initialCallPending && !this.sessionInitService.ephemeral
+			)
+		);
 
 	/** Initial load screen before a user is set. */
 	public readonly initiating = new BehaviorSubject<boolean>(true);
@@ -268,9 +271,8 @@ export class AccountChatComponent extends BaseProvider
 								}
 
 								if (contactID && messageBottomOffset) {
-									const newMessageBottomOffset = parseFloat(
-										messageBottomOffset
-									);
+									const newMessageBottomOffset =
+										parseFloat(messageBottomOffset);
 
 									if (!isNaN(newMessageBottomOffset)) {
 										messageBottomOffsetData = {
@@ -364,9 +366,10 @@ export class AccountChatComponent extends BaseProvider
 														normalize(participant)
 											);
 
-									contactID = await this.accountContactsService.getContactID(
-										appointmentOther
-									);
+									contactID =
+										await this.accountContactsService.getContactID(
+											appointmentOther
+										);
 
 									this.appointment.next(appointment);
 								}
@@ -447,8 +450,8 @@ export class AccountChatComponent extends BaseProvider
 									.toPromise();
 
 								if (burnerSession) {
-									beforeUnloadMessage = this.stringsService
-										.disconnectWarning;
+									beforeUnloadMessage =
+										this.stringsService.disconnectWarning;
 
 									destroyed.then(() => {
 										beforeUnloadMessage = undefined;

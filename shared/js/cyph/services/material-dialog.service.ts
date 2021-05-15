@@ -26,8 +26,10 @@ import {StringsService} from './strings.service';
  * DialogService implementation built on Angular Material.
  */
 @Injectable()
-export class MaterialDialogService extends BaseProvider
-	implements DialogService {
+export class MaterialDialogService
+	extends BaseProvider
+	implements DialogService
+{
 	/** @ignore */
 	private readonly lock: LockFunction = lockFunction();
 
@@ -270,10 +272,7 @@ export class MaterialDialogService extends BaseProvider
 
 				instance.changeDetectorRef.markForCheck();
 
-				await matDialogRef
-					.afterOpened()
-					.pipe(take(1))
-					.toPromise();
+				await matDialogRef.afterOpened().pipe(take(1)).toPromise();
 
 				instance.changeDetectorRef.markForCheck();
 			}

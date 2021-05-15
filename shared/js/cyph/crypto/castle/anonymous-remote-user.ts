@@ -27,12 +27,11 @@ export class AnonymousRemoteUser implements IRemoteUser {
 					[
 						this.handshakeState.remotePublicKey.getValue(),
 						(async () => {
-							const {
-								hash
-							} = await this.potassium.passwordHash.hash(
-								sharedSecretString,
-								AnonymousLocalUser.handshakeSalt
-							);
+							const {hash} =
+								await this.potassium.passwordHash.hash(
+									sharedSecretString,
+									AnonymousLocalUser.handshakeSalt
+								);
 
 							this.sharedSecret = undefined;
 

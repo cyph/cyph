@@ -4,7 +4,8 @@ import {ITimedValue} from '../itimed-value';
 
 /** Wraps a proto class with a maybe-TimedValue array equivalent. */
 export class MaybeTimedArrayProto<T>
-	implements IProto<(ITimedValue<T> | {empty: true; timestamp?: number})[]> {
+	implements IProto<(ITimedValue<T> | {empty: true; timestamp?: number})[]>
+{
 	/** @inheritDoc */
 	public create () : (ITimedValue<T> | {empty: true; timestamp?: number})[] {
 		return [];

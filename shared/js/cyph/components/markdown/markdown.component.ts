@@ -32,8 +32,10 @@ import {openWindow} from '../../util/window';
 	styleUrls: ['./markdown.component.scss'],
 	templateUrl: './markdown.component.html'
 })
-export class MarkdownComponent extends BaseProvider
-	implements OnChanges, OnInit {
+export class MarkdownComponent
+	extends BaseProvider
+	implements OnChanges, OnInit
+{
 	/** @ignore */
 	private initiated: boolean = false;
 

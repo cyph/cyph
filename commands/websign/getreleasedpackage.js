@@ -49,7 +49,7 @@ export const getReleasedPackage = async (packageName = 'cyph.app') => {
 	const opened = JSON.parse(
 		await superSphincs
 			.openString(packageData.signed, publicKey)
-			.catch(function ()  {
+			.catch(function () {
 				return superSphincs.openString(
 					packageData.signed,
 					publicKey,

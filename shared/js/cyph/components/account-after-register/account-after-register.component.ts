@@ -15,8 +15,10 @@ import {StringsService} from '../../services/strings.service';
 	styleUrls: ['./account-after-register.component.scss'],
 	templateUrl: './account-after-register.component.html'
 })
-export class AccountAfterRegisterComponent extends BaseProvider
-	implements OnInit {
+export class AccountAfterRegisterComponent
+	extends BaseProvider
+	implements OnInit
+{
 	/** @inheritDoc */
 	public ngOnInit () : void {
 		super.ngOnInit();

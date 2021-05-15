@@ -36,8 +36,10 @@ import {sleep} from '../../util/wait';
 	styleUrls: ['./account-note.component.scss'],
 	templateUrl: './account-note.component.html'
 })
-export class AccountNoteComponent extends BaseProvider
-	implements OnDestroy, OnInit {
+export class AccountNoteComponent
+	extends BaseProvider
+	implements OnDestroy, OnInit
+{
 	/** @ignore */
 	private readonly editView = new BehaviorSubject<boolean>(false);
 
@@ -45,9 +47,8 @@ export class AccountNoteComponent extends BaseProvider
 	private readonly saveLock = lockFunction();
 
 	/** @see AccountNoteComponents.anonymousMessages */
-	public readonly anonymousMessages: Observable<
-		boolean
-	> = this.activatedRoute.data.pipe(map(o => !!o.anonymousMessages));
+	public readonly anonymousMessages: Observable<boolean> =
+		this.activatedRoute.data.pipe(map(o => !!o.anonymousMessages));
 
 	/** @see getDateTimeString */
 	public readonly getDateTimeString = getDateTimeString;

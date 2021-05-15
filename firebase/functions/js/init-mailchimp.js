@@ -1,10 +1,12 @@
 export const initMailchimp = (mailchimp, mailchimpCredentials) => {
 	const addToMailingList = async (listID, email, mergeFields) =>
-		(await mailchimp.post(`/lists/${listID}/members`, {
-			email_address: email,
-			status: 'subscribed',
-			merge_fields: mergeFields
-		})).id;
+		(
+			await mailchimp.post(`/lists/${listID}/members`, {
+				email_address: email,
+				status: 'subscribed',
+				merge_fields: mergeFields
+			})
+		).id;
 
 	const removeFromMailingList = async (listID, idOrEmail) => {
 		let id = typeof idOrEmail === 'string' ? idOrEmail : undefined;

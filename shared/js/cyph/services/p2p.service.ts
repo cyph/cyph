@@ -25,31 +25,38 @@ import {WindowWatcherService} from './window-watcher.service';
 @Injectable()
 export class P2PService extends BaseProvider {
 	/** @ignore */
-	private readonly incomingStreamUsers = this.p2pWebRTCService.incomingStreamUsers.pipe(
-		map(users =>
-			users.map(
-				({name, username}) : IContactListItem =>
-					username ?
-						{
-							contactState: of(AccountContactState.States.None),
-							unreadMessageCount: of(0),
-							user: this.accountUserLookupService
-								.getUser(username)
-								.catch(() => undefined),
-							username
-						} :
-						{
-							anonymousUser: {
-								name: name || this.stringsService.anonymous
-							},
-							contactState: of(AccountContactState.States.None),
-							unreadMessageCount: of(0),
-							user: Promise.resolve(undefined),
-							username: ''
-						}
+	private readonly incomingStreamUsers =
+		this.p2pWebRTCService.incomingStreamUsers.pipe(
+			map(users =>
+				users.map(
+					({name, username}) : IContactListItem =>
+						username ?
+							{
+								contactState: of(
+										AccountContactState.States.None
+									),
+								unreadMessageCount: of(0),
+								user: this.accountUserLookupService
+									.getUser(username)
+									.catch(() => undefined),
+								username
+							} :
+							{
+								anonymousUser: {
+										name:
+											name ||
+											this.stringsService.anonymous
+									},
+								contactState: of(
+										AccountContactState.States.None
+									),
+								unreadMessageCount: of(0),
+								user: Promise.resolve(undefined),
+								username: ''
+							}
+				)
 			)
-		)
-	);
+		);
 
 	/** Indicates whether the gallery view is enabled for group video calls. */
 	public readonly galleryView = new BehaviorSubject<boolean>(false);

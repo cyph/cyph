@@ -31,9 +31,11 @@ export const changeInviteCode = async (
 
 	const {database} = initDatabaseService(projectId);
 
-	const oldInviteCodeValue = (await database
-		.ref(`${namespacePath}/inviteCodes/${inviteCode}`)
-		.once('value')).val();
+	const oldInviteCodeValue = (
+		await database
+			.ref(`${namespacePath}/inviteCodes/${inviteCode}`)
+			.once('value')
+	).val();
 
 	console.log({oldInviteCodeValue});
 
@@ -96,9 +98,11 @@ export const changeInviteCode = async (
 	);
 
 	console.log({
-		newInviteCodeValue: (await database
-			.ref(`${namespacePath}/inviteCodes/${inviteCode}`)
-			.once('value')).val()
+		newInviteCodeValue: (
+			await database
+				.ref(`${namespacePath}/inviteCodes/${inviteCode}`)
+				.once('value')
+		).val()
 	});
 
 	/*

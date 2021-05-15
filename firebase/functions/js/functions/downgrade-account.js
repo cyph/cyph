@@ -44,15 +44,12 @@ export const downgradeAccount = onRequest(true, async (req, res, namespace) => {
 	const planTrialEndRef = database.ref(`${internalURL}/planTrialEnd`);
 	const stripeRef = database.ref(`${internalURL}/stripe`);
 
-	const [
-		appStoreReceipt,
-		braintreeSubscriptionID,
-		stripeData
-	] = await Promise.all([
-		appStoreReceiptRef.once('value').then(o => o.val() || ''),
-		braintreeSubscriptionIDRef.once('value').then(o => o.val() || ''),
-		stripeRef.once('value').then(o => o.val() || {})
-	]);
+	const [appStoreReceipt, braintreeSubscriptionID, stripeData] =
+		await Promise.all([
+			appStoreReceiptRef.once('value').then(o => o.val() || ''),
+			braintreeSubscriptionIDRef.once('value').then(o => o.val() || ''),
+			stripeRef.once('value').then(o => o.val() || {})
+		]);
 
 	await Promise.all([
 		removeAppStoreReceiptRef ? appStoreReceiptRef.remove() : undefined,

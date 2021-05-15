@@ -17,8 +17,10 @@ import {observableAll} from '../../util/observable-all';
 	styleUrls: ['./account-confirm-email.component.scss'],
 	templateUrl: './account-confirm-email.component.html'
 })
-export class AccountConfirmEmailComponent extends BaseProvider
-	implements OnInit {
+export class AccountConfirmEmailComponent
+	extends BaseProvider
+	implements OnInit
+{
 	/** @ignore */
 	private readonly lock = lockFunction();
 

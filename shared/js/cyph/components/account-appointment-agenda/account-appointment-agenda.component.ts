@@ -55,8 +55,10 @@ import {openWindow} from '../../util/window';
 	styleUrls: ['./account-appointment-agenda.component.scss'],
 	templateUrl: './account-appointment-agenda.component.html'
 })
-export class AccountAppointmentAgendaComponent extends BaseProvider
-	implements OnInit {
+export class AccountAppointmentAgendaComponent
+	extends BaseProvider
+	implements OnInit
+{
 	/** @ignore */
 	private readonly internationalization = new Internationalization();
 

@@ -36,10 +36,7 @@ const superSphincs = require('supersphincs');
 			JSON.parse(
 				sodium.crypto_secretbox_open_easy(
 					sodium.from_base64(
-						fs
-							.readFileSync(args.keyBackupPath)
-							.toString()
-							.trim()
+						fs.readFileSync(args.keyBackupPath).toString().trim()
 					),
 					new Uint8Array(sodium.crypto_secretbox_NONCEBYTES),
 					sodium.crypto_pwhash_scryptsalsa208sha256(

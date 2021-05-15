@@ -31,8 +31,10 @@ import {getDateTimeString} from '../../util/time';
 	styleUrls: ['./account-post.component.scss'],
 	templateUrl: './account-post.component.html'
 })
-export class AccountPostComponent extends BaseProvider
-	implements OnChanges, OnInit {
+export class AccountPostComponent
+	extends BaseProvider
+	implements OnChanges, OnInit
+{
 	/** Post author. */
 	@Input() public author?: User;
 

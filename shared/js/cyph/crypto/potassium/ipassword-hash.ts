@@ -38,9 +38,7 @@ export interface IPasswordHash {
 	}>;
 
 	/** Parses metadata byte array into usable object. */
-	parseMetadata (
-		metadata: Uint8Array
-	) : Promise<{
+	parseMetadata (metadata: Uint8Array) : Promise<{
 		algorithm: string;
 		memLimit: number;
 		opsLimit: number;

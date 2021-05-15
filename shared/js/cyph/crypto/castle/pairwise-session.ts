@@ -127,15 +127,12 @@ export class PairwiseSession implements IPairwiseSession {
 
 	/** @ignore */
 	private async ratchetBootstrapIncoming () : Promise<void> {
-		const [
-			encryptionKeyPair,
-			publicSigningKey,
-			cyphertext
-		] = await Promise.all([
-			this.localUser.getEncryptionKeyPair(),
-			this.remoteUser.getPublicSigningKey(),
-			this.handshakeState.initialSecretCyphertext.getValue()
-		]);
+		const [encryptionKeyPair, publicSigningKey, cyphertext] =
+			await Promise.all([
+				this.localUser.getEncryptionKeyPair(),
+				this.remoteUser.getPublicSigningKey(),
+				this.handshakeState.initialSecretCyphertext.getValue()
+			]);
 
 		let maybeSignedSecret: Uint8Array;
 
@@ -174,27 +171,28 @@ export class PairwiseSession implements IPairwiseSession {
 
 	/** @ignore */
 	private async ratchetBootstrapOutgoing () : Promise<void> {
-		const [
-			signingKeyPair,
-			publicEncryptionKey,
-			initialSecret
-		] = await Promise.all([
-			this.localUser.getSigningKeyPair(),
-			this.remoteUser.getPublicEncryptionKey(),
-			(async () => {
-				let secret = await this.handshakeState.initialSecret.getValue();
+		const [signingKeyPair, publicEncryptionKey, initialSecret] =
+			await Promise.all([
+				this.localUser.getSigningKeyPair(),
+				this.remoteUser.getPublicEncryptionKey(),
+				(async () => {
+					let secret =
+						await this.handshakeState.initialSecret.getValue();
 
-				if (!secret) {
-					secret = this.potassium.randomBytes(
-						await this.potassium.ephemeralKeyExchange.secretBytes
-					);
+					if (!secret) {
+						secret = this.potassium.randomBytes(
+							await this.potassium.ephemeralKeyExchange
+								.secretBytes
+						);
 
-					await this.handshakeState.initialSecret.setValue(secret);
-				}
+						await this.handshakeState.initialSecret.setValue(
+							secret
+						);
+					}
 
-				return secret;
-			})()
-		]);
+					return secret;
+				})()
+			]);
 
 		await this.handshakeState.initialSecretCyphertext.setValue(
 			await this.potassium.box.seal(
@@ -294,48 +292,49 @@ export class PairwiseSession implements IPairwiseSession {
 		private readonly handshakeState: IHandshakeState,
 
 		/** @ignore */
-		private readonly incomingMessages: IAsyncValue<
-			ICastleIncomingMessages
-		> = new LocalAsyncValue<ICastleIncomingMessages>({max: 0, queue: {}}),
+		private readonly incomingMessages: IAsyncValue<ICastleIncomingMessages> = new LocalAsyncValue<ICastleIncomingMessages>(
+			{max: 0, queue: {}}
+		),
 		/** @ignore */
-		private readonly outgoingMessageQueue: IAsyncList<
-			Uint8Array
-		> = new LocalAsyncList([]),
+		private readonly outgoingMessageQueue: IAsyncList<Uint8Array> = new LocalAsyncList(
+			[]
+		),
 
 		/** @ignore */
 		private readonly lock: LockFunction = lockFunction(),
 
 		/** @ignore */
-		private readonly ratchetState: IAsyncValue<
-			ICastleRatchetState
-		> = new LocalAsyncValue<ICastleRatchetState>({
-			asymmetric: {
-				privateKey: new Uint8Array(0),
-				publicKey: new Uint8Array(0)
-			},
-			incomingMessageID: 0,
-			outgoingMessageID: 1,
-			symmetric: {
-				current: {
-					incoming: new Uint8Array(0),
-					outgoing: new Uint8Array(0)
+		private readonly ratchetState: IAsyncValue<ICastleRatchetState> = new LocalAsyncValue<ICastleRatchetState>(
+			{
+				asymmetric: {
+					privateKey: new Uint8Array(0),
+					publicKey: new Uint8Array(0)
 				},
-				next: {
-					incoming: new Uint8Array(0),
-					outgoing: new Uint8Array(0)
+				incomingMessageID: 0,
+				outgoingMessageID: 1,
+				symmetric: {
+					current: {
+						incoming: new Uint8Array(0),
+						outgoing: new Uint8Array(0)
+					},
+					next: {
+						incoming: new Uint8Array(0),
+						outgoing: new Uint8Array(0)
+					}
 				}
 			}
-		}),
+		),
 		/** @ignore */
-		private readonly ratchetUpdateQueue: IAsyncList<
-			ICastleRatchetUpdate
-		> = new LocalAsyncList([])
+		private readonly ratchetUpdateQueue: IAsyncList<ICastleRatchetUpdate> = new LocalAsyncList(
+			[]
+		)
 	) {
 		debugLog(() => ({pairwiseSessionStart: true}));
 
 		retryUntilSuccessful(async () => {
 			while (this.transport.isAlive) {
-				const currentStep = await this.handshakeState.currentStep.getValue();
+				const currentStep =
+					await this.handshakeState.currentStep.getValue();
 
 				if (currentStep === HandshakeSteps.Aborted) {
 					this.abort();
@@ -368,7 +367,8 @@ export class PairwiseSession implements IPairwiseSession {
 				) {
 					debugLog(() => ({castleHandshake: 'post-bootstrap'}));
 
-					const initialSecret = await this.handshakeState.initialSecret.getValue();
+					const initialSecret =
+						await this.handshakeState.initialSecret.getValue();
 
 					if (!initialSecret) {
 						throw new Error(
@@ -446,7 +446,8 @@ export class PairwiseSession implements IPairwiseSession {
 								this.transport.setSymmetricKey(symmetricKey);
 							});
 
-						const initialRatchetUpdates = await this.ratchetUpdateQueue.getValue();
+						const initialRatchetUpdates =
+							await this.ratchetUpdateQueue.getValue();
 
 						if (!o.stillOwner.value) {
 							return;
@@ -512,121 +513,131 @@ export class PairwiseSession implements IPairwiseSession {
 
 						const receiveLock = lockFunction();
 
-						const decryptSub = this.incomingMessageQueue.subscribeAndPop(
-							async ({cyphertext, newMessageID, resolve}) => {
-								debugLog(() => ({
-									castleIncomingCyphertext: {
-										author: this.remoteUser.username,
-										cyphertext,
-										newMessageID
-									}
-								}));
+						const decryptSub =
+							this.incomingMessageQueue.subscribeAndPop(
+								async ({cyphertext, newMessageID, resolve}) => {
+									debugLog(() => ({
+										castleIncomingCyphertext: {
+											author: this.remoteUser.username,
+											cyphertext,
+											newMessageID
+										}
+									}));
 
-								this.transport.logCyphertext(
-									this.remoteUser.username,
-									cyphertext
-								);
-
-								const decryptSetup = core.decryptSetup(
-									cyphertext
-								);
-
-								debugLog(() => ({
-									castleIncomingCyphertextDecryptSetup: {
-										decryptSetup,
-										newMessageID
-									}
-								}));
-
-								await receiveLock(async () => {
-									await this.processIncomingMessages(
-										core,
-										newMessageID,
+									this.transport.logCyphertext(
+										this.remoteUser.username,
 										cyphertext
 									);
-									resolve();
-								});
-							}
-						);
 
-						const encryptSub = this.outgoingMessageQueue.subscribeAndPop(
-							async message =>
-								core.encrypt(message, messageID => {
-									pendingMessageResolvers.timestamps.set(
-										messageID,
-										this.potassium
-											.toDataView(message)
-											.getFloat64(0, true)
-									);
-								})
-						);
+									const decryptSetup =
+										core.decryptSetup(cyphertext);
 
-						const ratchetUpdateSub = this.ratchetUpdateQueue.subscribeAndPop(
-							async update => {
-								if (
-									lastRatchetUpdate &&
-									lastRatchetUpdate.ratchetState
-										.incomingMessageID >=
-										update.ratchetState.incomingMessageID &&
-									lastRatchetUpdate.ratchetState
-										.outgoingMessageID >=
-										update.ratchetState.outgoingMessageID
-								) {
 									debugLog(() => ({
-										ratchetUpdate: {update, dropped: true}
+										castleIncomingCyphertextDecryptSetup: {
+											decryptSetup,
+											newMessageID
+										}
 									}));
-									return;
+
+									await receiveLock(async () => {
+										await this.processIncomingMessages(
+											core,
+											newMessageID,
+											cyphertext
+										);
+										resolve();
+									});
 								}
+							);
 
-								debugLog(() => ({
-									ratchetUpdate: {update, dropped: false}
-								}));
+						const encryptSub =
+							this.outgoingMessageQueue.subscribeAndPop(
+								async message =>
+									core.encrypt(message, messageID => {
+										pendingMessageResolvers.timestamps.set(
+											messageID,
+											this.potassium
+												.toDataView(message)
+												.getFloat64(0, true)
+										);
+									})
+							);
 
-								await this.transport.process(
-									this.remoteUser.username,
-									false,
-									update
-								);
-								await this.ratchetState.setValue(
-									update.ratchetState
-								);
-
-								if (
-									!update.cyphertext ||
-									this.potassium.isEmpty(update.cyphertext)
-								) {
-									return;
-								}
-
-								const messageID = this.potassium
-									.toDataView(update.cyphertext)
-									.getUint32(0, true);
-
-								const timestamp = pendingMessageResolvers.timestamps.get(
-									messageID
-								);
-
-								const resolver =
-									timestamp !== undefined ?
-										pendingMessageResolvers.resolvers.get(
-											timestamp
-										) :
-										undefined;
-
-								debugLog(() => ({
-									ratchetUpdateSend: {
-										messageID,
-										resolver: resolver !== undefined,
-										timestamp,
-										update
+						const ratchetUpdateSub =
+							this.ratchetUpdateQueue.subscribeAndPop(
+								async update => {
+									if (
+										lastRatchetUpdate &&
+										lastRatchetUpdate.ratchetState
+											.incomingMessageID >=
+											update.ratchetState
+												.incomingMessageID &&
+										lastRatchetUpdate.ratchetState
+											.outgoingMessageID >=
+											update.ratchetState
+												.outgoingMessageID
+									) {
+										debugLog(() => ({
+											ratchetUpdate: {
+												update,
+												dropped: true
+											}
+										}));
+										return;
 									}
-								}));
 
-								if (resolver) {
-									resolver.resolve();
+									debugLog(() => ({
+										ratchetUpdate: {update, dropped: false}
+									}));
+
+									await this.transport.process(
+										this.remoteUser.username,
+										false,
+										update
+									);
+									await this.ratchetState.setValue(
+										update.ratchetState
+									);
+
+									if (
+										!update.cyphertext ||
+										this.potassium.isEmpty(
+											update.cyphertext
+										)
+									) {
+										return;
+									}
+
+									const messageID = this.potassium
+										.toDataView(update.cyphertext)
+										.getUint32(0, true);
+
+									const timestamp =
+										pendingMessageResolvers.timestamps.get(
+											messageID
+										);
+
+									const resolver =
+										timestamp !== undefined ?
+											pendingMessageResolvers.resolvers.get(
+												timestamp
+											) :
+											undefined;
+
+									debugLog(() => ({
+										ratchetUpdateSend: {
+											messageID,
+											resolver: resolver !== undefined,
+											timestamp,
+											update
+										}
+									}));
+
+									if (resolver) {
+										resolver.resolve();
+									}
 								}
-							}
-						);
+							);
 
 						this.ready.resolve();
 

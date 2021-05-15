@@ -25,8 +25,10 @@ import {observableAll} from '../../util/observable-all';
 	styleUrls: ['./video.component.scss'],
 	templateUrl: './video.component.html'
 })
-export class VideoComponent extends BaseProvider
-	implements AfterViewInit, OnChanges, OnDestroy {
+export class VideoComponent
+	extends BaseProvider
+	implements AfterViewInit, OnChanges, OnDestroy
+{
 	/** @ignore */
 	private audioContext?: {
 		alive: boolean;

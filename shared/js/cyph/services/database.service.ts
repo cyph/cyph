@@ -477,10 +477,8 @@ export class DatabaseService extends DataManagerService {
 				localLock(async () => {
 					await asyncMap.clear();
 					await Promise.all(
-						Array.from(
-							mapValue.entries()
-						).map(async ([key, value]) =>
-							asyncMap.setItem(key, value)
+						Array.from(mapValue.entries()).map(
+							async ([key, value]) => asyncMap.setItem(key, value)
 						)
 					);
 				}),
@@ -550,37 +548,32 @@ export class DatabaseService extends DataManagerService {
 		/* eslint-disable-next-line @typescript-eslint/tslint/config */
 		const asyncValue: IAsyncValue<T> = {
 			getValue: async () =>
-				localLock(
-					async () : Promise<T> => {
-						const {hash} = await this.getMetadata(url);
+				localLock(async () : Promise<T> => {
+					const {hash} = await this.getMetadata(url);
 
-						/* eslint-disable-next-line @typescript-eslint/tslint/config */
-						if (currentHash === hash) {
-							return currentValue;
-						}
-
-						if (ArrayBuffer.isView(currentValue)) {
-							potassiumUtil.clearMemory(currentValue);
-						}
-
-						const value = await this.getItem(url, proto);
-
-						/* eslint-disable-next-line @typescript-eslint/tslint/config */
-						if (hash !== (await this.getMetadata(url)).hash) {
-							return asyncValue.getValue();
-						}
-
-						currentHash = hash;
-						currentValue = value;
-
+					/* eslint-disable-next-line @typescript-eslint/tslint/config */
+					if (currentHash === hash) {
 						return currentValue;
 					}
-				).catch(async () =>
+
+					if (ArrayBuffer.isView(currentValue)) {
+						potassiumUtil.clearMemory(currentValue);
+					}
+
+					const value = await this.getItem(url, proto);
+
+					/* eslint-disable-next-line @typescript-eslint/tslint/config */
+					if (hash !== (await this.getMetadata(url)).hash) {
+						return asyncValue.getValue();
+					}
+
+					currentHash = hash;
+					currentValue = value;
+
+					return currentValue;
+				}).catch(async () =>
 					blockGetValue ?
-						asyncValue
-							.watch()
-							.pipe(take(2))
-							.toPromise() :
+						asyncValue.watch().pipe(take(2)).toPromise() :
 						proto.create()
 				),
 			lock,
@@ -698,9 +691,7 @@ export class DatabaseService extends DataManagerService {
 	}
 
 	/** Checks whether a lock is currently claimed and what the specified reason is. */
-	public async lockStatus (
-		_URL: MaybePromise<string>
-	) : Promise<{
+	public async lockStatus (_URL: MaybePromise<string>) : Promise<{
 		locked: boolean;
 		reason: string | undefined;
 	}> {
@@ -899,9 +890,7 @@ export class DatabaseService extends DataManagerService {
 	}
 
 	/** Waits for lock to be released. */
-	public async waitForUnlock (
-		_URL: MaybePromise<string>
-	) : Promise<{
+	public async waitForUnlock (_URL: MaybePromise<string>) : Promise<{
 		reason: string | undefined;
 		wasLocked: boolean;
 	}> {

@@ -17,8 +17,10 @@ import {observableAll} from '../../util/observable-all';
 	styleUrls: ['./account-notifications-subscribe.component.scss'],
 	templateUrl: './account-notifications-subscribe.component.html'
 })
-export class AccountNotificationsSubscribeComponent extends BaseProvider
-	implements OnInit {
+export class AccountNotificationsSubscribeComponent
+	extends BaseProvider
+	implements OnInit
+{
 	/** Subscription status. */
 	public readonly status: Observable<{
 		email?: string;

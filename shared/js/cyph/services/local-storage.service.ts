@@ -134,13 +134,15 @@ export class LocalStorageService extends DataManagerService {
 		waitForReady: boolean = true,
 		getFromKeystore: boolean = false
 	) : Promise<T> {
-		return (await this.getValue(
-			url,
-			proto,
-			waitForReady,
-			undefined,
-			getFromKeystore
-		))[1];
+		return (
+			await this.getValue(
+				url,
+				proto,
+				waitForReady,
+				undefined,
+				getFromKeystore
+			)
+		)[1];
 	}
 
 	/** Gets items. */
@@ -151,13 +153,15 @@ export class LocalStorageService extends DataManagerService {
 		waitForReady: boolean = true,
 		getFromKeystore: boolean = false
 	) : Promise<T[]> {
-		return (await this.getValues(
-			root,
-			proto,
-			sortByTimestamp,
-			waitForReady,
-			getFromKeystore
-		)).map(o => o[1]);
+		return (
+			await this.getValues(
+				root,
+				proto,
+				sortByTimestamp,
+				waitForReady,
+				getFromKeystore
+			)
+		).map(o => o[1]);
 	}
 
 	/** Gets item timestamp. */
@@ -166,13 +170,15 @@ export class LocalStorageService extends DataManagerService {
 		waitForReady: boolean = true,
 		getFromKeystore: boolean = false
 	) : Promise<number> {
-		return (await this.getValue(
-			url,
-			BinaryProto,
-			waitForReady,
-			undefined,
-			getFromKeystore
-		))[2];
+		return (
+			await this.getValue(
+				url,
+				BinaryProto,
+				waitForReady,
+				undefined,
+				getFromKeystore
+			)
+		)[2];
 	}
 
 	/** Gets keys. */
@@ -237,7 +243,9 @@ export class LocalStorageService extends DataManagerService {
 	) : Promise<[string, T, number][]> {
 		const values = filterUndefined(
 			await Promise.all(
-				(await this.getKeys(root, waitForReady)).map(async url =>
+				(
+					await this.getKeys(root, waitForReady)
+				).map(async url =>
 					this.getValue(
 						url,
 						proto,
@@ -552,10 +560,9 @@ export class LocalStorageService extends DataManagerService {
 			return;
 		}
 
-		new BroadcastChannel(
-			this.broadcastChannelKeys.clear
-		).onmessage = () => {
-			this.cache.clear();
-		};
+		new BroadcastChannel(this.broadcastChannelKeys.clear).onmessage =
+			() => {
+				this.cache.clear();
+			};
 	}
 }

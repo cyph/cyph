@@ -74,137 +74,143 @@ export class AccountContactsSearchComponent extends BaseProvider {
 	@Input() public searchListLength: number = 10;
 
 	/** @see SearchBarComponent.options */
-	public readonly searchOptions: Observable<
-		ISearchOptions
-	> = this.searchControl.valueChanges.pipe(
-		map<string, string>(query => query.toLowerCase().trim()),
-		switchMap(async query => {
-			this.searchSpinner.next(true);
+	public readonly searchOptions: Observable<ISearchOptions> =
+		this.searchControl.valueChanges.pipe(
+			map<string, string>(query => query.toLowerCase().trim()),
+			switchMap(async query => {
+				this.searchSpinner.next(true);
 
-			let users = this.contactList ?
-				await this.contactList.pipe(take(1)).toPromise() :
-				[];
+				let users = this.contactList ?
+					await this.contactList.pipe(take(1)).toPromise() :
+					[];
 
-			if (!this.includeGroups) {
-				users = users.filter(user => !('groupData' in user));
-			}
-
-			const results = filterUndefined(
-				(await Promise.all(
-					users.map(async user => ({
-						extra:
-							this.searchProfileExtra && user instanceof User ?
-								await user.accountUserProfileExtra.getValue() :
-								undefined,
-						name:
-							user instanceof User ?
-								(await user.accountUserProfile.getValue())
-									.name :
-								'',
-						user,
-						username: user.username
-					}))
-				)).map(({extra, name, user, username}) => {
-					if (
-						username.startsWith(query) ||
-						name.toLowerCase().indexOf(query) > -1
-					) {
-						return {matchingText: undefined, user};
-					}
-
-					if (extra === undefined) {
-						return;
-					}
-
-					const matchingText = (<string[]> [])
-						.concat(extra.address || [])
-						.concat(
-							(<AccountUserProfileExtra.IPosition[]> [])
-								.concat(extra.education || [])
-								.concat(extra.work || [])
-								.flatMap(position =>
-									(<string[]> [])
-										.concat(position.detail || [])
-										.concat(position.locationName || [])
-								)
-						)
-						.concat(extra.insurance || [])
-						.concat(extra.npis || [])
-						.concat(extra.specialties || [])
-						.find(s => s.toLowerCase().indexOf(query) > -1);
-
-					return matchingText === undefined ?
-						undefined :
-						{matchingText, user};
-				})
-			)
-				.sort((a, b) =>
-					a.user.username === query ?
-						-1 :
-					b.user.username === query ?
-						1 :
-					a.user.username < b.user.username ?
-						-1 :
-						1
-				)
-				.slice(0, this.searchListLength);
-
-			let externalUser =
-				this.externalUsers &&
-				(results.length < 1 || results[0].user.username !== query) &&
-				(await this.accountUserLookupService.exists(query, false)) ?
-					query :
-					undefined;
-
-			this.searchSpinner.next(false);
-
-			if (this.chipInput && externalUser) {
-				externalUser = undefined;
-				const user = await this.accountUserLookupService.getUser(query);
-
-				if (user) {
-					results.unshift({matchingText: undefined, user});
+				if (!this.includeGroups) {
+					users = users.filter(user => !('groupData' in user));
 				}
-			}
 
-			return {
-				imageAltText: this.stringsService.userAvatar,
-				items: results.map(({matchingText, user}) => ({
-					image: user instanceof User ? user.avatar : of(undefined),
-					matchingText,
-					smallText:
-						user instanceof User ?
-							user.realUsername.pipe(
-								map(realUsername => `@${realUsername}`)
-							) :
-							of(undefined),
-					text:
-						user instanceof User ?
-							user.name :
-							of(`@${user.username}`),
-					value: user.username
-				})),
-				topOption:
-					externalUser === undefined ?
-						undefined :
-						{
-							routerLink: `/profile/${externalUser}`,
-							text:
-								`${this.stringsService.open} ` +
-								`@${externalUser}${this.stringsService.s} ` +
-								this.stringsService.profile
+				const results = filterUndefined(
+					(
+						await Promise.all(
+							users.map(async user => ({
+								extra:
+									this.searchProfileExtra &&
+									user instanceof User ?
+										await user.accountUserProfileExtra.getValue() :
+										undefined,
+								name:
+									user instanceof User ?
+										(
+											await user.accountUserProfile.getValue()
+										).name :
+										'',
+								user,
+								username: user.username
+							}))
+						)
+					).map(({extra, name, user, username}) => {
+						if (
+							username.startsWith(query) ||
+							name.toLowerCase().indexOf(query) > -1
+						) {
+							return {matchingText: undefined, user};
 						}
-			};
-		})
-	);
+
+						if (extra === undefined) {
+							return;
+						}
+
+						const matchingText = (<string[]> [])
+							.concat(extra.address || [])
+							.concat(
+								(<AccountUserProfileExtra.IPosition[]> [])
+									.concat(extra.education || [])
+									.concat(extra.work || [])
+									.flatMap(position =>
+										(<string[]> [])
+											.concat(position.detail || [])
+											.concat(position.locationName || [])
+									)
+							)
+							.concat(extra.insurance || [])
+							.concat(extra.npis || [])
+							.concat(extra.specialties || [])
+							.find(s => s.toLowerCase().indexOf(query) > -1);
+
+						return matchingText === undefined ?
+							undefined :
+							{matchingText, user};
+					})
+				)
+					.sort((a, b) =>
+						a.user.username === query ?
+							-1 :
+						b.user.username === query ?
+							1 :
+						a.user.username < b.user.username ?
+							-1 :
+							1
+					)
+					.slice(0, this.searchListLength);
+
+				let externalUser =
+					this.externalUsers &&
+					(results.length < 1 ||
+						results[0].user.username !== query) &&
+					(await this.accountUserLookupService.exists(query, false)) ?
+						query :
+						undefined;
+
+				this.searchSpinner.next(false);
+
+				if (this.chipInput && externalUser) {
+					externalUser = undefined;
+					const user = await this.accountUserLookupService.getUser(
+						query
+					);
+
+					if (user) {
+						results.unshift({matchingText: undefined, user});
+					}
+				}
+
+				return {
+					imageAltText: this.stringsService.userAvatar,
+					items: results.map(({matchingText, user}) => ({
+						image:
+							user instanceof User ? user.avatar : of(undefined),
+						matchingText,
+						smallText:
+							user instanceof User ?
+								user.realUsername.pipe(
+									map(realUsername => `@${realUsername}`)
+								) :
+								of(undefined),
+						text:
+							user instanceof User ?
+								user.name :
+								of(`@${user.username}`),
+						value: user.username
+					})),
+					topOption:
+						externalUser === undefined ?
+							undefined :
+							{
+								routerLink: `/profile/${externalUser}`,
+								text:
+									`${this.stringsService.open} ` +
+									`@${externalUser}${this.stringsService.s} ` +
+									this.stringsService.profile
+							}
+				};
+			})
+		);
 
 	/** If true, downloads User.extra and queries it for the search. */
 	@Input() public searchProfileExtra: boolean = false;
 
 	/** @see SearchBarComponent.spinner */
-	public readonly searchSpinner: BehaviorSubject<
-		boolean
-	> = new BehaviorSubject<boolean>(false);
+	public readonly searchSpinner: BehaviorSubject<boolean> =
+		new BehaviorSubject<boolean>(false);
 
 	/** @see SearchBarComponent.query */
 	@Input() public searchUsername?: Observable<string>;
@@ -242,9 +248,7 @@ export class AccountContactsSearchComponent extends BaseProvider {
 	}
 
 	/** @see SearchBarComponent.chipTransform */
-	public readonly userChipTransform: (
-		user?: User
-	) => {
+	public readonly userChipTransform: (user?: User) => {
 		smallText?: Async<string>;
 		text: Async<string>;
 	} = user =>

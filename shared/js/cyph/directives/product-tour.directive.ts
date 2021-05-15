@@ -18,8 +18,10 @@ import {TranslateDirective} from './translate.directive';
 	/* eslint-disable-next-line @typescript-eslint/tslint/config */
 	selector: '[cyphProductTourContent][cyphProductTourOrder]'
 })
-export class ProductTourDirective extends BaseProvider
-	implements IProductTourDirective, OnDestroy, OnInit {
+export class ProductTourDirective
+	extends BaseProvider
+	implements IProductTourDirective, OnDestroy, OnInit
+{
 	/** @inheritDoc */
 	@Input() public cyphProductTourContent: string = '';
 

@@ -51,7 +51,9 @@ export class CastleIncomingMessagesProto {
 			{
 				max: incomingMessages.max,
 				queue: Object.keys(incomingMessages.queue).reduce<{
-					[id: string]: CastleIncomingMessages.ICastleIncomingMessageItem;
+					[
+						id: string
+					]: CastleIncomingMessages.ICastleIncomingMessageItem;
 				}>((o, id: any) => {
 					o[id] = {cyphertexts: incomingMessages.queue[id]};
 					return o;

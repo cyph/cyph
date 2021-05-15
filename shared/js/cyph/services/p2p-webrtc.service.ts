@@ -34,8 +34,10 @@ const _SimplePeer: typeof SimplePeer = SimplePeer;
 
 /** @inheritDoc */
 @Injectable()
-export class P2PWebRTCService extends BaseProvider
-	implements IP2PWebRTCService {
+export class P2PWebRTCService
+	extends BaseProvider
+	implements IP2PWebRTCService
+{
 	/** Constant values used by P2P. */
 	public static readonly constants = {
 		accept: 'accept',
@@ -247,16 +249,15 @@ export class P2PWebRTCService extends BaseProvider
 	})();
 
 	/** @inheritDoc */
-	public readonly resolveHandlers: (handlers: IP2PHandlers) => void = this
-		._HANDLERS.resolve;
+	public readonly resolveHandlers: (handlers: IP2PHandlers) => void =
+		this._HANDLERS.resolve;
 
 	/** @inheritDoc */
 	public readonly resolveReady: () => void = this._READY.resolve;
 
 	/** @inheritDoc */
-	public readonly resolveRemoteVideos: (
-		remoteVideo: () => JQuery
-	) => void = this._REMOTE_VIDEOS.resolve;
+	public readonly resolveRemoteVideos: (remoteVideo: () => JQuery) => void =
+		this._REMOTE_VIDEOS.resolve;
 
 	/** @inheritDoc */
 	public readonly screenSharingEnabled = new BehaviorSubject<boolean>(
@@ -333,9 +334,9 @@ export class P2PWebRTCService extends BaseProvider
 
 		if (
 			(this.confirmLocalVideoAccess &&
-				!(await (await this.handlers).localVideoConfirm(
-					!!constraints.video
-				))) ||
+				!(await (
+					await this.handlers
+				).localVideoConfirm(!!constraints.video))) ||
 			!(await requestPermissions(
 				...['RECORD_AUDIO', ...(constraints.video ? ['CAMERA'] : [])]
 			))
@@ -519,11 +520,12 @@ export class P2PWebRTCService extends BaseProvider
 
 			return (!lastDevice ?
 				devices :
-				[lastDevice, ...devices.filter(o => o !== lastDevice)]
-			).map((o, i) => ({
-				label: o.label || `${kindName} ${i + 1}`,
-				switchTo: switchToFactory(o)
-			}));
+				[lastDevice, ...devices.filter(o => o !== lastDevice)]).map(
+				(o, i) => ({
+					label: o.label || `${kindName} ${i + 1}`,
+					switchTo: switchToFactory(o)
+				})
+			);
 		};
 
 		return {
@@ -556,27 +558,27 @@ export class P2PWebRTCService extends BaseProvider
 					this.stringsService.speakerTitle,
 					this.lastDeviceIDs.speaker,
 					(o: MediaDeviceInfo) => async () => {
-						const remoteVideos = (await this.remoteVideos)()
-							.find('video')
-							.toArray();
-						if (remoteVideos.length < 1) {
-							debugLogError(
-								() =>
-									'Remote video not found (switching speaker).'
-							);
-							return;
+							const remoteVideos = (await this.remoteVideos)()
+									.find('video')
+									.toArray();
+							if (remoteVideos.length < 1) {
+								debugLogError(
+									() =>
+										'Remote video not found (switching speaker).'
+								);
+								return;
+							}
+							if (!('setSinkId' in remoteVideos[0])) {
+								debugLogError(
+									() => 'Switching speakers unsupported.'
+								);
+								return;
+							}
+							for (const remoteVideo of remoteVideos) {
+								(<any> remoteVideo).setSinkId(o.deviceId);
+							}
+							this.lastDeviceIDs.speaker = o.deviceId;
 						}
-						if (!('setSinkId' in remoteVideos[0])) {
-							debugLogError(
-								() => 'Switching speakers unsupported.'
-							);
-							return;
-						}
-						for (const remoteVideo of remoteVideos) {
-							(<any> remoteVideo).setSinkId(o.deviceId);
-						}
-						this.lastDeviceIDs.speaker = o.deviceId;
-					}
 				)
 		};
 	}
@@ -946,16 +948,15 @@ export class P2PWebRTCService extends BaseProvider
 						return;
 					}
 
-					const newSessionServices = sessionServices.slice(
-						lastSessionProcessed
-					);
+					const newSessionServices =
+						sessionServices.slice(lastSessionProcessed);
 
 					this.incomingStreams.next(
 						this.incomingStreams.value.concat(
 							newSessionServices.map(sessionService => ({
 								activeVideo: false,
-								constraints: this.outgoingStream.value
-									.constraints,
+								constraints:
+									this.outgoingStream.value.constraints,
 								isOutgoing: false,
 								user: sessionService.pairwiseSessionData
 									?.remoteUsername ?
@@ -965,9 +966,8 @@ export class P2PWebRTCService extends BaseProvider
 												.remoteUsername
 									} :
 									{
-										name:
-											sessionService.remoteUserString
-												.value
+										name: sessionService.remoteUserString
+											.value
 									}
 							}))
 						)
@@ -1338,7 +1338,9 @@ export class P2PWebRTCService extends BaseProvider
 							return;
 						}
 
-						const ok = await (await this.handlers).acceptConfirm(
+						const ok = await (
+							await this.handlers
+						).acceptConfirm(
 							p2pSessionData.callType,
 							500000,
 							this.isAccepted

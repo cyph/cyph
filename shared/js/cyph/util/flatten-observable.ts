@@ -20,25 +20,24 @@ type AsyncObservable<T> =
 	| (() => Promise<Observable<T> | T>);
 
 /** @ignore */
-const subscribeFactory = <T>(
-	observable: AsyncObservable<T>,
-	subscriptions?: Subscription[]
-) => async (observer: Observer<T>) => {
-	const o = await (typeof observable === 'function' ?
-		observable() :
-		observable);
+const subscribeFactory =
+	<T>(observable: AsyncObservable<T>, subscriptions?: Subscription[]) =>
+	async (observer: Observer<T>) => {
+		const o = await (typeof observable === 'function' ?
+			observable() :
+			observable);
 
-	if (!(o instanceof Observable)) {
-		observer.next(o);
-		return;
-	}
+		if (!(o instanceof Observable)) {
+			observer.next(o);
+			return;
+		}
 
-	const sub = o.subscribe(observer);
+		const sub = o.subscribe(observer);
 
-	if (subscriptions) {
-		subscriptions.push(sub);
-	}
-};
+		if (subscriptions) {
+			subscriptions.push(sub);
+		}
+	};
 
 /** Wraps a possibly-async Observable with a synchronously created ReplaySubject. */
 export const cacheObservable = <T>(

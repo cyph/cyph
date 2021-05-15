@@ -21,10 +21,9 @@ export const verifyEmailConfirm = onCall(
 		const [authUsername, {emailVerification}] = await Promise.all([
 			getUsername(),
 			(async () =>
-				tokens.open(
-					token,
-					await getTokenKey(namespace)
-				))().catch(() => ({}))
+				tokens.open(token, await getTokenKey(namespace)))().catch(
+				() => ({})
+			)
 		]);
 
 		const {username} = emailVerification || {};

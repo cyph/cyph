@@ -61,10 +61,9 @@ export class PasswordHash implements IPasswordHash {
 	);
 
 	/** @inheritDoc */
-	public readonly opsLimitInteractive: Promise<
-		number
-	> = sodium.ready.then(() =>
-		this.isNative ? NativeCrypto.passwordHash.opsLimitInteractive : 3
+	public readonly opsLimitInteractive: Promise<number> = sodium.ready.then(
+		() =>
+			this.isNative ? NativeCrypto.passwordHash.opsLimitInteractive : 3
 	);
 
 	/** @inheritDoc */
@@ -162,9 +161,7 @@ export class PasswordHash implements IPasswordHash {
 	}
 
 	/** @inheritDoc */
-	public async parseMetadata (
-		metadata: Uint8Array
-	) : Promise<{
+	public async parseMetadata (metadata: Uint8Array) : Promise<{
 		algorithm: string;
 		memLimit: number;
 		opsLimit: number;

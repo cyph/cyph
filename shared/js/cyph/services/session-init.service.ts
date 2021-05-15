@@ -47,9 +47,8 @@ export class SessionInitService extends BaseProvider {
 	public parentID?: string;
 
 	/** Appended to ID as part of the shared secret. */
-	public readonly salt: Promise<string | undefined> = Promise.resolve(
-		undefined
-	);
+	public readonly salt: Promise<string | undefined> =
+		Promise.resolve(undefined);
 
 	/** @see IBurnerSession.timeString */
 	public readonly timeString?: string;

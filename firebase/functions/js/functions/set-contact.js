@@ -34,13 +34,15 @@ export const setContact = onCall(async (data, namespace, getUsername) => {
 				{} :
 				{
 					email: ' ',
-					name: (await getItem(
-						namespace,
-						`users/${username}/publicProfile`,
-						AccountUserProfile,
-						true,
-						true
-					).catch(() => ({}))).name
+					name: (
+						await getItem(
+							namespace,
+							`users/${username}/publicProfile`,
+							AccountUserProfile,
+							true,
+							true
+						).catch(() => ({}))
+					).name
 				}
 		)
 	]);

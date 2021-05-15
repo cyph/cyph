@@ -34,8 +34,10 @@ import {AccountComposeNoProvidersComponent} from '../account-compose-no-provider
 	styleUrls: ['./account-call-waiting.component.scss'],
 	templateUrl: './account-call-waiting.component.html'
 })
-export class AccountCallWaitingComponent extends BaseProvider
-	implements AfterViewInit, OnChanges {
+export class AccountCallWaitingComponent
+	extends BaseProvider
+	implements AfterViewInit, OnChanges
+{
 	/** @see AccountUserTypes */
 	public readonly accountUserTypes = AccountUserTypes;
 
@@ -115,8 +117,8 @@ export class AccountCallWaitingComponent extends BaseProvider
 			if (
 				!(
 					this.envService.isTelehealth &&
-					(this.appointment?.forms &&
-						this.appointment.forms.length < 1)
+					this.appointment?.forms &&
+					this.appointment.forms.length < 1
 				)
 			) {
 				return;

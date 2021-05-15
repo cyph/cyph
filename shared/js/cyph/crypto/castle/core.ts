@@ -62,7 +62,8 @@ export class Core {
 			this.potassium.isEmpty(this.ratchetState.asymmetric.privateKey) &&
 			!incomingPublicKey
 		) {
-			const aliceKeyPair = await this.potassium.ephemeralKeyExchange.aliceKeyPair();
+			const aliceKeyPair =
+				await this.potassium.ephemeralKeyExchange.aliceKeyPair();
 			outgoingPublicKey = aliceKeyPair.publicKey;
 
 			this.ratchetState.asymmetric.privateKey = aliceKeyPair.privateKey;
@@ -74,9 +75,10 @@ export class Core {
 			this.potassium.isEmpty(this.ratchetState.asymmetric.publicKey) &&
 			incomingPublicKey
 		) {
-			const secretData = await this.potassium.ephemeralKeyExchange.bobSecret(
-				incomingPublicKey
-			);
+			const secretData =
+				await this.potassium.ephemeralKeyExchange.bobSecret(
+					incomingPublicKey
+				);
 
 			secret = secretData.secret;
 
@@ -278,7 +280,8 @@ export class Core {
 					}
 
 					if (keys === this.ratchetState.symmetric.next) {
-						this.ratchetState.symmetric.current = this.ratchetState.symmetric.next;
+						this.ratchetState.symmetric.current =
+							this.ratchetState.symmetric.next;
 					}
 
 					this.updateRatchetState({plaintext});
@@ -301,9 +304,7 @@ export class Core {
 	 * Performs and caches decryption steps that don't require lock ownership.
 	 * @param cyphertext Data to be decrypted.
 	 */
-	public decryptSetup (
-		cyphertext: Uint8Array
-	) :
+	public decryptSetup (cyphertext: Uint8Array) :
 		| undefined
 		| {
 				encrypted: Uint8Array;
@@ -356,9 +357,10 @@ export class Core {
 
 			this.potassium.clearMemory(ratchetData);
 
-			this.ratchetState.symmetric.current.outgoing = await this.potassium.hash.deriveKey(
-				this.ratchetState.symmetric.current.outgoing
-			);
+			this.ratchetState.symmetric.current.outgoing =
+				await this.potassium.hash.deriveKey(
+					this.ratchetState.symmetric.current.outgoing
+				);
 
 			this.updateRatchetState({
 				cyphertext: this.potassium.concatMemory(

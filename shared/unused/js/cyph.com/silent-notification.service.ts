@@ -6,8 +6,10 @@ import {INotificationService} from '../cyph/service-interfaces/inotification.ser
  * Mocks notification service and discards all notification messages.
  */
 @Injectable()
-export class SilentNotificationService extends BaseProvider
-	implements INotificationService {
+export class SilentNotificationService
+	extends BaseProvider
+	implements INotificationService
+{
 	/** @inheritDoc */
 	public notify (_MESSAGE: string) : void {}
 

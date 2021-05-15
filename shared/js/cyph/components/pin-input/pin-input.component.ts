@@ -30,8 +30,10 @@ import {StringsService} from '../../services/strings.service';
 	styleUrls: ['./pin-input.component.scss'],
 	templateUrl: './pin-input.component.html'
 })
-export class PinInputComponent extends BaseProvider
-	implements ControlValueAccessor, OnInit {
+export class PinInputComponent
+	extends BaseProvider
+	implements ControlValueAccessor, OnInit
+{
 	/** Change event callback. */
 	private onChange?: (s: string) => void;
 

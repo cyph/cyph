@@ -7,8 +7,5 @@ export const mailchimp =
 		new MailchimpApiV3(mailchimpCredentials.apiKey) :
 		undefined;
 
-export const {
-	addToMailingList,
-	removeFromMailingList,
-	splitName
-} = initMailchimp(mailchimp, mailchimpCredentials);
+export const {addToMailingList, removeFromMailingList, splitName} =
+	initMailchimp(mailchimp, mailchimpCredentials);

@@ -59,8 +59,10 @@ import {resolvable, sleep} from '../../util/wait';
 	styleUrls: ['./account-register.component.scss'],
 	templateUrl: './account-register.component.html'
 })
-export class AccountRegisterComponent extends BaseProvider
-	implements OnDestroy, OnInit {
+export class AccountRegisterComponent
+	extends BaseProvider
+	implements OnDestroy, OnInit
+{
 	/** Alternate master key. */
 	private readonly altMasterKey = uuid(true, false);
 
@@ -316,11 +318,10 @@ export class AccountRegisterComponent extends BaseProvider
 	);
 
 	/** Auto-generated password options. */
-	public xkcdPassphrases:
-		| (() => Promise<string>)[]
-		| undefined = this.configService.masterKey.sizes.map(n =>
-		memoize(async () => (n === 0 ? '' : xkcdPassphrase.generate(n)))
-	);
+	public xkcdPassphrases: (() => Promise<string>)[] | undefined =
+		this.configService.masterKey.sizes.map(n =>
+			memoize(async () => (n === 0 ? '' : xkcdPassphrase.generate(n)))
+		);
 
 	/** Indicates whether xkcdPassphrase has been viewed. */
 	public readonly xkcdPassphraseHasBeenViewed = new BehaviorSubject<boolean>(

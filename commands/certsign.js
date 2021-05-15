@@ -84,15 +84,8 @@ export const certSign = async (projectId, standalone, namespace) => {
 		const getHash = async bytes =>
 			potassium.toBase64(await potassium.hash.hash(bytes));
 
-		const {
-			auth,
-			database,
-			getItem,
-			hasItem,
-			removeItem,
-			setItem,
-			storage
-		} = initDatabaseService(projectId);
+		const {auth, database, getItem, hasItem, removeItem, setItem, storage} =
+			initDatabaseService(projectId);
 
 		const namespacePath = namespace.replace(/\./g, '_');
 
@@ -158,9 +151,9 @@ export const certSign = async (projectId, standalone, namespace) => {
 				fs.readFileSync(lastIssuanceTimestampPath).toString()
 			);
 
-			const lastIssuanceTimestampRemote = (await lastIssuanceTimestampRef.once(
-				'value'
-			)).val();
+			const lastIssuanceTimestampRemote = (
+				await lastIssuanceTimestampRef.once('value')
+			).val();
 
 			if (
 				isNaN(lastIssuanceTimestampLocal) &&
@@ -239,78 +232,80 @@ export const certSign = async (projectId, standalone, namespace) => {
 			throw new Error('Failed to get AGSE-PKI history.');
 		}
 
-		const csrs = (await Promise.all(
-			usernames.map(async username => {
-				try {
-					if (
-						!username ||
-						username !==
-							username
-								.toLowerCase()
-								.replace(/[^0-9a-z_]/g, '')
-								.slice(0, 50)
-					) {
-						return;
-					}
+		const csrs = (
+			await Promise.all(
+				usernames.map(async username => {
+					try {
+						if (
+							!username ||
+							username !==
+								username
+									.toLowerCase()
+									.replace(/[^0-9a-z_]/g, '')
+									.slice(0, 50)
+						) {
+							return;
+						}
 
-					const bytes = await getItem(
-						namespace,
-						`users/${username}/certificateRequest`,
-						BinaryProto
-					);
-
-					const csr = await deserialize(
-						AGSEPKICSR,
-						new Uint8Array(
-							bytes.buffer,
-							bytes.byteOffset + (await potassium.sign.bytes)
-						)
-					);
-
-					if (
-						!csr.publicSigningKey ||
-						csr.publicSigningKey.length < 1 ||
-						!csr.username ||
-						csr.username !== username
-					) {
-						return;
-					}
-
-					const publicSigningKeyHash = await getHash(
-						csr.publicSigningKey
-					);
-
-					/* Validate that CSR data doesn't already belong to an existing user. */
-					if (
-						await duplicateCSR(
-							issuanceHistory,
-							csr,
-							publicSigningKeyHash
-						)
-					) {
-						console.log(
-							`Ignoring duplicate CSR for ${csr.username}.`
+						const bytes = await getItem(
+							namespace,
+							`users/${username}/certificateRequest`,
+							BinaryProto
 						);
-						return;
+
+						const csr = await deserialize(
+							AGSEPKICSR,
+							new Uint8Array(
+								bytes.buffer,
+								bytes.byteOffset + (await potassium.sign.bytes)
+							)
+						);
+
+						if (
+							!csr.publicSigningKey ||
+							csr.publicSigningKey.length < 1 ||
+							!csr.username ||
+							csr.username !== username
+						) {
+							return;
+						}
+
+						const publicSigningKeyHash = await getHash(
+							csr.publicSigningKey
+						);
+
+						/* Validate that CSR data doesn't already belong to an existing user. */
+						if (
+							await duplicateCSR(
+								issuanceHistory,
+								csr,
+								publicSigningKeyHash
+							)
+						) {
+							console.log(
+								`Ignoring duplicate CSR for ${csr.username}.`
+							);
+							return;
+						}
+
+						/* Validate CSR signature. */
+						await potassium.sign.open(
+							bytes,
+							csr.publicSigningKey,
+							`${namespace}:users/${csr.username}/certificateRequest`
+						);
+
+						issuanceHistory.publicSigningKeyHashes[
+							publicSigningKeyHash
+						] = true;
+						issuanceHistory.usernames[csr.username] = true;
+
+						return csr;
 					}
-
-					/* Validate CSR signature. */
-					await potassium.sign.open(
-						bytes,
-						csr.publicSigningKey,
-						`${namespace}:users/${csr.username}/certificateRequest`
-					);
-
-					issuanceHistory.publicSigningKeyHashes[
-						publicSigningKeyHash
-					] = true;
-					issuanceHistory.usernames[csr.username] = true;
-
-					return csr;
-				}
-				catch (_) {}
-			})
-		)).filter(csr => csr);
+					catch (_) {}
+				})
+			)
+		).filter(csr => csr);
 
 		if (csrs.length < 1) {
 			console.log('No certificates to sign.');

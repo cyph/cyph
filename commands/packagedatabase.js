@@ -53,10 +53,7 @@ export const packageDatabase = memoize(() => {
 
 	return getFiles('**/pkg.gz')
 		.map(pkg => [
-			pkg
-				.split('/')
-				.slice(0, -1)
-				.join('/'),
+			pkg.split('/').slice(0, -1).join('/'),
 			childProcess
 				.spawnSync('gunzip', ['-c', pkg], options)
 				.stdout.toString()

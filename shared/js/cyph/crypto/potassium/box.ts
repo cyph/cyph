@@ -91,10 +91,8 @@ export class Box implements IBox {
 		const oneTimeAuthKeyBytes = await this.oneTimeAuth.keyBytes;
 
 		try {
-			const [
-				asymmetricCyphertext,
-				symmetricCyphertext
-			] = potassiumUtil.splitBytes(cyphertext);
+			const [asymmetricCyphertext, symmetricCyphertext] =
+				potassiumUtil.splitBytes(cyphertext);
 
 			const mac = potassiumUtil.toBytes(
 				asymmetricCyphertext,
@@ -213,9 +211,7 @@ export class Box implements IBox {
 	}
 
 	/** @ignore */
-	private async splitPrivateKey (
-		privateKey: Uint8Array
-	) : Promise<{
+	private async splitPrivateKey (privateKey: Uint8Array) : Promise<{
 		classical: Uint8Array;
 		mceliece: Uint8Array;
 		ntru: Uint8Array;
@@ -249,9 +245,7 @@ export class Box implements IBox {
 	}
 
 	/** @ignore */
-	private async splitPublicKey (
-		publicKey: Uint8Array
-	) : Promise<{
+	private async splitPublicKey (publicKey: Uint8Array) : Promise<{
 		classical: Uint8Array;
 		mceliece: Uint8Array;
 		ntru: Uint8Array;

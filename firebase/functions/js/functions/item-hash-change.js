@@ -14,7 +14,9 @@ export const itemHashChange = async ({after: data}, {params}) => {
 	const url = getURL(data.adminRef.parent);
 
 	const files = await Promise.all(
-		(await storage.getFiles({prefix: `${url}/`}))[0].map(async file => {
+		(
+			await storage.getFiles({prefix: `${url}/`})
+		)[0].map(async file => {
 			const [metadata] = await file.getMetadata();
 
 			return {

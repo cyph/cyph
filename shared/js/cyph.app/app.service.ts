@@ -67,9 +67,8 @@ export class AppService extends BaseProvider implements CanActivate {
 	);
 
 	/** Resolves route to redirect to after unlock. */
-	public readonly resolveLockedDownRoute: (
-		lockedDownRoute: string
-	) => void = this._LOCKED_DOWN_ROUTE.resolve;
+	public readonly resolveLockedDownRoute: (lockedDownRoute: string) => void =
+		this._LOCKED_DOWN_ROUTE.resolve;
 
 	/** @inheritDoc */
 	public canActivate (
@@ -233,9 +232,11 @@ export class AppService extends BaseProvider implements CanActivate {
 				this.loadComplete();
 			}
 
-			await (await waitForValue(
-				() => router.routerState.root.firstChild || undefined
-			)).url
+			await (
+				await waitForValue(
+					() => router.routerState.root.firstChild || undefined
+				)
+			).url
 				.pipe(first())
 				.toPromise();
 

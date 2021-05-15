@@ -128,26 +128,27 @@ export const newFormContainer = (
 });
 
 /** Creates a new form element. */
-export const newFormElement = <
-	T extends {
-		fileName?: string;
-		id?: string;
-		label?: string;
-		mask?: any;
-		max?: number;
-		mediaType?: string;
-		min?: number;
-		noGrow?: boolean;
-		options?: string[];
-		required?: boolean;
-		step?: number;
-		tooltip?: string;
-		value?: boolean | number | string | Uint8Array;
-		width?: number;
-	}
->(
-	elementType: Form.Element.Types
-) =>
+export const newFormElement =
+	<
+		T extends {
+			fileName?: string;
+			id?: string;
+			label?: string;
+			mask?: any;
+			max?: number;
+			mediaType?: string;
+			min?: number;
+			noGrow?: boolean;
+			options?: string[];
+			required?: boolean;
+			step?: number;
+			tooltip?: string;
+			value?: boolean | number | string | Uint8Array;
+			width?: number;
+		}
+	>(
+		elementType: Form.Element.Types
+	) =>
 	/* eslint-disable-next-line complexity */
 	(o?: T) => {
 		const element: Form.IElement = {

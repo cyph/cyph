@@ -57,9 +57,7 @@
 				(sessionService.chatRequestUsername | await) !== undefined
 			"
 		>
-			<span cyphTranslate>
-				Connecting to
-			</span>
+			<span cyphTranslate> Connecting to </span>
 			&ngsp;
 			<span>
 				@{{ (sessionService.chatRequestUsername | await) || '' }}.
@@ -133,9 +131,7 @@
 					<mat-icon>textsms</mat-icon>
 				</a>
 
-				<span class="divider">
-					&nbsp;
-				</span>
+				<span class="divider"> &nbsp; </span>
 
 				<button
 					mat-mini-fab
@@ -146,9 +142,7 @@
 					<mat-icon>email</mat-icon>
 				</button>
 
-				<span class="divider">
-					&nbsp;
-				</span>
+				<span class="divider"> &nbsp; </span>
 
 				<button
 					mat-mini-fab
@@ -187,9 +181,7 @@
 			class="timer"
 			*ngIf="timer !== undefined && (isPassive | await) === false"
 		>
-			<span cyphTranslate>
-				Link expires in
-			</span>
+			<span cyphTranslate> Link expires in </span>
 			&ngsp;
 			<span class="countdown">
 				{{ timer.timestamp | await }}
@@ -218,9 +210,7 @@
 					<mat-option (click)="addTime(1800000)">
 						30 Minutes
 					</mat-option>
-					<mat-option (click)="addTime(3600000)">
-						1 Hour
-					</mat-option>
+					<mat-option (click)="addTime(3600000)"> 1 Hour </mat-option>
 					<mat-option (click)="addTime(43200000)">
 						12 Hours
 					</mat-option>

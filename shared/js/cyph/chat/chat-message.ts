@@ -22,8 +22,8 @@ export class ChatMessage implements IChatMessage {
 	public authorID?: string = this.message.authorID;
 
 	/** @inheritDoc */
-	public authorType: ChatMessageInternal.AuthorTypes = this.message
-		.authorType;
+	public authorType: ChatMessageInternal.AuthorTypes =
+		this.message.authorType;
 
 	/** Human-readable date + time. */
 	public dateTimeString: string = getDateTimeString(this.message.timestamp);

@@ -71,9 +71,8 @@ export class AccountContactComponent extends BaseProvider implements OnChanges {
 	@Input() public startGroup: boolean = false;
 
 	/** This user. */
-	public readonly user: BehaviorSubject<
-		User | undefined
-	> = new BehaviorSubject<User | undefined>(undefined);
+	public readonly user: BehaviorSubject<User | undefined> =
+		new BehaviorSubject<User | undefined>(undefined);
 
 	/** @see UserPresence */
 	public readonly userPresence = UserPresence;

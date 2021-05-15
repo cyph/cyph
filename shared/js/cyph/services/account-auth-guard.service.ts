@@ -13,8 +13,10 @@ import {StringsService} from './strings.service';
 
 /** Auth guard for accounts routing. */
 @Injectable()
-export class AccountAuthGuardService extends BaseProvider
-	implements CanActivate, CanActivateChild {
+export class AccountAuthGuardService
+	extends BaseProvider
+	implements CanActivate, CanActivateChild
+{
 	/** @ignore */
 	private readonly anonymouslyAccessibleRoutes: string[] = [
 		'404',

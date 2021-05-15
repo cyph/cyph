@@ -39,8 +39,10 @@ import {resolvable} from '../../util/wait/resolvable';
 	styleUrls: ['./account-new-device-activation.component.scss'],
 	templateUrl: './account-new-device-activation.component.html'
 })
-export class AccountNewDeviceActivationComponent extends BaseProvider
-	implements OnDestroy, OnInit {
+export class AccountNewDeviceActivationComponent
+	extends BaseProvider
+	implements OnDestroy, OnInit
+{
 	/** @ignore */
 	private wasSuccessful: boolean = false;
 
@@ -143,15 +145,17 @@ export class AccountNewDeviceActivationComponent extends BaseProvider
 				this.configService.cyphIDLength
 			);
 
-			await (await this.sessionService.send([
-				RpcEvents.accountMasterKeyConfirmation,
-				{
-					command: {
-						additionalData: masterKeyConfirmationCode,
-						method: ''
+			await (
+				await this.sessionService.send([
+					RpcEvents.accountMasterKeyConfirmation,
+					{
+						command: {
+							additionalData: masterKeyConfirmationCode,
+							method: ''
+						}
 					}
-				}
-			])).confirmPromise;
+				])
+			).confirmPromise;
 
 			this.masterKeyConfirmationCode.next(masterKeyConfirmationCode);
 
@@ -162,15 +166,17 @@ export class AccountNewDeviceActivationComponent extends BaseProvider
 				return;
 			}
 
-			await (await this.sessionService.send([
-				RpcEvents.accountMasterKey,
-				{
-					command: {
-						additionalData: this.sessionData.aliceMasterKey,
-						method: this.sessionData.aliceUsername
+			await (
+				await this.sessionService.send([
+					RpcEvents.accountMasterKey,
+					{
+						command: {
+							additionalData: this.sessionData.aliceMasterKey,
+							method: this.sessionData.aliceUsername
+						}
 					}
-				}
-			])).confirmPromise;
+				])
+			).confirmPromise;
 
 			this.activationComplete.emit(true);
 			this.wasSuccessful = true;

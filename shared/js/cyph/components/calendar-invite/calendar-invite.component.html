@@ -103,9 +103,8 @@
 						name="call-type"
 						[ngModel]="value?.callType || callTypes.None"
 						(ngModelChange)="
-							(
-								value || {callType: callTypes.None}
-							).callType = $event;
+							(value || {callType: callTypes.None}).callType =
+								$event;
 							value && valueChange(value)
 						"
 						[placeholder]="stringsService.callType"
@@ -168,12 +167,8 @@
 						"
 						[ngModel]="timestampToDate(value?.startTime || 0)"
 						(ngModelChange)="
-							(
-								value || {startTime: 0}
-							).startTime = timestampUpdate(
-								value?.startTime || 0,
-								$event
-							);
+							(value || {startTime: 0}).startTime =
+								timestampUpdate(value?.startTime || 0, $event);
 							(value || {endTime: 0}).endTime =
 								(value?.startTime || 0) + duration;
 							value && valueChange(value)
@@ -201,13 +196,12 @@
 							timestampTo24HourTimeString(value?.startTime || 0)
 						"
 						(ngModelChange)="
-							(
-								value || {startTime: 0}
-							).startTime = timestampUpdate(
-								value?.startTime || 0,
-								undefined,
-								$event
-							);
+							(value || {startTime: 0}).startTime =
+								timestampUpdate(
+									value?.startTime || 0,
+									undefined,
+									$event
+								);
 							(value || {endTime: 0}).endTime =
 								(value?.startTime || 0) + duration;
 							value && valueChange(value)
@@ -223,13 +217,12 @@
 						name="start-time"
 						[ngModel]="timestampToTime(value?.startTime || 0)"
 						(ngModelChange)="
-							(
-								value || {startTime: 0}
-							).startTime = timestampUpdate(
-								value?.startTime || 0,
-								undefined,
-								$event
-							);
+							(value || {startTime: 0}).startTime =
+								timestampUpdate(
+									value?.startTime || 0,
+									undefined,
+									$event
+								);
 							(value || {endTime: 0}).endTime =
 								(value?.startTime || 0) + duration;
 							value && valueChange(value)
@@ -501,9 +494,8 @@
 							true
 						"
 						(ngModelChange)="
-							(value?.alternateTimeFrames || {})[
-								timeFrame
-							] = $event;
+							(value?.alternateTimeFrames || {})[timeFrame] =
+								$event;
 							value && valueChange(value)
 						"
 						[value]="timeFrame"

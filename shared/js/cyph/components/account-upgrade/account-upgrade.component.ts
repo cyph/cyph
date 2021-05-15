@@ -21,8 +21,10 @@ import {SalesService} from '../../services/sales.service';
 	styleUrls: ['./account-upgrade.component.scss'],
 	templateUrl: './account-upgrade.component.html'
 })
-export class AccountUpgradeComponent extends BaseProvider
-	implements AfterViewInit {
+export class AccountUpgradeComponent
+	extends BaseProvider
+	implements AfterViewInit
+{
 	/** @see InAppPurchaseComponent */
 	@ViewChild('inAppPurchase', {read: InAppPurchaseComponent})
 	public inAppPurchase?: InAppPurchaseComponent;

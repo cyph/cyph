@@ -138,13 +138,12 @@ export class ChatService extends BaseProvider {
 	protected readonly fetchedMessageIDs = new LocalAsyncSet<string>();
 
 	/** Local version of messageValues (ephemeral chat optimization). */
-	protected readonly messageValuesLocal: EncryptedAsyncMap<
-		IChatMessageValue
-	> = new EncryptedAsyncMap<IChatMessageValue>(
-		this.potassiumService,
-		this.messageValuesURL,
-		ChatMessageValue
-	);
+	protected readonly messageValuesLocal: EncryptedAsyncMap<IChatMessageValue> =
+		new EncryptedAsyncMap<IChatMessageValue>(
+			this.potassiumService,
+			this.messageValuesURL,
+			ChatMessageValue
+		);
 
 	/** @see IChatData */
 	public readonly chatSubject = new BehaviorSubject(
@@ -196,10 +195,11 @@ export class ChatService extends BaseProvider {
 	);
 
 	/** @see P2PService */
-	public readonly p2pService = resolvable<{
-		isActive: BehaviorSubject<boolean>;
-		isSidebarOpen: BehaviorSubject<boolean>;
-	}>();
+	public readonly p2pService =
+		resolvable<{
+			isActive: BehaviorSubject<boolean>;
+			isSidebarOpen: BehaviorSubject<boolean>;
+		}>();
 
 	/** Remote User object where applicable. */
 	public readonly remoteUser = resolvable<UserLike | undefined>();
@@ -260,17 +260,20 @@ export class ChatService extends BaseProvider {
 						const unobservedPredecessors =
 							o.text.predecessors &&
 							o.text.predecessors.length > 0 ?
-								(await Promise.all(
-									o.text.predecessors.map(
-										async predecessor => ({
-											hasValidHash: await this.messageHasValidHash(
-												predecessor.id,
-												predecessor.hash
-											),
-											predecessor
-										})
+								(
+									await Promise.all(
+										o.text.predecessors.map(
+											async predecessor => ({
+												hasValidHash:
+													await this.messageHasValidHash(
+														predecessor.id,
+														predecessor.hash
+													),
+												predecessor
+											})
+										)
 									)
-								))
+								)
 									.filter(
 										unobservedPredecessor =>
 											!unobservedPredecessor.hasValidHash
@@ -313,19 +316,22 @@ export class ChatService extends BaseProvider {
 
 					const selfDestructChat = !!(
 						o.text.selfDestructChat &&
-						(o.text.selfDestructTimeout !== undefined &&
-							!isNaN(o.text.selfDestructTimeout) &&
-							o.text.selfDestructTimeout > 0) &&
+						o.text.selfDestructTimeout !== undefined &&
+						!isNaN(o.text.selfDestructTimeout) &&
+						o.text.selfDestructTimeout > 0 &&
 						(await (async () => {
-							const messageIDs = await this.chat.messageList.getFlatValue();
+							const messageIDs =
+								await this.chat.messageList.getFlatValue();
 
 							return (
 								messageIDs.length === 0 ||
 								(messageIDs.length === 1 &&
 									typeof messageIDs[0] === 'string' &&
-									(await this.chat.messages.getItem(
-										messageIDs[0]
-									)).authorType ===
+									(
+										await this.chat.messages.getItem(
+											messageIDs[0]
+										)
+									).authorType ===
 										ChatMessage.AuthorTypes.App)
 							);
 						})())
@@ -477,9 +483,7 @@ export class ChatService extends BaseProvider {
 	}
 
 	/** @ignore */
-	private messageValueHasher (
-		message: IChatMessage
-	) : {
+	private messageValueHasher (message: IChatMessage) : {
 		proto: IProto<IChatMessage>;
 		transform: (value: IChatMessageValue) => Promise<IChatMessage>;
 	} {
@@ -1033,7 +1037,8 @@ export class ChatService extends BaseProvider {
 						const referencesValue =
 							message.hash &&
 							message.hash.length > 0 &&
-							(message.key && message.key.length > 0);
+							message.key &&
+							message.key.length > 0;
 
 						for (const messageValues of [
 							this.messageValuesLocal,
@@ -1098,12 +1103,13 @@ export class ChatService extends BaseProvider {
 										this.sessionService.remoteUserString
 									);
 
-									const messageValue = await messageValues.getItem(
-										message.id,
-										message.key,
-										message.hash,
-										this.messageValueHasher(message)
-									);
+									const messageValue =
+										await messageValues.getItem(
+											message.id,
+											message.key,
+											message.hash,
+											this.messageValueHasher(message)
+										);
 
 									debugLog(() => ({
 										chatMessageValueBadDataRecovery: {
@@ -1118,10 +1124,11 @@ export class ChatService extends BaseProvider {
 									);
 
 									debugLog(() => ({
-										chatMessageValueBadDataRecoverySuccess: {
-											message,
-											messageValue
-										}
+										chatMessageValueBadDataRecoverySuccess:
+											{
+												message,
+												messageValue
+											}
 									}));
 
 									return messageValue;
@@ -1262,12 +1269,8 @@ export class ChatService extends BaseProvider {
 			phoneNumber = '';
 		}
 
-		const {
-			callType,
-			id,
-			url,
-			username
-		} = await this.sessionService.addToBurnerGroup(name);
+		const {callType, id, url, username} =
+			await this.sessionService.addToBurnerGroup(name);
 
 		if (!email && !phoneNumber) {
 			await this.dialogService.alert({
@@ -1326,9 +1329,7 @@ export class ChatService extends BaseProvider {
 	public async messageChange (isText: boolean = false) : Promise<void> {
 		return this.messageChangeLock(async () => {
 			if (this.chat.pendingMessageRoot) {
-				await this.localStorageService.setItem<
-					IChatMessageLiveValueSerialized
-				>(
+				await this.localStorageService.setItem<IChatMessageLiveValueSerialized>(
 					`${this.chat.pendingMessageRoot}-live`,
 					ChatMessageLiveValueSerialized,
 					{
@@ -1544,7 +1545,8 @@ export class ChatService extends BaseProvider {
 					!(
 						(isLocal || isRemote) &&
 						o.id &&
-						(o.hash && o.hash.length > 0) &&
+						o.hash &&
+						o.hash.length > 0 &&
 						(await this.messageHasValidHash(o))
 					)
 				) {
@@ -1817,11 +1819,12 @@ export class ChatService extends BaseProvider {
 						}),
 					this.localStorageService
 						.lock(pendingMessageRoot, async () => {
-							const pendingMessages = await this.localStorageService.getValues(
-								pendingMessageRoot,
-								ChatPendingMessage,
-								true
-							);
+							const pendingMessages =
+								await this.localStorageService.getValues(
+									pendingMessageRoot,
+									ChatPendingMessage,
+									true
+								);
 
 							this.resolvers.pendingMessagesSynced.resolve();
 
@@ -1891,8 +1894,10 @@ export class ChatService extends BaseProvider {
 			this.sessionService.childChannelsConnected.then(async () => {
 				debugLog(async () => ({
 					chat: {
-						futureMessages: await this.chat.futureMessages.getValue(),
-						lastConfirmedMessage: await this.chat.lastConfirmedMessage.getValue(),
+						futureMessages:
+							await this.chat.futureMessages.getValue(),
+						lastConfirmedMessage:
+							await this.chat.lastConfirmedMessage.getValue(),
 						lastUnreadMessage: await this.chat.lastUnreadMessage,
 						messageList: await this.chat.messageList.getValue(),
 						messages: await this.chat.messages.getValue(),
@@ -1949,14 +1954,15 @@ export class ChatService extends BaseProvider {
 							return;
 						};
 
-						let newLastConfirmedMessage = getNewLastConfirmedMesssage(
-							await this.chat.messageList.getFlatValue()
-						);
+						let newLastConfirmedMessage =
+							getNewLastConfirmedMesssage(
+								await this.chat.messageList.getFlatValue()
+							);
 
 						if (!newLastConfirmedMessage) {
-							const pendingMessageIDs = (await this.chat.pendingMessages.getFlatValue()).map(
-								m => m.id
-							);
+							const pendingMessageIDs = (
+								await this.chat.pendingMessages.getFlatValue()
+							).map(m => m.id);
 
 							if (
 								getNewLastConfirmedMesssage(
@@ -1966,14 +1972,15 @@ export class ChatService extends BaseProvider {
 								continue;
 							}
 
-							newLastConfirmedMessage = await this.chat.messageList
-								.watchFlat()
-								.pipe(
-									map(getNewLastConfirmedMesssage),
-									filterUndefinedOperator(),
-									take(1)
-								)
-								.toPromise();
+							newLastConfirmedMessage =
+								await this.chat.messageList
+									.watchFlat()
+									.pipe(
+										map(getNewLastConfirmedMesssage),
+										filterUndefinedOperator(),
+										take(1)
+									)
+									.toPromise();
 						}
 
 						this.chat.lastConfirmedMessage.updateValue(

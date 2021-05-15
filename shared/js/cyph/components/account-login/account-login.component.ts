@@ -167,25 +167,21 @@ export class AccountLoginComponent extends BaseProvider implements OnInit {
 		this.checking.next(true);
 
 		try {
-			const [
-				altMasterKey,
-				pinIsCustom,
-				savedMasterKey,
-				savedUsername
-			] = await Promise.all([
-				this.localStorageService
-					.getItem('altMasterKey', BooleanProto, undefined, true)
-					.catch(() => false),
-				this.localStorageService
-					.getItem('pinIsCustom', BooleanProto, undefined, true)
-					.catch(() => true),
-				this.localStorageService
-					.getItem('masterKey', BinaryProto, undefined, true)
-					.catch(() => undefined),
-				this.localStorageService
-					.getItem('username', StringProto, undefined, true)
-					.catch(() => undefined)
-			]);
+			const [altMasterKey, pinIsCustom, savedMasterKey, savedUsername] =
+				await Promise.all([
+					this.localStorageService
+						.getItem('altMasterKey', BooleanProto, undefined, true)
+						.catch(() => false),
+					this.localStorageService
+						.getItem('pinIsCustom', BooleanProto, undefined, true)
+						.catch(() => true),
+					this.localStorageService
+						.getItem('masterKey', BinaryProto, undefined, true)
+						.catch(() => undefined),
+					this.localStorageService
+						.getItem('username', StringProto, undefined, true)
+						.catch(() => undefined)
+				]);
 
 			this.altMasterKey.next(altMasterKey);
 			this.pinIsCustom.next(pinIsCustom);

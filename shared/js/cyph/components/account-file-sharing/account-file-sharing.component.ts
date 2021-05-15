@@ -49,11 +49,12 @@ export class AccountFileSharingComponent extends BaseProvider {
 			return {file: undefined, fileConfig: undefined};
 		}
 
-		const fileConfig = this.accountFilesService.config[
-			'recordType' in file ?
-				file.recordType :
-				this.accountFilesService.getFileType(file.data)
-		];
+		const fileConfig =
+			this.accountFilesService.config[
+				'recordType' in file ?
+					file.recordType :
+					this.accountFilesService.getFileType(file.data)
+			];
 
 		return {
 			file,

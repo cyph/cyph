@@ -16,8 +16,10 @@ import {BaseProvider} from '../base-provider';
 	/* eslint-disable-next-line @typescript-eslint/tslint/config */
 	selector: '[routerLink]'
 })
-export class RouterLinkDirective extends BaseProvider
-	implements OnChanges, OnInit {
+export class RouterLinkDirective
+	extends BaseProvider
+	implements OnChanges, OnInit
+{
 	/** @see RouterLink.prototype.routerLink */
 	@Input()
 	public readonly routerLink?: typeof RouterLink.prototype.routerLink;

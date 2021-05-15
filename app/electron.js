@@ -31,7 +31,7 @@ require('@electron/remote/main').initialize();
 // be closed automatically when the JavaScript object is garbage collected.
 let mainWindow;
 
-function createWindow ()  {
+function createWindow () {
 	// Create the browser window.
 	let appIcon;
 	if (fs.existsSync(`${__dirname}/img/app.png`)) {
@@ -66,7 +66,7 @@ function createWindow ()  {
 
 	setupPushReceiver(mainWindow.webContents);
 
-	mainWindow.webContents.on('did-finish-load', function ()  {
+	mainWindow.webContents.on('did-finish-load', function () {
 		mainWindow.webContents.send('window-id', mainWindow.id);
 	});
 
@@ -182,11 +182,11 @@ const menu = Menu.buildFromTemplate(
 			{
 				label: 'File',
 				submenu: [
-					menuItems.newWindow,
-					menuItems.closeWindow,
-					menuItems.separator,
-					menuItems.quit
-				]
+						menuItems.newWindow,
+						menuItems.closeWindow,
+						menuItems.separator,
+						menuItems.quit
+					]
 			},
 			menuSections.edit,
 			menuSections.window,

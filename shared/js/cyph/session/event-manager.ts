@@ -83,9 +83,7 @@ export class EventManager {
 	/** Resolves on first occurrence of event. */
 	/* eslint-disable-next-line @typescript-eslint/tslint/config */
 	public async one (event: RpcEvents) : Promise<ISessionMessageData[]> {
-		return this.getSubject(event)
-			.pipe(take(1))
-			.toPromise();
+		return this.getSubject(event).pipe(take(1)).toPromise();
 	}
 
 	/** Triggers event. */

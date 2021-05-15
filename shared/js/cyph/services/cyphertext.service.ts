@@ -25,9 +25,8 @@ export class CyphertextService extends BaseProvider {
 	public readonly isVisible = new BehaviorSubject<boolean>(false);
 
 	/** Cyphertext message list. */
-	public readonly messages: LocalAsyncList<ChatMessage> = new LocalAsyncList<
-		ChatMessage
-	>();
+	public readonly messages: LocalAsyncList<ChatMessage> =
+		new LocalAsyncList<ChatMessage>();
 
 	/** Logs new cyphertext message. */
 	private async log (

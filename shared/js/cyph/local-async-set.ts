@@ -8,8 +8,10 @@ import {LocalAsyncValue} from './local-async-value';
 /**
  * Local async Set implementation.
  */
-export class LocalAsyncSet<T> extends LocalAsyncValue<Set<T>>
-	implements IAsyncSet<T> {
+export class LocalAsyncSet<T>
+	extends LocalAsyncValue<Set<T>>
+	implements IAsyncSet<T>
+{
 	/** @ignore */
 	protected emitInternal () : void {
 		this.subject.next(new Set<T>(this.value));

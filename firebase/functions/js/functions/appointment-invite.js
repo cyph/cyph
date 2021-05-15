@@ -122,10 +122,10 @@ export const appointmentInvite = onCall(
 							!singleRecipient.name ?
 								singleRecipient.email ||
 								singleRecipient.phoneNumber :
-								`${
-									singleRecipient.name
-								} <${singleRecipient.email ||
-									singleRecipient.phoneNumber}>`
+								`${singleRecipient.name} <${
+									singleRecipient.email ||
+									singleRecipient.phoneNumber
+								}>`
 						}`
 				}`,
 				`${messageStatusPrefixLineBreak}${messagePart1

@@ -94,7 +94,8 @@ export class AccountSettingsComponent extends BaseProvider implements OnInit {
 		async () =>
 			this.user.value?.username ?
 				{
-					aliceMasterKey: await this.accountAuthService.getAltMasterKey(),
+					aliceMasterKey:
+						await this.accountAuthService.getAltMasterKey(),
 					aliceUsername: this.user.value.username,
 					bobSessionID: undefined
 				} :
@@ -272,16 +273,14 @@ export class AccountSettingsComponent extends BaseProvider implements OnInit {
 
 		this.user.next(user);
 
-		const [
-			email,
-			profileVisible,
-			{name, realUsername}
-		] = await Promise.all([
-			this.accountSettingsService.email.getValue(),
-			this.profileVisible.getValue(),
-			user.accountUserProfile.getValue(),
-			this.accountService.getUserToken()
-		]);
+		const [email, profileVisible, {name, realUsername}] = await Promise.all(
+			[
+				this.accountSettingsService.email.getValue(),
+				this.profileVisible.getValue(),
+				user.accountUserProfile.getValue(),
+				this.accountService.getUserToken()
+			]
+		);
 
 		const current = {
 			email,

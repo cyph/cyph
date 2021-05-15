@@ -18,9 +18,8 @@ import {AppService} from '../../app.service';
 })
 export class SignupConfirmComponent extends BaseProvider implements OnInit {
 	/** Generated API key. */
-	public readonly apiKey: Observable<
-		string | undefined
-	> = this.activatedRoute.params.pipe(map(o => o.apiKey));
+	public readonly apiKey: Observable<string | undefined> =
+		this.activatedRoute.params.pipe(map(o => o.apiKey));
 
 	/** @inheritDoc */
 	public ngOnInit () : void {

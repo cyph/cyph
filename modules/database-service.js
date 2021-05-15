@@ -54,10 +54,7 @@ export const initDatabaseService = (config, isCloudFunction) => {
 	};
 
 	const getHash = bytes =>
-		crypto
-			.createHash('sha512')
-			.update(bytes)
-			.digest('hex');
+		crypto.createHash('sha512').update(bytes).digest('hex');
 
 	const retry = async f =>
 		retryUntilSuccessful(async lastErr => {
@@ -92,7 +89,9 @@ export const initDatabaseService = (config, isCloudFunction) => {
 				Buffer.from(data, 'base64') :
 				await retry(
 					async () =>
-						(await storage.file(`${url}/${hash}`).download())[0]
+						(
+							await storage.file(`${url}/${hash}`).download()
+						)[0]
 				);
 			if (skipSignature) {
 				bytes = bytes.slice(41256);

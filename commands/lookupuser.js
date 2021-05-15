@@ -23,30 +23,34 @@ export const lookUpUser = async (projectId, query, namespace) => {
 	const isEmail = query.indexOf('@') > -1;
 
 	const inviteCodes = isEmail ?
-		(await database
-			.ref(
-				`${namespace.replace(
-					/\./g,
-					'_'
-				)}/inviteCodeEmailAddresses/${Buffer.from(query).toString(
-					'hex'
-				)}`
-			)
-			.once('value')).val() || undefined :
+		(
+			await database
+				.ref(
+					`${namespace.replace(
+						/\./g,
+						'_'
+					)}/inviteCodeEmailAddresses/${Buffer.from(query).toString(
+						'hex'
+					)}`
+				)
+				.once('value')
+		).val() || undefined :
 		undefined;
 
 	const {username} =
-		(await database
-			.ref(
-				`${namespace.replace(/\./g, '_')}/${
-					isEmail ?
-						`initialEmailAddresses/${Buffer.from(query).toString(
-							'hex'
-						)}` :
-						`consumedInviteCodes/${query}`
-				}`
-			)
-			.once('value')).val() || {};
+		(
+			await database
+				.ref(
+					`${namespace.replace(/\./g, '_')}/${
+						isEmail ?
+							`initialEmailAddresses/${Buffer.from(
+								query
+							).toString('hex')}` :
+							`consumedInviteCodes/${query}`
+					}`
+				)
+				.once('value')
+		).val() || {};
 
 	return {
 		inviteCodes,

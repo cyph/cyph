@@ -26,12 +26,11 @@ export class WorkerService extends BaseProvider {
 	public readonly serviceWorker: Promise<ServiceWorker>;
 
 	/** @see ServiceWorkerRegistration */
-	public readonly serviceWorkerRegistration: Promise<
-		ServiceWorkerRegistration
-	> = (async () =>
-		navigator.serviceWorker.register(
-			this.envService.webSignPaths.serviceWorker
-		))();
+	public readonly serviceWorkerRegistration: Promise<ServiceWorkerRegistration> =
+		(async () =>
+			navigator.serviceWorker.register(
+				this.envService.webSignPaths.serviceWorker
+			))();
 
 	/** @see Thread */
 	public async createThread<T> (

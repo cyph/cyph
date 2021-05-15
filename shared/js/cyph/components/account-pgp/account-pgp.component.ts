@@ -233,12 +233,10 @@ export class AccountPGPComponent extends BaseProvider implements OnInit {
 					true
 				);
 
-		const {
-			pgpMetadata,
-			publicKeyBytes
-		} = await this.pgpService.getPublicKeyMetadata(
-			publicKey !== undefined ? publicKey : keyPair?.publicKey
-		);
+		const {pgpMetadata, publicKeyBytes} =
+			await this.pgpService.getPublicKeyMetadata(
+				publicKey !== undefined ? publicKey : keyPair?.publicKey
+			);
 
 		const pgpKey: IPGPKey | undefined =
 			keyPair !== undefined ?

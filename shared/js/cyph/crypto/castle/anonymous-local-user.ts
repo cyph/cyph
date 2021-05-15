@@ -23,10 +23,12 @@ export class AnonymousLocalUser implements ILocalUser {
 				const keyPair = await this.potassium.box.keyPair();
 
 				if (this.sharedSecret !== undefined) {
-					const sharedSecret = (await this.potassium.passwordHash.hash(
-						this.sharedSecret,
-						AnonymousLocalUser.handshakeSalt
-					)).hash;
+					const sharedSecret = (
+						await this.potassium.passwordHash.hash(
+							this.sharedSecret,
+							AnonymousLocalUser.handshakeSalt
+						)
+					).hash;
 
 					await this.handshakeState.localPublicKey.setValue(
 						await this.potassium.secretBox.seal(

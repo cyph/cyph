@@ -58,8 +58,8 @@ export class AccountAppointmentsService extends BaseProvider {
 		> =>
 			this.accountFilesService.watchAppointment(record).pipe(
 				map(appointment => {
-					const currentUser = this.accountDatabaseService.currentUser
-						.value;
+					const currentUser =
+						this.accountDatabaseService.currentUser.value;
 
 					if (
 						!currentUser ||
@@ -314,8 +314,9 @@ export class AccountAppointmentsService extends BaseProvider {
 			throw new Error('No calendar event UID.');
 		}
 
-		const burnerSessionURL = `burnerSessions/${calendarInvite.burnerUID ||
-			calendarInvite.uid}`;
+		const burnerSessionURL = `burnerSessions/${
+			calendarInvite.burnerUID || calendarInvite.uid
+		}`;
 
 		if (!burnerSession) {
 			burnerSession = await this.accountDatabaseService.getItem(
@@ -363,9 +364,12 @@ export class AccountAppointmentsService extends BaseProvider {
 				undefined,
 			shareMemberContactInfo: !!sharing?.memberContactInfo,
 			shareMemberList: !!sharing?.memberList,
-			telehealth: this.configService.planConfig[
-				await this.accountSettingsService.plan.pipe(take(1)).toPromise()
-			].telehealth,
+			telehealth:
+				this.configService.planConfig[
+					await this.accountSettingsService.plan
+						.pipe(take(1))
+						.toPromise()
+				].telehealth,
 			to: {
 				members: (burnerSession.members || []).map(o => ({
 					...o,
@@ -426,8 +430,8 @@ export class AccountAppointmentsService extends BaseProvider {
 			rsvpSessionSubID: uuid(),
 			sharing: {
 				inviterTimeZone: !!appointmentSharing?.inviterTimeZone.value,
-				memberContactInfo: !!appointmentSharing?.memberContactInfo
-					.value,
+				memberContactInfo:
+					!!appointmentSharing?.memberContactInfo.value,
 				memberList: !!appointmentSharing?.memberList.value
 			}
 		};

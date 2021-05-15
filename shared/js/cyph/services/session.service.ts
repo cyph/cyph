@@ -56,8 +56,10 @@ import {StringsService} from './strings.service';
  * Manages a session.
  */
 @Injectable()
-export abstract class SessionService extends BaseProvider
-	implements ISessionService<SessionService> {
+export abstract class SessionService
+	extends BaseProvider
+	implements ISessionService<SessionService>
+{
 	/** @ignore */
 	private readonly eventManager = new EventManager();
 
@@ -83,8 +85,8 @@ export abstract class SessionService extends BaseProvider
 
 	/** @inheritDoc */
 	public readonly apiFlags = {
-		disableP2P: !!this.envService.environment.customBuild?.config
-			.disableP2P,
+		disableP2P:
+			!!this.envService.environment.customBuild?.config.disableP2P,
 		modestBranding: false
 	};
 
@@ -104,9 +106,8 @@ export abstract class SessionService extends BaseProvider
 	public readonly channelConnected = resolvable<true>(true);
 
 	/** @inheritDoc */
-	public readonly chatRequestUsername: BehaviorSubject<
-		string | undefined
-	> = new BehaviorSubject<string | undefined>(undefined);
+	public readonly chatRequestUsername: BehaviorSubject<string | undefined> =
+		new BehaviorSubject<string | undefined>(undefined);
 
 	/** @inheritDoc */
 	public readonly childChannelsConnected = resolvable<true>(true);
@@ -130,9 +131,8 @@ export abstract class SessionService extends BaseProvider
 	}>();
 
 	/** @inheritDoc */
-	public readonly freezePong: BehaviorSubject<boolean> = new BehaviorSubject<
-		boolean
-	>(false);
+	public readonly freezePong: BehaviorSubject<boolean> =
+		new BehaviorSubject<boolean>(false);
 
 	/** @inheritDoc */
 	public readonly group = new BehaviorSubject<SessionService[] | undefined>(
@@ -155,9 +155,8 @@ export abstract class SessionService extends BaseProvider
 	public readonly joinConfirmationWait = new BehaviorSubject<boolean>(false);
 
 	/** @inheritDoc */
-	public readonly localUsername: Observable<string> = new BehaviorSubject<
-		string
-	>(this.stringsService.me);
+	public readonly localUsername: Observable<string> =
+		new BehaviorSubject<string>(this.stringsService.me);
 
 	/** @inheritDoc */
 	public readonly opened = resolvable<true>(true);
@@ -428,9 +427,8 @@ export abstract class SessionService extends BaseProvider
 		if (this.group.value) {
 			await Promise.all(
 				this.group.value.map(async session => {
-					const confirmPromise = session.plaintextSendHandler(
-						messages
-					);
+					const confirmPromise =
+						session.plaintextSendHandler(messages);
 
 					/* Don't block confirmation on a send that may never complete */
 					if (
@@ -575,9 +573,7 @@ export abstract class SessionService extends BaseProvider
 	}
 
 	/** @inheritDoc */
-	public async addToBurnerGroup (
-		_NAME?: string
-	) : Promise<{
+	public async addToBurnerGroup (_NAME?: string) : Promise<{
 		callType?: 'audio' | 'video';
 		id: string;
 		url: string;
@@ -627,8 +623,12 @@ export abstract class SessionService extends BaseProvider
 
 				const messages =
 					(await (async () =>
-						(await deserialize(SessionMessageList, data.plaintext))
-							.messages)().catch(() => undefined)) || [];
+						(
+							await deserialize(
+								SessionMessageList,
+								data.plaintext
+							)
+						).messages)().catch(() => undefined)) || [];
 
 				debugLog(() => ({
 					sessionCastleReceiveMessages: {data, messages}

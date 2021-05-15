@@ -33,20 +33,20 @@ export const appRoutes = <Routes> [
 					{
 						path: `${burnerRoot}-group-test`,
 						children: [
-							{
-								...burner,
-								data: {groupTest: true}
-							}
-						]
+								{
+									...burner,
+									data: {groupTest: true}
+								}
+							]
 					},
 					{
 						path: `${burnerRoot}-ui-test`,
 						children: [
-							{
-								...burner,
-								data: {uiTest: true}
-							}
-						]
+								{
+									...burner,
+									data: {uiTest: true}
+								}
+							]
 					}
 				] :
 				[]),

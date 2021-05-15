@@ -1,5 +1,5 @@
-self.setOnerror = function ()  {
-	self.onerror = function (err)  {
+self.setOnerror = function () {
+	self.onerror = function (err) {
 		if (err === 'Script error.') {
 			return;
 		}

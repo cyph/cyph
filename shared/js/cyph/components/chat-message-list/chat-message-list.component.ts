@@ -52,8 +52,10 @@ import {urlToSafeStyle} from '../../util/safe-values';
 	styleUrls: ['./chat-message-list.component.scss'],
 	templateUrl: './chat-message-list.component.html'
 })
-export class ChatMessageListComponent extends BaseProvider
-	implements AfterViewInit, OnChanges, OnDestroy, OnInit {
+export class ChatMessageListComponent
+	extends BaseProvider
+	implements AfterViewInit, OnChanges, OnDestroy, OnInit
+{
 	/** @ignore */
 	private static readonly observableCache = new Map<
 		IChatData,
@@ -181,9 +183,7 @@ export class ChatMessageListComponent extends BaseProvider
 		/* TODO: HANDLE NATIVE */
 		if (this.envService.isWeb) {
 			this.scrollService.init(
-				$(this.elementRef.nativeElement)
-					.children()
-					.first(),
+				$(this.elementRef.nativeElement).children().first(),
 				this.messageCountInTitle
 			);
 
@@ -285,11 +285,11 @@ export class ChatMessageListComponent extends BaseProvider
 									isStart: i === 0,
 									message,
 									mobile: this.mobile,
-									persistentEndMessage: this
-										.persistentEndMessage,
+									persistentEndMessage:
+										this.persistentEndMessage,
 									scrollIntoView: false,
-									showDisconnectMessage: this
-										.showDisconnectMessage,
+									showDisconnectMessage:
+										this.showDisconnectMessage,
 									uiStyle: this.uiStyle,
 									unconfirmedMessages:
 										observables.unconfirmedMessages
@@ -419,7 +419,8 @@ export class ChatMessageListComponent extends BaseProvider
 		}
 
 		this.infiniteScrollingData.messageBottomOffset = messageBottomOffset;
-		this.infiniteScrollingData.viewportMessageCount = this.viewportMessageCount.value;
+		this.infiniteScrollingData.viewportMessageCount =
+			this.viewportMessageCount.value;
 
 		debugLog(() => ({messageBottomOffset}));
 

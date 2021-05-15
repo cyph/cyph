@@ -98,26 +98,26 @@ export class AccountFilesService extends BaseProvider {
 	 * Resolves circular dependency needed for shareFilePrompt to work.
 	 * @see AccountFileSharingComponent
 	 */
-	public static readonly accountFileSharingComponent = resolvable<
-		ComponentType<{
-			changeDetectorRef: ChangeDetectorRef;
-			closeFunction?: IResolvable<() => void>;
-			file?: AccountFileShare;
-		}>
-	>();
+	public static readonly accountFileSharingComponent =
+		resolvable<
+			ComponentType<{
+				changeDetectorRef: ChangeDetectorRef;
+				closeFunction?: IResolvable<() => void>;
+				file?: AccountFileShare;
+			}>
+		>();
 
 	/** File directories async value. */
-	private readonly directoriesAsyncValue = this.accountDatabaseService.getAsyncValue<
-		IAccountFileDirectory
-	>(
-		'fileDirectories',
-		AccountFileDirectory,
-		undefined,
-		undefined,
-		undefined,
-		undefined,
-		this.subscriptions
-	);
+	private readonly directoriesAsyncValue =
+		this.accountDatabaseService.getAsyncValue<IAccountFileDirectory>(
+			'fileDirectories',
+			AccountFileDirectory,
+			undefined,
+			undefined,
+			undefined,
+			undefined,
+			this.subscriptions
+		);
 
 	/** @ignore */
 	private readonly incomingFileCache: Map<
@@ -395,9 +395,9 @@ export class AccountFilesService extends BaseProvider {
 				!directory ||
 				(confirm &&
 					!(await this.dialogService.confirm({
-						content: `${
-							this.stringsService.deleteMessage
-						} ${directory || this.stringsService.untitled}?`,
+						content: `${this.stringsService.deleteMessage} ${
+							directory || this.stringsService.untitled
+						}?`,
 						title: this.stringsService.deleteConfirm
 					})))
 			) {
@@ -768,127 +768,145 @@ export class AccountFilesService extends BaseProvider {
 			)
 			.pipe(
 				switchMap(async arr =>
-					(await Promise.all(
-						arr.map(async ({value}) =>
-							getOrSetDefaultAsync(
-								this.incomingFileCache,
-								value,
-								async () => {
-									try {
-										const currentUser = this
-											.accountDatabaseService.currentUser
-											.value;
+					(
+						await Promise.all(
+							arr.map(async ({value}) =>
+								getOrSetDefaultAsync(
+									this.incomingFileCache,
+									value,
+									async () => {
+										try {
+											const currentUser =
+												this.accountDatabaseService
+													.currentUser.value;
 
-										if (!currentUser) {
-											return this.nonexistentFile;
-										}
+											if (!currentUser) {
+												return this.nonexistentFile;
+											}
 
-										const referenceContainer = await deserialize(
-											AccountFileReferenceContainer,
-											await this.potassiumService.box.open(
-												value,
-												currentUser.keys
-													.encryptionKeyPair
-											)
-										);
-
-										let record: IAccountFileRecord;
-										let reference: IAccountFileReference;
-
-										if (referenceContainer.anonymousShare) {
-											record =
-												referenceContainer
-													.anonymousShare
-													.accountFileRecord;
-
-											record.wasAnonymousShare = true;
-
-											if (record.replyToEmail) {
-												record.replyToEmail = record.replyToEmail.trim();
-												if (
-													!isValidEmail(
-														record.replyToEmail
+											const referenceContainer =
+												await deserialize(
+													AccountFileReferenceContainer,
+													await this.potassiumService.box.open(
+														value,
+														currentUser.keys
+															.encryptionKeyPair
 													)
-												) {
-													record.replyToEmail = undefined;
+												);
+
+											let record: IAccountFileRecord;
+											let reference: IAccountFileReference;
+
+											if (
+												referenceContainer.anonymousShare
+											) {
+												record =
+													referenceContainer
+														.anonymousShare
+														.accountFileRecord;
+
+												record.wasAnonymousShare = true;
+
+												if (record.replyToEmail) {
+													record.replyToEmail =
+														record.replyToEmail.trim();
+													if (
+														!isValidEmail(
+															record.replyToEmail
+														)
+													) {
+														record.replyToEmail =
+															undefined;
+													}
 												}
-											}
 
-											if (record.replyToName) {
-												record.replyToName = record.replyToName
-													.replace(/\s+/g, ' ')
-													.trim();
-											}
+												if (record.replyToName) {
+													record.replyToName =
+														record.replyToName
+															.replace(
+																/\s+/g,
+																' '
+															)
+															.trim();
+												}
 
-											reference = {
-												id: record.id,
-												key:
-													referenceContainer
+												reference = {
+													id: record.id,
+													key: referenceContainer
 														.anonymousShare.key,
-												owner: currentUser.user.username
-											};
-										}
-										else if (
-											referenceContainer.signedShare
-										) {
-											reference = await deserialize(
-												AccountFileReference,
-												await this.potassiumService.sign.open(
-													referenceContainer
-														.signedShare
-														.accountFileReference,
-													(await this.accountDatabaseService.getUserPublicKeys(
+													owner: currentUser.user
+														.username
+												};
+											}
+											else if (
+												referenceContainer.signedShare
+											) {
+												reference = await deserialize(
+													AccountFileReference,
+													await this.potassiumService.sign.open(
 														referenceContainer
-															.signedShare.owner
-													)).signing
+															.signedShare
+															.accountFileReference,
+														(
+															await this.accountDatabaseService.getUserPublicKeys(
+																referenceContainer
+																	.signedShare
+																	.owner
+															)
+														).signing
+													)
+												);
+
+												record =
+													await this.accountDatabaseService.getItem(
+														`users/${reference.owner}/fileRecords/${reference.id}`,
+														AccountFileRecord,
+														undefined,
+														reference.key
+													);
+											}
+											else {
+												return this.nonexistentFile;
+											}
+
+											const incomingFile = {
+												id: record.id,
+												key: reference.key,
+												mediaType: record.mediaType,
+												name: record.name,
+												owner: reference.owner,
+												recordType: record.recordType,
+												replyToEmail:
+													record.replyToEmail,
+												replyToName: record.replyToName,
+												size: record.size,
+												timestamp: record.timestamp,
+												wasAnonymousShare:
+													record.wasAnonymousShare
+											};
+
+											if (
+												await this.hasFile(
+													incomingFile.id
 												)
-											);
+											) {
+												await this.acceptIncomingFile(
+													incomingFile,
+													false
+												);
+												return this.nonexistentFile;
+											}
 
-											record = await this.accountDatabaseService.getItem(
-												`users/${reference.owner}/fileRecords/${reference.id}`,
-												AccountFileRecord,
-												undefined,
-												reference.key
-											);
+											return incomingFile;
 										}
-										else {
+										catch {
 											return this.nonexistentFile;
 										}
-
-										const incomingFile = {
-											id: record.id,
-											key: reference.key,
-											mediaType: record.mediaType,
-											name: record.name,
-											owner: reference.owner,
-											recordType: record.recordType,
-											replyToEmail: record.replyToEmail,
-											replyToName: record.replyToName,
-											size: record.size,
-											timestamp: record.timestamp,
-											wasAnonymousShare:
-												record.wasAnonymousShare
-										};
-
-										if (
-											await this.hasFile(incomingFile.id)
-										) {
-											await this.acceptIncomingFile(
-												incomingFile,
-												false
-											);
-											return this.nonexistentFile;
-										}
-
-										return incomingFile;
 									}
-									catch {
-										return this.nonexistentFile;
-									}
-								}
+								)
 							)
 						)
-					)).filter(file => file !== this.nonexistentFile)
+					).filter(file => file !== this.nonexistentFile)
 				)
 			),
 		[]
@@ -1047,10 +1065,15 @@ export class AccountFilesService extends BaseProvider {
 				pgpKey?.keyPair?.publicKey;
 
 		const getPrimaryKeyFingerprint = async () =>
-			(await this.pgpService.getPublicKeyMetadata(
-				(await (await this.accountDatabaseService.getCurrentUser()).user.accountUserProfileExtra.getValue())
-					.pgp?.publicKey
-			)).pgpMetadata.fingerprint;
+			(
+				await this.pgpService.getPublicKeyMetadata(
+					(
+						await (
+							await this.accountDatabaseService.getCurrentUser()
+						).user.accountUserProfileExtra.getValue()
+					).pgp?.publicKey
+				)
+			).pgpMetadata.fingerprint;
 
 		const primaryKeyFingerprint = memoize(() =>
 			toBehaviorSubject(
@@ -1058,9 +1081,11 @@ export class AccountFilesService extends BaseProvider {
 					switchMap(o => o.user.extra()),
 					switchMap(
 						async o =>
-							(await this.pgpService.getPublicKeyMetadata(
-								o?.pgp?.publicKey
-							))?.pgpMetadata.fingerprint
+							(
+								await this.pgpService.getPublicKeyMetadata(
+									o?.pgp?.publicKey
+								)
+							)?.pgpMetadata.fingerprint
 					)
 				),
 				undefined
@@ -1091,8 +1116,9 @@ export class AccountFilesService extends BaseProvider {
 
 			const publicKey = getPublicKey(pgpKey);
 
-			const currentUser = (await this.accountDatabaseService.getCurrentUser())
-				.user;
+			const currentUser = (
+				await this.accountDatabaseService.getCurrentUser()
+			).user;
 
 			const publicKeyVerification =
 				pgpKey?.keyPair?.privateKey === undefined ||
@@ -1101,8 +1127,8 @@ export class AccountFilesService extends BaseProvider {
 					await this.pgpService.sign.signBytes(
 						await serialize<IPGPVerification>(PGPVerification, {
 							username: currentUser.username,
-							verificationString: this.accountDatabaseService
-								.verificationString
+							verificationString:
+								this.accountDatabaseService.verificationString
 						}),
 						pgpKey?.keyPair?.privateKey
 					);
@@ -1119,9 +1145,9 @@ export class AccountFilesService extends BaseProvider {
 
 		const removePrimaryKey = async (id?: IPGPKey | string) => {
 			if (typeof id === 'object') {
-				id = (await this.pgpService.getPublicKeyMetadata(
-					getPublicKey(id)
-				)).pgpMetadata.fingerprint;
+				id = (
+					await this.pgpService.getPublicKeyMetadata(getPublicKey(id))
+				).pgpMetadata.fingerprint;
 			}
 
 			if (
@@ -1215,21 +1241,22 @@ export class AccountFilesService extends BaseProvider {
 
 		filePromise.catch(() => {});
 
-		const {
-			alreadyCached,
-			progress,
-			result
-		} = this.accountDatabaseService.downloadItem(
-			filePromise.then(file => `users/${file.owner}/files/${file.id}`),
-			<any> proto === DataURIProto ?
-				<any> (
-					new DataURIProto(filePromise.then(file => file.mediaType))
-				) :
-				proto,
-			securityModel,
-			filePromise.then(file => file.key),
-			true
-		);
+		const {alreadyCached, progress, result} =
+			this.accountDatabaseService.downloadItem(
+				filePromise.then(
+					file => `users/${file.owner}/files/${file.id}`
+				),
+				<any> proto === DataURIProto ?
+					<any> (
+						new DataURIProto(
+							filePromise.then(file => file.mediaType)
+						)
+					) :
+					proto,
+				securityModel,
+				filePromise.then(file => file.key),
+				true
+			);
 
 		alreadyCached.catch(() => {});
 		result.catch(() => {});
@@ -1677,9 +1704,7 @@ export class AccountFilesService extends BaseProvider {
 	}
 
 	/** Downloads file and returns password. */
-	public downloadPassword (
-		id: string | IAccountFileRecord
-	) : {
+	public downloadPassword (id: string | IAccountFileRecord) : {
 		progress: Observable<number>;
 		result: Promise<IPassword>;
 	} {
@@ -1703,9 +1728,7 @@ export class AccountFilesService extends BaseProvider {
 	}
 
 	/** Downloads file and returns as data URI. */
-	public downloadURI (
-		id: string | IAccountFileRecord
-	) : {
+	public downloadURI (id: string | IAccountFileRecord) : {
 		progress: Observable<number>;
 		result: Promise<SafeUrl | string>;
 	} {
@@ -1713,9 +1736,7 @@ export class AccountFilesService extends BaseProvider {
 	}
 
 	/** Downloads file and returns wallet. */
-	public downloadWallet (
-		id: string | IAccountFileRecord
-	) : {
+	public downloadWallet (id: string | IAccountFileRecord) : {
 		progress: Observable<number>;
 		result: Promise<IWallet>;
 	} {
@@ -1723,9 +1744,7 @@ export class AccountFilesService extends BaseProvider {
 	}
 
 	/** Gets a doc in the form of an async list. */
-	public getDoc (
-		id: string | Async<IAccountFileRecord>
-	) : {
+	public getDoc (id: string | Async<IAccountFileRecord>) : {
 		asyncList: IAsyncList<IQuillDelta | IQuillRange>;
 		deltas: Observable<IQuillDelta>;
 		selections: Observable<IQuillRange>;
@@ -1777,11 +1796,13 @@ export class AccountFilesService extends BaseProvider {
 				),
 			updateValue: async f =>
 				asyncList.updateValue(async bytesArray =>
-					(await f(
-						this.accountDatabaseService
-							.filterListHoles(bytesArray)
-							.map(bytes => this.decodeQuill(bytes))
-					)).map(delta => this.encodeQuill(delta))
+					(
+						await f(
+							this.accountDatabaseService
+								.filterListHoles(bytesArray)
+								.map(bytes => this.decodeQuill(bytes))
+						)
+					).map(delta => this.encodeQuill(delta))
 				),
 			watch: memoize(() =>
 				asyncList
@@ -1990,26 +2011,30 @@ export class AccountFilesService extends BaseProvider {
 		fingerprint = normalize(fingerprint);
 
 		try {
-			return (await Promise.all(
-				filterUndefined(
-					await Promise.all(
-						(await this.accountDatabaseService.getListKeys(
-							'fileReferences'
-						)).map(async id =>
-							this.getFile(id).catch(() => undefined)
+			return (
+				await Promise.all(
+					filterUndefined(
+						await Promise.all(
+							(
+								await this.accountDatabaseService.getListKeys(
+									'fileReferences'
+								)
+							).map(async id =>
+								this.getFile(id).catch(() => undefined)
+							)
 						)
 					)
+						.filter(
+							o =>
+								o.recordType ===
+								AccountFileRecord.RecordTypes.PGPKey
+						)
+						.map(async o => ({
+							id: o.id,
+							pgpKey: await this.downloadPGPKey(o)
+						}))
 				)
-					.filter(
-						o =>
-							o.recordType ===
-							AccountFileRecord.RecordTypes.PGPKey
-					)
-					.map(async o => ({
-						id: o.id,
-						pgpKey: await this.downloadPGPKey(o)
-					}))
-			))
+			)
 				.filter(
 					({pgpKey}) =>
 						fingerprint ===
@@ -2238,9 +2263,9 @@ export class AccountFilesService extends BaseProvider {
 		if (confirmAndRedirect) {
 			if (
 				await this.dialogService.confirm({
-					content: `${
-						this.stringsService.deleteMessage
-					} ${file.name || this.stringsService.untitled}?`,
+					content: `${this.stringsService.deleteMessage} ${
+						file.name || this.stringsService.untitled
+					}?`,
 					title: this.stringsService.deleteConfirm
 				})
 			) {
@@ -2349,9 +2374,11 @@ export class AccountFilesService extends BaseProvider {
 						AccountFileReferenceContainer,
 						accountFileReferenceContainer
 					),
-					(await this.accountDatabaseService.getUserPublicKeys(
-						username
-					)).encryption
+					(
+						await this.accountDatabaseService.getUserPublicKeys(
+							username
+						)
+					).encryption
 				)
 			);
 		}
@@ -2592,8 +2619,8 @@ export class AccountFilesService extends BaseProvider {
 			);
 
 		if (this.accountDatabaseService.currentUser.value) {
-			username = this.accountDatabaseService.currentUser.value.user
-				.username;
+			username =
+				this.accountDatabaseService.currentUser.value.user.username;
 		}
 		else if (shareWithUsers.length > 0) {
 			anonymous = true;
@@ -2743,15 +2770,11 @@ export class AccountFilesService extends BaseProvider {
 						key
 					);
 
-					const {
-						fileReference,
-						isNewFileReference
-					} = await fileReferenceData;
+					const {fileReference, isNewFileReference} =
+						await fileReferenceData;
 
 					if (isNewFileReference) {
-						await this.accountDatabaseService.setItem<
-							IAccountFileReference
-						>(
+						await this.accountDatabaseService.setItem<IAccountFileReference>(
 							`fileReferences/${id}`,
 							AccountFileReference,
 							fileReference
@@ -2991,9 +3014,11 @@ export class AccountFilesService extends BaseProvider {
 
 		(async () => {
 			if (
-				(await this.accountDatabaseService.getListKeys(
-					'fileReferences'
-				)).length === 0
+				(
+					await this.accountDatabaseService.getListKeys(
+						'fileReferences'
+					)
+				).length === 0
 			) {
 				this.initiated.next(true);
 				this.showSpinner.next(undefined);

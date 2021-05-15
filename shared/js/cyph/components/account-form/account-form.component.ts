@@ -51,10 +51,11 @@ export class AccountFormComponent extends BaseProvider implements OnInit {
 
 					if (appointmentID && id) {
 						const i = toInt(id);
-						const downloadTask = this.accountFilesService.downloadFile(
-							appointmentID,
-							AccountFileRecord.RecordTypes.Appointment
-						);
+						const downloadTask =
+							this.accountFilesService.downloadFile(
+								appointmentID,
+								AccountFileRecord.RecordTypes.Appointment
+							);
 
 						this.form.next({
 							data: downloadTask.result.then(o => {
@@ -74,10 +75,11 @@ export class AccountFormComponent extends BaseProvider implements OnInit {
 						});
 					}
 					else if (id) {
-						const downloadTask = this.accountFilesService.downloadFile(
-							id,
-							AccountFileRecord.RecordTypes.Form
-						);
+						const downloadTask =
+							this.accountFilesService.downloadFile(
+								id,
+								AccountFileRecord.RecordTypes.Form
+							);
 
 						this.form.next({
 							data: downloadTask.result,

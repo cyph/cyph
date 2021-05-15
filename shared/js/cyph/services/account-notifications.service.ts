@@ -69,9 +69,7 @@ export class AccountNotificationsService extends BaseProvider {
 	public readonly notifications = toBehaviorSubject(
 		this.accountDatabaseService
 			.filterListHoles<IAccountNotification>(
-				this.accountDatabaseService.watchListWithKeys<
-					IAccountNotification
-				>(
+				this.accountDatabaseService.watchListWithKeys<IAccountNotification>(
 					'notifications',
 					AccountNotification,
 					SecurityModels.unprotected,

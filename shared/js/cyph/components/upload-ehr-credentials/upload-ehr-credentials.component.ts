@@ -18,20 +18,20 @@ import {StringsService} from '../../services/strings.service';
 	styleUrls: ['./upload-ehr-credentials.component.scss'],
 	templateUrl: './upload-ehr-credentials.component.html'
 })
-export class UploadEhrCredentialsComponent extends BaseProvider
-	implements OnInit {
+export class UploadEhrCredentialsComponent
+	extends BaseProvider
+	implements OnInit
+{
 	/** Generated API key. */
 	public readonly apiKey: BehaviorSubject<string> = new BehaviorSubject('');
 
 	/** Indicates whether operation is done. */
-	public readonly done: BehaviorSubject<boolean> = new BehaviorSubject<
-		boolean
-	>(false);
+	public readonly done: BehaviorSubject<boolean> =
+		new BehaviorSubject<boolean>(false);
 
 	/** Indicates whether operation failed. */
-	public readonly error: BehaviorSubject<boolean> = new BehaviorSubject<
-		boolean
-	>(false);
+	public readonly error: BehaviorSubject<boolean> =
+		new BehaviorSubject<boolean>(false);
 
 	/** @inheritDoc */
 	public async ngOnInit () : Promise<void> {

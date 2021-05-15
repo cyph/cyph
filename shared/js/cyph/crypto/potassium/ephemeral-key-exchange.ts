@@ -96,9 +96,7 @@ export class EphemeralKeyExchange implements IEphemeralKeyExchange {
 	}
 
 	/** @inheritDoc */
-	public async bobSecret (
-		alicePublicKey: Uint8Array
-	) : Promise<{
+	public async bobSecret (alicePublicKey: Uint8Array) : Promise<{
 		publicKey: Uint8Array;
 		secret: Uint8Array;
 	}> {

@@ -149,14 +149,14 @@ export class AccountService extends BaseProvider {
 	);
 
 	/** Indicates whether current user has unlimited invites. */
-	public readonly hasUnlimitedInvites: Observable<
-		boolean
-	> = this.accountSettingsService.plan.pipe(
-		map(
-			plan =>
-				this.configService.planConfig[plan].initialInvites === undefined
-		)
-	);
+	public readonly hasUnlimitedInvites: Observable<boolean> =
+		this.accountSettingsService.plan.pipe(
+			map(
+				plan =>
+					this.configService.planConfig[plan].initialInvites ===
+					undefined
+			)
+		);
 
 	/** Header title for current section. */
 	public readonly header: Observable<{
@@ -205,11 +205,10 @@ export class AccountService extends BaseProvider {
 	public readonly menuMinWidth: number = this.menuExpandedMinWidth * 2.5;
 
 	/** Indicates whether simplified menu should be displayed. */
-	public readonly menuReduced: Observable<
-		boolean
-	> = this.windowWatcherService.width.pipe(
-		map(width => width <= this.configService.responsiveMaxWidths.xs)
-	);
+	public readonly menuReduced: Observable<boolean> =
+		this.windowWatcherService.width.pipe(
+			map(width => width <= this.configService.responsiveMaxWidths.xs)
+		);
 
 	/** Indicates whether mobile menu is open. */
 	public readonly mobileMenuOpen: Observable<boolean> = observableAll([
@@ -266,9 +265,7 @@ export class AccountService extends BaseProvider {
 	);
 
 	/** @ignore */
-	private async getIncomingCallRoute (
-		callMetadata: string
-	) : Promise<{
+	private async getIncomingCallRoute (callMetadata: string) : Promise<{
 		callType: 'audio' | 'chat' | 'video';
 		expires: number;
 		id: string;
@@ -277,13 +274,8 @@ export class AccountService extends BaseProvider {
 		timestamp: number;
 		user: User | undefined;
 	}> {
-		const [
-			callType,
-			username,
-			groupID,
-			id,
-			expiresString
-		] = callMetadata.split(',');
+		const [callType, username, groupID, id, expiresString] =
+			callMetadata.split(',');
 		const expires = toInt(expiresString);
 		const timestamp = await getTimestamp();
 
@@ -450,12 +442,10 @@ export class AccountService extends BaseProvider {
 
 		this.lastUserToken = await retryUntilSuccessful(
 			async () => {
-				const {
-					expires,
-					token
-				} = await this.accountDatabaseService.callFunction(
-					'getUserToken'
-				);
+				const {expires, token} =
+					await this.accountDatabaseService.callFunction(
+						'getUserToken'
+					);
 
 				if (
 					typeof token !== 'string' ||
@@ -721,13 +711,8 @@ export class AccountService extends BaseProvider {
 					}
 
 					try {
-						const {
-							callType,
-							expires,
-							groupID,
-							route,
-							user
-						} = await this.getIncomingCallRoute(k);
+						const {callType, expires, groupID, route, user} =
+							await this.getIncomingCallRoute(k);
 
 						const {name, realUsername} =
 							(await user?.accountUserProfile.getValue()) || {};
@@ -753,11 +738,11 @@ export class AccountService extends BaseProvider {
 														.decline,
 													cancelFAB: 'close',
 													content: !realUsername ?
-														this.stringsService
-															.anonymous :
-													!name ?
-														`@${realUsername}` :
-														`${name} (@${realUsername})`,
+															this.stringsService
+																.anonymous :
+														!name ?
+															`@${realUsername}` :
+															`${name} (@${realUsername})`,
 													fabAvatar: user?.avatar,
 													ok: this.stringsService
 														.answer,

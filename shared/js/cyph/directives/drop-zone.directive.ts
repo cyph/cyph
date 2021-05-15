@@ -45,9 +45,8 @@ export class DropZoneDirective extends BaseProvider implements OnChanges {
 	@Input() public cyphDropZoneClass: boolean = true;
 
 	/** File drop event emitter. */
-	@Output() public readonly fileDrop: EventEmitter<IFile> = new EventEmitter<
-		IFile
-	>();
+	@Output() public readonly fileDrop: EventEmitter<IFile> =
+		new EventEmitter<IFile>();
 
 	/** @ignore */
 	private async confirm (file: {
@@ -120,26 +119,26 @@ export class DropZoneDirective extends BaseProvider implements OnChanges {
 			const dropZone = !this.envService.isCordovaMobile ?
 				(() => {
 					const dz = new Dropzone(`.${this.id}`, {
-						accept: async (file, done) => {
-							done('ignore');
-							dz.removeAllFiles();
+							accept: async (file, done) => {
+								done('ignore');
+								dz.removeAllFiles();
 
-							if (!(await this.confirm(file))) {
-								return;
-							}
+								if (!(await this.confirm(file))) {
+									return;
+								}
 
-							this.fileDrop.emit(
-								await this.fileService.getIFile(
-									file,
-									this.compressImages
-								)
-							);
-						},
-						filesizeBase: 1024,
-						maxFilesize: Infinity,
-						url: 'data:text/plain;ascii,',
-						...(this.accept ? {acceptedFiles: this.accept} : {})
-					});
+								this.fileDrop.emit(
+									await this.fileService.getIFile(
+										file,
+										this.compressImages
+									)
+								);
+							},
+							filesizeBase: 1024,
+							maxFilesize: Infinity,
+							url: 'data:text/plain;ascii,',
+							...(this.accept ? {acceptedFiles: this.accept} : {})
+						});
 
 					return dz;
 				})() :
@@ -147,27 +146,27 @@ export class DropZoneDirective extends BaseProvider implements OnChanges {
 					const elem: HTMLElement = this.elementRef.nativeElement;
 
 					const handler = async () => {
-						const o = await (<any> self).chooser.getFile(
-							this.accept
-						);
+							const o = await (<any> self).chooser.getFile(
+									this.accept
+								);
 
-						if (
-							typeof o === 'object' &&
-							o.data instanceof Uint8Array &&
-							typeof o.mediaType === 'string' &&
-							typeof o.name === 'string' &&
-							(await this.confirm(o))
-						) {
-							this.fileDrop.emit(o);
-						}
-					};
+							if (
+								typeof o === 'object' &&
+								o.data instanceof Uint8Array &&
+								typeof o.mediaType === 'string' &&
+								typeof o.name === 'string' &&
+								(await this.confirm(o))
+							) {
+								this.fileDrop.emit(o);
+							}
+						};
 
 					elem.addEventListener('click', handler);
 
 					return {
 						destroy: () => {
-							elem.removeEventListener('click', handler);
-						}
+								elem.removeEventListener('click', handler);
+							}
 					};
 				})();
 

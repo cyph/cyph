@@ -132,9 +132,7 @@ export class AccountSessionService extends SessionService {
 	}
 
 	/** @inheritDoc */
-	public async addToBurnerGroup (
-		name?: string
-	) : Promise<{
+	public async addToBurnerGroup (name?: string) : Promise<{
 		callType?: 'audio' | 'video';
 		id: string;
 		url: string;
@@ -276,8 +274,8 @@ export class AccountSessionService extends SessionService {
 			sessionInit.accountsBurnerAliceData = {
 				passive: !!chat.passive,
 				remoteUser,
-				username: this.accountDatabaseService.currentUser.value.user
-					.username
+				username:
+					this.accountDatabaseService.currentUser.value.user.username
 			};
 
 			sessionInit.callType = this.sessionInitService.callType;
@@ -416,8 +414,9 @@ export class AccountSessionService extends SessionService {
 			chat.username = this.normalizeUsername(chat.username);
 
 			this.pairwiseSessionData = {
-				localUsername: (await this.accountDatabaseService.getCurrentUser())
-					.user.username,
+				localUsername: (
+					await this.accountDatabaseService.getCurrentUser()
+				).user.username,
 				remoteUsername: chat.username
 			};
 		}
@@ -530,11 +529,10 @@ export class AccountSessionService extends SessionService {
 			.catch(() => {});
 
 		(async () => {
-			const {
-				castleSessionID
-			} = await this.accountContactsService.getCastleSessionData(
-				chat.username
-			);
+			const {castleSessionID} =
+				await this.accountContactsService.getCastleSessionData(
+					chat.username
+				);
 
 			const sessionID = !this.sessionSubID ?
 				castleSessionID :
@@ -560,20 +558,22 @@ export class AccountSessionService extends SessionService {
 			const castleSessionURL = `castleSessions/${castleSessionID}/session`;
 			const sessionURL = `castleSessions/${sessionID}/session`;
 
-			this.incomingMessageQueue = this.accountDatabaseService.getAsyncList(
-				`${sessionURL}/incomingMessageQueue`,
-				SessionMessageList,
-				undefined,
-				undefined,
-				undefined,
-				false
-			);
+			this.incomingMessageQueue =
+				this.accountDatabaseService.getAsyncList(
+					`${sessionURL}/incomingMessageQueue`,
+					SessionMessageList,
+					undefined,
+					undefined,
+					undefined,
+					false
+				);
 
-			this.incomingMessageQueueLock = this.accountDatabaseService.lockFunction(
-				`${sessionURL}/incomingMessageQueueLock${
-					sessionSubID ? `/${sessionSubID}` : ''
-				}`
-			);
+			this.incomingMessageQueueLock =
+				this.accountDatabaseService.lockFunction(
+					`${sessionURL}/incomingMessageQueueLock${
+						sessionSubID ? `/${sessionSubID}` : ''
+					}`
+				);
 
 			await this.init(
 				castleSessionID,

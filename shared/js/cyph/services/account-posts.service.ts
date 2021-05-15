@@ -167,14 +167,13 @@ export class AccountPostsService extends BaseProvider {
 					);
 
 			const pushCommentID = async (postID: string, commentID: string) => {
-				await this.accountDatabaseService.pushItem<
-					IAccountPostCommentReference
-				>(
+				await this.accountDatabaseService.pushItem<IAccountPostCommentReference>(
 					`${urlPrefix}postReplies/${postID}`,
 					AccountPostCommentReference,
 					{
-						author: (await this.accountDatabaseService.getCurrentUser())
-							.user.username,
+						author: (
+							await this.accountDatabaseService.getCurrentUser()
+						).user.username,
 						id: commentID
 					},
 					SecurityModels.unprotected,
@@ -193,19 +192,21 @@ export class AccountPostsService extends BaseProvider {
 					false
 				);
 
-				const posts = this.accountDatabaseService.getAsyncMap<
-					IAccountPost
-				>(
-					`${urlPrefix}posts/public`,
-					AccountPost,
-					SecurityModels.public,
-					undefined,
-					true
-				);
+				const posts =
+					this.accountDatabaseService.getAsyncMap<IAccountPost>(
+						`${urlPrefix}posts/public`,
+						AccountPost,
+						SecurityModels.public,
+						undefined,
+						true
+					);
 
-				const myComments = this.accountDatabaseService.getAsyncMap<
-					IAccountPostComment
-				>('postComments', AccountPostComment, SecurityModels.public);
+				const myComments =
+					this.accountDatabaseService.getAsyncMap<IAccountPostComment>(
+						'postComments',
+						AccountPostComment,
+						SecurityModels.public
+					);
 
 				const getComment = async (
 					commentRef: IAccountPostCommentReference
@@ -253,9 +254,11 @@ export class AccountPostsService extends BaseProvider {
 
 				return {
 					getComments: async id =>
-						(await Promise.all(
-							(await getCommentReferences(id)).map(getComment)
-						)).filter(o => o.comment.postID === id),
+						(
+							await Promise.all(
+								(await getCommentReferences(id)).map(getComment)
+							)
+						).filter(o => o.comment.postID === id),
 					getIDs: async () =>
 						this.accountDatabaseService.filterListHoles(
 							ids.getValue()
@@ -349,17 +352,14 @@ export class AccountPostsService extends BaseProvider {
 							undefined,
 							false
 						),
-						myComments: this.accountDatabaseService.getAsyncMap<
-							IAccountPostComment
-						>(
-							'postComments',
-							AccountPostComment,
-							SecurityModels.privateSigned,
-							circle.key
-						),
-						posts: this.accountDatabaseService.getAsyncMap<
-							IAccountPost
-						>(
+						myComments:
+							this.accountDatabaseService.getAsyncMap<IAccountPostComment>(
+								'postComments',
+								AccountPostComment,
+								SecurityModels.privateSigned,
+								circle.key
+							),
+						posts: this.accountDatabaseService.getAsyncMap<IAccountPost>(
 							`${urlPrefix}posts/private`,
 							AccountPost,
 							SecurityModels.privateSigned,
@@ -455,32 +455,32 @@ export class AccountPostsService extends BaseProvider {
 						);
 					}
 
-					const [
-						currentCircleWrapper,
-						oldCircleWrappers
-					] = await Promise.all([
-						getCircleWrapper(currentCircle),
-						Promise.all(oldCircles.map(getCircleWrapper))
-					]);
+					const [currentCircleWrapper, oldCircleWrappers] =
+						await Promise.all([
+							getCircleWrapper(currentCircle),
+							Promise.all(oldCircles.map(getCircleWrapper))
+						]);
 
-					const oldIDData = (await Promise.all(
-						oldCircleWrappers.map(async o =>
-							this.accountDatabaseService
-								.filterListHoles<string>(
-									await o.ids.getTimedValue()
-								)
-								.map((id) : [
-									string,
-									{
-										circleWrapper: typeof o;
-										timedValue: ITimedValue<string>;
-									}
-								] => [
-									id.value,
-									{circleWrapper: o, timedValue: id}
-								])
+					const oldIDData = (
+						await Promise.all(
+							oldCircleWrappers.map(async o =>
+								this.accountDatabaseService
+									.filterListHoles<string>(
+										await o.ids.getTimedValue()
+									)
+									.map((id) : [
+										string,
+										{
+											circleWrapper: typeof o;
+											timedValue: ITimedValue<string>;
+										}
+									] => [
+										id.value,
+										{circleWrapper: o, timedValue: id}
+									])
+							)
 						)
-					)).flat();
+					).flat();
 
 					const oldIDMap = new Map(oldIDData);
 					const oldTimedIDs = oldIDData.map(([_, v]) => v.timedValue);
@@ -490,25 +490,29 @@ export class AccountPostsService extends BaseProvider {
 
 					const privatePostDataPartInternal: IAccountPostDataPart = {
 						getComments: async id =>
-							(await Promise.all(
-								(await getCommentReferences(id)).map(
-									currentCircleWrapper.getComment
+							(
+								await Promise.all(
+									(
+										await getCommentReferences(id)
+									).map(currentCircleWrapper.getComment)
 								)
-							)).filter(o => o.comment.postID === id),
+							).filter(o => o.comment.postID === id),
 						getIDs: async () =>
-							(await privatePostDataPartInternal.getTimedIDs()).map(
-								o => o.value
-							),
+							(
+								await privatePostDataPartInternal.getTimedIDs()
+							).map(o => o.value),
 						getPost: async id =>
 							getCircleWrapperForID(id).getPost(id),
 						getTimedIDs: async () =>
-							(await Promise.all([
-								oldTimedIDs,
-								this.accountDatabaseService.filterListHoles<
-									string
-								>(currentCircleWrapper.ids.getTimedValue()),
-								publicPostDataPart.getTimedIDs()
-							]))
+							(
+								await Promise.all([
+									oldTimedIDs,
+									this.accountDatabaseService.filterListHoles<string>(
+										currentCircleWrapper.ids.getTimedValue()
+									),
+									publicPostDataPart.getTimedIDs()
+								])
+							)
 								.flat()
 								.sort((a, b) =>
 									a.timestamp > b.timestamp ? 1 : -1
@@ -578,9 +582,8 @@ export class AccountPostsService extends BaseProvider {
 						return subject;
 					};
 
-					const privatePostDataPartWatcher = initPrivatePostDataPartUpdates(
-						currentCircle
-					);
+					const privatePostDataPartWatcher =
+						initPrivatePostDataPartUpdates(currentCircle);
 
 					for (const circle of oldCircles) {
 						/* eslint-disable-next-line @typescript-eslint/tslint/config */
@@ -648,10 +651,9 @@ export class AccountPostsService extends BaseProvider {
 						await (!username ?
 							/* TODO: Handle case of multiple circles per user */
 							this.getInnerCircle() :
-							this.acceptIncomingCircles(
-								username
-							).then(async () =>
-								this.getLatestSharedCircleID(username || '')
+							this.acceptIncomingCircles(username).then(
+								async () =>
+									this.getLatestSharedCircleID(username || '')
 							))
 					),
 				public: publicPostDataPart
@@ -786,9 +788,11 @@ export class AccountPostsService extends BaseProvider {
 									),
 									currentUser.keys.encryptionKeyPair
 								),
-								(await this.accountDatabaseService.getUserPublicKeys(
-									username
-								)).signing,
+								(
+									await this.accountDatabaseService.getUserPublicKeys(
+										username
+									)
+								).signing,
 								`users/${currentUser.user.username}/externalCirclesIncoming/${username}/${circleID}`
 							)
 						),
@@ -826,9 +830,11 @@ export class AccountPostsService extends BaseProvider {
 	/** Gets ID of most recently shared circle. */
 	private async getLatestSharedCircleID (username: string) : Promise<string> {
 		/* TODO: Handle case of multiple circles per user */
-		const circleID = (await this.accountDatabaseService.getListKeys(
-			`externalCirclesIncoming/${username}`
-		)).slice(-1)[0];
+		const circleID = (
+			await this.accountDatabaseService.getListKeys(
+				`externalCirclesIncoming/${username}`
+			)
+		).slice(-1)[0];
 
 		if (!circleID) {
 			throw new Error(`External circle for user ${username} not found.`);
@@ -1043,35 +1049,35 @@ export class AccountPostsService extends BaseProvider {
 			);
 		}
 
-		const sorted = (await Promise.all(
-			usernames.map(async username => {
-				const postDataPart = await this.getUserPostData(username);
-				const ids = await postDataPart.getTimedIDs();
+		const sorted = (
+			await Promise.all(
+				usernames.map(async username => {
+					const postDataPart = await this.getUserPostData(username);
+					const ids = await postDataPart.getTimedIDs();
 
-				const getAuthor = memoize(async () =>
-					this.accountUserLookupService.getUser(username)
-				);
+					const getAuthor = memoize(async () =>
+						this.accountUserLookupService.getUser(username)
+					);
 
-				/* eslint-disable-next-line @typescript-eslint/tslint/config */
-				return (nMostRecent === undefined ?
-					ids :
-					ids.slice(-nMostRecent)
-				).map(o => ({
-					getAuthor,
-					id: o.value,
-					postDataPart,
-					timestamp: o.timestamp
-				}));
-			})
-		))
+					/* eslint-disable-next-line @typescript-eslint/tslint/config */
+					return (nMostRecent === undefined ?
+						ids :
+						ids.slice(-nMostRecent)).map(o => ({
+						getAuthor,
+						id: o.value,
+						postDataPart,
+						timestamp: o.timestamp
+					}));
+				})
+			)
+		)
 			.flat()
 			.sort((a, b) => (a.timestamp > b.timestamp ? -1 : 1));
 
 		/* eslint-disable-next-line @typescript-eslint/tslint/config */
 		return (nMostRecent === undefined ?
 			sorted :
-			sorted.slice(-nMostRecent)
-		).map(o => ({
+			sorted.slice(-nMostRecent)).map(o => ({
 			author: o.getAuthor(),
 			id: o.id,
 			post: o.postDataPart.watchPost(o.id)
@@ -1241,9 +1247,10 @@ export class AccountPostsService extends BaseProvider {
 			/* TODO: Handle case of multiple circles per user */
 			const circle = await this.getInnerCircle();
 
-			const circleMembers = await this.accountDatabaseService.filterListHoles(
-				this.circleMembers(circle.id).getFlatValue()
-			);
+			const circleMembers =
+				await this.accountDatabaseService.filterListHoles(
+					this.circleMembers(circle.id).getFlatValue()
+				);
 			const circleMembersSet = new Set(circleMembers);
 
 			const usersToAdd = usernames.filter(
@@ -1324,9 +1331,11 @@ export class AccountPostsService extends BaseProvider {
 									currentUser.keys.signingKeyPair.privateKey,
 									url
 								),
-								(await this.accountDatabaseService.getUserPublicKeys(
-									username
-								)).encryption
+								(
+									await this.accountDatabaseService.getUserPublicKeys(
+										username
+									)
+								).encryption
 							),
 						SecurityModels.unprotected,
 						undefined,

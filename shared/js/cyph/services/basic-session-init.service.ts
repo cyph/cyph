@@ -10,8 +10,10 @@ import {SessionInitService} from './session-init.service';
  * Simplest possible SessionInitService implementation.
  */
 @Injectable()
-export class BasicSessionInitService extends BaseProvider
-	implements SessionInitService {
+export class BasicSessionInitService
+	extends BaseProvider
+	implements SessionInitService
+{
 	/** @ignore */
 	private readonly _HEADLESS = resolvable<boolean>();
 
@@ -55,8 +57,8 @@ export class BasicSessionInitService extends BaseProvider
 	public readonly id: Promise<string> = this._ID;
 
 	/** @inheritDoc */
-	public readonly joinConfirmation: Promise<boolean> = this
-		._JOIN_CONFIRMATION;
+	public readonly joinConfirmation: Promise<boolean> =
+		this._JOIN_CONFIRMATION;
 
 	/** @inheritDoc */
 	public parentID?: string;

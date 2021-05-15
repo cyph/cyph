@@ -32,12 +32,12 @@ export class ScrollService extends BaseProvider {
 	private readonly readItems: Set<string> = new Set();
 
 	/** @ignore */
-	private readonly resolveRootElement: (rootElement?: JQuery) => void = this
-		._ROOT_ELEMENT.resolve;
+	private readonly resolveRootElement: (rootElement?: JQuery) => void =
+		this._ROOT_ELEMENT.resolve;
 
 	/** @ignore */
-	private readonly rootElement: Promise<JQuery | undefined> = this
-		._ROOT_ELEMENT;
+	private readonly rootElement: Promise<JQuery | undefined> =
+		this._ROOT_ELEMENT;
 
 	/** @ignore */
 	private readonly scrollDownLock = {};
@@ -54,38 +54,37 @@ export class ScrollService extends BaseProvider {
 	) => void = this._UNREAD_ITEMS.resolve;
 
 	/** Current scroll positon. */
-	public readonly scrollPosition: BehaviorSubject<number> = toBehaviorSubject<
-		number
-	>(
-		this.rootElement.then(rootElement =>
-			rootElement ?
-				new Observable<number>(observer => {
-					const handler = () => {
-						observer.next(
-							Math.max(
-								rootElement[0].scrollHeight -
-									(rootElement[0].scrollTop +
-										rootElement[0].clientHeight),
-								0
-							)
-						);
-					};
+	public readonly scrollPosition: BehaviorSubject<number> =
+		toBehaviorSubject<number>(
+			this.rootElement.then(rootElement =>
+				rootElement ?
+					new Observable<number>(observer => {
+						const handler = () => {
+							observer.next(
+								Math.max(
+									rootElement[0].scrollHeight -
+										(rootElement[0].scrollTop +
+											rootElement[0].clientHeight),
+									0
+								)
+							);
+						};
 
-					rootElement.on('scroll', handler);
+						rootElement.on('scroll', handler);
 
-					return () => {
-						rootElement.off('scroll', handler);
-					};
-				}) :
-				0
-		),
-		this.minScroll,
-		this.subscriptions
-	);
+						return () => {
+							rootElement.off('scroll', handler);
+						};
+					}) :
+					0
+			),
+			this.minScroll,
+			this.subscriptions
+		);
 
 	/** Unread item IDs. */
-	public readonly unreadItems: Promise<IAsyncSet<string>> = this
-		._UNREAD_ITEMS;
+	public readonly unreadItems: Promise<IAsyncSet<string>> =
+		this._UNREAD_ITEMS;
 
 	/** Watches unread item count. */
 	public readonly watchUnreadCount = memoize(() =>

@@ -45,8 +45,10 @@ import {
 	styleUrls: ['./quill.component.scss'],
 	templateUrl: './quill.component.html'
 })
-export class QuillComponent extends BaseProvider
-	implements AfterViewInit, ControlValueAccessor, OnChanges {
+export class QuillComponent
+	extends BaseProvider
+	implements AfterViewInit, ControlValueAccessor, OnChanges
+{
 	/** @ignore */
 	private readonly clientID: string = uuid();
 
@@ -101,9 +103,8 @@ export class QuillComponent extends BaseProvider
 	public readonly isDisabledWrapper = new BehaviorSubject<boolean>(false);
 
 	/** Emits on ready. */
-	@Output() public readonly ready: EventEmitter<void> = new EventEmitter<
-		void
-	>();
+	@Output() public readonly ready: EventEmitter<void> =
+		new EventEmitter<void>();
 
 	/** Emits on selection change. */
 	@Output() public readonly selectionChange: EventEmitter<{

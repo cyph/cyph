@@ -5,9 +5,11 @@ export const filterAsync = async <T>(
 	arr: T[],
 	f: (value: T) => MaybePromise<boolean>
 ) : Promise<T[]> =>
-	(await Promise.all(
-		arr.map(async value => ({filter: await f(value), value}))
-	))
+	(
+		await Promise.all(
+			arr.map(async value => ({filter: await f(value), value}))
+		)
+	)
 		.filter(o => o.filter)
 		.map(o => o.value);
 

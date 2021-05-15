@@ -61,14 +61,8 @@ export const changeUserPlan = async (
 
 	username = normalize(username);
 
-	const {
-		auth,
-		database,
-		getItem,
-		removeItem,
-		setItem,
-		storage
-	} = initDatabaseService(projectId);
+	const {auth, database, getItem, removeItem, setItem, storage} =
+		initDatabaseService(projectId);
 
 	const cyphPlan = CyphPlans[plan];
 
@@ -183,9 +177,11 @@ export const changeUserPlan = async (
 			}
 
 			const numInvites = Object.keys(
-				(await database
-					.ref(`${namespacePath}/users/${username}/inviteCodes`)
-					.once('value')).val() || {}
+				(
+					await database
+						.ref(`${namespacePath}/users/${username}/inviteCodes`)
+						.once('value')
+				).val() || {}
 			).length;
 
 			if (numInvites >= planConfig.initialInvites) {

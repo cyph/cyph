@@ -31,18 +31,16 @@ export const copyToClipboard = async (
 		}
 
 		if (successToast) {
-			await (await staticDialogService).toast(
-				successToast,
-				toastDuration
-			);
+			await (
+				await staticDialogService
+			).toast(successToast, toastDuration);
 		}
 	}
 	catch (err) {
 		if (failureToast) {
-			await (await staticDialogService).toast(
-				failureToast,
-				toastDuration
-			);
+			await (
+				await staticDialogService
+			).toast(failureToast, toastDuration);
 		}
 		else {
 			throw err;

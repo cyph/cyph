@@ -62,13 +62,12 @@ export class PairwiseSessionLite implements IPairwiseSession {
 			}
 
 			if (handshakeStep !== HandshakeSteps.Complete) {
-				const [
-					signingKeyPair,
-					publicEncryptionKey
-				] = await Promise.all([
-					this.localUser.getSigningKeyPair(),
-					this.remoteUser.getPublicEncryptionKey()
-				]);
+				const [signingKeyPair, publicEncryptionKey] = await Promise.all(
+					[
+						this.localUser.getSigningKeyPair(),
+						this.remoteUser.getPublicEncryptionKey()
+					]
+				);
 
 				await this.handshakeState.initialSecretCyphertext.setValue(
 					await this.potassium.box.seal(
@@ -84,15 +83,12 @@ export class PairwiseSessionLite implements IPairwiseSession {
 			}
 		}
 		else if (!secret) {
-			const [
-				encryptionKeyPair,
-				publicSigningKey,
-				cyphertext
-			] = await Promise.all([
-				this.localUser.getEncryptionKeyPair(),
-				this.remoteUser.getPublicSigningKey(),
-				this.handshakeState.initialSecretCyphertext.getValue()
-			]);
+			const [encryptionKeyPair, publicSigningKey, cyphertext] =
+				await Promise.all([
+					this.localUser.getEncryptionKeyPair(),
+					this.remoteUser.getPublicSigningKey(),
+					this.handshakeState.initialSecretCyphertext.getValue()
+				]);
 
 			const maybeSignedSecret = await this.potassium.box.open(
 				cyphertext,
@@ -200,42 +196,42 @@ export class PairwiseSessionLite implements IPairwiseSession {
 		private readonly handshakeState: IHandshakeState,
 
 		/** @ignore */
-		protected readonly _INCOMING_MESSAGES: IAsyncValue<
-			ICastleIncomingMessages
-		> = new LocalAsyncValue<ICastleIncomingMessages>({max: 0, queue: {}}),
+		protected readonly _INCOMING_MESSAGES: IAsyncValue<ICastleIncomingMessages> = new LocalAsyncValue<ICastleIncomingMessages>(
+			{max: 0, queue: {}}
+		),
 		/** @ignore */
-		protected readonly _OUTGOING_MESSAGE_QUEUE: IAsyncList<
-			Uint8Array
-		> = new LocalAsyncList([]),
+		protected readonly _OUTGOING_MESSAGE_QUEUE: IAsyncList<Uint8Array> = new LocalAsyncList(
+			[]
+		),
 
 		/** @ignore */
 		protected readonly _LOCK: LockFunction = lockFunction(),
 
 		/** @ignore */
-		protected readonly _RATCHET_STATE: IAsyncValue<
-			ICastleRatchetState
-		> = new LocalAsyncValue<ICastleRatchetState>({
-			asymmetric: {
-				privateKey: new Uint8Array(0),
-				publicKey: new Uint8Array(0)
-			},
-			incomingMessageID: 0,
-			outgoingMessageID: 1,
-			symmetric: {
-				current: {
-					incoming: new Uint8Array(0),
-					outgoing: new Uint8Array(0)
+		protected readonly _RATCHET_STATE: IAsyncValue<ICastleRatchetState> = new LocalAsyncValue<ICastleRatchetState>(
+			{
+				asymmetric: {
+					privateKey: new Uint8Array(0),
+					publicKey: new Uint8Array(0)
 				},
-				next: {
-					incoming: new Uint8Array(0),
-					outgoing: new Uint8Array(0)
+				incomingMessageID: 0,
+				outgoingMessageID: 1,
+				symmetric: {
+					current: {
+						incoming: new Uint8Array(0),
+						outgoing: new Uint8Array(0)
+					},
+					next: {
+						incoming: new Uint8Array(0),
+						outgoing: new Uint8Array(0)
+					}
 				}
 			}
-		}),
+		),
 		/** @ignore */
-		protected readonly _RATCHET_UPDATE_QUEUE: IAsyncList<
-			ICastleRatchetUpdate
-		> = new LocalAsyncList([])
+		protected readonly _RATCHET_UPDATE_QUEUE: IAsyncList<ICastleRatchetUpdate> = new LocalAsyncList(
+			[]
+		)
 	) {
 		this.key
 			.then(async key => {

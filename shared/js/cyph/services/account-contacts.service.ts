@@ -59,18 +59,21 @@ export class AccountContactsService extends BaseProvider {
 	 * Resolves circular dependency needed for addContactPrompt to work.
 	 * @see AccountContactsSearchComponent
 	 */
-	public static readonly accountContactsSearchComponent = resolvable<
-		ComponentType<{
-			changeDetectorRef: ChangeDetectorRef;
-			chipInput: boolean;
-			contactList: Observable<(IContactListItem | User)[]> | undefined;
-			externalUsers: boolean;
-			getContacts?: IResolvable<User[]>;
-			includeGroups?: boolean;
-			minimum?: number;
-			title?: string;
-		}>
-	>();
+	public static readonly accountContactsSearchComponent =
+		resolvable<
+			ComponentType<{
+				changeDetectorRef: ChangeDetectorRef;
+				chipInput: boolean;
+				contactList:
+					| Observable<(IContactListItem | User)[]>
+					| undefined;
+				externalUsers: boolean;
+				getContacts?: IResolvable<User[]>;
+				includeGroups?: boolean;
+				minimum?: number;
+				title?: string;
+			}>
+		>();
 
 	/** @ignore */
 	private readonly contactListHelpers = {
@@ -104,9 +107,10 @@ export class AccountContactsService extends BaseProvider {
 
 				return {
 					contactState: this.watchContactState(username),
-					unreadMessageCount: accountUserLookupService.getUnreadMessageCount(
-						username
-					),
+					unreadMessageCount:
+						accountUserLookupService.getUnreadMessageCount(
+							username
+						),
 					user,
 					username
 				};
@@ -126,10 +130,11 @@ export class AccountContactsService extends BaseProvider {
 					};
 				}
 
-				const castleSessionID = await this.accountDatabaseService.callFunction(
-					'getCastleSessionID',
-					{username}
-				);
+				const castleSessionID =
+					await this.accountDatabaseService.callFunction(
+						'getCastleSessionID',
+						{username}
+					);
 
 				if (typeof castleSessionID !== 'string') {
 					throw new Error('Invalid Castle session ID.');
@@ -152,46 +157,47 @@ export class AccountContactsService extends BaseProvider {
 	>(undefined);
 
 	/** List of contacts for current user, sorted alphabetically by username. */
-	public readonly contactList: Observable<
-		(IContactListItem | User)[]
-	> = cacheObservable(
-		observableAll([
-			this.accountFilesService.filesListFilteredWithData.messagingGroups(),
-			this.accountFilesService.incomingFilesFilteredWithData.messagingGroups(),
-			this.accountDatabaseService.watchListKeys(
-				'contacts',
-				undefined,
-				this.subscriptions
+	public readonly contactList: Observable<(IContactListItem | User)[]> =
+		cacheObservable(
+			observableAll([
+				this.accountFilesService.filesListFilteredWithData.messagingGroups(),
+				this.accountFilesService.incomingFilesFilteredWithData.messagingGroups(),
+				this.accountDatabaseService.watchListKeys(
+					'contacts',
+					undefined,
+					this.subscriptions
+				),
+				this.accountUserLookupService.pipe(filterUndefinedOperator())
+			]).pipe(
+				map(
+					([
+						groups,
+						incomingGroups,
+						usernames,
+						accountUserLookupService
+					]) => [
+						...[
+							...incomingGroups.map(o => ({
+								group: o.data,
+								id: o.record.id,
+								incoming: true
+							})),
+							...groups.map(o => ({
+								group: o.data,
+								id: o.record.id,
+								incoming: false
+							}))
+						].map(this.contactListHelpers.groupData),
+						...normalizeArray(usernames).map(
+							this.contactListHelpers.user(
+								accountUserLookupService
+							)
+						)
+					]
+				)
 			),
-			this.accountUserLookupService.pipe(filterUndefinedOperator())
-		]).pipe(
-			map(
-				([
-					groups,
-					incomingGroups,
-					usernames,
-					accountUserLookupService
-				]) => [
-					...[
-						...incomingGroups.map(o => ({
-							group: o.data,
-							id: o.record.id,
-							incoming: true
-						})),
-						...groups.map(o => ({
-							group: o.data,
-							id: o.record.id,
-							incoming: false
-						}))
-					].map(this.contactListHelpers.groupData),
-					...normalizeArray(usernames).map(
-						this.contactListHelpers.user(accountUserLookupService)
-					)
-				]
-			)
-		),
-		this.subscriptions
-	);
+			this.subscriptions
+		);
 
 	/** List of Inner Circle contacts for current user, sorted alphabetically by username. */
 	public readonly contactListInnerCircle: Observable<
@@ -249,30 +255,26 @@ export class AccountContactsService extends BaseProvider {
 	);
 
 	/** Gets contact username or group metadata based on ID. */
-	public readonly getChatData = memoize(
-		async (
-			id?: string
-		) : Promise<
-			{group: IAccountMessagingGroup; id: string} | {username: string}
-		> => {
-			if (!id) {
-				throw new Error('Invalid contact ID.');
-			}
-
-			try {
-				return {username: await this.getContactUsername(id)};
-			}
-			catch {
-				return {
-					group: await this.accountFilesService.downloadFile(
-						id,
-						AccountFileRecord.RecordTypes.MessagingGroup
-					).result,
-					id
-				};
-			}
+	public readonly getChatData = memoize(async (id?: string) : Promise<
+		{group: IAccountMessagingGroup; id: string} | {username: string}
+	> => {
+		if (!id) {
+			throw new Error('Invalid contact ID.');
 		}
-	);
+
+		try {
+			return {username: await this.getContactUsername(id)};
+		}
+		catch {
+			return {
+				group: await this.accountFilesService.downloadFile(
+					id,
+					AccountFileRecord.RecordTypes.MessagingGroup
+				).result,
+				id
+			};
+		}
+	});
 
 	/** Gets contact ID based on username. */
 	public readonly getContactID = memoize(
@@ -345,10 +347,12 @@ export class AccountContactsService extends BaseProvider {
 			return false;
 		}
 
-		const planConfig = this.configService.planConfig[
-			(await this.accountDatabaseService.currentUser.value?.user.cyphPlan.getValue())
-				?.plan || CyphPlans.Free
-		];
+		const planConfig =
+			this.configService.planConfig[
+				(
+					await this.accountDatabaseService.currentUser.value?.user.cyphPlan.getValue()
+				)?.plan || CyphPlans.Free
+			];
 
 		if (typeof planConfig.innerCircleLimit === 'number') {
 			const innerCircleCount = this.accountDatabaseService
@@ -362,8 +366,9 @@ export class AccountContactsService extends BaseProvider {
 						false
 					)
 				)
-				.filter(o => o.state === AccountContactState.States.Confirmed)
-				.length;
+				.filter(
+					o => o.state === AccountContactState.States.Confirmed
+				).length;
 
 			if (innerCircleCount >= planConfig.innerCircleLimit) {
 				await this.dialogService.alert({

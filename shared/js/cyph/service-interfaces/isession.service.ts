@@ -157,9 +157,7 @@ export interface ISessionService<
 	 * Adds a member to the Burner group, if applicable.
 	 * (For now, requires that this have been a group session from the start.)
 	 */
-	addToBurnerGroup (
-		name?: string
-	) : Promise<{
+	addToBurnerGroup (name?: string) : Promise<{
 		callType?: 'audio' | 'video';
 		id: string;
 		url: string;

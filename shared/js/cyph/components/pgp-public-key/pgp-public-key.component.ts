@@ -26,8 +26,10 @@ import {copyToClipboard} from '../../util/clipboard';
 	styleUrls: ['./pgp-public-key.component.scss'],
 	templateUrl: './pgp-public-key.component.html'
 })
-export class PGPPublicKeyComponent extends BaseProvider
-	implements OnChanges, OnInit {
+export class PGPPublicKeyComponent
+	extends BaseProvider
+	implements OnChanges, OnInit
+{
 	/** @see copyToClipboard */
 	public readonly copyToClipboard = copyToClipboard;
 
@@ -59,7 +61,8 @@ export class PGPPublicKeyComponent extends BaseProvider
 		this.userProfileExtra.next(undefined);
 		this.verified.next(undefined);
 
-		const userProfileExtra = await this.user?.accountUserProfileExtra.getValue();
+		const userProfileExtra =
+			await this.user?.accountUserProfileExtra.getValue();
 
 		const verified = await this.accountFilesService.pgp.verifyPublicKey(
 			this.user?.username,

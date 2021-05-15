@@ -27,9 +27,10 @@ export class AccountOrganizationsService extends BaseProvider {
 				toBehaviorSubject<User[]>(
 					async () => {
 						if (typeof org === 'string') {
-							const maybeOrg = await this.accountUserLookupService.getUser(
-								org
-							);
+							const maybeOrg =
+								await this.accountUserLookupService.getUser(
+									org
+								);
 							if (!maybeOrg) {
 								return [];
 							}

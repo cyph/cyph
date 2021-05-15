@@ -30,9 +30,11 @@ import {StringsService} from './strings.service';
 @Injectable()
 export class AccountSettingsService extends BaseProvider {
 	/** @ignore */
-	private readonly setupChecklistInternal = this.accountDatabaseService.getAsyncValue<
-		IAccountSetupChecklist
-	>('setupChecklist', AccountSetupChecklist);
+	private readonly setupChecklistInternal =
+		this.accountDatabaseService.getAsyncValue<IAccountSetupChecklist>(
+			'setupChecklist',
+			AccountSetupChecklist
+		);
 
 	/** User's email address. */
 	public readonly email = this.accountDatabaseService.getAsyncValue(
@@ -75,8 +77,11 @@ export class AccountSettingsService extends BaseProvider {
 		(async () => {
 			const latestHomePage = (async () =>
 				this.configService.planConfig[
-					(await (await this.accountDatabaseService.getCurrentUser()).user.cyphPlan.getValue())
-						.plan
+					(
+						await (
+							await this.accountDatabaseService.getCurrentUser()
+						).user.cyphPlan.getValue()
+					).plan
 				].homePage)();
 
 			const homePageKey = 'AccountSettingsService.homePage';

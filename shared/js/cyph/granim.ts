@@ -8,13 +8,15 @@ import {waitForIterable} from './util/wait';
  */
 export const initGranim = async (
 	opts: Record<string, any>
-) : Promise<| undefined
-| {
-		changeState: (state: string) => void;
-		clear: () => void;
-		pause: () => void;
-		play: () => void;
-  }> => {
+) : Promise<
+	| undefined
+	| {
+			changeState: (state: string) => void;
+			clear: () => void;
+			pause: () => void;
+			play: () => void;
+	  }
+> => {
 	if (!env.isWeb) {
 		return;
 	}
@@ -25,9 +27,9 @@ export const initGranim = async (
 		throw new Error('Missing Granim selector.');
 	}
 
-	const elem = (await waitForIterable(() =>
-		document.querySelectorAll(selector)
-	))[0];
+	const elem = (
+		await waitForIterable(() => document.querySelectorAll(selector))
+	)[0];
 
 	const started = new Promise<void>(resolve => {
 		const event = 'granim:start';

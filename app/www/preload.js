@@ -139,17 +139,18 @@ window.navigator.mediaDevices.getDisplayMedia = async () =>
 								);
 							}
 
-							const stream = await window.navigator.mediaDevices.getUserMedia(
-								{
-									audio: false,
-									video: {
-										mandatory: {
-											chromeMediaSource: 'desktop',
-											chromeMediaSourceId: source.id
+							const stream =
+								await window.navigator.mediaDevices.getUserMedia(
+									{
+										audio: false,
+										video: {
+											mandatory: {
+												chromeMediaSource: 'desktop',
+												chromeMediaSourceId: source.id
+											}
 										}
 									}
-								}
-							);
+								);
 							resolve(stream);
 
 							selectionElem.remove();

@@ -37,16 +37,18 @@ export const inviteUser = async (
 	const {database} = initDatabaseService(projectId);
 	const namespacePath = 'cyph_ws';
 
-	const inviteCodes = (await addInviteCode(
-		projectId,
-		{'': count},
-		undefined,
-		plan,
-		reservedUsername,
-		trialMonths,
-		email,
-		misc
-	))[''];
+	const inviteCodes = (
+		await addInviteCode(
+			projectId,
+			{'': count},
+			undefined,
+			plan,
+			reservedUsername,
+			trialMonths,
+			email,
+			misc
+		)
+	)[''];
 
 	const inviteCode = inviteCodes[0];
 

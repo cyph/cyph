@@ -90,9 +90,9 @@ export class AccountInviteService extends BaseProvider {
 
 	/** Displays invite link to user. */
 	public async showInviteURL () : Promise<void> {
-		const {
-			plan
-		} = await (await this.accountDatabaseService.getCurrentUser()).user.cyphPlan.getValue();
+		const {plan} = await (
+			await this.accountDatabaseService.getCurrentUser()
+		).user.cyphPlan.getValue();
 
 		const hasUnlimitedInvites =
 			this.configService.planConfig[plan].initialInvites === undefined;

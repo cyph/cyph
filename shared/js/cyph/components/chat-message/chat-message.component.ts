@@ -50,8 +50,10 @@ import {sleep} from '../../util/wait';
 	styleUrls: ['./chat-message.component.scss'],
 	templateUrl: './chat-message.component.html'
 })
-export class ChatMessageComponent extends BaseProvider
-	implements AfterViewInit, OnChanges, OnDestroy, OnInit {
+export class ChatMessageComponent
+	extends BaseProvider
+	implements AfterViewInit, OnChanges, OnDestroy, OnInit
+{
 	/** @ignore */
 	private static readonly appeared: BehaviorSubject<Set<string>> = (() => {
 		const ids = new Set<string>();
@@ -142,9 +144,8 @@ export class ChatMessageComponent extends BaseProvider
 	@Output() public readonly loaded = new EventEmitter<void>();
 
 	/** Indicates whether media "spoiler" mode should be active. */
-	public readonly mediaSpoiler: BehaviorSubject<
-		boolean
-	> = new BehaviorSubject<boolean>(true);
+	public readonly mediaSpoiler: BehaviorSubject<boolean> =
+		new BehaviorSubject<boolean>(true);
 
 	/** @see ChatMessage */
 	@Input() public message?: IChatMessage | string | ListHoleError;
@@ -156,9 +157,8 @@ export class ChatMessageComponent extends BaseProvider
 	public pending: boolean = false;
 
 	/** @see ChatMessageValue.quill */
-	public readonly quill: BehaviorSubject<
-		IQuillDelta | undefined
-	> = new BehaviorSubject<IQuillDelta | undefined>(undefined);
+	public readonly quill: BehaviorSubject<IQuillDelta | undefined> =
+		new BehaviorSubject<IQuillDelta | undefined>(undefined);
 
 	/** @see readableByteLength */
 	public readonly readableByteLength = readableByteLength;
@@ -167,9 +167,8 @@ export class ChatMessageComponent extends BaseProvider
 	@Input() public scrollIntoView: boolean = false;
 
 	/** Fires after scrolling into view. */
-	@Output() public readonly scrolledIntoView: EventEmitter<
-		void
-	> = new EventEmitter<void>();
+	@Output() public readonly scrolledIntoView: EventEmitter<void> =
+		new EventEmitter<void>();
 
 	/** @see trackBySelf */
 	public readonly trackBySelf = trackBySelf;
@@ -184,9 +183,8 @@ export class ChatMessageComponent extends BaseProvider
 	@Input() public unconfirmedMessages?: {[id: string]: boolean | undefined};
 
 	/** Indicates whether view is ready. */
-	public readonly viewReady: BehaviorSubject<boolean> = new BehaviorSubject<
-		boolean
-	>(false);
+	public readonly viewReady: BehaviorSubject<boolean> =
+		new BehaviorSubject<boolean>(false);
 
 	/** Indicates whether message is confirmed. */
 	public get confirmed () : boolean {

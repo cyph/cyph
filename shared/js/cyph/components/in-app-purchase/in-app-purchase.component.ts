@@ -24,8 +24,10 @@ import {StringsService} from '../../services/strings.service';
 	styleUrls: ['./in-app-purchase.component.scss'],
 	templateUrl: './in-app-purchase.component.html'
 })
-export class InAppPurchaseComponent extends BaseProvider
-	implements IInAppPurchaseComponent {
+export class InAppPurchaseComponent
+	extends BaseProvider
+	implements IInAppPurchaseComponent
+{
 	/** @inheritDoc */
 	@ViewChild('checkoutComponent', {read: CheckoutComponent})
 	public checkoutComponent?: CheckoutComponent;
@@ -37,8 +39,8 @@ export class InAppPurchaseComponent extends BaseProvider
 	@Input() public inviteCodeFormControl?: FormControl;
 
 	/** @inheritDoc */
-	@Input() public spinner: BehaviorSubject<boolean> | undefined = this
-		.accountService.interstitial;
+	@Input() public spinner: BehaviorSubject<boolean> | undefined =
+		this.accountService.interstitial;
 
 	/** @inheritDoc */
 	@Input() public userToken?: boolean | MaybePromise<string | undefined>;

@@ -25,9 +25,9 @@ export const giftAccount = async (projectId, checkoutURL) => {
 	const category = config.pricingConfig.categories[categoryName];
 	const item = category.items[itemName];
 
-	const accountsPlan = backendPlans()[
-		`${category.id.toString()}-${item.id.toString()}`
-	].accountsPlan;
+	const accountsPlan =
+		backendPlans()[`${category.id.toString()}-${item.id.toString()}`]
+			.accountsPlan;
 
 	const plans = accountsPlan.startsWith('[') ?
 		JSON.parse(accountsPlan) :
@@ -36,23 +36,25 @@ export const giftAccount = async (projectId, checkoutURL) => {
 				plan: accountsPlan,
 				quantity: 1,
 				trialMonths: accountsPlan.startsWith('Annual') ?
-					12 :
-					accountsPlan.startsWith('Monthly') ?
-					1 :
-					undefined
+						12 :
+						accountsPlan.startsWith('Monthly') ?
+						1 :
+						undefined
 			}
 		];
 
 	return Promise.all(
 		plans.map(async ({plan, quantity, trialMonths}) => {
-			const inviteCodes = (await addInviteCode(
-				projectId,
-				{'': quantity},
-				undefined,
-				plan,
-				undefined,
-				trialMonths
-			))[''];
+			const inviteCodes = (
+				await addInviteCode(
+					projectId,
+					{'': quantity},
+					undefined,
+					plan,
+					undefined,
+					trialMonths
+				)
+			)[''];
 
 			const trialDuration =
 				isNaN(trialMonths) || trialMonths < 1 ?

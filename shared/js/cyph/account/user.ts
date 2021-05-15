@@ -29,20 +29,18 @@ import {reviewMax} from './review-max';
  */
 export class User {
 	/** @ignore */
-	private static readonly defaultAvatar: Promise<
-		SafeUrl
-	> = staticDomSanitizer.then(domSanitizer =>
-		domSanitizer.bypassSecurityTrustUrl(
-			'/assets/img/favicon/favicon-256x256.png'
-		)
-	);
+	private static readonly defaultAvatar: Promise<SafeUrl> =
+		staticDomSanitizer.then(domSanitizer =>
+			domSanitizer.bypassSecurityTrustUrl(
+				'/assets/img/favicon/favicon-256x256.png'
+			)
+		);
 
 	/** @ignore */
-	private static readonly defaultCoverImage: Promise<
-		SafeUrl
-	> = staticDomSanitizer.then(domSanitizer =>
-		domSanitizer.bypassSecurityTrustUrl('/assets/img/coverimage.png')
-	);
+	private static readonly defaultCoverImage: Promise<SafeUrl> =
+		staticDomSanitizer.then(domSanitizer =>
+			domSanitizer.bypassSecurityTrustUrl('/assets/img/coverimage.png')
+		);
 
 	/** @ignore */
 	private static readonly fetchLock: LockFunction = lockFunction();
@@ -64,12 +62,11 @@ export class User {
 	).pipe(switchMap(async avatar => avatar || User.defaultAvatar));
 
 	/** @see IAccountContactState.state */
-	public readonly contactState: Observable<
-		AccountContactState.States
-	> = toBehaviorSubject(
-		this.accountContactState.watch().pipe(map(({state}) => state)),
-		AccountContactState.States.None
-	);
+	public readonly contactState: Observable<AccountContactState.States> =
+		toBehaviorSubject(
+			this.accountContactState.watch().pipe(map(({state}) => state)),
+			AccountContactState.States.None
+		);
 
 	/** Image URI for cover image. */
 	public readonly coverImage: Observable<SafeUrl> = toBehaviorSubject(
@@ -168,12 +165,11 @@ export class User {
 	);
 
 	/** @see IAccountUserProfile.userType */
-	public readonly userType: Observable<
-		AccountUserTypes | undefined
-	> = toBehaviorSubject(
-		this.accountUserProfile.watch().pipe(map(({userType}) => userType)),
-		undefined
-	);
+	public readonly userType: Observable<AccountUserTypes | undefined> =
+		toBehaviorSubject(
+			this.accountUserProfile.watch().pipe(map(({userType}) => userType)),
+			undefined
+		);
 
 	/** Fetches user data and sets ready to true when complete. */
 	public async fetch (bypassLock: boolean = false) : Promise<void> {
@@ -225,9 +221,7 @@ export class User {
 		public readonly accountUserProfile: IAsyncValue<IAccountUserProfile>,
 
 		/** @see IAccountUserProfileExtra */
-		public readonly accountUserProfileExtra: IAsyncValue<
-			IAccountUserProfileExtra
-		>,
+		public readonly accountUserProfileExtra: IAsyncValue<IAccountUserProfileExtra>,
 
 		/** @see ICyphPlan */
 		public readonly cyphPlan: IAsyncValue<ICyphPlan>,

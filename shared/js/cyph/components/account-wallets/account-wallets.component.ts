@@ -112,12 +112,13 @@ export class AccountWalletsComponent extends BaseProvider implements OnInit {
 		}
 
 		const cryptocurrency = await this.dialogService.prompt({
-			multipleChoiceOptions: this.cryptocurrencyService.supportedCryptocurrencies.map(
-				value => ({
-					title: this.cryptocurrencyService.names[value],
-					value
-				})
-			),
+			multipleChoiceOptions:
+				this.cryptocurrencyService.supportedCryptocurrencies.map(
+					value => ({
+						title: this.cryptocurrencyService.names[value],
+						value
+					})
+				),
 			title: this.stringsService.cryptocurrencySelectionPrompt
 		});
 
@@ -157,8 +158,9 @@ export class AccountWalletsComponent extends BaseProvider implements OnInit {
 									label: this.stringsService
 										.newWalletUncompressed,
 									noGrow: true,
-									tooltip: this.stringsService
-										.newWalletUncompressedTooltip
+									tooltip:
+										this.stringsService
+											.newWalletUncompressedTooltip
 								})])
 						] :
 						[])
@@ -266,9 +268,8 @@ export class AccountWalletsComponent extends BaseProvider implements OnInit {
 				this.accountFilesService.showSpinner.next(undefined);
 			}
 
-			const transactionFee = this.cryptocurrencyService.getTransactionFee(
-				wallet
-			);
+			const transactionFee =
+				this.cryptocurrencyService.getTransactionFee(wallet);
 
 			const step = 0.00000001;
 

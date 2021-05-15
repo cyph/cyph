@@ -27,8 +27,10 @@ import {DynamicFormComponent} from '../dynamic-form';
 	styleUrls: ['./dialog-confirm.component.scss'],
 	templateUrl: './dialog-confirm.component.html'
 })
-export class DialogConfirmComponent extends BaseProvider
-	implements AfterViewInit {
+export class DialogConfirmComponent
+	extends BaseProvider
+	implements AfterViewInit
+{
 	/** Indicates whether this is a bottom sheet. */
 	public bottomSheet: boolean = false;
 

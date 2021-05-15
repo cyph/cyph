@@ -53,15 +53,16 @@ import {translate} from '../../util/translate';
 	styleUrls: ['./calendar-invite.component.scss'],
 	templateUrl: './calendar-invite.component.html'
 })
-export class CalendarInviteComponent extends BaseProvider
-	implements ControlValueAccessor, OnChanges, OnInit {
+export class CalendarInviteComponent
+	extends BaseProvider
+	implements ControlValueAccessor, OnChanges, OnInit
+{
 	/** @see AppointmentSharing */
 	@Input() public appointmentSharing = new AppointmentSharing();
 
 	/** @see AppointmentSharing */
-	@Output() public readonly appointmentSharingChange = new EventEmitter<
-		AppointmentSharing
-	>();
+	@Output() public readonly appointmentSharingChange =
+		new EventEmitter<AppointmentSharing>();
 
 	/** Value. */
 	public readonly calendarInvite = new BehaviorSubject<
@@ -72,9 +73,8 @@ export class CalendarInviteComponent extends BaseProvider
 	public readonly callTypes = CallTypes;
 
 	/** Current date. */
-	public readonly currentDate: BehaviorSubject<
-		Date | undefined
-	> = new BehaviorSubject<Date | undefined>(undefined);
+	public readonly currentDate: BehaviorSubject<Date | undefined> =
+		new BehaviorSubject<Date | undefined>(undefined);
 
 	/** @see CalendarInvite.DaysOfWeek */
 	public readonly daysOfWeek = CalendarInvite.DaysOfWeek;

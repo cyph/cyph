@@ -37,8 +37,10 @@ import {sleep, waitForIterable} from '../../util/wait';
 	styleUrls: ['./chat-message-box.component.scss'],
 	templateUrl: './chat-message-box.component.html'
 })
-export class ChatMessageBoxComponent extends BaseProvider
-	implements AfterViewInit {
+export class ChatMessageBoxComponent
+	extends BaseProvider
+	implements AfterViewInit
+{
 	/** @ignore */
 	private readonly $textarea: Promise<JQuery> = waitForIterable(() =>
 		$(this.elementRef.nativeElement).find(
@@ -53,9 +55,8 @@ export class ChatMessageBoxComponent extends BaseProvider
 	@Input() public appointmentSharing = new AppointmentSharing();
 
 	/** @see AppointmentSharing */
-	@Output() public readonly appointmentSharingChange = new EventEmitter<
-		AppointmentSharing
-	>();
+	@Output() public readonly appointmentSharingChange =
+		new EventEmitter<AppointmentSharing>();
 
 	/** If true, autofocuses. */
 	@Input() public autofocus: boolean = true;

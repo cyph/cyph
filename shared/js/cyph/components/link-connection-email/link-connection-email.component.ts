@@ -24,8 +24,10 @@ import {StringsService} from '../../services/strings.service';
 	styleUrls: ['./link-connection-email.component.scss'],
 	templateUrl: './link-connection-email.component.html'
 })
-export class LinkConnectionEmailComponent extends BaseProvider
-	implements OnDestroy, OnInit {
+export class LinkConnectionEmailComponent
+	extends BaseProvider
+	implements OnDestroy, OnInit
+{
 	/** @see emailPattern */
 	public readonly emailPattern = emailPattern;
 
@@ -126,9 +128,7 @@ export class LinkConnectionEmailComponent extends BaseProvider
 		public readonly changeDetectorRef: ChangeDetectorRef,
 
 		/** Dialog instance. */
-		public readonly matDialogRef: MatDialogRef<
-			LinkConnectionEmailComponent
-		>,
+		public readonly matDialogRef: MatDialogRef<LinkConnectionEmailComponent>,
 
 		/** @see EnvService */
 		public readonly envService: EnvService,

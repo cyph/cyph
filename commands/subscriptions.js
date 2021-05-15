@@ -52,14 +52,16 @@ const braintreeCancelSubscription = async subscriptionID => {
 const braintreeCloneSubscription = async subscriptionID => {
 	const subscription = await gateway.subscription.find(subscriptionID);
 
-	return (await gateway.subscription.create({
-		addOns: subscription.addOns,
-		discounts: subscription.discounts,
-		id: uuid(),
-		paymentMethodToken: subscription.paymentMethodToken,
-		planId: subscription.planId,
-		price: subscription.price
-	})).subscription.id;
+	return (
+		await gateway.subscription.create({
+			addOns: subscription.addOns,
+			discounts: subscription.discounts,
+			id: uuid(),
+			paymentMethodToken: subscription.paymentMethodToken,
+			planId: subscription.planId,
+			price: subscription.price
+		})
+	).subscription.id;
 };
 
 const braintreeRefundSubscription = async subscriptionID => {
@@ -94,19 +96,21 @@ const stripeCancelSubscriptionItem = async subscriptionItemID => {
 const stripeCloneSubscription = async subscriptionID => {
 	const subscription = await stripe.subscriptions.retrieve(subscriptionID);
 
-	return (await stripe.subscriptions.create({
-		cancel_at_period_end: subscription.cancel_at_period_end,
-		customer: subscription.customer,
-		default_payment_method: subscription.default_payment_method,
-		items: subscription.items.data.map(o => ({
-			billing_thresholds: o.billing_thresholds,
-			metadata: o.metadata,
-			price: o.price.id,
-			quantity: o.quantity,
-			tax_rates: o.tax_rates.map(taxRate => taxRate.id)
-		})),
-		metadata: subscription.metadata
-	})).id;
+	return (
+		await stripe.subscriptions.create({
+			cancel_at_period_end: subscription.cancel_at_period_end,
+			customer: subscription.customer,
+			default_payment_method: subscription.default_payment_method,
+			items: subscription.items.data.map(o => ({
+				billing_thresholds: o.billing_thresholds,
+				metadata: o.metadata,
+				price: o.price.id,
+				quantity: o.quantity,
+				tax_rates: o.tax_rates.map(taxRate => taxRate.id)
+			})),
+			metadata: subscription.metadata
+		})
+	).id;
 };
 
 const stripeCloneSubscriptionItem = async subscriptionItemID => {
@@ -114,18 +118,20 @@ const stripeCloneSubscriptionItem = async subscriptionItemID => {
 		subscriptionItemID
 	);
 
-	return (await stripe.subscriptions.create({
-		price_data: {
-			currency: subscriptionItem.price.currency,
-			product: subscriptionItem.price.product.id,
-			recurring: {
-				interval: subscriptionItem.price.recurring.interval
+	return (
+		await stripe.subscriptions.create({
+			price_data: {
+				currency: subscriptionItem.price.currency,
+				product: subscriptionItem.price.product.id,
+				recurring: {
+					interval: subscriptionItem.price.recurring.interval
+				},
+				unit_amount: subscriptionItem.price.unit_amount
 			},
-			unit_amount: subscriptionItem.price.unit_amount
-		},
-		quantity: 1,
-		subscription: subscriptionItem.subscription
-	})).id;
+			quantity: 1,
+			subscription: subscriptionItem.subscription
+		})
+	).id;
 };
 
 const stripeRefundSubscription = async subscriptionID => {

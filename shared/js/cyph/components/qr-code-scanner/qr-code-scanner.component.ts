@@ -25,8 +25,10 @@ import {resolvable, waitForValue} from '../../util/wait';
 	styleUrls: ['./qr-code-scanner.component.scss'],
 	templateUrl: './qr-code-scanner.component.html'
 })
-export class QRCodeScannerComponent extends BaseProvider
-	implements OnDestroy, AfterViewInit {
+export class QRCodeScannerComponent
+	extends BaseProvider
+	implements OnDestroy, AfterViewInit
+{
 	/** Activated. */
 	public readonly activated = resolvable(true);
 

@@ -55,14 +55,8 @@ export const addInviteCode = async (
 
 	const namespacePath = namespace.replace(/\./g, '_');
 
-	const {
-		auth,
-		database,
-		getItem,
-		removeItem,
-		setItem,
-		storage
-	} = initDatabaseService(projectId);
+	const {auth, database, getItem, removeItem, setItem, storage} =
+		initDatabaseService(projectId);
 
 	const inviteCodes = Object.keys(countByUser).map(inviterUsername => ({
 		codes: new Array(
@@ -77,9 +71,11 @@ export const addInviteCode = async (
 
 	if (
 		reservedUsername &&
-		(await database
-			.ref(`${namespacePath}/users/${reservedUsername}/publicProfile`)
-			.once('value')).val()
+		(
+			await database
+				.ref(`${namespacePath}/users/${reservedUsername}/publicProfile`)
+				.once('value')
+		).val()
 	) {
 		reservedUsername = undefined;
 	}
@@ -102,9 +98,9 @@ export const addInviteCode = async (
 								...(trialMonths ?
 									{
 										planTrialEnd: new Date().setMonth(
-											new Date().getMonth() +
-												parseInt(trialMonths, 10)
-										)
+												new Date().getMonth() +
+													parseInt(trialMonths, 10)
+											)
 									} :
 									{})
 							}),

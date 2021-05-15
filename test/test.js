@@ -73,7 +73,7 @@ const driverScript = (driver, f) =>
 
 const driverSetURL = (driver, url) =>
 	driverPromise(() => driver.get(url)).then(() =>
-		driverScript(driver, function ()  {
+		driverScript(driver, function () {
 			setOnerror();
 		})
 	);
@@ -121,7 +121,7 @@ const homeTest = async o => {
 		await driverWait(
 			driver,
 			webdriver.until.elementLocated(
-				webdriver.By.js(function ()  {
+				webdriver.By.js(function () {
 					setOnerror();
 					return document.querySelector(
 						'body.load-complete #new-cyph'
@@ -134,7 +134,7 @@ const homeTest = async o => {
 		await driverWait(
 			driver,
 			webdriver.until.elementLocated(
-				webdriver.By.js(function ()  {
+				webdriver.By.js(function () {
 					setOnerror();
 					return document.getElementsByClassName('postlist')[0];
 				})
@@ -155,7 +155,7 @@ const newCyphTest = async (o, i) => {
 		await driverWait(
 			driver,
 			webdriver.until.elementLocated(
-				webdriver.By.js(function ()  {
+				webdriver.By.js(function () {
 					setOnerror();
 					return document.querySelector(
 						'body.load-complete .message-box'
@@ -164,17 +164,17 @@ const newCyphTest = async (o, i) => {
 			),
 			60000
 		);
-		await driverScript(driver, function ()  {
+		await driverScript(driver, function () {
 			sendMessage('balls');
 		});
 		await new Promise(resolve => setTimeout(resolve, 10000));
 		await driverWait(
 			driver,
 			webdriver.until.elementLocated(
-				webdriver.By.js(function ()  {
+				webdriver.By.js(function () {
 					return Array.from(
 						document.querySelectorAll('.message-item')
-					).filter(function (elem)  {
+					).filter(function (elem) {
 						var text = elem.textContent;
 						return (
 							text.indexOf('friend') > -1 &&

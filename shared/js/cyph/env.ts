@@ -35,8 +35,9 @@ export class Env extends EnvDeploy {
 			}`;
 
 	/** Unique string representing the current package. */
-	public readonly appName: string = `com.cyph.app-${environment.customBuild
-		?.namespace || 'cyph.ws'}-${environment.envName}`;
+	public readonly appName: string = `com.cyph.app-${
+		environment.customBuild?.namespace || 'cyph.ws'
+	}-${environment.envName}`;
 
 	/** @inheritDoc */
 	public readonly appUrl: string =

@@ -23,8 +23,10 @@ import {StringsService} from '../../services/strings.service';
 	styleUrls: ['./sidenav.component.scss'],
 	templateUrl: './sidenav.component.html'
 })
-export class SidenavComponent extends BaseProvider
-	implements AfterViewInit, OnChanges, OnDestroy {
+export class SidenavComponent
+	extends BaseProvider
+	implements AfterViewInit, OnChanges, OnDestroy
+{
 	/** @ignore */
 	private sidenav?: Sidenav;
 

@@ -25,11 +25,10 @@ export class AccountHomeComponent extends BaseProvider implements OnInit {
 	public readonly isSpeedDialOpen = new BehaviorSubject<boolean>(false);
 
 	/** @see AccountContactsComponent.searchMode */
-	public readonly searchMode: Observable<
-		boolean
-	> = this.accountService.routeChanges.pipe(
-		map(url => url.split('/').slice(-1)[0] === 'search')
-	);
+	public readonly searchMode: Observable<boolean> =
+		this.accountService.routeChanges.pipe(
+			map(url => url.split('/').slice(-1)[0] === 'search')
+		);
 
 	/** @inheritDoc */
 	public async ngOnInit () : Promise<void> {

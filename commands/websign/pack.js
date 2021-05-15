@@ -72,10 +72,7 @@ export const pack = async (
 	for (let subresource of subresources) {
 		if (subresource.sri) {
 			const path = `${subresourcePath}/${subresource.path}`;
-			const pathParent = path
-				.split('/')
-				.slice(0, -1)
-				.join('/');
+			const pathParent = path.split('/').slice(0, -1).join('/');
 
 			await mkdirp(pathParent);
 			fs.writeFileSync(`${dir}/${path}`, subresource.content);

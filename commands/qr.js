@@ -30,9 +30,9 @@ export const getQR = async (text, path) => {
 	await page.type('#in-margin', '20');
 	await page.type('#in-dotScale', '0.5');
 
-	await (await page.$('#background-img-select-native')).uploadFile(
-		`${__dirname}/../shared/assets/img/cyph.icon.png`
-	);
+	await (
+		await page.$('#background-img-select-native')
+	).uploadFile(`${__dirname}/../shared/assets/img/cyph.icon.png`);
 
 	await nodeUtil.promisify(setTimeout)(1000);
 	await page.evaluate(() => j_generate());

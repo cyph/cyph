@@ -18,8 +18,10 @@ import {filterUndefinedOperator} from '../../util/filter';
 	styleUrls: ['./account-pseudo-relationship-response.component.scss'],
 	templateUrl: './account-pseudo-relationship-response.component.html'
 })
-export class AccountPseudoRelationshipResponseComponent extends BaseProvider
-	implements OnInit {
+export class AccountPseudoRelationshipResponseComponent
+	extends BaseProvider
+	implements OnInit
+{
 	/** Indicates whether request has been rejected. */
 	public readonly rejected = new BehaviorSubject<boolean>(false);
 

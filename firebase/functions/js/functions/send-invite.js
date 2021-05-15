@@ -50,8 +50,8 @@ export const sendInvite = onCall(async (data, namespace, getUsername) => {
 				if (false) {
 					plan = CyphPlans.MonthlyPremium;
 					planTrialEnd = new Date().setMonth(
-						new Date().getMonth() + 1
-					);
+							new Date().getMonth() + 1
+						);
 				}
 
 				await Promise.all([

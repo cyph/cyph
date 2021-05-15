@@ -8,7 +8,8 @@ import {config} from './config';
  */
 export class EnvDeploy {
 	/** @ignore */
-	protected static readonly UA: string = navigatorData.userAgent.toLowerCase();
+	protected static readonly UA: string =
+		navigatorData.userAgent.toLowerCase();
 
 	/** @ignore */
 	public static readonly languageInternal: string =
@@ -105,7 +106,8 @@ export class EnvDeploy {
 	// public readonly localFirebaseDatabaseURL: string = `ws://${`${locationData.hostname}.`.replace(/(localhost|127\.0\.0\.1|0\.0\.0\.0)\.$/, '127.0.1')}:44000`;
 
 	/** Complete (lowercase) language code, e.g. "en-us". */
-	public readonly fullLanguage: string = EnvDeploy.languageInternal.toLowerCase();
+	public readonly fullLanguage: string =
+		EnvDeploy.languageInternal.toLowerCase();
 
 	/** Normalized language code, used for translations. */
 	public readonly language: string = (() => {

@@ -48,11 +48,13 @@ const getEmailAddress = async (database, namespace, username) => {
 			username
 		)}/internal`;
 
-		[email, name] = (await Promise.all(
-			['email', 'name'].map(async k =>
-				database.ref(`${internalURL}/${k}`).once('value')
+		[email, name] = (
+			await Promise.all(
+				['email', 'name'].map(async k =>
+					database.ref(`${internalURL}/${k}`).once('value')
+				)
 			)
-		)).map(o => o.val() || undefined);
+		).map(o => o.val() || undefined);
 	}
 
 	return {
@@ -139,150 +141,169 @@ export const sendEmailInternal = async (
 						})
 					),
 			icalEvent: !eventDetails ?
-				undefined :
-				{
-					content: ical({
-						domain: 'cyph.com',
-						events: [{
-								attendees: Object.values(
-									[
-										to,
-										...(eventInviter ? [eventInviter] : []),
-										...(eventDetails.attendees || [])
-									].reduce(
-										(attendees, o) => ({
-											[typeof o === 'string' ?
-												o :
-												o.email]: o,
-											...attendees
-										}),
-										{}
-									)
-								).filter(o => o.email),
-								...(eventDescription ?
-									{description: eventDescription} :
-									{}),
-								end: new Date(eventDetails.endTime),
-								...(eventDetails.location ?
-									{location: eventDetails.location} :
-									{}),
-								organizer: fromFormatted,
-								...(eventDetails.recurrence ? {repeating: {
-											...(eventDetails.recurrence
-												.byWeekDay &&
-											eventDetails.recurrence.byWeekDay
-												.length > 0 ?
-												{
-													byDay: eventDetails.recurrence.byWeekDay.map(
-														recurrenceDayToString
-													)
-												} :
-												{}),
-											...(eventDetails.recurrence
-												.byMonth ?
-												{
-													byMonth:
+					undefined :
+					{
+						content: ical({
+								domain: 'cyph.com',
+								events: [{
+										attendees: Object.values(
+											[
+												to,
+												...(eventInviter ?
+													[eventInviter] :
+													[]),
+												...(eventDetails.attendees ||
+													[])
+											].reduce(
+												(attendees, o) => ({
+													[typeof o === 'string' ?
+														o :
+														o.email]: o,
+													...attendees
+												}),
+												{}
+											)
+										).filter(o => o.email),
+										...(eventDescription ?
+											{description: eventDescription} :
+											{}),
+										end: new Date(eventDetails.endTime),
+										...(eventDetails.location ?
+											{location: eventDetails.location} :
+											{}),
+										organizer: fromFormatted,
+										...(eventDetails.recurrence ?
+											{repeating: {
+													...(eventDetails.recurrence
+														.byWeekDay &&
+													eventDetails.recurrence
+														.byWeekDay.length > 0 ?
+														{
+															byDay: eventDetails.recurrence.byWeekDay.map(
+																recurrenceDayToString
+															)
+														} :
+														{}),
+													...(eventDetails.recurrence
+														.byMonth ?
+														{
+															byMonth:
+																eventDetails
+																	.recurrence
+																	.byMonth
+														} :
+														{}),
+													...(eventDetails.recurrence
+														.byMonthDay ?
+														{
+															byMonthDay:
+																eventDetails
+																	.recurrence
+																	.byMonthDay
+														} :
+														{}),
+													...(eventDetails.recurrence
+														.bySetPosition ?
+														{
+															bySetPos:
+																eventDetails
+																	.recurrence
+																	.bySetPosition
+														} :
+														{}),
+													...(eventDetails.recurrence
+														.count ?
+														{
+															count: eventDetails
+																.recurrence
+																.count
+														} :
+														{}),
+													...(eventDetails.recurrence
+														.excludeDates &&
+													eventDetails.recurrence
+														.excludeDates.length >
+														0 ?
+														{
+															exclude:
+																eventDetails.recurrence.excludeDates.map(
+																	timestamp =>
+																		new Date(
+																			timestamp
+																		)
+																)
+														} :
+														{}),
+													...(eventDetails.recurrence
+														.excludeDatesTimeZone ?
+														{
+															excludeTimezone:
+																eventDetails
+																	.recurrence
+																	.excludeDatesTimeZone
+														} :
+														{}),
+													freq: recurrenceFrequencyToString(
 														eventDetails.recurrence
-															.byMonth
-												} :
-												{}),
-											...(eventDetails.recurrence
-												.byMonthDay ?
-												{
-													byMonthDay:
-														eventDetails.recurrence
-															.byMonthDay
-												} :
-												{}),
-											...(eventDetails.recurrence
-												.bySetPosition ?
-												{
-													bySetPos:
-														eventDetails.recurrence
-															.bySetPosition
-												} :
-												{}),
-											...(eventDetails.recurrence.count ?
-												{
-													count:
-														eventDetails.recurrence
-															.count
-												} :
-												{}),
-											...(eventDetails.recurrence
-												.excludeDates &&
-											eventDetails.recurrence.excludeDates
-												.length > 0 ?
-												{
-													exclude: eventDetails.recurrence.excludeDates.map(
-														timestamp =>
-															new Date(timestamp)
-													)
-												} :
-												{}),
-											...(eventDetails.recurrence
-												.excludeDatesTimeZone ?
-												{
-													excludeTimezone:
-														eventDetails.recurrence
-															.excludeDatesTimeZone
-												} :
-												{}),
-											freq: recurrenceFrequencyToString(
-												eventDetails.recurrence
-													.frequency
-											),
-											...(eventDetails.recurrence
-												.interval ?
-												{
-													interval:
-														eventDetails.recurrence
-															.interval
-												} :
-												{}),
-											...(eventDetails.recurrence.until ?
-												{
-													until: new Date(
-														eventDetails.recurrence.until
-													)
-												} :
-												{}),
-											...(eventDetails.recurrence
-												.weekStart ?
-												{
-													wkst: recurrenceDayToString(
-														eventDetails.recurrence
-															.weekStart
-													)
-												} :
-												{})
-										}} : {}),
-								sequence: Math.floor(Date.now() / 1000),
-								start: new Date(eventDetails.startTime),
-								status: cancelEvent ? 'cancelled' : 'confirmed',
-								summary: eventDetails.title || subject,
-								...(eventDetails.uid ?
-									{uid: eventDetails.uid} :
-									{}),
-								...(eventDetails.url ?
-									{url: eventDetails.url} :
-									{})
-							}],
-						method: cancelEvent ? 'CANCEL' : 'REQUEST',
-						prodId: '//cyph.com//cyph-appointment-scheduler//EN'
-					})
-						.toString()
-						.replace(
-							/RRULE:(.*)/,
-							(_, rrule) =>
-								`RRULE:${rrule
-									.split(';')
-									.filter(s => !s.endsWith('='))
-									.join(';')}`
-						),
-					filename: 'invite.ics',
-					method: cancelEvent ? 'cancel' : 'request'
-				},
+															.frequency
+													),
+													...(eventDetails.recurrence
+														.interval ?
+														{
+															interval:
+																eventDetails
+																	.recurrence
+																	.interval
+														} :
+														{}),
+													...(eventDetails.recurrence
+														.until ?
+														{
+															until: new Date(
+																eventDetails.recurrence.until
+															)
+														} :
+														{}),
+													...(eventDetails.recurrence
+														.weekStart ?
+														{
+															wkst: recurrenceDayToString(
+																eventDetails
+																	.recurrence
+																	.weekStart
+															)
+														} :
+														{})
+												}} :
+											{}),
+										sequence: Math.floor(Date.now() / 1000),
+										start: new Date(eventDetails.startTime),
+										status: cancelEvent ?
+											'cancelled' :
+											'confirmed',
+										summary: eventDetails.title || subject,
+										...(eventDetails.uid ?
+											{uid: eventDetails.uid} :
+											{}),
+										...(eventDetails.url ?
+											{url: eventDetails.url} :
+											{})
+									}],
+								method: cancelEvent ? 'CANCEL' : 'REQUEST',
+								prodId: '//cyph.com//cyph-appointment-scheduler//EN'
+							})
+								.toString()
+								.replace(
+									/RRULE:(.*)/,
+									(_, rrule) =>
+										`RRULE:${rrule
+											.split(';')
+											.filter(s => !s.endsWith('='))
+											.join(';')}`
+								),
+						filename: 'invite.ics',
+						method: cancelEvent ? 'cancel' : 'request'
+					},
 			subject,
 			text: markdown,
 			to: typeof to === 'string' ? to : to.formatted

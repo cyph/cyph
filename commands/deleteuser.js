@@ -61,7 +61,9 @@ export const deleteUser = async (
 	}
 
 	await auth.deleteUser(
-		(await auth.getUserByEmail(`${username}@${namespace}`)).uid
+		(
+			await auth.getUserByEmail(`${username}@${namespace}`)
+		).uid
 	);
 
 	await removeItem(namespace, `users/${username}`, true);

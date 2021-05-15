@@ -49,8 +49,10 @@ import {AccountContactsSearchComponent} from '../account-contacts-search';
 	styleUrls: ['./account-contacts.component.scss'],
 	templateUrl: './account-contacts.component.html'
 })
-export class AccountContactsComponent extends BaseProvider
-	implements OnChanges, OnDestroy, OnInit {
+export class AccountContactsComponent
+	extends BaseProvider
+	implements OnChanges, OnDestroy, OnInit
+{
 	/** @ignore */
 	private readonly contactListInternal = new BehaviorSubject<
 		| Observable<{
@@ -77,8 +79,8 @@ export class AccountContactsComponent extends BaseProvider
 	>;
 
 	/** List of users to search. */
-	@Input() public contactList: Observable<(IContactListItem | User)[]> = this
-		.accountContactsService.contactList;
+	@Input() public contactList: Observable<(IContactListItem | User)[]> =
+		this.accountContactsService.contactList;
 
 	/** Indicates whether contact list should be sorted and filtered. */
 	@Input() public filterContactList: boolean = true;
@@ -280,8 +282,9 @@ export class AccountContactsComponent extends BaseProvider
 									undefined :
 									{
 										user,
-										userType: (await user.accountUserProfile.getValue())
-											.userType
+										userType: (
+												await user.accountUserProfile.getValue()
+											).userType
 									};
 							})
 						)
@@ -317,12 +320,14 @@ export class AccountContactsComponent extends BaseProvider
 
 					return {
 						activeUser: {
-							contactState: this.accountContactsService.watchContactState(
-								username
-							),
-							unreadMessageCount: this.accountUserLookupService.getUnreadMessageCount(
-								username
-							),
+							contactState:
+								this.accountContactsService.watchContactState(
+									username
+								),
+							unreadMessageCount:
+								this.accountUserLookupService.getUnreadMessageCount(
+									username
+								),
 							user: this.accountUserLookupService.getUser(
 								username
 							),

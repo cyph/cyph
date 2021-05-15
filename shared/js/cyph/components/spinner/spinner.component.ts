@@ -21,8 +21,10 @@ import {sleep} from '../../util/wait/sleep';
 	styleUrls: ['./spinner.component.scss'],
 	templateUrl: './spinner.component.html'
 })
-export class SpinnerComponent extends BaseProvider
-	implements OnChanges, OnInit {
+export class SpinnerComponent
+	extends BaseProvider
+	implements OnChanges, OnInit
+{
 	/** @ignore */
 	private indeterminateValueLoopInProgress: boolean = false;
 

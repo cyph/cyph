@@ -9,10 +9,7 @@ const zlib = require('zlib');
 
 const cat = f => {
 	try {
-		return fs
-			.readFileSync(f)
-			.toString()
-			.trim();
+		return fs.readFileSync(f).toString().trim();
 	}
 	catch (_) {
 		return '';
@@ -27,10 +24,7 @@ const catJSON = f => {
 };
 
 const exec = command =>
-	childProcess
-		.execSync(command, {cwd: __dirname})
-		.toString()
-		.trim();
+	childProcess.execSync(command, {cwd: __dirname}).toString().trim();
 
 const open = url =>
 	require(path.join(__dirname, 'shared', 'node_modules', 'open'))(url);

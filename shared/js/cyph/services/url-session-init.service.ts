@@ -12,8 +12,10 @@ import {SessionInitService} from './session-init.service';
  * SessionInitService implementation that gets ID from URL.
  */
 @Injectable()
-export class UrlSessionInitService extends BaseProvider
-	implements SessionInitService {
+export class UrlSessionInitService
+	extends BaseProvider
+	implements SessionInitService
+{
 	/** @inheritDoc */
 	public accountsBurnerAliceData?: {
 		passive: boolean;
@@ -51,9 +53,8 @@ export class UrlSessionInitService extends BaseProvider
 	public parentID?: string;
 
 	/** @inheritDoc */
-	public readonly salt: Promise<string | undefined> = Promise.resolve(
-		undefined
-	);
+	public readonly salt: Promise<string | undefined> =
+		Promise.resolve(undefined);
 
 	/** @inheritDoc */
 	public readonly timeString?: string;

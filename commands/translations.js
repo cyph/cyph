@@ -10,11 +10,7 @@ import path from 'path';
 export const translations = glob
 	.sync(path.join(__dirname, '..', 'translations', '*.json'))
 	.map(file => ({
-		key: file
-			.split('/')
-			.slice(-1)[0]
-			.split('.')[0]
-			.toLowerCase(),
+		key: file.split('/').slice(-1)[0].split('.')[0].toLowerCase(),
 		value: JSON.parse(fs.readFileSync(file).toString())
 	}))
 	.reduce((translations, o) => {

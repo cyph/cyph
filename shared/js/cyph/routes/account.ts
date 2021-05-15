@@ -417,8 +417,7 @@ export const account: Route = {
 		{path: 'upgrade', component: AccountUpgradeComponent},
 		{path: 'upgrade/:category/:item', component: AccountUpgradeComponent},
 		{
-			path:
-				'upload-ehr-credentials/:cyphAdminKey/:redoxApiKey/:redoxSecret/:username',
+			path: 'upload-ehr-credentials/:cyphAdminKey/:redoxApiKey/:redoxSecret/:username',
 			component: UploadEhrCredentialsComponent
 		},
 		{path: 'vault', component: AccountVaultComponent},

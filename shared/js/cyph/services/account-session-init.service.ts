@@ -10,8 +10,10 @@ import {SessionInitService} from './session-init.service';
  * SessionInitService implementation for accounts.
  */
 @Injectable()
-export class AccountSessionInitService extends BaseProvider
-	implements SessionInitService {
+export class AccountSessionInitService
+	extends BaseProvider
+	implements SessionInitService
+{
 	/** @inheritDoc */
 	public accountsBurnerAliceData?: {
 		passive: boolean;
@@ -46,9 +48,8 @@ export class AccountSessionInitService extends BaseProvider
 	public readonly joinConfirmation: Promise<boolean> = Promise.resolve(true);
 
 	/** @inheritDoc */
-	public readonly salt: Promise<string | undefined> = Promise.resolve(
-		undefined
-	);
+	public readonly salt: Promise<string | undefined> =
+		Promise.resolve(undefined);
 
 	/** @inheritDoc */
 	public timeString?: string;

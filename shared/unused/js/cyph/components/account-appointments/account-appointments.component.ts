@@ -41,8 +41,10 @@ import {getDateTimeString, watchTimestamp} from '../../util/time';
 	styleUrls: ['./account-appointments.component.scss'],
 	templateUrl: './account-appointments.component.html'
 })
-export class AccountAppointmentsComponent extends BaseProvider
-	implements AfterViewInit {
+export class AccountAppointmentsComponent
+	extends BaseProvider
+	implements AfterViewInit
+{
 	/** @ignore */
 	private calendarEvents: {end: number; start: number; title: string}[] = [];
 
@@ -137,11 +139,12 @@ export class AccountAppointmentsComponent extends BaseProvider
 						title: appointment.calendarInvite.title,
 						uid: appointment.calendarInvite.uid
 					},
-					telehealth: this.configService.planConfig[
-						await this.accountSettingsService.plan
-							.pipe(take(1))
-							.toPromise()
-					].telehealth,
+					telehealth:
+						this.configService.planConfig[
+							await this.accountSettingsService.plan
+								.pipe(take(1))
+								.toPromise()
+						].telehealth,
 					to: {
 						members: [friend || {
 								email: appointment.fromEmail,

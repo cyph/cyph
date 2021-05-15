@@ -71,10 +71,8 @@ export const checkInviteCode = onCall(async (data, namespace, getUsername) => {
 		pgpPublicKey,
 		plan,
 		reservedUsername,
-		welcomeLetter: (await renderTemplate(
-			'new-cyph-invite',
-			templateData,
-			true
-		)).markdown
+		welcomeLetter: (
+			await renderTemplate('new-cyph-invite', templateData, true)
+		).markdown
 	};
 });

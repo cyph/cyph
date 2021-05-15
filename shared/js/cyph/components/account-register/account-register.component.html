@@ -199,9 +199,7 @@
 							>Upgrade to premium</a
 						>
 						&ngsp;
-						<span cyphTranslate>
-							and skip the waitlist!
-						</span>
+						<span cyphTranslate> and skip the waitlist! </span>
 					</div>
 				</ng-template>
 			</div>
@@ -301,7 +299,10 @@
 											#mainInviteCodeWelcomeMessage
 										>
 											<div
-												class="cyph-light-theme welcome-letter"
+												class="
+													cyph-light-theme
+													welcome-letter
+												"
 												*ngIf="
 													(inviteCodeData | await)
 														?.isValid ?
@@ -451,7 +452,9 @@
 													>
 														<span
 															cyphTranslate
-															class="form-field-pending"
+															class="
+																form-field-pending
+															"
 															matTooltip="Checking availability..."
 															*ngIf="
 																!!currentUsername?.pending
@@ -644,7 +647,9 @@
 													<div matSuffix>
 														<span
 															cyphTranslate
-															class="form-field-pending"
+															class="
+																form-field-pending
+															"
 															matTooltip="Checking invite code..."
 															*ngIf="
 																!!currentInviteCode?.pending
@@ -1301,9 +1306,7 @@
 				class="cyph-banner inverted default-align"
 			>
 				<div cyphTranslate>
-					<h4>
-						Understanding your Master Key:
-					</h4>
+					<h4>Understanding your Master Key:</h4>
 					<ol>
 						<li>
 							Your Master Key is what unlocks your encrypted data
@@ -1331,9 +1334,7 @@
 								>you will not be able to access your
 								account</strong
 							>
-							<span>
-								or recover your data!
-							</span>
+							<span> or recover your data! </span>
 						</li>
 					</ol>
 					<h4>Security Recommendations:</h4>
@@ -1707,13 +1708,9 @@
 				matTooltip="Install and set up the Cyph app on a mobile device."
 				(click)="newDeviceActivation(true)"
 			>
-				<mat-icon>
-					smartphone
-				</mat-icon>
+				<mat-icon> smartphone </mat-icon>
 				&nbsp;
-				<span cyphTranslate>
-					Phone
-				</span>
+				<span cyphTranslate> Phone </span>
 			</button>
 			<pre
 				class="additional-devices-count"
@@ -1729,13 +1726,9 @@
 				matTooltip="Install and set up the Cyph app on a desktop or laptop."
 				(click)="newDeviceActivation(false)"
 			>
-				<mat-icon>
-					computer
-				</mat-icon>
+				<mat-icon> computer </mat-icon>
 				&nbsp; &nbsp;
-				<span cyphTranslate>
-					Computer
-				</span>
+				<span cyphTranslate> Computer </span>
 			</button>
 			<pre
 				class="additional-devices-count"
@@ -1761,13 +1754,9 @@
 						matTooltip="Set up a long-term secure passphrase. Most highly recommended option."
 						(click)="paperMasterKeySetup()"
 					>
-						<mat-icon>
-							description
-						</mat-icon>
+						<mat-icon> description </mat-icon>
 						&nbsp;
-						<span cyphTranslate>
-							Paper Master Key
-						</span>
+						<span cyphTranslate> Paper Master Key </span>
 					</button>
 					<mat-icon *ngIf="additionalDevices.paperMasterKey | await"
 						>check</mat-icon

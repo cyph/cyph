@@ -120,8 +120,9 @@ export class AccountP2PService extends P2PService {
 					true
 				)) ||
 				this.configService.planConfig[
-					(await this.accountDatabaseService.currentUser.value?.user.cyphPlan.getValue())
-						?.plan || CyphPlans.Free
+					(
+						await this.accountDatabaseService.currentUser.value?.user.cyphPlan.getValue()
+					)?.plan || CyphPlans.Free
 				].unlimitedCalling ||
 				(remoteUser instanceof User &&
 					this.configService.planConfig[

@@ -65,10 +65,7 @@ import superSphincs from 'supersphincs';
 				content = content.replace(/☁/g, subresource);
 
 				const path = `${args.subresourcePath}/${subresource}`;
-				const pathParent = path
-					.split('/')
-					.slice(0, -1)
-					.join('/');
+				const pathParent = path.split('/').slice(0, -1).join('/');
 
 				await mkdirp(pathParent);
 				fs.writeFileSync(path, dataURI);

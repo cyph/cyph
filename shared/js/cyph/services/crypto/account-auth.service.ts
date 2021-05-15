@@ -96,10 +96,12 @@ export class AccountAuthService extends BaseProvider {
 
 		username = normalize(username);
 
-		return (await this.potassiumService.passwordHash.hash(
-			password,
-			username + '9BdfYbI5PggWwtnaAXbDRIsTHgMjLx/8hbHvgbQb+qs='
-		)).hash;
+		return (
+			await this.potassiumService.passwordHash.hash(
+				password,
+				username + '9BdfYbI5PggWwtnaAXbDRIsTHgMjLx/8hbHvgbQb+qs='
+			)
+		).hash;
 	}
 
 	/** @ignore */
@@ -176,8 +178,8 @@ export class AccountAuthService extends BaseProvider {
 				...currentUser.loginData,
 				oldSecondaryPassword: currentUser.loginData.secondaryPassword,
 				secondaryPassword: this.potassiumService.toBase64(
-					this.potassiumService.randomBytes(64)
-				)
+						this.potassiumService.randomBytes(64)
+					)
 			};
 
 		await Promise.all<unknown>([
@@ -202,8 +204,8 @@ export class AccountAuthService extends BaseProvider {
 				this.removeSavedCredentials() :
 				(async () => {
 					const pinHash = await this.localStorageService
-						.getItem('pinHash', BinaryProto, undefined, true)
-						.catch(() => undefined);
+							.getItem('pinHash', BinaryProto, undefined, true)
+							.catch(() => undefined);
 
 					return this.localStorageService.setItem(
 						'masterKey',
@@ -397,29 +399,28 @@ export class AccountAuthService extends BaseProvider {
 				return;
 			}
 
-			const [
-				masterKeyUnconfirmed,
-				pinDuration,
-				pinTimestamp,
-				timestamp
-			] = await Promise.all([
-				this.localStorageService.hasItem('unconfirmedMasterKey', true),
-				this.envService.environment.debug ?
+			const [masterKeyUnconfirmed, pinDuration, pinTimestamp, timestamp] =
+				await Promise.all([
+					this.localStorageService.hasItem(
+						'unconfirmedMasterKey',
+						true
+					),
+					this.envService.environment.debug ?
+						this.localStorageService.getItem(
+							'pinDuration',
+							NumberProto,
+							undefined,
+							true
+						) :
+						this.defaultPinDuration,
 					this.localStorageService.getItem(
-						'pinDuration',
+						'pinTimestamp',
 						NumberProto,
 						undefined,
 						true
-					) :
-					this.defaultPinDuration,
-				this.localStorageService.getItem(
-					'pinTimestamp',
-					NumberProto,
-					undefined,
-					true
-				),
-				getTimestamp()
-			]);
+					),
+					getTimestamp()
+				]);
 
 			if (
 				masterKeyUnconfirmed ||
@@ -439,11 +440,13 @@ export class AccountAuthService extends BaseProvider {
 	/** Indicates whether credentials are saved locally. */
 	public async hasSavedCredentials () : Promise<boolean> {
 		return (
-			(await Promise.all(
-				['masterKey', 'pinIsCustom', 'username'].map(async k =>
-					this.localStorageService.hasItem(k, true)
+			(
+				await Promise.all(
+					['masterKey', 'pinIsCustom', 'username'].map(async k =>
+						this.localStorageService.hasItem(k, true)
+					)
 				)
-			)).filter(b => !b).length < 1
+			).filter(b => !b).length < 1
 		);
 	}
 

@@ -1,4 +1,4 @@
-self.onmessage	= function (e) {
-	self.onmessage	= undefined;
+self.onmessage = function (e) {
+	self.onmessage = undefined;
 	eval(e.data);
 };

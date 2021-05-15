@@ -46,21 +46,22 @@ import {resolvable} from '../../util/wait/resolvable';
 	styleUrls: ['./account.component.scss'],
 	templateUrl: './account.component.html'
 })
-export class AccountComponent extends BaseProvider
-	implements AfterViewInit, OnInit {
+export class AccountComponent
+	extends BaseProvider
+	implements AfterViewInit, OnInit
+{
 	/** @ignore */
 	private readonly _VIEW_INITIATED = resolvable();
 
 	/** @ignore */
-	private readonly activatedRouteURL: Observable<
-		UrlSegment[]
-	> = this.accountService.routeChanges.pipe(
-		switchMap(() =>
-			this.activatedRoute.firstChild ?
-				this.activatedRoute.firstChild.url :
-				of([])
-		)
-	);
+	private readonly activatedRouteURL: Observable<UrlSegment[]> =
+		this.accountService.routeChanges.pipe(
+			switchMap(() =>
+				this.activatedRoute.firstChild ?
+					this.activatedRoute.firstChild.url :
+					of([])
+			)
+		);
 
 	/** @ignore */
 	private readonly route: Observable<string> = this.activatedRouteURL.pipe(
@@ -70,15 +71,14 @@ export class AccountComponent extends BaseProvider
 	);
 
 	/** @ignore */
-	private readonly routePath: Observable<
-		string[]
-	> = this.accountService.routeChanges.pipe(
-		map(() => this.accountService.routePath)
-	);
+	private readonly routePath: Observable<string[]> =
+		this.accountService.routeChanges.pipe(
+			map(() => this.accountService.routePath)
+		);
 
 	/** @ignore */
-	private readonly resolveViewInitiated: () => void = this._VIEW_INITIATED
-		.resolve;
+	private readonly resolveViewInitiated: () => void =
+		this._VIEW_INITIATED.resolve;
 
 	/** @see CyphPlans */
 	public readonly cyphPlans = CyphPlans;

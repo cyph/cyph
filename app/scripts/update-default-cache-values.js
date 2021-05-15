@@ -39,11 +39,15 @@ const defaultCacheValuesPath = path.join(
 
 	const cacheValues = await page.evaluate(async () =>
 		JSON.stringify({
-			localforage: (await Promise.all(
-				(await localforage.keys())
-					.filter(k => /^websign-(fetch|sri-cache)/.test(k))
-					.map(async k => Promise.all([k, localforage.getItem(k)]))
-			))
+			localforage: (
+				await Promise.all(
+					(await localforage.keys())
+						.filter(k => /^websign-(fetch|sri-cache)/.test(k))
+						.map(async k =>
+							Promise.all([k, localforage.getItem(k)])
+						)
+				)
+			)
 				.filter(
 					([_, v]) =>
 						!/(crypto|mceliece|ntru|potassium|rlwe|rsasign|sidh|sphincs|superSphincs|xkcdPassphrase)/.test(

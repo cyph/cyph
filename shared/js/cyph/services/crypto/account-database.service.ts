@@ -75,12 +75,14 @@ export class AccountDatabaseService extends BaseProvider {
 				}
 
 				try {
-					return (await this.localStorageService.getItem(
-						`AccountDatabaseService/cache.list${
-							immutable ? '-immutable' : ''
-						}/${await this.normalizeURL(url, true)}`,
-						new MaybeTimedArrayProto(proto)
-					)).map(o =>
+					return (
+						await this.localStorageService.getItem(
+							`AccountDatabaseService/cache.list${
+								immutable ? '-immutable' : ''
+							}/${await this.normalizeURL(url, true)}`,
+							new MaybeTimedArrayProto(proto)
+						)
+					).map(o =>
 						!('empty' in o && o.empty) ?
 							<ITimedValue<T>> o :
 							{
@@ -241,14 +243,12 @@ export class AccountDatabaseService extends BaseProvider {
 	};
 
 	/** @see getCurrentUser */
-	public readonly currentUser: BehaviorSubject<
-		ICurrentUser | undefined
-	> = new BehaviorSubject<ICurrentUser | undefined>(undefined);
+	public readonly currentUser: BehaviorSubject<ICurrentUser | undefined> =
+		new BehaviorSubject<ICurrentUser | undefined>(undefined);
 
 	/** @see getCurrentUser */
-	public readonly currentUserFiltered: Observable<
-		ICurrentUser
-	> = this.currentUser.pipe(filterUndefinedOperator<ICurrentUser>());
+	public readonly currentUserFiltered: Observable<ICurrentUser> =
+		this.currentUser.pipe(filterUndefinedOperator<ICurrentUser>());
 
 	/** Database namespace + a random 64-byte string, used for verification purposes. */
 	public readonly verificationString = `${this.databaseService.namespace}:DQPcViq0Fmr8NZ1NTqyEFFjvUqqcplaGdE2rqjYOercYO/t1/CxBY0cRohegDPf/gqhUJmZ58YMzogCIT2zScA==`;
@@ -439,10 +439,9 @@ export class AccountDatabaseService extends BaseProvider {
 			`users/${currentUser.user.username}/locks/` +
 			this.potassiumService.toHex(
 				await this.potassiumService.hash.hash(
-					(await this.normalizeURL(url, true)).replace(
-						`users/${currentUser.user.username}/`,
-						''
-					)
+					(
+						await this.normalizeURL(url, true)
+					).replace(`users/${currentUser.user.username}/`, '')
 				)
 			)
 		);
@@ -769,13 +768,17 @@ export class AccountDatabaseService extends BaseProvider {
 
 			const getItemInternal = async (key: string) => {
 				const f = async () =>
-					(await (await this.getItemInternal(
-						`${await url}/${key}`,
-						proto,
-						securityModel,
-						customKey,
-						anonymous
-					)).result).value;
+					(
+						await (
+							await this.getItemInternal(
+								`${await url}/${key}`,
+								proto,
+								securityModel,
+								customKey,
+								anonymous
+							)
+						).result
+					).value;
 
 				if (!staticValues) {
 					return f();
@@ -872,10 +875,9 @@ export class AccountDatabaseService extends BaseProvider {
 					localLock(async () => {
 						await asyncMap.clear();
 						await Promise.all(
-							Array.from(
-								mapValue.entries()
-							).map(async ([key, value]) =>
-								asyncMap.setItem(key, value)
+							Array.from(mapValue.entries()).map(
+								async ([key, value]) =>
+									asyncMap.setItem(key, value)
 							)
 						);
 					}),
@@ -985,9 +987,7 @@ export class AccountDatabaseService extends BaseProvider {
 						);
 					}).catch(async () =>
 						blockGetValue ?
-							watch()
-								.pipe(take(2))
-								.toPromise() :
+							watch().pipe(take(2)).toPromise() :
 							proto.create()
 					),
 				lock: async (f, reason) => (await asyncValue).lock(f, reason),
@@ -1051,13 +1051,17 @@ export class AccountDatabaseService extends BaseProvider {
 		customKey?: MaybePromise<Uint8Array>,
 		anonymous: boolean = false
 	) : Promise<T> {
-		return (await (await this.getItemInternal(
-			url,
-			proto,
-			securityModel,
-			customKey,
-			anonymous
-		)).result).value;
+		return (
+			await (
+				await this.getItemInternal(
+					url,
+					proto,
+					securityModel,
+					customKey,
+					anonymous
+				)
+			).result
+		).value;
 	}
 
 	/** @see DatabaseService.getLatestKey */
@@ -1076,14 +1080,16 @@ export class AccountDatabaseService extends BaseProvider {
 		anonymous?: boolean,
 		immutable?: boolean
 	) : Promise<(T | ListHoleError)[]> {
-		return (await this.getListWithTimestamps(
-			url,
-			proto,
-			securityModel,
-			customKey,
-			anonymous,
-			immutable
-		)).map(o => o.value);
+		return (
+			await this.getListWithTimestamps(
+				url,
+				proto,
+				securityModel,
+				customKey,
+				anonymous,
+				immutable
+			)
+		).map(o => o.value);
 	}
 
 	/** @see DatabaseService.getListKeys */
@@ -1301,9 +1307,7 @@ export class AccountDatabaseService extends BaseProvider {
 	}
 
 	/** @see DatabaseService.lockStatus */
-	public async lockStatus (
-		url: MaybePromise<string>
-	) : Promise<{
+	public async lockStatus (url: MaybePromise<string>) : Promise<{
 		locked: boolean;
 		reason: string | undefined;
 	}> {
@@ -1545,9 +1549,7 @@ export class AccountDatabaseService extends BaseProvider {
 	}
 
 	/** @see DatabaseService.waitForUnlock */
-	public async waitForUnlock (
-		url: MaybePromise<string>
-	) : Promise<{
+	public async waitForUnlock (url: MaybePromise<string>) : Promise<{
 		reason: string | undefined;
 		wasLocked: boolean;
 	}> {

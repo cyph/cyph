@@ -317,9 +317,7 @@ export const getDurationString = memoize((time: number) : string => {
 /** Returns an ISO 8601 representation of the date (e.g. "2018-01-01"). */
 export const getISODateString = memoize(
 	(timestamp?: number | Date) : string =>
-		timestampToDate(timestamp)
-			.toISOString()
-			.split('T')[0]
+		timestampToDate(timestamp).toISOString().split('T')[0]
 );
 
 /**
@@ -468,15 +466,13 @@ export const timestampTo24HourTimeString = memoize(
 );
 
 /** Converts a timestamp into a Time. */
-export const timestampToTime = memoize(
-	(timestamp?: number) : Time => {
-		const date = timestampToDate(timestamp);
-		return hourAndMinuteToTime({
-			hour: date.getHours(),
-			minute: date.getMinutes()
-		});
-	}
-);
+export const timestampToTime = memoize((timestamp?: number) : Time => {
+	const date = timestampToDate(timestamp);
+	return hourAndMinuteToTime({
+		hour: date.getHours(),
+		minute: date.getMinutes()
+	});
+});
 
 /**
  * Changes the date and/or time of a timestamp.
@@ -617,52 +613,50 @@ export const watchRelativeDateString = memoize(
 
 /** @ignore */
 const relativeDateTimeStringInternal = memoize((now: number) =>
-	memoize(
-		async (date: number | Date) : Promise<string> => {
-			if (date instanceof Date) {
-				date = date.getTime();
-			}
+	memoize(async (date: number | Date) : Promise<string> => {
+		if (date instanceof Date) {
+			date = date.getTime();
+		}
 
-			const delta = now - date;
+		const delta = now - date;
 
-			if (delta < 60000) {
-				return strings.justNow;
-			}
+		if (delta < 60000) {
+			return strings.justNow;
+		}
 
-			if (delta < 3600000) {
-				const minutes = Math.floor((now - date) / 60000);
-				return `${minutes.toString()} ${
-					minutes === 1 ? strings.minuteAgo : strings.minutesAgo
-				}`;
-			}
-
-			if (delta < 86400000) {
-				const hours = Math.floor((now - date) / 3600000);
-				return `${hours.toString()} ${
-					hours === 1 ? strings.hourAgo : strings.hoursAgo
-				}`;
-			}
-
-			if (delta < 2629800000) {
-				const days = Math.floor((now - date) / 86400000);
-				return `${days.toString()} ${
-					days === 1 ? strings.dayAgo : strings.daysAgo
-				}`;
-			}
-
-			if (delta < 31557600000) {
-				const months = Math.floor((now - date) / 2629800000);
-				return `${months.toString()} ${
-					months === 1 ? strings.monthAgo : strings.monthsAgo
-				}`;
-			}
-
-			const years = Math.floor((now - date) / 31557600000);
-			return `${years.toString()} ${
-				years === 1 ? strings.yearAgo : strings.yearsAgo
+		if (delta < 3600000) {
+			const minutes = Math.floor((now - date) / 60000);
+			return `${minutes.toString()} ${
+				minutes === 1 ? strings.minuteAgo : strings.minutesAgo
 			}`;
 		}
-	)
+
+		if (delta < 86400000) {
+			const hours = Math.floor((now - date) / 3600000);
+			return `${hours.toString()} ${
+				hours === 1 ? strings.hourAgo : strings.hoursAgo
+			}`;
+		}
+
+		if (delta < 2629800000) {
+			const days = Math.floor((now - date) / 86400000);
+			return `${days.toString()} ${
+				days === 1 ? strings.dayAgo : strings.daysAgo
+			}`;
+		}
+
+		if (delta < 31557600000) {
+			const months = Math.floor((now - date) / 2629800000);
+			return `${months.toString()} ${
+				months === 1 ? strings.monthAgo : strings.monthsAgo
+			}`;
+		}
+
+		const years = Math.floor((now - date) / 31557600000);
+		return `${years.toString()} ${
+			years === 1 ? strings.yearAgo : strings.yearsAgo
+		}`;
+	})
 );
 
 /**

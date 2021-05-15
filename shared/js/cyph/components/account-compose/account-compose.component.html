@@ -255,8 +255,8 @@
 											*ngIf="
 												(sentFileID | await) !==
 													undefined &&
-													(currentUser?.user
-														?.userType | await) ===
+													(currentUser?.user?.userType
+														| await) ===
 														accountUserTypes.Standard;
 												else doctorView
 											"

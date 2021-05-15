@@ -36,8 +36,10 @@ import {LinkConnectionEmailComponent} from '../link-connection-email';
 	styleUrls: ['./link-connection.component.scss'],
 	templateUrl: './link-connection.component.html'
 })
-export class LinkConnectionComponent extends BaseProvider
-	implements AfterViewInit {
+export class LinkConnectionComponent
+	extends BaseProvider
+	implements AfterViewInit
+{
 	/** @ignore */
 	private readonly addTimeLock = {};
 
@@ -148,12 +150,14 @@ export class LinkConnectionComponent extends BaseProvider
 
 		let isWaiting = true;
 
-		const sharedSecret = (await this.sessionService.state.sharedSecrets
-			.pipe(
-				filter(arr => arr.length > 0 && arr[0].length > 0),
-				take(1)
-			)
-			.toPromise())[0].split(' ')[0];
+		const sharedSecret = (
+			await this.sessionService.state.sharedSecrets
+				.pipe(
+					filter(arr => arr.length > 0 && arr[0].length > 0),
+					take(1)
+				)
+				.toPromise()
+		)[0].split(' ')[0];
 
 		this.linkConstant = this.newDeviceActivation ?
 			sharedSecret :
@@ -190,9 +194,11 @@ export class LinkConnectionComponent extends BaseProvider
 			}
 			else {
 				this.connectLinkInput = <HTMLInputElement> (
-					(await waitForIterable(() =>
-						document.querySelectorAll('.connect-link-input')
-					))[0]
+					(
+						await waitForIterable(() =>
+							document.querySelectorAll('.connect-link-input')
+						)
+					)[0]
 				);
 
 				this.onBlur();

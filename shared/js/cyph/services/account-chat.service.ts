@@ -57,12 +57,13 @@ export class AccountChatService extends ChatService {
 	private readonly chats = new Map<string, IChatData>();
 
 	/** @ignore */
-	private readonly notificationData = resolvable<{
-		castleSessionID: string;
-		groupID?: string;
-		unreadMessagesID: string;
-		usernames: string[];
-	}>();
+	private readonly notificationData =
+		resolvable<{
+			castleSessionID: string;
+			groupID?: string;
+			unreadMessagesID: string;
+			usernames: string[];
+		}>();
 
 	/** @inheritDoc */
 	protected readonly account: boolean = true;
@@ -275,9 +276,11 @@ export class AccountChatService extends ChatService {
 		const notificationData =
 			'username' in chat ?
 				{
-					castleSessionID: (await this.accountContactsService.getCastleSessionData(
-						chat.username
-					)).castleSessionID,
+					castleSessionID: (
+							await this.accountContactsService.getCastleSessionData(
+								chat.username
+							)
+						).castleSessionID,
 					unreadMessagesID: chat.username,
 					usernames: [chat.username]
 				} :
@@ -286,10 +289,10 @@ export class AccountChatService extends ChatService {
 					groupID: chat.id,
 					unreadMessagesID: chat.id,
 					usernames: chat.group.usernames ?
-						this.accountSessionService.normalizeUsername(
-							chat.group.usernames
-						) :
-						[]
+							this.accountSessionService.normalizeUsername(
+								chat.group.usernames
+							) :
+							[]
 				};
 
 		this.notificationData.resolve(notificationData);
@@ -308,55 +311,58 @@ export class AccountChatService extends ChatService {
 					notificationData.castleSessionID,
 					() => ({
 						currentMessage: keepCurrentMessage ?
-							this.chat.currentMessage :
-							{},
+								this.chat.currentMessage :
+								{},
 						futureMessages: this.accountDatabaseService.getAsyncMap(
-							`${url}/futureMessages`,
-							SessionMessageDataList,
-							undefined,
-							undefined,
-							undefined,
-							true
-						),
+								`${url}/futureMessages`,
+								SessionMessageDataList,
+								undefined,
+								undefined,
+								undefined,
+								true
+							),
 						initProgress: new BehaviorSubject(0),
 						isConnected: true,
 						isDisconnected: false,
 						isFriendTyping: new BehaviorSubject<boolean>(false),
 						isMessageChanged: false,
-						lastConfirmedMessage: this.accountDatabaseService.getAsyncValue(
-							`${url}/lastConfirmedMessage`,
-							ChatLastConfirmedMessage
-						),
-						lastUnreadMessage: this.accountDatabaseService.getLatestKey(
-							`unreadMessages/${notificationData.unreadMessagesID}`
-						),
+						lastConfirmedMessage:
+							this.accountDatabaseService.getAsyncValue(
+								`${url}/lastConfirmedMessage`,
+								ChatLastConfirmedMessage
+							),
+						lastUnreadMessage:
+							this.accountDatabaseService.getLatestKey(
+								`unreadMessages/${notificationData.unreadMessagesID}`
+							),
 						messageList: this.accountDatabaseService.getAsyncList(
-							`${url}/messageList`,
-							StringArrayProto,
-							undefined,
-							undefined,
-							undefined,
-							true
-						),
+								`${url}/messageList`,
+								StringArrayProto,
+								undefined,
+								undefined,
+								undefined,
+								true
+							),
 						messages: this.accountDatabaseService.getAsyncMap(
-							`${url}/messages`,
-							ChatMessage,
-							undefined,
-							undefined,
-							undefined,
-							true
-						),
+								`${url}/messages`,
+								ChatMessage,
+								undefined,
+								undefined,
+								undefined,
+								true
+							),
 						pendingMessageRoot: `${url}/pendingMessages`,
 						pendingMessages: new LocalAsyncList<
-							IChatMessage & {pending: true}
-						>(),
-						receiveTextLock: this.accountDatabaseService.lockFunction(
-							`${url}/receiveTextLock`
-						),
+								IChatMessage & {pending: true}
+							>(),
+						receiveTextLock:
+							this.accountDatabaseService.lockFunction(
+								`${url}/receiveTextLock`
+							),
 						state: States.chat,
 						unconfirmedMessages: new BehaviorSubject<
-							{[id: string]: boolean | undefined} | undefined
-						>(undefined)
+								{[id: string]: boolean | undefined} | undefined
+							>(undefined)
 					})
 				)
 		);

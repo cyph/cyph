@@ -43,7 +43,9 @@ export class QRService extends BaseProvider {
 		imageData: ImageData,
 		transferToThread: boolean = true
 	) : Promise<string | undefined> {
-		const o = await (await this.qrScanner()).scan(
+		const o = await (
+			await this.qrScanner()
+		).scan(
 			transferToThread ?
 				Comlink.transfer(imageData.data, [imageData.data.buffer]) :
 				imageData.data,

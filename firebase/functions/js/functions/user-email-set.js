@@ -112,10 +112,12 @@ export const userEmailSet = async ({after: data}, {params}) => {
 
 	await sendVerificationEmail(params.namespace, username);
 
-	const [pseudoAccount, registrationEmailSent] = (await Promise.all([
-		pseudoAccountRef.once('value'),
-		registrationEmailSentRef.once('value')
-	])).map(o => o.val());
+	const [pseudoAccount, registrationEmailSent] = (
+		await Promise.all([
+			pseudoAccountRef.once('value'),
+			registrationEmailSentRef.once('value')
+		])
+	).map(o => o.val());
 
 	if (pseudoAccount || registrationEmailSent) {
 		return;

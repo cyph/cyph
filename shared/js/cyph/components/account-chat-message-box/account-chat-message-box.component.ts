@@ -29,9 +29,8 @@ export class AccountChatMessageBoxComponent extends BaseProvider {
 	@Input() public appointmentSharing = new AppointmentSharing();
 
 	/** @see AppointmentSharing */
-	@Output() public readonly appointmentSharingChange = new EventEmitter<
-		AppointmentSharing
-	>();
+	@Output() public readonly appointmentSharingChange =
+		new EventEmitter<AppointmentSharing>();
 
 	/** @see ChatMessageBoxComponent.calendarInviteFollowUp */
 	@Input() public calendarInviteFollowUp: boolean = false;

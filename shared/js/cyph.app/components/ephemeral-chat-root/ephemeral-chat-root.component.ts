@@ -48,8 +48,10 @@ import {ChatRootStates} from '../../enums';
 	styleUrls: ['./ephemeral-chat-root.component.scss'],
 	templateUrl: './ephemeral-chat-root.component.html'
 })
-export class EphemeralChatRootComponent extends BaseProvider
-	implements AfterViewInit {
+export class EphemeralChatRootComponent
+	extends BaseProvider
+	implements AfterViewInit
+{
 	/** @see ChatRootStates */
 	public readonly chatRootStates = ChatRootStates;
 
@@ -96,11 +98,11 @@ export class EphemeralChatRootComponent extends BaseProvider
 							video.muted = true;
 
 							video.src = URL.createObjectURL(
-								/* eslint-disable-next-line @typescript-eslint/tslint/config */
-								await fetch(
-									`${this.envService.baseUrl}test.webm`
-								).then(async o => o.blob())
-							);
+									/* eslint-disable-next-line @typescript-eslint/tslint/config */
+									await fetch(
+										`${this.envService.baseUrl}test.webm`
+									).then(async o => o.blob())
+								);
 
 							await video.play();
 
@@ -142,18 +144,18 @@ export class EphemeralChatRootComponent extends BaseProvider
 			'default-state': !this.envService.telehealthTheme.value ?
 				{
 					gradients: [
-						['#392859', '#624599'],
-						['#9368e6', '#624599']
-					],
+							['#392859', '#624599'],
+							['#9368e6', '#624599']
+						],
 					loop: true,
 					transitionSpeed: 5000
 				} :
 				{
 					direction: 'diagonal',
 					gradients: [
-						['#eeecf1', '#fbf8fe'],
-						['#fbf8fe', '#eeecf1']
-					],
+							['#eeecf1', '#fbf8fe'],
+							['#fbf8fe', '#eeecf1']
+						],
 					loop: true,
 					opacity: [0.75, 0.5],
 					transitionSpeed: 2500
@@ -161,9 +163,9 @@ export class EphemeralChatRootComponent extends BaseProvider
 			'paused': !this.envService.telehealthTheme.value ?
 				{
 					gradients: [
-						['#624599', '#8b62d9'],
-						['#9368e6', '#624599']
-					],
+							['#624599', '#8b62d9'],
+							['#9368e6', '#624599']
+						],
 					transitionSpeed: 5000
 				} :
 				undefined

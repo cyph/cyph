@@ -53,10 +53,9 @@ export const generateInvite = onRequest(true, async (req, res, namespace) => {
 		const subscriptionItemID = subscriptionItemIDs.shift();
 
 		if (!username) {
-			username = (await tokens.open(
-				userToken,
-				await getTokenKey(namespace)
-			)).username;
+			username = (
+				await tokens.open(userToken, await getTokenKey(namespace))
+			).username;
 		}
 
 		const internalURL = `${namespace}/users/${username}/internal`;
@@ -120,9 +119,11 @@ export const generateInvite = onRequest(true, async (req, res, namespace) => {
 				}
 
 				const numInvites = Object.keys(
-					(await database
-						.ref(`${namespace}/users/${username}/inviteCodes`)
-						.once('value')).val() || {}
+					(
+						await database
+							.ref(`${namespace}/users/${username}/inviteCodes`)
+							.once('value')
+					).val() || {}
 				).length;
 
 				if (numInvites >= planConfig.initialInvites) {
@@ -179,9 +180,9 @@ export const generateInvite = onRequest(true, async (req, res, namespace) => {
 		const preexistingInviteCodeRef = database.ref(
 			`${namespace}/inviteCodes/${preexistingInviteCode}`
 		);
-		const preexistingInviteCodeData = (await preexistingInviteCodeRef.once(
-			'value'
-		)).val();
+		const preexistingInviteCodeData = (
+			await preexistingInviteCodeRef.once('value')
+		).val();
 
 		if (!preexistingInviteCodeData) {
 			throw new Error(`Invalid invite code: ${preexistingInviteCode}.`);
@@ -271,7 +272,8 @@ export const generateInvite = onRequest(true, async (req, res, namespace) => {
 											} :
 											{
 												braintreeID: customerID,
-												braintreeSubscriptionID: subscriptionID
+												braintreeSubscriptionID:
+													subscriptionID
 											}),
 										...(i === 0 && email ? {email} : {}),
 										...(!isNaN(planGroup.planTrialEnd) ?

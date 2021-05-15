@@ -175,9 +175,7 @@ export class PotassiumUtil {
 
 	/** Converts binary into base64url string. */
 	public toBase64URL (a: ArrayBufferView | string) : string {
-		return this.toBase64(a)
-			.replace(/\+/g, '-')
-			.replace(/\//g, '_');
+		return this.toBase64(a).replace(/\+/g, '-').replace(/\//g, '_');
 	}
 
 	/** Normalizes any binary data as standard byte array format. */

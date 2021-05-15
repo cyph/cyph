@@ -73,42 +73,44 @@ export const ipfsGateways = memoize(async skipUptimeCheck => {
 			url
 		}));
 
-	return (await Promise.all(
-		gatewayURLs.map(async ({host, url}) => {
-			try {
-				const [v4IPs, v6IPs] = await Promise.all([
-					dns.promises.resolve(host).catch(() => []),
-					dns.promises.resolve6(host).catch(() => [])
-				]);
+	return (
+		await Promise.all(
+			gatewayURLs.map(async ({host, url}) => {
+				try {
+					const [v4IPs, v6IPs] = await Promise.all([
+						dns.promises.resolve(host).catch(() => []),
+						dns.promises.resolve6(host).catch(() => [])
+					]);
 
-				return Promise.all(
-					Array.from(
-						new Set(
-							await Promise.all(
-								[...v4IPs, ...v6IPs].map(async ip =>
-									(
-										(await lookup).get(ip) || {
-											continent: {code: 'na'}
-										}
-									).continent.code.toLowerCase()
+					return Promise.all(
+						Array.from(
+							new Set(
+								await Promise.all(
+									[...v4IPs, ...v6IPs].map(async ip =>
+										(
+											(await lookup).get(ip) || {
+												continent: {code: 'na'}
+											}
+										).continent.code.toLowerCase()
+									)
 								)
 							)
-						)
-					).map(async continentCode => ({
-						continentCode,
-						supportsIPv6: v6IPs.length > 0,
-						uptimeCheck: skipUptimeCheck ?
-							undefined :
-							await uptimeCheck(url),
-						url
-					}))
-				);
-			}
-			catch {
-				return [];
-			}
-		})
-	)).reduce((a, b) => a.concat(b), []);
+						).map(async continentCode => ({
+							continentCode,
+							supportsIPv6: v6IPs.length > 0,
+							uptimeCheck: skipUptimeCheck ?
+								undefined :
+								await uptimeCheck(url),
+							url
+						}))
+					);
+				}
+				catch {
+					return [];
+				}
+			})
+		)
+	).reduce((a, b) => a.concat(b), []);
 });
 
 if (isCLI) {

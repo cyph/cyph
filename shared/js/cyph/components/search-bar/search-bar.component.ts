@@ -34,8 +34,10 @@ import {toBehaviorSubject} from '../../util/flatten-observable';
 	styleUrls: ['./search-bar.component.scss'],
 	templateUrl: './search-bar.component.html'
 })
-export class SearchBarComponent<T extends any> extends BaseProvider
-	implements OnChanges, OnDestroy, OnInit {
+export class SearchBarComponent<T extends any>
+	extends BaseProvider
+	implements OnChanges, OnDestroy, OnInit
+{
 	/** @ignore */
 	private querySubscription?: Subscription;
 
@@ -59,13 +61,12 @@ export class SearchBarComponent<T extends any> extends BaseProvider
 	> = new EventEmitter<BehaviorSubject<Set<T>>>();
 
 	/** First filter item. */
-	public readonly filterSingle: BehaviorSubject<
-		T | undefined
-	> = toBehaviorSubject(
-		this.filter.pipe(map(items => items.values().next().value)),
-		undefined,
-		this.subscriptions
-	);
+	public readonly filterSingle: BehaviorSubject<T | undefined> =
+		toBehaviorSubject(
+			this.filter.pipe(map(items => items.values().next().value)),
+			undefined,
+			this.subscriptions
+		);
 
 	/** Gets chip from filter value. */
 	public readonly getChip = memoize((value?: T) => this.chipTransform(value));
@@ -107,9 +108,7 @@ export class SearchBarComponent<T extends any> extends BaseProvider
 	}
 
 	/** Transforms filter value to chip value. */
-	@Input() public chipTransform: (
-		value?: T
-	) => {
+	@Input() public chipTransform: (value?: T) => {
 		smallText?: Async<string | undefined>;
 		text: Async<string>;
 	} = value => ({text: <any> value});

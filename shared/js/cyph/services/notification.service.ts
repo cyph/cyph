@@ -13,8 +13,10 @@ import {WorkerService} from './worker.service';
  * @inheritDoc
  */
 @Injectable()
-export class NotificationService extends BaseProvider
-	implements INotificationService {
+export class NotificationService
+	extends BaseProvider
+	implements INotificationService
+{
 	/** Time to allow for answer responses to make it back from Bob to Alice. */
 	private readonly answeringBufferTime: number = 5000;
 
@@ -77,11 +79,9 @@ export class NotificationService extends BaseProvider
 		catch {
 			options.audio = this.config.audio;
 
-			(await this.workerService
-				.serviceWorkerRegistration).showNotification(
-				this.config.title,
-				options
-			);
+			(
+				await this.workerService.serviceWorkerRegistration
+			).showNotification(this.config.title, options);
 		}
 	}
 

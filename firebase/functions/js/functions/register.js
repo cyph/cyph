@@ -109,9 +109,11 @@ export const register = onCall(
 			);
 
 		const permanentReservedUsername = reservedUsername ?
-			(await database
-				.ref(`${namespace}/reservedUsernames/${username}`)
-				.once('value')).val() === '.' :
+			(
+				await database
+					.ref(`${namespace}/reservedUsernames/${username}`)
+					.once('value')
+			).val() === '.' :
 			false;
 
 		await Promise.all([

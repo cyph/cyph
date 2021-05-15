@@ -97,17 +97,17 @@ export class FirebaseDatabaseService extends DatabaseService {
 		undefined :
 		{
 			messaging: (<any> self).PushNotification.init({
-				android: {
-					color: 'white',
-					icon: 'notification_icon',
-					iconColor: '#8b62d9'
-				},
-				ios: {
-					alert: true,
-					badge: true,
-					sound: true
-				}
-			})
+					android: {
+						color: 'white',
+						icon: 'notification_icon',
+						iconColor: '#8b62d9'
+					},
+					ios: {
+						alert: true,
+						badge: true,
+						sound: true
+					}
+				})
 		};
 
 	/** @ignore */
@@ -391,8 +391,10 @@ export class FirebaseDatabaseService extends DatabaseService {
 						} :
 						undefined,
 					method: 'POST',
-					url: `https://${(await geolocation.firebaseRegion) ||
-						this.configService.defaultFirebaseRegion}-${
+					url: `https://${
+						(await geolocation.firebaseRegion) ||
+						this.configService.defaultFirebaseRegion
+					}-${
 						this.envService.environment.firebase.project
 					}.cloudfunctions.net/${name}`
 				})
@@ -610,9 +612,9 @@ export class FirebaseDatabaseService extends DatabaseService {
 			const url = await urlPromise;
 
 			try {
-				const value = (await (await this.getDatabaseRef(url)).once(
-					'value'
-				)).val();
+				const value = (
+					await (await this.getDatabaseRef(url)).once('value')
+				).val();
 				const keys = this.getListKeysInternal(value);
 
 				return keys
@@ -635,7 +637,9 @@ export class FirebaseDatabaseService extends DatabaseService {
 
 			try {
 				return await Promise.all(
-					(await this.getListKeys(url)).map(async k =>
+					(
+						await this.getListKeys(url)
+					).map(async k =>
 						this.getItem(`${url}/${k}`, proto).catch(
 							() => new ListHoleError()
 						)
@@ -1019,9 +1023,7 @@ export class FirebaseDatabaseService extends DatabaseService {
 	}
 
 	/** @inheritDoc */
-	public async lockStatus (
-		urlPromise: MaybePromise<string>
-	) : Promise<{
+	public async lockStatus (urlPromise: MaybePromise<string>) : Promise<{
 		locked: boolean;
 		reason: string | undefined;
 	}> {
@@ -1118,10 +1120,12 @@ export class FirebaseDatabaseService extends DatabaseService {
 			const previousKey = async () : Promise<string | undefined> =>
 				retryUntilSuccessful(async () => {
 					const listValueMap: Record<string, any> =
-						(await listRef
-							.orderByKey()
-							.limitToLast(1)
-							.once('value')).val() || {};
+						(
+							await listRef
+								.orderByKey()
+								.limitToLast(1)
+								.once('value')
+						).val() || {};
 
 					return Object.keys(listValueMap)[0];
 				});
@@ -1294,15 +1298,9 @@ export class FirebaseDatabaseService extends DatabaseService {
 			const ref = await this.getDatabaseRef(url);
 
 			await Promise.all([
-				ref
-					.child(messaging.token)
-					.set(this.envService.platform)
-					.then(),
+				ref.child(messaging.token).set(this.envService.platform).then(),
 				oldMessagingToken && oldMessagingToken !== messaging.token ?
-					ref
-						.child(oldMessagingToken)
-						.remove()
-						.then() :
+					ref.child(oldMessagingToken).remove().then() :
 					undefined
 			]);
 		});
@@ -1444,9 +1442,11 @@ export class FirebaseDatabaseService extends DatabaseService {
 					push ||
 					/* eslint-disable-next-line @typescript-eslint/tslint/config */
 					hash !==
-						(await this.getMetadata(url).catch(() => ({
-							hash: undefined
-						}))).hash
+						(
+							await this.getMetadata(url).catch(() => ({
+								hash: undefined
+							}))
+						).hash
 				) {
 					if (push || data.length < this.nonBlobStorageLimit) {
 						if (data.length >= this.nonBlobStoragePushLimit) {
@@ -1458,10 +1458,9 @@ export class FirebaseDatabaseService extends DatabaseService {
 						});
 					}
 					else {
-						const uploadTask = (await this.getStorageRef(
-							url,
-							hash
-						)).put(new Blob([data]));
+						const uploadTask = (
+							await this.getStorageRef(url, hash)
+						).put(new Blob([data]));
 
 						if (progress) {
 							uploadTask.on(
@@ -1568,9 +1567,7 @@ export class FirebaseDatabaseService extends DatabaseService {
 	}
 
 	/** @inheritDoc */
-	public async waitForUnlock (
-		urlPromise: MaybePromise<string>
-	) : Promise<{
+	public async waitForUnlock (urlPromise: MaybePromise<string>) : Promise<{
 		reason: string | undefined;
 		wasLocked: boolean;
 	}> {
@@ -1971,35 +1968,31 @@ export class FirebaseDatabaseService extends DatabaseService {
 							previousKey?: string | null
 						) =>
 							localLock(async () =>
-								this.ngZone.run(
-									async () : Promise<void> => {
-										if (
-											snapshot?.key &&
-											typeof snapshot.val()?.hash !==
-												'string'
-										) {
-											return onChildAdded(
-												await this.waitForValue(
-													`${url}/${snapshot.key}`
-												),
-												previousKey
-											);
-										}
-										if (
-											!snapshot ||
-											!snapshot.exists() ||
-											!snapshot.key
-										) {
-											return;
-										}
-
-										subject.next({
-											key: snapshot.key,
-											previousKey:
-												previousKey || undefined
-										});
+								this.ngZone.run(async () : Promise<void> => {
+									if (
+										snapshot?.key &&
+										typeof snapshot.val()?.hash !== 'string'
+									) {
+										return onChildAdded(
+											await this.waitForValue(
+												`${url}/${snapshot.key}`
+											),
+											previousKey
+										);
 									}
-								)
+									if (
+										!snapshot ||
+										!snapshot.exists() ||
+										!snapshot.key
+									) {
+										return;
+									}
+
+									subject.next({
+										key: snapshot.key,
+										previousKey: previousKey || undefined
+									});
+								})
 							);
 
 						listRef.on('child_added', onChildAdded);
@@ -2132,10 +2125,8 @@ export class FirebaseDatabaseService extends DatabaseService {
 								emitLock(async () =>
 									this.ngZone.run(async () => {
 										try {
-											const {
-												timestamp,
-												value
-											} = await result;
+											const {timestamp, value} =
+												await result;
 
 											subject.next({
 												key,
@@ -2146,11 +2137,10 @@ export class FirebaseDatabaseService extends DatabaseService {
 											});
 										}
 										catch {
-											const {
-												timestamp
-											} = await metadata.catch(() => ({
-												timestamp: 0
-											}));
+											const {timestamp} =
+												await metadata.catch(() => ({
+													timestamp: 0
+												}));
 
 											subject.next({
 												key,

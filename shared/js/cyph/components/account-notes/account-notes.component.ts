@@ -24,9 +24,8 @@ import {StringsService} from '../../services/strings.service';
 })
 export class AccountNotesComponent extends BaseProvider implements OnInit {
 	/** Indicates whether or the anonymous inbox UI should be displayed. */
-	public readonly anonymousMessages: Observable<
-		boolean
-	> = this.activatedRoute.data.pipe(map(o => !!o.anonymousMessages));
+	public readonly anonymousMessages: Observable<boolean> =
+		this.activatedRoute.data.pipe(map(o => !!o.anonymousMessages));
 
 	/** @see AccountBaseFileListComponent.filterFunction */
 	public readonly filterFunction = this.anonymousMessages.pipe(
@@ -39,9 +38,8 @@ export class AccountNotesComponent extends BaseProvider implements OnInit {
 	);
 
 	/** Indicates whether or not the real-time doc UI is enabled. */
-	public readonly realTime: Observable<
-		boolean
-	> = this.activatedRoute.data.pipe(map(o => !!o.realTime));
+	public readonly realTime: Observable<boolean> =
+		this.activatedRoute.data.pipe(map(o => !!o.realTime));
 
 	/** @see AccountFileRecord.RecordTypes */
 	public readonly recordTypes = AccountFileRecord.RecordTypes;

@@ -126,7 +126,8 @@ export class EphemeralSessionService extends SessionService {
 			}
 
 			const masterSessionInit = new BasicSessionInitService();
-			masterSessionInit.accountsBurnerAliceData = this.sessionInitService.accountsBurnerAliceData;
+			masterSessionInit.accountsBurnerAliceData =
+				this.sessionInitService.accountsBurnerAliceData;
 			masterSessionInit.child = true;
 			masterSessionInit.parentID = parentID;
 			masterSessionInit.timeString = this.sessionInitService.timeString;
@@ -135,7 +136,8 @@ export class EphemeralSessionService extends SessionService {
 			const masterSession = this.spawn(masterSessionInit);
 
 			const childSessionInit = new BasicSessionInitService();
-			childSessionInit.accountsBurnerAliceData = this.sessionInitService.accountsBurnerAliceData;
+			childSessionInit.accountsBurnerAliceData =
+				this.sessionInitService.accountsBurnerAliceData;
 			childSessionInit.child = true;
 			childSessionInit.parentID = parentID;
 			childSessionInit.timeString = this.sessionInitService.timeString;
@@ -494,9 +496,7 @@ export class EphemeralSessionService extends SessionService {
 	}
 
 	/** @inheritDoc */
-	public async addToBurnerGroup (
-		name?: string
-	) : Promise<{
+	public async addToBurnerGroup (name?: string) : Promise<{
 		callType?: 'audio' | 'video';
 		id: string;
 		url: string;
@@ -883,11 +883,14 @@ export class EphemeralSessionService extends SessionService {
 							.map((member, i) => {
 								i += burnerGroupMembers.length;
 
-								const sessionInit = new BasicSessionInitService();
-								sessionInit.accountsBurnerAliceData = this.sessionInitService.accountsBurnerAliceData;
+								const sessionInit =
+									new BasicSessionInitService();
+								sessionInit.accountsBurnerAliceData =
+									this.sessionInitService.accountsBurnerAliceData;
 								sessionInit.child = true;
 								sessionInit.parentID = fullID;
-								sessionInit.timeString = this.sessionInitService.timeString;
+								sessionInit.timeString =
+									this.sessionInitService.timeString;
 
 								if (i === 0) {
 									sessionInit.setID(
@@ -896,10 +899,11 @@ export class EphemeralSessionService extends SessionService {
 											member.id
 									);
 
-									const castleService = new BasicCastleService(
-										this.accountDatabaseService,
-										this.potassiumService
-									);
+									const castleService =
+										new BasicCastleService(
+											this.accountDatabaseService,
+											this.potassiumService
+										);
 
 									const hostSession = this.spawn(
 										sessionInit,

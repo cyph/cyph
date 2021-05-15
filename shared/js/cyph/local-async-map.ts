@@ -11,8 +11,10 @@ import {lockFunction} from './util/lock';
 /**
  * IAsyncMap implementation that wraps a local value.
  */
-export class LocalAsyncMap<K, V> extends LocalAsyncValue<Map<K, V>>
-	implements IAsyncMap<K, V> {
+export class LocalAsyncMap<K, V>
+	extends LocalAsyncValue<Map<K, V>>
+	implements IAsyncMap<K, V>
+{
 	/** @ignore */
 	protected readonly itemLocks = new Map<K, LockFunction>();
 

@@ -51,8 +51,10 @@ const EF: any | undefined =
 	styleUrls: ['./checkout.component.scss'],
 	templateUrl: './checkout.component.html'
 })
-export class CheckoutComponent extends BaseProvider
-	implements AfterViewInit, OnChanges, OnInit {
+export class CheckoutComponent
+	extends BaseProvider
+	implements AfterViewInit, OnChanges, OnInit
+{
 	/** BitPay invoice ID. */
 	private bitPayInvoiceID?: Promise<string>;
 
@@ -255,9 +257,11 @@ export class CheckoutComponent extends BaseProvider
 	/** Gets BitPay invoice. */
 	private async getBitPayInvoice (id: string) : Promise<any> {
 		return (
-			(await requestJSON({
-				url: `https://bitpay.com/invoices/${id}?token=${this.configService.bitPayToken}`
-			}))?.data || {}
+			(
+				await requestJSON({
+					url: `https://bitpay.com/invoices/${id}?token=${this.configService.bitPayToken}`
+				})
+			)?.data || {}
 		);
 	}
 
@@ -293,31 +297,34 @@ export class CheckoutComponent extends BaseProvider
 						this.configService.stripe.apiKeys.prod :
 						this.configService.stripe.apiKeys.test
 				),
-				Promise.all([this.inviteCode, this.partnerTransactionID, this.userToken]).then(
-					async ([inviteCode, partnerTransactionID, userToken]) =>
-						request({
-							data: {
-								amount: Math.floor(this.amount * 100),
-								url: location.toString(),
-								...(this.category !== undefined ?
-									{category: this.category} :
-									{}),
-								...(inviteCode !== undefined ? {inviteCode} : {}),
-								...(this.item !== undefined ?
-									{item: this.item} :
-									{}),
-								...(this.namespace !== undefined ?
-									{namespace: this.namespace} :
-									{}),
-								...(partnerTransactionID ?
-									{partnerTransactionID} :
-									{}),
-								...(userToken !== undefined ? {userToken} : {})
-							},
-							method: 'POST',
-							retries: 5,
-							url: this.envService.baseUrl + 'stripe/session'
-						})
+				Promise.all([
+					this.inviteCode,
+					this.partnerTransactionID,
+					this.userToken
+				]).then(async ([inviteCode, partnerTransactionID, userToken]) =>
+					request({
+						data: {
+							amount: Math.floor(this.amount * 100),
+							url: location.toString(),
+							...(this.category !== undefined ?
+								{category: this.category} :
+								{}),
+							...(inviteCode !== undefined ? {inviteCode} : {}),
+							...(this.item !== undefined ?
+								{item: this.item} :
+								{}),
+							...(this.namespace !== undefined ?
+								{namespace: this.namespace} :
+								{}),
+							...(partnerTransactionID ?
+								{partnerTransactionID} :
+								{}),
+							...(userToken !== undefined ? {userToken} : {})
+						},
+						method: 'POST',
+						retries: 5,
+						url: this.envService.baseUrl + 'stripe/session'
+					})
 				)
 			]);
 
@@ -628,7 +635,8 @@ export class CheckoutComponent extends BaseProvider
 
 		(async () => {
 			if (!this.address.countryCode) {
-				this.address.countryCode = this.configService.defaultCountryCode;
+				this.address.countryCode =
+					this.configService.defaultCountryCode;
 			}
 
 			while (!this.destroyed.value) {
@@ -714,10 +722,12 @@ export class CheckoutComponent extends BaseProvider
 							}
 						);
 					}).catch(err => {
-						throw err ||
+						throw (
+							err ||
 							new Error(
 								this.stringsService.checkoutBraintreeError
-							);
+							)
+						);
 					});
 
 			const bitPayInvoiceID = !useBitPay ?
@@ -743,17 +753,17 @@ export class CheckoutComponent extends BaseProvider
 
 					/* https://github.com/j3k0/cordova-plugin-purchase/blob/master/doc/api.md#storeproduct-object */
 					const productPromise = new Promise<{
-						finish: () => void;
-						transaction: {
-							appStoreReceipt: string;
-							id: string;
-							type: string;
-						};
-					}>((resolve, reject) => {
-						store.when(inAppPurchase.id).approved(resolve);
-						store.when(inAppPurchase.id).cancelled(reject);
-						store.when(inAppPurchase.id).error(reject);
-					});
+							finish: () => void;
+							transaction: {
+								appStoreReceipt: string;
+								id: string;
+								type: string;
+							};
+						}>((resolve, reject) => {
+							store.when(inAppPurchase.id).approved(resolve);
+							store.when(inAppPurchase.id).cancelled(reject);
+							store.when(inAppPurchase.id).error(reject);
+						});
 
 					await store.order(inAppPurchase.id);
 

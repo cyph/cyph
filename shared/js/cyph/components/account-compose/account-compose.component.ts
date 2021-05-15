@@ -60,8 +60,10 @@ import {sleep} from '../../util/wait/sleep';
 	styleUrls: ['./account-compose.component.scss'],
 	templateUrl: './account-compose.component.html'
 })
-export class AccountComposeComponent extends BaseProvider
-	implements OnDestroy, OnInit {
+export class AccountComposeComponent
+	extends BaseProvider
+	implements OnDestroy, OnInit
+{
 	/** Indicates whether this component is using its own service providers. */
 	protected readonly hasOwnProviders: boolean = true;
 
@@ -91,9 +93,8 @@ export class AccountComposeComponent extends BaseProvider
 	>([]);
 
 	/** @see AppointmentSharing */
-	public readonly appointmentSharing = new BehaviorSubject<
-		AppointmentSharing
-	>(new AppointmentSharing());
+	public readonly appointmentSharing =
+		new BehaviorSubject<AppointmentSharing>(new AppointmentSharing());
 
 	/** @see ChatMessageValue.Types */
 	public readonly chatMessageValueTypes = ChatMessageValue.Types;
@@ -127,15 +128,18 @@ export class AccountComposeComponent extends BaseProvider
 				if (value !== undefined) {
 					switch (messageType) {
 						case ChatMessageValue.Types.CalendarInvite:
-							this.accountChatService.chat.currentMessage.calendarInvite = value;
+							this.accountChatService.chat.currentMessage.calendarInvite =
+								value;
 							break;
 
 						case ChatMessageValue.Types.FileTransfer:
-							this.accountChatService.chat.currentMessage.fileTransfer = value;
+							this.accountChatService.chat.currentMessage.fileTransfer =
+								value;
 							break;
 
 						case ChatMessageValue.Types.Form:
-							this.accountChatService.chat.currentMessage.form = value;
+							this.accountChatService.chat.currentMessage.form =
+								value;
 
 							this.appointmentFormData.next(
 								typeof params.appointmentID === 'string' ?
@@ -146,11 +150,13 @@ export class AccountComposeComponent extends BaseProvider
 							break;
 
 						case ChatMessageValue.Types.Quill:
-							this.accountChatService.chat.currentMessage.quill = value;
+							this.accountChatService.chat.currentMessage.quill =
+								value;
 							break;
 
 						case ChatMessageValue.Types.Text:
-							this.accountChatService.chat.currentMessage.text = value;
+							this.accountChatService.chat.currentMessage.text =
+								value;
 							break;
 
 						default:
@@ -374,8 +380,9 @@ export class AccountComposeComponent extends BaseProvider
 			this.messageType.value === ChatMessageValue.Types.CalendarInvite &&
 			typeof routeData.form === 'function' &&
 			(this.accountDatabaseService.currentUser.value === undefined ||
-				(await this.accountDatabaseService.currentUser.value.user.accountUserProfile.getValue())
-					.userType === AccountUserTypes.Standard)
+				(
+					await this.accountDatabaseService.currentUser.value.user.accountUserProfile.getValue()
+				).userType === AccountUserTypes.Standard)
 		) {
 			this.accountChatService.chat.currentMessage.form = routeData.form({
 				email: this.accountService.fromEmail.value,
@@ -433,15 +440,20 @@ export class AccountComposeComponent extends BaseProvider
 					undefined
 			) {
 				this.sentFileID.next(
-					(await this.accountAppointmentsService.sendAppointment(
-						this.accountChatService.chat.currentMessage
-							.calendarInvite,
-						this.appointmentGroupMembers.value,
-						this.appointmentSharing.value,
-						this.accountChatService.chat.currentMessage.form ?
-							[this.accountChatService.chat.currentMessage.form] :
-							undefined
-					)).uploadedFileID
+					(
+						await this.accountAppointmentsService.sendAppointment(
+							this.accountChatService.chat.currentMessage
+								.calendarInvite,
+							this.appointmentGroupMembers.value,
+							this.appointmentSharing.value,
+							this.accountChatService.chat.currentMessage.form ?
+								[
+									this.accountChatService.chat.currentMessage
+										.form
+								] :
+								undefined
+						)
+					).uploadedFileID
 				);
 			}
 			else if (
