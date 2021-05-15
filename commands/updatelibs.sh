@@ -59,6 +59,7 @@ find . -maxdepth 2 -type f -name .go.mod -exec bash -c '
 	cd $(echo "{}" | sed "s|/.go.mod||")
 	cp .go.mod go.mod
 	go mod tidy
+	go get -u ./...
 ' \;
 
 ./commands/commit.sh --gc "${@}" updatelibs
