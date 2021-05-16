@@ -43,7 +43,7 @@
 							]
 						},
 						"betaProd": {
-							"optimization": false,
+							"optimization": true,
 							"outputHashing": "all",
 							"sourceMap": false,
 							"namedChunks": false,
@@ -157,7 +157,7 @@
 							]
 						},
 						"prod": {
-							"optimization": false,
+							"optimization": true,
 							"outputHashing": "all",
 							"sourceMap": false,
 							"namedChunks": false,
@@ -173,7 +173,7 @@
 							]
 						},
 						"production": {
-							"optimization": false,
+							"optimization": true,
 							"outputHashing": "all",
 							"sourceMap": false,
 							"namedChunks": false,
@@ -189,7 +189,7 @@
 							]
 						},
 						"staging": {
-							"optimization": false,
+							"optimization": true,
 							"outputHashing": "all",
 							"sourceMap": false,
 							"namedChunks": false,
