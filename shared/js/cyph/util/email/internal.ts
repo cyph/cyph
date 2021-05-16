@@ -41,8 +41,8 @@ export const sendEmailInternal =
 						from_email: 'incoming@cyph.com',
 						/* eslint-disable-next-line @typescript-eslint/naming-convention */
 						from_name: fromName,
-						/* eslint-disable-next-line @typescript-eslint/naming-convention */
 						headers: {
+							/* eslint-disable-next-line @typescript-eslint/naming-convention */
 							...(fromEmail ? {'Reply-To': fromEmail} : {})
 						},
 						subject,
