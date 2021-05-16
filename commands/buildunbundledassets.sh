@@ -216,10 +216,8 @@ for f in ${typescriptAssets} ; do
 				minimize: true,
 				minimizer: [
 					new TerserPlugin({
-						cache: true,
 						extractComments: false,
 						parallel: true,
-						sourceMap: false,
 						terserOptions: {
 							ecma: 5,
 							ie8: false,
