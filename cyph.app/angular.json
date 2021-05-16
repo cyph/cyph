@@ -86,67 +86,88 @@
 							]
 						},
 						"local": {
-							"outputHashing": "all",
+							"aot": false,
+							"buildOptimizer": false,
 							"fileReplacements": [
 								{
 									"replace": "src/js/environments/environment.ts",
 									"with": "src/js/environments/environment.local.ts"
 								}
-							]
+							],
+							"optimization": false,
+							"sourceMap": false
 						},
 						"localBackup": {
-							"outputHashing": "all",
+							"aot": false,
+							"buildOptimizer": false,
 							"fileReplacements": [
 								{
 									"replace": "src/js/environments/environment.ts",
 									"with": "src/js/environments/environment.local-backup.ts"
 								}
-							]
+							],
+							"optimization": false,
+							"sourceMap": false
 						},
 						"localBeta": {
-							"outputHashing": "all",
+							"aot": false,
+							"buildOptimizer": false,
 							"fileReplacements": [
 								{
 									"replace": "src/js/environments/environment.ts",
 									"with": "src/js/environments/environment.local-beta.ts"
 								}
-							]
+							],
+							"optimization": false,
+							"sourceMap": false
 						},
 						"localDev": {
-							"outputHashing": "all",
+							"aot": false,
+							"buildOptimizer": false,
 							"fileReplacements": [
 								{
 									"replace": "src/js/environments/environment.ts",
 									"with": "src/js/environments/environment.local-dev.ts"
 								}
-							]
+							],
+							"optimization": false,
+							"sourceMap": false
 						},
 						"localMaster": {
-							"outputHashing": "all",
+							"aot": false,
+							"buildOptimizer": false,
 							"fileReplacements": [
 								{
 									"replace": "src/js/environments/environment.ts",
 									"with": "src/js/environments/environment.local-master.ts"
 								}
-							]
+							],
+							"optimization": false,
+							"sourceMap": false
 						},
 						"localProd": {
-							"outputHashing": "all",
+							"aot": false,
+							"buildOptimizer": false,
 							"fileReplacements": [
 								{
 									"replace": "src/js/environments/environment.ts",
 									"with": "src/js/environments/environment.local-prod.ts"
 								}
-							]
+							],
+							"optimization": false,
+							"sourceMap": false
 						},
 						"localStaging": {
-							"outputHashing": "all",
+							"aot": false,
+							"buildOptimizer": false,
 							"fileReplacements": [
 								{
 									"replace": "src/js/environments/environment.ts",
 									"with": "src/js/environments/environment.local-staging.ts"
 								}
-							]
+							],
+							"optimization": false,
+							"sourceMap": false
 						},
 						"master": {
 							"fileReplacements": [

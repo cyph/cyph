@@ -110,7 +110,6 @@ ngserve () {
 			ng serve \
 				--configuration "${environment}" \
 				--live-reload false \
-				--source-map false \
 				--public-host "localhost:${port}" \
 				$(if [ "${prodBuild}" ] ; then echo '--watch false' ; fi) \
 				"${@}"
