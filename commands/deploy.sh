@@ -1117,5 +1117,8 @@ if [ "${websign}" ] && ( [ "${test}" ] || [ "${debug}" ] || [ "${betaProd}" ] ) 
 	cd ~/.cyph/repos/internal
 	git checkout public
 	git pull
+	mv commands/buildunbundledassets.sh commands/buildunbundledassets.old.sh
+	cp ${dir}/commands/buildunbundledassets.sh commands/
 	./commands/deploy.sh --prod --fast --site backend
+	mv commands/buildunbundledassets.old.sh commands/buildunbundledassets.sh
 fi
