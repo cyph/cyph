@@ -458,7 +458,9 @@ for branchDir in ~/.build ${branchDirs} ; do
 		$(test "${test}" && echo '--test') \
 		--version "$(getVersion ${branchDir})" \
 		$(test "${websign}" && echo '--websign') \
-		$(test "${wpPromote}" && echo '--wp-promote')
+		$(test "${wpPromote}" && echo '--wp-promote') \
+	||
+		fail
 done
 cd ~/.build
 
