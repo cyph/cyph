@@ -1,6 +1,7 @@
 # Sourced by bashrc within Docker
 
 export NEWLINE=$'\n'
+export NODE_OPTIONS='--max-old-space-size=8192'
 
 bindmount () {
 	if [ "${CIRCLECI}" -o ! -d /cyph ] ; then
@@ -168,11 +169,6 @@ log () {
 	echo -e "\n\n\n${*} ($(date))\n"
 }
 
-# Workaround for https://github.com/angular/angular-cli/issues/10529
-ng () {
-	node --max_old_space_size=8000 ./node_modules/@angular/cli/bin/ng "${@}"
-}
-
 notify () {
 	/node_modules/.bin/notify --text "${*}" > /dev/null
 	log "${*}"
@@ -222,7 +218,6 @@ export -f ipfsHash
 export -f ipfsWarmUp
 export -f ipfsWarmUpAll
 export -f log
-export -f ng
 export -f notify
 export -f parseArgs
 export -f pass
