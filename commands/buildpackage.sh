@@ -324,7 +324,7 @@ if [ "${cacheBustedProjects}" ] ; then
 			cp cyph.com.src/robots.txt cyph.com/
 			while [ ! -f .build.done ] ; do sleep 1 ; done
 			cp -a shared/assets cyph.com/
-			mkdir cyph.com/img
+			if [ ! -d cyph.com/img ] ; then mkdir cyph.com/img ; fi
 			cp shared/assets/img/metaimage.png cyph.com/img/
 		fi
 
