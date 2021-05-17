@@ -7,10 +7,12 @@ const varToSelfReplacements = new Set([
 	'assets/node_modules/openpgp/dist/openpgp.min.js'
 ]);
 
+const args = {
+	path: process.argv[2]
+};
+
 (async () => {
-	const args = {
-		path: process.argv[2]
-	};
+	console.log(`Threadpack start: ${args.path}`);
 
 	const code = fs
 		.readFileSync(args.path)
@@ -42,8 +44,10 @@ const varToSelfReplacements = new Set([
 
 	fs.writeFileSync(args.path, code);
 
+	console.log(`Threadpack complete: ${args.path}`);
+
 	process.exit(0);
 })().catch(err => {
-	console.error(err);
+	console.error(`Threadpack fail: ${args.path}`, err);
 	process.exit(1);
 });
