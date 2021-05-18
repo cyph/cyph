@@ -409,6 +409,7 @@ terser
 terser-webpack-plugin@^5
 text-mask-addons
 textillate
+ts-loader
 ts-node
 tslib
 tslint-consistent-codestyle
