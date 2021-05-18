@@ -260,6 +260,7 @@
 		"firebase-functions": "^3.14.0",
 		"firebase-server": "^1.1.0",
 		"firebase-tools": "^9.10.2",
+		"fork-ts-checker-webpack-plugin": "^6.2.9",
 		"glob": "^7.1.7",
 		"gpu.js": "^2.11.3",
 		"granim": "^2.0.0",
