@@ -111,10 +111,11 @@ export class PGPService extends BaseProvider {
 							) => {
 								const armor = !bytes;
 
-								const message =
+								const message = await openpgp.createMessage(
 									typeof plaintext === 'string' ?
-										openpgp.Message.fromText(plaintext) :
-										openpgp.Message.fromBinary(plaintext);
+										{text: plaintext} :
+										{binary: plaintext}
+								);
 
 								const [privateKeys, publicKeys] =
 									await Promise.all([
@@ -144,7 +145,9 @@ export class PGPService extends BaseProvider {
 								const expirationTime =
 									await publicKey.getExpirationTime();
 
-								const userID = publicKey.users[0]?.userId || {};
+								const {
+									user: {userID}
+								} = await publicKey.getPrimaryUser();
 
 								return {
 									comment: userID.comment,
@@ -154,13 +157,13 @@ export class PGPService extends BaseProvider {
 											undefined :
 											expirationTime.getTime(),
 									fingerprint: publicKey.getFingerprint(),
-									keyID: publicKey.getKeyId().toHex(),
+									keyID: publicKey.getKeyID().toHex(),
 									name: userID.name,
 									publicKey: publicKey.armor(),
 									publicKeyBytes: await transfer(
 										publicKey.toPacketlist().write()
 									),
-									userID: userID.userid
+									userID: userID.userID
 								};
 							},
 							keyPair: async (
@@ -179,7 +182,7 @@ export class PGPService extends BaseProvider {
 									(
 										await openpgp.generateKey({
 											rsaBits: 4096,
-											userIds: [options]
+											userIDs: [options]
 										})
 									).key :
 									await readRawKey(options.privateKey);
@@ -232,11 +235,15 @@ export class PGPService extends BaseProvider {
 												message:
 													typeof signed.message ===
 													'string' ?
-														openpgp.CleartextMessage.fromText(
-															signed.message
+														await openpgp.createCleartextMessage(
+															{
+																text: signed.message
+															}
 														) :
-														openpgp.Message.fromBinary(
-															signed.message
+														await openpgp.createMessage(
+															{
+																binary: signed.message
+															}
 														),
 												signature:
 													await openpgp.readSignature(
@@ -307,10 +314,12 @@ export class PGPService extends BaseProvider {
 
 								const pgpMessage =
 									typeof message === 'string' ?
-										openpgp.CleartextMessage.fromText(
-											message
-										) :
-										openpgp.Message.fromBinary(message);
+										await openpgp.createCleartextMessage({
+											text: message
+										}) :
+										await openpgp.createMessage({
+											binary: message
+										});
 
 								const privateKeys = await readRawKeys(
 									privateKeysRaw
