@@ -1,7 +1,11 @@
-const {format} = require('@cyph/prettier');
+const cyphPrettier = require('@cyph/prettier');
 const fs = require('fs');
 const path = require('path');
 const puppeteer = require('puppeteer');
+
+const packageJSON = JSON.parse(
+	fs.readFileSync(path.join(__dirname, '..', '..', 'package.json')).toString()
+);
 
 const cordovaJSPath = path.join(__dirname, '..', 'www', 'cordova.js');
 
@@ -65,23 +69,12 @@ const defaultCacheValuesPath = path.join(
 
 	fs.writeFileSync(
 		defaultCacheValuesPath,
-		format(`var defaultCacheValues = ${cacheValues};`, {
-			arrowParens: 'avoid',
-			bracketSpacing: false,
-			endOfLine: 'lf',
-			htmlWhitespaceSensitivity: 'css',
-			jsxBracketSameLine: false,
-			jsxSingleQuote: false,
-			parser: 'babel',
-			printWidth: 80,
-			proseWrap: 'always',
-			quoteProps: 'consistent',
-			semi: true,
-			singleQuote: true,
-			tabWidth: 4,
-			trailingComma: 'none',
-			useTabs: true
-		}).replace(' =', '\t=')
+		cyphPrettier
+			.format(`var defaultCacheValues = ${cacheValues};`, {
+				...packageJSON.prettier,
+				parser: 'babel'
+			})
+			.replace(' =', '\t=')
 	);
 
 	fs.unlinkSync(cordovaJSPath);
