@@ -1,4 +1,5 @@
 import {NgModule} from '@angular/core';
+import {setProtoThread} from '../proto';
 import {AccountComponent} from '../components/account';
 import {AccountAfterRegisterComponent} from '../components/account-after-register';
 import {AccountAppointmentAgendaComponent} from '../components/account-appointment-agenda';
@@ -69,6 +70,7 @@ import {AccountDatabaseService} from '../services/crypto/account-database.servic
 import {PGPService} from '../services/crypto/pgp.service';
 import {DatabaseService} from '../services/database.service';
 import {ProductTourService} from '../services/product-tour.service';
+import {ProtoThreadService} from '../services/proto-thread.service';
 import {CyphCommonModule} from './cyph-common.module';
 
 /**
@@ -210,7 +212,8 @@ export class CyphAppModule {
 		accountPostsService: AccountPostsService,
 		databaseService: DatabaseService,
 		pgpService: PGPService,
-		productTourService: ProductTourService
+		productTourService: ProductTourService,
+		protoThreadService: ProtoThreadService
 	) {
 		AccountContactsService.accountContactsSearchComponent.resolve(
 			AccountContactsSearchComponent
@@ -219,6 +222,8 @@ export class CyphAppModule {
 		AccountFilesService.accountFileSharingComponent.resolve(
 			AccountFileSharingComponent
 		);
+
+		setProtoThread(protoThreadService);
 
 		/* For debugging */
 

@@ -16,7 +16,11 @@ export class MaybeTimedArrayProto<T>
 		bytes: Uint8Array
 	) : Promise<(ITimedValue<T> | {empty: true; timestamp?: number})[]> {
 		return Promise.all(
-			Internal.MaybeTimedValueArray.decode(bytes).data.map(async o =>
+			(
+				await Promise.resolve(
+					Internal.MaybeTimedValueArray.decode(bytes)
+				)
+			).data.map(async o =>
 				!o.empty && o.value ?
 					{
 						timestamp: o.timestamp || 0,
@@ -34,27 +38,32 @@ export class MaybeTimedArrayProto<T>
 	public async encode (
 		data: (ITimedValue<T> | {empty: true; timestamp?: number})[]
 	) : Promise<Uint8Array> {
-		const encoded = Internal.MaybeTimedValueArray.encode({
-			data: await Promise.all(
-				data.map(async maybeTimedValue => {
-					if ('empty' in maybeTimedValue && maybeTimedValue.empty) {
+		const encoded = await Promise.resolve(
+			Internal.MaybeTimedValueArray.encode({
+				data: await Promise.all(
+					data.map(async maybeTimedValue => {
+						if (
+							'empty' in maybeTimedValue &&
+							maybeTimedValue.empty
+						) {
+							return {
+								empty: true,
+								timestamp: maybeTimedValue.timestamp
+							};
+						}
+
+						const o = await this.proto.encode(
+							(<ITimedValue<T>> maybeTimedValue).value
+						);
+
 						return {
-							empty: true,
-							timestamp: maybeTimedValue.timestamp
+							timestamp: maybeTimedValue.timestamp,
+							value: o instanceof Uint8Array ? o : o.finish()
 						};
-					}
-
-					const o = await this.proto.encode(
-						(<ITimedValue<T>> maybeTimedValue).value
-					);
-
-					return {
-						timestamp: maybeTimedValue.timestamp,
-						value: o instanceof Uint8Array ? o : o.finish()
-					};
-				})
-			)
-		});
+					})
+				)
+			})
+		);
 
 		return encoded instanceof Uint8Array ? encoded : encoded.finish();
 	}

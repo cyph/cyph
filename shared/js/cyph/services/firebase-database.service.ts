@@ -1699,10 +1699,10 @@ export class FirebaseDatabaseService extends DatabaseService {
 							catch {
 								lastValue = undefined;
 								const timestamp = await getTimestamp();
-								this.ngZone.run(() => {
+								this.ngZone.run(async () => {
 									subject.next({
 										timestamp,
-										value: proto.create()
+										value: await proto.create()
 									});
 								});
 							}

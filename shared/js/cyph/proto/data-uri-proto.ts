@@ -88,7 +88,7 @@ export class DataURIProto {
 	}
 
 	/** @see DataURIProto.create */
-	public create () : SafeUrl {
+	public async create () : Promise<SafeUrl> {
 		return DataURIProto.create();
 	}
 

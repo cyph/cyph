@@ -1,9 +1,16 @@
 #!/bin/bash
 
 
+eval "$(parseArgs \
+	--opt-bool omit-worker \
+)"
+
+
 dir="$PWD"
 cd $(cd "$(dirname "$0")" ; pwd)/..
 
+
+omitWorker="$(getBoolArg ${_arg_omit_worker})"
 
 rm -rf shared/js/proto 2> /dev/null
 mkdir shared/js/proto
@@ -18,3 +25,8 @@ echo "export * from './types';" > shared/js/proto/index.d.ts
 # https://github.com/protobufjs/protobuf.js/issues/1306#issuecomment-549204730
 sed -i "s|\[ 'object' \]\.|Record|g" shared/js/proto/types.d.ts
 sed -i "s|\[ 'Array' \]\.|Array|g" shared/js/proto/types.d.ts
+
+if [ ! "${omitWorker}" ] ; then
+	./commands/protobufworker.js
+	checkfail
+fi
