@@ -400,6 +400,7 @@
 		"terser-webpack-plugin": "^5.1.2",
 		"text-mask-addons": "^3.8.0",
 		"textillate": "^0.4.1",
+		"ts-loader": "^9.1.2",
 		"ts-node": "^9.1.1",
 		"tslib": "^2.2.0",
 		"tslint-consistent-codestyle": "^1.16.0",
