@@ -194,10 +194,18 @@ for f in ${typescriptAssets} ; do
 	m="$(getmodulename "${f}")"
 
 	cat > "$(echo "${f}" | sha).webpack.js" <<- EOM
-		const {TsConfigPathsPlugin} = require('awesome-typescript-loader');
+		const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
+		const fs = require('fs');
 		const path = require('path');
 		const TerserPlugin = require('terser-webpack-plugin');
 		const {mangleExceptions} = require('../../../scripts/mangleexceptions');
+
+		const tsconfig = JSON.parse(
+			fs.readFileSync('../../js/tsconfig.json').toString().
+				split('\n').
+				filter(s => s.trim()[0] !== '/').
+				join('\n')
+		);
 
 		module.exports = {
 			entry: {
@@ -207,8 +215,11 @@ for f in ${typescriptAssets} ; do
 			module: {
 				rules: [
 					{
-						test: /\.ts$/,
-						use: [{loader: 'awesome-typescript-loader'}]
+						loader: 'ts-loader',
+						options: {
+							transpileOnly: true
+						},
+						test: /\.ts$/
 					}
 				]
 			},
@@ -256,17 +267,26 @@ for f in ${typescriptAssets} ; do
 				libraryTarget: 'var',
 				path: '${PWD}'
 			},
+			plugins: [
+				new ForkTsCheckerWebpackPlugin({
+					typescript: {
+						configFile: 'tsconfig.json'
+					}
+				})
+			],
 			resolve: {
 				alias: {
-					jquery: path.resolve(__dirname, '../../js/externals/jquery.ts')
+					jquery: path.resolve(__dirname, '../../js/externals/jquery.ts'),
+					...Object.entries(tsconfig.compilerOptions.paths)
+						.map(([k, [v]]) => [
+							k,
+							v.startsWith('../node_modules/') ?
+								v.slice(2) :
+								path.resolve(__dirname, '../../' + v + '.ts')
+						])
+						.reduce((o, [k, v]) => ({...o, [k]: v}), {})
 				},
-				extensions: ['.js', '.ts'],
-				plugins: [
-					new TsConfigPathsPlugin({
-						compiler: 'typescript',
-						configFileName: 'tsconfig.json'
-					})
-				]
+				extensions: ['.js', '.ts']
 			}
 		};
 	EOM
