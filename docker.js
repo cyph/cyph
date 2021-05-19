@@ -547,7 +547,6 @@ const dockerBase64Files = s =>
 			'commands/.bashrc',
 			'commands/dockerpostmake.sh',
 			'commands/getlibs.sh',
-			'commands/libclone.sh',
 			'commands/updatedockerimage.sh',
 			'native/plugins.list',
 			'shared/lib/js/package.json',
