@@ -59,8 +59,6 @@ if [ ! -d ~/.ipfs ] ; then
 fi
 
 
-go get -u github.com/codegangsta/gin
-
 # app-engine-go currently fails on ARM, but the others work
 for component in app-engine-go beta cloud-datastore-emulator ; do
 	~/google-cloud-sdk/install.sh \
