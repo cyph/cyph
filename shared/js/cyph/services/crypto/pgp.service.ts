@@ -1,7 +1,8 @@
-/* eslint-disable max-lines */
+/* eslint-disable max-classes-per-file, max-lines */
 
 import {Injectable} from '@angular/core';
 import memoize from 'lodash-es/memoize';
+import OpenPGP from 'openpgp/openpgp.d';
 import {BaseProvider} from '../../base-provider';
 import {potassiumUtil} from '../../crypto/potassium/potassium-util';
 import {IKeyPair, IPGPMetadata} from '../../proto/types';
@@ -25,24 +26,38 @@ export class PGPService extends BaseProvider {
 						'/assets/node_modules/openpgp/dist/openpgp.min.js'
 					);
 
-					const openpgp = (<any> self).openpgp;
+					const openpgp: typeof OpenPGP = (<any> self).openpgp;
 
-					openpgp.config.versionstring = 'Cyph';
-					openpgp.config.commentstring = 'https://www.cyph.com';
+					openpgp.config.versionString = 'Cyph';
+					openpgp.config.commentString = 'https://www.cyph.com';
+					openpgp.config.showVersion = true;
+					openpgp.config.showComment = true;
 
 					const readRawKey = async (key: Uint8Array | string) =>
-						openpgp.readKey(
-							typeof key === 'string' ?
-								{armoredKey: key} :
-								{binaryKey: key}
-						);
+						typeof key === 'string' ?
+							openpgp.readKey({armoredKey: key}) :
+							openpgp.readKey({binaryKey: key});
 
-					const readRawKeys = async (
-						keys: (Uint8Array | string)[] | undefined
-					) =>
-						keys === undefined ?
-							undefined :
-							Promise.all(keys.map(readRawKey));
+					/* eslint-disable-next-line @typescript-eslint/unbound-method */
+					const {readRawKeys} = class {
+						/** @ignore */
+						public static async readRawKeys (
+							keys: undefined
+						) : Promise<undefined>;
+						public static async readRawKeys (
+							keys: (Uint8Array | string)[]
+						) : Promise<OpenPGP.Key[]>;
+						public static async readRawKeys (
+							keys: (Uint8Array | string)[] | undefined
+						) : Promise<OpenPGP.Key[] | undefined>;
+						public static async readRawKeys (
+							keys: (Uint8Array | string)[] | undefined
+						) : Promise<OpenPGP.Key[] | undefined> {
+							return keys === undefined ?
+								undefined :
+								Promise.all(keys.map(readRawKey));
+						}
+					};
 
 					const transfer = async (data: any) => {
 						data = await data;
@@ -51,16 +66,22 @@ export class PGPService extends BaseProvider {
 							data;
 					};
 
-					const validateSignatures = (
-						signatures: {valid?: boolean}[],
+					const validateSignatures = async (
+						/* eslint-disable-next-line no-null/no-null */
+						signatures: {verified?: Promise<null | boolean>}[],
 						publicKeys?: any[]
 					) =>
 						!!publicKeys &&
 						(publicKeys.length < 1 ||
 							(signatures.length >= publicKeys.length &&
-								signatures
-									.map(sig => !!sig.valid)
-									.reduce((a, b) => a && b, true)));
+								(
+									await Promise.all(
+										signatures.map(
+											async sig =>
+												(await sig.verified) === true
+										)
+									)
+								).reduce((a, b) => a && b, true)));
 
 					(<any> self).Comlink.expose(
 						{
@@ -74,11 +95,13 @@ export class PGPService extends BaseProvider {
 							) => {
 								const [message, privateKeys, publicKeys] =
 									await Promise.all([
-										openpgp.readMessage(
-											typeof cyphertext === 'string' ?
-												{armoredMessage: cyphertext} :
-												{binaryMessage: cyphertext}
-										),
+										typeof cyphertext === 'string' ?
+											openpgp.readMessage({
+												armoredMessage: cyphertext
+											}) :
+											openpgp.readMessage({
+												binaryMessage: cyphertext
+											}),
 										readRawKeys(privateKeysRaw),
 										readRawKeys(signingPublicKeysRaw)
 									]);
@@ -91,10 +114,10 @@ export class PGPService extends BaseProvider {
 								});
 
 								if (
-									!validateSignatures(
+									!(await validateSignatures(
 										o.signatures,
 										publicKeys
-									)
+									))
 								) {
 									throw new Error('Invalid signature.');
 								}
@@ -111,11 +134,14 @@ export class PGPService extends BaseProvider {
 							) => {
 								const armor = !bytes;
 
-								const message = await openpgp.createMessage(
+								const message =
 									typeof plaintext === 'string' ?
-										{text: plaintext} :
-										{binary: plaintext}
-								);
+										await openpgp.createMessage({
+											text: plaintext
+										}) :
+										await openpgp.createMessage({
+											binary: plaintext
+										});
 
 								const [privateKeys, publicKeys] =
 									await Promise.all([
@@ -150,20 +176,24 @@ export class PGPService extends BaseProvider {
 								} = await publicKey.getPrimaryUser();
 
 								return {
-									comment: userID.comment,
-									email: userID.email,
+									comment: userID?.comment,
+									email: userID?.email,
 									expires:
 										expirationTime === Infinity ?
 											undefined :
-											expirationTime.getTime(),
+										typeof expirationTime === 'number' ?
+											expirationTime :
+										expirationTime instanceof Date ?
+											expirationTime.getTime() :
+											undefined,
 									fingerprint: publicKey.getFingerprint(),
 									keyID: publicKey.getKeyID().toHex(),
-									name: userID.name,
+									name: userID?.name,
 									publicKey: publicKey.armor(),
 									publicKeyBytes: await transfer(
-										publicKey.toPacketlist().write()
+										publicKey.write()
 									),
-									userID: userID.userID
+									userID: userID?.userID
 								};
 							},
 							keyPair: async (
@@ -178,7 +208,7 @@ export class PGPService extends BaseProvider {
 											privateKey: Uint8Array | string;
 									  }
 							) => {
-								const o = !('privateKey' in options) ?
+								let o = !('privateKey' in options) ?
 									(
 										await openpgp.generateKey({
 											rsaBits: 4096,
@@ -192,7 +222,10 @@ export class PGPService extends BaseProvider {
 									!o.isDecrypted()
 								) {
 									try {
-										await o.decrypt(options.passphrase);
+										o = await openpgp.decryptKey({
+											passphrase: options.passphrase,
+											privateKey: o
+										});
 									}
 									catch {
 										throw new Error(
@@ -202,11 +235,9 @@ export class PGPService extends BaseProvider {
 								}
 
 								return {
-									privateKey: await transfer(
-										o.toPacketlist().write()
-									),
+									privateKey: await transfer(o.write()),
 									publicKey: await transfer(
-										o.toPublic().toPacketlist().write()
+										o.toPublic().write()
 									)
 								};
 							},
@@ -220,80 +251,124 @@ export class PGPService extends BaseProvider {
 									  },
 								publicKeysRaw: (Uint8Array | string)[]
 							) => {
-								const detached = !(
-									typeof signed === 'string' ||
-									signed instanceof Uint8Array
-								);
-
-								const [message, publicKeys] = await Promise.all(
-									[
+								const [{message, signature}, publicKeys] =
+									await Promise.all([
 										!(
 											typeof signed === 'string' ||
 											signed instanceof Uint8Array
 										) ?
 											(async () => ({
 												message:
+													typeof signed ===
+														'object' &&
 													typeof signed.message ===
-													'string' ?
+														'string' ?
 														await openpgp.createCleartextMessage(
 															{
 																text: signed.message
 															}
 														) :
+													typeof signed ===
+															'object' &&
+														signed.message instanceof
+															Uint8Array ?
 														await openpgp.createMessage(
 															{
 																binary: signed.message
 															}
-														),
+														) :
+														undefined,
 												signature:
-													await openpgp.readSignature(
-														typeof signed.signature ===
-															'string' ?
+													typeof signed ===
+														'object' &&
+													typeof signed.signature ===
+														'string' ?
+														await openpgp.readSignature(
 															{
 																armoredSignature:
 																	signed.signature
-															} :
+															}
+														) :
+													typeof signed ===
+															'object' &&
+														signed.signature instanceof
+															Uint8Array ?
+														await openpgp.readSignature(
 															{
 																binarySignature:
 																	signed.signature
 															}
-													)
+														) :
+														undefined
 											}))() :
 										typeof signed === 'string' ?
 											(async () => {
-												try {
-													return openpgp.readCleartextMessage(
-														{
-															cleartextMessage:
-																signed
-														}
+												if (
+													typeof signed !== 'string'
+												) {
+													throw new Error(
+														'Invalid `signed` value.'
 													);
 												}
+
+												try {
+													return {
+														message:
+															await openpgp.readCleartextMessage(
+																{
+																	cleartextMessage:
+																		signed
+																}
+															),
+														signature: undefined
+													};
+												}
 												catch {
-													return openpgp.readMessage({
-														armoredMessage: signed
-													});
+													return {
+														message:
+															await openpgp.readMessage(
+																{
+																	armoredMessage:
+																		signed
+																}
+															),
+														signature: undefined
+													};
 												}
 											})() :
-											openpgp.readMessage({
-												binaryMessage: signed
-											}),
+											(async () => ({
+												message:
+													await openpgp.readMessage({
+														binaryMessage: signed
+													}),
+												signature: undefined
+											}))(),
 										readRawKeys(publicKeysRaw)
-									]
-								);
+									]);
 
-								const o = await openpgp.verify({
-									detached,
-									message: detached ?
-										message.message :
-										message,
-									publicKeys,
-									signature: detached ?
-										message.signature :
-										undefined
-								});
+								if (message === undefined) {
+									throw new Error('Invalid `message` value.');
+								}
 
-								const isValid = validateSignatures(
+								const detached = signature !== undefined;
+
+								const o =
+									message instanceof
+									openpgp.CleartextMessage ?
+										{
+											data: message.getText(),
+											signatures: await message.verify(
+													publicKeys
+												)
+										} :
+										await openpgp.verify({
+											expectSigned: true,
+											message,
+											publicKeys,
+											signature
+										});
+
+								const isValid = await validateSignatures(
 									o.signatures,
 									publicKeys
 								);
@@ -326,12 +401,20 @@ export class PGPService extends BaseProvider {
 								);
 
 								return transfer(
-									await openpgp.sign({
-										armor,
-										detached,
-										message: pgpMessage,
-										privateKeys
-									})
+									pgpMessage instanceof
+										openpgp.CleartextMessage ?
+										await openpgp.sign({
+											armor,
+											detached,
+											message: pgpMessage,
+											privateKeys
+										}) :
+										await openpgp.sign({
+											armor,
+											detached,
+											message: pgpMessage,
+											privateKeys
+										})
 								);
 							}
 						},
