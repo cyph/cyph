@@ -3,7 +3,8 @@
 :host ::ng-deep {
 	> span {
 		> p:only-child {
-			display: inline;
+			margin-top: 0;
+			margin-bottom: 0;
 		}
 
 		hr {
