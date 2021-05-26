@@ -1217,7 +1217,7 @@ func trackEvent(h HandlerArgs, category, action, label string, value int) error 
 	return err
 }
 
-func trackPartnerConversion(h HandlerArgs, transactionID string, orderID string, totalAmount int64) error {
+func trackPartnerConversion(h HandlerArgs, orderID, transactionID string, totalAmount int64) error {
 	req, err := http.NewRequest(
 		methods.GET,
 		config.PartnerConversionURL+"/?nid="+everflowID+"&verification_token="+everflowToken+"&amount="+strconv.FormatInt(totalAmount/100, 10)+"&order_id="+orderID+"&transaction_id="+transactionID,
