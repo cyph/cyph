@@ -130,7 +130,6 @@ export class Config {
 						maxUsers?: number;
 						minUsers?: number;
 						name?: string;
-						offerID?: number;
 						perUser?: boolean;
 						subscriptionType?: 'annual' | 'monthly';
 					};

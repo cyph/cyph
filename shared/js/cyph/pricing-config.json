@@ -375,7 +375,6 @@
 					"id": 10,
 					"individualSubscriptions": true,
 					"name": "Telehealth (Annual)",
-					"offerID": 3,
 					"perUser": true,
 					"subscriptionType": "annual"
 				},
@@ -385,7 +384,6 @@
 					"id": 9,
 					"individualSubscriptions": true,
 					"name": "Telehealth (Monthly)",
-					"offerID": 2,
 					"perUser": true,
 					"subscriptionType": "monthly"
 				}

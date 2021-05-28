@@ -17,7 +17,6 @@
 				itemName = 'Monthly Premium',
 				maxUsers = 25,
 				minUsers = 6,
-				offerID = undefined,
 				noSpinnerEnd = false,
 				perUser = true,
 				subscriptionType = 1
@@ -39,9 +38,6 @@
 				checkout.setAttribute('item-name', itemName);
 				checkout.setAttribute('max-users', maxUsers);
 				checkout.setAttribute('min-users', minUsers);
-				if (offerID) {
-					checkout.setAttribute('offer-i-d', offerID);
-				}
 				checkout.setAttribute('no-spinner-end', noSpinnerEnd);
 				checkout.setAttribute('per-user', perUser);
 				checkout.setAttribute('subscription-type', subscriptionType);

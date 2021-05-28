@@ -166,9 +166,6 @@ export class CheckoutComponent
 	/** If true, will never stop spinning. */
 	@Input() public noSpinnerEnd: boolean = false;
 
-	/** If applicable, partner offer ID. */
-	@Input() public offerID?: number;
-
 	/** Amount saved via partner discount, if applicable. */
 	public readonly partnerDiscountString = new BehaviorSubject<
 		string | undefined
@@ -575,13 +572,6 @@ export class CheckoutComponent
 		if (typeof this.noSpinnerEnd === 'string') {
 			this.noSpinnerEnd = <any> this.noSpinnerEnd === 'true';
 		}
-		if (
-			/* eslint-disable-next-line @typescript-eslint/tslint/config */
-			typeof this.offerID === 'string' &&
-			this.offerID
-		) {
-			this.offerID = parseFloat(this.offerID);
-		}
 		/* eslint-disable-next-line @typescript-eslint/tslint/config */
 		if (typeof this.perUser === 'string') {
 			this.perUser = <any> this.perUser === 'true';
@@ -596,12 +586,10 @@ export class CheckoutComponent
 		this.updateUserOptions();
 
 		const affid: string | undefined =
-			EF && this.offerID !== undefined ?
-				EF.urlParameter('affid') ||
-				/* eslint-disable-next-line @typescript-eslint/tslint/config */
-				localStorage.getItem('affid') ||
-				undefined :
-				undefined;
+			EF?.urlParameter('affid') ||
+			/* eslint-disable-next-line @typescript-eslint/tslint/config */
+			localStorage.getItem('affid') ||
+			undefined;
 
 		if (affid) {
 			const partnerDiscount =
@@ -622,7 +610,7 @@ export class CheckoutComponent
 					/* eslint-disable-next-line @typescript-eslint/naming-convention */
 					affiliate_id: affid,
 					/* eslint-disable-next-line @typescript-eslint/naming-convention */
-					offer_id: this.offerID,
+					offer_id: this.envService.everflowOfferID,
 					sub1: EF.urlParameter('sub1'),
 					sub2: EF.urlParameter('sub2'),
 					sub3: EF.urlParameter('sub3'),
