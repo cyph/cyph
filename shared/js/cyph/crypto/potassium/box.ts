@@ -3,6 +3,7 @@ import {mceliece} from 'mceliece';
 import {ntru} from 'ntru';
 import {sidh} from 'sidh';
 import {IKeyPair} from '../../proto/types';
+import {debugLog} from '../../util/log';
 import {retryUntilSuccessful} from '../../util/wait/retry-until-successful';
 import {IBox} from './ibox';
 import {IOneTimeAuth} from './ione-time-auth';
@@ -251,30 +252,86 @@ export class Box implements IBox {
 		ntru: Uint8Array;
 		sidh: Uint8Array;
 	}> {
+		const [
+			classicalCypherPublicKeyBytes,
+			mceliecePublicKeyBytes,
+			ntruPublicKeyBytes,
+			sidhPublicKeyBytes
+		] = await Promise.all([
+			this.classicalCypher.publicKeyBytes,
+			mceliece.publicKeyBytes,
+			ntru.publicKeyBytes,
+			sidh.publicKeyBytes
+		]);
+
+		const logProgress = (publicKeys?: () => Record<string, Uint8Array>) =>
+			debugLog(() => ({
+				splitPublicKey: {
+					byteLengths: {
+						classicalCypherPublicKeyBytes,
+						mceliecePublicKeyBytes,
+						ntruPublicKeyBytes,
+						sidhPublicKeyBytes
+					},
+					publicKeys: publicKeys ? publicKeys() : undefined
+				}
+			})).catch(() => {});
+
+		logProgress();
+
+		const classicalKey = potassiumUtil.toBytes(
+			publicKey,
+			0,
+			classicalCypherPublicKeyBytes
+		);
+
+		logProgress(() => ({
+			classicalKey
+		}));
+
+		const mcelieceKey = potassiumUtil.toBytes(
+			publicKey,
+			classicalCypherPublicKeyBytes,
+			mceliecePublicKeyBytes
+		);
+
+		logProgress(() => ({
+			classicalKey,
+			mcelieceKey
+		}));
+
+		const ntruKey = potassiumUtil.toBytes(
+			publicKey,
+			classicalCypherPublicKeyBytes + mceliecePublicKeyBytes,
+			ntruPublicKeyBytes
+		);
+
+		logProgress(() => ({
+			classicalKey,
+			mcelieceKey,
+			ntruKey
+		}));
+
+		const sidhKey = potassiumUtil.toBytes(
+			publicKey,
+			classicalCypherPublicKeyBytes +
+				mceliecePublicKeyBytes +
+				ntruPublicKeyBytes,
+			sidhPublicKeyBytes
+		);
+
+		logProgress(() => ({
+			classicalKey,
+			mcelieceKey,
+			ntruKey,
+			sidhKey
+		}));
+
 		return {
-			classical: potassiumUtil.toBytes(
-				publicKey,
-				0,
-				await this.classicalCypher.publicKeyBytes
-			),
-			mceliece: potassiumUtil.toBytes(
-				publicKey,
-				await this.classicalCypher.publicKeyBytes,
-				await mceliece.publicKeyBytes
-			),
-			ntru: potassiumUtil.toBytes(
-				publicKey,
-				(await this.classicalCypher.publicKeyBytes) +
-					(await mceliece.publicKeyBytes),
-				await ntru.publicKeyBytes
-			),
-			sidh: potassiumUtil.toBytes(
-				publicKey,
-				(await this.classicalCypher.publicKeyBytes) +
-					(await mceliece.publicKeyBytes) +
-					(await ntru.publicKeyBytes),
-				await sidh.publicKeyBytes
-			)
+			classical: classicalKey,
+			mceliece: mcelieceKey,
+			ntru: ntruKey,
+			sidh: sidhKey
 		};
 	}
 
