@@ -62,7 +62,7 @@ export class PotassiumUtil {
 		let index = 0;
 
 		for (const a of arrays) {
-			out.set(this.toBytes(a), index);
+			out.set(new Uint8Array(this.toBytes(a)), index);
 			index += a.byteLength;
 
 			if (clearOriginals) {

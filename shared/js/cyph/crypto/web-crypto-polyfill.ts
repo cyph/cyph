@@ -67,7 +67,6 @@ export const webCryptoPolyfill = (seed: Uint8Array) => {
 				array.byteOffset,
 				array.byteLength
 			).set(newBytes);
-			sodium().memzero(newBytes);
 
 			return array;
 		},
