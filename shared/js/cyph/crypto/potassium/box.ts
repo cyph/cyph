@@ -264,7 +264,9 @@ export class Box implements IBox {
 			sidh.publicKeyBytes
 		]);
 
-		const logProgress = (publicKeys?: () => Record<string, Uint8Array>) =>
+		const logProgress = async (
+			publicKeys?: () => Record<string, Uint8Array>
+		) =>
 			debugLog(() => ({
 				splitPublicKey: {
 					byteLengths: {
