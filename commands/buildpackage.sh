@@ -439,10 +439,10 @@ for d in ${compiledProjects} ; do
 		)};
 	`.trim()))().then(() => process.exit(0))' > src/js/standalone/translations.ts
 
-	if \
-		( [ "${debug}" ] && [ ! "${debugProdBuild}" ] ) || \
-		( [ "${simple}" ] && [ ! "${simpleProdBuild}" ] )
-	then
+	if [ "${simple}" ] && [ ! "${simpleProdBuild}" ] ; then
+		ng build --configuration "${environment}" --source-map false --vendor-chunk true || fail
+		terser dist/vendor.js -o dist/vendor.js
+	elif [ "${debug}" ] && [ ! "${debugProdBuild}" ] ; then
 		ng build --source-map false --configuration "${environment}" || fail
 	else
 		../commands/prodbuild.sh --configuration "${environment}" || fail
