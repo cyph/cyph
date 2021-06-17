@@ -108,6 +108,13 @@ export class Env extends EnvDeploy {
 	/** Indicates whether debug logging is enabled (true by default when debug is true). */
 	public readonly debugLog: boolean = this.debug;
 
+	/** If applicable, local storage key for log backups. */
+	/* eslint-disable-next-line @typescript-eslint/tslint/config */
+	public readonly debugLogID: string | undefined =
+		this.debugLog && !environment.production ?
+			`DebugLog_${Date.now().toString()}` :
+			undefined;
+
 	/** @see IEnvironment */
 	public readonly environment: IEnvironment = environment;
 

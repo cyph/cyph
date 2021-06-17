@@ -78,6 +78,16 @@ const debugLogInternal = async (
 		console.log(date, ...(argsString ? [argsString] : args));
 	}
 
+	if (env.debugLogID) {
+		/* eslint-disable-next-line @typescript-eslint/tslint/config */
+		localStorage.setItem(
+			env.debugLogID,
+			`${localStorage.getItem(env.debugLogID) || ''}${JSON.stringify(
+				log
+			)}\n\n`
+		);
+	}
+
 	return log;
 };
 
