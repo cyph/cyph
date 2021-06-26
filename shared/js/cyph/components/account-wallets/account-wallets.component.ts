@@ -258,14 +258,14 @@ export class AccountWalletsComponent extends BaseProvider implements OnInit {
 		amount?: number
 	) : Promise<void> {
 		if (recipient === undefined || amount === undefined || isNaN(amount)) {
-			this.accountFilesService.showSpinner.next(-1);
+			this.accountFilesService.showSpinner().next(-1);
 
 			let balance: number;
 			try {
 				balance = await this.cryptocurrencyService.getBalance(wallet);
 			}
 			finally {
-				this.accountFilesService.showSpinner.next(undefined);
+				this.accountFilesService.showSpinner().next(undefined);
 			}
 
 			const transactionFee =
@@ -360,7 +360,7 @@ export class AccountWalletsComponent extends BaseProvider implements OnInit {
 			return;
 		}
 
-		this.accountFilesService.showSpinner.next(-1);
+		this.accountFilesService.showSpinner().next(-1);
 
 		try {
 			await this.cryptocurrencyService.send(wallet, recipient, amount);
@@ -385,7 +385,7 @@ export class AccountWalletsComponent extends BaseProvider implements OnInit {
 			});
 		}
 		finally {
-			this.accountFilesService.showSpinner.next(undefined);
+			this.accountFilesService.showSpinner().next(undefined);
 		}
 	}
 

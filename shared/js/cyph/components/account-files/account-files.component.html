@@ -1,7 +1,7 @@
 <cyph-account-base-file-list #baseFileList>
 	<ng-container
 		*ngIf="
-			((accountFilesService.filesTotalSize | await) || 0) <=
+			((accountFilesService.filesTotalSize() | await) || 0) <=
 				((accountFilesService.fileStorageLimit | await) || 0);
 			else blocked
 		"

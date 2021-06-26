@@ -3,7 +3,9 @@
 	fxLayout="row"
 	fxLayoutAlign="center start"
 	class="card-list"
-	[class.initiating]="(accountFilesService.showSpinner | await) !== undefined"
+	[class.initiating]="
+		(accountFilesService.showSpinner() | await) !== undefined
+	"
 	*ngIf="envService.isTelehealth"
 >
 	<div
@@ -15,8 +17,8 @@
 	>
 		<ng-container
 			*ngFor="
-				let redoxPatient of accountFilesService.incomingFilesFiltered
-					.redoxPatients | await;
+				let redoxPatient of accountFilesService.incomingFilesFiltered.redoxPatients()
+					| await;
 				trackBy: trackByID;
 				let i = index
 			"
@@ -28,7 +30,7 @@
 				"
 				[attr.data-index]="i"
 				[class.bounceInRight]="
-					(accountFilesService.initiated | await) === false
+					(accountFilesService.initiated() | await) === false
 				"
 				[ngClass]="'_' + i"
 			>
@@ -79,19 +81,19 @@
 	</div>
 
 	<ng-container
-		*ngIf="(accountFilesService.showSpinner | await) !== undefined"
+		*ngIf="(accountFilesService.showSpinner() | await) !== undefined"
 	>
 		<cyph-spinner
 			mode="indeterminate"
 			*ngIf="
-				((accountFilesService.showSpinner | await) || 0) < 1;
+				((accountFilesService.showSpinner() | await) || 0) < 1;
 				else determinateFileSpinner
 			"
 		></cyph-spinner>
 		<ng-template #determinateFileSpinner>
 			<cyph-spinner
 				mode="determinate"
-				[value]="(accountFilesService.showSpinner | await) || 1"
+				[value]="(accountFilesService.showSpinner() | await) || 1"
 			></cyph-spinner>
 		</ng-template>
 	</ng-container>

@@ -3,7 +3,7 @@
 		{{ stringsService.totalSpace }}
 		{{
 			readableByteLength(
-				(accountFilesService.filesTotalSize | await) || 0
+				(accountFilesService.filesTotalSize() | await) || 0
 			)
 		}}
 		/
@@ -15,12 +15,12 @@
 	</h3>
 	<mat-progress-bar
 		[value]="
-			(((accountFilesService.filesTotalSize | await) || 0) /
+			(((accountFilesService.filesTotalSize() | await) || 0) /
 				((accountFilesService.fileStorageLimit | await) || 0)) *
 			100
 		"
 		[color]="
-			((accountFilesService.filesTotalSize | await) || 0) <=
+			((accountFilesService.filesTotalSize() | await) || 0) <=
 			((accountFilesService.fileStorageLimit | await) || 0) ?
 				undefined :
 				'warn'

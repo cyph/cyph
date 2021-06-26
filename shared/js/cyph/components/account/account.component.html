@@ -101,15 +101,17 @@
 						[matBadge]="
 							(
 								((accountService.unreadMessages | await) || 0) +
-								((accountFilesService.incomingFiles | await)
+								((accountFilesService.incomingFiles() | await)
 									?.length || 0)
 							).toString()
 						"
 						[matBadgeHidden]="
 							!(
 								((accountService.unreadMessages | await) || 0) +
-									((accountFilesService.incomingFiles | await)
-										?.length || 0) >
+									((
+										accountFilesService.incomingFiles()
+										| await
+									)?.length || 0) >
 								0
 							)
 						"

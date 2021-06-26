@@ -127,7 +127,7 @@ export class AccountAppointmentsService extends BaseProvider {
 
 	/** All (unfiltered) appointments. */
 	public readonly allAppointments = this.getAppointments(
-		this.accountFilesService.filesListFiltered.appointments
+		this.accountFilesService.filesListFiltered.appointments()
 	);
 
 	/**
@@ -162,7 +162,7 @@ export class AccountAppointmentsService extends BaseProvider {
 			)
 		),
 		incoming: this.getAppointments(
-			this.accountFilesService.incomingFilesFiltered.appointments
+			this.accountFilesService.incomingFilesFiltered.appointments()
 		),
 		past: observableAll([this.allAppointments, watchTimestamp()]).pipe(
 			map(([appointments, now]) =>

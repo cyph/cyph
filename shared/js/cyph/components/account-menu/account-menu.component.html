@@ -46,7 +46,7 @@
 					(currentUser?.user?.userType | await) ===
 						accountUserTypes.Standard &&
 					((
-						accountFilesService.incomingFilesFiltered.redoxPatients
+						accountFilesService.incomingFilesFiltered.redoxPatients()
 						| await
 					)?.length || 0) > 0
 				"
@@ -70,16 +70,16 @@
 						[matBadge]="
 							(
 								(
-									accountFilesService.incomingFilesFiltered
-										.redoxPatients | await
+									accountFilesService.incomingFilesFiltered.redoxPatients()
+									| await
 								)?.length || 0
 							).toString()
 						"
 						[matBadgeHidden]="
 							!(
 								((
-									accountFilesService.incomingFilesFiltered
-										.redoxPatients | await
+									accountFilesService.incomingFilesFiltered.redoxPatients()
+									| await
 								)?.length || 0) > 0
 							)
 						"
@@ -113,16 +113,16 @@
 						[matBadge]="
 							(
 								(
-									accountFilesService.incomingFilesFiltered
-										.appointments | await
+									accountFilesService.incomingFilesFiltered.appointments()
+									| await
 								)?.length || 0
 							).toString()
 						"
 						[matBadgeHidden]="
 							!(
 								((
-									accountFilesService.incomingFilesFiltered
-										.appointments | await
+									accountFilesService.incomingFilesFiltered.appointments()
+									| await
 								)?.length || 0) > 0
 							)
 						"
@@ -295,8 +295,7 @@
 							(
 								((accountService.unreadMessages | await) || 0) +
 								((
-									accountFilesService.incomingFilesFiltered
-										.notes
+									accountFilesService.incomingFilesFiltered.notes()
 									| await
 									| cyphFilter
 										: accountFilesService.filterFunctions
@@ -308,8 +307,7 @@
 							!(
 								((accountService.unreadMessages | await) || 0) +
 									((
-										accountFilesService
-											.incomingFilesFiltered.notes
+										accountFilesService.incomingFilesFiltered.notes()
 										| await
 										| cyphFilter
 											: accountFilesService
@@ -388,11 +386,10 @@
 						mat-list-icon
 						[matBadge]="
 							(
-								((accountFilesService.incomingFiles | await)
+								((accountFilesService.incomingFiles() | await)
 									?.length || 0) -
 								((
-									accountFilesService.incomingFilesFiltered
-										.notes
+									accountFilesService.incomingFilesFiltered.notes()
 									| await
 									| cyphFilter
 										: accountFilesService.filterFunctions
@@ -402,11 +399,10 @@
 						"
 						[matBadgeHidden]="
 							!(
-								((accountFilesService.incomingFiles | await)
+								((accountFilesService.incomingFiles() | await)
 									?.length || 0) -
 									((
-										accountFilesService
-											.incomingFilesFiltered.notes
+										accountFilesService.incomingFilesFiltered.notes()
 										| await
 										| cyphFilter
 											: accountFilesService

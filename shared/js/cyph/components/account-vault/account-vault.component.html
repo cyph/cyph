@@ -7,13 +7,13 @@
 			mat-list-icon
 			[matBadge]="
 				(
-					(accountFilesService.incomingFilesFiltered.files | await)
+					(accountFilesService.incomingFilesFiltered.files() | await)
 						?.length || 0
 				).toString()
 			"
 			[matBadgeHidden]="
 				!(
-					((accountFilesService.incomingFilesFiltered.files | await)
+					((accountFilesService.incomingFilesFiltered.files() | await)
 						?.length || 0) > 0
 				)
 			"
@@ -32,7 +32,7 @@
 			[matBadge]="
 				(
 					(
-						accountFilesService.incomingFilesFiltered.notes
+						accountFilesService.incomingFilesFiltered.notes()
 						| await
 						| cyphFilter
 							: accountFilesService.filterFunctions
@@ -43,7 +43,7 @@
 			[matBadgeHidden]="
 				!(
 					((
-						accountFilesService.incomingFilesFiltered.notes
+						accountFilesService.incomingFilesFiltered.notes()
 						| await
 						| cyphFilter
 							: accountFilesService.filterFunctions
@@ -68,13 +68,13 @@
 			mat-list-icon
 			[matBadge]="
 				(
-					(accountFilesService.incomingFilesFiltered.docs | await)
+					(accountFilesService.incomingFilesFiltered.docs() | await)
 						?.length || 0
 				).toString()
 			"
 			[matBadgeHidden]="
 				!(
-					((accountFilesService.incomingFilesFiltered.docs | await)
+					((accountFilesService.incomingFilesFiltered.docs() | await)
 						?.length || 0) > 0
 				)
 			"
@@ -95,13 +95,13 @@
 			mat-list-icon
 			[matBadge]="
 				(
-					(accountFilesService.incomingFilesFiltered.forms | await)
+					(accountFilesService.incomingFilesFiltered.forms() | await)
 						?.length || 0
 				).toString()
 			"
 			[matBadgeHidden]="
 				!(
-					((accountFilesService.incomingFilesFiltered.forms | await)
+					((accountFilesService.incomingFilesFiltered.forms() | await)
 						?.length || 0) > 0
 				)
 			"
@@ -116,7 +116,7 @@
 				[matBadge]="
 					(
 						(
-							accountFilesService.incomingFilesFiltered.forms
+							accountFilesService.incomingFilesFiltered.forms()
 							| await
 						)?.length || 0
 					).toString()
@@ -124,7 +124,7 @@
 				[matBadgeHidden]="
 					!(
 						((
-							accountFilesService.incomingFilesFiltered.forms
+							accountFilesService.incomingFilesFiltered.forms()
 							| await
 						)?.length || 0) > 0
 					)
@@ -147,7 +147,7 @@
 			[matBadge]="
 				(
 					(
-						accountFilesService.incomingFilesFiltered.passwords
+						accountFilesService.incomingFilesFiltered.passwords()
 						| await
 					)?.length || 0
 				).toString()
@@ -155,7 +155,7 @@
 			[matBadgeHidden]="
 				!(
 					((
-						accountFilesService.incomingFilesFiltered.passwords
+						accountFilesService.incomingFilesFiltered.passwords()
 						| await
 					)?.length || 0) > 0
 				)
@@ -174,14 +174,18 @@
 			mat-list-icon
 			[matBadge]="
 				(
-					(accountFilesService.incomingFilesFiltered.pgpKeys | await)
-						?.length || 0
+					(
+						accountFilesService.incomingFilesFiltered.pgpKeys()
+						| await
+					)?.length || 0
 				).toString()
 			"
 			[matBadgeHidden]="
 				!(
-					((accountFilesService.incomingFilesFiltered.pgpKeys | await)
-						?.length || 0) > 0
+					((
+						accountFilesService.incomingFilesFiltered.pgpKeys()
+						| await
+					)?.length || 0) > 0
 				)
 			"
 			matBadgePosition="above after"
@@ -201,14 +205,18 @@
 			mat-list-icon
 			[matBadge]="
 				(
-					(accountFilesService.incomingFilesFiltered.wallets | await)
-						?.length || 0
+					(
+						accountFilesService.incomingFilesFiltered.wallets()
+						| await
+					)?.length || 0
 				).toString()
 			"
 			[matBadgeHidden]="
 				!(
-					((accountFilesService.incomingFilesFiltered.wallets | await)
-						?.length || 0) > 0
+					((
+						accountFilesService.incomingFilesFiltered.wallets()
+						| await
+					)?.length || 0) > 0
 				)
 			"
 			matBadgePosition="above after"

@@ -3,7 +3,9 @@
 	fxLayout="row"
 	fxLayoutAlign="center start"
 	class="card-list"
-	[class.initiating]="(accountFilesService.showSpinner | await) !== undefined"
+	[class.initiating]="
+		(accountFilesService.showSpinner() | await) !== undefined
+	"
 	[class.mobile]="envService.isMobile | await"
 	*ngIf="accountDatabaseService.currentUser | await as currentUser"
 >
@@ -61,7 +63,7 @@
 			"
 			[attr.data-index]="i"
 			[class.bounceInRight]="
-				(accountFilesService.initiated | await) === false
+				(accountFilesService.initiated() | await) === false
 			"
 			[ngClass]="'_' + i"
 		>
@@ -839,19 +841,19 @@
 	<ng-content></ng-content>
 
 	<ng-container
-		*ngIf="(accountFilesService.showSpinner | await) !== undefined"
+		*ngIf="(accountFilesService.showSpinner() | await) !== undefined"
 	>
 		<cyph-spinner
 			mode="indeterminate"
 			*ngIf="
-				((accountFilesService.showSpinner | await) || 0) < 1;
+				((accountFilesService.showSpinner() | await) || 0) < 1;
 				else determinateFileSpinner
 			"
 		></cyph-spinner>
 		<ng-template #determinateFileSpinner>
 			<cyph-spinner
 				mode="determinate"
-				[value]="(accountFilesService.showSpinner | await) || 1"
+				[value]="(accountFilesService.showSpinner() | await) || 1"
 			></cyph-spinner>
 		</ng-template>
 	</ng-container>
@@ -882,7 +884,7 @@
 			)
 		"
 		*ngIf="
-			((accountFilesService.filesTotalSize | await) || 0) <=
+			((accountFilesService.filesTotalSize() | await) || 0) <=
 			((accountFilesService.fileStorageLimit | await) || 0)
 		"
 	>

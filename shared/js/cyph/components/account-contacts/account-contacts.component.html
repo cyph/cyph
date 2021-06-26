@@ -76,7 +76,7 @@
 			[class.initiating]="
 				(showSpinner | await) ||
 				(home &&
-					(accountFilesService.uploadSpinner | await) !== undefined)
+					(accountFilesService.uploadSpinner() | await) !== undefined)
 			"
 		>
 			<div cyphNanoScroller>
@@ -137,7 +137,7 @@
 				*ngIf="
 					(showSpinner | await) ||
 					(home &&
-						(accountFilesService.uploadSpinner | await) !==
+						(accountFilesService.uploadSpinner() | await) !==
 							undefined)
 				"
 			></cyph-spinner>

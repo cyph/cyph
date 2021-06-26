@@ -564,13 +564,14 @@
 		<ng-template #fileUploadSpinner>
 			<ng-container
 				*ngIf="
-					(accountFilesService.uploadSpinner | await) !== undefined
+					(accountFilesService.uploadSpinner() | await) !== undefined
 				"
 			>
 				<cyph-spinner
 					mode="indeterminate"
 					*ngIf="
-						((accountFilesService.uploadSpinner | await) || 0) < 1;
+						((accountFilesService.uploadSpinner() | await) || 0) <
+							1;
 						else determinateFileSpinner
 					"
 				></cyph-spinner>
@@ -578,7 +579,7 @@
 					<cyph-spinner
 						mode="determinate"
 						[value]="
-							(accountFilesService.uploadSpinner | await) || 1
+							(accountFilesService.uploadSpinner() | await) || 1
 						"
 					></cyph-spinner>
 				</ng-template>
@@ -791,7 +792,7 @@
 		<div
 			[class.editing]="(isEditorFocused | await) && (editMode | await)"
 			[class.initiating]="
-				(accountFilesService.uploadSpinner | await) !== undefined
+				(accountFilesService.uploadSpinner() | await) !== undefined
 			"
 			*ngIf="!envService.isTelehealthFull"
 		>
@@ -805,7 +806,7 @@
 			class="telehealth"
 			[class.editing]="(isEditorFocused | await) && (editMode | await)"
 			[class.initiating]="
-				(accountFilesService.uploadSpinner | await) !== undefined
+				(accountFilesService.uploadSpinner() | await) !== undefined
 			"
 			*ngIf="envService.isTelehealthFull"
 		>

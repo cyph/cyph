@@ -23,7 +23,7 @@
 			[matBadge]="
 				(
 					(
-						accountFilesService.incomingFilesFiltered.notes
+						accountFilesService.incomingFilesFiltered.notes()
 						| await
 						| cyphFilter
 							: accountFilesService.filterFunctions
@@ -34,7 +34,7 @@
 			[matBadgeHidden]="
 				!(
 					((
-						accountFilesService.incomingFilesFiltered.notes
+						accountFilesService.incomingFilesFiltered.notes()
 						| await
 						| cyphFilter
 							: accountFilesService.filterFunctions

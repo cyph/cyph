@@ -13,7 +13,9 @@
 
 <div
 	fxFlexFill
-	[class.initiating]="(accountFilesService.showSpinner | await) !== undefined"
+	[class.initiating]="
+		(accountFilesService.showSpinner() | await) !== undefined
+	"
 	*ngIf="accountSettingsService.staticFeatureFlags.wallets | await"
 >
 	<div
@@ -21,8 +23,8 @@
 		fxLayout="column"
 		fxLayoutAlign="center center"
 		*ngIf="
-			((accountFilesService.filesListFiltered.wallets | await)?.length ||
-				0) < 1;
+			((accountFilesService.filesListFiltered.wallets() | await)
+				?.length || 0) < 1;
 			else wallets
 		"
 	>
@@ -388,19 +390,19 @@
 	</ng-template>
 
 	<ng-container
-		*ngIf="(accountFilesService.showSpinner | await) !== undefined"
+		*ngIf="(accountFilesService.showSpinner() | await) !== undefined"
 	>
 		<cyph-spinner
 			mode="indeterminate"
 			*ngIf="
-				((accountFilesService.showSpinner | await) || 0) < 1;
+				((accountFilesService.showSpinner() | await) || 0) < 1;
 				else determinateFileSpinner
 			"
 		></cyph-spinner>
 		<ng-template #determinateFileSpinner>
 			<cyph-spinner
 				mode="determinate"
-				[value]="(accountFilesService.showSpinner | await) || 1"
+				[value]="(accountFilesService.showSpinner() | await) || 1"
 			></cyph-spinner>
 		</ng-template>
 	</ng-container>

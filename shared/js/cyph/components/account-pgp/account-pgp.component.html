@@ -10,7 +10,7 @@
 			fxFlexFill
 			[class.initiating]="
 				(outgoingMessage.spinner | await) === true ||
-				(accountFilesService.showSpinner | await) !== undefined
+				(accountFilesService.showSpinner() | await) !== undefined
 			"
 		>
 			<mat-card
@@ -182,7 +182,7 @@
 			fxFlexFill
 			[class.initiating]="
 				(incomingMessage.spinner | await) === true ||
-				(accountFilesService.showSpinner | await) !== undefined
+				(accountFilesService.showSpinner() | await) !== undefined
 			"
 		>
 			<mat-card
@@ -350,19 +350,19 @@
 
 <ng-template #defaultFileSpinner>
 	<ng-container
-		*ngIf="(accountFilesService.showSpinner | await) !== undefined"
+		*ngIf="(accountFilesService.showSpinner() | await) !== undefined"
 	>
 		<cyph-spinner
 			mode="indeterminate"
 			*ngIf="
-				((accountFilesService.showSpinner | await) || 0) < 1;
+				((accountFilesService.showSpinner() | await) || 0) < 1;
 				else determinateFileSpinner
 			"
 		></cyph-spinner>
 		<ng-template #determinateFileSpinner>
 			<cyph-spinner
 				mode="determinate"
-				[value]="(accountFilesService.showSpinner | await) || 1"
+				[value]="(accountFilesService.showSpinner() | await) || 1"
 			></cyph-spinner>
 		</ng-template>
 	</ng-container>
