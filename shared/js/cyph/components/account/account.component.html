@@ -100,14 +100,16 @@
 					<mat-icon
 						[matBadge]="
 							(
-								((accountService.unreadMessages | await) || 0) +
+								((accountService.unreadMessages() | await) ||
+									0) +
 								((accountFilesService.incomingFiles() | await)
 									?.length || 0)
 							).toString()
 						"
 						[matBadgeHidden]="
 							!(
-								((accountService.unreadMessages | await) || 0) +
+								((accountService.unreadMessages() | await) ||
+									0) +
 									((
 										accountFilesService.incomingFiles()
 										| await

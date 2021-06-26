@@ -3,10 +3,10 @@
 		<mat-icon
 			mat-list-icon
 			[matBadge]="
-				((accountService.unreadMessages | await) || 0).toString()
+				((accountService.unreadMessages() | await) || 0).toString()
 			"
 			[matBadgeHidden]="
-				!(((accountService.unreadMessages | await) || 0) > 0)
+				!(((accountService.unreadMessages() | await) || 0) > 0)
 			"
 			matBadgePosition="above after"
 		>

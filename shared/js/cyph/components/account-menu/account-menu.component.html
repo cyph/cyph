@@ -293,7 +293,8 @@
 						mat-list-icon
 						[matBadge]="
 							(
-								((accountService.unreadMessages | await) || 0) +
+								((accountService.unreadMessages() | await) ||
+									0) +
 								((
 									accountFilesService.incomingFilesFiltered.notes()
 									| await
@@ -305,7 +306,8 @@
 						"
 						[matBadgeHidden]="
 							!(
-								((accountService.unreadMessages | await) || 0) +
+								((accountService.unreadMessages() | await) ||
+									0) +
 									((
 										accountFilesService.incomingFilesFiltered.notes()
 										| await

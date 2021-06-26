@@ -9,6 +9,7 @@ import {
 	Router,
 	UrlSegment
 } from '@angular/router';
+import memoize from 'lodash-es/memoize';
 import {BehaviorSubject, Observable, of, Subject} from 'rxjs';
 import {filter, map, skip, switchMap} from 'rxjs/operators';
 import {SecurityModels, User} from '../account';
@@ -242,15 +243,17 @@ export class AccountService extends BaseProvider {
 	public readonly uiReady: Promise<void> = this._UI_READY;
 
 	/** Total count of unread messages. */
-	public readonly unreadMessages: Observable<number> = toBehaviorSubject(
-		this.accountContactsService.contactList.pipe(
-			switchMap(users =>
-				observableAll(users.map(user => user.unreadMessageCount))
+	public readonly unreadMessages: () => Observable<number> = memoize(() =>
+		toBehaviorSubject(
+			this.accountContactsService.contactList().pipe(
+				switchMap(users =>
+					observableAll(users.map(user => user.unreadMessageCount))
+				),
+				map(arraySum)
 			),
-			map(arraySum)
-		),
-		0,
-		this.subscriptions
+			0,
+			this.subscriptions
+		)
 	);
 
 	/** @see SalesService.upsellBanner */

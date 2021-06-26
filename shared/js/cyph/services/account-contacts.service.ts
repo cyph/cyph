@@ -157,68 +157,78 @@ export class AccountContactsService extends BaseProvider {
 	>(undefined);
 
 	/** List of contacts for current user, sorted alphabetically by username. */
-	public readonly contactList: Observable<(IContactListItem | User)[]> =
-		cacheObservable(
+	public readonly contactList: () => Observable<(IContactListItem | User)[]> =
+		memoize(() =>
+			cacheObservable(
+				observableAll([
+					this.accountFilesService.filesListFilteredWithData.messagingGroups(),
+					this.accountFilesService.incomingFilesFilteredWithData.messagingGroups(),
+					this.accountDatabaseService.watchListKeys(
+						'contacts',
+						undefined,
+						this.subscriptions
+					),
+					this.accountUserLookupService.pipe(
+						filterUndefinedOperator()
+					)
+				]).pipe(
+					map(
+						([
+							groups,
+							incomingGroups,
+							usernames,
+							accountUserLookupService
+						]) => [
+							...[
+								...incomingGroups.map(o => ({
+									group: o.data,
+									id: o.record.id,
+									incoming: true
+								})),
+								...groups.map(o => ({
+									group: o.data,
+									id: o.record.id,
+									incoming: false
+								}))
+							].map(this.contactListHelpers.groupData),
+							...normalizeArray(usernames).map(
+								this.contactListHelpers.user(
+									accountUserLookupService
+								)
+							)
+						]
+					)
+				),
+				this.subscriptions
+			)
+		);
+
+	/** List of Inner Circle contacts for current user, sorted alphabetically by username. */
+	public readonly contactListInnerCircle: () => Observable<
+		(IContactListItem | User)[]
+	> = memoize(() => {
+		const contactListInnerCircle = cacheObservable(
 			observableAll([
-				this.accountFilesService.filesListFilteredWithData.messagingGroups(),
-				this.accountFilesService.incomingFilesFilteredWithData.messagingGroups(),
 				this.accountDatabaseService.watchListKeys(
-					'contacts',
+					'contactsInnerCircle',
 					undefined,
 					this.subscriptions
 				),
 				this.accountUserLookupService.pipe(filterUndefinedOperator())
 			]).pipe(
-				map(
-					([
-						groups,
-						incomingGroups,
-						usernames,
-						accountUserLookupService
-					]) => [
-						...[
-							...incomingGroups.map(o => ({
-								group: o.data,
-								id: o.record.id,
-								incoming: true
-							})),
-							...groups.map(o => ({
-								group: o.data,
-								id: o.record.id,
-								incoming: false
-							}))
-						].map(this.contactListHelpers.groupData),
-						...normalizeArray(usernames).map(
-							this.contactListHelpers.user(
-								accountUserLookupService
-							)
-						)
-					]
+				map(([usernames, accountUserLookupService]) =>
+					normalizeArray(usernames).map(
+						this.contactListHelpers.user(accountUserLookupService)
+					)
 				)
 			),
 			this.subscriptions
 		);
 
-	/** List of Inner Circle contacts for current user, sorted alphabetically by username. */
-	public readonly contactListInnerCircle: Observable<
-		(IContactListItem | User)[]
-	> = cacheObservable(
-		observableAll([
-			this.accountDatabaseService.watchListKeys(
-				'contactsInnerCircle',
-				undefined,
-				this.subscriptions
-			),
-			this.accountUserLookupService.pipe(filterUndefinedOperator())
-		]).pipe(
-			map(([usernames, accountUserLookupService]) =>
-				normalizeArray(usernames).map(
-					this.contactListHelpers.user(accountUserLookupService)
-				)
-			)
-		),
-		this.subscriptions
-	);
+		this.initInnerCircle(contactListInnerCircle);
+
+		return contactListInnerCircle;
+	});
 
 	/** Contact state. */
 	public readonly contactState = memoize(
@@ -383,6 +393,71 @@ export class AccountContactsService extends BaseProvider {
 		}
 
 		return true;
+	}
+
+	/** @ignore */
+	private async initInnerCircle (
+		contactListInnerCircle: Observable<(IContactListItem | User)[]>
+	) : Promise<void> {
+		this.subscriptions.push(
+			observableAll([
+				this.accountPostsService.pipe(filterUndefinedOperator()),
+				contactListInnerCircle.pipe(
+					switchMap(contactListInnerCircle =>
+						observableAll(
+							contactListInnerCircle.map(user =>
+								this.contactState(user.username)
+									.watch()
+									.pipe(
+										map(
+											contactState =>
+												<
+													[
+														IContactListItem | User,
+														IAccountContactState
+													]
+												> [user, contactState]
+										)
+									)
+							)
+						)
+					),
+					map(contactListInnerCircle =>
+						contactListInnerCircle
+							.filter(
+								([_, contactState]) =>
+									contactState.innerCircle &&
+									contactState.state ===
+										AccountContactState.States.Confirmed
+							)
+							.map(([user]) => user.username)
+					)
+				)
+			]).subscribe(async ([accountPostsService, innerCircle]) =>
+				accountPostsService.setCircleMembers(
+					innerCircle,
+					async username => {
+						if (
+							await this.dialogService.confirm({
+								content: this.stringsService.setParameters(
+									this.stringsService
+										.innerCircleFinalConfirmationPrompt,
+									{username}
+								),
+								title: this.stringsService
+									.innerCircleFinalConfirmationTitle
+							})
+						) {
+							return true;
+						}
+
+						await this.removeContact(username);
+
+						return false;
+					}
+				)
+			)
+		);
 	}
 
 	/** Accepts incoming contact request. */
@@ -720,70 +795,5 @@ export class AccountContactsService extends BaseProvider {
 		private readonly stringsService: StringsService
 	) {
 		super();
-
-		/* Workaround for unnecessary drag on performance */
-		if (locationData.hash.startsWith('#account-burner/')) {
-			return;
-		}
-
-		this.subscriptions.push(
-			observableAll([
-				this.accountPostsService.pipe(filterUndefinedOperator()),
-				this.contactListInnerCircle.pipe(
-					switchMap(contactListInnerCircle =>
-						observableAll(
-							contactListInnerCircle.map(user =>
-								this.contactState(user.username)
-									.watch()
-									.pipe(
-										map(
-											contactState =>
-												<
-													[
-														IContactListItem | User,
-														IAccountContactState
-													]
-												> [user, contactState]
-										)
-									)
-							)
-						)
-					),
-					map(contactListInnerCircle =>
-						contactListInnerCircle
-							.filter(
-								([_, contactState]) =>
-									contactState.innerCircle &&
-									contactState.state ===
-										AccountContactState.States.Confirmed
-							)
-							.map(([user]) => user.username)
-					)
-				)
-			]).subscribe(async ([accountPostsService, innerCircle]) =>
-				accountPostsService.setCircleMembers(
-					innerCircle,
-					async username => {
-						if (
-							await this.dialogService.confirm({
-								content: this.stringsService.setParameters(
-									this.stringsService
-										.innerCircleFinalConfirmationPrompt,
-									{username}
-								),
-								title: this.stringsService
-									.innerCircleFinalConfirmationTitle
-							})
-						) {
-							return true;
-						}
-
-						await this.removeContact(username);
-
-						return false;
-					}
-				)
-			)
-		);
 	}
 }

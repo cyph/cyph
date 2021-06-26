@@ -43,7 +43,7 @@ export class AccountContactsSearchComponent extends BaseProvider {
 	/** List of users to search. */
 	@Input() public contactList:
 		| Observable<(IContactListItem | User)[]>
-		| undefined = this.accountContactsService.contactList;
+		| undefined = this.accountContactsService.contactList();
 
 	/** Allows looking up non-contact users by exact username match and opening their profiles. */
 	@Input() public externalUsers: boolean = false;

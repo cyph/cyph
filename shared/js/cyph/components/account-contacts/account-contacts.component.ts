@@ -80,7 +80,7 @@ export class AccountContactsComponent
 
 	/** List of users to search. */
 	@Input() public contactList: Observable<(IContactListItem | User)[]> =
-		this.accountContactsService.contactList;
+		this.accountContactsService.contactList();
 
 	/** Indicates whether contact list should be sorted and filtered. */
 	@Input() public filterContactList: boolean = true;
@@ -140,7 +140,7 @@ export class AccountContactsComponent
 			this.innerCircleTab.pipe(
 				switchMap(innerCircleTab =>
 					(innerCircleTab ?
-						this.accountContactsService.contactListInnerCircle :
+						this.accountContactsService.contactListInnerCircle() :
 						this.contactList
 					).pipe(map(contactList => ({contactList, innerCircleTab})))
 				)
@@ -192,7 +192,7 @@ export class AccountContactsComponent
 
 	/** If true, tell user when they have no friends. */
 	public get youHaveNoFriends () : boolean {
-		return this.contactList === this.accountContactsService.contactList;
+		return this.contactList === this.accountContactsService.contactList();
 	}
 
 	constructor (
@@ -378,7 +378,7 @@ export class AccountContactsComponent
 				).next(false);
 			}),
 			map(([o, counts, contactStates]) =>
-				this.contactList !== this.accountContactsService.contactList ?
+				this.contactList !== this.accountContactsService.contactList() ?
 					o.filteredContactList :
 					[
 						...o.filteredContactList.filter(
