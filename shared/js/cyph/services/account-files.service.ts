@@ -1338,6 +1338,16 @@ export class AccountFilesService extends BaseProvider {
 	}
 
 	/** @ignore */
+	private encodeQuill (o: IQuillDelta | IQuillRange) : Uint8Array {
+		return dynamicSerializeBytes({
+			...('clientID' in o ? {clientID: o.clientID} : {}),
+			...('index' in o ? {index: o.index} : {}),
+			...('length' in o ? {length: o.length} : {}),
+			...('ops' in o ? {ops: o.ops} : {})
+		});
+	}
+
+	/** @ignore */
 	private getChildDirectory (
 		root: IAccountFileDirectory,
 		directorySplit: string[]
@@ -1351,16 +1361,6 @@ export class AccountFilesService extends BaseProvider {
 			}
 			return o.children[path];
 		}, root);
-	}
-
-	/** @ignore */
-	private encodeQuill (o: IQuillDelta | IQuillRange) : Uint8Array {
-		return dynamicSerializeBytes({
-			...('clientID' in o ? {clientID: o.clientID} : {}),
-			...('index' in o ? {index: o.index} : {}),
-			...('length' in o ? {length: o.length} : {}),
-			...('ops' in o ? {ops: o.ops} : {})
-		});
 	}
 
 	/** @ignore */
