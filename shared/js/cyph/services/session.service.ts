@@ -78,7 +78,10 @@ export abstract class SessionService
 	protected lastIncomingMessageTimestamp: number = 0;
 
 	/** @ignore */
-	protected readonly receivedMessages: Set<string> = new Set<string>();
+	protected readonly receivedMessages: Map<string, number> = new Map<
+		string,
+		number
+	>();
 
 	/** @inheritDoc */
 	public readonly aborted = resolvable<true>(true);
@@ -256,12 +259,23 @@ export abstract class SessionService
 			return;
 		}
 
-		await this.castleService.send(
-			await serialize<ISessionMessageList>(SessionMessageList, {
-				messages
-			}),
-			messages[0].data.timestamp
-		);
+		const sendMessages = async () =>
+			this.castleService.send(
+				await serialize<ISessionMessageList>(SessionMessageList, {
+					messages
+				}),
+				messages[0].data.timestamp
+			);
+
+		if (!this.envService.debug) {
+			await sendMessages();
+			return;
+		}
+
+		for (let i = 0; i < 5; ++i) {
+			await sendMessages();
+			await sleep();
+		}
 	}
 
 	/** @see IChannelHandlers.onClose */
@@ -318,10 +332,28 @@ export abstract class SessionService
 
 		await Promise.all(
 			messages.filter(this.correctSubSession).map(async message => {
-				if (
-					!message.data.id ||
-					this.receivedMessages.has(message.data.id)
-				) {
+				if (!message.data.id) {
+					return;
+				}
+
+				if (this.receivedMessages.has(message.data.id)) {
+					debugLog(() => {
+						const count =
+							getOrSetDefault(
+								this.receivedMessages,
+								message.data.id,
+								() => 0
+							) + 1;
+
+						this.receivedMessages.set(message.data.id, count);
+
+						return {
+							duplicateSessionMessageReceive: {
+								count,
+								id: message.data.id
+							}
+						};
+					});
 					return;
 				}
 
@@ -346,7 +378,10 @@ export abstract class SessionService
 			this.trigger(event, data);
 
 			for (const {id} of data) {
-				this.receivedMessages.add(id);
+				this.receivedMessages.set(
+					id,
+					getOrSetDefault(this.receivedMessages, id, () => 0) + 1
+				);
 			}
 		}
 	}
