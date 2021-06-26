@@ -79,12 +79,23 @@ const debugLogInternal = async (
 	}
 
 	if (env.debugLogID) {
+		let logString = `[Invalid Log] ${date.toString()}`;
+		try {
+			logString = JSON.stringify(log);
+		}
+		catch {
+			try {
+				logString = JSON.stringify(
+					dynamicDeserialize(dynamicSerializeBytes(log))
+				);
+			}
+			catch {}
+		}
+
 		/* eslint-disable-next-line @typescript-eslint/tslint/config */
 		localStorage.setItem(
 			env.debugLogID,
-			`${localStorage.getItem(env.debugLogID) || ''}${JSON.stringify(
-				log
-			)}\n\n`
+			`${localStorage.getItem(env.debugLogID) || ''}${logString}\n\n`
 		);
 	}
 
