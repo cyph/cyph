@@ -4,7 +4,7 @@ import {ComponentType} from '@angular/cdk/portal';
 import {ChangeDetectorRef, Injectable} from '@angular/core';
 import {SafeUrl} from '@angular/platform-browser';
 import {Router} from '@angular/router';
-import * as htmlToText from 'html-to-text';
+import {htmlToText} from 'html-to-text';
 import memoize from 'lodash-es/memoize';
 import {DeltaOperation} from 'quill';
 import Delta from 'quill-delta';
@@ -1217,7 +1217,7 @@ export class AccountFilesService extends BaseProvider {
 
 	/** @ignore */
 	private deltaToString (delta: IQuillDelta) : string {
-		return htmlToText.fromString(
+		return htmlToText(
 			new QuillDeltaToHtmlConverter(delta.ops || []).convert()
 		);
 	}
