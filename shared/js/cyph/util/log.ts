@@ -19,6 +19,8 @@ if (env.debugLog) {
 	(<any> self).logs = logs;
 }
 
+const debugLogLocalStorageKey = 'DebugLog';
+
 const debugLogTimeLock = lockFunction();
 
 const debugLogInternal = async (
@@ -92,10 +94,15 @@ const debugLogInternal = async (
 			catch {}
 		}
 
+		logString = `[${env.debugLogID}] ${logString}`;
+
 		/* eslint-disable-next-line @typescript-eslint/tslint/config */
 		localStorage.setItem(
-			env.debugLogID,
-			`${localStorage.getItem(env.debugLogID) || ''}${logString}\n\n`
+			debugLogLocalStorageKey,
+			`${(localStorage.getItem(debugLogLocalStorageKey) || '')
+				.split('\n')
+				.slice(-100)
+				.join('\n')}${logString}\n\n`
 		);
 	}
 
