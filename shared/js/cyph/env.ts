@@ -118,9 +118,6 @@ export class Env extends EnvDeploy {
 	/** @see IEnvironment */
 	public readonly environment: IEnvironment = environment;
 
-	/** Everflow offer ID. */
-	public everflowOfferID = environment.production ? '5' : '4';
-
 	/** File-transfer-related config. */
 	public readonly filesConfig: {
 		maxImageWidth: number;

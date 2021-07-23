@@ -21,6 +21,7 @@ sed -i "s|CYPH-ME|https://cyph.me|g" shared/js/cyph/env-deploy.ts
 sed -i "s|CYPH-VIDEO|https://cyph.video|g" shared/js/cyph/env-deploy.ts
 sed -i "s|${defaultHost}42000|https://api.cyph.com|g" shared/js/cyph/env-deploy.ts
 sed -i "s|${defaultHost}43000|${homeURL}|g" shared/js/cyph/env-deploy.ts
+sed -i "s|everflowOfferID: string = '4'|everflowOfferID: string = '5'|g" shared/js/cyph/env-deploy.ts
 
 cd cyph.com
 ../commands/buildunbundledassets.sh

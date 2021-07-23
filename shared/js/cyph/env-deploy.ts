@@ -105,6 +105,12 @@ export class EnvDeploy {
 	/** Firebase-related config. */
 	// public readonly localFirebaseDatabaseURL: string = `ws://${`${locationData.hostname}.`.replace(/(localhost|127\.0\.0\.1|0\.0\.0\.0)\.$/, '127.0.1')}:44000`;
 
+	/** Discount rate for Everflow checkouts. */
+	public readonly everflowDiscountRate: number = 20;
+
+	/** Everflow offer ID. */
+	public readonly everflowOfferID: string = '4';
+
 	/** Complete (lowercase) language code, e.g. "en-us". */
 	public readonly fullLanguage: string =
 		EnvDeploy.languageInternal.toLowerCase();
