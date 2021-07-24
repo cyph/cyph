@@ -1212,7 +1212,13 @@ func trackEvent(h HandlerArgs, category, action, label string, value int) error 
 	}
 
 	client := &http.Client{}
-	_, err = client.Do(req)
+	resp, err := client.Do(req)
+
+	if err != nil {
+		return err
+	}
+
+	_, err = ioutil.ReadAll(resp.Body)
 
 	return err
 }
@@ -1229,7 +1235,13 @@ func trackPartnerConversion(h HandlerArgs, orderID, transactionID string, totalA
 	}
 
 	client := &http.Client{}
-	_, err = client.Do(req)
+	resp, err := client.Do(req)
+
+	if err != nil {
+		return err
+	}
+
+	_, err = ioutil.ReadAll(resp.Body)
 
 	return err
 }
