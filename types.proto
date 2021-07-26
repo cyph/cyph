@@ -1045,6 +1045,30 @@ message EhrApiKey {
 	required bool isMaster = 2;
 }
 
+/** Email message data. */
+message EmailMessage {
+	/** Attachments. */
+	repeated bytes attachments = 1;
+
+	/** BCC email address(es). */
+	string bcc = 2;
+
+	/** CC email address(es). */
+	string cc = 3;
+
+	/** Sender email address. */
+	string from = 4;
+
+	/** HTML body. */
+	string html = 5;
+
+	/** Text body. */
+	string text = 6;
+
+	/** Recipient email address(es). */
+	string to = 7;
+}
+
 /** Angular CLI environment configuration. */
 message Environment {
 	/** Custom build environment data. */
