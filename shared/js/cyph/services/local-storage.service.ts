@@ -532,7 +532,7 @@ export class LocalStorageService extends DataManagerService {
 				while (!this.destroyed.value) {
 					subject.next({
 						timestamp: await getTimestamp(),
-						value: await this.getItem(url, proto).catch(async () =>
+						value: await this.getItem(url, proto).catch(() =>
 							proto.create()
 						)
 					});

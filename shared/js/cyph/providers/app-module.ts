@@ -20,7 +20,6 @@ import {EHRService} from '../services/ehr.service';
 import {FingerprintService} from '../services/fingerprint.service';
 import {FirebaseDatabaseService} from '../services/firebase-database.service';
 import {ProductTourService} from '../services/product-tour.service';
-import {ProtoThreadService} from '../services/proto-thread.service';
 import {QRService} from '../services/qr.service';
 import {WorkerService} from '../services/worker.service';
 
@@ -46,7 +45,6 @@ export const appModuleProviders = [
 	FingerprintService,
 	PGPService,
 	ProductTourService,
-	ProtoThreadService,
 	QRService,
 	WorkerService,
 	{

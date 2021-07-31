@@ -4,7 +4,7 @@ import {IProto} from '../iproto';
 export class GenericArrayProto<T> implements IProto<T[]> {
 	/** @inheritDoc */
 	public create () : T[] {
-		return [];
+		return this.proto.create().data || [];
 	}
 
 	/** @inheritDoc */

@@ -11,24 +11,22 @@ export class ArrayWrapperProto<T> implements IProto<T[]> {
 	/** @inheritDoc */
 	public async decode (bytes: Uint8Array) : Promise<T[]> {
 		return Promise.all(
-			(
-				await Promise.resolve(Internal.BinaryArray.decode(bytes))
-			).data.map(async b => this.proto.decode(b))
+			Internal.BinaryArray.decode(bytes).data.map(async b =>
+				this.proto.decode(b)
+			)
 		);
 	}
 
 	/** @inheritDoc */
 	public async encode (data: T[]) : Promise<Uint8Array> {
-		const encoded = await Promise.resolve(
-			Internal.BinaryArray.encode({
-				data: await Promise.all(
-					data.map(async t => {
-						const o = await this.proto.encode(t);
-						return o instanceof Uint8Array ? o : o.finish();
-					})
-				)
-			})
-		);
+		const encoded = Internal.BinaryArray.encode({
+			data: await Promise.all(
+				data.map(async t => {
+					const o = await this.proto.encode(t);
+					return o instanceof Uint8Array ? o : o.finish();
+				})
+			)
+		});
 
 		return encoded instanceof Uint8Array ? encoded : encoded.finish();
 	}

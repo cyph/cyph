@@ -3,8 +3,8 @@ import {IProto} from '../iproto';
 /** Generic/primitive value encoder/decoder. */
 export class GenericProto<T> implements IProto<T> {
 	/** @inheritDoc */
-	public async create () : Promise<T> {
-		return this.decodeTransformer((await this.proto.create()).data);
+	public create () : T {
+		return this.decodeTransformer(this.proto.create().data);
 	}
 
 	/** @inheritDoc */

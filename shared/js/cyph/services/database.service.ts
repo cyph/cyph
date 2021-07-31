@@ -556,8 +556,6 @@ export class DatabaseService extends DataManagerService {
 						return currentValue;
 					}
 
-					currentValue = await currentValue;
-
 					if (ArrayBuffer.isView(currentValue)) {
 						potassiumUtil.clearMemory(currentValue);
 					}
@@ -581,7 +579,7 @@ export class DatabaseService extends DataManagerService {
 			lock,
 			setValue: async value =>
 				localLock(async () => {
-					const oldValue = await currentValue;
+					const oldValue = currentValue;
 
 					currentHash = (await this.setItem(url, proto, value)).hash;
 					currentValue = value;

@@ -3,7 +3,6 @@
 
 eval "$(parseArgs \
 	--opt-bool libpotassium \
-	--opt-bool no-proto-worker \
 	--opt-bool prod-test \
 	--opt-bool service-worker \
 	--opt-bool test \
@@ -19,7 +18,6 @@ if [ "${CIRCLECI}" ] ; then
 fi
 
 libpotassium="$(getBoolArg ${_arg_libpotassium})"
-noProtoWorker="$(getBoolArg ${_arg_no_proto_worker})"
 prodTest="$(getBoolArg ${_arg_prod_test})"
 serviceWorker="$(getBoolArg ${_arg_service_worker})"
 test="$(getBoolArg ${_arg_test})"
@@ -118,11 +116,7 @@ rm -rf node_modules js css 2> /dev/null
 mkdir node_modules js css
 
 
-../../commands/protobuf.sh $(
-	if [ "${noProtoWorker}" ] ; then
-		echo -n ' --omit-worker'
-	fi
-)
+../../commands/protobuf.sh
 
 if [ "${serviceWorker}" ] || [ "${test}" ] ; then
 	node -e 'fs.writeFileSync(
@@ -197,14 +191,6 @@ uglify standalone/global.js -o standalone/global.js
 checkfail
 
 for f in ${typescriptAssets} ; do
-	if [ ! -f "../../js/${f}.ts" ] && [ -f "../../js/${f}.js" ] ; then
-		typescriptAssets="$(echo "${typescriptAssets}" | grep -vP "^${f}$")"
-		fParent="$(echo "${f}" | perl -pe 's/\/[^\/]+$//')"
-		mkdir "${fParent}" 2> /dev/null
-		cp "../../js/${f}.js" "${fParent}/"
-		continue
-	fi
-
 	m="$(getmodulename "${f}")"
 
 	cat > "$(echo "${f}" | sha).webpack.js" <<- EOM

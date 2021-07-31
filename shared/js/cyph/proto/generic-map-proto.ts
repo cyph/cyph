@@ -4,7 +4,7 @@ import {IProto} from '../iproto';
 export class GenericMapProto<T> implements IProto<Record<string, T>> {
 	/** @inheritDoc */
 	public create () : Record<string, T> {
-		return {};
+		return this.proto.create().data || {};
 	}
 
 	/** @inheritDoc */

@@ -385,13 +385,10 @@ if [ ! "${site}" ] || [ "${site}" == 'cyph.app' ] || [ "${site}" == 'cyph.com' ]
 	./commands/buildunbundledassets.sh $(
 		if [ "${simple}" ] || ( [ "${debug}" ] && [ ! "${debugProdBuild}" ] ) ; then
 			if [ "${simpleProdBuild}" ] ; then
-				echo -n '--prod-test --service-worker'
+				echo '--prod-test --service-worker'
 			else
-				echo -n '--test'
+				echo '--test'
 			fi
-		fi
-		if [ "${site}" == 'sdk' ] ; then
-			echo -n ' --no-proto-worker'
 		fi
 	) || fail
 fi

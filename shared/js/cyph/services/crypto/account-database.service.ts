@@ -1015,7 +1015,7 @@ export class AccountDatabaseService extends BaseProvider {
 									securityModel,
 									value,
 									customKey
-								).catch(async () => proto.create())
+								).catch(() => proto.create())
 							),
 							securityModel,
 							customKey
@@ -1581,7 +1581,7 @@ export class AccountDatabaseService extends BaseProvider {
 		customKey?: MaybePromise<Uint8Array>,
 		anonymous: boolean = false,
 		subscriptions?: Subscription[],
-		defaultValue: () => MaybePromise<T> = async () => proto.create()
+		defaultValue: () => T = () => proto.create()
 	) : Observable<ITimedValue<T>> {
 		return cacheObservable(
 			this.watchCurrentUser(anonymous).pipe(
