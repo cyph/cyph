@@ -108,9 +108,13 @@ export class PGPService extends BaseProvider {
 
 								const o = await openpgp.decrypt({
 									format: bytes ? 'binary' : undefined,
+									decryptionKeys: <OpenPGP.PrivateKey[]> (
+										privateKeys
+									),
 									message,
-									privateKeys,
-									publicKeys
+									verificationKeys: <OpenPGP.PublicKey[]> (
+										publicKeys
+									)
 								});
 
 								if (
@@ -150,12 +154,27 @@ export class PGPService extends BaseProvider {
 									]);
 
 								return transfer(
-									await openpgp.encrypt({
-										armor,
-										message,
-										privateKeys,
-										publicKeys
-									})
+									armor ?
+										await openpgp.encrypt({
+											encryptionKeys: <
+													OpenPGP.PublicKey[]
+												> publicKeys,
+											format: 'armored',
+											message,
+											signingKeys: <
+													OpenPGP.PrivateKey[]
+												> privateKeys
+										}) :
+										await openpgp.encrypt({
+											encryptionKeys: <
+													OpenPGP.PublicKey[]
+												> publicKeys,
+											format: 'binary',
+											message,
+											signingKeys: <
+													OpenPGP.PrivateKey[]
+												> privateKeys
+										})
 								);
 							},
 							getPrivateKeyArmor: async (
@@ -211,11 +230,14 @@ export class PGPService extends BaseProvider {
 								let o = !('privateKey' in options) ?
 									(
 										await openpgp.generateKey({
+											format: 'object',
 											rsaBits: 4096,
 											userIDs: [options]
 										})
-									).key :
-									await readRawKey(options.privateKey);
+									).privateKey :
+									<OpenPGP.PrivateKey> (
+										await readRawKey(options.privateKey)
+									);
 
 								if (
 									'privateKey' in options &&
@@ -364,8 +386,10 @@ export class PGPService extends BaseProvider {
 										await openpgp.verify({
 											expectSigned: true,
 											message,
-											publicKeys,
-											signature
+											signature,
+											verificationKeys: <
+													OpenPGP.PublicKey[]
+												> publicKeys
 										});
 
 								const isValid = await validateSignatures(
@@ -404,16 +428,29 @@ export class PGPService extends BaseProvider {
 									pgpMessage instanceof
 										openpgp.CleartextMessage ?
 										await openpgp.sign({
-											armor,
+											format: 'armored',
 											detached,
 											message: pgpMessage,
-											privateKeys
+											signingKeys: <
+													OpenPGP.PrivateKey[]
+												> privateKeys
+										}) :
+									armor ?
+										await openpgp.sign({
+											format: 'armored',
+											detached,
+											message: pgpMessage,
+											signingKeys: <
+													OpenPGP.PrivateKey[]
+												> privateKeys
 										}) :
 										await openpgp.sign({
-											armor,
+											format: 'binary',
 											detached,
 											message: pgpMessage,
-											privateKeys
+											signingKeys: <
+													OpenPGP.PrivateKey[]
+												> privateKeys
 										})
 								);
 							}
