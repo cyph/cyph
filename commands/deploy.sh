@@ -346,7 +346,7 @@ if [ "${allBranches}" ] ; then
 	mkdir ~/.build/branches
 	cd ~/.cyph/repos/internal
 
-	for gitBranch in $(git branch | sed 's/^\*//' | grep -vP '^\s*prod$') ; do
+	for gitBranch in $(git branch | sed 's/^\*//' | grep -vP '^\s*(prod|public)$') ; do
 		branchDir="${HOME}/.build/branches/$(
 			echo "${gitBranch}" | perl -pe 's/^beta$/beta-staging/'
 		)"
