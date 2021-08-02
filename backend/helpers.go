@@ -472,11 +472,28 @@ func getIPFSGatewaysInternal(continentCode string, ipv6Only bool) []string {
 	ipfsGatewayUptimeChecksLock.Unlock()
 
 	if len(gateways) < 1 {
-		if continentCode == config.DefaultContinentCode {
-			return gateways
+		/* If applicable, try relaxing IPv6 restriction */
+		if ipv6Only {
+			if continentCode == config.DefaultContinentCode {
+				return getIPFSGatewaysInternal(config.DefaultContinentCode, false)
+			}
+
+			return append(
+				getIPFSGatewaysInternal(continentCode, false),
+				getIPFSGatewaysInternal(config.DefaultContinentCode, true)...,
+			)
 		}
 
-		return getIPFSGatewaysInternal(config.DefaultContinentCode, ipv6Only)
+		/* If no gateways for current continent, fall back to default continent */
+		if continentCode != config.DefaultContinentCode {
+			return getIPFSGatewaysInternal(config.DefaultContinentCode, false)
+		}
+
+		/*
+			In edge case scenario where all gateways fail uptime check,
+			just return the full list as a fallback Hail Mary
+		*/
+		return allGateways
 	}
 
 	index := nonSecureRandom.Intn(len(gateways))
