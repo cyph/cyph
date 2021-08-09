@@ -67,12 +67,12 @@ service firebase.storage {
 
 			// match /pendingSignups/{hash} {}
 
-			// match /pseudoRelationships/{hash} {}
-
 			match /privatePostLists/{circleID}/{postID}/{hash} {
 				allow read;
 				allow write: if resource == null;
 			}
+
+			// match /pseudoRelationships/{hash} {}
 
 			// match /reservedUsernames/{hash} {}
 
