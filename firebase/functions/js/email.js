@@ -175,7 +175,8 @@ export const sendEmailInternal = async (
 										...(eventDetails.recurrence ?
 											{repeating: {
 													...(eventDetails.recurrence
-														.byWeekDay &&
+														.byWeekDay instanceof
+														Array &&
 													eventDetails.recurrence
 														.byWeekDay.length > 0 ?
 														{
@@ -185,7 +186,10 @@ export const sendEmailInternal = async (
 														} :
 														{}),
 													...(eventDetails.recurrence
-														.byMonth ?
+														.byMonth instanceof
+														Array &&
+													eventDetails.recurrence
+														.byMonth.length > 0 ?
 														{
 															byMonth:
 																eventDetails
@@ -194,7 +198,10 @@ export const sendEmailInternal = async (
 														} :
 														{}),
 													...(eventDetails.recurrence
-														.byMonthDay ?
+														.byMonthDay instanceof
+														Array &&
+													eventDetails.recurrence
+														.byMonthDay.length > 0 ?
 														{
 															byMonthDay:
 																eventDetails
@@ -203,7 +210,11 @@ export const sendEmailInternal = async (
 														} :
 														{}),
 													...(eventDetails.recurrence
-														.bySetPosition ?
+														.bySetPosition instanceof
+														Array &&
+													eventDetails.recurrence
+														.bySetPosition.length >
+														0 ?
 														{
 															bySetPos:
 																eventDetails
@@ -220,7 +231,8 @@ export const sendEmailInternal = async (
 														} :
 														{}),
 													...(eventDetails.recurrence
-														.excludeDates &&
+														.excludeDates instanceof
+														Array &&
 													eventDetails.recurrence
 														.excludeDates.length >
 														0 ?
