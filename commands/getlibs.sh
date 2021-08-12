@@ -256,6 +256,7 @@ for anyType in \
 	markdown-it-emoji \
 	markdown-it-sup \
 	math-expression-evaluator \
+	mergebounce \
 	opus-recorder \
 	recorder.js \
 	recordrtc \

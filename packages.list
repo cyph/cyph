@@ -311,6 +311,8 @@ libsodium-wrappers
 libsodium-wrappers-sumo
 libvorbis.js
 localforage
+localforage-getitems
+localforage-setitems
 lodash
 lodash-es
 long
@@ -328,6 +330,7 @@ materialize-css
 math-expression-evaluator
 maxmind
 mceliece
+mergebounce
 microlight-string
 minimist
 mkdirp
