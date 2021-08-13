@@ -4,6 +4,7 @@
 /qr-invite-codes
 /serve.ready
 /threadpack.log
+/users.json
 .build.yaml
 *.mmdb
 .sass-cache
