@@ -66,13 +66,9 @@ if (isCLI) {
 		const query = process.argv[3];
 		const namespace = process.argv[4];
 
-		console.log(
-			JSON.stringify(
-				await lookUpUser(projectId, query, namespace),
-				undefined,
-				'\t'
-			)
-		);
+		console.dir(await lookUpUser(projectId, query, namespace), {
+			depth: undefined
+		});
 
 		process.exit(0);
 	})().catch(err => {

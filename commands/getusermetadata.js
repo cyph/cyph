@@ -155,16 +155,13 @@ if (isCLI) {
 		const usernames = process.argv[3].split(' ');
 		const namespace = process.argv[4];
 
-		console.log(
-			JSON.stringify(
-				await Promise.all(
-					usernames.map(async username =>
-						getUserMetadata(projectId, username, namespace)
-					)
-				),
-				undefined,
-				'\t'
-			)
+		console.dir(
+			await Promise.all(
+				usernames.map(async username =>
+					getUserMetadata(projectId, username, namespace)
+				)
+			),
+			{depth: undefined}
 		);
 
 		process.exit(0);
