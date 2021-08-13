@@ -4,9 +4,12 @@ import * as localforage from 'localforage';
 import {extendPrototype as localforageGetItemsInit} from 'localforage-getitems';
 import {potassiumUtil} from '../crypto/potassium/potassium-util';
 import {env} from '../env';
+import {IResolvable} from '../iresolvable';
 import {StringProto} from '../proto';
 import {lockFunction} from '../util/lock';
 import {debugLogError} from '../util/log';
+import {resolvable} from '../util/wait/resolvable';
+import {sleep} from '../util/wait/sleep';
 import {LocalStorageService} from './local-storage.service';
 
 localforageGetItemsInit(localforage);
@@ -16,6 +19,20 @@ localforageGetItemsInit(localforage);
  */
 @Injectable()
 export class WebLocalStorageService extends LocalStorageService {
+	/** @ignore */
+	private readonly batchInterval = 250;
+
+	/** @ignore */
+	private readonly batchQueues = {
+		getItem: <
+			{key: string; result: IResolvable<Uint8Array | undefined>}[]
+		> [],
+		removeItem: <{key: string; result: IResolvable<void>}[]> [],
+		setItem: <
+			{key: string; result: IResolvable<void>; value: Uint8Array}[]
+		> []
+	};
+
 	/** @ignore */
 	private readonly dexie = (() => {
 		const db = new Dexie('WebLocalStorageService');
@@ -181,7 +198,40 @@ export class WebLocalStorageService extends LocalStorageService {
 		}
 
 		const [webStorageValue, keystoreValue] = await Promise.all([
-			this.dexie.get(url).then(o => <Uint8Array | undefined> o?.value),
+			(async () => {
+				const result = resolvable<Uint8Array | undefined>();
+				this.batchQueues.getItem.push({key: url, result});
+
+				this.webStorageLock(async () => {
+					if (this.batchQueues.getItem.length < 1) {
+						return;
+					}
+
+					await sleep(this.batchInterval);
+
+					const queue = this.batchQueues.getItem.splice(
+						0,
+						this.batchQueues.getItem.length
+					);
+
+					try {
+						const results = await this.dexie.bulkGet(
+							queue.map(o => o.key)
+						);
+
+						for (let i = 0; i < queue.length; ++i) {
+							queue[i].result.resolve(results[i]?.value);
+						}
+					}
+					catch (err) {
+						for (const {result} of queue) {
+							result.reject(err);
+						}
+					}
+				}).catch(() => {});
+
+				return result;
+			})(),
 			getFromKeystore ?
 				this.nativeKeystore
 					.then(async keystore => keystore?.getItem(url))
@@ -235,7 +285,38 @@ export class WebLocalStorageService extends LocalStorageService {
 		}
 
 		await Promise.all([
-			this.webStorageLock(async () => this.dexie.delete(url)),
+			(async () => {
+				const result = resolvable<void>();
+				this.batchQueues.removeItem.push({key: url, result});
+
+				this.webStorageLock(async () => {
+					if (this.batchQueues.removeItem.length < 1) {
+						return;
+					}
+
+					await sleep(this.batchInterval);
+
+					const queue = this.batchQueues.removeItem.splice(
+						0,
+						this.batchQueues.removeItem.length
+					);
+
+					try {
+						await this.dexie.bulkDelete(queue.map(o => o.key));
+
+						for (const {result} of queue) {
+							result.resolve();
+						}
+					}
+					catch (err) {
+						for (const {result} of queue) {
+							result.reject(err);
+						}
+					}
+				}).catch(() => {});
+
+				return result;
+			})(),
 			this.nativeKeystore
 				.then(async keystore => keystore?.removeItem(url))
 				.catch(() => {})
@@ -254,7 +335,40 @@ export class WebLocalStorageService extends LocalStorageService {
 		}
 
 		await Promise.all([
-			this.webStorageLock(async () => this.dexie.put({key: url, value})),
+			(async () => {
+				const result = resolvable<void>();
+				this.batchQueues.setItem.push({key: url, result, value});
+
+				this.webStorageLock(async () => {
+					if (this.batchQueues.setItem.length < 1) {
+						return;
+					}
+
+					await sleep(this.batchInterval);
+
+					const queue = this.batchQueues.setItem.splice(
+						0,
+						this.batchQueues.setItem.length
+					);
+
+					try {
+						await this.dexie.bulkPut(
+							queue.map(o => ({key: o.key, value: o.value}))
+						);
+
+						for (const {result} of queue) {
+							result.resolve();
+						}
+					}
+					catch (err) {
+						for (const {result} of queue) {
+							result.reject(err);
+						}
+					}
+				}).catch(() => {});
+
+				return result;
+			})(),
 			saveToKeystore ?
 				this.nativeKeystore
 					.then(async keystore => keystore?.setItem(url, value))
