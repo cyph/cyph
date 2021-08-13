@@ -57,7 +57,7 @@ export class LocalStorageService extends DataManagerService {
 		Promise<void>
 	>();
 
-	/** If true, localForage failed and we should stop bugging the user for permission. */
+	/** If true, storage engine failed and we should stop bugging the user for permission. */
 	private setInternalFailed: boolean = false;
 
 	/** @ignore */

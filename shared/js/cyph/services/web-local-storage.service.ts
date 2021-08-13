@@ -1,10 +1,15 @@
 import {Injectable} from '@angular/core';
+import {Dexie} from 'dexie';
 import * as localforage from 'localforage';
+import {extendPrototype as localforageGetItemsInit} from 'localforage-getitems';
 import {potassiumUtil} from '../crypto/potassium/potassium-util';
 import {env} from '../env';
 import {StringProto} from '../proto';
 import {lockFunction} from '../util/lock';
+import {debugLogError} from '../util/log';
 import {LocalStorageService} from './local-storage.service';
+
+localforageGetItemsInit(localforage);
 
 /**
  * Provides local storage functionality for the web.
@@ -12,7 +17,11 @@ import {LocalStorageService} from './local-storage.service';
 @Injectable()
 export class WebLocalStorageService extends LocalStorageService {
 	/** @ignore */
-	private readonly localforageLock = lockFunction();
+	private readonly dexie = (() => {
+		const db = new Dexie('WebLocalStorageService');
+		db.version(1).stores({data: 'key'});
+		return db.table('data');
+	})();
 
 	/** @ignore */
 	private readonly nativeKeystore = (async () => {
@@ -109,25 +118,43 @@ export class WebLocalStorageService extends LocalStorageService {
 
 	/** @ignore */
 	private readonly ready: Promise<void> = (async () => {
+		/* Temporary migration of local data from localforage to Dexie */
 		try {
 			await localforage.ready();
+
+			const oldData = Object.entries(await localforage.getItems());
+
+			if (oldData.length > 0) {
+				await this.dexie.bulkPut(
+					oldData.map(([key, value]) => ({key, value}))
+				);
+
+				await localforage.clear();
+			}
 		}
-		catch {}
+		catch (err) {
+			debugLogError(() => ({localforageToDexieMigrationError: err}));
+		}
+
 		try {
 			await Promise.all(
 				Object.keys(localStorage)
-					.filter(key => !key.startsWith('localforage/'))
-					.map(async key => {
-						/* eslint-disable-next-line @typescript-eslint/tslint/config */
-						const value = localStorage.getItem(key);
-						if (value) {
-							await this.setItem(key, StringProto, value, false);
-						}
-					})
+					.map(
+						key =>
+							/* eslint-disable-next-line @typescript-eslint/tslint/config */
+							<[string, string]> [key, localStorage.getItem(key)]
+					)
+					.filter(([_, value]) => !!value)
+					.map(async ([key, value]) =>
+						this.setItem(key, StringProto, value, false)
+					)
 			);
 		}
 		catch {}
 	})();
+
+	/** @ignore */
+	private readonly webStorageLock = lockFunction();
 
 	/** @inheritDoc */
 	protected async clearInternal (waitForReady: boolean) : Promise<void> {
@@ -136,7 +163,7 @@ export class WebLocalStorageService extends LocalStorageService {
 		}
 
 		await Promise.all([
-			this.localforageLock(async () => localforage.clear()),
+			this.webStorageLock(async () => this.dexie.clear()),
 			this.nativeKeystore
 				.then(async keystore => keystore?.clear())
 				.catch(() => {})
@@ -153,8 +180,8 @@ export class WebLocalStorageService extends LocalStorageService {
 			await this.ready;
 		}
 
-		const [localforageValue, keystoreValue] = await Promise.all([
-			localforage.getItem<Uint8Array | undefined>(url),
+		const [webStorageValue, keystoreValue] = await Promise.all([
+			this.dexie.get(url).then(o => <Uint8Array | undefined> o?.value),
 			getFromKeystore ?
 				this.nativeKeystore
 					.then(async keystore => keystore?.getItem(url))
@@ -163,8 +190,8 @@ export class WebLocalStorageService extends LocalStorageService {
 		]);
 
 		const value =
-			localforageValue instanceof Uint8Array ?
-				localforageValue :
+			webStorageValue instanceof Uint8Array ?
+				webStorageValue :
 				keystoreValue;
 
 		/*
@@ -174,7 +201,7 @@ export class WebLocalStorageService extends LocalStorageService {
 		if (
 			getFromKeystore &&
 			value instanceof Uint8Array &&
-			(!(localforageValue instanceof Uint8Array) ||
+			(!(webStorageValue instanceof Uint8Array) ||
 				!(keystoreValue instanceof Uint8Array))
 		) {
 			await this.setItemInternal(url, value, waitForReady, true);
@@ -195,7 +222,7 @@ export class WebLocalStorageService extends LocalStorageService {
 			await this.ready;
 		}
 
-		return localforage.keys();
+		return <any> this.dexie.toCollection().keys();
 	}
 
 	/** @inheritDoc */
@@ -208,7 +235,7 @@ export class WebLocalStorageService extends LocalStorageService {
 		}
 
 		await Promise.all([
-			this.localforageLock(async () => localforage.removeItem(url)),
+			this.webStorageLock(async () => this.dexie.delete(url)),
 			this.nativeKeystore
 				.then(async keystore => keystore?.removeItem(url))
 				.catch(() => {})
@@ -227,9 +254,7 @@ export class WebLocalStorageService extends LocalStorageService {
 		}
 
 		await Promise.all([
-			this.localforageLock(async () =>
-				localforage.setItem<Uint8Array>(url, value)
-			),
+			this.webStorageLock(async () => this.dexie.put({key: url, value})),
 			saveToKeystore ?
 				this.nativeKeystore
 					.then(async keystore => keystore?.setItem(url, value))
