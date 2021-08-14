@@ -372,7 +372,11 @@ if [ "${electron}" ] ; then
 							'apt-get update ; ' +
 							'apt-get install -y git nodejs ; ' +
 							'npx cordova telemetry off ; ' +
-							'while true ; do npx cordova build electron --release && break ; done'
+							// Workaround for RocksDB native build
+							'mv node_modules/rocksdb node_modules/rocksdb.old ; if [ -d node_modules/rocksdb.linux ] ; then mv node_modules/rocksdb.linux node_modules/rocksdb ; else npm install rocksdb ; fi ; ' +
+							'while true ; do npx cordova build electron --release && break ; done ; ' +
+							// Revert RocksDB workaround
+							'mv node_modules/rocksdb node_modules/rocksdb.linux ; mv node_modules/rocksdb.old node_modules/rocksdb ; '
 					],
 					{stdio: 'inherit'}
 				);
