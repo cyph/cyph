@@ -1,4 +1,4 @@
-import {Injectable} from '@angular/core';
+import {Injectable, NgZone} from '@angular/core';
 import {Dexie} from 'dexie';
 import * as localforage from 'localforage';
 import {extendPrototype as localforageGetItemsInit} from 'localforage-getitems';
@@ -34,7 +34,7 @@ export class WebLocalStorageService extends LocalStorageService {
 	};
 
 	/** @ignore */
-	private readonly db = (() => {
+	private readonly db = this.ngZone.runOutsideAngular(() => {
 		if (!env.isCordovaDesktop || typeof cordovaRequire !== 'function') {
 			const dexie = new Dexie('WebLocalStorageService');
 			dexie.version(1).stores({data: 'key'});
@@ -42,6 +42,26 @@ export class WebLocalStorageService extends LocalStorageService {
 		}
 
 		const level = cordovaRequire('level')('./web-local-storage.service.db');
+
+		const collection = {
+			keys: async () => {
+				const stream = level.createKeyStream();
+				const keys: string[] = [];
+				const result = resolvable(keys);
+
+				stream.on('data', (key: string) => {
+					keys.push(key);
+				});
+				stream.on('end', () => {
+					result.resolve();
+				});
+				stream.on('error', (err: any) => {
+					result.reject(err);
+				});
+
+				return result;
+			}
+		};
 
 		return {
 			bulkGet: async (keys: string[]) =>
@@ -51,27 +71,9 @@ export class WebLocalStorageService extends LocalStorageService {
 			bulkPut: async (items: {key: string; value: Uint8Array}[]) =>
 				level.batch(items.map(item => ({...item, type: 'put'}))),
 			clear: async () => level.clear(),
-			toCollection: () => ({
-				keys: async () => {
-					const stream = level.createKeyStream();
-					const keys: string[] = [];
-					const result = resolvable(keys);
-
-					stream.on('data', (key: string) => {
-						keys.push(key);
-					});
-					stream.on('end', () => {
-						result.resolve();
-					});
-					stream.on('error', (err: any) => {
-						result.reject(err);
-					});
-
-					return result;
-				}
-			})
+			toCollection: () => collection
 		};
-	})();
+	});
 
 	/** @ignore */
 	private readonly nativeKeystore = (async () => {
@@ -175,8 +177,10 @@ export class WebLocalStorageService extends LocalStorageService {
 			const oldData = Object.entries(await localforage.getItems());
 
 			if (oldData.length > 0) {
-				await this.db.bulkPut(
-					oldData.map(([key, value]) => ({key, value}))
+				await this.ngZone.runOutsideAngular(async () =>
+					this.db.bulkPut(
+						oldData.map(([key, value]) => ({key, value}))
+					)
 				);
 
 				await localforage.clear();
@@ -197,7 +201,9 @@ export class WebLocalStorageService extends LocalStorageService {
 		}
 
 		await Promise.all([
-			this.webStorageLock(async () => this.db.clear()),
+			this.webStorageLock(async () =>
+				this.ngZone.runOutsideAngular(async () => this.db.clear())
+			),
 			this.nativeKeystore
 				.then(async keystore => keystore?.clear())
 				.catch(() => {})
@@ -232,8 +238,8 @@ export class WebLocalStorageService extends LocalStorageService {
 					);
 
 					try {
-						const results = await this.db.bulkGet(
-							queue.map(o => o.key)
+						const results = await this.ngZone.runOutsideAngular(
+							async () => this.db.bulkGet(queue.map(o => o.key))
 						);
 
 						for (let i = 0; i < queue.length; ++i) {
@@ -289,7 +295,11 @@ export class WebLocalStorageService extends LocalStorageService {
 			await this.ready;
 		}
 
-		return <any> this.db.toCollection().keys();
+		return <any> (
+			this.ngZone.runOutsideAngular(async () =>
+				this.db.toCollection().keys()
+			)
+		);
 	}
 
 	/** @inheritDoc */
@@ -319,7 +329,9 @@ export class WebLocalStorageService extends LocalStorageService {
 					);
 
 					try {
-						await this.db.bulkDelete(queue.map(o => o.key));
+						await this.ngZone.runOutsideAngular(async () =>
+							this.db.bulkDelete(queue.map(o => o.key))
+						);
 
 						for (const {result} of queue) {
 							result.resolve();
@@ -369,8 +381,10 @@ export class WebLocalStorageService extends LocalStorageService {
 					);
 
 					try {
-						await this.db.bulkPut(
-							queue.map(o => ({key: o.key, value: o.value}))
+						await this.ngZone.runOutsideAngular(async () =>
+							this.db.bulkPut(
+								queue.map(o => ({key: o.key, value: o.value}))
+							)
 						);
 
 						for (const {result} of queue) {
@@ -394,7 +408,10 @@ export class WebLocalStorageService extends LocalStorageService {
 		]);
 	}
 
-	constructor () {
+	constructor (
+		/** @ignore */
+		private readonly ngZone: NgZone
+	) {
 		super();
 	}
 }
