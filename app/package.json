@@ -4,7 +4,8 @@
 	"dependencies": {
 		"@electron/remote": "*",
 		"electron-push-receiver": "*",
-		"level": "*"
+		"levelup": "*",
+		"rocksdb": "*"
 	},
 	"devDependencies": {
 		"@cyph/prettier": "*",

@@ -40,7 +40,9 @@ export class WebLocalStorageService extends LocalStorageService {
 		try {
 			level =
 				env.isCordovaDesktop && typeof cordovaRequire === 'function' ?
-					cordovaRequire('level')('./data.db') :
+					cordovaRequire('levelup')(
+						cordovaRequire('rocksdb')('./data.db')
+					) :
 					undefined;
 		}
 		catch {}
