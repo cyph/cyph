@@ -34,10 +34,10 @@ export class WebLocalStorageService extends LocalStorageService {
 	};
 
 	/** @ignore */
-	private readonly dexie = (() => {
-		const db = new Dexie('WebLocalStorageService');
-		db.version(1).stores({data: 'key'});
-		return db.table('data');
+	private readonly db = (() => {
+		const dexie = new Dexie('WebLocalStorageService');
+		dexie.version(1).stores({data: 'key'});
+		return dexie.table('data');
 	})();
 
 	/** @ignore */
@@ -142,7 +142,7 @@ export class WebLocalStorageService extends LocalStorageService {
 			const oldData = Object.entries(await localforage.getItems());
 
 			if (oldData.length > 0) {
-				await this.dexie.bulkPut(
+				await this.db.bulkPut(
 					oldData.map(([key, value]) => ({key, value}))
 				);
 
@@ -180,7 +180,7 @@ export class WebLocalStorageService extends LocalStorageService {
 		}
 
 		await Promise.all([
-			this.webStorageLock(async () => this.dexie.clear()),
+			this.webStorageLock(async () => this.db.clear()),
 			this.nativeKeystore
 				.then(async keystore => keystore?.clear())
 				.catch(() => {})
@@ -215,7 +215,7 @@ export class WebLocalStorageService extends LocalStorageService {
 					);
 
 					try {
-						const results = await this.dexie.bulkGet(
+						const results = await this.db.bulkGet(
 							queue.map(o => o.key)
 						);
 
@@ -272,7 +272,7 @@ export class WebLocalStorageService extends LocalStorageService {
 			await this.ready;
 		}
 
-		return <any> this.dexie.toCollection().keys();
+		return <any> this.db.toCollection().keys();
 	}
 
 	/** @inheritDoc */
@@ -302,7 +302,7 @@ export class WebLocalStorageService extends LocalStorageService {
 					);
 
 					try {
-						await this.dexie.bulkDelete(queue.map(o => o.key));
+						await this.db.bulkDelete(queue.map(o => o.key));
 
 						for (const {result} of queue) {
 							result.resolve();
@@ -352,7 +352,7 @@ export class WebLocalStorageService extends LocalStorageService {
 					);
 
 					try {
-						await this.dexie.bulkPut(
+						await this.db.bulkPut(
 							queue.map(o => ({key: o.key, value: o.value}))
 						);
 
