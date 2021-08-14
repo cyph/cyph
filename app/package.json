@@ -3,7 +3,8 @@
 	"author": "Cyph, Inc. <cordova-app@cyph.com> (https://github.com/cyph)",
 	"dependencies": {
 		"@electron/remote": "*",
-		"electron-push-receiver": "*"
+		"electron-push-receiver": "*",
+		"level": "*"
 	},
 	"devDependencies": {
 		"@cyph/prettier": "*",
