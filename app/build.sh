@@ -370,7 +370,7 @@ if [ "${electron}" ] ; then
 							') main\" >> /etc/apt/sources.list ; ' +
 							'curl -s https://deb.nodesource.com/gpgkey/nodesource.gpg.key | apt-key add - ; ' +
 							'apt-get update ; ' +
-							'apt-get install -y nodejs ; ' +
+							'apt-get install -y git nodejs ; ' +
 							'npx cordova telemetry off ; ' +
 							'while true ; do npx cordova build electron --release && break ; done'
 					],
