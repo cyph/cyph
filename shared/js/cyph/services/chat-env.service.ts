@@ -4,7 +4,6 @@ import {env} from '../env';
 import {ISessionService} from '../service-interfaces/isession.service';
 import {ConfigService} from './config.service';
 import {EnvService} from './env.service';
-import {LocalStorageService} from './local-storage.service';
 import {SessionInitService} from './session-init.service';
 import {SessionWrapperService} from './session-wrapper.service';
 
@@ -74,8 +73,6 @@ export class ChatEnvService extends EnvService {
 	public set newCyphBaseUrl (_: string)  {}
 
 	constructor (
-		localStorageService: LocalStorageService,
-
 		/** @ignore */
 		private readonly configService: ConfigService,
 
@@ -85,7 +82,7 @@ export class ChatEnvService extends EnvService {
 		/** @ignore */
 		private readonly sessionWrapperService: SessionWrapperService
 	) {
-		super(localStorageService);
+		super();
 
 		this.sessionWrapperService.sessionService.then(sessionService => {
 			this.sessionService = sessionService;

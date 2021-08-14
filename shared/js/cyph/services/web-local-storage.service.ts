@@ -5,7 +5,6 @@ import {extendPrototype as localforageGetItemsInit} from 'localforage-getitems';
 import {potassiumUtil} from '../crypto/potassium/potassium-util';
 import {env} from '../env';
 import {IResolvable} from '../iresolvable';
-import {StringProto} from '../proto';
 import {lockFunction} from '../util/lock';
 import {debugLogError} from '../util/log';
 import {resolvable} from '../util/wait/resolvable';
@@ -186,22 +185,6 @@ export class WebLocalStorageService extends LocalStorageService {
 		catch (err) {
 			debugLogError(() => ({localforageToDexieMigrationError: err}));
 		}
-
-		try {
-			await Promise.all(
-				Object.keys(localStorage)
-					.map(
-						key =>
-							/* eslint-disable-next-line @typescript-eslint/tslint/config */
-							<[string, string]> [key, localStorage.getItem(key)]
-					)
-					.filter(([_, value]) => !!value)
-					.map(async ([key, value]) =>
-						this.setItem(key, StringProto, value, false)
-					)
-			);
-		}
-		catch {}
 	})();
 
 	/** @ignore */

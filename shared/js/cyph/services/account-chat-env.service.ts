@@ -2,7 +2,6 @@ import {Injectable} from '@angular/core';
 import {env} from '../env';
 import {ChatEnvService} from './chat-env.service';
 import {ConfigService} from './config.service';
-import {LocalStorageService} from './local-storage.service';
 import {SessionInitService} from './session-init.service';
 import {SessionWrapperService} from './session-wrapper.service';
 
@@ -21,16 +20,10 @@ export class AccountChatEnvService extends ChatEnvService {
 	public readonly telehealthTheme = env.telehealthTheme;
 
 	constructor (
-		localStorageService: LocalStorageService,
 		configService: ConfigService,
 		sessionInitService: SessionInitService,
 		sessionWrapperService: SessionWrapperService
 	) {
-		super(
-			localStorageService,
-			configService,
-			sessionInitService,
-			sessionWrapperService
-		);
+		super(configService, sessionInitService, sessionWrapperService);
 	}
 }

@@ -1,11 +1,10 @@
-import {Inject, Injectable, Optional} from '@angular/core';
+import {Injectable} from '@angular/core';
 import * as countryList from 'country-list';
 import {Env, env} from '../env';
 import {geolocation} from '../geolocation';
-import {DataURIProto, StringProto} from '../proto';
+import {DataURIProto} from '../proto';
 import {toInt} from '../util/formatting';
 import {deserialize} from '../util/serialization';
-import {LocalStorageService} from './local-storage.service';
 
 /**
  * @see Env
@@ -49,17 +48,13 @@ export class EnvService extends Env {
 	/** Package/environment name. */
 	public readonly packageName: Promise<string> = (async () => {
 		try {
-			if (this.localStorageService) {
-				const timestamp = toInt(
-					await this.localStorageService.getItem(
-						'webSignPackageTimestamp',
-						StringProto
-					)
-				);
+			const timestamp = toInt(
+				/* eslint-disable-next-line @typescript-eslint/tslint/config */
+				localStorage.getItem('webSignPackageTimestamp')
+			);
 
-				if (!isNaN(timestamp)) {
-					return `${this.host} ${timestamp.toString()}`;
-				}
+			if (!isNaN(timestamp)) {
+				return `${this.host} ${timestamp.toString()}`;
 			}
 		}
 		catch {}
@@ -98,21 +93,18 @@ export class EnvService extends Env {
 		];
 
 		try {
-			if (this.localStorageService) {
-				const isAffectedBrowser = /\/#test$/.test(
-					new Request('https://cyph.app/#test').url
-				);
+			const isAffectedBrowser = /\/#test$/.test(
+				new Request('https://cyph.app/#test').url
+			);
 
-				const webSignHash = await this.localStorageService.getItem(
-					'webSignHash',
-					StringProto
-				);
+			/* eslint-disable-next-line @typescript-eslint/tslint/config */
+			const webSignHash = localStorage.getItem('webSignHash');
 
-				return (
-					isAffectedBrowser &&
-					affectedWebSignHashes.indexOf(webSignHash) > -1
-				);
-			}
+			return (
+				isAffectedBrowser &&
+				typeof webSignHash === 'string' &&
+				affectedWebSignHashes.indexOf(webSignHash) > -1
+			);
 		}
 		catch {}
 
@@ -124,12 +116,7 @@ export class EnvService extends Env {
 		return '/retry/' + this.newCyphBaseUrl.replace(/^.*?(\/#|$)/, '');
 	}
 
-	constructor (
-		/** @ignore */
-		@Inject(LocalStorageService)
-		@Optional()
-		private readonly localStorageService: LocalStorageService | undefined
-	) {
+	constructor () {
 		super();
 
 		this.countries = this.geolocation.countryCode.then(countryCode => {
