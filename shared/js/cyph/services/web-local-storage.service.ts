@@ -10,6 +10,7 @@ import {lockFunction} from '../util/lock';
 import {debugLogError} from '../util/log';
 import {resolvable} from '../util/wait/resolvable';
 import {sleep} from '../util/wait/sleep';
+
 import {LocalStorageService} from './local-storage.service';
 
 localforageGetItemsInit(localforage);
@@ -35,9 +36,42 @@ export class WebLocalStorageService extends LocalStorageService {
 
 	/** @ignore */
 	private readonly db = (() => {
-		const dexie = new Dexie('WebLocalStorageService');
-		dexie.version(1).stores({data: 'key'});
-		return dexie.table('data');
+		if (!env.isCordovaDesktop || typeof cordovaRequire !== 'function') {
+			const dexie = new Dexie('WebLocalStorageService');
+			dexie.version(1).stores({data: 'key'});
+			return dexie.table('data');
+		}
+
+		const level = cordovaRequire('level')('./web-local-storage.service.db');
+
+		return {
+			bulkGet: async (keys: string[]) =>
+				Promise.all(keys.map(async key => level.get(key))),
+			bulkDelete: async (keys: string[]) =>
+				level.batch(keys.map(key => ({key, type: 'del'}))),
+			bulkPut: async (items: {key: string; value: Uint8Array}[]) =>
+				level.batch(items.map(item => ({...item, type: 'put'}))),
+			clear: async () => level.clear(),
+			toCollection: () => ({
+				keys: async () => {
+					const stream = level.createKeyStream();
+					const keys: string[] = [];
+					const result = resolvable(keys);
+
+					stream.on('data', (key: string) => {
+						keys.push(key);
+					});
+					stream.on('end', () => {
+						result.resolve();
+					});
+					stream.on('error', (err: any) => {
+						result.reject(err);
+					});
+
+					return result;
+				}
+			})
+		};
 	})();
 
 	/** @ignore */
