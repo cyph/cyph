@@ -35,13 +35,21 @@ export class WebLocalStorageService extends LocalStorageService {
 
 	/** @ignore */
 	private readonly db = this.ngZone.runOutsideAngular(() => {
-		if (!env.isCordovaDesktop || typeof cordovaRequire !== 'function') {
+		let level: any;
+
+		try {
+			level =
+				env.isCordovaDesktop && typeof cordovaRequire === 'function' ?
+					cordovaRequire('level')('./data.db') :
+					undefined;
+		}
+		catch {}
+
+		if (!level) {
 			const dexie = new Dexie('WebLocalStorageService');
 			dexie.version(1).stores({data: 'key'});
 			return dexie.table('data');
 		}
-
-		const level = cordovaRequire('level')('./web-local-storage.service.db');
 
 		const collection = {
 			keys: async () => {
