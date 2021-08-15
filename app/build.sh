@@ -362,26 +362,31 @@ if [ "${electron}" ] ; then
 						'-c',
 						'cd /build ; ' +
 							'apt-get update ; ' +
-							'apt-get install -y curl apt-transport-https lsb-release ; ' +
+							'apt-get install -y curl apt-transport-https lsb-release software-properties-common ; ' +
 							'echo \"deb https://deb.nodesource.com/node_14.x \$(' +
 								'grep DISTRIB_CODENAME /etc/lsb-release | ' +
 								'tr \\'=\\' \\' \\' | ' +
 								'awk \\'{print \$2}\\'' +
 							') main\" >> /etc/apt/sources.list ; ' +
 							'curl -s https://deb.nodesource.com/gpgkey/nodesource.gpg.key | apt-key add - ; ' +
+							'add-apt-repository -y ppa:deadsnakes/ppa ; ' +
 							'apt-get update ; ' +
-							'apt-get install -y git nodejs ; ' +
+							'apt-get install -y build-essential git nodejs python3.6 ; ' +
+							'update-alternatives --install /usr/bin/python python /usr/bin/python3.6 10 ; ' +
 							'npx cordova telemetry off ; ' +
-							// Workaround for RocksDB native build
-							'mv node_modules/rocksdb node_modules/rocksdb.old ; if [ -d node_modules/rocksdb.linux ] ; then mv node_modules/rocksdb.linux node_modules/rocksdb ; else npm install rocksdb ; fi ; ' +
-							'while true ; do npx cordova build electron --release && break ; done ; ' +
-							// Revert RocksDB workaround
-							'mv node_modules/rocksdb node_modules/rocksdb.linux ; mv node_modules/rocksdb.old node_modules/rocksdb ; '
+							'./node_modules/.bin/electron-rebuild ; ' +
+							'while true ; do npx cordova build electron --release && break ; done'
 					],
 					{stdio: 'inherit'}
 				);
 				return;
 			}
+
+			child_process.spawnSync(
+				'node',
+				['node_modules/.bin/electron-rebuild'],
+				{stdio: 'inherit'}
+			);
 
 			while (true) {
 				const {status} = child_process.spawnSync(
