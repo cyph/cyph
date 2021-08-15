@@ -74,13 +74,20 @@ export class WebLocalStorageService extends LocalStorageService {
 		};
 
 		return {
-			bulkGet: async (keys: string[]) =>
-				Promise.all(keys.map(async key => level.get(key))),
-			bulkDelete: async (keys: string[]) =>
+			bulkGet: async (keys: string[]) : Promise<{value?: Uint8Array}[]> =>
+				Promise.all(
+					keys.map(async key => ({value: await level.get(key)}))
+				),
+			bulkDelete: async (keys: string[]) : Promise<void> =>
 				level.batch(keys.map(key => ({key, type: 'del'}))),
-			bulkPut: async (items: {key: string; value: Uint8Array}[]) =>
+			bulkPut: async (
+				items: {key: string; value: Uint8Array}[]
+			) : Promise<void> =>
 				level.batch(items.map(item => ({...item, type: 'put'}))),
-			clear: async () => level.clear(),
+			clear: async () : Promise<void> => level.clear(),
+			optimizedGet: async (
+				key: string
+			) : Promise<Uint8Array | undefined> => level.get(key),
 			toCollection: () => collection
 		};
 	});
@@ -232,6 +239,14 @@ export class WebLocalStorageService extends LocalStorageService {
 
 		const [webStorageValue, keystoreValue] = await Promise.all([
 			(async () => {
+				if ('optimizedGet' in this.db) {
+					const {optimizedGet} = this.db;
+
+					return this.webStorageLock(async () =>
+						optimizedGet(url).catch(() => undefined)
+					);
+				}
+
 				const result = resolvable<Uint8Array | undefined>();
 				this.batchQueues.getItem.push({key: url, result});
 
