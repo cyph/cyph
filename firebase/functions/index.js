@@ -60,6 +60,10 @@ exports.getCastleSessionID = onRequest(async (...args) =>
 	(await importFunction('get-castle-session-id')).getCastleSessionID(...args)
 );
 
+exports.getEmailData = onRequest(async (...args) =>
+	(await importFunction('get-email-data')).getEmailData(...args)
+);
+
 exports.getReactions = onRequest(async (...args) =>
 	(await importFunction('get-reactions')).getReactions(...args)
 );
@@ -86,6 +90,10 @@ exports.itemRemoved = database
 
 exports.openUserToken = onRequest(async (...args) =>
 	(await importFunction('open-user-token')).openUserToken(...args)
+);
+
+exports.publishEmail = onRequest(async (...args) =>
+	(await importFunction('publish-email')).publishEmail(...args)
 );
 
 exports.register = onRequest(async (...args) =>
