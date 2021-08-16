@@ -1,0 +1,48 @@
+diff --git a/node_modules/app-builder-lib/out/codeSign/windowsCodeSign.js b/node_modules/app-builder-lib/out/codeSign/windowsCodeSign.js
+index ea1a92f..743b089 100644
+--- a/node_modules/app-builder-lib/out/codeSign/windowsCodeSign.js
++++ b/node_modules/app-builder-lib/out/codeSign/windowsCodeSign.js
+@@ -221,7 +221,7 @@ function getWinSignTool(vendorPath) {
+         return path.join(vendorPath, "windows-6", "signtool.exe");
+     }
+     else {
+-        return path.join(vendorPath, "windows-10", process.arch, "signtool.exe");
++        return path.join(vendorPath, "windows-10", "x64", "signtool.exe");
+     }
+ }
+ async function getToolPath() {
+diff --git a/node_modules/app-builder-lib/out/electron/electronMac.js b/node_modules/app-builder-lib/out/electron/electronMac.js
+index 2e3e50d..7598df9 100644
+--- a/node_modules/app-builder-lib/out/electron/electronMac.js
++++ b/node_modules/app-builder-lib/out/electron/electronMac.js
+@@ -122,7 +122,7 @@ async function createMacApp(packager, appOutDir, asarIntegrity, isMas) {
+         helper.CFBundleDisplayName = `${appInfo.productName} Helper ${postfix}`;
+         helper.CFBundleIdentifier = userProvidedBundleIdentifier
+             ? appInfo_1.filterCFBundleIdentifier(userProvidedBundleIdentifier)
+-            : appInfo_1.filterCFBundleIdentifier(`${helperBundleIdentifier}.${postfix}`);
++            : appInfo_1.filterCFBundleIdentifier(`${helperBundleIdentifier}.${postfix.replace(/[^a-z0-9]/gim,"")}`);
+         helper.CFBundleVersion = appPlist.CFBundleVersion;
+     }
+     if (helperRendererPlist != null) {
+diff --git a/node_modules/app-builder-lib/out/util/yarn.js b/node_modules/app-builder-lib/out/util/yarn.js
+index ee0d8db..0402674 100644
+--- a/node_modules/app-builder-lib/out/util/yarn.js
++++ b/node_modules/app-builder-lib/out/util/yarn.js
+@@ -75,7 +75,7 @@ function installDependencies(appDir, options) {
+     const arch = options.arch || process.arch;
+     const additionalArgs = options.additionalArgs;
+     builder_util_1.log.info({ platform, arch, appDir }, `installing production dependencies`);
+-    let execPath = process.env.npm_execpath || process.env.NPM_CLI_JS;
++    let execPath = require('child_process').spawnSync('which', ['npm']).stdout.toString().trim();
+     const execArgs = ["install"];
+     const isYarnBerry = checkYarnBerry();
+     if (!isYarnBerry) {
+@@ -129,7 +129,7 @@ async function rebuild(appDir, options) {
+         platform: options.platform || process.platform,
+         arch: options.arch || process.arch,
+         additionalArgs: options.additionalArgs,
+-        execPath: process.env.npm_execpath || process.env.NPM_CLI_JS,
++        execPath: require('child_process').spawnSync('which', ['npm']).stdout.toString().trim(),
+         buildFromSource: options.buildFromSource === true,
+     };
+     const env = getGypEnv(options.frameworkInfo, configuration.platform, configuration.arch, options.buildFromSource === true);
