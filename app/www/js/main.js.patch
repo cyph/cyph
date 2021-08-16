@@ -3,21 +3,24 @@
 ---
 > document.addEventListener('DOMContentLoaded', function () {
 > document.addEventListener('deviceready', function () {
-3a5,13
+3a5,16
 > document.addEventListener('backbutton', function (e) {
 > 	if (typeof self.onbackbutton === 'function') {
 > 		self.onbackbutton(e);
 > 	}
 > });
 > 
+> var os	= require('os');
+> 
 > self.cordovaParent	= location.toString() + '/../';
 > self.cordovaRequire	= self.require;
+> self.cordovaRocksDB	= !(os.platform() === 'darwin' && os.arch() === 'arm64');
 > 
-6c16
+6c19
 < 	navigator.serviceWorker.register('/serviceworker.js').catch(function () {});
 ---
 > 	navigator.serviceWorker.register('serviceworker.js').catch(function () {});
-15,34c25,28
+15,34c28,31
 < var hostSplit		= location.host.split('.');
 < var isHiddenService	= hostSplit.slice(-1)[0] === 'onion';
 < var locationString	= location.toString();
@@ -43,9 +46,9 @@
 > 	if (cordova && cordova.plugins && cordova.plugins.backgroundMode) {
 > 		cordova.plugins.backgroundMode.enable();
 > 	}
-35a30
+35a33
 > catch (_) {}
-37,40c32,35
+37,40c35,38
 < /* Different styling between the main Cyph environments and others */
 < var packageNameSplit	= packageName.split('.');
 < if (config.cyphBranches.indexOf(packageNameSplit[0]) > -1) {
@@ -55,7 +58,7 @@
 > 	if (cordova && cordova.plugins && cordova.plugins.iosrtc) {
 > 		cordova.plugins.iosrtc.registerGlobals();
 > 	}
-42,43c37,53
+42,43c40,56
 < if (packageNameSplit.length === 2 && packageNameSplit[0] === 'cyph') {
 < 	document.getElementById('websign-load').className	= 'cyph-branded';
 ---
@@ -76,7 +79,7 @@
 > 		delete storage.webSignPackageName;
 > 		delete storage.webSignPackageTimestamp;
 > 	}
-166,203c176,178
+166,203c179,181
 < /* Before finishing, perform self-administered
 < 	integrity check on WebSign bootstrap */
 < catch(function () {
@@ -119,28 +122,29 @@
 > /* Successfully execute package */
 > then(function (o) {
 > 	var headHTML	= o.package.split('<head>')[1].split('</head>')[0];
-205,212c180,181
+205,209c183,184
 < 	if (!hashWhitelist[storage.webSignHash]) {
 < 		throw {
 < 			webSignPanic: true,
 < 			bootstrapText: bootstrapText
 < 		};
-< 	}
-< 	else if (o) {
-< 		return o;
 ---
 > 	if (device.platform === 'iOS') {
 > 		headHTML	= headHTML.replace('href="/"', 'href="#"');
-215,220c184
+211,216d185
+< 	else if (o) {
+< 		return o;
+< 	}
+< 
 < 	throw null;
 < }).
-< 
+218,220c187
 < /* Successfully execute package */
 < then(function (o) {
 < 	document.head.innerHTML	= o.package.split('<head>')[1].split('</head>')[0];
 ---
 > 	document.head.innerHTML	= headHTML;
-230,267c194,198
+230,267c197,201
 < catch(function (err) {
 < 	var messageElement;
 < 
@@ -185,12 +189,12 @@
 > 		if (cordova && cordova.plugins && cordova.plugins.backgroundMode) {
 > 			cordova.plugins.backgroundMode.disable();
 > 		}
-268a200,203
+268a203,206
 > 	catch (_) {}
 > 
 > 	var messageElement			= document.getElementById('websign-load-message');
 > 	messageElement.innerText	= config.abortText;
-282c217
+282c220
 < })();
 ---
 > }); });

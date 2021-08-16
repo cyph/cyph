@@ -24,6 +24,12 @@ declare let cordovaRequire: NodeRequire | undefined;
 
 /**
  * @global
+ * Indicates whether native RocksDB instance should be used (Cordova-specific).
+ */
+declare let cordovaRocksDB: boolean | undefined;
+
+/**
+ * @global
  * Base64-encoded custom build object.
  */
 declare let customBuildBase64: string | undefined;
