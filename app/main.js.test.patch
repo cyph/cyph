@@ -1,27 +1,35 @@
-40d39
+43d42
 < var packageName		= 'cyph.app';
-42,43c41,42
+45,46c44,45
 < if (storage.betaTestUser) {
 < 	packageName		= 'beta.cyph.app';
 ---
 > var alternateTestEnvironmentOrigin;
 > var packageName;
-45,46d43
+48,49d46
 < 	if (!storage.betaTestInitialized) {
 < 		storage.betaTestInitialized	= true;
-48,53c45,65
+51,55c48,82
 < 		delete storage.webSignExpires;
 < 		delete storage.webSignHashWhitelist;
 < 		delete storage.webSignPackageMetadata;
 < 		delete storage.webSignPackageName;
 < 		delete storage.webSignPackageTimestamp;
-< 	}
 ---
-> var alternateTestEnvironment	= prompt(
-> 	'Enter the hostname or IP address of a local test environment, ' +
-> 	'or hit cancel to use a hosted test environment:',
-> 	storage.alternateTestEnvironment
-> );
+> var alternateTestEnvironment;
+> 
+> try {
+> 	alternateTestEnvironment	= prompt(
+> 		'Enter the hostname or IP address of a local test environment, ' +
+> 		'or hit cancel to use a hosted test environment:',
+> 		storage.alternateTestEnvironment
+> 	);
+> }
+> catch (_) {
+> 	if (confirm('Use localhost?')) {
+> 		alternateTestEnvironment	= 'localhost';
+> 	}
+> }
 > 
 > if (typeof alternateTestEnvironment === 'string') {
 > 	alternateTestEnvironmentOrigin		= 'http://' + alternateTestEnvironment + ':42002'
@@ -37,8 +45,13 @@
 > 	packageName	= 'master.cyph.app';
 > }
 > else {
-> 	packageName	= (prompt('Other:') || '').trim();
-57a70,85
+> 	try {
+> 		packageName	= (prompt('Other:') || '').trim();
+> 	}
+> 	catch (_) {
+> 		alert('Too bad. Using master anyway.');
+> 		packageName	= 'master.cyph.app';
+60a88,103
 > (alternateTestEnvironment ?
 > 
 > 
@@ -55,16 +68,16 @@
 > }) :
 > 
 > 
-174c202,205
+177c220,223
 < }).
 ---
 > })
 > 
 > 
 > ).
-178a210
+181a228
 > 	var bodyHTML	= o.package.split('<body>')[1].split('</body>')[0];
-184,185c216,226
+187,188c234,244
 < 	document.head.innerHTML	= headHTML;
 < 	document.body.innerHTML	= o.package.split('<body>')[1].split('</body>')[0];
 ---
@@ -79,7 +92,7 @@
 > 	}
 > 
 > 	var scriptRegex		= /<script[\s$>].*?<\/script>/g;
-187,190c228,302
+190,193c246,320
 < 	webSignSRI(o.packageMetadata).catch(function (err) {
 < 		document.head.innerHTML		= '';
 < 		document.body.textContent	= err;
