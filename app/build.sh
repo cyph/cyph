@@ -285,19 +285,19 @@ fi
 echo -e '\n\nBUILD\n\n'
 
 if [ "${iOSEmulator}" ] ; then
-	npx cordova build --debug --emulator || exit 1
+	npx cordova build --debug --emulator --verbose || exit 1
 	exit
 fi
 
 if [ "${debug}" ] ; then
-	npx cordova build --debug --device || exit 1
+	npx cordova build --debug --device --verbose || exit 1
 	cp platforms/android/app/build/outputs/apk/debug/app-debug.apk build/${packageName}.debug.apk
 	exit
 fi
 
 
 if [ "${android}" ] ; then
-	npx cordova build android --release --device -- \
+	npx cordova build android --release --device --verbose -- \
 		--keystore="${HOME}/.cyph/nativereleasesigning/android/cyph.jks" \
 		--alias=cyph \
 		--storePassword="${password}" \
@@ -312,10 +312,12 @@ if [ "${electron}" ] ; then
 	mkdir -p platforms/electron/build-res/appx 2> /dev/null
 	cp -f res/icon/windows/* platforms/electron/build-res/appx/
 
-	# npx cordova build electron --release
+	# npx cordova build electron --release --verbose
 
 	# https://github.com/electron-userland/electron-builder/issues/4151#issuecomment-520663362
 	find . -type f -name 'electronMac.js' -exec sed -i 's|\${helperBundleIdentifier}\.\${postfix}|${helperBundleIdentifier}.${postfix.replace(/[^a-z0-9]/gim,"")}|g' {} \;
+
+	npx electron-rebuild
 
 	# Workaround for Cordova and/or Electron and/or Parallels bug
 	cp build.json build.json.bak
@@ -374,24 +376,18 @@ if [ "${electron}" ] ; then
 							'apt-get install -y build-essential git nodejs python3.6 ; ' +
 							'update-alternatives --install /usr/bin/python python /usr/bin/python3.6 10 ; ' +
 							'npx cordova telemetry off ; ' +
-							'./node_modules/.bin/electron-rebuild ; ' +
-							'while true ; do npx cordova build electron --release && break ; done'
+							'npx electron-rebuild ; ' +
+							'while true ; do npx cordova build electron --release --verbose && break ; done'
 					],
 					{stdio: 'inherit'}
 				);
 				return;
 			}
 
-			child_process.spawnSync(
-				'node',
-				['node_modules/.bin/electron-rebuild'],
-				{stdio: 'inherit'}
-			);
-
 			while (true) {
 				const {status} = child_process.spawnSync(
 					'npx',
-					['cordova', 'build', 'electron', '--release'],
+					['cordova', 'build', 'electron', '--release', '--verbose'],
 					{stdio: 'inherit'}
 				);
 
@@ -401,7 +397,7 @@ if [ "${electron}" ] ; then
 			}
 		};
 
-		// Workraound for Cordova oversight
+		// Workaround for Cordova oversight
 		const originalOptionsSet = 'this.options = (0, _builderUtil().deepAssign)({}, this.packager.platformSpecificBuildOptions, this.packager.config.appx);';
 
 		fs.writeFileSync(
@@ -421,39 +417,43 @@ if [ "${electron}" ] ; then
 	node -e "
 		${electronScript}
 
-		build({linux}, true);
 		build({mac});
 		build({windows: windowsExe});
 		build({windows: windowsAppStore});
 	"
-	cp -f build.json.bak build.json
-
 	cp -a platforms/electron/build/mas-universal/*.pkg build/${packageName}.pkg || exit 1
 	cp platforms/electron/build/*.appx build/${packageName}.appx || exit 1
-	# cp platforms/electron/build/*.AppImage build/${packageName}.AppImage || exit 1
-	# cp platforms/electron/build/*.deb build/${packageName}.deb || exit 1
 	cp platforms/electron/build/*.dmg build/${packageName}.dmg || exit 1
 	cp platforms/electron/build/*.exe build/${packageName}.exe || exit 1
-	# cp platforms/electron/build/*.rpm build/${packageName}.rpm || exit 1
-	cp platforms/electron/build/*_amd64.snap build/${packageName}.amd64.snap || exit 1
-	# cp platforms/electron/build/*_arm64.snap build/${packageName}.arm64.snap || exit 1
-	cp platforms/electron/build/*_armhf.snap build/${packageName}.armhf.snap || exit 1
 
+	cp -f build.json.bak build.json
 	node -e "
 		$(echo "${electronScript}" | sed 's|--release|--debug|g')
 
 		build({mac: macDmgDebug});
 		build({windows: windowsExeDebug});
 	"
-
 	cp platforms/electron/build/*.dmg build/${packageName}.debug.dmg || exit 1
 	cp platforms/electron/build/*.exe build/${packageName}.debug.exe || exit 1
+
+	cp -f build.json.bak build.json
+	node -e "
+		${electronScript}
+
+		build({linux}, true);
+	"
+	# cp platforms/electron/build/*.AppImage build/${packageName}.AppImage || exit 1
+	# cp platforms/electron/build/*.deb build/${packageName}.deb || exit 1
+	# cp platforms/electron/build/*.rpm build/${packageName}.rpm || exit 1
+	cp platforms/electron/build/*_amd64.snap build/${packageName}.amd64.snap || exit 1
+	# cp platforms/electron/build/*_arm64.snap build/${packageName}.arm64.snap || exit 1
+	cp platforms/electron/build/*_armhf.snap build/${packageName}.armhf.snap || exit 1
 
 	mv build.json.bak build.json
 fi
 
 if [ "${iOS}" ] ; then
-	npx cordova build ios --debug --device \
+	npx cordova build ios --debug --device --verbose \
 		--codeSignIdentity="${iOSDevelopmentIdentity}" \
 		--developmentTeam='SXZZ8WLPV2' \
 		--packageType='development' \
@@ -463,7 +463,7 @@ if [ "${iOS}" ] ; then
 
 	mv platforms/ios/build/device ios-debug
 
-	npx cordova build ios --release --device \
+	npx cordova build ios --release --device --verbose \
 		--codeSignIdentity="${iOSDistributionIdentity}" \
 		--developmentTeam='SXZZ8WLPV2' \
 		--packageType='app-store' \
