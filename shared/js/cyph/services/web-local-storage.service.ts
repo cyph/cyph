@@ -383,7 +383,7 @@ export class WebLocalStorageService extends LocalStorageService {
 
 		await Promise.all([
 			(async () => {
-				const result = resolvable<void>();
+				const result = resolvable();
 				this.batchQueues.removeItem.push({key: url, result});
 
 				this.locks
@@ -437,7 +437,7 @@ export class WebLocalStorageService extends LocalStorageService {
 
 		await Promise.all([
 			(async () => {
-				const result = resolvable<void>();
+				const result = resolvable();
 				this.batchQueues.setItem.push({key: url, result, value});
 
 				this.locks
