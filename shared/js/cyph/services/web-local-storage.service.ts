@@ -61,8 +61,8 @@ export class WebLocalStorageService extends LocalStorageService {
 					const keys: string[] = [];
 					const result = resolvable(keys);
 
-					stream.on('data', (key: string) => {
-						keys.push(key);
+					stream.on('data', (key: Uint8Array) => {
+						keys.push(potassiumUtil.toString(key));
 					});
 					stream.on('end', () => {
 						result.resolve();
@@ -208,7 +208,13 @@ export class WebLocalStorageService extends LocalStorageService {
 				value: new Uint8Array(0)
 			};
 
-			if ((await this.db.bulkGet([migrationComplete.key]))[0]?.value) {
+			if (
+				(
+					await this.db
+						.bulkGet([migrationComplete.key])
+						.catch(() => [])
+				)[0]?.value
+			) {
 				return;
 			}
 
