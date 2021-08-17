@@ -91,6 +91,13 @@ export class WebLocalStorageService extends LocalStorageService {
 	});
 
 	/** @ignore */
+	private readonly locks = {
+		getItem: lockFunction(),
+		removeItem: lockFunction(),
+		setItem: lockFunction()
+	};
+
+	/** @ignore */
 	private readonly nativeKeystore = (async () => {
 		if (!env.isCordovaMobile) {
 			return undefined;
@@ -206,9 +213,6 @@ export class WebLocalStorageService extends LocalStorageService {
 		}
 	})();
 
-	/** @ignore */
-	private readonly webStorageLock = lockFunction();
-
 	/** @inheritDoc */
 	protected async clearInternal (waitForReady: boolean) : Promise<void> {
 		if (waitForReady) {
@@ -216,9 +220,7 @@ export class WebLocalStorageService extends LocalStorageService {
 		}
 
 		await Promise.all([
-			this.webStorageLock(async () =>
-				this.ngZone.runOutsideAngular(async () => this.db.clear())
-			),
+			this.ngZone.runOutsideAngular(async () => this.db.clear()),
 			this.nativeKeystore
 				.then(async keystore => keystore?.clear())
 				.catch(() => {})
@@ -238,43 +240,42 @@ export class WebLocalStorageService extends LocalStorageService {
 		const [webStorageValue, keystoreValue] = await Promise.all([
 			(async () => {
 				if ('optimizedGet' in this.db) {
-					const {optimizedGet} = this.db;
-
-					return this.webStorageLock(async () =>
-						optimizedGet(url).catch(() => undefined)
-					);
+					return this.db.optimizedGet(url).catch(() => undefined);
 				}
 
 				const result = resolvable<Uint8Array | undefined>();
 				this.batchQueues.getItem.push({key: url, result});
 
-				this.webStorageLock(async () => {
-					if (this.batchQueues.getItem.length < 1) {
-						return;
-					}
+				this.locks
+					.getItem(async () => {
+						if (this.batchQueues.getItem.length < 1) {
+							return;
+						}
 
-					await sleep(this.batchInterval);
+						await sleep(this.batchInterval);
 
-					const queue = this.batchQueues.getItem.splice(
-						0,
-						this.batchQueues.getItem.length
-					);
-
-					try {
-						const results = await this.ngZone.runOutsideAngular(
-							async () => this.db.bulkGet(queue.map(o => o.key))
+						const queue = this.batchQueues.getItem.splice(
+							0,
+							this.batchQueues.getItem.length
 						);
 
-						for (let i = 0; i < queue.length; ++i) {
-							queue[i].result.resolve(results[i]?.value);
+						try {
+							const results = await this.ngZone.runOutsideAngular(
+								async () =>
+									this.db.bulkGet(queue.map(o => o.key))
+							);
+
+							for (let i = 0; i < queue.length; ++i) {
+								queue[i].result.resolve(results[i]?.value);
+							}
 						}
-					}
-					catch (err) {
-						for (const {result} of queue) {
-							result.reject(err);
+						catch (err) {
+							for (const {result} of queue) {
+								result.reject(err);
+							}
 						}
-					}
-				}).catch(() => {});
+					})
+					.catch(() => {});
 
 				return result;
 			})(),
@@ -339,33 +340,35 @@ export class WebLocalStorageService extends LocalStorageService {
 				const result = resolvable<void>();
 				this.batchQueues.removeItem.push({key: url, result});
 
-				this.webStorageLock(async () => {
-					if (this.batchQueues.removeItem.length < 1) {
-						return;
-					}
+				this.locks
+					.removeItem(async () => {
+						if (this.batchQueues.removeItem.length < 1) {
+							return;
+						}
 
-					await sleep(this.batchInterval);
+						await sleep(this.batchInterval);
 
-					const queue = this.batchQueues.removeItem.splice(
-						0,
-						this.batchQueues.removeItem.length
-					);
-
-					try {
-						await this.ngZone.runOutsideAngular(async () =>
-							this.db.bulkDelete(queue.map(o => o.key))
+						const queue = this.batchQueues.removeItem.splice(
+							0,
+							this.batchQueues.removeItem.length
 						);
 
-						for (const {result} of queue) {
-							result.resolve();
+						try {
+							await this.ngZone.runOutsideAngular(async () =>
+								this.db.bulkDelete(queue.map(o => o.key))
+							);
+
+							for (const {result} of queue) {
+								result.resolve();
+							}
 						}
-					}
-					catch (err) {
-						for (const {result} of queue) {
-							result.reject(err);
+						catch (err) {
+							for (const {result} of queue) {
+								result.reject(err);
+							}
 						}
-					}
-				}).catch(() => {});
+					})
+					.catch(() => {});
 
 				return result;
 			})(),
@@ -391,35 +394,40 @@ export class WebLocalStorageService extends LocalStorageService {
 				const result = resolvable<void>();
 				this.batchQueues.setItem.push({key: url, result, value});
 
-				this.webStorageLock(async () => {
-					if (this.batchQueues.setItem.length < 1) {
-						return;
-					}
+				this.locks
+					.setItem(async () => {
+						if (this.batchQueues.setItem.length < 1) {
+							return;
+						}
 
-					await sleep(this.batchInterval);
+						await sleep(this.batchInterval);
 
-					const queue = this.batchQueues.setItem.splice(
-						0,
-						this.batchQueues.setItem.length
-					);
-
-					try {
-						await this.ngZone.runOutsideAngular(async () =>
-							this.db.bulkPut(
-								queue.map(o => ({key: o.key, value: o.value}))
-							)
+						const queue = this.batchQueues.setItem.splice(
+							0,
+							this.batchQueues.setItem.length
 						);
 
-						for (const {result} of queue) {
-							result.resolve();
+						try {
+							await this.ngZone.runOutsideAngular(async () =>
+								this.db.bulkPut(
+									queue.map(o => ({
+										key: o.key,
+										value: o.value
+									}))
+								)
+							);
+
+							for (const {result} of queue) {
+								result.resolve();
+							}
 						}
-					}
-					catch (err) {
-						for (const {result} of queue) {
-							result.reject(err);
+						catch (err) {
+							for (const {result} of queue) {
+								result.reject(err);
+							}
 						}
-					}
-				}).catch(() => {});
+					})
+					.catch(() => {});
 
 				return result;
 			})(),
