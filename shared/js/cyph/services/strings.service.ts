@@ -506,6 +506,9 @@ export class StringsService extends BaseProvider {
 	public readonly formattingHelp = `Formatting Help`;
 
 	/** @see StringsService */
+	public readonly freeInviteCode = `As a limited-time promotion, you have been gifted a free invite code. Congratulations!`;
+
+	/** @see StringsService */
 	public readonly friend = `${this.internalFriend}`;
 
 	/** @see StringsService */
@@ -1471,6 +1474,9 @@ export class StringsService extends BaseProvider {
 
 	/** @see StringsService */
 	public readonly telehealthSessionWith = `Telehealth Session with`;
+
+	/** @see StringsService */
+	public readonly thanks = `Thanks!`;
 
 	/** @see StringsService */
 	public readonly timeExtended = `Added time to countdown.`;
