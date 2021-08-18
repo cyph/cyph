@@ -5,6 +5,7 @@ import {
 	ChangeDetectorRef,
 	Component,
 	EventEmitter,
+	HostBinding,
 	Input,
 	OnDestroy,
 	OnInit,
@@ -226,6 +227,14 @@ export class AccountRegisterComponent
 
 	/** If true, may skip setting lock screen password. */
 	@Input() public pinSkippable: boolean = false;
+
+	/** Indicates whether the simplified UI is enabled. */
+	@HostBinding('class.simple')
+	public readonly simple: BehaviorSubject<boolean> = toBehaviorSubject(
+		this.activatedRoute.data.pipe(map(o => !!o.simple)),
+		false,
+		this.subscriptions
+	);
 
 	/** Sets a spoiler on generated master key. */
 	public readonly spoiler = new BehaviorSubject<boolean>(true);
@@ -603,6 +612,11 @@ export class AccountRegisterComponent
 
 			const pendingInviteCode = await pendingInviteCodePromise;
 
+			if (!pendingInviteCode && this.simple.value) {
+				await this.router.navigate([this.accountService.routePath[0]]);
+				return;
+			}
+
 			this.inviteCode.setValue(pendingInviteCode);
 
 			if (!pendingInviteCode && !this.inviteCode.value) {
@@ -661,7 +675,7 @@ export class AccountRegisterComponent
 					}
 				}
 
-				this.router.navigate(['register', '1']);
+				this.router.navigate([this.accountService.routePath[0], '1']);
 			})
 		);
 
@@ -835,7 +849,7 @@ export class AccountRegisterComponent
 		tabIndex: number = this.tabIndex.value
 	) : void {
 		this.router.navigate([
-			'register',
+			this.accountService.routePath[0],
 			(tabIndex + increment + 1).toString()
 		]);
 	}

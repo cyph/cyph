@@ -83,6 +83,7 @@
 	class="login-form"
 	[class.checking]="checking | await"
 	[class.show-upsell-banner]="
+		!(simple | await) &&
 		(salesService.registerUpsellBanner | await) &&
 		configService.planConfig[
 			(inviteCodeData | await)?.plan || cyphPlans.Free
@@ -260,6 +261,7 @@
 										fxLayout="row"
 										fxLayoutAlign="center center"
 										class="description"
+										*ngIf="!(simple | await)"
 									>
 										<ng-container
 											*ngIf="
@@ -1092,11 +1094,15 @@
 						</ng-container>
 					</form>
 				</div>
+
 				<div
 					fxLayout="row"
 					fxLayoutAlign="center center"
 					fxLayoutGap="32px"
-					*ngIf="((tabIndex | await) || 0) !== totalSteps"
+					*ngIf="
+						!(simple | await) &&
+						((tabIndex | await) || 0) !== totalSteps
+					"
 				>
 					<ng-container
 						*ngIf="
@@ -1128,6 +1134,37 @@
 						</button>
 					</ng-template>
 				</div>
+
+				<ng-container *ngIf="simple | await">
+					<div
+						fxLayout="row"
+						fxLayoutAlign="center center"
+						fxLayoutGap="32px"
+					>
+						<button
+							mat-raised-button
+							type="submit"
+							[disabled]="((currentStep | await) || 0) <= 0"
+						>
+							<span cyphTranslate>Register</span>
+						</button>
+					</div>
+
+					<div></div>
+
+					<div
+						fxLayout="row"
+						fxLayoutAlign="center center"
+						fxLayoutGap="32px"
+					>
+						<a mat-link-button routerLink="/login" cyphTranslate>
+							Already have an account? Click here to log in.
+						</a>
+					</div>
+
+					<div></div>
+				</ng-container>
+
 				<div></div>
 				<cyph-footer></cyph-footer>
 			</div>

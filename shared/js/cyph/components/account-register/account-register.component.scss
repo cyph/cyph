@@ -1,5 +1,16 @@
 @import '../../../../css/mixins';
 
+:host.simple {
+	::ng-deep {
+		mat-tab-header {
+			&,
+			* {
+				visibility: hidden !important;
+			}
+		}
+	}
+}
+
 .login-form {
 	> .cyph-banner {
 		position: fixed;

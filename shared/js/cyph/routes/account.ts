@@ -341,8 +341,14 @@ export const account: Route = {
 			children: [{path: 'edit', component: BlankComponent}]
 		},
 		{path: 'profile/:username', component: AccountProfileComponent},
-		{path: 'register/:step', component: AccountRegisterComponent},
+		{
+			path: 'register/:step',
+			component: AccountRegisterComponent,
+			data: {simple: true}
+		},
 		{path: 'register', component: AccountGenerateInviteCodeComponent},
+		{path: 'registerv1/:step', component: AccountRegisterComponent},
+		{path: 'registerv1', redirectTo: 'registerv1/1'},
 		{
 			path: 'reject/:id',
 			component: AccountPseudoRelationshipResponseComponent,
