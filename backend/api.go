@@ -38,6 +38,7 @@ func main() {
 	handleFuncs("/downgradeaccount/{userToken}", false, Handlers{methods.GET: downgradeAccount})
 	handleFuncs("/geolocation/{language}", false, Handlers{methods.GET: getGeolocation})
 	handleFuncs("/iceservers", false, Handlers{methods.GET: getIceServers})
+	handleFuncs("/invitecode", false, Handlers{methods.GET: getInviteCode})
 	handleFuncs("/package/*", false, Handlers{methods.GET: getPackage})
 	handleFuncs("/packagetimestamp/*", false, Handlers{methods.GET: getPackageTimestamp})
 	handleFuncs("/preauth/{id}", false, Handlers{methods.POST: preAuth})
@@ -858,6 +859,29 @@ func getBillingStatus(h HandlerArgs) (interface{}, int) {
 func getContinent(h HandlerArgs) (interface{}, int) {
 	_, continentCode, _, _, _, _, _, _ := geolocate(h)
 	return continentCode, http.StatusOK
+}
+
+func getInviteCode(h HandlerArgs) (interface{}, int) {
+	inviteCode, _, _, err := generateInvite(
+		"",
+		"",
+		"",
+		"",
+		[]string{""},
+		[]string{""},
+		[]string{},
+		"",
+		"",
+		false,
+		false,
+		false,
+	)
+
+	if err != nil {
+		return err.Error(), http.StatusNotFound
+	}
+
+	return inviteCode, http.StatusOK
 }
 
 func getGeolocation(h HandlerArgs) (interface{}, int) {

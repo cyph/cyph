@@ -13,6 +13,7 @@ import {AccountEhrAccessComponent} from '../components/account-ehr-access';
 import {AccountFilesComponent} from '../components/account-files';
 import {AccountFormComponent} from '../components/account-form';
 import {AccountFormsComponent} from '../components/account-forms';
+import {AccountGenerateInviteCodeComponent} from '../components/account-generate-invite-code';
 import {AccountHomeComponent} from '../components/account-home';
 import {AccountIncomingPatientInfoComponent} from '../components/account-incoming-patient-info';
 import {AccountMessagingComponent} from '../components/account-messaging';
@@ -341,7 +342,7 @@ export const account: Route = {
 		},
 		{path: 'profile/:username', component: AccountProfileComponent},
 		{path: 'register/:step', component: AccountRegisterComponent},
-		{path: 'register', redirectTo: 'register/1'},
+		{path: 'register', component: AccountGenerateInviteCodeComponent},
 		{
 			path: 'reject/:id',
 			component: AccountPseudoRelationshipResponseComponent,
