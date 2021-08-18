@@ -41,14 +41,18 @@ export class WebLocalStorageService extends LocalStorageService {
 			return dexie.table<{key: string; value: Uint8Array}>('data');
 		}),
 		rocksDB: this.ngZone.runOutsideAngular(() => {
+			const ready = resolvable();
+
 			const level =
 				env.isCordovaDesktop &&
 				typeof cordovaRequire === 'function' &&
 				typeof cordovaRocksDB === 'boolean' &&
 				cordovaRocksDB ?
-					cordovaRequire('levelup')(
-						cordovaRequire('rocksdb')('./data.db')
-					) :
+					(() => {
+						const rocksDB = cordovaRequire('rocksdb')('./data.db');
+						rocksDB.close(ready.resolve);
+						return cordovaRequire('levelup')(rocksDB);
+					})() :
 					undefined;
 
 			if (!level) {
@@ -92,6 +96,7 @@ export class WebLocalStorageService extends LocalStorageService {
 				optimizedGet: async (
 					key: string
 				) : Promise<Uint8Array | undefined> => level.get(key),
+				ready,
 				toCollection: () => collection
 			};
 		})
@@ -247,7 +252,10 @@ export class WebLocalStorageService extends LocalStorageService {
 			}
 
 			try {
-				const oldData = await this.datastores.dexie.toArray();
+				const [oldData] = await Promise.all([
+					this.datastores.dexie.toArray(),
+					this.datastores.rocksDB.ready
+				]);
 
 				if (oldData.length > 0) {
 					await this.datastores.rocksDB.bulkPut(
