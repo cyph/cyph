@@ -2,6 +2,7 @@
 
 import {Routes} from '@angular/router';
 import {BlankComponent} from '../cyph/components/blank';
+import {EmailComposeComponent} from '../cyph/components/email-compose';
 import {env} from '../cyph/env';
 import {account, login, retry} from '../cyph/routes';
 import {AppService} from './app.service';
@@ -47,6 +48,10 @@ export const appRoutes = <Routes> [
 									data: {uiTest: true}
 								}
 							]
+					},
+					{
+						path: 'email-compose-test',
+						component: EmailComposeComponent
 					}
 				] :
 				[]),
