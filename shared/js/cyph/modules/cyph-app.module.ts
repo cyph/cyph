@@ -47,6 +47,7 @@ import {AccountUserRatingComponent} from '../components/account-user-rating';
 import {AccountVaultComponent} from '../components/account-vault';
 import {AccountWalletsComponent} from '../components/account-wallets';
 import {BurnerChatSetupComponent} from '../components/burner-chat-setup';
+import {EmailComposeComponent} from '../components/email-compose';
 import {FooterComponent} from '../components/footer';
 import {InAppPurchaseComponent} from '../components/in-app-purchase';
 import {LinkConnectionComponent} from '../components/link-connection';
@@ -124,6 +125,7 @@ import {CyphCommonModule} from './cyph-common.module';
 		AccountVaultComponent,
 		AccountWalletsComponent,
 		BurnerChatSetupComponent,
+		EmailComposeComponent,
 		FooterComponent,
 		InAppPurchaseComponent,
 		LinkConnectionComponent,
@@ -185,6 +187,7 @@ import {CyphCommonModule} from './cyph-common.module';
 		AccountWalletsComponent,
 		BurnerChatSetupComponent,
 		CyphCommonModule,
+		EmailComposeComponent,
 		FooterComponent,
 		InAppPurchaseComponent,
 		LinkConnectionComponent,
