@@ -1,1 +1,35 @@
 @import '../../../../css/mixins';
+
+ejs-documenteditorcontainer ::ng-deep {
+	[id='_editor_viewerContainer'] {
+		overflow-x: hidden !important;
+	}
+}
+
+.document-editor-container-wrapper {
+	height: calc(100% + 36px);
+	overflow: hidden;
+}
+
+:host > div:not(.mobile) > .card-wrapper {
+	--width: 75vw;
+	--height: 80vh;
+}
+
+:host > div.mobile > .card-wrapper {
+	--width: 100vw;
+	--height: calc(100vh - 56px);
+}
+
+.card-wrapper {
+	height: var(--height);
+	width: var(--width);
+
+	mat-card .document-editor-container-wrapper {
+		margin-left: -16px;
+		margin-bottom: -52px;
+		width: calc(100% + 32px);
+		// height: calc(var(--height) - 118px + 52px);
+		height: calc(var(--height) + 52px);
+	}
+}

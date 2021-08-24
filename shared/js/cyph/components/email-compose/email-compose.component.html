@@ -1,1 +1,112 @@
-<div>EmailCompose</div>
+<div
+	fxFlexFill
+	[fxLayoutAlign]="
+		(envService.isMobile | await) ? 'stretch stretch' : 'center center'
+	"
+	[class.mobile]="envService.isMobile | await"
+>
+	<div fxFlex class="cyph-light-theme card-wrapper">
+		<mat-card class="animated slideInDown ui-section" fxFlex>
+			<button
+				mat-icon-button
+				cyphTranslate
+				class="close-button"
+				matTooltip="Close"
+				matTooltipPosition="left"
+			>
+				<mat-icon>close</mat-icon>
+			</button>
+
+			<mat-card-title>
+				<span cyphTranslate>New Message</span>
+			</mat-card-title>
+			<mat-card-content>
+				<div fxFlexFill fxLayout="column">
+					<mat-form-field fxFlex>
+						<mat-chip-list
+							#chipList
+							cyphTranslate
+							aria-label="Recipients"
+						>
+							<mat-chip [removable]="true" [selectable]="true">
+								<span>
+									Kharle Hungelsach &lt;kharle@cyph.com&gt;
+								</span>
+								<mat-icon matChipRemove>cancel</mat-icon>
+							</mat-chip>
+							<!--
+								[value]="o"
+								(removed)="removeFromGroup($event.chip.value)"
+								*ngFor="
+									let o of appointmentGroupMembers | await;
+									trackBy: trackBySelf
+								"
+								{{
+									o.name +
+										' <' +
+										(o.email && o.phoneNumber ?
+											o.email + ', ' + o.phoneNumber :
+											o.email || o.phoneNumber) +
+										'>'
+								}}
+							-->
+
+							<input
+								#chipListInput
+								cyphTranslate
+								placeholder="To"
+								[matChipInputFor]="chipList"
+							/>
+							<!--
+								(matChipInputTokenEnd)="addToGroup(false)"
+								[ngModel]="appointmentGroupMemberDraft | await"
+								(ngModelChange)="
+									appointmentGroupMemberDraft.next($event)
+								"
+							-->
+
+							<mat-icon matSuffix class="suffix-button">
+								add
+							</mat-icon>
+							<!--
+								(click)="addToGroup()"
+							-->
+						</mat-chip-list>
+					</mat-form-field>
+
+					<mat-form-field>
+						<input
+							matInput
+							cyphTranslate
+							name="subject"
+							placeholder="Subject"
+						/>
+					</mat-form-field>
+
+					<div class="document-editor-container-wrapper">
+						<ejs-documenteditorcontainer
+							#documentEditorContainer
+							[enableComment]="false"
+							[enableCsp]="false"
+							[enableLocalPaste]="true"
+							[enableToolbar]="true"
+							layoutType="web"
+							[restrictEditing]="readOnly"
+							[toolbarItems]="[
+								'Hyperlink',
+								'Image',
+								'Table',
+								'Separator',
+								'Undo',
+								'Redo',
+								'Separator',
+								'Find'
+							]"
+						>
+						</ejs-documenteditorcontainer>
+					</div>
+				</div>
+			</mat-card-content>
+		</mat-card>
+	</div>
+</div>

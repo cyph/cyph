@@ -23,6 +23,7 @@ export class AccountAuthGuardService
 		'cancel-email',
 		'compose',
 		'download',
+		'email-compose-test',
 		'post',
 		'profile',
 		'reject',

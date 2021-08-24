@@ -738,7 +738,7 @@ $default-white: map-get($mat-grey, 100);
 		stroke: $cyph-theme-primary-default !important;
 	}
 
-	.e-dropdown-btn {
+	.e-dropdown-btn:not(.e-tbar-btn) {
 		background-color: map-get($cyph-accent, default);
 		color: map-get($cyph-white, default);
 	}
