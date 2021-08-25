@@ -84,13 +84,14 @@ export const getUserMetadata = async (projectId, username, namespace) => {
 
 	username = normalize(username);
 
-	const {database, getItem} = initDatabaseService(projectId);
+	const {auth, database, getItem} = initDatabaseService(projectId);
 
 	const [
 		certTimestamp,
 		internal,
 		inviteCode,
 		inviterUsername,
+		lastLogin,
 		plan,
 		profile,
 		profileExtra
@@ -108,6 +109,19 @@ export const getUserMetadata = async (projectId, username, namespace) => {
 			`users/${username}/inviterUsername`,
 			StringProto
 		).catch(() => ''),
+		auth
+			.getUserByEmail(`${username}@${namespace}`)
+			.then(o =>
+				o.metadata.lastRefreshTime ?
+					new Date(
+						Math.max(
+							new Date(o.metadata.lastRefreshTime).getTime(),
+							new Date(o.metadata.lastSignInTime).getTime()
+						)
+					) :
+					new Date(o.metadata.lastSignInTime)
+			)
+			.catch(() => undefined),
 		getItem(namespace, `users/${username}/plan`, CyphPlan)
 			.then(o => o.plan)
 			.catch(() => CyphPlans.Free),
@@ -132,6 +146,12 @@ export const getUserMetadata = async (projectId, username, namespace) => {
 		internal,
 		inviteCode,
 		inviterUsername,
+		lastLogin: {
+			daysSince: Math.floor(
+				(Date.now() - lastLogin.getTime()) / 86400000
+			),
+			timestamp: lastLogin.toLocaleString()
+		},
 		pgpPublicKey:
 			profileExtra.pgp &&
 			profileExtra.pgp.publicKey &&
