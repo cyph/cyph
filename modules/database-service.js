@@ -115,12 +115,7 @@ export const initDatabaseService = (config, isCloudFunction) => {
 
 			let bytes = data ?
 				Buffer.from(data, 'base64') :
-				await retry(
-					async () =>
-						(
-							await storage.file(`${url}/${hash}`).download()
-						)[0]
-				);
+				await databaseService.storageGetItem(undefined, url, hash);
 			if (skipSignature) {
 				bytes = bytes.slice(41256);
 			}
@@ -274,7 +269,22 @@ export const initDatabaseService = (config, isCloudFunction) => {
 				})
 			);
 		},
-		storage
+		storage,
+		storageGetItem: async (namespace, url, hash) =>
+			retry(
+				async () =>
+					(
+						await storage
+							.file(
+								`${
+									namespace === undefined ?
+										url :
+										processURL(namespace, url)
+								}/${hash}`
+							)
+							.download()
+					)[0]
+			)
 	};
 
 	return databaseService;

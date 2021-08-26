@@ -1,5 +1,6 @@
 /.bootstrap.original
 /.build
+/account-backups
 /docs
 /qr-invite-codes
 /serve.ready
