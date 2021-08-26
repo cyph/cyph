@@ -284,6 +284,7 @@
 		"jquery-appear-original": "^0.6.2",
 		"jsdoc": "^3.5.5",
 		"jsdom": "^16.7.0",
+		"jsonpath": "^1.1.1",
 		"jspdf": "^2.3.1",
 		"jsqr": "^1.4.0",
 		"karma": "^6.3.4",
