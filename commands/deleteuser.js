@@ -79,9 +79,34 @@ export const deleteUser = async (
 
 		console.log(`Getting ${namespacePath}/${url}/${parentObject.hash}.`);
 
-		parentObject.data = (
-			await storageGetItem(namespace, url, parentObject.hash)
-		).toString('base64');
+		try {
+			parentObject.data = (
+				await storageGetItem(namespace, url, parentObject.hash)
+			).toString('base64');
+		}
+		catch (err) {
+			console.error(err);
+
+			if (
+				(await new Promise((resolve, reject) => {
+					read(
+						{
+							prompt: 'An error has occurred. Ignore it and resume the backup/deletion? [y/N]'
+						},
+						(promptError, s) => {
+							if (promptError) {
+								reject(promptError);
+							}
+							else {
+								resolve(s.trim().toLowerCase());
+							}
+						}
+					);
+				})) !== 'y'
+			) {
+				throw err;
+			}
+		}
 	}
 
 	const accountBackupsDir = path.join(__dirname, '..', 'account-backups');
