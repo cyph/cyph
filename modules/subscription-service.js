@@ -134,6 +134,10 @@ export const initSubscriptionService = (config = {}) => {
 	};
 
 	const stripeCustomizeProduct = async (planID, metadata) => {
+		throw new Error('Not implemented.');
+
+		/* TODO: Remove this after confirming that it isn't needed. */
+
 		const {username, inviteCode} = metadata;
 
 		const product = await (async () => {
