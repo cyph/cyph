@@ -2,9 +2,11 @@
 
 import {util} from '@cyph/sdk';
 import braintree from 'braintree';
+import memoize from 'lodash-es/memoize.js';
 import fs from 'fs';
 import os from 'os';
 import initStripe from 'stripe';
+import superSphincs from 'supersphincs';
 
 const {uuid} = util;
 
@@ -113,16 +115,20 @@ const stripeCloneSubscription = async subscriptionID => {
 	).id;
 };
 
-const stripeCloneSubscriptionItem = async subscriptionItemID => {
+const stripeCloneSubscriptionItem = async (
+	subscriptionItemID,
+	overrideProductID
+) => {
 	const subscriptionItem = await stripe.subscriptionItems.retrieve(
 		subscriptionItemID
 	);
 
 	return (
-		await stripe.subscriptions.create({
+		await stripe.subscriptionItems.create({
+			metadata: subscriptionItem.metadata,
 			price_data: {
 				currency: subscriptionItem.price.currency,
-				product: subscriptionItem.price.product.id,
+				product: overrideProductID || subscriptionItem.price.product,
 				recurring: {
 					interval: subscriptionItem.price.recurring.interval
 				},
@@ -132,6 +138,76 @@ const stripeCloneSubscriptionItem = async subscriptionItemID => {
 			subscription: subscriptionItem.subscription
 		})
 	).id;
+};
+
+const stripeCustomizeProduct = async (planID, metadata) => {
+	const {username, inviteCode} = metadata;
+
+	const product = await (async () => {
+		const o = await stripeGetProduct(planID);
+		return o.metadata.parent ? stripeGetProduct(o.metadata.parent) : o;
+	})();
+
+	if (!username && !inviteCode) {
+		return product.id;
+	}
+
+	const id = `child_product_${
+		(
+			await superSphincs.hash(
+				`${product.id}\n${username || ''}\n${inviteCode || ''}`
+			)
+		).hex
+	}`;
+
+	try {
+		await stripe.products.retrieve(id);
+		return id;
+	}
+	catch {}
+
+	await stripe.products.create({
+		id,
+		metadata: {
+			parent: product.id
+		},
+		name: `${username ? `@${username}` : `Invite Code ${inviteCode}`} —— ${
+			product.name
+		}`
+	});
+
+	return id;
+};
+
+const stripeGetProduct = memoize(async planID =>
+	stripe.products.retrieve(planID)
+);
+
+export const stripeUpdateSubscriptionItem = async (
+	subscriptionItemID,
+	metadata = {}
+) => {
+	const subscriptionItem = await stripe.subscriptionItems.retrieve(
+		subscriptionItemID
+	);
+
+	const productID = await stripeCustomizeProduct(
+		subscriptionItem.price.product,
+		{...subscriptionItem.metadata, ...metadata}
+	);
+
+	if (subscriptionItem.price.product === productID) {
+		return subscriptionItemID;
+	}
+
+	const newSubscriptionItemID = await stripeCloneSubscriptionItem(
+		subscriptionItemID,
+		productID
+	);
+
+	await stripe.subscriptionItems.del(subscriptionItemID);
+
+	return newSubscriptionItemID;
 };
 
 const stripeRefundSubscription = async subscriptionID => {
