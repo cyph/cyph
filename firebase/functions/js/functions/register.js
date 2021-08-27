@@ -11,7 +11,7 @@ import {
 	setItem
 } from '../init.js';
 import {mailchimp, removeFromMailingList} from '../mailchimp.js';
-import {stripeUpdateSubscriptionItem} from '../stripe.js';
+import {stripe} from '../stripe.js';
 import {validateEmail} from '../validation.js';
 
 const {BinaryProto, BooleanProto, CyphPlan, CyphPlans, StringProto} = proto;
@@ -206,9 +206,11 @@ export const register = onCall(
 					.remove() :
 				undefined,
 			stripeData ?
-				stripeUpdateSubscriptionItem(stripeData.subscriptionItemID, {
-					username
-				}).catch(() => {}) :
+				stripe.subscriptionItems
+					.update(stripeData.subscriptionItemID, {
+						metadata: {username}
+					})
+					.catch(() => {}) :
 				undefined,
 			pendingInviteRef
 				.once('value')
