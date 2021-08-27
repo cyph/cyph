@@ -5,7 +5,7 @@ import {sendEmailInternal} from '../email.js';
 import {database, getItem, getTokenKey, onRequest, setItem} from '../init.js';
 import {addToMailingList, mailchimp, splitName} from '../mailchimp.js';
 import {namespaces} from '../namespaces.js';
-import {stripe} from '../stripe.js';
+import {stripeUpdateSubscriptionItem} from '../stripe.js';
 import * as tokens from '../tokens.js';
 import {validateEmail, validateInput} from '../validation.js';
 
@@ -107,11 +107,9 @@ export const generateInvite = onRequest(true, async (req, res, namespace) => {
 				subscriptionItemIDRef.remove(),
 			planTrialEndRef.remove(),
 			useStripe && subscriptionItemID ?
-				stripe.subscriptionItems
-					.update(subscriptionItemID, {
-						metadata: {username}
-					})
-					.catch(() => {}) :
+				stripeUpdateSubscriptionItem(subscriptionItemID, {
+					username
+				}).catch(() => {}) :
 				undefined,
 			(async () => {
 				if (planConfig.initialInvites === undefined) {
@@ -295,11 +293,10 @@ export const generateInvite = onRequest(true, async (req, res, namespace) => {
 										.set({inviterUsername: ''}) :
 									undefined,
 								useStripe && subscriptionItemID ?
-									stripe.subscriptionItems
-										.update(subscriptionItemID, {
-											metadata: {inviteCode}
-										})
-										.catch(() => {}) :
+									stripeUpdateSubscriptionItem(
+										subscriptionItemID,
+										{inviteCode}
+									).catch(() => {}) :
 									undefined,
 								i === 0 &&
 								email &&
