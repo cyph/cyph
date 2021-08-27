@@ -22,7 +22,22 @@ const rocksDBPromise = new Promise((resolve, reject) => {
 rocksDBPromise.then(rocksDB => {
 	comlink.expose(
 		{
-			rocksDB
+			rocksDB,
+			rocksDBKeys: async () =>
+				new Promise((resolve, reject) => {
+					const stream = rocksDB.createKeyStream();
+					const keys = [];
+
+					stream.on('data', key => {
+						keys.push(key.toString());
+					});
+					stream.on('end', () => {
+						resolve(keys);
+					});
+					stream.on('error', err => {
+						reject(err);
+					});
+				})
 		},
 		{
 			addEventListener: (_TYPE, listener, _OPTIONS) => {

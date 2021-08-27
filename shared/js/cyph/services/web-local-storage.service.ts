@@ -40,14 +40,18 @@ export class WebLocalStorageService extends LocalStorageService {
 			dexie.version(1).stores({data: 'key'});
 			return dexie.table<{key: string; value: Uint8Array}>('data');
 		}),
-		rocksDB: this.ngZone.runOutsideAngular(() => {
-			const ready = resolvable();
+		rocksDB: this.ngZone
+			.runOutsideAngular(async () => {
+				const ready = resolvable();
 
-			const level =
+				const level = (<any> self).nodeThread ?
+					await (
+						await (<any> self).nodeThread
+					).rocksDB :
 				env.isCordovaDesktop &&
-				typeof cordovaRequire === 'function' &&
-				typeof cordovaRocksDB === 'boolean' &&
-				cordovaRocksDB ?
+					typeof cordovaRequire === 'function' &&
+					typeof cordovaRocksDB === 'boolean' &&
+					cordovaRocksDB ?
 					(() => {
 						const rocksDB = cordovaRequire('rocksdb')('./data.db');
 						rocksDB.close(ready.resolve);
@@ -55,55 +59,61 @@ export class WebLocalStorageService extends LocalStorageService {
 					})() :
 					undefined;
 
-			if (!level) {
-				return;
-			}
-
-			const collection = {
-				keys: async () => {
-					const stream = level.createKeyStream();
-					const keys: string[] = [];
-					const result = resolvable(keys);
-
-					stream.on('data', (key: Uint8Array) => {
-						keys.push(potassiumUtil.toString(key));
-					});
-					stream.on('end', () => {
-						result.resolve();
-					});
-					stream.on('error', (err: any) => {
-						result.reject(err);
-					});
-
-					return result;
+				if (!level) {
+					return;
 				}
-			};
 
-			return {
-				bulkGet: async (
-					keys: string[]
-				) : Promise<{value?: Uint8Array}[]> =>
-					Promise.all(
-						keys.map(async key => ({value: await level.get(key)}))
-					),
-				bulkDelete: async (keys: string[]) : Promise<void> =>
-					level.batch(keys.map(key => ({key, type: 'del'}))),
-				bulkPut: async (
-					items: {key: string; value: Uint8Array}[]
-				) : Promise<void> =>
-					level.batch(items.map(item => ({...item, type: 'put'}))),
-				clear: async () : Promise<void> => level.clear(),
-				optimizedGet: async (
-					key: string
-				) : Promise<Uint8Array | undefined> => level.get(key),
-				ready,
-				toCollection: () => collection
-			};
-		})
+				const collection = {
+					keys: async () =>
+						(<any> self).nodeThread ?
+							(await (<any> self).nodeThread).rocksDBKeys() :
+							new Promise((resolve, reject) => {
+								const stream = level.createKeyStream();
+								const keys: string[] = [];
+
+								stream.on('data', (key: Uint8Array) => {
+									keys.push(potassiumUtil.toString(key));
+								});
+								stream.on('end', () => {
+									resolve(keys);
+								});
+								stream.on('error', (err: any) => {
+									reject(err);
+								});
+							})
+				};
+
+				return {
+					bulkGet: async (
+						keys: string[]
+					) : Promise<{value?: Uint8Array}[]> =>
+						Promise.all(
+							keys.map(async key => ({
+								value: await level.get(key)
+							}))
+						),
+					bulkDelete: async (keys: string[]) : Promise<void> =>
+						level.batch(keys.map(key => ({key, type: 'del'}))),
+					bulkPut: async (
+						items: {key: string; value: Uint8Array}[]
+					) : Promise<void> =>
+						level.batch(
+							items.map(item => ({...item, type: 'put'}))
+						),
+					clear: async () : Promise<void> => level.clear(),
+					optimizedGet: async (
+						key: string
+					) : Promise<Uint8Array | undefined> => level.get(key),
+					ready,
+					toCollection: () => collection
+				};
+			})
+			.catch(() => undefined)
 	};
 
 	/** @ignore */
-	private readonly db = this.datastores.rocksDB || this.datastores.dexie;
+	private readonly db = (async () =>
+		(await this.datastores.rocksDB) || this.datastores.dexie)();
 
 	/** @ignore */
 	private readonly locks = {
@@ -215,7 +225,7 @@ export class WebLocalStorageService extends LocalStorageService {
 
 			if (
 				(
-					await this.db
+					await (await this.db)
 						.bulkGet([migrationComplete.key])
 						.catch(() => [])
 				)[0]?.value
@@ -231,7 +241,9 @@ export class WebLocalStorageService extends LocalStorageService {
 				const oldData = Object.entries(await localforage.getItems());
 
 				if (oldData.length > 0) {
-					await this.db.bulkPut(
+					await (
+						await this.db
+					).bulkPut(
 						oldData
 							.map(([key, value]) => ({key, value}))
 							.concat(migrationComplete)
@@ -246,7 +258,9 @@ export class WebLocalStorageService extends LocalStorageService {
 
 			/* Migration of local data from Dexie to RocksDB */
 
-			if (!this.datastores.rocksDB) {
+			const rocksDB = await this.datastores.rocksDB;
+
+			if (!rocksDB) {
 				await this.datastores.dexie.put(migrationComplete);
 				return;
 			}
@@ -254,17 +268,15 @@ export class WebLocalStorageService extends LocalStorageService {
 			try {
 				const [oldData] = await Promise.all([
 					this.datastores.dexie.toArray(),
-					this.datastores.rocksDB.ready
+					rocksDB.ready
 				]);
 
 				if (oldData.length > 0) {
-					await this.datastores.rocksDB.bulkPut(
-						oldData.concat(migrationComplete)
-					);
+					await rocksDB.bulkPut(oldData.concat(migrationComplete));
 					await this.datastores.dexie.clear();
 				}
 				else {
-					await this.datastores.rocksDB.bulkPut([migrationComplete]);
+					await rocksDB.bulkPut([migrationComplete]);
 				}
 			}
 			catch (err) {
@@ -280,7 +292,7 @@ export class WebLocalStorageService extends LocalStorageService {
 		}
 
 		await Promise.all([
-			this.ngZone.runOutsideAngular(async () => this.db.clear()),
+			this.ngZone.runOutsideAngular(async () => (await this.db).clear()),
 			this.nativeKeystore
 				.then(async keystore => keystore?.clear())
 				.catch(() => {})
@@ -299,8 +311,10 @@ export class WebLocalStorageService extends LocalStorageService {
 
 		const [webStorageValue, keystoreValue] = await Promise.all([
 			(async () => {
-				if ('optimizedGet' in this.db) {
-					return this.db.optimizedGet(url).catch(() => undefined);
+				const db = await this.db;
+
+				if ('optimizedGet' in db) {
+					return db.optimizedGet(url).catch(() => undefined);
 				}
 
 				const result = resolvable<Uint8Array | undefined>();
@@ -322,7 +336,9 @@ export class WebLocalStorageService extends LocalStorageService {
 						try {
 							const results = await this.ngZone.runOutsideAngular(
 								async () =>
-									this.db.bulkGet(queue.map(o => o.key))
+									(
+										await this.db
+									).bulkGet(queue.map(o => o.key))
 							);
 
 							for (let i = 0; i < queue.length; ++i) {
@@ -381,7 +397,7 @@ export class WebLocalStorageService extends LocalStorageService {
 
 		return <any> (
 			this.ngZone.runOutsideAngular(async () =>
-				this.db.toCollection().keys()
+				(await this.db).toCollection().keys()
 			)
 		);
 	}
@@ -415,7 +431,9 @@ export class WebLocalStorageService extends LocalStorageService {
 
 						try {
 							await this.ngZone.runOutsideAngular(async () =>
-								this.db.bulkDelete(queue.map(o => o.key))
+								(
+									await this.db
+								).bulkDelete(queue.map(o => o.key))
 							);
 
 							for (const {result} of queue) {
@@ -469,7 +487,9 @@ export class WebLocalStorageService extends LocalStorageService {
 
 						try {
 							await this.ngZone.runOutsideAngular(async () =>
-								this.db.bulkPut(
+								(
+									await this.db
+								).bulkPut(
 									queue.map(o => ({
 										key: o.key,
 										value: o.value
