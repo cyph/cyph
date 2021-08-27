@@ -77,6 +77,8 @@
 ---
 > 		<script src='cordova.js'></script>
 > 		<script src='js/init.js'></script>
+> 		<script src='nodejs-project/node_modules/comlink/dist/umd/comlink.js'></script>
+> 		<script src='js/node.js'></script>
 > 		<script src='lib/localforage.js'></script>
 > 		<script src='lib/supersphincs.js'></script>
 > 		<script src='lib/brotli.js'></script>
