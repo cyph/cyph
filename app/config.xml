@@ -18,7 +18,10 @@
 
 	<icon src="res/icon/default.png" />
 
-	<plugin name="@havesource/cordova-plugin-push" spec="*" />
+	<plugin
+		name="@havesource/cordova-plugin-push"
+		spec="https://github.com/havesource/cordova-plugin-push#dev/3.0.0-kotlin"
+	/>
 	<!-- <plugin name="cordova-call" spec="*" /> --> -->
 	<plugin name="cordova-clipboard" spec="*" />
 	<plugin
