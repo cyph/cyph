@@ -31,7 +31,7 @@ require('@electron/remote/main').initialize();
 // be closed automatically when the JavaScript object is garbage collected.
 let mainWindow;
 
-function createWindow () {
+const createWindow = () => {
 	// Create the browser window.
 	let appIcon;
 	if (fs.existsSync(`${__dirname}/img/app.png`)) {
@@ -66,7 +66,7 @@ function createWindow () {
 
 	setupPushReceiver(mainWindow.webContents);
 
-	mainWindow.webContents.on('did-finish-load', function () {
+	mainWindow.webContents.on('did-finish-load', () => {
 		mainWindow.webContents.send('window-id', mainWindow.id);
 	});
 
@@ -82,7 +82,7 @@ function createWindow () {
 		// when you should delete the corresponding element.
 		mainWindow = null;
 	});
-}
+};
 
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.

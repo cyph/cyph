@@ -1,11 +1,11 @@
-self.cordovaNodeJS = new Promise(function (resolve, reject) {
-	self.cordovaNodeJSResolve = {reject: reject, resolve: resolve};
+self.cordovaNodeJS = new Promise((resolve, reject) => {
+	self.cordovaNodeJSResolve = {reject, resolve};
 });
 
-self.cordovaNodeJSInit = function () {
+self.cordovaNodeJSInit = () => {
 	nodejs.start(
 		'index.js',
-		function (err) {
+		err => {
 			if (err) {
 				self.cordovaNodeJSResolve.reject(err);
 				return;
@@ -13,10 +13,10 @@ self.cordovaNodeJSInit = function () {
 
 			self.cordovaNodeJSResolve.resolve(
 				Comlink.wrap({
-					addEventListener: function (_TYPE, listener, _OPTIONS) {
+					addEventListener: (_TYPE, listener, _OPTIONS) => {
 						nodejs.channel.setListener(listener);
 					},
-					postMessage: function (message, _TRANSFER) {
+					postMessage: (message, _TRANSFER) => {
 						nodejs.channel.send(message);
 					}
 				})

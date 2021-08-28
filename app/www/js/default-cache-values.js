@@ -1,4 +1,4 @@
-var defaultCacheValues = {
+self.defaultCacheValues = {
 	localforage: {},
 	localStorage: {}
 };

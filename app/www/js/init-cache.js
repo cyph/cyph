@@ -1,11 +1,11 @@
 if (!storage.webSignPackageTimestamp) {
-	Object.keys(defaultCacheValues.localforage).forEach(function (k) {
+	for (const k of Object.keys(self.defaultCacheValues.localforage)) {
 		localforage
 			.setItem(k, defaultCacheValues.localforage[k])
-			.catch(function () {});
-	});
+			.catch(() => {});
+	}
 
-	Object.keys(defaultCacheValues.localStorage).forEach(function (k) {
+	for (const k of Object.keys(self.defaultCacheValues.localStorage)) {
 		storage[k] = defaultCacheValues.localStorage[k];
-	});
+	}
 }

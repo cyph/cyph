@@ -70,7 +70,7 @@ const defaultCacheValuesPath = path.join(
 	fs.writeFileSync(
 		defaultCacheValuesPath,
 		cyphPrettier
-			.format(`var defaultCacheValues = ${cacheValues};`, {
+			.format(`self.defaultCacheValues = ${cacheValues};`, {
 				...packageJSON.prettier,
 				parser: 'babel'
 			})
