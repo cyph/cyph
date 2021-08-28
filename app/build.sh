@@ -157,6 +157,12 @@ fi
 
 npm install
 
+if [ ! "${electron}" ] ; then
+	cd www/nodejs-project
+	npm install
+	cd ../..
+fi
+
 if [ ! "${test}" ] ; then
 	while ! npm run updateDefaultCacheValues ; do echo 'Retrying' ; done
 fi
