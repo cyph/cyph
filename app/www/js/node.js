@@ -11,13 +11,23 @@ self.cordovaNodeJSInit = () => {
 				return;
 			}
 
+			const listeners = new Set();
+			nodejs.channel.on('message', message => {
+				for (const listener of listeners) {
+					listener({data: message});
+				}
+			});
+
 			self.cordovaNodeJSResolve.resolve(
 				Comlink.wrap({
 					addEventListener: (_TYPE, listener, _OPTIONS) => {
-						nodejs.channel.setListener(listener);
+						listeners.add(listener);
 					},
 					postMessage: (message, _TRANSFER) => {
 						nodejs.channel.send(message);
+					},
+					removeEventListener: (_TYPE, listener, _OPTIONS) => {
+						listeners.delete(listener);
 					}
 				})
 			);
