@@ -63,7 +63,7 @@
 < 			</div>
 ---
 > 			<div class='logo-animation'></div>
-107,116c64,76
+107,116c64,78
 < 		<script src='/js/init.js'></script>
 < 		<script src='/lib/localforage.js'></script>
 < 		<script src='/lib/supersphincs.js'></script>
@@ -77,7 +77,7 @@
 ---
 > 		<script src='cordova.js'></script>
 > 		<script src='js/init.js'></script>
-> 		<script src='nodejs-project/node_modules/comlink/dist/umd/comlink.js'></script>
+> 		<script src='lib/comlink.js'></script>
 > 		<script src='js/node.js'></script>
 > 		<script src='lib/localforage.js'></script>
 > 		<script src='lib/supersphincs.js'></script>
