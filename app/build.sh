@@ -88,6 +88,7 @@ fi
 
 export CSC_KEY_PASSWORD="${passwordWindows}"
 export CSC_KEYCHAIN="${HOME}/.cyph/nativereleasesigning/apple/cyph.keychain"
+export ORG_GRADLE_PROJECT_cdvMinSdkVersion="$(grep android-minSdkVersion config.xml | perl -pe 's/.*value="(.*?)".*/\1/g')"
 
 if [ -d cordova-build ] ; then
 	rm -rf cordova-build
