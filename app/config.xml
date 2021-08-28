@@ -61,7 +61,6 @@
 	<allow-intent href="sms:*" />
 	<allow-intent href="mailto:*" />
 	<allow-intent href="geo:*" />
-
 	<preference name="android-minSdkVersion" value="23" />
 	<preference name="android-targetSdkVersion" value="30" />
 	<preference name="BackgroundColor" value="#8b62d9" />
@@ -104,6 +103,7 @@
 		<preference name="StatusBarBackgroundColor" value="#8b62d9" />
 
 		<allow-intent href="market:*" />
+		<allow-navigation href="https://localhost/*" />
 
 		<resource-file src="google-services.json" target="app/google-services.json" />
 
