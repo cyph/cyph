@@ -95,6 +95,8 @@
 		<preference name="MixedContentMode" value="1" />
 		<preference name="Scheme" value="https" />
 
+		<preference name="AndroidInsecureFileModeEnabled" value="true" />
+
 		<preference
 			name="OverrideUserAgent"
 			value="Mozilla/5.0 (Linux; Android 7.1; Pixel XL Build/NDE63H) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.91 Mobile Safari/537.36"
@@ -356,7 +358,7 @@
 		<splash height="480" platform="ios" src="res/screen/ios/Default~iphone.png" width="320" />
 	</platform>
 
-	<engine name="android" spec="^10" />
+	<engine name="android" spec="~10.0" />
 	<engine name="electron" spec="git+https://github.com/buu700/cordova-electron-tmp" />
 	<engine name="ios" spec="^6" />
 </widget>
