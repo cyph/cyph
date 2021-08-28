@@ -1,17 +1,17 @@
-self.nodeThread = new Promise((resolve, reject) => {
-	self.resolveNodeThread = {reject: reject, resolve: resolve};
+self.cordovaNodeJS = new Promise(function (resolve, reject) {
+	self.cordovaNodeJSResolve = {reject: reject, resolve: resolve};
 });
 
-document.addEventListener('deviceready', function () {
+self.cordovaNodeJSInit = function () {
 	nodejs.start(
 		'index.js',
 		function (err) {
 			if (err) {
-				self.resolveNodeThread.reject(err);
+				self.cordovaNodeJSResolve.reject(err);
 				return;
 			}
 
-			self.resolveNodeThread.resolve(
+			self.cordovaNodeJSResolve.resolve(
 				Comlink.wrap({
 					addEventListener: function (_TYPE, listener, _OPTIONS) {
 						nodejs.channel.setListener(listener);
@@ -24,4 +24,4 @@ document.addEventListener('deviceready', function () {
 		},
 		{redirectOutputToLogcat: false}
 	);
-});
+};

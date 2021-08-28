@@ -1,15 +1,15 @@
-43d42
+49d48
 < var packageName		= 'cyph.app';
-45,46c44,45
+51,52c50,51
 < if (storage.betaTestUser) {
 < 	packageName		= 'beta.cyph.app';
 ---
 > var alternateTestEnvironmentOrigin;
 > var packageName;
-48,49d46
+54,55d52
 < 	if (!storage.betaTestInitialized) {
 < 		storage.betaTestInitialized	= true;
-51,55c48,82
+57,61c54,88
 < 		delete storage.webSignExpires;
 < 		delete storage.webSignHashWhitelist;
 < 		delete storage.webSignPackageMetadata;
@@ -51,7 +51,7 @@
 > 	catch (_) {
 > 		alert('Too bad. Using master anyway.');
 > 		packageName	= 'master.cyph.app';
-60a88,103
+66a94,109
 > (alternateTestEnvironment ?
 > 
 > 
@@ -68,16 +68,16 @@
 > }) :
 > 
 > 
-177c220,223
+183c226,229
 < }).
 ---
 > })
 > 
 > 
 > ).
-181a228
+187a234
 > 	var bodyHTML	= o.package.split('<body>')[1].split('</body>')[0];
-187,188c234,244
+193,194c240,250
 < 	document.head.innerHTML	= headHTML;
 < 	document.body.innerHTML	= o.package.split('<body>')[1].split('</body>')[0];
 ---
@@ -92,7 +92,7 @@
 > 	}
 > 
 > 	var scriptRegex		= /<script[\s$>].*?<\/script>/g;
-190,193c246,320
+196,199c252,326
 < 	webSignSRI(o.packageMetadata).catch(function (err) {
 < 		document.head.innerHTML		= '';
 < 		document.body.textContent	= err;

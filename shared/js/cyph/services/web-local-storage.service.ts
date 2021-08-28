@@ -44,20 +44,24 @@ export class WebLocalStorageService extends LocalStorageService {
 			.runOutsideAngular(async () => {
 				const ready = resolvable();
 
-				const level = (<any> self).nodeThread ?
-					await (
-						await (<any> self).nodeThread
-					).rocksDB :
-				env.isCordovaDesktop &&
-					typeof cordovaRequire === 'function' &&
+				const level =
+					typeof cordovaNodeJS !== 'undefined' &&
 					typeof cordovaRocksDB === 'boolean' &&
 					cordovaRocksDB ?
-					(() => {
-						const rocksDB = cordovaRequire('rocksdb')('./data.db');
-						rocksDB.close(ready.resolve);
-						return cordovaRequire('levelup')(rocksDB);
-					})() :
-					undefined;
+						await (
+							await cordovaNodeJS
+						).rocksDB :
+					env.isCordovaDesktop &&
+						typeof cordovaRequire === 'function' &&
+						typeof cordovaRocksDB === 'boolean' &&
+						cordovaRocksDB ?
+						(() => {
+							const rocksDB =
+								cordovaRequire('rocksdb')('./data.db');
+							rocksDB.close(ready.resolve);
+							return cordovaRequire('levelup')(rocksDB);
+						})() :
+						undefined;
 
 				if (!level) {
 					return;
@@ -65,8 +69,8 @@ export class WebLocalStorageService extends LocalStorageService {
 
 				const collection = {
 					keys: async () =>
-						(<any> self).nodeThread ?
-							(await (<any> self).nodeThread).rocksDBKeys() :
+						(<any> self).cordovaNodeJS ?
+							(await (<any> self).cordovaNodeJS).rocksDBKeys() :
 							new Promise((resolve, reject) => {
 								const stream = level.createKeyStream();
 								const keys: string[] = [];

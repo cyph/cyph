@@ -18,6 +18,12 @@ declare let burnerRoot: string;
 
 /**
  * @global
+ * Node.js wrapper instance (Cordova-specific).
+ */
+declare let cordovaNodeJS: any | undefined;
+
+/**
+ * @global
  * Run-time `require` function specific to Cordova environments.
  */
 declare let cordovaRequire: NodeRequire | undefined;
