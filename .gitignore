@@ -1,11 +1,13 @@
 /.bootstrap.original
 /.build
+/.websign.tmp
 /docs
 /qr-invite-codes
 /serve.ready
 /threadpack.log
 /users.json
 /websign/lib/*.webpack.js
+/websign-serve.ready
 .build.yaml
 *.mmdb
 .sass-cache
