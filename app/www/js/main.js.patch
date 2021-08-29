@@ -19,7 +19,7 @@
 > }
 > else {
 > 	self.cordovaNodeJSInit();
-> 	self.cordovaRocksDB	= true;
+> 	self.cordovaRocksDB	= false;
 > }
 > 
 6c25

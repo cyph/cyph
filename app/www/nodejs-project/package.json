@@ -3,8 +3,6 @@
 	"version": "0.0.0",
 	"main": "index.js",
 	"dependencies": {
-		"comlink": "*",
-		"levelup": "*",
-		"rocksdb": "https://github.com/buu700/rocksdb-tmp"
+		"comlink": "*"
 	}
 }
