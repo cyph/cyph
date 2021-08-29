@@ -3,9 +3,9 @@ const cordova = require('cordova-bridge');
 const {ipfsFetch} = require('ipfs-fetch');
 
 const listeners = new Set();
-cordova.channel.on('message', message => {
+cordova.channel.on('message', data => {
 	for (const listener of listeners) {
-		listener({data: message});
+		listener({data});
 	}
 });
 

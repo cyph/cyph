@@ -12,9 +12,9 @@ self.cordovaNodeJSInit = () => {
 			}
 
 			const listeners = new Set();
-			nodejs.channel.on('message', message => {
+			nodejs.channel.on('message', data => {
 				for (const listener of listeners) {
-					listener({data: message});
+					listener({data});
 				}
 			});
 
