@@ -1,5 +1,6 @@
 const comlink = require('comlink');
 const cordova = require('cordova-bridge');
+const {ipfsFetch} = require('ipfs-fetch');
 
 const listeners = new Set();
 cordova.channel.on('message', message => {
@@ -9,7 +10,10 @@ cordova.channel.on('message', message => {
 });
 
 comlink.expose(
-	{},
+	{
+		ipfsFetch: async (hash, options) =>
+			(await ipfsFetch(hash, options)).toString('base64')
+	},
 	{
 		addEventListener: (_TYPE, listener, _OPTIONS) => {
 			listeners.add(listener);

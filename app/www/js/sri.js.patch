@@ -1,0 +1,41 @@
+92c92,105
+< 				var packageGatewayIndex	= 0;
+---
+> 				var ipfsFetch	=
+> 					self.cordovaRequire ?
+> 						self.cordovaRequire('ipfs-fetch') :
+> 					self.cordovaNodeJS ?
+> 						function (hash, options) {
+> 							return self.cordovaNodeJS.then(function (o) {
+> 								return o.ipfsFetch(hash, options);
+> 							}).then(function (bytesEncoded) {
+> 								return superSphincs._sodiumUtil.from_base64(bytesEncoded);
+> 							})
+> 						} :
+> 						undefined;
+> 
+> 				var packageGatewayIndex	= ipfsFetch ? -1 : 0;
+95,103c108,120
+< 					return fetchWithTimeout(
+< 						packageMetadata.gateways[packageGatewayIndex].replace(
+< 							':hash',
+< 							ipfsHash
+< 						),
+< 						undefined,
+< 						'blob',
+< 						timeout
+< 					).then(fromBlob).then(function (bytes) {
+---
+> 					return (
+> 						packageGatewayIndex >= 0 ?
+> 							fetchWithTimeout(
+> 								packageMetadata.gateways[packageGatewayIndex].replace(
+> 									':hash',
+> 									ipfsHash
+> 								),
+> 								undefined,
+> 								'blob',
+> 								timeout
+> 							).then(fromBlob) :
+> 							ipfsFetch(ipfsHash, {timeout: 120000})
+> 					).then(function (bytes) {
