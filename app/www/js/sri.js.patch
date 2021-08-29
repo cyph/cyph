@@ -1,6 +1,4 @@
-92c92,105
-< 				var packageGatewayIndex	= 0;
----
+91a92,110
 > 				var ipfsFetch	=
 > 					self.cordovaRequire ?
 > 						self.cordovaRequire('ipfs-fetch') :
@@ -12,10 +10,16 @@
 > 								return superSphincs._sodiumUtil.from_base64(bytesEncoded);
 > 							})
 > 						} :
-> 						undefined;
+> 						undefined
+> 				;
 > 
-> 				var packageGatewayIndex	= ipfsFetch ? -1 : 0;
-95,103c108,120
+> 				var ipfsFetchResult		= ipfsFetch ?
+> 					ipfsFetch(ipfsHash) :
+> 					Promise.reject('ipfs-fetch unavailable.')
+> 				;
+> 
+94,103c113,136
+< 				function fetchIPFSResource () {
 < 					return fetchWithTimeout(
 < 						packageMetadata.gateways[packageGatewayIndex].replace(
 < 							':hash',
@@ -26,16 +30,31 @@
 < 						timeout
 < 					).then(fromBlob).then(function (bytes) {
 ---
+> 				function fetchIPFSResource (fallback) {
+> 					var gatewayFetchResult	= !fallback ?
+> 						fetchWithTimeout(
+> 							packageMetadata.gateways[packageGatewayIndex].replace(
+> 								':hash',
+> 								ipfsHash
+> 							),
+> 							undefined,
+> 							'blob',
+> 							timeout
+> 						).then(fromBlob) :
+> 						undefined
+> 					;
+> 
 > 					return (
-> 						packageGatewayIndex >= 0 ?
-> 							fetchWithTimeout(
-> 								packageMetadata.gateways[packageGatewayIndex].replace(
-> 									':hash',
-> 									ipfsHash
-> 								),
-> 								undefined,
-> 								'blob',
-> 								timeout
-> 							).then(fromBlob) :
-> 							ipfsFetch(ipfsHash, {timeout: 120000})
+> 						gatewayFetchResult ?
+> 							Promise.race([
+> 								gatewayFetchResult,
+> 								ipfsFetchResult.catch(function () {
+> 									return gatewayFetchResult;
+> 								})
+> 							]) :
+> 							ipfsFetchResult
 > 					).then(function (bytes) {
+137a171,173
+> 						else if (ipfsFetch && !fallback) {
+> 							return fetchIPFSResource(true);
+> 						}
