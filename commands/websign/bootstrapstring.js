@@ -13,7 +13,7 @@ export const bootstrapString = async () => {
 
 	/* special case; add general solution when needed */
 	const serviceWorker =
-		fs.readFileSync(`${path}/lib/localforage.js`).toString().trim() +
+		fs.readFileSync(`${path}/lib/dexie.js`).toString().trim() +
 		'\n' +
 		fs.readFileSync(`${path}/serviceworker.js`).toString().trim();
 

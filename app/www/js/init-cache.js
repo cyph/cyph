@@ -1,7 +1,7 @@
 if (!storage.webSignPackageTimestamp) {
-	for (const k of Object.keys(self.defaultCacheValues.localforage)) {
-		localforage
-			.setItem(k, defaultCacheValues.localforage[k])
+	if (self.defaultCacheValues.webSignStorage.length > 0) {
+		webSignStorage
+			.bulkPut(self.defaultCacheValues.webSignStorage)
 			.catch(() => {});
 	}
 

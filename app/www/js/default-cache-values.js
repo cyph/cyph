@@ -1,4 +1,4 @@
 self.defaultCacheValues = {
-	localforage: {},
-	localStorage: {}
+	localStorage: {},
+	webSignStorage: []
 };

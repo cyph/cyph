@@ -5,6 +5,7 @@
 /serve.ready
 /threadpack.log
 /users.json
+/websign/lib/*.webpack.js
 .build.yaml
 *.mmdb
 .sass-cache

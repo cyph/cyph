@@ -121,7 +121,7 @@ mkdir node_modules js css
 if [ "${serviceWorker}" ] || [ "${test}" ] ; then
 	node -e 'fs.writeFileSync(
 		"serviceworker.js",
-		fs.readFileSync("../../websign/lib/localforage.js").toString() +
+		fs.readFileSync("../../websign/lib/dexie.js").toString() +
 		"\n" +
 		fs.readFileSync("../../websign/serviceworker.js").toString().replace(
 			"/* Redirect non-whitelisted paths in this origin */",

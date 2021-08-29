@@ -43,27 +43,21 @@ const defaultCacheValuesPath = path.join(
 
 	const cacheValues = await page.evaluate(async () =>
 		JSON.stringify({
-			localforage: (
-				await Promise.all(
-					(await localforage.keys())
-						.filter(k => /^websign-(fetch|sri-cache)/.test(k))
-						.map(async k =>
-							Promise.all([k, localforage.getItem(k)])
-						)
-				)
-			)
-				.filter(
-					([_, v]) =>
-						!/(crypto|mceliece|ntru|potassium|rlwe|rsasign|sidh|sphincs|superSphincs|xkcdPassphrase)/.test(
-							v
-						)
-				)
-				.reduce((o, [k, v]) => ({...o, [k]: v}), {}),
 			localStorage: {
 				webSignExpires: localStorage.webSignExpires,
 				webSignHashWhitelist: localStorage.webSignHashWhitelist,
 				webSignPackageTimestamp: localStorage.webSignPackageTimestamp
-			}
+			},
+			webSignStorage: (
+				await webSignStorage.bulkGet(
+					await webSignStorage.toCollection().keys()
+				)
+			).filter(
+				({value}) =>
+					!/(crypto|mceliece|ntru|potassium|rlwe|rsasign|sidh|sphincs|superSphincs|xkcdPassphrase)/.test(
+						value
+					)
+			)
 		})
 	);
 

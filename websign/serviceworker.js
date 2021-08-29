@@ -94,10 +94,16 @@ self.addEventListener('activate', function (e) {
 /* Enable running functions provided by the application */
 
 var storedFunctionResults	= {};
-var storedFunctionRoot		= 'websign-stored-functions';
+var storedFunctions			= (function () {
+	var dexie = new Dexie('WebSignStoredFunctions');
+	dexie.version(1).stores({data: 'key'});
+	return dexie.table('data');
+})();
 
 function runStoredFunction (name) {
-	return localforage.getItem(storedFunctionRoot + '/' + name).then(function (data) {
+	return storedFunctions.get(name).then(function (o) {
+		var data	= o.value;
+
 		var importedFunction;
 
 		if (!(data.name in storedFunctionResults)) {
@@ -115,8 +121,8 @@ function runStoredFunction (name) {
 }
 
 function initStoredFunctions () {
-	localforage.getItem(storedFunctionRoot).then(function (storedFunctionList) {
-		if (!storedFunctionList) {
+	storedFunctions.toCollection().keys().then(function (storedFunctionList) {
+		if (storedFunctionList.length < 1) {
 			return;
 		}
 
@@ -138,10 +144,8 @@ self.addEventListener('message', function (e) {
 		return;
 	}
 
-	var storedFunctionKey = storedFunctionRoot + '/' + e.data.name;
-
 	if (e.data.unregister === true) {
-		localforage.removeItem(storedFunctionKey);
+		storedFunctions.delete(e.data.name);
 		return;
 	}
 
@@ -152,24 +156,9 @@ self.addEventListener('message', function (e) {
 		return;
 	}
 
-	localforage.setItem(
-		storedFunctionKey,
-		e.data
-	).then(function () {
-		return localforage.getItem(storedFunctionRoot);
-	}).then(function (storedFunctionList) {
-		if (!storedFunctionList) {
-			storedFunctionList	= [];
-		}
-
-		if (storedFunctionList.indexOf(e.data.name) > -1) {
-			return;
-		}
-
-		return localforage.setItem(
-			storedFunctionRoot,
-			storedFunctionList.concat(e.data.name)
-		);
+	storedFunctions.put({
+		key: e.data.name,
+		value: e.data
 	}).then(function () {
 		return runStoredFunction(e.data.name);
 	}).then(function (output) {
