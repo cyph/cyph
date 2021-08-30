@@ -110,3 +110,50 @@
 		</mat-card>
 	</div>
 </div>
+
+<div #statusBarUI class="status-bar-ui-temporary-container" fxHide>
+	<button
+		class="e-control e-dropdown-btn e-lib e-btn send-button"
+		matTooltip="Send Email"
+		matTooltipPosition="above"
+		cyphTranslate
+	>
+		Send
+	</button>
+
+	<mat-form-field
+		appearance="fill"
+		class="attachments-list"
+		[matTooltip]="stringsService.attachmentsTooltip"
+		matTooltipPosition="above"
+	>
+		<mat-label cyphTranslate>Attachments</mat-label>
+		<mat-select
+			multiple
+			panelClass="email-compose-attachments-panel"
+			(openedChange)="attachmentsPanelOpen()"
+		>
+			<mat-option>Secret Launch Codes.pdf</mat-option>
+			<mat-option>balls.mov</mat-option>
+			<mat-option>virus.exe</mat-option>
+			<button
+				class="remove-button"
+				mat-button
+				color="primary"
+				cyphTranslate
+			>
+				Remove Selected Attachments
+			</button>
+		</mat-select>
+	</mat-form-field>
+
+	<div
+		class="attachments-add file-upload"
+		[matTooltip]="stringsService.attachFile"
+		matTooltipPosition="above"
+		cyphDropZone
+		cyphTranslate
+	>
+		<mat-icon>attach_file</mat-icon>
+	</div>
+</div>

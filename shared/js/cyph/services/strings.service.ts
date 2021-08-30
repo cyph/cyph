@@ -131,6 +131,12 @@ export class StringsService extends BaseProvider {
 	public readonly appointmentNotes = `Notes about this appointment:`;
 
 	/** @see StringsService */
+	public readonly attachFile = `Attach File`;
+
+	/** @see StringsService */
+	public readonly attachmentsTooltip = `Manage Attachments`;
+
+	/** @see StringsService */
 	public readonly audioCall = `call`;
 
 	/** @see StringsService */

@@ -2,6 +2,7 @@ import {
 	AfterViewInit,
 	ChangeDetectionStrategy,
 	Component,
+	ElementRef,
 	Input,
 	OnChanges,
 	ViewChild
@@ -39,6 +40,10 @@ export class EmailComposeComponent
 	/** If true, read-only mode. */
 	@Input() public readOnly: boolean = false;
 
+	/** @see DocumentEditorContainerComponent */
+	@ViewChild('statusBarUI')
+	public statusBarUI?: ElementRef<HTMLDivElement>;
+
 	/** @ignore */
 	private async onChanges () : Promise<void> {
 		const documentEditor = await waitForValue(
@@ -46,6 +51,14 @@ export class EmailComposeComponent
 		);
 
 		documentEditor.useCtrlClickToFollowHyperlink = !this.readOnly;
+	}
+
+	/** Attachments panel open event. */
+	public attachmentsPanelOpen () : void {
+		/* TODO: Find a better way of doing this */
+		document
+			.querySelector('.email-compose-attachments-panel')
+			?.parentElement?.classList.add('cyph-light-theme');
 	}
 
 	/** @inheritDoc */
@@ -62,6 +75,31 @@ export class EmailComposeComponent
 		});
 
 		await this.onChanges();
+
+		const statusBarUI = this.statusBarUI?.nativeElement;
+		const statusBar =
+			documentEditorContainer.element.querySelector('.e-de-status-bar');
+
+		if (
+			!(
+				statusBar instanceof HTMLElement &&
+				statusBarUI instanceof HTMLElement
+			)
+		) {
+			return;
+		}
+
+		for (const child of Array.from(statusBar.children)) {
+			if (!(child instanceof HTMLElement)) {
+				continue;
+			}
+
+			child.style.display = 'none';
+		}
+
+		while (statusBarUI.firstChild) {
+			statusBar.appendChild(statusBarUI.firstChild);
+		}
 
 		/* Temporary test function */
 		(<any> self).documentEditorContainer = documentEditorContainer;
