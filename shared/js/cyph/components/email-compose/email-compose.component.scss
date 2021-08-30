@@ -7,7 +7,7 @@ ejs-documenteditorcontainer ::ng-deep {
 }
 
 .document-editor-container-wrapper {
-	height: calc(100% + 36px);
+	height: 100%;
 	overflow: hidden;
 }
 
@@ -25,11 +25,16 @@ ejs-documenteditorcontainer ::ng-deep {
 	height: var(--height);
 	width: var(--width);
 
+	/* Workaround for Syncfusion editor responsiveness issues */
+	$minHeight: 497px;
+	min-height: $minHeight;
+
 	mat-card .document-editor-container-wrapper {
+		$heightOffset: 183px;
+		height: calc(var(--height) - #{$heightOffset});
+		min-height: $minHeight - $heightOffset;
+
 		margin-left: -16px;
-		margin-bottom: -52px;
 		width: calc(100% + 32px);
-		// height: calc(var(--height) - 118px + 52px);
-		height: calc(var(--height) + 52px);
 	}
 }
