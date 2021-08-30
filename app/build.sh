@@ -460,6 +460,14 @@ if [ "${electron}" ] ; then
 fi
 
 if [ "${iOS}" ] ; then
+	echo 0 > www/NODEJS_MOBILE_BUILD_NATIVE_MODULES_VALUE.txt
+	find www/nodejs-project \( \
+		-name '*.node' \
+		-or -name '*.o' \
+		-or -name '*.a' \
+		-or -name '*.framework' \
+	\) -delete
+
 	npx cordova build ios --debug --device --verbose \
 		--codeSignIdentity="${iOSDevelopmentIdentity}" \
 		--developmentTeam='SXZZ8WLPV2' \
