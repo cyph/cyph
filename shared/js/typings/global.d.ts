@@ -20,7 +20,7 @@ declare let burnerRoot: string;
  * @global
  * Node.js wrapper instance (Cordova-specific).
  */
-declare let cordovaNodeJS: any | undefined;
+declare let cordovaNodeJS: Promise<any> | undefined;
 
 /**
  * @global

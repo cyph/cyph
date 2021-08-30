@@ -1,8 +1,15 @@
-self.cordovaNodeJS = new Promise((resolve, reject) => {
-	self.cordovaNodeJSResolve = {reject, resolve};
-});
+self.cordovaNodeJS =
+	typeof nodejs === 'undefined' ?
+		undefined :
+		new Promise((resolve, reject) => {
+			self.cordovaNodeJSResolve = {reject, resolve};
+		});
 
 self.cordovaNodeJSInit = () => {
+	if (typeof nodejs === 'undefined') {
+		return;
+	}
+
 	nodejs.start(
 		'index.js',
 		err => {
