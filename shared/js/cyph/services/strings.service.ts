@@ -410,6 +410,12 @@ export class StringsService extends BaseProvider {
 	public readonly emailOptional = `Email (optional)`;
 
 	/** @see StringsService */
+	public readonly emailSent = `Message Sent.`;
+
+	/** @see StringsService */
+	public readonly emailSentUndo = `Undo`;
+
+	/** @see StringsService */
 	public readonly emailUnverified = `Email (unverified)`;
 
 	/** @see StringsService */

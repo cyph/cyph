@@ -205,6 +205,7 @@ export class AccountComposeComponent
 			return;
 		}
 
+		/* TODO: Factor out this and EmailComposeComponent.addRecipients */
 		const parsedInput =
 			groupInput.indexOf('<') < 0 ?
 				[{email: '', name: groupInput}] :

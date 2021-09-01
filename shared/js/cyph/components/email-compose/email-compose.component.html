@@ -4,6 +4,7 @@
 		(envService.isMobile | await) ? 'stretch stretch' : 'center center'
 	"
 	[class.mobile]="envService.isMobile | await"
+	[class.ui-disabled]="sending | await"
 >
 	<div fxFlex class="cyph-light-theme card-wrapper">
 		<mat-card class="animated slideInDown ui-section" fxFlex>
@@ -13,6 +14,7 @@
 				class="close-button"
 				matTooltip="Close"
 				matTooltipPosition="left"
+				routerLink="/"
 			>
 				<mat-icon>close</mat-icon>
 			</button>
@@ -28,49 +30,41 @@
 							cyphTranslate
 							aria-label="Recipients"
 						>
-							<mat-chip [removable]="true" [selectable]="true">
+							<mat-chip
+								[removable]="true"
+								[selectable]="true"
+								[value]="o"
+								(removed)="removeRecipient(o, to)"
+								*ngFor="
+									let o of to | await;
+									trackBy: trackBySelf
+								"
+							>
 								<span>
-									Kharle Hungelsach &lt;kharle@cyph.com&gt;
+									{{ o.name }} &lt;{{ o.email }}&gt;
 								</span>
 								<mat-icon matChipRemove>cancel</mat-icon>
 							</mat-chip>
-							<!--
-								[value]="o"
-								(removed)="removeFromGroup($event.chip.value)"
-								*ngFor="
-									let o of appointmentGroupMembers | await;
-									trackBy: trackBySelf
-								"
-								{{
-									o.name +
-										' <' +
-										(o.email && o.phoneNumber ?
-											o.email + ', ' + o.phoneNumber :
-											o.email || o.phoneNumber) +
-										'>'
-								}}
-							-->
 
 							<input
 								#chipListInput
 								cyphTranslate
 								placeholder="To"
 								[matChipInputFor]="chipList"
-							/>
-							<!--
-								(matChipInputTokenEnd)="addToGroup(false)"
-								[ngModel]="appointmentGroupMemberDraft | await"
-								(ngModelChange)="
-									appointmentGroupMemberDraft.next($event)
+								(matChipInputTokenEnd)="
+									addRecipients(toDraft, to)
 								"
-							-->
+								[ngModel]="toDraft | await"
+								(ngModelChange)="toDraft.next($event)"
+							/>
 
-							<mat-icon matSuffix class="suffix-button">
+							<mat-icon
+								matSuffix
+								class="suffix-button"
+								(click)="addRecipients(toDraft, to)"
+							>
 								add
 							</mat-icon>
-							<!--
-								(click)="addToGroup()"
-							-->
 						</mat-chip-list>
 					</mat-form-field>
 
@@ -117,6 +111,7 @@
 		matTooltip="Send Email"
 		matTooltipPosition="above"
 		cyphTranslate
+		(click)="send()"
 	>
 		Send
 	</button>
@@ -129,18 +124,31 @@
 	>
 		<mat-label cyphTranslate>Attachments</mat-label>
 		<mat-select
+			#attachmentsDropdown
 			multiple
+			[disabled]="((attachments | await) || []).length < 1"
 			panelClass="email-compose-attachments-panel"
 			(openedChange)="attachmentsPanelOpen()"
+			[ngModel]="(attachmentsToRemove | await) || []"
+			(ngModelChange)="attachmentsToRemove.next($event)"
 		>
-			<mat-option>Secret Launch Codes.pdf</mat-option>
-			<mat-option>balls.mov</mat-option>
-			<mat-option>virus.exe</mat-option>
+			<mat-option
+				[value]="attachment"
+				*ngFor="
+					let attachment of attachments | await;
+					trackBy: trackBySelf
+				"
+			>
+				{{ attachment.name }} ({{
+					readableByteLength(attachment.data.length)
+				}})
+			</mat-option>
 			<button
 				class="remove-button"
 				mat-button
 				color="primary"
 				cyphTranslate
+				(click)="removeAttachments()"
 			>
 				Remove Selected Attachments
 			</button>
@@ -153,6 +161,7 @@
 		matTooltipPosition="above"
 		cyphDropZone
 		cyphTranslate
+		(fileDrop)="attachments.next(attachments.value.concat($event))"
 	>
 		<mat-icon>attach_file</mat-icon>
 	</div>
