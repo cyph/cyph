@@ -399,7 +399,9 @@ touch shared/assets/frozen
 if [ "${site}" == 'sdk' ] ; then
 	log "Build $(projectname sdk ${branchDir})"
 	cd sdk
+	cp -f src/js/proto/index.node.js src/js/proto/index.js
 	ng build --source-map false --configuration "${environment}" || fail
+	cp -f src/js/proto/index.web.js src/js/proto/index.js
 
 	# Temporary workaround to remove unwanted excessively verbose error logging from emscripten
 	cat dist/main.js |
