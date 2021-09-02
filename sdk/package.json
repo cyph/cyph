@@ -15,10 +15,10 @@
 		"build": "ng build"
 	},
 	"dependencies": {
-		"fetch-blob": "*",
-		"firebase": "*",
+		"fetch-blob": ">=3",
+		"firebase": ">=9",
 		"generate-rsa-keypair": "*",
-		"node-fetch": "*",
+		"node-fetch": ">=3",
 		"tslib": "*",
 		"xhr2": "*"
 	},
