@@ -10,6 +10,7 @@ import {
 } from '../init.js';
 import {addToMailingList, mailchimp, splitName} from '../mailchimp.js';
 import {sendVerificationEmail} from '../send-verification-email.js';
+import {updatePublishedEmail} from '../update-published-email.js';
 import {validateEmail} from '../validation.js';
 
 const {CyphPlan, CyphPlans, StringProto} = proto;
@@ -56,7 +57,8 @@ export const userEmailSet = async ({after: data}, {params}) => {
 
 		await Promise.all([
 			emailVerifiedRef.remove(),
-			removeItem(params.namespace, `users/${username}/emailVerified`)
+			removeItem(params.namespace, `users/${username}/emailVerified`),
+			updatePublishedEmail(namespace, username, true)
 		]);
 	})();
 

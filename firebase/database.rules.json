@@ -342,6 +342,19 @@
 				}
 			},
 
+			"publicEmailData": {
+				"emails": {
+					"$username": {
+						".validate": "newData.isString()"
+					}
+				},
+				"usernames": {
+					"$email": {
+						".validate": "newData.isString()"
+					}
+				}
+			},
+
 			"reservedUsernames": {
 				"$reservedUsername": {
 					".validate": "newData.val() === '' || newData.val() === '.'"

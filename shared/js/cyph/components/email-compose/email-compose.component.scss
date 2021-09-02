@@ -1,0 +1,93 @@
+@import '../../../../css/mixins';
+
+ejs-documenteditorcontainer ::ng-deep {
+	[id='_editor_viewerContainer'] {
+		overflow-x: hidden !important;
+	}
+
+	.e-de-status-bar {
+		> * {
+			max-height: 33px !important;
+			margin-left: 12px;
+		}
+
+		> .e-btn {
+			text-transform: uppercase;
+		}
+
+		> .send-button {
+			margin-left: 3px;
+		}
+
+		> .attachments-list {
+			margin-top: 1px;
+
+			> div > .mat-form-field-flex {
+				padding-top: 4px;
+				height: 32px;
+			}
+		}
+
+		> .attachments-add {
+			height: 28px;
+			width: 100%;
+			margin-right: 3px;
+			margin-top: 2px;
+			text-align: center;
+
+			> mat-icon {
+				@include icon-size(18px);
+			}
+		}
+	}
+}
+
+::ng-deep {
+	.email-compose-attachments-panel {
+		/* Small optimization to address delay in cyph-light-theme class application */
+		background: white !important;
+
+		&,
+		> .mat-select-panel {
+			font-size: 14px !important;
+		}
+
+		.remove-button {
+			display: block;
+			margin: 16px auto;
+		}
+	}
+}
+
+.document-editor-container-wrapper {
+	height: 100%;
+	overflow: hidden;
+}
+
+:host > div:not(.mobile) > .card-wrapper {
+	--width: 75vw;
+	--height: 80vh;
+}
+
+:host > div.mobile > .card-wrapper {
+	--width: 100vw;
+	--height: calc(100vh - 56px);
+}
+
+.card-wrapper {
+	height: var(--height);
+	width: var(--width);
+
+	/* Workaround for Syncfusion editor responsiveness issues */
+	$minHeight: 497px;
+	min-height: $minHeight;
+
+	mat-card .document-editor-container-wrapper {
+		$heightOffset: 183px;
+		height: calc(var(--height) - #{$heightOffset});
+		min-height: $minHeight - $heightOffset;
+
+		margin-left: -16px;
+		width: calc(100% + 32px);
+	}
+}

@@ -1047,6 +1047,42 @@ message EhrApiKey {
 
 /** Email message data. */
 message EmailMessage {
+	/** Email contact data for a user. */
+	message Contact {
+		/** Email address. */
+		required string email = 1;
+
+		/** Name. */
+		required string name = 2;
+
+		/** Username. */
+		string username = 3;
+	}
+
+	/** Attachments. */
+	repeated FileContainer attachments = 1;
+
+	/** BCC email contacts. */
+	repeated Contact bcc = 2;
+
+	/** Sfdt-formatted message content. */
+	string body = 3;
+
+	/** CC email contacts. */
+	repeated Contact cc = 4;
+
+	/** Sender email contact. */
+	Contact from = 5;
+
+	/** Subject. */
+	string subject = 6;
+
+	/** Recipient email contacts. */
+	repeated Contact to = 7;
+}
+
+/** External email message data to import. */
+message EmailMessageExternal {
 	/** Attachments. */
 	repeated bytes attachments = 1;
 
@@ -1062,11 +1098,14 @@ message EmailMessage {
 	/** HTML body. */
 	string html = 5;
 
+	/** Subject. */
+	string subject = 6;
+
 	/** Text body. */
-	string text = 6;
+	string text = 7;
 
 	/** Recipient email address(es). */
-	string to = 7;
+	string to = 8;
 }
 
 /** Angular CLI environment configuration. */
@@ -1211,6 +1250,18 @@ message Environment {
 
 	/** Indicates whether production AGSE-PKI signing keys should be used. */
 	bool useProdSigningKeys = 8;
+}
+
+/** File data container. */
+message FileContainer {
+	/** File data. */
+	required bytes data = 1;
+
+	/** File MIME type. */
+	required string mediaType = 2;
+
+	/** File name. */
+	required string name = 3;
 }
 
 /** Represents a transferred file. */

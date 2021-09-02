@@ -131,6 +131,12 @@ export class StringsService extends BaseProvider {
 	public readonly appointmentNotes = `Notes about this appointment:`;
 
 	/** @see StringsService */
+	public readonly attachFile = `Attach File`;
+
+	/** @see StringsService */
+	public readonly attachmentsTooltip = `Manage Attachments`;
+
+	/** @see StringsService */
 	public readonly audioCall = `call`;
 
 	/** @see StringsService */
@@ -402,6 +408,12 @@ export class StringsService extends BaseProvider {
 
 	/** @see StringsService */
 	public readonly emailOptional = `Email (optional)`;
+
+	/** @see StringsService */
+	public readonly emailSent = `Message Sent.`;
+
+	/** @see StringsService */
+	public readonly emailSentUndo = `Undo`;
 
 	/** @see StringsService */
 	public readonly emailUnverified = `Email (unverified)`;

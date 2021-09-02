@@ -1,0 +1,168 @@
+<div
+	fxFlexFill
+	[fxLayoutAlign]="
+		(envService.isMobile | await) ? 'stretch stretch' : 'center center'
+	"
+	[class.mobile]="envService.isMobile | await"
+	[class.ui-disabled]="sending | await"
+>
+	<div fxFlex class="cyph-light-theme card-wrapper">
+		<mat-card class="animated slideInDown ui-section" fxFlex>
+			<button
+				mat-icon-button
+				cyphTranslate
+				class="close-button"
+				matTooltip="Close"
+				matTooltipPosition="left"
+				routerLink="/"
+			>
+				<mat-icon>close</mat-icon>
+			</button>
+
+			<mat-card-title>
+				<span cyphTranslate>New Message</span>
+			</mat-card-title>
+			<mat-card-content>
+				<div fxFlexFill fxLayout="column">
+					<mat-form-field fxFlex>
+						<mat-chip-list
+							#chipList
+							cyphTranslate
+							aria-label="Recipients"
+						>
+							<mat-chip
+								[removable]="true"
+								[selectable]="true"
+								[value]="o"
+								(removed)="removeRecipient(o, to)"
+								*ngFor="
+									let o of to | await;
+									trackBy: trackBySelf
+								"
+							>
+								<span>
+									{{ o.name }} &lt;{{ o.email }}&gt;
+								</span>
+								<mat-icon matChipRemove>cancel</mat-icon>
+							</mat-chip>
+
+							<input
+								#chipListInput
+								cyphTranslate
+								placeholder="To"
+								[matChipInputFor]="chipList"
+								(matChipInputTokenEnd)="
+									addRecipients(toDraft, to)
+								"
+								[ngModel]="toDraft | await"
+								(ngModelChange)="toDraft.next($event)"
+							/>
+
+							<mat-icon
+								matSuffix
+								class="suffix-button"
+								(click)="addRecipients(toDraft, to)"
+							>
+								add
+							</mat-icon>
+						</mat-chip-list>
+					</mat-form-field>
+
+					<mat-form-field>
+						<input
+							matInput
+							cyphTranslate
+							name="subject"
+							placeholder="Subject"
+						/>
+					</mat-form-field>
+
+					<div class="document-editor-container-wrapper">
+						<ejs-documenteditorcontainer
+							#documentEditorContainer
+							[enableComment]="false"
+							[enableCsp]="false"
+							[enableLocalPaste]="true"
+							[enableToolbar]="true"
+							layoutType="web"
+							[restrictEditing]="readOnly"
+							[toolbarItems]="[
+								'Hyperlink',
+								'Image',
+								'Table',
+								'Separator',
+								'Undo',
+								'Redo',
+								'Separator',
+								'Find'
+							]"
+						>
+						</ejs-documenteditorcontainer>
+					</div>
+				</div>
+			</mat-card-content>
+		</mat-card>
+	</div>
+</div>
+
+<div #statusBarUI class="status-bar-ui-temporary-container" fxHide>
+	<button
+		class="e-control e-dropdown-btn e-lib e-btn send-button"
+		matTooltip="Send Email"
+		matTooltipPosition="above"
+		cyphTranslate
+		(click)="send()"
+	>
+		Send
+	</button>
+
+	<mat-form-field
+		appearance="fill"
+		class="attachments-list"
+		[matTooltip]="stringsService.attachmentsTooltip"
+		matTooltipPosition="above"
+	>
+		<mat-label cyphTranslate>Attachments</mat-label>
+		<mat-select
+			#attachmentsDropdown
+			multiple
+			[disabled]="((attachments | await) || []).length < 1"
+			panelClass="email-compose-attachments-panel"
+			(openedChange)="attachmentsPanelOpen()"
+			[ngModel]="(attachmentsToRemove | await) || []"
+			(ngModelChange)="attachmentsToRemove.next($event)"
+		>
+			<mat-option
+				[value]="attachment"
+				*ngFor="
+					let attachment of attachments | await;
+					trackBy: trackBySelf
+				"
+			>
+				{{ attachment.name }} ({{
+					readableByteLength(attachment.data.length)
+				}})
+			</mat-option>
+			<button
+				class="remove-button"
+				mat-button
+				color="primary"
+				cyphTranslate
+				(click)="removeAttachments()"
+			>
+				Remove Selected Attachments
+			</button>
+		</mat-select>
+	</mat-form-field>
+
+	<div
+		class="attachments-add file-upload"
+		[matTooltip]="stringsService.attachFile"
+		matTooltipPosition="above"
+		cyphDropZone
+		cyphTranslate
+		(fileDrop)="attachments.next(attachments.value.concat($event))"
+	>
+		<mat-icon>attach_file</mat-icon>
+	</div>
+</div>

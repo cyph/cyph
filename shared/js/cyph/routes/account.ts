@@ -34,6 +34,7 @@ import {AccountUpgradeComponent} from '../components/account-upgrade';
 import {AccountVaultComponent} from '../components/account-vault';
 import {AccountWalletsComponent} from '../components/account-wallets';
 import {BlankComponent} from '../components/blank';
+import {EmailComposeComponent} from '../components/email-compose';
 import {NotFoundComponent} from '../components/not-found';
 import {UploadEhrCredentialsComponent} from '../components/upload-ehr-credentials';
 import {WarrantCanaryComponent} from '../components/warrant-canary';
@@ -51,6 +52,10 @@ export const account: Route = {
 	children: [
 		...(!env.environment.production ?
 			[
+				{
+					path: 'email-compose-test',
+					component: EmailComposeComponent
+				},
 				{
 					path: 'new-appointment-test',
 					component: AccountNewAppointmentTestComponent

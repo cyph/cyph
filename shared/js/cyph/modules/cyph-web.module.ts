@@ -48,6 +48,7 @@ import {faExclamation} from '@fortawesome/free-solid-svg-icons/faExclamation';
 import {faLink} from '@fortawesome/free-solid-svg-icons/faLink';
 import {faMinus} from '@fortawesome/free-solid-svg-icons/faMinus';
 import {faPrint} from '@fortawesome/free-solid-svg-icons/faPrint';
+import {DocumentEditorContainerModule} from '@syncfusion/ej2-angular-documenteditor';
 import {
 	RecurrenceEditorModule,
 	ScheduleAllModule
@@ -85,6 +86,7 @@ import {CyphSharedModule} from './cyph-shared.module';
 	exports: [
 		AngularDraggableModule,
 		CyphSharedModule,
+		DocumentEditorContainerModule,
 		DxFileManagerModule,
 		EmojiModule,
 		FileManagerComponent,
@@ -124,6 +126,7 @@ import {CyphSharedModule} from './cyph-shared.module';
 	imports: [
 		AngularDraggableModule,
 		CyphSharedModule,
+		DocumentEditorContainerModule,
 		DxFileManagerModule,
 		EmojiModule,
 		FontAwesomeModule,
