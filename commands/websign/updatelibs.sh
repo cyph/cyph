@@ -23,12 +23,28 @@ cat > brotli.webpack.js <<- EOM
 			library: 'brotli',
 			libraryTarget: 'var',
 			path: process.cwd()
+		},
+		module: {
+			rules: [
+				{
+					exclude: /node_modules/,
+					test: /\.m?js$/,
+					use: {
+						loader: 'babel-loader',
+						options: {
+							presets: [['@babel/preset-env']],
+							plugins: ['@babel/plugin-transform-runtime']
+						}
+					}
+				}
+			]
 		}
 	};
 EOM
 webpack --config brotli.webpack.js
 rm brotli.webpack.js
 echo 'var BrotliDecode = brotli.BrotliDecode; brotli = undefined;' >> brotli.js
+babel brotli.js --presets=@babel/preset-env -o brotli.js
 terser brotli.js -o brotli.js
 
 
