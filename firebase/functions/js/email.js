@@ -3,6 +3,7 @@ import fs from 'fs';
 import ical from 'ical-generator';
 import mustache from 'mustache';
 import nodemailer from 'nodemailer';
+import icalTimezones from '@touch4it/ical-timezones';
 import {getMeta} from './base.js';
 import {dompurifyHtmlSanitizer} from './dompurify-html-sanitizer.js';
 import {from, transport, transportBackup} from './email-credentials.js';
@@ -63,6 +64,14 @@ const getEmailAddress = async (database, namespace, username) => {
 		name
 	};
 };
+
+const cal = ical({
+	timezone: {
+		generator: icalTimezones.getVtimezoneComponent,
+		name: 'Cyph Calendar'
+	}
+});
+const createEvent = data => cal.createEvent(data);
 
 const recurrenceDayToString = dayOfWeek =>
 	CalendarInvite.DaysOfWeek[dayOfWeek].toUpperCase().slice(0, 2);
@@ -143,7 +152,7 @@ export const sendEmailInternal = async (
 			icalEvent: !eventDetails ?
 					undefined :
 					{
-						content: ical({
+						content: createEvent({
 								domain: 'cyph.com',
 								events: [{
 										attendees: Object.values(
@@ -293,6 +302,8 @@ export const sendEmailInternal = async (
 										status: cancelEvent ?
 											'cancelled' :
 											'confirmed',
+										timezone:
+											eventDetails.timeZone || 'UTC',
 										summary: eventDetails.title || subject,
 										...(eventDetails.uid ?
 											{uid: eventDetails.uid} :
