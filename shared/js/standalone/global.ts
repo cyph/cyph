@@ -107,17 +107,19 @@ try {
 }
 catch {}
 
-try {
+(<any> self).asyncImportsComplete = (async () => {
 	if (typeof fetch === 'undefined') {
 		/* eslint-disable-next-line no-eval */
-		const nodeFetch = eval('require')('node-fetch');
-		(<any> self).fetch = nodeFetch;
+		(<any> self).Blob = (await eval('import("fetch-blob")')).Blob;
+
+		/* eslint-disable-next-line no-eval */
+		const nodeFetch = await eval('import("node-fetch")');
+		(<any> self).fetch = nodeFetch.default;
 		(<any> self).Headers = nodeFetch.Headers;
 		(<any> self).Request = nodeFetch.Request;
 		(<any> self).Response = nodeFetch.Response;
 	}
-}
-catch {}
+})().catch(() => {});
 
 try {
 	if (typeof XMLHttpRequest === 'undefined') {

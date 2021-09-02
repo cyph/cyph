@@ -178,10 +178,11 @@ for f in $(find . -name '*.html') ; do node -e "(async () => {
 	const cheerio = require('cheerio');
 	const htmlMinifier = require('html-minifier');
 	const imageType = require('image-type');
+	const fetch = (await import('node-fetch')).default;
 	const superSphincs = require('supersphincs');
 
 	const fetch = (url, opts) =>
-		require('node-fetch')(url, opts).catch(() => fetch(url, opts))
+		fetch(url, opts).catch(() => fetch(url, opts))
 	;
 
 	const isAmp = '${f}'.endsWith('/amp/index.html');

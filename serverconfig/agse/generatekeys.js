@@ -1,13 +1,13 @@
 #!/usr/bin/env node
 
-const fs = require('fs');
-const level = require('level');
-const sodium = require('libsodium-wrappers-sumo');
-const fetch = require('node-fetch');
-const os = require('os');
-const superSphincs = require('supersphincs');
-
 (async () => {
+	const fs = require('fs');
+	const level = require('level');
+	const sodium = require('libsodium-wrappers-sumo');
+	const fetch = await import('node-fetch');
+	const os = require('os');
+	const superSphincs = require('supersphincs');
+
 	const args = {
 		numActiveKeys: parseInt(process.argv[2], 10),
 		numBackupKeys: parseInt(process.argv[3], 10),
