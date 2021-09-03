@@ -220,18 +220,19 @@ export class FirebaseDatabaseService extends DatabaseService {
 				this.envService.firebaseConfig,
 				/* eslint-disable-next-line @typescript-eslint/no-shadow */
 				config => {
-					/* TODO: Remove dependency on compat builds */
-					importScripts(
-						'/assets/node_modules/firebase/firebase-app-compat.js'
-					);
-					importScripts(
-						'/assets/node_modules/firebase/firebase-messaging-compat.js'
+					importScripts('/assets/misc/firebase-app.js');
+					importScripts('/assets/misc/firebase-messaging-sw.js');
+
+					(<any> self).firebaseApp.initializeApp(config);
+
+					(<any> self).messaging = (<any> (
+						self
+					)).firebaseMessaging.getMessaging(
+						(<any> self).firebaseApp.getApp()
 					);
 
-					(<any> self).firebase.initializeApp(config);
-					(<any> self).messaging = (<any> self).firebase.messaging();
-
-					(<any> self).messaging.setBackgroundMessageHandler(
+					(<any> self).firebaseMessaging.onBackgroundMessage(
+						(<any> self).messaging,
 						(payload: any) => {
 							const notification = !payload ?
 								undefined :
