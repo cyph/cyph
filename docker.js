@@ -138,6 +138,7 @@ fs.existsSync(path.join(__dirname, 'commands', `${args.command}.js`)) ?
 const gitconfigPath = path.join(homeDir, '.gitconfig');
 const gitconfigDockerPath = `${dockerHomeDir}/.gitconfig`;
 const serveReadyPath = path.join(__dirname, 'serve.ready');
+const webSignServeReadyPath = path.join(__dirname, 'websign-serve.ready');
 
 const needAGSE =
 	(args.command === 'sign' && process.argv[4] !== '--test') ||
@@ -648,6 +649,11 @@ const updateCircleCI = () => {
 		);
 };
 
+const waitUntilFileExists = filePath =>
+	new Promise(resolve => setTimeout(resolve, 5000))
+		.then(() => new Promise(resolve => fs.exists(filePath, resolve)))
+		.then(exists => (exists ? undefined : waitUntilFileExists(filePath)));
+
 if (!isCyphInternal && needAGSE) {
 	fail('Non-Cyph-employee. AGSE unsupported.');
 }
@@ -782,22 +788,9 @@ switch (args.command) {
 		}
 
 		const waitUntilServeReady = () =>
-			new Promise(resolve => setTimeout(resolve, 5000))
-				.then(
-					() =>
-						new Promise(resolve =>
-							fs.exists(serveReadyPath, resolve)
-						)
-				)
-				.then(exists =>
-					exists ?
-						fs
-							.readFileSync(serveReadyPath)
-							.toString()
-							.trim()
-							.split(' ') :
-						waitUntilServeReady()
-				);
+			waitUntilFileExists(serveReadyPath).then(() =>
+				fs.readFileSync(serveReadyPath).toString().trim().split(' ')
+			);
 
 		waitUntilServeReady()
 			.then(ports =>
@@ -824,6 +817,18 @@ switch (args.command) {
 
 	case 'updatecircleci':
 		updateCircleCI();
+		break;
+
+	case 'websign/serve':
+		if (fs.existsSync(webSignServeReadyPath)) {
+			fs.unlinkSync(webSignServeReadyPath);
+		}
+
+		waitUntilFileExists(webSignServeReadyPath)
+			.then(() => open(`file://${__dirname}/.websign.tmp/index.html`))
+			.then(() => {
+				fs.unlinkSync(webSignServeReadyPath);
+			});
 		break;
 
 	default:

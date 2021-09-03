@@ -1,9 +1,13 @@
 #!/usr/bin/env node
 
 import {getMeta} from '../modules/base.js';
-const {isCLI} = getMeta(import.meta);
+const {__dirname, isCLI} = getMeta(import.meta);
 
+import cyphPrettier from '@cyph/prettier';
 import {util} from '@cyph/sdk';
+import fs from 'fs';
+import jp from 'jsonpath';
+import path from 'path';
 import read from 'read';
 import {initDatabaseService} from '../modules/database-service.js';
 
@@ -52,7 +56,89 @@ export const deleteUser = async (
 
 	const namespacePath = namespace.replace(/\./g, '_');
 
-	const {auth, database, removeItem} = initDatabaseService(projectId);
+	const {auth, database, removeItem, setArchive, storageGetItem} =
+		initDatabaseService(projectId);
+
+	const user = (
+		await database.ref(`${namespacePath}/users/${username}`).once('value')
+	).val();
+
+	const userDataPaths = jp
+		.paths(user, '$..hash')
+		.map(p => p.slice(1, -1))
+		.map(p => ({
+			parentObject: p.reduce((v, k) => v[k], user),
+			url: `users/${username}/${p.join('/')}`
+		}))
+		.filter(o => typeof o.parentObject.hash === 'string');
+
+	for (const {parentObject, url} of userDataPaths) {
+		if (parentObject.data) {
+			continue;
+		}
+
+		console.log(`Getting ${namespacePath}/${url}/${parentObject.hash}.`);
+
+		try {
+			parentObject.data = (
+				await storageGetItem(namespace, url, parentObject.hash)
+			).toString('base64');
+		}
+		catch (err) {
+			console.error(err);
+
+			if (
+				(await new Promise((resolve, reject) => {
+					read(
+						{
+							prompt: 'An error has occurred. Ignore it and resume the backup/deletion? [y/N]'
+						},
+						(promptError, s) => {
+							if (promptError) {
+								reject(promptError);
+							}
+							else {
+								resolve(s.trim().toLowerCase());
+							}
+						}
+					);
+				})) !== 'y'
+			) {
+				throw err;
+			}
+		}
+	}
+
+	const accountBackupsDir = path.join(__dirname, '..', 'account-backups');
+	const packageJSON = JSON.parse(
+		fs.readFileSync(path.join(__dirname, '..', 'package.json')).toString()
+	);
+	const userJSON = JSON.stringify(user);
+
+	if (!fs.existsSync(accountBackupsDir)) {
+		fs.mkdirSync(accountBackupsDir);
+	}
+	fs.writeFileSync(
+		path.join(accountBackupsDir, `${username}@${namespace}.json`),
+		cyphPrettier.format(userJSON, {
+			...packageJSON.prettier,
+			parser: 'json'
+		})
+	);
+	console.log(
+		`Saved user data backup to account-backups/${username}@${namespace}.json.`
+	);
+
+	if (projectId === 'cyphme') {
+		console.log('Uploading backup archive.');
+		const backupTimestamp = await setArchive(
+			`account-backups/${username}@${namespace}`,
+			userJSON
+		);
+		console.log(
+			`Finished uploading account-backups/${username}@${namespace}/${backupTimestamp.toString()}.`
+		);
+	}
 
 	if (blockOffUsername) {
 		await database

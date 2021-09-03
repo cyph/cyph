@@ -6,7 +6,7 @@
 	xmlns="http://www.w3.org/ns/widgets"
 	xmlns:cdv="http://cordova.apache.org/ns/1.0"
 	xmlns:android="http://schemas.android.com/apk/res/android"
-	version="1.0.96"
+	version="1.0.97"
 >
 	<name>Cyph</name>
 	<description>
@@ -18,7 +18,10 @@
 
 	<icon src="res/icon/default.png" />
 
-	<plugin name="@havesource/cordova-plugin-push" spec="*" />
+	<plugin
+		name="@havesource/cordova-plugin-push"
+		spec="https://github.com/havesource/cordova-plugin-push#dev/3.0.0-kotlin"
+	/>
 	<!-- <plugin name="cordova-call" spec="*" /> --> -->
 	<plugin name="cordova-clipboard" spec="*" />
 	<plugin
@@ -58,7 +61,6 @@
 	<allow-intent href="sms:*" />
 	<allow-intent href="mailto:*" />
 	<allow-intent href="geo:*" />
-
 	<preference name="android-minSdkVersion" value="23" />
 	<preference name="android-targetSdkVersion" value="30" />
 	<preference name="BackgroundColor" value="#8b62d9" />
@@ -77,18 +79,23 @@
 		<plugin name="cordova-plugin-browsertab" spec="*" />
 		<plugin
 			name="cordova-plugin-contacts"
-			spec="https://github.com/expcapitaldev/cordova-plugin-contacts.git"
+			spec="https://github.com/expcapitaldev/cordova-plugin-contacts"
 		/>
 		<plugin name="cordova-plugin-ionic-keyboard" spec="*" />
 		<plugin name="cordova-plugin-ionic-webview" spec="*" />
 		<plugin name="cordova-plugin-secure-storage-echo" spec="*" />
 		<plugin name="cordova-plugin-splashscreen" spec="*" />
-		<plugin name="nodejs-mobile-cordova" spec="*" />
+		<plugin
+			name="nodejs-mobile-cordova"
+			spec="https://github.com/buu700/nodejs-mobile-cordova-tmp"
+		/>
 		<plugin name="phonegap-plugin-local-notification" spec="*" />
 
 		<!-- Ionic webview preferences -->
 		<preference name="MixedContentMode" value="1" />
 		<preference name="Scheme" value="https" />
+
+		<preference name="AndroidInsecureFileModeEnabled" value="true" />
 
 		<preference
 			name="OverrideUserAgent"
@@ -98,6 +105,7 @@
 		<preference name="StatusBarBackgroundColor" value="#8b62d9" />
 
 		<allow-intent href="market:*" />
+		<allow-navigation href="https://localhost/*" />
 
 		<resource-file src="google-services.json" target="app/google-services.json" />
 
@@ -259,7 +267,7 @@
 		<plugin name="cordova-plugin-browsertab" spec="*" />
 		<plugin
 			name="cordova-plugin-contacts"
-			spec="https://github.com/expcapitaldev/cordova-plugin-contacts.git"
+			spec="https://github.com/expcapitaldev/cordova-plugin-contacts"
 		/>
 		<plugin name="cordova-plugin-ionic-keyboard" spec="*" />
 		<plugin name="cordova-plugin-ionic-webview" spec="*" />
@@ -268,7 +276,10 @@
 		<plugin name="cordova-plugin-purchase" spec="*" />
 		<plugin name="cordova-plugin-secure-storage-echo" spec="*" />
 		<plugin name="cordova-plugin-splashscreen" spec="*" />
-		<plugin name="nodejs-mobile-cordova" spec="*" />
+		<plugin
+			name="nodejs-mobile-cordova"
+			spec="https://github.com/buu700/nodejs-mobile-cordova-tmp"
+		/>
 		<plugin name="phonegap-plugin-local-notification" spec="*" />
 
 		<allow-intent href="itms:*" />
@@ -347,7 +358,7 @@
 		<splash height="480" platform="ios" src="res/screen/ios/Default~iphone.png" width="320" />
 	</platform>
 
-	<engine name="android" spec="^9" />
+	<engine name="android" spec="~10.0" />
 	<engine name="electron" spec="git+https://github.com/buu700/cordova-electron-tmp" />
 	<engine name="ios" spec="^6" />
 </widget>

@@ -50,7 +50,7 @@
 < 	});
 < });
 ---
-> importScripts('lib/localforage.js');
+> importScripts('lib/dexie.js');
 52,84d2
 < self.addEventListener('fetch', function (e) {
 < 	var url	= e.request.url.split('#')[0];

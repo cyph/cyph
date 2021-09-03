@@ -20,6 +20,7 @@ export class PGPService extends BaseProvider {
 	private readonly openpgp = memoize(async () =>
 		this.workerService
 			.createThread<any>(
+				'PGPService',
 				/* eslint-disable-next-line prefer-arrow/prefer-arrow-functions */
 				function () : void {
 					importScripts(

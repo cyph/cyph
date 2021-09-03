@@ -14,6 +14,8 @@ else if ((<any> module).hot) {
 	(<any> module).hot.accept();
 }
 
-platformBrowserDynamic().bootstrapModule(AppModule, {
-	preserveWhitespaces: false
-});
+asyncImportsComplete.then(async () =>
+	platformBrowserDynamic().bootstrapModule(AppModule, {
+		preserveWhitespaces: false
+	})
+);

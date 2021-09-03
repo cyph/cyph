@@ -21,6 +21,9 @@ if (env.debugLog) {
 
 const debugLogLocalStorageKey = 'debugLog';
 const debugLogStorageEnabled =
+	typeof (<any> localStorage) === 'object' &&
+	/* eslint-disable-next-line @typescript-eslint/unbound-method */
+	typeof (<any> localStorage).getItem === 'function' &&
 	/* eslint-disable-next-line @typescript-eslint/tslint/config */
 	localStorage.getItem('debugLogStorageEnabled') === 'true';
 
@@ -100,14 +103,17 @@ const debugLogInternal = async (
 		logString = `[${env.debugLogID}] ${logString}`;
 
 		if (debugLogStorageEnabled) {
-			/* eslint-disable-next-line @typescript-eslint/tslint/config */
-			localStorage.setItem(
-				debugLogLocalStorageKey,
-				`${(localStorage.getItem(debugLogLocalStorageKey) || '')
-					.split('\n')
-					.slice(-100)
-					.join('\n')}${logString}\n\n`
-			);
+			try {
+				/* eslint-disable-next-line @typescript-eslint/tslint/config */
+				localStorage.setItem(
+					debugLogLocalStorageKey,
+					`${(localStorage.getItem(debugLogLocalStorageKey) || '')
+						.split('\n')
+						.slice(-100)
+						.join('\n')}${logString}\n\n`
+				);
+			}
+			catch {}
 		}
 	}
 

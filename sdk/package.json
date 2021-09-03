@@ -1,6 +1,6 @@
 {
 	"name": "@cyph/sdk",
-	"version": "4.2.2",
+	"version": "5.0.6",
 	"license": "Cyph-RSL",
 	"type": "module",
 	"main": "./sdk.js",
@@ -15,10 +15,10 @@
 		"build": "ng build"
 	},
 	"dependencies": {
-		"fetch-blob": "*",
-		"firebase": "*",
+		"fetch-blob": ">=3",
+		"firebase": ">=9",
 		"generate-rsa-keypair": "*",
-		"node-fetch": "*",
+		"node-fetch": ">=3",
 		"tslib": "*",
 		"xhr2": "*"
 	},

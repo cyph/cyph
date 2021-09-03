@@ -15,6 +15,7 @@
 		"@google-cloud/storage": "*",
 		"@msgpack/msgpack": "*",
 		"@node-rs/crc32": "*",
+		"@touch4it/ical-timezones": "*",
 		"cors": "*",
 		"dompurify": "*",
 		"fast-crc32c": "*",

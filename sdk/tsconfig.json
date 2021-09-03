@@ -7,10 +7,6 @@
 		"outDir": "./dist/out-tsc",
 		"paths": {
 			"bitpay.js": ["js/externals/bitpay.js"],
-			"core-js/es6/*": ["../node_modules/core-js/es"],
-			"core-js/es7/reflect": [
-				"../node_modules/core-js/proposals/reflect-metadata"
-			],
 			"debug": ["js/externals/debug"],
 			"dropzone": ["js/externals/dropzone"],
 			"firebase/app": ["js/externals/firebase-app"],

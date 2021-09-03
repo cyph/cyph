@@ -88,6 +88,7 @@ fi
 
 export CSC_KEY_PASSWORD="${passwordWindows}"
 export CSC_KEYCHAIN="${HOME}/.cyph/nativereleasesigning/apple/cyph.keychain"
+export ORG_GRADLE_PROJECT_cdvMinSdkVersion="$(grep android-minSdkVersion config.xml | perl -pe 's/.*value="(.*?)".*/\1/g')"
 
 if [ -d cordova-build ] ; then
 	rm -rf cordova-build
@@ -156,6 +157,12 @@ if [ "${test}" ] ; then
 fi
 
 npm install
+
+if [ ! "${electron}" ] ; then
+	cd www/nodejs-project
+	npm install
+	cd ../..
+fi
 
 if [ ! "${test}" ] ; then
 	while ! npm run updateDefaultCacheValues ; do echo 'Retrying' ; done
@@ -453,6 +460,14 @@ if [ "${electron}" ] ; then
 fi
 
 if [ "${iOS}" ] ; then
+	echo 0 > www/NODEJS_MOBILE_BUILD_NATIVE_MODULES_VALUE.txt
+	find www/nodejs-project \( \
+		-name '*.node' \
+		-or -name '*.o' \
+		-or -name '*.a' \
+		-or -name '*.framework' \
+	\) -delete
+
 	npx cordova build ios --debug --device --verbose \
 		--codeSignIdentity="${iOSDevelopmentIdentity}" \
 		--developmentTeam='SXZZ8WLPV2' \

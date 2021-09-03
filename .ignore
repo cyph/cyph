@@ -1,3 +1,4 @@
 !.bashrc
 .git
 node_modules
+websign/lib

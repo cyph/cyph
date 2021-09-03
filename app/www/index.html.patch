@@ -63,12 +63,13 @@
 < 			</div>
 ---
 > 			<div class='logo-animation'></div>
-107,116c64,76
+107,117c64,79
 < 		<script src='/js/init.js'></script>
-< 		<script src='/lib/localforage.js'></script>
+< 		<script src='/lib/dexie.js'></script>
 < 		<script src='/lib/supersphincs.js'></script>
 < 		<script src='/lib/brotli.js'></script>
 < 		<script src='/lib/fetch.js'></script>
+< 		<script src='/js/storage.js'></script>
 < 		<script src='/js/caching-fetch.js'></script>
 < 		<script src='/js/sri.js'></script>
 < 		<script src='/js/keys.js'></script>
@@ -77,10 +78,13 @@
 ---
 > 		<script src='cordova.js'></script>
 > 		<script src='js/init.js'></script>
-> 		<script src='lib/localforage.js'></script>
+> 		<script src='lib/comlink.js'></script>
+> 		<script src='js/node.js'></script>
+> 		<script src='lib/dexie.js'></script>
 > 		<script src='lib/supersphincs.js'></script>
 > 		<script src='lib/brotli.js'></script>
 > 		<script src='lib/fetch.js'></script>
+> 		<script src='js/storage.js'></script>
 > 		<script src='js/caching-fetch.js'></script>
 > 		<script src='js/sri.js'></script>
 > 		<script src='js/keys.js'></script>

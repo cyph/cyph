@@ -1,0 +1,61 @@
+92a93,106
+> 	var ipfsFetch			=
+> 		self.cordovaRequire ?
+> 			self.cordovaRequire('ipfs-fetch') :
+> 		self.cordovaNodeJS ?
+> 			function (hash, options) {
+> 				return self.cordovaNodeJS.then(function (o) {
+> 					return o.ipfsFetch(hash, options);
+> 				}).then(function (bytesEncoded) {
+> 					return superSphincs._sodiumUtil.from_base64(bytesEncoded);
+> 				})
+> 			} :
+> 			undefined
+> 	;
+> 
+120a135,139
+> 			var ipfsFetchResult		= ipfsFetch ?
+> 				ipfsFetch(ipfsHash) :
+> 				Promise.reject('ipfs-fetch unavailable.')
+> 			;
+> 
+123,132c142,165
+< 			function fetchIPFSResource () {
+< 				return fetchWithTimeout(
+< 					packageMetadata.gateways[packageGatewayIndex].replace(
+< 						':hash',
+< 						ipfsHash
+< 					),
+< 					undefined,
+< 					'blob',
+< 					timeout
+< 				).then(fromBlob).then(function (bytes) {
+---
+> 			function fetchIPFSResource (fallback) {
+> 				var gatewayFetchResult	= !fallback ?
+> 					fetchWithTimeout(
+> 						packageMetadata.gateways[packageGatewayIndex].replace(
+> 							':hash',
+> 							ipfsHash
+> 						),
+> 						undefined,
+> 						'blob',
+> 						timeout
+> 					).then(fromBlob) :
+> 					undefined
+> 				;
+> 
+> 				return (
+> 					gatewayFetchResult ?
+> 						Promise.race([
+> 							gatewayFetchResult,
+> 							ipfsFetchResult.catch(function () {
+> 								return gatewayFetchResult;
+> 							})
+> 						]) :
+> 						ipfsFetchResult
+> 				).then(function (bytes) {
+166a200,202
+> 						else if (ipfsFetch && !fallback) {
+> 							return fetchIPFSResource(true);
+> 						}

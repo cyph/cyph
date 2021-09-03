@@ -34,6 +34,7 @@ export class WorkerService extends BaseProvider {
 
 	/** @see Thread */
 	public async createThread<T> (
+		name: string,
 		f: () => void,
 		locals: MaybePromise<any> = {}
 	) : Promise<IThread<T>> {
@@ -41,7 +42,7 @@ export class WorkerService extends BaseProvider {
 			locals = await locals;
 		}
 
-		return new Thread<T>(f, locals);
+		return new Thread<T>(name, f, locals);
 	}
 
 	/** Runs a function in the context of the ServiceWorker. */

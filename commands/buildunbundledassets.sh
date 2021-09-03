@@ -112,8 +112,8 @@ if [ -f unbundled.hash ] && [ "${hash}" == "$(cat unbundled.hash)" ] ; then
 	exit 0
 fi
 
-rm -rf node_modules js css 2> /dev/null
-mkdir node_modules js css
+rm -rf node_modules js css misc 2> /dev/null
+mkdir node_modules js css misc
 
 
 ../../commands/protobuf.sh
@@ -121,7 +121,7 @@ mkdir node_modules js css
 if [ "${serviceWorker}" ] || [ "${test}" ] ; then
 	node -e 'fs.writeFileSync(
 		"serviceworker.js",
-		fs.readFileSync("../../websign/lib/localforage.js").toString() +
+		fs.readFileSync("../../websign/lib/dexie.js").toString() +
 		"\n" +
 		fs.readFileSync("../../websign/serviceworker.js").toString().replace(
 			"/* Redirect non-whitelisted paths in this origin */",
@@ -153,6 +153,57 @@ echo ${nodeModulesAssets} | tr ' ' '\n' | xargs -I% -P ${parallelProcesses} bash
 
 	uglify -cm "${path}" -o "${f}.js"
 '
+
+
+cd ../misc
+
+cp -a /node_modules/firebase firebase.tmp
+
+for f in firebase-app firebase-messaging-sw ; do
+	cat firebase.tmp/${f}.js |
+		perl -pe 's/https:\/\/.*\/(.*?.js)/.\/\1/g' \
+	> firebase.tmp/${f}.js.new
+	mv firebase.tmp/${f}.js.new firebase.tmp/${f}.js
+
+	cat > ${f}.webpack.js <<- EOM
+		module.exports = {
+			entry: {
+				app: process.cwd() + '/firebase.tmp/${f}.js'
+			},
+			mode: 'none',
+			output: {
+				filename: '${f}.js',
+				library: '$(
+					echo ${f} | perl -pe 's/-sw$//g' | perl -pe 's/-([a-z])/\u\1/g'
+				)',
+				libraryTarget: 'var',
+				path: process.cwd()
+			},
+			module: {
+				rules: [
+					{
+						exclude: /node_modules/,
+						test: /\.m?js$/,
+						use: {
+							loader: 'babel-loader',
+							options: {
+								presets: [['@babel/preset-env']],
+								plugins: ['@babel/plugin-transform-runtime']
+							}
+						}
+					}
+				]
+			}
+		};
+	EOM
+
+	webpack --config ${f}.webpack.js
+	rm ${f}.webpack.js
+	babel ${f}.js --presets=@babel/preset-env -o ${f}.js
+	terser ${f}.js -o ${f}.js
+done
+
+rm -rf firebase.tmp
 
 
 cd ../js

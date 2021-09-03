@@ -17,6 +17,7 @@ export class QRService extends BaseProvider {
 	private readonly qrScanner = memoize(async () =>
 		this.workerService
 			.createThread<any>(
+				'QRService',
 				/* eslint-disable-next-line prefer-arrow/prefer-arrow-functions */
 				function () : void {
 					importScripts('/assets/node_modules/jsqr/dist/jsQR.js');

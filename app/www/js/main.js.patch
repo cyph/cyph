@@ -3,24 +3,30 @@
 ---
 > document.addEventListener('DOMContentLoaded', function () {
 > document.addEventListener('deviceready', function () {
-3a5,16
+3a5,22
 > document.addEventListener('backbutton', function (e) {
 > 	if (typeof self.onbackbutton === 'function') {
 > 		self.onbackbutton(e);
 > 	}
 > });
 > 
-> var os	= require('os');
-> 
 > self.cordovaParent	= location.toString() + '/../';
 > self.cordovaRequire	= self.require;
-> self.cordovaRocksDB	= !(os.platform() === 'darwin' && os.arch() === 'arm64');
 > 
-6c19
+> if (typeof cordovaRequire === 'function') {
+> 	var os	= cordovaRequire('os');
+> 	self.cordovaRocksDB	= !(os.platform() === 'darwin' && os.arch() === 'arm64');
+> }
+> else {
+> 	self.cordovaNodeJSInit();
+> 	self.cordovaRocksDB	= false;
+> }
+> 
+6c25
 < 	navigator.serviceWorker.register('/serviceworker.js').catch(function () {});
 ---
 > 	navigator.serviceWorker.register('serviceworker.js').catch(function () {});
-15,34c28,31
+15,34c34,37
 < var hostSplit		= location.host.split('.');
 < var isHiddenService	= hostSplit.slice(-1)[0] === 'onion';
 < var locationString	= location.toString();
@@ -46,9 +52,9 @@
 > 	if (cordova && cordova.plugins && cordova.plugins.backgroundMode) {
 > 		cordova.plugins.backgroundMode.enable();
 > 	}
-35a33
+35a39
 > catch (_) {}
-37,40c35,38
+37,40c41,44
 < /* Different styling between the main Cyph environments and others */
 < var packageNameSplit	= packageName.split('.');
 < if (config.cyphBranches.indexOf(packageNameSplit[0]) > -1) {
@@ -58,7 +64,7 @@
 > 	if (cordova && cordova.plugins && cordova.plugins.iosrtc) {
 > 		cordova.plugins.iosrtc.registerGlobals();
 > 	}
-42,43c40,56
+42,43c46,62
 < if (packageNameSplit.length === 2 && packageNameSplit[0] === 'cyph') {
 < 	document.getElementById('websign-load').className	= 'cyph-branded';
 ---
@@ -79,7 +85,7 @@
 > 		delete storage.webSignPackageName;
 > 		delete storage.webSignPackageTimestamp;
 > 	}
-166,203c179,181
+166,203c185,187
 < /* Before finishing, perform self-administered
 < 	integrity check on WebSign bootstrap */
 < catch(function () {
@@ -122,7 +128,7 @@
 > /* Successfully execute package */
 > then(function (o) {
 > 	var headHTML	= o.package.split('<head>')[1].split('</head>')[0];
-205,209c183,184
+205,209c189,190
 < 	if (!hashWhitelist[storage.webSignHash]) {
 < 		throw {
 < 			webSignPanic: true,
@@ -131,20 +137,20 @@
 ---
 > 	if (device.platform === 'iOS') {
 > 		headHTML	= headHTML.replace('href="/"', 'href="#"');
-211,216d185
+211,216d191
 < 	else if (o) {
 < 		return o;
 < 	}
 < 
 < 	throw null;
 < }).
-218,220c187
+218,220c193
 < /* Successfully execute package */
 < then(function (o) {
 < 	document.head.innerHTML	= o.package.split('<head>')[1].split('</head>')[0];
 ---
 > 	document.head.innerHTML	= headHTML;
-230,267c197,201
+230,267c203,207
 < catch(function (err) {
 < 	var messageElement;
 < 
@@ -189,12 +195,12 @@
 > 		if (cordova && cordova.plugins && cordova.plugins.backgroundMode) {
 > 			cordova.plugins.backgroundMode.disable();
 > 		}
-268a203,206
+268a209,212
 > 	catch (_) {}
 > 
 > 	var messageElement			= document.getElementById('websign-load-message');
 > 	messageElement.innerText	= config.abortText;
-282c220
+282c226
 < })();
 ---
 > }); });

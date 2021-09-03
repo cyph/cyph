@@ -72,9 +72,10 @@ function cachingFetch (url) {
 
 	return superSphincs.hash(url).then(function (hash) {
 		key	= 'websign-fetch/' + hash.hex;
-		return localforage.ready().catch(function () {});
-	}).then(function () {
-		return localforage.getItem(key).catch(function () {});
+
+		return webSignStorage.get({key: key}).then(function (o) {
+			return o.value;
+		}).catch(function () {});
 	}).then(function (value) {
 		if (typeof value === 'string') {
 			return value;
@@ -82,7 +83,7 @@ function cachingFetch (url) {
 
 		return fetchRetry(url).then(function (s) {
 			var value	= s.trim();
-			localforage.setItem(key, value).catch(function () {});
+			webSignStorage.put({key: key, value: value}).catch(function () {});
 			return value;
 		});
 	});

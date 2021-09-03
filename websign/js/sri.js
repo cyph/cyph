@@ -59,130 +59,164 @@ function webSignSRI_Process (packageMetadata) {
 		return exists ? value : null;
 	}
 
-	return localforage.ready().catch(function () {}).then(function () {
-		return Promise.all(inputElements.map(function (elem, i) {
-			var tagName			= elem.tagName.toLowerCase();
-			var expectedHash	= getAndRemoveAttribute(elem, 'websign-sri-hash');
-			var path			= getAndRemoveAttribute(elem, 'websign-sri-path');
-			var isDataResource	= getAndRemoveAttribute(elem, 'websign-sri-data') !== null;
-			var localStorageKey	= 'websign-sri-cache/' + expectedHash;
+	var inputItems	= inputElements.map(function (elem) {
+		var tagName			= elem.tagName.toLowerCase();
+		var expectedHash	= getAndRemoveAttribute(elem, 'websign-sri-hash');
+		var path			= getAndRemoveAttribute(elem, 'websign-sri-path');
+		var isDataResource	= getAndRemoveAttribute(elem, 'websign-sri-data') !== null;
+		var localStorageKey	= 'websign-sri-cache/' + expectedHash;
 
-			if (!expectedHash || !path) {
-				return;
+		if (!expectedHash || !path) {
+			return;
+		}
+
+		return {
+			elem: elem,
+			expectedHash: expectedHash,
+			isDataResource: isDataResource,
+			localStorageKey: localStorageKey,
+			path: path,
+			tagName: tagName
+		};
+	}).filter(function (o) {
+		return o !== undefined;
+	});
+
+	var localValuesPromise	= webSignStorage.bulkGet(inputItems.map(function (inputItem) {
+		return inputItem.localStorageKey;
+	})).catch(function () {
+		return [];
+	});
+
+	var newLocalValues		= [];
+
+	return Promise.all(inputItems.map(function (inputItem, i) {
+		var elem			= inputItem.elem;
+		var expectedHash	= inputItem.expectedHash;
+		var isDataResource	= inputItem.isDataResource;
+		var localStorageKey	= inputItem.localStorageKey;
+		var path			= inputItem.path;
+		var tagName			= inputItem.tagName;
+
+		return localValuesPromise.then(function (localValues) {
+			var content	= (localValues[i] || {}).value;
+
+			if (!content) {
+				throw new Error('Content not in WebSign-SRI cache.');
 			}
 
-			return localforage.getItem(localStorageKey).then(function (content) {
-				if (!content) {
-					throw new Error('Content not in WebSign-SRI cache.');
-				}
+			return content;
+		}).catch(function () {
+			var subresource	= path.replace(/^\//, '');
+			var ipfsHash	= packageMetadata.package.subresources[subresource];
+			var timeout		=
+				(packageMetadata.package.subresourceTimeouts || {})[subresource] ||
+				60000
+			;
 
-				return content;
-			}).catch(function () {
-				var subresource	= path.replace(/^\//, '');
-				var ipfsHash	= packageMetadata.package.subresources[subresource];
-				var timeout		=
-					(packageMetadata.package.subresourceTimeouts || {})[subresource] ||
-					60000
-				;
+			if (!ipfsHash) {
+				throw new Error('IPFS hash not found.');
+			}
 
-				if (!ipfsHash) {
-					throw new Error('IPFS hash not found.');
-				}
+			var packageGatewayIndex	= 0;
 
-				var packageGatewayIndex	= 0;
+			function fetchIPFSResource () {
+				return fetchWithTimeout(
+					packageMetadata.gateways[packageGatewayIndex].replace(
+						':hash',
+						ipfsHash
+					),
+					undefined,
+					'blob',
+					timeout
+				).then(fromBlob).then(function (bytes) {
+					var content	=
+						superSphincs._sodiumUtil.to_string(
+							BrotliDecode(bytes)
+						).trim()
+					;
 
-				function fetchIPFSResource () {
-					return fetchWithTimeout(
-						packageMetadata.gateways[packageGatewayIndex].replace(
-							':hash',
-							ipfsHash
-						),
-						undefined,
-						'blob',
-						timeout
-					).then(fromBlob).then(function (bytes) {
-						var content	=
-							superSphincs._sodiumUtil.to_string(
-								BrotliDecode(bytes)
-							).trim()
-						;
+					return Promise.all([
+						content,
+						superSphincs.hash(content)
+					])
+				}).then(function (results) {
+					var content		= results[0];
+					var actualHash	= results[1].hex;
 
-						return Promise.all([
-							content,
-							superSphincs.hash(content)
-						])
-					}).then(function (results) {
-						var content		= results[0];
-						var actualHash	= results[1].hex;
+					if (actualHash !== expectedHash) {
+						throw new Error(
+							'Invalid subresource ' + path + '.\n\n' +
+							'Expected: ' +  expectedHash + '.\n\n' +
+							'Received: ' + actualHash + '.'
+						);
+					}
 
-						if (actualHash !== expectedHash) {
-							throw new Error(
-								'Invalid subresource ' + path + '.\n\n' +
-								'Expected: ' +  expectedHash + '.\n\n' +
-								'Received: ' + actualHash + '.'
-							);
-						}
-
-						localforage.setItem(
-							localStorageKey,
-							content
-						).catch(function () {});
-
-						return content;
-					}).catch(function (err) {
-						++packageGatewayIndex;
-
-						if (packageMetadata.gateways.length > packageGatewayIndex) {
-							return fetchIPFSResource();
-						}
-						else {
-							throw err;
-						}
+					newLocalValues.push({
+						key: localStorageKey,
+						value: content
 					});
-				}
 
-				return fetchIPFSResource();
-			}).then(function (content) {
-				if (isDataResource) {
-					elem.setAttribute(
-						tagName === 'link' ?
-							'href' :
-							tagName === 'meta' ?
-								'content' :
-								'src'
-						,
-						content
-					);
+					return content;
+				}).catch(function (err) {
+					++packageGatewayIndex;
 
-					outputElements[i]	= elem;
-				}
-				else {
-					elem.parentElement.removeChild(elem);
-
-					outputElements[i]	= document.createElement(
-						tagName === 'script' ?
-							'script' :
-							'style'
-					);
-
-					outputElements[i].textContent	= content;
-				}
-
-				while (true) {
-					var outputElement	= outputElements[outputIndex];
-
-					if (!outputElement) {
-						return;
+					if (packageMetadata.gateways.length > packageGatewayIndex) {
+						return fetchIPFSResource();
 					}
-
-					if (!outputElement.parentElement) {
-						document.head.appendChild(outputElement);
+					else {
+						throw err;
 					}
+				});
+			}
 
-					outputElements[outputIndex]	= null;
-					++outputIndex;
+			return fetchIPFSResource();
+		}).then(function (content) {
+			if (isDataResource) {
+				elem.setAttribute(
+					tagName === 'link' ?
+						'href' :
+						tagName === 'meta' ?
+							'content' :
+							'src'
+					,
+					content
+				);
+
+				outputElements[i]	= elem;
+			}
+			else {
+				elem.parentElement.removeChild(elem);
+
+				outputElements[i]	= document.createElement(
+					tagName === 'script' ?
+						'script' :
+						'style'
+				);
+
+				outputElements[i].textContent	= content;
+			}
+
+			while (true) {
+				var outputElement	= outputElements[outputIndex];
+
+				if (!outputElement) {
+					return;
 				}
-			});
-		}));
+
+				if (!outputElement.parentElement) {
+					document.head.appendChild(outputElement);
+				}
+
+				outputElements[outputIndex]	= null;
+				++outputIndex;
+			}
+		});
+	})).then(function () {
+		if (newLocalValues.length < 1) {
+			return;
+		}
+
+		return webSignStorage.bulkPut(newLocalValues).catch(function () {});
 	});
 }

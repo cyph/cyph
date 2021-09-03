@@ -143,6 +143,7 @@ export const appointmentInvite = onCall(
 					endTime: data.eventDetails.endTime,
 					recurrence: data.eventDetails.recurrence,
 					startTime: data.eventDetails.startTime,
+					timeZone: data.inviterTimeZone,
 					title: data.eventDetails.title,
 					uid,
 					url: inviterLink
@@ -195,6 +196,7 @@ export const appointmentInvite = onCall(
 									inviterUsername: emailTo,
 									recurrence: data.eventDetails.recurrence,
 									startTime: data.eventDetails.startTime,
+									timeZone: data.inviterTimeZone,
 									title: data.eventDetails.title,
 									uid,
 									url: inviteeLink

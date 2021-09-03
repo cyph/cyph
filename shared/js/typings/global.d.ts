@@ -6,6 +6,12 @@ declare let accountPrimaryTheme: boolean;
 
 /**
  * @global
+ * If applicable, resolves when the all global async imports are complete.
+ */
+declare let asyncImportsComplete: Promise<void>;
+
+/**
+ * @global
  * Message to return for beforeunload event.
  */
 declare let beforeUnloadMessage: string | undefined;
@@ -15,6 +21,12 @@ declare let beforeUnloadMessage: string | undefined;
  * The root route of Burner.
  */
 declare let burnerRoot: string;
+
+/**
+ * @global
+ * Node.js wrapper instance (Cordova-specific).
+ */
+declare let cordovaNodeJS: Promise<any> | undefined;
 
 /**
  * @global

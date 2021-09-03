@@ -41,6 +41,10 @@
 @angular/router
 @angular/service-worker
 @asymmetrik/ngx-leaflet
+@babel/cli
+@babel/core
+@babel/plugin-transform-runtime
+@babel/preset-env
 @compodoc/compodoc
 @covalent/core
 @covalent/dynamic-forms
@@ -223,6 +227,7 @@ animate.css
 animated-scroll-to
 animejs
 assert-browserify
+babel-loader
 bitpay.js
 bourbon
 braintree
@@ -293,6 +298,7 @@ jquery
 jquery-appear-original
 jsdoc@3.5.5
 jsdom
+jsonpath
 jspdf
 jsqr
 karma
