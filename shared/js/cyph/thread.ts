@@ -52,15 +52,12 @@ export class Thread<T> implements IThread<T> {
 			};
 		}
 
-		/* Normalisation to increase compatibility with web libraries */
+		/* Global namespace normalization and TypeScript helpers */
 
 		importScripts('/assets/node_modules/core-js-bundle/minified.js');
+		importScripts('/assets/node_modules/tslib/tslib.js');
 		importScripts('/assets/js/standalone/global.js');
 		/* Import when needed: /assets/js/standalone/node-polyfills.js */
-
-		/* TypeScript helpers */
-
-		importScripts('/assets/node_modules/tslib/tslib.js');
 
 		/* RPC */
 
