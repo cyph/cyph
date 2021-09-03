@@ -301,7 +301,10 @@ export class CalendarInviteComponent
 
 	/** Handles recurrence change. */
 	public setRecurrence (recurrence: RecurrenceEditorChangeEventArgs) : void {
-		if (!this.calendarInvite.value) {
+		if (
+			!this.calendarInvite.value ||
+			typeof recurrence.value !== 'string'
+		) {
 			return;
 		}
 

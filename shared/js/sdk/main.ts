@@ -15,16 +15,18 @@ if (environment.production) {
 	enableProdMode();
 }
 
-platformDynamicServer([
-	{
-		provide: INITIAL_CONFIG,
-		useValue: <PlatformConfig> {
-			document: '<html><body><cyph-sdk></cyph-sdk></body></html>'
+asyncImportsComplete.then(async () =>
+	platformDynamicServer([
+		{
+			provide: INITIAL_CONFIG,
+			useValue: <PlatformConfig> {
+				document: '<html><body><cyph-sdk></cyph-sdk></body></html>'
+			}
 		}
-	}
-]).bootstrapModule(AppModule, {
-	preserveWhitespaces: false
-});
+	]).bootstrapModule(AppModule, {
+		preserveWhitespaces: false
+	})
+);
 
 /* eslint-disable-next-line import/no-default-export */
 export default AppModule.sdk;

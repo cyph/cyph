@@ -1,6 +1,7 @@
 /.bootstrap.original
 /.build
 /.websign.tmp
+/account-backups
 /docs
 /qr-invite-codes
 /serve.ready

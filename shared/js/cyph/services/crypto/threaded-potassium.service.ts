@@ -26,6 +26,7 @@ export class ThreadedPotassiumService
 	private readonly potassiumInternal = memoize((_I: number) => {
 		const potassiumPromise = this.workerService
 			.createThread<any>(
+				'ThreadedPotassiumService',
 				/* eslint-disable-next-line prefer-arrow/prefer-arrow-functions */
 				function () : void {
 					importScripts(

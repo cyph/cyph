@@ -1,9 +1,11 @@
+@use 'sass:math';
+
 @import '../../../../css/mixins';
 
 $height: 60px;
 
 .footer {
-	line-height: $height / 2;
+	line-height: math.div($height, 2);
 	min-height: $height;
 	font-size: 1rem;
 	padding-top: 16px;

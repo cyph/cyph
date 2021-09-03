@@ -10,6 +10,7 @@ import admin from 'firebase-admin';
 import fs from 'fs';
 import lz4 from 'lz4';
 import os from 'os';
+import * as brotli from './brotli.js';
 
 const {BinaryProto, StringProto} = proto;
 const {deserialize, retryUntilSuccessful, serialize, sleep, uuid} = util;
@@ -45,6 +46,11 @@ export const initDatabaseService = (config, isCloudFunction) => {
 		`${config.project.id}.appspot.com`
 	);
 
+	const archiveStorage =
+		config.project.id === 'cyphme' && !isCloudFunction ?
+			new Storage(config.storage).bucket('cyph-archive-storage') :
+			undefined;
+
 	const processURL = (namespace, url) => {
 		if (!namespace || !url) {
 			throw new Error('Invalid URL.');
@@ -78,6 +84,28 @@ export const initDatabaseService = (config, isCloudFunction) => {
 		getHash,
 		messaging,
 		processURL,
+		async getArchive (archiveName, timestamp)  {
+			if (!archiveStorage) {
+				throw new Error('Archive storage bucket is production-only.');
+			}
+
+			return brotli.decode(
+				await retry(
+					async () =>
+						(
+							await archiveStorage
+								.file(
+									`${archiveName}/${(timestamp instanceof
+									Date ?
+										timestamp.getTime() :
+										timestamp
+									).toString()}`
+								)
+								.download()
+						)[0]
+				)
+			);
+		},
 		async getItem (namespace, url, proto, skipSignature, decompress)  {
 			url = processURL(namespace, url);
 
@@ -87,12 +115,7 @@ export const initDatabaseService = (config, isCloudFunction) => {
 
 			let bytes = data ?
 				Buffer.from(data, 'base64') :
-				await retry(
-					async () =>
-						(
-							await storage.file(`${url}/${hash}`).download()
-						)[0]
-				);
+				await databaseService.storageGetItem(undefined, url, hash);
 			if (skipSignature) {
 				bytes = bytes.slice(41256);
 			}
@@ -192,6 +215,22 @@ export const initDatabaseService = (config, isCloudFunction) => {
 				await retry(async () => database.ref(url).remove());
 			}
 		},
+		async setArchive (archiveName, bytes)  {
+			if (!archiveStorage) {
+				throw new Error('Archive storage bucket is production-only.');
+			}
+
+			const timestamp = Date.now();
+			const encodedBytes = brotli.encode(bytes);
+
+			await retry(async () =>
+				archiveStorage
+					.file(`${archiveName}/${timestamp.toString()}`)
+					.save(encodedBytes)
+			);
+
+			return timestamp;
+		},
 		async setItem (namespace, url, proto, value)  {
 			return databaseService.setItemInternal(
 				processURL(namespace, url),
@@ -230,7 +269,22 @@ export const initDatabaseService = (config, isCloudFunction) => {
 				})
 			);
 		},
-		storage
+		storage,
+		storageGetItem: async (namespace, url, hash) =>
+			retry(
+				async () =>
+					(
+						await storage
+							.file(
+								`${
+									namespace === undefined ?
+										url :
+										processURL(namespace, url)
+								}/${hash}`
+							)
+							.download()
+					)[0]
+			)
 	};
 
 	return databaseService;
