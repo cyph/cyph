@@ -1,3 +1,5 @@
+/* eslint-disable max-lines */
+
 import {Injectable, NgZone} from '@angular/core';
 import {Dexie} from 'dexie';
 import * as localforage from 'localforage';
