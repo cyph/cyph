@@ -154,10 +154,11 @@ export class Thread<T> implements IThread<T> {
 	}
 
 	/**
+	 * @param name Human-readable name of the new thread.
 	 * @param f Function to run in the new thread.
 	 * @param locals Local data to pass in to the new thread.
 	 */
-	constructor (f: () => void, locals: any = {}) {
+	constructor (name: string, f: () => void, locals: any = {}) {
 		const seedBytes = potassiumUtil.randomBytes(32);
 
 		const threadSetupVars = {
@@ -255,7 +256,9 @@ export class Thread<T> implements IThread<T> {
 				'cyphThreadError' in e.data
 			) {
 				throw new Error(
-					`Thread error: ${(e.data.cyphThreadError || '').toString()}`
+					`Thread error (${name}): ${(
+						e.data.cyphThreadError || ''
+					).toString()}`
 				);
 			}
 		};
