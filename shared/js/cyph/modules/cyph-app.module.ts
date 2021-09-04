@@ -14,6 +14,7 @@ import {AccountContactsComponent} from '../components/account-contacts';
 import {AccountContactsSearchComponent} from '../components/account-contacts-search';
 import {AccountDownloadComponent} from '../components/account-download';
 import {AccountEhrAccessComponent} from '../components/account-ehr-access';
+import {AccountEmailComposeComponent} from '../components/account-email-compose';
 import {AccountFileSharingComponent} from '../components/account-file-sharing';
 import {AccountFilesComponent} from '../components/account-files';
 import {AccountFormComponent} from '../components/account-form';
@@ -92,6 +93,7 @@ import {CyphCommonModule} from './cyph-common.module';
 		AccountContactsSearchComponent,
 		AccountDownloadComponent,
 		AccountEhrAccessComponent,
+		AccountEmailComposeComponent,
 		AccountFilesComponent,
 		AccountFileSharingComponent,
 		AccountFormComponent,
@@ -153,6 +155,7 @@ import {CyphCommonModule} from './cyph-common.module';
 		AccountContactsSearchComponent,
 		AccountDownloadComponent,
 		AccountEhrAccessComponent,
+		AccountEmailComposeComponent,
 		AccountFilesComponent,
 		AccountFileSharingComponent,
 		AccountFormComponent,

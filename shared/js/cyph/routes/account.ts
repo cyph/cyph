@@ -10,6 +10,7 @@ import {AccountConfirmEmailComponent} from '../components/account-confirm-email'
 import {AccountContactsComponent} from '../components/account-contacts';
 import {AccountDownloadComponent} from '../components/account-download';
 import {AccountEhrAccessComponent} from '../components/account-ehr-access';
+import {AccountEmailComposeComponent} from '../components/account-email-compose';
 import {AccountFilesComponent} from '../components/account-files';
 import {AccountFormComponent} from '../components/account-form';
 import {AccountFormsComponent} from '../components/account-forms';
@@ -239,6 +240,10 @@ export const account: Route = {
 		},
 		{path: 'download/:username/:id', component: AccountDownloadComponent},
 		{path: 'ehr-access', component: AccountEhrAccessComponent},
+		{
+			path: 'email/compose',
+			component: AccountEmailComposeComponent
+		},
 		{path: 'feed', component: AccountPostFeedPageComponent},
 		{path: 'files', component: AccountFilesComponent},
 		{path: 'forms', component: AccountFormsComponent},

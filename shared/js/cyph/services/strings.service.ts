@@ -410,7 +410,7 @@ export class StringsService extends BaseProvider {
 	public readonly emailOptional = `Email (optional)`;
 
 	/** @see StringsService */
-	public readonly emailSent = `Message Sent.`;
+	public readonly emailSent = `Message sent.`;
 
 	/** @see StringsService */
 	public readonly emailSentUndo = `Undo`;
@@ -423,6 +423,9 @@ export class StringsService extends BaseProvider {
 
 	/** @see StringsService */
 	public readonly emailVerifyError = `Initiating email verification failed. Please try again later.`;
+
+	/** @see StringsService */
+	public readonly emailVerifiedRequiredError = `Verified email address required.`;
 
 	/** @see StringsService */
 	public readonly emojiPick = `Pick your emoji…`;

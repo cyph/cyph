@@ -1,1 +1,6 @@
-<div>AccountEmailCompose</div>
+<cyph-email-compose
+	[from]="from"
+	[fullPage]="true"
+	(sentContent)="send($event)"
+	*ngIf="senderData | await as from"
+></cyph-email-compose>
