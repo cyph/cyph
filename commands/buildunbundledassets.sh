@@ -165,6 +165,8 @@ for f in firebase-app firebase-messaging-sw ; do
 	> firebase.tmp/${f}.js.new
 	mv firebase.tmp/${f}.js.new firebase.tmp/${f}.js
 
+	name="$(echo ${f} | perl -pe 's/-sw$//g' | perl -pe 's/-([a-z])/\u\1/g')"
+
 	cat > ${f}.webpack.js <<- EOM
 		module.exports = {
 			entry: {
@@ -173,9 +175,7 @@ for f in firebase-app firebase-messaging-sw ; do
 			mode: 'none',
 			output: {
 				filename: '${f}.js',
-				library: '$(
-					echo ${f} | perl -pe 's/-sw$//g' | perl -pe 's/-([a-z])/\u\1/g'
-				)',
+				library: '${name}',
 				libraryTarget: 'var',
 				path: process.cwd()
 			},
@@ -200,6 +200,7 @@ for f in firebase-app firebase-messaging-sw ; do
 	webpack --config ${f}.webpack.js
 	rm ${f}.webpack.js
 	babel ${f}.js --presets=@babel/preset-env -o ${f}.js
+	echo ";self.${name} = ${name};" >> ${f}.js
 	minify ${f}.js -o ${f}.js
 done
 
