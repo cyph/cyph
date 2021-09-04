@@ -279,9 +279,6 @@ for f in ${typescriptAssets} ; do
 				minimizer: [
 					new TerserPlugin({
 						extractComments: false,
-						$(if [ "${test}" ] ; then
-							echo "minify: TerserPlugin.uglifyJsMinify,"
-						fi)
 						parallel: true,
 						terserOptions: {
 							ecma: 5,
@@ -377,6 +374,11 @@ for f in ${typescriptAssets} ; do
 
 	mv "${f}.js.tmp" "${f}.js"
 	ls -lh "${f}.js"
+
+	if [ "${test}" ] ; then
+		minify "${f}.js" -bo "${f}.js"
+		ls -lh "${f}.js"
+	fi
 done
 
 
