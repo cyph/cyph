@@ -37,7 +37,7 @@ minify () {
 			shift
 		fi
 
-		terser "${@}" -b
+		uglifyjs "${@}" -b
 	elif [ "${1}" == '-cm' ] ; then
 		shift
 		terser "${@}" -cm
@@ -279,6 +279,9 @@ for f in ${typescriptAssets} ; do
 				minimizer: [
 					new TerserPlugin({
 						extractComments: false,
+						$(if [ "${test}" ] ; then
+							echo "minify: TerserPlugin.uglifyJsMinify,"
+						fi)
 						parallel: true,
 						terserOptions: {
 							ecma: 5,
