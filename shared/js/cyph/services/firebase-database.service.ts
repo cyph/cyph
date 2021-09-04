@@ -220,16 +220,13 @@ export class FirebaseDatabaseService extends DatabaseService {
 				this.envService.firebaseConfig,
 				/* eslint-disable-next-line @typescript-eslint/no-shadow */
 				config => {
-					importScripts('/assets/misc/firebase-app.js');
 					importScripts('/assets/misc/firebase-messaging-sw.js');
 
-					(<any> self).firebaseApp.initializeApp(config);
+					(<any> self).firebaseMessaging.initializeApp(config);
 
 					(<any> self).messaging = (<any> (
 						self
-					)).firebaseMessaging.getMessaging(
-						(<any> self).firebaseApp.getApp()
-					);
+					)).firebaseMessaging.getMessaging();
 
 					(<any> self).firebaseMessaging.onBackgroundMessage(
 						(<any> self).messaging,

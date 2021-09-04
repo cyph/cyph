@@ -15,7 +15,8 @@ import superSphincs from 'supersphincs';
 
 	const filesToMerge = glob
 		.sync('assets/**', {nodir: true})
-		.filter(s => !s.match(/^assets\/(css|js|node_modules)\//));
+		.filter(s => !s.match(/^assets\/(css|js|misc|node_modules)\//));
+
 	const filesToModify = [
 		{dir: 'assets/css', ext: 'css'},
 		{dir: 'assets/js', ext: 'js'},

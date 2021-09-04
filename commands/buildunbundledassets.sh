@@ -31,13 +31,13 @@ mkparentdir () {
 	mkdir -p "$(echo "${1}" | perl -pe 's/(.*)\/[^\/]+$/\1/')" 2> /dev/null
 }
 
-uglify () {
+minify () {
 	if [ "${test}" ] ; then
 		if [ "${1}" == '-cm' ] ; then
 			shift
 		fi
 
-		terser "${@}" -b
+		uglifyjs "${@}" -b
 	elif [ "${1}" == '-cm' ] ; then
 		shift
 		terser "${@}" -cm
@@ -140,7 +140,7 @@ fi
 cd node_modules
 
 export test
-export -f uglify
+export -f minify
 for f in ${nodeModulesAssets} ; do
 	mkparentdir "${f}"
 done
@@ -151,7 +151,7 @@ echo ${nodeModulesAssets} | tr ' ' '\n' | xargs -I% -P ${parallelProcesses} bash
 		path="/node_modules/${f}.min.js"
 	fi
 
-	uglify -cm "${path}" -o "${f}.js"
+	minify -cm "${path}" -o "${f}.js"
 '
 
 
@@ -159,11 +159,15 @@ cd ../misc
 
 cp -a /node_modules/firebase firebase.tmp
 
-for f in firebase-app firebase-messaging-sw ; do
+for f in firebase-messaging-sw ; do
 	cat firebase.tmp/${f}.js |
-		perl -pe 's/https:\/\/.*\/(.*?.js)/.\/\1/g' \
+		perl -pe 's/https:\/\/.*\/(.*?.js)/.\/\1/g' |
+		perl -pe 's/(import \{ .*? getApp) /\1, initializeApp /g' |
+		perl -pe 's/(import (.*?) from .*?;)/\1\nexport \2;/g' \
 	> firebase.tmp/${f}.js.new
 	mv firebase.tmp/${f}.js.new firebase.tmp/${f}.js
+
+	name="$(echo ${f} | perl -pe 's/-sw$//g' | perl -pe 's/-([a-z])/\u\1/g')"
 
 	cat > ${f}.webpack.js <<- EOM
 		module.exports = {
@@ -173,9 +177,7 @@ for f in firebase-app firebase-messaging-sw ; do
 			mode: 'none',
 			output: {
 				filename: '${f}.js',
-				library: '$(
-					echo ${f} | perl -pe 's/-sw$//g' | perl -pe 's/-([a-z])/\u\1/g'
-				)',
+				library: '${name}',
 				libraryTarget: 'var',
 				path: process.cwd()
 			},
@@ -200,7 +202,8 @@ for f in firebase-app firebase-messaging-sw ; do
 	webpack --config ${f}.webpack.js
 	rm ${f}.webpack.js
 	babel ${f}.js --presets=@babel/preset-env -o ${f}.js
-	terser ${f}.js -o ${f}.js
+	echo ";self.${name} = ${name};" >> ${f}.js
+	minify ${f}.js -o ${f}.js
 done
 
 rm -rf firebase.tmp
@@ -238,7 +241,7 @@ node -e "
 
 tsc -p .
 checkfail
-uglify standalone/global.js -o standalone/global.js
+minify standalone/global.js -o standalone/global.js
 checkfail
 
 for f in ${typescriptAssets} ; do
@@ -364,7 +367,7 @@ for f in ${typescriptAssets} ; do
 				self[key] = ${m}[key];
 			}
 		" |
-			uglify \
+			minify \
 		;
 		echo '})();';
 	} \
@@ -374,6 +377,11 @@ for f in ${typescriptAssets} ; do
 
 	mv "${f}.js.tmp" "${f}.js"
 	ls -lh "${f}.js"
+
+	if [ "${test}" ] ; then
+		minify "${f}.js" -bo "${f}.js"
+		ls -lh "${f}.js"
+	fi
 done
 
 
@@ -392,5 +400,5 @@ checkfailretry
 
 cd ..
 find . -type f -name '*.js' -exec sed -i 's|use strict||g' {} \;
-if [ "${prodTest}" ] ; then find . -type f -name '*.js' -exec terser {} -bo {} \; ; fi
+if [ "${prodTest}" ] ; then find . -type f -name '*.js' -exec minify {} -bo {} \; ; fi
 echo "${hash}" > unbundled.hash
