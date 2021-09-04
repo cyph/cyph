@@ -31,7 +31,7 @@ mkparentdir () {
 	mkdir -p "$(echo "${1}" | perl -pe 's/(.*)\/[^\/]+$/\1/')" 2> /dev/null
 }
 
-uglify () {
+minify () {
 	if [ "${test}" ] ; then
 		if [ "${1}" == '-cm' ] ; then
 			shift
@@ -140,7 +140,7 @@ fi
 cd node_modules
 
 export test
-export -f uglify
+export -f minify
 for f in ${nodeModulesAssets} ; do
 	mkparentdir "${f}"
 done
@@ -151,7 +151,7 @@ echo ${nodeModulesAssets} | tr ' ' '\n' | xargs -I% -P ${parallelProcesses} bash
 		path="/node_modules/${f}.min.js"
 	fi
 
-	uglify -cm "${path}" -o "${f}.js"
+	minify -cm "${path}" -o "${f}.js"
 '
 
 
@@ -200,7 +200,7 @@ for f in firebase-app firebase-messaging-sw ; do
 	webpack --config ${f}.webpack.js
 	rm ${f}.webpack.js
 	babel ${f}.js --presets=@babel/preset-env -o ${f}.js
-	terser ${f}.js -o ${f}.js
+	minify ${f}.js -o ${f}.js
 done
 
 rm -rf firebase.tmp
@@ -238,7 +238,7 @@ node -e "
 
 tsc -p .
 checkfail
-uglify standalone/global.js -o standalone/global.js
+minify standalone/global.js -o standalone/global.js
 checkfail
 
 for f in ${typescriptAssets} ; do
@@ -364,7 +364,7 @@ for f in ${typescriptAssets} ; do
 				self[key] = ${m}[key];
 			}
 		" |
-			uglify \
+			minify \
 		;
 		echo '})();';
 	} \
@@ -392,5 +392,5 @@ checkfailretry
 
 cd ..
 find . -type f -name '*.js' -exec sed -i 's|use strict||g' {} \;
-if [ "${prodTest}" ] ; then find . -type f -name '*.js' -exec terser {} -bo {} \; ; fi
+if [ "${prodTest}" ] ; then find . -type f -name '*.js' -exec minify {} -bo {} \; ; fi
 echo "${hash}" > unbundled.hash
