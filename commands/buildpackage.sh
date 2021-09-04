@@ -448,7 +448,7 @@ for d in ${compiledProjects} ; do
 		../commands/prodbuild.sh --configuration "${environment}" || fail
 
 		if [ "${simple}" ] && [ ! "${simpleWebSignBuild}" ] ; then
-			ls dist/*.js | xargs -I% terser % -bo %
+			ls dist/*.js | xargs -I% uglifyjs % -bo %
 		fi
 	fi
 
