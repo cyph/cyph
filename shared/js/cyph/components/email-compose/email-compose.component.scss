@@ -83,7 +83,7 @@ ejs-documenteditorcontainer ::ng-deep {
 	min-height: $minHeight;
 
 	mat-card .document-editor-container-wrapper {
-		$heightOffset: 183px;
+		$heightOffset: 168px;
 		height: calc(var(--height) - #{$heightOffset});
 		min-height: $minHeight - $heightOffset;
 
