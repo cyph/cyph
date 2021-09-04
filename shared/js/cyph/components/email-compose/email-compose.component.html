@@ -5,6 +5,7 @@
 	"
 	[class.mobile]="envService.isMobile | await"
 	[class.ui-disabled]="sending | await"
+	*ngIf="fullPage; else emailComposeUI"
 >
 	<div fxFlex class="cyph-light-theme card-wrapper">
 		<mat-card class="animated slideInDown ui-section" fxFlex>
@@ -23,87 +24,80 @@
 				<span cyphTranslate>New Message</span>
 			</mat-card-title>
 			<mat-card-content>
-				<div fxFlexFill fxLayout="column">
-					<mat-form-field fxFlex>
-						<mat-chip-list
-							#chipList
-							cyphTranslate
-							aria-label="Recipients"
-						>
-							<mat-chip
-								[removable]="true"
-								[selectable]="true"
-								[value]="o"
-								(removed)="removeRecipient(o, to)"
-								*ngFor="
-									let o of to | await;
-									trackBy: trackBySelf
-								"
-							>
-								<span>
-									{{ o.name }} &lt;{{ o.email }}&gt;
-								</span>
-								<mat-icon matChipRemove>cancel</mat-icon>
-							</mat-chip>
-
-							<input
-								#chipListInput
-								cyphTranslate
-								placeholder="To"
-								[matChipInputFor]="chipList"
-								(matChipInputTokenEnd)="
-									addRecipients(toDraft, to)
-								"
-								[ngModel]="toDraft | await"
-								(ngModelChange)="toDraft.next($event)"
-							/>
-
-							<mat-icon
-								matSuffix
-								class="suffix-button"
-								(click)="addRecipients(toDraft, to)"
-							>
-								add
-							</mat-icon>
-						</mat-chip-list>
-					</mat-form-field>
-
-					<mat-form-field>
-						<input
-							matInput
-							cyphTranslate
-							name="subject"
-							placeholder="Subject"
-						/>
-					</mat-form-field>
-
-					<div class="document-editor-container-wrapper">
-						<ejs-documenteditorcontainer
-							#documentEditorContainer
-							[enableComment]="false"
-							[enableCsp]="false"
-							[enableLocalPaste]="true"
-							[enableToolbar]="true"
-							layoutType="web"
-							[restrictEditing]="readOnly"
-							[toolbarItems]="[
-								'Hyperlink',
-								'Image',
-								'Table',
-								'Separator',
-								'Undo',
-								'Redo',
-								'Separator',
-								'Find'
-							]"
-						>
-						</ejs-documenteditorcontainer>
-					</div>
-				</div>
+				<ng-container *ngTemplateOutlet="emailComposeUI"></ng-container>
 			</mat-card-content>
 		</mat-card>
 	</div>
 </div>
+
+<ng-template #emailComposeUI>
+	<div fxFlexFill fxLayout="column">
+		<mat-form-field fxFlex>
+			<mat-chip-list #chipList cyphTranslate aria-label="Recipients">
+				<mat-chip
+					[removable]="true"
+					[selectable]="true"
+					[value]="o"
+					(removed)="removeRecipient(o, to)"
+					*ngFor="let o of to | await; trackBy: trackBySelf"
+				>
+					<span> {{ o.name }} &lt;{{ o.email }}&gt; </span>
+					<mat-icon matChipRemove>cancel</mat-icon>
+				</mat-chip>
+
+				<input
+					#chipListInput
+					cyphTranslate
+					placeholder="To"
+					[matChipInputFor]="chipList"
+					(matChipInputTokenEnd)="addRecipients(toDraft, to)"
+					[ngModel]="toDraft | await"
+					(ngModelChange)="toDraft.next($event)"
+				/>
+
+				<mat-icon
+					matSuffix
+					class="suffix-button"
+					(click)="addRecipients(toDraft, to)"
+				>
+					add
+				</mat-icon>
+			</mat-chip-list>
+		</mat-form-field>
+
+		<mat-form-field>
+			<input
+				matInput
+				cyphTranslate
+				name="subject"
+				placeholder="Subject"
+			/>
+		</mat-form-field>
+
+		<div class="document-editor-container-wrapper">
+			<ejs-documenteditorcontainer
+				#documentEditorContainer
+				[enableComment]="false"
+				[enableCsp]="false"
+				[enableLocalPaste]="true"
+				[enableToolbar]="true"
+				layoutType="web"
+				[restrictEditing]="readOnly"
+				[toolbarItems]="[
+					'Hyperlink',
+					'Image',
+					'Table',
+					'Separator',
+					'Undo',
+					'Redo',
+					'Separator',
+					'Find'
+				]"
+			>
+			</ejs-documenteditorcontainer>
+		</div>
+	</div>
+</ng-template>
 
 <div #statusBarUI class="status-bar-ui-temporary-container" fxHide>
 	<button

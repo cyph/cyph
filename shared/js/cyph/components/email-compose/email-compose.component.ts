@@ -65,6 +65,9 @@ export class EmailComposeComponent
 	/** @see IEmailMessage.from */
 	@Input() public from?: EmailMessage.IContact;
 
+	/** If true, full page mode. */
+	@Input() public fullPage: boolean = false;
+
 	/** An initial draft to load. */
 	@Input() public initialDraft?: IEmailMessage;
 
