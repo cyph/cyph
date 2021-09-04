@@ -159,9 +159,11 @@ cd ../misc
 
 cp -a /node_modules/firebase firebase.tmp
 
-for f in firebase-app firebase-messaging-sw ; do
+for f in firebase-messaging-sw ; do
 	cat firebase.tmp/${f}.js |
-		perl -pe 's/https:\/\/.*\/(.*?.js)/.\/\1/g' \
+		perl -pe 's/https:\/\/.*\/(.*?.js)/.\/\1/g' |
+		perl -pe 's/(import \{ .*? getApp) /\1, initializeApp /g' |
+		perl -pe 's/(import (.*?) from .*?;)/\1\nexport \2;/g' \
 	> firebase.tmp/${f}.js.new
 	mv firebase.tmp/${f}.js.new firebase.tmp/${f}.js
 
