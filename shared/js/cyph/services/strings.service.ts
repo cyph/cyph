@@ -410,6 +410,9 @@ export class StringsService extends BaseProvider {
 	public readonly emailOptional = `Email (optional)`;
 
 	/** @see StringsService */
+	public readonly emailRecipientAddFailure = `Failed to add the following recipients: \${RECIPIENTS}.`;
+
+	/** @see StringsService */
 	public readonly emailSent = `Message sent.`;
 
 	/** @see StringsService */

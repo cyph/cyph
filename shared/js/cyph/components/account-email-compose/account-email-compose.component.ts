@@ -1,13 +1,17 @@
 import {ChangeDetectionStrategy, Component, OnInit} from '@angular/core';
 import {Router} from '@angular/router';
+import memoize from 'lodash-es/memoize';
 import {BehaviorSubject} from 'rxjs';
 import {SecurityModels} from '../../account';
 import {BaseProvider} from '../../base-provider';
 import {EmailMessage, IEmailMessage, StringProto} from '../../proto';
+import {AccountFilesService} from '../../services/account-files.service';
+import {AccountUserLookupService} from '../../services/account-user-lookup.service';
 import {AccountService} from '../../services/account.service';
 import {AccountDatabaseService} from '../../services/crypto/account-database.service';
 import {DialogService} from '../../services/dialog.service';
 import {StringsService} from '../../services/strings.service';
+import {filterUndefined} from '../../util/filter';
 import {debugLog} from '../../util/log';
 
 /**
@@ -23,6 +27,31 @@ export class AccountEmailComposeComponent
 	extends BaseProvider
 	implements OnInit
 {
+	/** @see EmailComposeComponent.preprocessRecipient */
+	public readonly preprocessRecipient = memoize(
+		async (contact: EmailMessage.IContact) => {
+			const {email} = contact;
+
+			const {username} =
+				contact.username ||
+				(
+					await this.accountDatabaseService.callFunction(
+						'getEmailData',
+						{email}
+					)
+				).username;
+
+			const name =
+				(
+					await (
+						await this.accountUserLookupService.getUser(username)
+					)?.accountUserProfile.getValue()
+				)?.name || contact.name;
+
+			return {email, name, username};
+		}
+	);
+
 	/** @see EmailComposeComponent.from */
 	public readonly senderData = new BehaviorSubject<
 		EmailMessage.IContact | undefined
@@ -77,8 +106,13 @@ export class AccountEmailComposeComponent
 
 	/** Sends email. */
 	public async send (message: IEmailMessage) : Promise<void> {
-		/* TODO */
-		debugLog(() => ({accountEmailComposeComponentSendTest: message}));
+		debugLog(() => ({accountEmailComposeComponentSend: message}));
+
+		await this.accountFilesService.upload(
+			'',
+			message,
+			filterUndefined(message.to?.map(o => o.username) || [])
+		).result;
 	}
 
 	constructor (
@@ -89,7 +123,13 @@ export class AccountEmailComposeComponent
 		private readonly accountDatabaseService: AccountDatabaseService,
 
 		/** @ignore */
+		private readonly accountFilesService: AccountFilesService,
+
+		/** @ignore */
 		private readonly accountService: AccountService,
+
+		/** @ignore */
+		private readonly accountUserLookupService: AccountUserLookupService,
 
 		/** @ignore */
 		private readonly dialogService: DialogService,

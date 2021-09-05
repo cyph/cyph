@@ -1,6 +1,7 @@
 <cyph-email-compose
 	[from]="from"
 	[fullPage]="true"
+	[preprocessRecipient]="preprocessRecipient"
 	(sentContent)="send($event)"
 	*ngIf="senderData | await as from"
 ></cyph-email-compose>

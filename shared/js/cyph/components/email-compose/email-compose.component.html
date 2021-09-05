@@ -41,7 +41,10 @@
 					(removed)="removeRecipient(o, to)"
 					*ngFor="let o of to | await; trackBy: trackBySelf"
 				>
-					<span> {{ o.name }} &lt;{{ o.email }}&gt; </span>
+					<span *ngIf="!!o.email">
+						{{ o.name ? o.name + ' ' : '' }}&lt;{{ o.email
+						}}{{ o.username ? ' | @' + o.username : '' }}&gt;
+					</span>
 					<mat-icon matChipRemove>cancel</mat-icon>
 				</mat-chip>
 

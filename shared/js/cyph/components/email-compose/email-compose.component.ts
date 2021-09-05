@@ -18,11 +18,13 @@ import {BehaviorSubject} from 'rxjs';
 import {BaseProvider} from '../../base-provider';
 import {potassiumUtil} from '../../crypto/potassium/potassium-util';
 import {IFile} from '../../ifile';
+import {MaybePromise} from '../../maybe-promise-type';
 import {EmailMessage, IEmailMessage} from '../../proto';
 import {DialogService} from '../../services/dialog.service';
 import {EnvService} from '../../services/env.service';
 import {StringsService} from '../../services/strings.service';
 import {trackBySelf} from '../../track-by/track-by-self';
+import {filterUndefined} from '../../util/filter';
 import {readableByteLength} from '../../util/formatting';
 import {waitForValue} from '../../util/wait';
 
@@ -71,6 +73,11 @@ export class EmailComposeComponent
 	/** An initial draft to load. */
 	@Input() public initialDraft?: IEmailMessage;
 
+	/** Function to preprocess each new recipient, for example to populate usernames. */
+	@Input() public preprocessRecipient = (
+		contact: EmailMessage.IContact
+	) : MaybePromise<EmailMessage.IContact> => contact;
+
 	/** @see readableByteLength */
 	public readonly readableByteLength = readableByteLength;
 
@@ -109,10 +116,10 @@ export class EmailComposeComponent
 	}
 
 	/** Adds a list of recipients to `to`. */
-	public addRecipients (
+	public async addRecipients (
 		recipientsInput: BehaviorSubject<string>,
 		recipientsSubject: BehaviorSubject<EmailMessage.IContact[]>
-	) : void {
+	) : Promise<void> {
 		if (!recipientsInput.value) {
 			return;
 		}
@@ -120,7 +127,12 @@ export class EmailComposeComponent
 		/* TODO: Factor out this and AccountComposeComponent.addToGroup */
 		const parsedInput =
 			recipientsInput.value.indexOf('<') < 0 ?
-				[{email: '', name: recipientsInput.value}] :
+				[
+					{
+						email: recipientsInput.value.toLowerCase(),
+						name: recipientsInput.value
+					}
+				] :
 				recipientsInput.value.split(',').map(s => {
 					s = s.trim();
 					const parts = s.match(/^"?(.*?)"?\s*<(.*?)>$/) || [];
@@ -130,11 +142,43 @@ export class EmailComposeComponent
 						{email: s.toLowerCase(), name: s};
 				});
 
+		const newRecipients = await Promise.all(
+			parsedInput.map(async contact => {
+				try {
+					return await this.preprocessRecipient(contact);
+				}
+				catch {
+					return undefined;
+				}
+			})
+		);
+
+		const failures = filterUndefined(
+			newRecipients.map((o, i) =>
+				o === undefined ? parsedInput[i].email : undefined
+			)
+		);
+
 		recipientsSubject.next(
-			Array.from(recipientsSubject.value.concat(parsedInput))
+			Array.from(
+				recipientsSubject.value.concat(filterUndefined(newRecipients))
+			)
 		);
 
 		recipientsInput.next('');
+
+		if (failures.length < 1) {
+			return;
+		}
+
+		await this.dialogService.toast(
+			this.stringsService.setParameters(
+				this.stringsService.emailRecipientAddFailure,
+				{recipients: failures.join(', ')}
+			),
+			-1,
+			this.stringsService.ok
+		);
 	}
 
 	/** Attachments panel open event. */
