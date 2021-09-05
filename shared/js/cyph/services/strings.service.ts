@@ -410,6 +410,15 @@ export class StringsService extends BaseProvider {
 	public readonly emailOptional = `Email (optional)`;
 
 	/** @see StringsService */
+	public readonly emailPublishButton = `Publish`;
+
+	/** @see StringsService */
+	public readonly emailPublishError = `Email publish failed. Please try again later.`;
+
+	/** @see StringsService */
+	public readonly emailPublishTooltip = `Publish your email address so that others can use it to look up your account.`;
+
+	/** @see StringsService */
 	public readonly emailRecipientAddFailure = `Failed to add the following recipients: \${RECIPIENTS}.`;
 
 	/** @see StringsService */
@@ -419,10 +428,25 @@ export class StringsService extends BaseProvider {
 	public readonly emailSentUndo = `Undo`;
 
 	/** @see StringsService */
+	public readonly emailUnpublishButton = `Unpublish`;
+
+	/** @see StringsService */
+	public readonly emailUnpublishError = `Email unpublish failed. Please try again later.`;
+
+	/** @see StringsService */
+	public readonly emailUnpublishTooltip = `Unpublish your email address so that it can no longer be used to look up your account.`;
+
+	/** @see StringsService */
 	public readonly emailUnverified = `Email (unverified)`;
 
 	/** @see StringsService */
 	public readonly emailVerified = `Email (verified)`;
+
+	/** @see StringsService */
+	public readonly emailVerifyButton = `Verify`;
+
+	/** @see StringsService */
+	public readonly emailVerifyTooltip = `Verify your email address.`;
 
 	/** @see StringsService */
 	public readonly emailVerifyError = `Initiating email verification failed. Please try again later.`;

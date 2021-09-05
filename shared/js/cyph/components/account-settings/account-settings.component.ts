@@ -6,8 +6,8 @@ import {
 } from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
 import memoize from 'lodash-es/memoize';
-import {BehaviorSubject} from 'rxjs';
-import {map, take} from 'rxjs/operators';
+import {BehaviorSubject, Observable} from 'rxjs';
+import {map, switchMap, take} from 'rxjs/operators';
 import {SecurityModels, User, usernameMask} from '../../account';
 import {BaseProvider} from '../../base-provider';
 import {InAppPurchaseComponent} from '../../components/in-app-purchase';
@@ -70,6 +70,9 @@ export class AccountSettingsComponent extends BaseProvider implements OnInit {
 
 	/** @see emailPattern */
 	public readonly emailPattern = emailPattern;
+
+	/** Indicates whether this user's email address is published. */
+	public readonly emailPublished: Observable<boolean>;
 
 	/** Indicates whether this user's email address is verified. */
 	public readonly emailVerified = observableAll([
@@ -310,6 +313,30 @@ export class AccountSettingsComponent extends BaseProvider implements OnInit {
 		this.loading.next(false);
 	}
 
+	/** Publishes email address. */
+	public async publishEmail (unpublish: boolean = false) : Promise<void> {
+		this.loading.next(true);
+
+		try {
+			await this.accountDatabaseService.callFunction('publishEmail', {
+				unpublish
+			});
+		}
+		catch {
+			this.dialogService
+				.toast(
+					unpublish ?
+						this.stringsService.emailUnpublishError :
+						this.stringsService.emailPublishError,
+					0,
+					this.stringsService.ok
+				)
+				.catch(() => {});
+		}
+
+		this.loading.next(false);
+	}
+
 	/** Saves data updates. */
 	public async save () : Promise<void> {
 		const user = this.user.value;
@@ -474,6 +501,24 @@ export class AccountSettingsComponent extends BaseProvider implements OnInit {
 		public readonly stringsService: StringsService
 	) {
 		super();
+
+		/* TODO: Update data model to properly keep this in sync */
+		this.emailPublished = observableAll([
+			this.accountSettingsService.email.watch(),
+			this.emailVerified
+		]).pipe(
+			switchMap(
+				async ([email, emailVerified]) =>
+					emailVerified &&
+					(
+						await this.accountDatabaseService
+							.callFunction('getEmailData', {email})
+							.catch(() => {})
+					)?.username ===
+						this.accountDatabaseService.currentUser.value?.user
+							.username
+			)
+		);
 
 		this.ready = toBehaviorSubject(
 			observableAll([this.data, this.user]).pipe(

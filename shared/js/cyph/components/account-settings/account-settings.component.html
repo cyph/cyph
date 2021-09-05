@@ -57,19 +57,38 @@
 				/>
 				<button
 					mat-button
-					cyphTranslate
 					matSuffix
-					class="email-verify-button"
-					color="warn"
-					(click)="verifyEmail()"
+					class="email-suffix-button"
+					[color]="o.verified ? 'primary' : 'warn'"
+					(click)="
+						o.published ?
+							publishEmail(true) :
+						o.verified ?
+							publishEmail() :
+							verifyEmail()
+					"
 					[class.visibility-hidden]="
 						!(data | await)?.modified?.email ||
 						(data | await)?.current?.email !==
-							(data | await)?.modified?.email ||
-						(emailVerified | await) !== false
+							(data | await)?.modified?.email
 					"
+					[matTooltip]="
+						o.verified ?
+							stringsService.emailPublishTooltip :
+							stringsService.emailVerifyTooltip
+					"
+					*ngIf="{
+						published: (emailPublished | await) === true,
+						verified: (emailVerified | await) === true
+					} as o"
 				>
-					Verify
+					{{
+						o.published ?
+							stringsService.emailUnpublishButton :
+						o.verified ?
+							stringsService.emailPublishButton :
+							stringsService.emailVerifyButton
+					}}
 				</button>
 			</mat-form-field>
 
