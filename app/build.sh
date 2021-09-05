@@ -129,7 +129,7 @@ if [ "${test}" ] ; then
 
 	cat config.xml |
 		grep -v cordova-plugin-privacyscreen |
-		sed 's|<name>Cyph</name>|<name>Cyph Test</name>|g' |
+		sed 's|<name>Cyph</name>|<name>CyphTest</name>|g' |
 		perl -pe 's/com\.cyph\.(app|desktop)/com.cyph.test/g' |
 		perl -pe 's/(android:largeHeap="true")/\1 android:usesCleartextTraffic="true"/g' |
 		perl -pe 's/([":])(cyph|burner)\./\1staging.\2./g' \
