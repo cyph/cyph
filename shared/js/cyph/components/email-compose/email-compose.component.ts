@@ -73,11 +73,6 @@ export class EmailComposeComponent
 	/** An initial draft to load. */
 	@Input() public initialDraft?: IEmailMessage;
 
-	/** Function to preprocess each new recipient, for example to populate usernames. */
-	@Input() public preprocessRecipient = (
-		contact: EmailMessage.IContact
-	) : MaybePromise<EmailMessage.IContact> => contact;
-
 	/** @see readableByteLength */
 	public readonly readableByteLength = readableByteLength;
 
@@ -236,6 +231,11 @@ export class EmailComposeComponent
 	public async ngOnChanges () : Promise<void> {
 		await this.onChanges();
 	}
+
+	/** Function to preprocess each new recipient, for example to populate usernames. */
+	@Input() public preprocessRecipient = (
+		contact: EmailMessage.IContact
+	) : MaybePromise<EmailMessage.IContact> => contact;
 
 	/** Removes attachments. */
 	public removeAttachments () : void {
