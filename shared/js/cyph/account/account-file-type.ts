@@ -4,6 +4,7 @@ import {
 	IAccountMessagingGroup,
 	IAppointment,
 	IEhrApiKey,
+	IEmailMessage,
 	IForm,
 	IPassword,
 	IPGPKey,
@@ -16,6 +17,7 @@ export type AccountFile =
 	| IAccountMessagingGroup
 	| IAppointment
 	| IEhrApiKey
+	| IEmailMessage
 	| IFile
 	| IForm
 	| IQuillDelta

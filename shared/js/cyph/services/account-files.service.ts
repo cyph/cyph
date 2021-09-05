@@ -33,6 +33,7 @@ import {
 	BlobProto,
 	DataURIProto,
 	EhrApiKey,
+	EmailMessage,
 	Form,
 	IAccountFileDirectory,
 	IAccountFileRecord,
@@ -41,6 +42,7 @@ import {
 	IAccountMessagingGroup,
 	IAppointment,
 	IEhrApiKey,
+	IEmailMessage,
 	IForm,
 	IPassword,
 	IPGPKey,
@@ -98,14 +100,13 @@ export class AccountFilesService extends BaseProvider {
 	 * Resolves circular dependency needed for shareFilePrompt to work.
 	 * @see AccountFileSharingComponent
 	 */
-	public static readonly accountFileSharingComponent =
-		resolvable<
-			ComponentType<{
-				changeDetectorRef: ChangeDetectorRef;
-				closeFunction?: IResolvable<() => void>;
-				file?: AccountFileShare;
-			}>
-		>();
+	public static readonly accountFileSharingComponent = resolvable<
+		ComponentType<{
+			changeDetectorRef: ChangeDetectorRef;
+			closeFunction?: IResolvable<() => void>;
+			file?: AccountFileShare;
+		}>
+	>();
 
 	/** @ignore */
 	private readonly _initiated = new BehaviorSubject<boolean>(false);
@@ -264,6 +265,24 @@ export class AccountFilesService extends BaseProvider {
 			securityModel: undefined,
 			stringPlural: this.stringsService.translate('EHR access keys'),
 			subroutable: false
+		},
+		[AccountFileRecord.RecordTypes.Email]: {
+			blockAnonymous: true,
+			description: 'Email',
+			incoming: () => this.incomingFilesFilteredWithData.emails(),
+			isOfType: (file: any) =>
+				typeof file === 'object' &&
+				typeof file.from === 'object' &&
+				typeof file.from.email === 'string' &&
+				typeof file.from.name === 'string',
+			list: () => this.filesListFilteredWithData.emails(),
+			mediaType: 'cyph/email',
+			proto: EmailMessage,
+			recordType: AccountFileRecord.RecordTypes.Email,
+			route: 'email/inbox',
+			securityModel: undefined,
+			stringPlural: this.stringsService.translate('emails'),
+			subroutable: true
 		},
 		[AccountFileRecord.RecordTypes.File]: {
 			blockAnonymous: false,
@@ -548,6 +567,10 @@ export class AccountFilesService extends BaseProvider {
 			this.filesList,
 			AccountFileRecord.RecordTypes.EhrApiKey
 		),
+		emails: this.filterFiles(
+			this.filesList,
+			AccountFileRecord.RecordTypes.Email
+		),
 		files: this.filterFiles(
 			this.filesList,
 			AccountFileRecord.RecordTypes.File
@@ -610,6 +633,18 @@ export class AccountFilesService extends BaseProvider {
 			this.filesListFiltered.ehrApiKeys,
 			AccountFileRecord.RecordTypes.EhrApiKey,
 			this.config[AccountFileRecord.RecordTypes.EhrApiKey]
+		),
+		emails: this.getFiles<
+			IEmailMessage,
+			{
+				data: undefined;
+				owner: string;
+				record: IAccountFileRecord;
+			}
+		>(
+			this.filesListFiltered.emails,
+			AccountFileRecord.RecordTypes.Email,
+			this.config[AccountFileRecord.RecordTypes.Email]
 		),
 		files: this.getFiles<
 			Blob,
@@ -742,6 +777,7 @@ export class AccountFilesService extends BaseProvider {
 		AccountFileRecord.RecordTypes.Appointment,
 		AccountFileRecord.RecordTypes.Doc,
 		AccountFileRecord.RecordTypes.EhrApiKey,
+		AccountFileRecord.RecordTypes.Email,
 		AccountFileRecord.RecordTypes.File,
 		AccountFileRecord.RecordTypes.Form,
 		AccountFileRecord.RecordTypes.MessagingGroup,
@@ -943,6 +979,10 @@ export class AccountFilesService extends BaseProvider {
 			this.incomingFiles,
 			AccountFileRecord.RecordTypes.EhrApiKey
 		),
+		emails: this.filterFiles(
+			this.incomingFiles,
+			AccountFileRecord.RecordTypes.Email
+		),
 		files: this.filterFiles(
 			this.incomingFiles,
 			AccountFileRecord.RecordTypes.File
@@ -991,6 +1031,11 @@ export class AccountFilesService extends BaseProvider {
 			this.incomingFilesFiltered.ehrApiKeys,
 			AccountFileRecord.RecordTypes.EhrApiKey,
 			this.config[AccountFileRecord.RecordTypes.EhrApiKey]
+		),
+		emails: this.getFiles(
+			this.incomingFilesFiltered.emails,
+			AccountFileRecord.RecordTypes.Email,
+			this.config[AccountFileRecord.RecordTypes.Email]
 		),
 		files: this.getFiles(
 			this.incomingFilesFiltered.files,
@@ -1685,6 +1730,16 @@ export class AccountFilesService extends BaseProvider {
 			| string
 			| IAccountFileRecord
 			| (IAccountFileRecord & IAccountFileReference),
+		recordType: AccountFileRecord.RecordTypes.Email
+	) : {
+		progress: Observable<number>;
+		result: Promise<IEmailMessage>;
+	};
+	public downloadFile (
+		id:
+			| string
+			| IAccountFileRecord
+			| (IAccountFileRecord & IAccountFileReference),
 		recordType:
 			| AccountFileRecord.RecordTypes.File
 			| AccountFileRecord.RecordTypes.Note
@@ -1955,6 +2010,12 @@ export class AccountFilesService extends BaseProvider {
 			ehrApiKeys[0],
 			AccountFileRecord.RecordTypes.EhrApiKey
 		).result;
+	}
+
+	/** Returns email. */
+	public async getEmail (id: string) : Promise<IEmailMessage> {
+		return this.downloadFile(id, AccountFileRecord.RecordTypes.Email)
+			.result;
 	}
 
 	/** Gets the specified file record. */

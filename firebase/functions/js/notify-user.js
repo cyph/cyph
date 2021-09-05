@@ -259,6 +259,11 @@ export const notifyUser = async (
 			subject: `Incoming EHR Access from ${senderUsername}`,
 			text: `${targetName}, ${senderName} has granted you access to an EHR system.`
 		} :
+	metadata.fileType === AccountFileRecord.RecordTypes.Email ?
+		{
+			subject: `Encrypted Email from ${senderUsername}`,
+			text: `${targetName}, ${senderName} has sent you a secure email.`
+		} :
 	metadata.fileType === AccountFileRecord.RecordTypes.File ?
 		{
 			subject: `Incoming File from ${senderUsername}`,
