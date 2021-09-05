@@ -149,10 +149,9 @@ export class EmailComposeComponent
 
 	/** @inheritDoc */
 	public async ngAfterViewInit () : Promise<void> {
-		(<any> self).balls = this.attachmentsDropdown;
 		const documentEditorContainer = this.documentEditorContainer;
 
-		if (!documentEditorContainer) {
+		if (!documentEditorContainer || !this.from) {
 			return;
 		}
 
@@ -225,8 +224,9 @@ export class EmailComposeComponent
 	/** Send email. */
 	public async send () : Promise<void> {
 		const documentEditorContainer = this.documentEditorContainer;
+		const from = this.from;
 
-		if (!documentEditorContainer) {
+		if (!documentEditorContainer || !from) {
 			return;
 		}
 
@@ -254,7 +254,7 @@ export class EmailComposeComponent
 				)
 			),
 			cc: this.cc.value,
-			from: this.from,
+			from,
 			subject: this.subject.value,
 			to: this.to.value
 		});

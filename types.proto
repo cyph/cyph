@@ -1072,7 +1072,7 @@ message EmailMessage {
 	repeated Contact cc = 4;
 
 	/** Sender email contact. */
-	Contact from = 5;
+	required Contact from = 5;
 
 	/** Subject. */
 	string subject = 6;
