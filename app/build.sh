@@ -308,7 +308,8 @@ if [ "${android}" ] ; then
 		--keystore="${HOME}/.cyph/nativereleasesigning/android/cyph.jks" \
 		--alias=cyph \
 		--storePassword="${password}" \
-		--password="${password}"
+		--password="${password}" \
+		--packageType=apk
 
 	cp platforms/android/app/build/outputs/apk/release/app-release.apk build/${packageName}.apk || exit 1
 fi
