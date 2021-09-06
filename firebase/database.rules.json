@@ -345,7 +345,12 @@
 			"publicEmailData": {
 				"emails": {
 					"$username": {
-						".validate": "newData.isString()"
+						"email": {
+							".validate": "newData.isString()"
+						},
+						"signature": {
+							".validate": "newData.isString()"
+						}
 					}
 				},
 				"usernames": {

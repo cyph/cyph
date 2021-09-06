@@ -5,6 +5,7 @@ import {BehaviorSubject} from 'rxjs';
 import {SecurityModels} from '../../account';
 import {BaseProvider} from '../../base-provider';
 import {EmailMessage, IEmailMessage, StringProto} from '../../proto';
+import {AccountEmailService} from '../../services/account-email.service';
 import {AccountFilesService} from '../../services/account-files.service';
 import {AccountUserLookupService} from '../../services/account-user-lookup.service';
 import {AccountService} from '../../services/account.service';
@@ -32,14 +33,9 @@ export class AccountEmailComposeComponent
 		async (contact: EmailMessage.IContact) => {
 			const {email} = contact;
 
-			const {username} =
+			const username =
 				contact.username ||
-				(
-					await this.accountDatabaseService.callFunction(
-						'getEmailData',
-						{email}
-					)
-				).username;
+				(await this.accountEmailService.getEmailData({email})).username;
 
 			const name =
 				(
@@ -123,6 +119,9 @@ export class AccountEmailComposeComponent
 
 		/** @ignore */
 		private readonly accountDatabaseService: AccountDatabaseService,
+
+		/** @ignore */
+		private readonly accountEmailService: AccountEmailService,
 
 		/** @ignore */
 		private readonly accountFilesService: AccountFilesService,

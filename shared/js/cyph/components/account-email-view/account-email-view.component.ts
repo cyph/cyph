@@ -3,9 +3,9 @@ import {ActivatedRoute, Router} from '@angular/router';
 import {BehaviorSubject} from 'rxjs';
 import {BaseProvider} from '../../base-provider';
 import {AccountFileRecord, EmailMessage, IEmailMessage} from '../../proto';
+import {AccountEmailService} from '../../services/account-email.service';
 import {AccountFilesService} from '../../services/account-files.service';
 import {AccountService} from '../../services/account.service';
-import {AccountDatabaseService} from '../../services/crypto/account-database.service';
 import {StringsService} from '../../services/strings.service';
 import {lockFunction} from '../../util/lock';
 import {debugLogError} from '../../util/log';
@@ -31,7 +31,7 @@ export class AccountEmailViewComponent extends BaseProvider implements OnInit {
 	) : Promise<EmailMessage.IContact> {
 		const publishedEmail: unknown = contact.username ?
 			(
-				await this.accountDatabaseService.callFunction('getEmailData', {
+				await this.accountEmailService.getEmailData({
 					username: contact.username
 				})
 			).email :
@@ -113,7 +113,7 @@ export class AccountEmailViewComponent extends BaseProvider implements OnInit {
 		private readonly router: Router,
 
 		/** @ignore */
-		private readonly accountDatabaseService: AccountDatabaseService,
+		private readonly accountEmailService: AccountEmailService,
 
 		/** @ignore */
 		private readonly accountFilesService: AccountFilesService,

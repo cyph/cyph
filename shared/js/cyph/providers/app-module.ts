@@ -2,6 +2,7 @@ import {AccountAppointmentsService} from '../services/account-appointments.servi
 import {AccountAuthGuardService} from '../services/account-auth-guard.service';
 import {AccountContactsService} from '../services/account-contacts.service';
 import {AccountDownloadService} from '../services/account-download.service';
+import {AccountEmailService} from '../services/account-email.service';
 import {AccountFilesService} from '../services/account-files.service';
 import {AccountInviteService} from '../services/account-invite.service';
 import {AccountNotificationsService} from '../services/account-notifications.service';
@@ -31,6 +32,7 @@ export const appModuleProviders = [
 	AccountContactsService,
 	AccountDatabaseService,
 	AccountDownloadService,
+	AccountEmailService,
 	AccountFilesService,
 	AccountInviteService,
 	AccountNotificationsService,

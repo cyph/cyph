@@ -5,6 +5,7 @@ export const publishEmail = onCall(async (data, namespace, getUsername) =>
 	updatePublishedEmail(
 		namespace,
 		await getUsername(),
+		data.signature,
 		data.unpublish === true
 	)
 );

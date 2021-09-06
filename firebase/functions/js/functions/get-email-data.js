@@ -9,13 +9,25 @@ export const getEmailData = onCall(async (data, namespace, getUsername) => {
 
 	username = username ? normalize(username) : undefined;
 
+	let signature;
+
 	if (username) {
-		email = (
+		const o = (
 			await publicEmailDataRef
 				.child('emails')
 				.child(username)
 				.once('value')
 		).val();
+
+		if (
+			typeof o === 'object' &&
+			o &&
+			typeof o.email === 'string' &&
+			typeof o.signature === 'string'
+		) {
+			email = o.email;
+			signature = Buffer.from(o.signature, 'base64');
+		}
 	}
 	else if (email) {
 		username = (
@@ -26,5 +38,5 @@ export const getEmailData = onCall(async (data, namespace, getUsername) => {
 		).val();
 	}
 
-	return {email, username};
+	return {email, signature, username};
 });

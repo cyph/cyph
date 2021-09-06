@@ -58,7 +58,7 @@ export const userEmailSet = async ({after: data}, {params}) => {
 		await Promise.all([
 			emailVerifiedRef.remove(),
 			removeItem(params.namespace, `users/${username}/emailVerified`),
-			updatePublishedEmail(namespace, username, true)
+			updatePublishedEmail(namespace, username, undefined, true)
 		]);
 	})();
 

@@ -6,9 +6,20 @@ const {normalize} = util;
 export const updatePublishedEmail = async (
 	namespace,
 	username,
+	signature,
 	forceRemove = false
 ) => {
 	username = normalize(username);
+
+	if (signature instanceof Uint8Array) {
+		signature = Buffer.from(signature);
+	}
+	if (signature instanceof Buffer) {
+		signature = signature.toString('base64');
+	}
+	if (typeof signature !== 'string') {
+		signature = undefined;
+	}
 
 	const internalURL = `${namespace}/users/${username}/internal`;
 	const emailVerifiedRef = database.ref(`${internalURL}/emailVerified`);
@@ -23,6 +34,7 @@ export const updatePublishedEmail = async (
 			emailVerifiedRef.once('value').then(o => o.val()),
 		publicEmailsRef
 			.child(username)
+			.child('email')
 			.once('value')
 			.then(o => o.val())
 	]);
@@ -32,7 +44,7 @@ export const updatePublishedEmail = async (
 		Buffer.from(oldPublicEmail).toString('hex') :
 		undefined;
 
-	if (!email) {
+	if (!email || !signature) {
 		await Promise.all([
 			publicEmailsRef.child(username).remove(),
 			publicUsernamesRef.child(emailHex).remove()
@@ -50,7 +62,7 @@ export const updatePublishedEmail = async (
 	}
 
 	await Promise.all([
-		publicEmailsRef.child(username).set(email),
+		publicEmailsRef.child(username).set({email, signature}),
 		publicUsernamesRef.child(emailHex).set(username),
 		oldPublicUsername && oldPublicUsername !== username ?
 			publicEmailsRef.child(oldPublicUsername).remove() :

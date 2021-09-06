@@ -15,6 +15,7 @@ import {BaseProvider} from '../../base-provider';
 import {InAppPurchaseComponent} from '../../components/in-app-purchase';
 import {emailPattern} from '../../email-pattern';
 import {BinaryProto, BooleanProto, CyphPlans, StringProto} from '../../proto';
+import {AccountEmailService} from '../../services/account-email.service';
 import {AccountSettingsService} from '../../services/account-settings.service';
 import {AccountService} from '../../services/account.service';
 import {ConfigService} from '../../services/config.service';
@@ -320,9 +321,7 @@ export class AccountSettingsComponent extends BaseProvider implements OnInit {
 		this.loading.next(true);
 
 		try {
-			await this.accountDatabaseService.callFunction('publishEmail', {
-				unpublish
-			});
+			await this.accountEmailService.publishEmailData(unpublish);
 		}
 		catch {
 			this.dialogService
@@ -479,6 +478,9 @@ export class AccountSettingsComponent extends BaseProvider implements OnInit {
 		private readonly accountAuthService: AccountAuthService,
 
 		/** @ignore */
+		private readonly accountEmailService: AccountEmailService,
+
+		/** @ignore */
 		private readonly dialogService: DialogService,
 
 		/** @see AccountService */
@@ -513,8 +515,8 @@ export class AccountSettingsComponent extends BaseProvider implements OnInit {
 				async ([email, emailVerified]) =>
 					emailVerified &&
 					(
-						await this.accountDatabaseService
-							.callFunction('getEmailData', {email})
+						await this.accountEmailService
+							.getEmailData({email})
 							.catch(() => {})
 					)?.username ===
 						this.accountDatabaseService.currentUser.value?.user
