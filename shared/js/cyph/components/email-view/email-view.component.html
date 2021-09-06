@@ -1,1 +1,121 @@
-<div>EmailView</div>
+<div
+	fxFlexFill
+	[fxLayoutAlign]="
+		(envService.isMobile | await) ? 'stretch stretch' : 'center center'
+	"
+	[class.mobile]="envService.isMobile | await"
+	*ngIf="fullPage; else emailViewUI"
+>
+	<div fxFlex class="cyph-light-theme card-wrapper">
+		<mat-card class="animated slideInDown ui-section" fxFlex>
+			<button
+				mat-icon-button
+				cyphTranslate
+				class="close-button"
+				matTooltip="Close"
+				matTooltipPosition="left"
+				routerLink="/"
+			>
+				<mat-icon>close</mat-icon>
+			</button>
+
+			<mat-card-title>
+				<span>{{
+					email?.subject || stringsService.emailNoSubject
+				}}</span>
+			</mat-card-title>
+			<mat-card-content>
+				<ng-container *ngTemplateOutlet="emailViewUI"></ng-container>
+			</mat-card-content>
+		</mat-card>
+	</div>
+</div>
+
+<ng-template #emailViewUI>
+	<div fxFlexFill fxLayout="column" *ngIf="!!email">
+		<h2 [attr.aria-label]="stringsService.emailSubject" *ngIf="!fullPage">
+			{{ email?.subject || stringsService.emailNoSubject }}
+		</h2>
+
+		<mat-form-field fxFlex>
+			<mat-chip-list
+				#chipList
+				[attr.aria-label]="stringsService.emailRecipients"
+			>
+				<mat-chip
+					[removable]="false"
+					[selectable]="true"
+					[value]="o"
+					*ngFor="let o of email?.to || []; trackBy: trackBySelf"
+				>
+					<span *ngIf="!!o.email">
+						{{ o.name ? o.name + ' ' : '' }}&lt;{{ o.email
+						}}{{ o.username ? ' | @' + o.username : '' }}&gt;
+					</span>
+					<mat-icon matChipRemove>cancel</mat-icon>
+				</mat-chip>
+
+				<input
+					#chipListInput
+					cyphTranslate
+					disabled
+					placeholder="To"
+					[matChipInputFor]="chipList"
+				/>
+			</mat-chip-list>
+		</mat-form-field>
+
+		<div class="document-editor-container-wrapper">
+			<ejs-documenteditorcontainer
+				#documentEditorContainer
+				[enableComment]="false"
+				[enableCsp]="true"
+				[enableLocalPaste]="false"
+				[enableToolbar]="false"
+				layoutType="web"
+				[restrictEditing]="true"
+			></ejs-documenteditorcontainer>
+		</div>
+	</div>
+</ng-template>
+
+<div #statusBarUI class="status-bar-ui-temporary-container" fxHide>
+	<mat-form-field
+		appearance="fill"
+		class="attachments-list"
+		[matTooltip]="stringsService.attachmentsViewTooltip"
+		matTooltipPosition="above"
+	>
+		<mat-label cyphTranslate>Attachments</mat-label>
+		<mat-select
+			#attachmentsDropdown
+			multiple
+			[disabled]="((attachments | await) || []).length < 1"
+			panelClass="email-view-attachments-panel"
+			(openedChange)="attachmentsPanelOpen()"
+			[ngModel]="(attachmentsToDownload | await) || []"
+			(ngModelChange)="attachmentsToDownload.next($event)"
+		>
+			<mat-option
+				[value]="attachment"
+				*ngFor="
+					let attachment of attachments | await;
+					trackBy: trackBySelf
+				"
+			>
+				{{ attachment.name }} ({{
+					readableByteLength(attachment.data.length)
+				}})
+			</mat-option>
+			<button
+				class="remove-button"
+				mat-button
+				color="primary"
+				cyphTranslate
+				(click)="downloadAttachments()"
+			>
+				Download Selected Attachments
+			</button>
+		</mat-select>
+	</mat-form-field>
+</div>

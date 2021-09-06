@@ -134,7 +134,10 @@ export class StringsService extends BaseProvider {
 	public readonly attachFile = `Attach File`;
 
 	/** @see StringsService */
-	public readonly attachmentsTooltip = `Manage Attachments`;
+	public readonly attachmentsComposeTooltip = `Manage Attachments`;
+
+	/** @see StringsService */
+	public readonly attachmentsViewTooltip = `View Attachments`;
 
 	/** @see StringsService */
 	public readonly audioCall = `call`;
@@ -407,6 +410,9 @@ export class StringsService extends BaseProvider {
 	public readonly email = `Email`;
 
 	/** @see StringsService */
+	public readonly emailNoSubject = `(no subject)`;
+
+	/** @see StringsService */
 	public readonly emailOptional = `Email (optional)`;
 
 	/** @see StringsService */
@@ -429,6 +435,9 @@ export class StringsService extends BaseProvider {
 
 	/** @see StringsService */
 	public readonly emailSentUndo = `Undo`;
+
+	/** @see StringsService */
+	public readonly emailSubject = `Email Subject`;
 
 	/** @see StringsService */
 	public readonly emailUnpublishButton = `Unpublish`;
