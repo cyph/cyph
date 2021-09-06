@@ -95,7 +95,8 @@
 								}
 							],
 							"optimization": false,
-							"sourceMap": false
+							"sourceMap": false,
+							"vendorChunk": true
 						},
 						"localBackup": {
 							"aot": false,
@@ -107,7 +108,8 @@
 								}
 							],
 							"optimization": false,
-							"sourceMap": false
+							"sourceMap": false,
+							"vendorChunk": true
 						},
 						"localBeta": {
 							"aot": false,
@@ -119,7 +121,8 @@
 								}
 							],
 							"optimization": false,
-							"sourceMap": false
+							"sourceMap": false,
+							"vendorChunk": true
 						},
 						"localDev": {
 							"aot": false,
@@ -131,7 +134,8 @@
 								}
 							],
 							"optimization": false,
-							"sourceMap": false
+							"sourceMap": false,
+							"vendorChunk": true
 						},
 						"localMaster": {
 							"aot": false,
@@ -143,7 +147,8 @@
 								}
 							],
 							"optimization": false,
-							"sourceMap": false
+							"sourceMap": false,
+							"vendorChunk": true
 						},
 						"localProd": {
 							"aot": false,
@@ -155,7 +160,8 @@
 								}
 							],
 							"optimization": false,
-							"sourceMap": false
+							"sourceMap": false,
+							"vendorChunk": true
 						},
 						"localStaging": {
 							"aot": false,
@@ -167,7 +173,8 @@
 								}
 							],
 							"optimization": false,
-							"sourceMap": false
+							"sourceMap": false,
+							"vendorChunk": true
 						},
 						"master": {
 							"fileReplacements": [
