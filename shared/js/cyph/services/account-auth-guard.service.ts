@@ -24,6 +24,7 @@ export class AccountAuthGuardService
 		'compose',
 		'download',
 		'email-compose-test',
+		'email-view-test',
 		'post',
 		'profile',
 		'reject',

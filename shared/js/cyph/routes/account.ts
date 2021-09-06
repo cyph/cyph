@@ -11,6 +11,7 @@ import {AccountContactsComponent} from '../components/account-contacts';
 import {AccountDownloadComponent} from '../components/account-download';
 import {AccountEhrAccessComponent} from '../components/account-ehr-access';
 import {AccountEmailComposeComponent} from '../components/account-email-compose';
+import {AccountEmailViewComponent} from '../components/account-email-view';
 import {AccountFilesComponent} from '../components/account-files';
 import {AccountFormComponent} from '../components/account-form';
 import {AccountFormsComponent} from '../components/account-forms';
@@ -36,6 +37,7 @@ import {AccountVaultComponent} from '../components/account-vault';
 import {AccountWalletsComponent} from '../components/account-wallets';
 import {BlankComponent} from '../components/blank';
 import {EmailComposeComponent} from '../components/email-compose';
+import {EmailViewComponent} from '../components/email-view';
 import {NotFoundComponent} from '../components/not-found';
 import {UploadEhrCredentialsComponent} from '../components/upload-ehr-credentials';
 import {WarrantCanaryComponent} from '../components/warrant-canary';
@@ -56,6 +58,10 @@ export const account: Route = {
 				{
 					path: 'email-compose-test',
 					component: EmailComposeComponent
+				},
+				{
+					path: 'email-view-test',
+					component: EmailViewComponent
 				},
 				{
 					path: 'new-appointment-test',
@@ -243,6 +249,10 @@ export const account: Route = {
 		{
 			path: 'email/compose',
 			component: AccountEmailComposeComponent
+		},
+		{
+			path: 'email/:id',
+			component: AccountEmailViewComponent
 		},
 		{path: 'feed', component: AccountPostFeedPageComponent},
 		{path: 'files', component: AccountFilesComponent},

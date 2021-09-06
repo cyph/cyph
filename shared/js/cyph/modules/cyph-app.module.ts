@@ -15,6 +15,7 @@ import {AccountContactsSearchComponent} from '../components/account-contacts-sea
 import {AccountDownloadComponent} from '../components/account-download';
 import {AccountEhrAccessComponent} from '../components/account-ehr-access';
 import {AccountEmailComposeComponent} from '../components/account-email-compose';
+import {AccountEmailViewComponent} from '../components/account-email-view';
 import {AccountFileSharingComponent} from '../components/account-file-sharing';
 import {AccountFilesComponent} from '../components/account-files';
 import {AccountFormComponent} from '../components/account-form';
@@ -49,6 +50,7 @@ import {AccountVaultComponent} from '../components/account-vault';
 import {AccountWalletsComponent} from '../components/account-wallets';
 import {BurnerChatSetupComponent} from '../components/burner-chat-setup';
 import {EmailComposeComponent} from '../components/email-compose';
+import {EmailViewComponent} from '../components/email-view';
 import {FooterComponent} from '../components/footer';
 import {InAppPurchaseComponent} from '../components/in-app-purchase';
 import {LinkConnectionComponent} from '../components/link-connection';
@@ -94,6 +96,7 @@ import {CyphCommonModule} from './cyph-common.module';
 		AccountDownloadComponent,
 		AccountEhrAccessComponent,
 		AccountEmailComposeComponent,
+		AccountEmailViewComponent,
 		AccountFilesComponent,
 		AccountFileSharingComponent,
 		AccountFormComponent,
@@ -128,6 +131,7 @@ import {CyphCommonModule} from './cyph-common.module';
 		AccountWalletsComponent,
 		BurnerChatSetupComponent,
 		EmailComposeComponent,
+		EmailViewComponent,
 		FooterComponent,
 		InAppPurchaseComponent,
 		LinkConnectionComponent,
@@ -156,6 +160,7 @@ import {CyphCommonModule} from './cyph-common.module';
 		AccountDownloadComponent,
 		AccountEhrAccessComponent,
 		AccountEmailComposeComponent,
+		AccountEmailViewComponent,
 		AccountFilesComponent,
 		AccountFileSharingComponent,
 		AccountFormComponent,
@@ -191,6 +196,7 @@ import {CyphCommonModule} from './cyph-common.module';
 		BurnerChatSetupComponent,
 		CyphCommonModule,
 		EmailComposeComponent,
+		EmailViewComponent,
 		FooterComponent,
 		InAppPurchaseComponent,
 		LinkConnectionComponent,

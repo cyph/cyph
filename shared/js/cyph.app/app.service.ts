@@ -246,7 +246,11 @@ export class AppService extends BaseProvider implements CanActivate {
 				router.navigate(['contacts']);
 			}
 
-			if (new Set(['email-compose-test']).has(urlSegmentPaths[0])) {
+			if (
+				new Set(['email-compose-test', 'email-view-test']).has(
+					urlSegmentPaths[0]
+				)
+			) {
 				this.accountService.transitionEnd();
 				this.accountService.resolveUiReady();
 			}
