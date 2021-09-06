@@ -33,7 +33,10 @@
 <ng-template #emailComposeUI>
 	<div fxFlexFill fxLayout="column">
 		<mat-form-field fxFlex>
-			<mat-chip-list #chipList cyphTranslate aria-label="Recipients">
+			<mat-chip-list
+				#chipList
+				[attr.aria-label]="stringsService.emailRecipients"
+			>
 				<mat-chip
 					[removable]="true"
 					[selectable]="true"
@@ -74,6 +77,8 @@
 				cyphTranslate
 				name="subject"
 				placeholder="Subject"
+				[ngModel]="subject | await"
+				(ngModelChange)="subject.next($event)"
 			/>
 		</mat-form-field>
 
@@ -81,7 +86,7 @@
 			<ejs-documenteditorcontainer
 				#documentEditorContainer
 				[enableComment]="false"
-				[enableCsp]="false"
+				[enableCsp]="true"
 				[enableLocalPaste]="true"
 				[enableToolbar]="true"
 				layoutType="web"

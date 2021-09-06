@@ -419,6 +419,9 @@ export class StringsService extends BaseProvider {
 	public readonly emailPublishTooltip = `Publish your email address so that others can use it to look up your account.`;
 
 	/** @see StringsService */
+	public readonly emailRecipients = `Recipients`;
+
+	/** @see StringsService */
 	public readonly emailRecipientAddFailure = `Failed to add the following recipients: \${RECIPIENTS}.`;
 
 	/** @see StringsService */
