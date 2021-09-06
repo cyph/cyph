@@ -1,10 +1,15 @@
+import {util} from '@cyph/sdk';
 import {database} from './init.js';
+
+const {normalize} = util;
 
 export const updatePublishedEmail = async (
 	namespace,
 	username,
 	forceRemove = false
 ) => {
+	username = normalize(username);
+
 	const internalURL = `${namespace}/users/${username}/internal`;
 	const emailVerifiedRef = database.ref(`${internalURL}/emailVerified`);
 	const publicEmailsRef = database.ref(`${namespace}/publicEmailData/emails`);
@@ -17,26 +22,27 @@ export const updatePublishedEmail = async (
 			undefined :
 			emailVerifiedRef.once('value').then(o => o.val()),
 		publicEmailsRef
-			.child(username)
-			.once('value')
-			.then(o => o.val()),
-		publicUsernamesRef
-			.child(email)
+			.child(Buffer.from(username).toString('hex'))
 			.once('value')
 			.then(o => o.val())
 	]);
 
+	const emailHex = email ? Buffer.from(email).toString('hex') : undefined;
+	const oldPublicEmailHex = oldPublicEmail ?
+		Buffer.from(oldPublicEmail).toString('hex') :
+		undefined;
+
 	if (!email) {
 		await Promise.all([
 			publicEmailsRef.child(username).remove(),
-			publicUsernamesRef.child(email).remove()
+			publicUsernamesRef.child(emailHex).remove()
 		]);
 
 		return;
 	}
 
 	const oldPublicUsername = oldPublicEmail ?
-		(await publicUsernamesRef.child(email).once('value')).val() :
+		(await publicUsernamesRef.child(emailHex).once('value')).val() :
 		undefined;
 
 	if (oldPublicEmail === email && oldPublicUsername === username) {
@@ -45,12 +51,12 @@ export const updatePublishedEmail = async (
 
 	await Promise.all([
 		publicEmailsRef.child(username).set(email),
-		publicUsernamesRef.child(email).set(username),
+		publicUsernamesRef.child(emailHex).set(username),
 		oldPublicUsername && oldPublicUsername !== username ?
 			publicEmailsRef.child(oldPublicUsername).remove() :
 			undefined,
 		oldPublicEmail && oldPublicEmail !== email ?
-			publicUsernamesRef.child(oldPublicEmail).remove() :
+			publicUsernamesRef.child(oldPublicEmailHex).remove() :
 			undefined
 	]);
 
