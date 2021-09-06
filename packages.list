@@ -184,6 +184,7 @@
 @taiga-ui/core
 @taiga-ui/icons
 @taiga-ui/kit
+@touch4it/ical-timezones
 @types/animejs
 @types/braintree-web
 @types/country-list
