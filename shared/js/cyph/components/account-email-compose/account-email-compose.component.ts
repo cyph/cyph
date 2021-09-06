@@ -108,11 +108,13 @@ export class AccountEmailComposeComponent
 	public async send (message: IEmailMessage) : Promise<void> {
 		debugLog(() => ({accountEmailComposeComponentSend: message}));
 
-		await this.accountFilesService.upload(
+		const id = await this.accountFilesService.upload(
 			'',
 			message,
 			filterUndefined(message.to?.map(o => o.username) || [])
 		).result;
+
+		await this.router.navigate(['email', id]);
 	}
 
 	constructor (

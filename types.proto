@@ -1058,6 +1058,9 @@ message EmailMessage {
 
 		/** Username. */
 		string username = 3;
+
+		/** Indicates whether details have been verified. */
+		bool verified = 4;
 	}
 
 	/** Attachments. */

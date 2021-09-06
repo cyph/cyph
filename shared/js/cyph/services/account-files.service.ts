@@ -2013,7 +2013,12 @@ export class AccountFilesService extends BaseProvider {
 	}
 
 	/** Returns email. */
-	public async getEmail (id: string) : Promise<IEmailMessage> {
+	public async getEmail (
+		id:
+			| string
+			| IAccountFileRecord
+			| (IAccountFileRecord & IAccountFileReference)
+	) : Promise<IEmailMessage> {
 		return this.downloadFile(id, AccountFileRecord.RecordTypes.Email)
 			.result;
 	}

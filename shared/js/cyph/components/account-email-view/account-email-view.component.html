@@ -1,1 +1,5 @@
-<div>AccountEmailView</div>
+<cyph-email-view
+	[email]="o"
+	[fullPage]="true"
+	*ngIf="email | await as o"
+></cyph-email-view>

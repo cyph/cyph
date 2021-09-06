@@ -410,6 +410,9 @@ export class StringsService extends BaseProvider {
 	public readonly email = `Email`;
 
 	/** @see StringsService */
+	public readonly emailAddressUnverifiedWarning = `WARNING: Could not verify ownership of this email address by this user.`;
+
+	/** @see StringsService */
 	public readonly emailNoSubject = `(no subject)`;
 
 	/** @see StringsService */
@@ -431,7 +434,7 @@ export class StringsService extends BaseProvider {
 	public readonly emailRecipientAddFailure = `Failed to add the following recipients: \${RECIPIENTS}.`;
 
 	/** @see StringsService */
-	public readonly emailSent = `Message sent.`;
+	public readonly emailSent = `Message sending.`;
 
 	/** @see StringsService */
 	public readonly emailSentUndo = `Undo`;

@@ -43,16 +43,20 @@
 				[attr.aria-label]="stringsService.emailRecipients"
 			>
 				<mat-chip
+					[matTooltip]="stringsService.emailAddressUnverifiedWarning"
+					[matTooltipDisabled]="o.verified"
 					[removable]="false"
 					[selectable]="true"
 					[value]="o"
 					*ngFor="let o of email?.to || []; trackBy: trackBySelf"
 				>
+					<mat-icon matChipAvatar color="warn" *ngIf="!o.verified">
+						warning
+					</mat-icon>
 					<span *ngIf="!!o.email">
 						{{ o.name ? o.name + ' ' : '' }}&lt;{{ o.email
 						}}{{ o.username ? ' | @' + o.username : '' }}&gt;
 					</span>
-					<mat-icon matChipRemove>cancel</mat-icon>
 				</mat-chip>
 
 				<input
