@@ -7,6 +7,7 @@ import {
 	notify,
 	pushItem
 } from './init.js';
+import {namespaces} from './namespaces.js';
 
 const {AccountFileRecord, AccountNotification, NotificationTypes} = proto;
 const {normalize, titleize} = util;
@@ -18,6 +19,8 @@ export const notifyUser = async (
 	username,
 	serverInitiated
 ) => {
+	const {accountsURL} = namespaces[namespace];
+
 	const notification = data;
 	const metadata =
 		typeof notification.metadata === 'object' ? notification.metadata : {};
@@ -262,7 +265,7 @@ export const notifyUser = async (
 	metadata.fileType === AccountFileRecord.RecordTypes.Email ?
 		{
 			subject: `Encrypted Email from ${senderUsername}`,
-			text: `${targetName}, ${senderName} has sent you a secure email.`
+			text: `${targetName}, ${senderName} has sent you a secure email: ${accountsURL}email/${notificationID}`
 		} :
 	metadata.fileType === AccountFileRecord.RecordTypes.File ?
 		{
