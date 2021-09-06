@@ -22,7 +22,7 @@ export const updatePublishedEmail = async (
 			undefined :
 			emailVerifiedRef.once('value').then(o => o.val()),
 		publicEmailsRef
-			.child(Buffer.from(username).toString('hex'))
+			.child(username)
 			.once('value')
 			.then(o => o.val())
 	]);
