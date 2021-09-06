@@ -129,7 +129,7 @@ if [ "${test}" ] ; then
 
 	cat config.xml |
 		grep -v cordova-plugin-privacyscreen |
-		sed 's|<name>Cyph</name>|<name>Cyph Test</name>|g' |
+		sed 's|<name>Cyph</name>|<name>CyphTest</name>|g' |
 		perl -pe 's/com\.cyph\.(app|desktop)/com.cyph.test/g' |
 		perl -pe 's/(android:largeHeap="true")/\1 android:usesCleartextTraffic="true"/g' |
 		perl -pe 's/([":])(cyph|burner)\./\1staging.\2./g' \
@@ -308,7 +308,8 @@ if [ "${android}" ] ; then
 		--keystore="${HOME}/.cyph/nativereleasesigning/android/cyph.jks" \
 		--alias=cyph \
 		--storePassword="${password}" \
-		--password="${password}"
+		--password="${password}" \
+		--packageType=apk
 
 	cp platforms/android/app/build/outputs/apk/release/app-release.apk build/${packageName}.apk || exit 1
 fi
