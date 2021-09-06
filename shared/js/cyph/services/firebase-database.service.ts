@@ -445,6 +445,8 @@ export class FirebaseDatabaseService extends DatabaseService {
 			return result;
 		}
 		catch (err) {
+			debugLogError(() => ({databaseCallFunctionError: [name, o, err]}));
+
 			throw new Error(
 				`Function ${name} failed${
 					typeof err === 'string' ? `: ${err}` : '.'
