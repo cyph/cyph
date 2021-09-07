@@ -34,7 +34,7 @@ export class AccountAfterRegisterComponent
 		this.accountService.setHeader(
 			this.accountDatabaseService.currentUser.value?.masterKeyConfirmed ?
 				this.stringsService.welcomeToProduct :
-				this.stringsService.welcomeMasterKeySetup
+				{disable: true}
 		);
 
 		this.accountService.transitionEnd();

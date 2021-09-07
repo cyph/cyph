@@ -64,6 +64,7 @@
 				fxLayoutGap="8px"
 				*ngIf="
 					(accountService.header | await)?.header !== undefined &&
+					(accountService.header | await)?.header?.disable !== true &&
 					(accountService.isCallActive | await) === false &&
 					!(
 						(envService.isMobile | await) &&
@@ -457,16 +458,13 @@
 			<ng-template #initialSetupAccountBanner>
 				<h3
 					class="cyph-banner alert"
-					cyphTranslate
 					*ngIf="
 						(accountDatabaseService.currentUser | await)
 							?.masterKeyConfirmed === false;
 						else unverifiedAccountBanner
 					"
 				>
-					Your account will be submitted for verification after the
-					initial setup. Your username is guaranteed so long as this
-					is completed within 30 days.
+					{{ stringsService.welcomInitialSetup }}
 				</h3>
 			</ng-template>
 

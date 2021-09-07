@@ -9,6 +9,11 @@ mat-tab-group.simple ::ng-deep {
 	}
 }
 
+mat-card.post-simple-register-setup {
+	position: absolute !important;
+	z-index: 0 !important;
+}
+
 .login-form {
 	> .cyph-banner {
 		position: fixed;

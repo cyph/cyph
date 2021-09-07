@@ -1400,6 +1400,9 @@ export class StringsService extends BaseProvider {
 	public readonly registerErrorUsername = `Username unavailable`;
 
 	/** @see StringsService */
+	public readonly registerPostSimpleRegisterSetupTitle = `${this.internalProduct} Account Setup`;
+
+	/** @see StringsService */
 	public readonly registerTitle = `Register for ${this.internalProduct}`;
 
 	/** @see StringsService */
@@ -1681,6 +1684,9 @@ export class StringsService extends BaseProvider {
 
 	/** @see StringsService */
 	public readonly welcomeComma = `Welcome,`;
+
+	/** @see StringsService */
+	public readonly welcomInitialSetup = `Your account will be submitted for verification after the initial setup. Your username is guaranteed so long as this is completed within 30 days.`;
 
 	/** @see StringsService */
 	public readonly welcomeMasterKeySetup = `IMPORTANT: Confirm Your Master Key`;

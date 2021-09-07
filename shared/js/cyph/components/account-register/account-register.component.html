@@ -186,7 +186,15 @@
 					</ng-template>
 				</div>
 				<ng-template #noInviteCodeUpsell>
-					<div *ngIf="!envService.noInAppPurchasesReferenceAllowed">
+					<div *ngIf="postSimpleRegisterSetup">
+						<span>{{ stringsService.welcomInitialSetup }}</span>
+					</div>
+					<div
+						*ngIf="
+							!postSimpleRegisterSetup &&
+							!envService.noInAppPurchasesReferenceAllowed
+						"
+					>
 						<a
 							cyphTranslate
 							(click)="
@@ -200,7 +208,7 @@
 							>Upgrade to premium</a
 						>
 						&ngsp;
-						<span cyphTranslate> and skip the waitlist! </span>
+						<span cyphTranslate>and skip the waitlist!</span>
 					</div>
 				</ng-template>
 			</div>
@@ -218,9 +226,17 @@
 		</div>
 	</h3>
 
-	<mat-card fxFlex class="fullscreen">
+	<mat-card
+		fxFlex
+		class="fullscreen"
+		[class.post-simple-register-setup]="postSimpleRegisterSetup"
+	>
 		<mat-card-title>
-			{{ stringsService.registerTitle }}
+			{{
+				postSimpleRegisterSetup ?
+					stringsService.registerPostSimpleRegisterSetupTitle :
+					stringsService.registerTitle
+			}}
 		</mat-card-title>
 		<cyph-logo cardHeader homeLink></cyph-logo>
 		<mat-card-content [class.full-height]="(phase | await) === 3">
@@ -246,7 +262,7 @@
 								tabIndex.next($event); updateRoute(0, $event)
 							"
 						>
-							<mat-tab>
+							<mat-tab *ngIf="!postSimpleRegisterSetup">
 								<ng-template mat-tab-label>
 									<mat-icon>radio_button_checked</mat-icon>
 									&nbsp;
@@ -810,18 +826,25 @@
 							</mat-tab>
 							<mat-tab
 								[disabled]="
-									!(inviteCodeWatcher | await)?.value ||
-									((currentStep | await) || 0) < 1
+									!postSimpleRegisterSetup &&
+									(!(inviteCodeWatcher | await)?.value ||
+										((currentStep | await) || 0) < 1)
 								"
 							>
 								<ng-template mat-tab-label>
 									<mat-icon
-										*ngIf="((tabIndex | await) || 0) > 0"
+										*ngIf="
+											postSimpleRegisterSetup ||
+											((tabIndex | await) || 0) > 0
+										"
 									>
 										radio_button_checked
 									</mat-icon>
 									<mat-icon
-										*ngIf="((tabIndex | await) || 0) <= 0"
+										*ngIf="
+											!postSimpleRegisterSetup &&
+											((tabIndex | await) || 0) <= 0
+										"
 									>
 										radio_button_unchecked
 									</mat-icon>
@@ -835,18 +858,28 @@
 							</mat-tab>
 							<mat-tab
 								[disabled]="
-									!(inviteCodeWatcher | await)?.value ||
-									((currentStep | await) || 0) < 2
+									!(
+										postSimpleRegisterSetup ||
+										(inviteCodeWatcher | await)?.value
+									) ||
+									((currentStep | await) || 0) <
+										(postSimpleRegisterSetup ? 1 : 2)
 								"
 							>
 								<ng-template mat-tab-label>
 									<mat-icon
-										*ngIf="((tabIndex | await) || 0) > 1"
+										*ngIf="
+											((tabIndex | await) || 0) >
+											(postSimpleRegisterSetup ? 0 : 1)
+										"
 									>
 										radio_button_checked
 									</mat-icon>
 									<mat-icon
-										*ngIf="((tabIndex | await) || 0) <= 1"
+										*ngIf="
+											((tabIndex | await) || 0) <=
+											(postSimpleRegisterSetup ? 0 : 1)
+										"
 									>
 										radio_button_unchecked
 									</mat-icon>
@@ -860,18 +893,28 @@
 							</mat-tab>
 							<mat-tab
 								[disabled]="
-									!(inviteCodeWatcher | await)?.value ||
-									((currentStep | await) || 0) < 3
+									!(
+										postSimpleRegisterSetup ||
+										(inviteCodeWatcher | await)?.value
+									) ||
+									((currentStep | await) || 0) <
+										(postSimpleRegisterSetup ? 3 : 2)
 								"
 							>
 								<ng-template mat-tab-label>
 									<mat-icon
-										*ngIf="((tabIndex | await) || 0) > 2"
+										*ngIf="
+											((tabIndex | await) || 0) >
+											(postSimpleRegisterSetup ? 1 : 2)
+										"
 									>
 										radio_button_checked
 									</mat-icon>
 									<mat-icon
-										*ngIf="((tabIndex | await) || 0) <= 2"
+										*ngIf="
+											((tabIndex | await) || 0) <=
+											(postSimpleRegisterSetup ? 1 : 2)
+										"
 									>
 										radio_button_unchecked
 									</mat-icon>
@@ -931,6 +974,7 @@
 											<div
 												fxLayout="row"
 												fxLayoutAlign="center center"
+												*ngIf="!postSimpleRegisterSetup"
 											>
 												<strong cyphTranslate
 													>Name:</strong
@@ -942,6 +986,7 @@
 											<div
 												fxLayout="row"
 												fxLayoutAlign="center center"
+												*ngIf="!postSimpleRegisterSetup"
 											>
 												<strong cyphTranslate
 													>Email:</strong
@@ -976,6 +1021,7 @@
 											<div
 												fxLayout="row"
 												fxLayoutAlign="center center"
+												*ngIf="!postSimpleRegisterSetup"
 											>
 												<strong cyphTranslate
 													>Plan:</strong
@@ -1095,7 +1141,18 @@
 										type="submit"
 										[disabled]="(errors?.length || 0) > 0"
 									>
-										<span cyphTranslate>Register</span>
+										<span
+											cyphTranslate
+											*ngIf="!postSimpleRegisterSetup"
+										>
+											Register
+										</span>
+										<span
+											cyphTranslate
+											*ngIf="postSimpleRegisterSetup"
+										>
+											Confirm
+										</span>
 									</button>
 								</div>
 							</ng-container>
@@ -1114,7 +1171,8 @@
 				>
 					<ng-container
 						*ngIf="
-							!!(inviteCodeWatcher | await)?.value;
+							postSimpleRegisterSetup ||
+								!!(inviteCodeWatcher | await)?.value;
 							else waitlistButton
 						"
 					>

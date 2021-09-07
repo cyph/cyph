@@ -70,6 +70,10 @@ export class AccountRegisterComponent
 	private inviteCodeDebounceLast?: string;
 
 	/** @ignore */
+	public readonly postSimpleRegisterSetupWatcher =
+		new BehaviorSubject<boolean>(false);
+
+	/** @ignore */
 	private usernameDebounceLast?: string;
 
 	/** Indicates which additional devices have been set up. */
@@ -224,6 +228,9 @@ export class AccountRegisterComponent
 	/** If true, may skip setting lock screen password. */
 	@Input() public pinSkippable: boolean = false;
 
+	/** If true, will display only the post-simple-register initial setup UI. */
+	@Input() public postSimpleRegisterSetup: boolean = false;
+
 	/** Indicates whether the simplified UI is enabled. */
 	public readonly simple: BehaviorSubject<boolean> = toBehaviorSubject(
 		this.activatedRoute.data.pipe(map(o => !!o.simple)),
@@ -261,9 +268,6 @@ export class AccountRegisterComponent
 
 	/** @see titleize */
 	public readonly titleize = titleize;
-
-	/** Total number of steps/tabs (minus one). */
-	public readonly totalSteps: number = 3;
 
 	/** @see trackBySelf */
 	public readonly trackBySelf = trackBySelf;
@@ -595,6 +599,7 @@ export class AccountRegisterComponent
 		super.ngOnInit();
 
 		this.accountService.transitionEnd();
+		this.postSimpleRegisterSetupWatcher.next(this.postSimpleRegisterSetup);
 
 		const pendingInviteCodePromise = this.localStorageService
 			.getString('pendingInviteCode')
@@ -622,7 +627,8 @@ export class AccountRegisterComponent
 		if (
 			this.confirmMasterKeyOnly ||
 			this.getMasterKeyOnly ||
-			this.getPinOnly
+			this.getPinOnly ||
+			this.postSimpleRegisterSetup
 		) {
 			if (this.accountDatabaseService.currentUser.value) {
 				this.username.setValue(
@@ -838,11 +844,21 @@ export class AccountRegisterComponent
 		await this.router.navigate(['welcome']);
 	}
 
+	/** Total number of steps/tabs (minus one). */
+	public get totalSteps () : number {
+		return this.postSimpleRegisterSetup ? 2 : 3;
+	}
+
 	/** Updates route for consistency with tabIndex. */
 	public updateRoute (
 		increment: number = 0,
 		tabIndex: number = this.tabIndex.value
 	) : void {
+		if (this.postSimpleRegisterSetup) {
+			this.tabIndex.next(tabIndex + increment);
+			return;
+		}
+
 		this.router.navigate([
 			this.accountService.routePath[0],
 			(tabIndex + increment + 1).toString()
@@ -1034,6 +1050,7 @@ export class AccountRegisterComponent
 				this.inviteCodeWatcher,
 				this.lockScreenPasswordReady,
 				this.name,
+				this.postSimpleRegisterSetupWatcher,
 				this.simple,
 				this.usernameWatcher,
 				from(
@@ -1052,6 +1069,7 @@ export class AccountRegisterComponent
 						inviteCode,
 						lockScreenPasswordReady,
 						name,
+						postSimpleRegisterSetup,
 						simple,
 						username,
 						xkcd
@@ -1065,10 +1083,13 @@ export class AccountRegisterComponent
 											.registerErrorAdditionalDevices
 									] :
 									[]),
-								...(email && !emailRegex.test(email) ?
+								...(!postSimpleRegisterSetup &&
+								email &&
+								!emailRegex.test(email) ?
 									[this.stringsService.registerErrorEmail] :
 									[]),
-								...(!inviteCode.value || inviteCode.errors ?
+								...(!postSimpleRegisterSetup &&
+								(!inviteCode.value || inviteCode.errors) ?
 									[
 										this.stringsService
 											.registerErrorInviteCode
@@ -1080,10 +1101,11 @@ export class AccountRegisterComponent
 											.registerErrorLockScreen
 									] :
 									[]),
-								...(!name ?
+								...(!postSimpleRegisterSetup && !name ?
 									[this.stringsService.registerErrorName] :
 									[]),
-								...(!username.value || username.errors ?
+								...(!postSimpleRegisterSetup &&
+								(!username.value || username.errors) ?
 									[
 										this.stringsService
 											.registerErrorUsername
@@ -1109,6 +1131,7 @@ export class AccountRegisterComponent
 				this.inviteCodeWatcher,
 				this.lockScreenPasswordReady,
 				this.name,
+				this.postSimpleRegisterSetupWatcher,
 				this.tabIndex,
 				this.usernameWatcher
 			]).pipe(
@@ -1119,23 +1142,30 @@ export class AccountRegisterComponent
 						inviteCode,
 						lockScreenPasswordReady,
 						name,
+						postSimpleRegisterSetup,
 						tabIndex,
 						username
 					]) =>
-						(email && !emailRegex.test(email)) ||
-						!inviteCode.value ||
-						inviteCode.errors ||
-						!name ||
-						!username.value ||
-						username.errors ||
-						(tabIndex === 0 &&
-							(username.pending || inviteCode.pending)) ?
-							0 :
+						!postSimpleRegisterSetup ?
+							(email && !emailRegex.test(email)) ||
+							  !inviteCode.value ||
+							  inviteCode.errors ||
+							  !name ||
+							  !username.value ||
+							  username.errors ||
+							  (tabIndex === 0 &&
+									(username.pending || inviteCode.pending)) ?
+								0 :
+							!additionalDevicesReady ?
+								1 :
+							!lockScreenPasswordReady ?
+								2 :
+								3 :
 						!additionalDevicesReady ?
-							1 :
+							0 :
 						!lockScreenPasswordReady ?
-							2 :
-							3
+							1 :
+							2
 				)
 			),
 			0,

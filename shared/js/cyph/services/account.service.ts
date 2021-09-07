@@ -71,7 +71,14 @@ export class AccountService extends BaseProvider {
 			icon: string;
 			label: string;
 		}[];
-		header?: string | {desktop?: string; mobile?: string; user?: User};
+		header?:
+			| string
+			| {
+					desktop?: string;
+					disable?: boolean;
+					mobile?: string;
+					user?: User;
+			  };
 	}>({});
 
 	/** @ignore */
@@ -166,7 +173,12 @@ export class AccountService extends BaseProvider {
 			icon: string;
 			label: string;
 		}[];
-		header?: {desktop?: string; mobile?: string; user?: User};
+		header?: {
+			desktop?: string;
+			disable?: boolean;
+			mobile?: string;
+			user?: User;
+		};
 	}>;
 
 	/** Indicates the status of the interstitial. */
@@ -359,15 +371,17 @@ export class AccountService extends BaseProvider {
 						of([])
 				])
 			),
-			map(([data, childData, params, childParams, url, childURL]) : [
-				Data,
-				Params,
-				UrlSegment[]
-			] => [
-				{...data, ...childData},
-				{...params, ...childParams},
-				[...url, ...childURL]
-			])
+			map(
+				([data, childData, params, childParams, url, childURL]) : [
+					Data,
+					Params,
+					UrlSegment[]
+				] => [
+					{...data, ...childData},
+					{...params, ...childParams},
+					[...url, ...childURL]
+				]
+			)
 		);
 	}
 
@@ -489,7 +503,10 @@ export class AccountService extends BaseProvider {
 
 	/** Sets custom header text. */
 	public setHeader (
-		header: string | {desktop?: string; mobile?: string} | User,
+		header:
+			| string
+			| {desktop?: string; disable?: boolean; mobile?: string}
+			| User,
 		contextMenuActions?: {
 			handler: (e: MouseEvent) => void;
 			icon: string;
