@@ -74,7 +74,7 @@ export class AccountRegisterComponent
 	private usernameDebounceLast?: string;
 
 	/** @ignore */
-	private readonly usingPostRegistrationMasterKeySetupUX: boolean = false;
+	private readonly usingPostRegistrationMasterKeySetupUX: BehaviorSubject<boolean>;
 
 	/** Indicates which additional devices have been set up. */
 	public readonly additionalDevices = {
@@ -741,7 +741,7 @@ export class AccountRegisterComponent
 
 	/** Initiates registration attempt. */
 	public async submit () : Promise<void> {
-		if (this.tabIndex.value !== this.totalSteps) {
+		if (!this.simple.value && this.tabIndex.value !== this.totalSteps) {
 			return;
 		}
 
@@ -761,7 +761,7 @@ export class AccountRegisterComponent
 		this.submitError.next(undefined);
 
 		try {
-			if (this.usingPostRegistrationMasterKeySetupUX) {
+			if (this.usingPostRegistrationMasterKeySetupUX.value) {
 				await this.localStorageService.setString(
 					'unconfirmedMasterKey',
 					masterKey
@@ -951,6 +951,7 @@ export class AccountRegisterComponent
 		super();
 
 		this.additionalDevicesReady = this.additionalDevices.paperMasterKey;
+		this.usingPostRegistrationMasterKeySetupUX = this.simple;
 
 		this.subscriptions.push(
 			this.inviteCode.valueChanges.subscribe(value => {
@@ -1039,6 +1040,7 @@ export class AccountRegisterComponent
 				this.inviteCodeWatcher,
 				this.lockScreenPasswordReady,
 				this.name,
+				this.simple,
 				this.usernameWatcher,
 				from(
 					this.xkcdPassphrases ?
@@ -1056,13 +1058,14 @@ export class AccountRegisterComponent
 						inviteCode,
 						lockScreenPasswordReady,
 						name,
+						simple,
 						username,
 						xkcd
 					]) =>
 						checking ?
 							[] :
 							[
-								...(!additionalDevicesReady ?
+								...(!simple && !additionalDevicesReady ?
 									[
 										this.stringsService
 											.registerErrorAdditionalDevices
@@ -1077,7 +1080,7 @@ export class AccountRegisterComponent
 											.registerErrorInviteCode
 									] :
 									[]),
-								...(!lockScreenPasswordReady ?
+								...(!simple && !lockScreenPasswordReady ?
 									[
 										this.stringsService
 											.registerErrorLockScreen
@@ -1092,7 +1095,7 @@ export class AccountRegisterComponent
 											.registerErrorUsername
 									] :
 									[]),
-								...(xkcd.length < 1 ?
+								...(!simple && xkcd.length < 1 ?
 									[
 										this.stringsService
 											.registerErrorInitializing
