@@ -73,9 +73,6 @@ export class AccountRegisterComponent
 	/** @ignore */
 	private usernameDebounceLast?: string;
 
-	/** @ignore */
-	private readonly usingPostRegistrationMasterKeySetupUX: BehaviorSubject<boolean>;
-
 	/** Indicates which additional devices have been set up. */
 	public readonly additionalDevices = {
 		desktop: new BehaviorSubject<number>(0),
@@ -761,7 +758,7 @@ export class AccountRegisterComponent
 		this.submitError.next(undefined);
 
 		try {
-			if (this.usingPostRegistrationMasterKeySetupUX.value) {
+			if (this.simple.value) {
 				await this.localStorageService.setString(
 					'unconfirmedMasterKey',
 					masterKey
@@ -951,7 +948,6 @@ export class AccountRegisterComponent
 		super();
 
 		this.additionalDevicesReady = this.additionalDevices.paperMasterKey;
-		this.usingPostRegistrationMasterKeySetupUX = this.simple;
 
 		this.subscriptions.push(
 			this.inviteCode.valueChanges.subscribe(value => {
