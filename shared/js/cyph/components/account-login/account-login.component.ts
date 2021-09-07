@@ -39,6 +39,9 @@ import {observableAll} from '../../util/observable-all';
 })
 export class AccountLoginComponent extends BaseProvider implements OnInit {
 	/** @ignore */
+	private readonly loggingInInternal = new BehaviorSubject<boolean>(false);
+
+	/** @ignore */
 	private readonly savedMasterKey = new BehaviorSubject<
 		Uint8Array | undefined
 	>(undefined);
@@ -167,27 +170,53 @@ export class AccountLoginComponent extends BaseProvider implements OnInit {
 		this.checking.next(true);
 
 		try {
-			const [altMasterKey, pinIsCustom, savedMasterKey, savedUsername] =
-				await Promise.all([
-					this.localStorageService
-						.getItem('altMasterKey', BooleanProto, undefined, true)
-						.catch(() => false),
-					this.localStorageService
-						.getItem('pinIsCustom', BooleanProto, undefined, true)
-						.catch(() => true),
-					this.localStorageService
-						.getItem('masterKey', BinaryProto, undefined, true)
-						.catch(() => undefined),
-					this.localStorageService
-						.getItem('username', StringProto, undefined, true)
-						.catch(() => undefined)
-				]);
+			const [
+				altMasterKey,
+				pinIsCustom,
+				savedMasterKey,
+				unconfirmedMasterKey,
+				savedUsername
+			] = await Promise.all([
+				this.localStorageService
+					.getItem('altMasterKey', BooleanProto, undefined, true)
+					.catch(() => false),
+				this.localStorageService
+					.getItem('pinIsCustom', BooleanProto, undefined, true)
+					.catch(() => true),
+				this.localStorageService
+					.getItem('masterKey', BinaryProto, undefined, true)
+					.catch(() => undefined),
+				this.localStorageService
+					.getString('unconfirmedMasterKey')
+					.catch(() => undefined),
+				this.localStorageService
+					.getItem('username', StringProto, undefined, true)
+					.catch(() => undefined)
+			]);
 
 			this.altMasterKey.next(altMasterKey);
 			this.pinIsCustom.next(pinIsCustom);
 			this.savedMasterKey.next(savedMasterKey);
 			this.savedUsername.next(savedUsername);
 			this.username.next(savedUsername || '');
+
+			if (savedUsername && typeof unconfirmedMasterKey === 'string') {
+				try {
+					this.loggingInInternal.next(true);
+					await this.accountAuthService.login(
+						savedUsername,
+						unconfirmedMasterKey,
+						undefined,
+						altMasterKey
+					);
+					await this.postLogin();
+					return;
+				}
+				catch (err) {
+					this.error.next(true);
+					throw err;
+				}
+			}
 
 			if (
 				!(savedMasterKey && savedUsername) ||
@@ -353,11 +382,17 @@ export class AccountLoginComponent extends BaseProvider implements OnInit {
 		);
 
 		this.loggingIn = observableAll([
+			this.loggingInInternal,
 			this.pinUnlock,
 			this.activatedRoute.url.pipe(
 				map(url => url.length > 0 && url.slice(-1)[0].path === 'login')
 			)
-		]).pipe(map(([pinUnlock, loginStep2]) => pinUnlock || loginStep2));
+		]).pipe(
+			map(
+				([loggingInInternal, pinUnlock, loginStep2]) =>
+					loggingInInternal || pinUnlock || loginStep2
+			)
+		);
 
 		this.subscriptions.push(
 			this.activatedRoute.url.subscribe(() => {
