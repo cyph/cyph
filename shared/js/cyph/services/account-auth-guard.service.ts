@@ -34,7 +34,10 @@ export class AccountAuthGuardService
 	];
 
 	/** @ignore */
-	private readonly forcedAnonymouslyAccessibleRoutes: string[] = ['register'];
+	private readonly forcedAnonymouslyAccessibleRoutes: string[] = [
+		'register',
+		'registerv1'
+	];
 
 	/** @ignore */
 	private readonly pseudoAccountRoutes: string[] = ['accept'];
