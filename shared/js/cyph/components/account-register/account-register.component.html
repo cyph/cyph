@@ -240,6 +240,7 @@
 						(submit)="submit()"
 					>
 						<mat-tab-group
+							[class.simple]="simple | await"
 							[selectedIndex]="tabIndex | await"
 							(selectedIndexChange)="
 								tabIndex.next($event); updateRoute(0, $event)

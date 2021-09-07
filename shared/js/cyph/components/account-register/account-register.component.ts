@@ -5,7 +5,6 @@ import {
 	ChangeDetectorRef,
 	Component,
 	EventEmitter,
-	HostBinding,
 	Input,
 	OnDestroy,
 	OnInit,
@@ -226,7 +225,6 @@ export class AccountRegisterComponent
 	@Input() public pinSkippable: boolean = false;
 
 	/** Indicates whether the simplified UI is enabled. */
-	@HostBinding('class.simple')
 	public readonly simple: BehaviorSubject<boolean> = toBehaviorSubject(
 		this.activatedRoute.data.pipe(map(o => !!o.simple)),
 		false,

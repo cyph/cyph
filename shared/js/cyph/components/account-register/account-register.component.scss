@@ -1,12 +1,10 @@
 @import '../../../../css/mixins';
 
-:host.simple {
-	::ng-deep {
-		mat-tab-header {
-			&,
-			* {
-				visibility: hidden !important;
-			}
+mat-tab-group.simple ::ng-deep {
+	mat-tab-header {
+		&,
+		* {
+			visibility: hidden !important;
 		}
 	}
 }
