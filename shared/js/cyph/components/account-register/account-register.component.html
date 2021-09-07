@@ -1037,7 +1037,10 @@
 						</mat-tab-group>
 
 						<ng-container
-							*ngIf="((tabIndex | await) || 0) === totalSteps"
+							*ngIf="
+								(simple | await) ||
+								((tabIndex | await) || 0) === totalSteps
+							"
 						>
 							<ng-container
 								*ngIf="
@@ -1048,7 +1051,10 @@
 									fxLayout="row"
 									fxLayoutAlign="center center"
 									class="cyph-banner default-align warn"
-									*ngIf="(errors?.length || 0) > 0"
+									*ngIf="
+										!(simple | await) &&
+										(errors?.length || 0) > 0
+									"
 								>
 									<div>
 										<p>
@@ -1079,6 +1085,7 @@
 									<button
 										mat-button
 										(click)="updateRoute(-1)"
+										*ngIf="!(simple | await)"
 									>
 										<span cyphTranslate>Previous</span>
 									</button>
@@ -1136,20 +1143,6 @@
 				</div>
 
 				<ng-container *ngIf="simple | await">
-					<div
-						fxLayout="row"
-						fxLayoutAlign="center center"
-						fxLayoutGap="32px"
-					>
-						<button
-							mat-raised-button
-							type="submit"
-							[disabled]="((currentStep | await) || 0) <= 0"
-						>
-							<span cyphTranslate>Register</span>
-						</button>
-					</div>
-
 					<div></div>
 
 					<div
