@@ -388,7 +388,7 @@
 					*ngIf="
 						(accountService.billingStatus | await)?.goodStanding ===
 							false;
-						else unverifiedAccountBanner
+						else initialSetupAccountBanner
 					"
 				>
 					<span cyphTranslate>
@@ -451,6 +451,22 @@
 							>here</a
 						>.
 					</ng-template>
+				</h3>
+			</ng-template>
+
+			<ng-template #initialSetupAccountBanner>
+				<h3
+					class="cyph-banner alert"
+					cyphTranslate
+					*ngIf="
+						(accountDatabaseService.currentUser | await)
+							?.masterKeyConfirmed === false;
+						else unverifiedAccountBanner
+					"
+				>
+					Your account will be submitted for verification after the
+					initial setup. Your username is guaranteed so long as this
+					is completed within 30 days.
 				</h3>
 			</ng-template>
 
