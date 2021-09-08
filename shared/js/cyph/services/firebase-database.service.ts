@@ -4,9 +4,7 @@ import {Injectable, NgZone} from '@angular/core';
 import {FirebaseApp, getApps, initializeApp} from 'firebase/app';
 import {
 	Auth,
-	indexedDBLocalPersistence,
 	initializeAuth,
-	inMemoryPersistence,
 	signInWithEmailAndPassword,
 	updatePassword
 } from 'firebase/auth';
@@ -117,14 +115,7 @@ export class FirebaseDatabaseService extends DatabaseService {
 
 			return {
 				app,
-				auth: () =>
-					initializeAuth(app, {
-						persistence: [
-							this.envService.isSDK ?
-								inMemoryPersistence :
-								indexedDBLocalPersistence
-						]
-					}),
+				auth: () => initializeAuth(app),
 				database: () => getDatabase(app),
 				messaging: () => getMessaging(app),
 				storage: () => getStorage(app)
