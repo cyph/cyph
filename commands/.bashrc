@@ -47,52 +47,42 @@ getBoolArg () {
 	fi
 }
 
-export temporalCloudToken=""
-
 ipfsAdd () {
-	f="${PWD}/${1}"
+	f="$(realpath "${1}")"
 
-	export ipfsAddOutput="$(
-		curl -s https://api.pinata.cloud/pinning/pinFileToIPFS \
-			-H "pinata_api_key: $(head -n1 ~/.cyph/pinata.key)" \
-			-H "pinata_secret_api_key: $(tail -n1 ~/.cyph/pinata.key)" \
-			-F "file=@${f}"
-	)"
-
-	hash="$(node -e 'console.log(JSON.parse(process.env.ipfsAddOutput).IpfsHash)')"
-
-	if [ "${temporalCloudToken}" == "" ] ; then
-		export temporalCloudAuth="$(
-			curl -s https://api.temporal.cloud/v2/auth/login -d "{\"username\": \"$(
-				head -n1 ~/.cyph/temporal.cloud.key
-			)\", \"password\": \"$(
-				tail -n1 ~/.cyph/temporal.cloud.key
-			)\"}" 2> /dev/null
-		)"
-
-		temporalCloudToken="$(node -e "console.log(
-			JSON.parse(process.env.temporalCloudAuth || '{}').token || ''
-		)")"
-	fi
-
-	if [ "${hash}" ] ; then
-		curl -s -X POST https://api.temporal.cloud/v2/ipfs/public/file/add \
-			-H "Authorization: Bearer ${temporalCloudToken}" \
-			-F 'hold_time=12' \
-			-F "file=@${f}" \
-		&> /dev/null
-
-		curl -i -s -X POST https://www.eternum.io/api/pin/ \
-			-H "Authorization: Bearer $(cat ~/.cyph/eternum.key)" \
-			-H 'Content-Type: application/json' \
-			-d "{\"hash\": \"${hash}\"}" \
-		&> /dev/null
-
-		echo "${hash}"
-	else
+	hash="$(ipfsAddNative ${f})"
+	while [ ! "${hash}" ] ; do
 		sleep 5
-		ipfsAdd "${1}"
+		hash="$(ipfsAddNative ${f})"
+	done
+
+	pinataHash=''
+	while [ "${pinataHash}" != "${hash}" ] ; do
+		export pinataResponse="$(
+			curl -s https://api.pinata.cloud/pinning/pinFileToIPFS \
+				-H "pinata_api_key: $(head -n1 ~/.cyph/pinata.key)" \
+				-H "pinata_secret_api_key: $(tail -n1 ~/.cyph/pinata.key)" \
+				-F "file=@${f}"
+		)"
+		pinataHash="$(node -e 'console.log(JSON.parse(process.env.pinataResponse).IpfsHash)')"
+	done
+
+	curl -i -s -X POST https://www.eternum.io/api/pin/ \
+		-H "Authorization: Bearer $(cat ~/.cyph/eternum.key)" \
+		-H 'Content-Type: application/json' \
+		-d "{\"hash\": \"${hash}\"}" \
+	&> /dev/null
+
+	echo "${hash}"
+}
+
+ipfsAddNative () {
+	if ! ps ux | grep 'ipfs daemon' | grep -v grep &> /dev/null ; then
+		bash -c 'ipfs daemon &' &> /dev/null
+		while ! ipfs swarm peers &> /dev/null ; do sleep 1 ; done
 	fi
+
+	ipfs add -q "${@}"
 }
 
 export ipfsGatewaysCache=""
@@ -213,6 +203,7 @@ export -f download
 export -f fail
 export -f getBoolArg
 export -f ipfsAdd
+export -f ipfsAddNative
 export -f ipfsGateways
 export -f ipfsHash
 export -f ipfsWarmUp

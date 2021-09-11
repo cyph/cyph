@@ -4,9 +4,7 @@ import {Injectable, NgZone} from '@angular/core';
 import {FirebaseApp, getApps, initializeApp} from 'firebase/app';
 import {
 	Auth,
-	getAuth,
-	indexedDBLocalPersistence,
-	inMemoryPersistence,
+	initializeAuth,
 	signInWithEmailAndPassword,
 	updatePassword
 } from 'firebase/auth';
@@ -117,7 +115,7 @@ export class FirebaseDatabaseService extends DatabaseService {
 
 			return {
 				app,
-				auth: () => getAuth(app),
+				auth: () => initializeAuth(app),
 				database: () => getDatabase(app),
 				messaging: () => getMessaging(app),
 				storage: () => getStorage(app)
@@ -1091,12 +1089,6 @@ export class FirebaseDatabaseService extends DatabaseService {
 	public async login (username: string, password: string) : Promise<void> {
 		return this.ngZone.runOutsideAngular(async () => {
 			const auth = (await this.app).auth();
-
-			await auth.setPersistence(
-				this.envService.isSDK ?
-					inMemoryPersistence :
-					indexedDBLocalPersistence
-			);
 
 			await signInWithEmailAndPassword(
 				auth,
