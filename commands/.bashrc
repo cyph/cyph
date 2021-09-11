@@ -47,8 +47,6 @@ getBoolArg () {
 	fi
 }
 
-export temporalCloudToken=""
-
 ipfsAdd () {
 	f="$(realpath "${1}")"
 
@@ -68,26 +66,6 @@ ipfsAdd () {
 		)"
 		pinataHash="$(node -e 'console.log(JSON.parse(process.env.pinataResponse).IpfsHash)')"
 	done
-
-	if [ "${temporalCloudToken}" == "" ] ; then
-		export temporalCloudAuth="$(
-			curl -s https://api.temporal.cloud/v2/auth/login -d "{\"username\": \"$(
-				head -n1 ~/.cyph/temporal.cloud.key
-			)\", \"password\": \"$(
-				tail -n1 ~/.cyph/temporal.cloud.key
-			)\"}" 2> /dev/null
-		)"
-
-		export temporalCloudToken="$(node -e "console.log(
-			JSON.parse(process.env.temporalCloudAuth || '{}').token || ''
-		)")"
-	fi
-
-	curl -s -X POST https://api.temporal.cloud/v2/ipfs/public/file/add \
-		-H "Authorization: Bearer ${temporalCloudToken}" \
-		-F 'hold_time=12' \
-		-F "file=@${f}" \
-	&> /dev/null
 
 	curl -i -s -X POST https://www.eternum.io/api/pin/ \
 		-H "Authorization: Bearer $(cat ~/.cyph/eternum.key)" \
