@@ -627,14 +627,18 @@ if \
 	[ "${site}" == 'backend' ] || \
 	[ "${site}" == 'websign' ] \
 ; then
-	./commands/backendplans.js backend/plans.json
-	./commands/cloudfunctions.js backend/cloudfunctions.list
-	./commands/ipfsgateways.js backend/ipfs-gateways.json
-	./commands/packagedatabase.js backend/packages.json
+	rm -rf backend/assets 2> /dev/null
+	mkdir backend/assets
+
+	./commands/backendplans.js backend/assets/plans.json
+	./commands/cloudfunctions.js backend/assets/cloudfunctions.list
+	./commands/ipfsgateways.js backend/assets/ipfs-gateways.json
+	./commands/packagedatabase.js backend/assets/packages.json
 
 	if [ "${allBranches}" ] ; then
 		for branchDir in ${branchDirs} ; do
-			cp backend/ipfs-gateways.json backend/packages.json ${branchDir}/backend/
+			rm -rf ${branchDir}/backend/assets 2> /dev/null
+			cp -a backend/assets ${branchDir}/backend/
 		done
 	fi
 fi
