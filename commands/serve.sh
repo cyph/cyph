@@ -167,8 +167,10 @@ if [ -d ~/.cyph ] && [ -f ~/.cyph/backend.vars ] && [ ! "${CIRCLECI}" ] ; then
 	fi
 fi
 
-./commands/backendplans.js backend/plans.json
-./commands/cloudfunctions.js backend/cloudfunctions.list
+rm -rf backend/assets 2> /dev/null
+mkdir backend/assets
+./commands/backendplans.js backend/assets/plans.json
+./commands/cloudfunctions.js backend/assets/cloudfunctions.list
 
 # TODO: Handle host checks
 export DATASTORE_EMULATOR_HOST=0.0.0.0:6000

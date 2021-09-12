@@ -169,14 +169,14 @@ var analIDs = func() map[string]string {
 	return o
 }()
 
-var cloudFunctionRoutes = strings.Split(getFileText("cloudfunctions.list"), "\n")
+var cloudFunctionRoutes = strings.Split(getFileText("assets/cloudfunctions.list"), "\n")
 
 var ipfsGatewayURLs = func() []IPFSGatewayData {
 	if isLocalEnv {
 		return []IPFSGatewayData{}
 	}
 
-	b, err := ioutil.ReadFile("ipfs-gateways.json")
+	b, err := ioutil.ReadFile("assets/ipfs-gateways.json")
 	if err != nil {
 		panic(err)
 	}
@@ -236,7 +236,7 @@ var packages = func() map[string]PackageData {
 		return map[string]PackageData{}
 	}
 
-	b, err := ioutil.ReadFile("packages.json")
+	b, err := ioutil.ReadFile("assets/packages.json")
 	if err != nil {
 		panic(err)
 	}
@@ -251,7 +251,7 @@ var packages = func() map[string]PackageData {
 }()
 
 var plans = func() map[string]Plan {
-	b, err := ioutil.ReadFile("plans.json")
+	b, err := ioutil.ReadFile("assets/plans.json")
 	if err != nil {
 		panic(err)
 	}
