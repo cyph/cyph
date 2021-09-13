@@ -44,9 +44,19 @@ export class AccountNotificationsService extends BaseProvider {
 				case NotificationTypes.File:
 					if (
 						typeof notification.value.fileType !== 'number' ||
-						!(notification.value.fileType in AccountFileRecord)
+						!(
+							notification.value.fileType in
+							AccountFileRecord.RecordTypes
+						)
 					) {
 						break;
+					}
+
+					if (notification.value.eventID) {
+						switch (notification.value.fileType) {
+							case AccountFileRecord.RecordTypes.Email:
+								return `/email/${notification.value.eventID}`;
+						}
 					}
 
 					return this.accountFilesService.config[

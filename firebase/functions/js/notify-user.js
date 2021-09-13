@@ -158,6 +158,7 @@ export const notifyUser = async (
 	const {
 		actions,
 		additionalData = {},
+		emailOnly,
 		eventDetails,
 		subject,
 		tag = notificationID,
@@ -264,6 +265,7 @@ export const notifyUser = async (
 		} :
 	metadata.fileType === AccountFileRecord.RecordTypes.Email ?
 		{
+			emailOnly: true,
 			subject: `Encrypted Email from ${senderUsername}`,
 			text: `${targetName}, ${senderName} has sent you a secure email: ${accountsURL}email/${notificationID}`
 		} :
@@ -333,7 +335,8 @@ export const notifyUser = async (
 				ring: activeCall,
 				tag: `${notification.type}_${tag}`
 			},
-			true
+			true,
+			emailOnly
 		),
 		pushItem(
 			namespace,
