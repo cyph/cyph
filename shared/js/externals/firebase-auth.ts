@@ -10,6 +10,8 @@ export const getAuth = auth.getAuth;
 
 export const indexedDBLocalPersistence: any = auth.indexedDBLocalPersistence;
 
+export const initializeAuth: any = auth.initializeAuth;
+
 export const inMemoryPersistence: any = auth.inMemoryPersistence;
 
 export const signInWithEmailAndPassword: any = auth.signInWithEmailAndPassword;
