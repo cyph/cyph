@@ -1081,8 +1081,11 @@ message EmailMessage {
 	/** Subject. */
 	string subject = 6;
 
+	/** Timestamp. */
+	required double timestamp = 7;
+
 	/** Recipient email contacts. */
-	repeated Contact to = 7;
+	repeated Contact to = 8;
 }
 
 /** External email message data to import. */

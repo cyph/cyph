@@ -26,6 +26,7 @@ import {StringsService} from '../../services/strings.service';
 import {trackBySelf} from '../../track-by/track-by-self';
 import {filterUndefined} from '../../util/filter';
 import {readableByteLength} from '../../util/formatting';
+import {getTimestamp} from '../../util/time';
 import {waitForValue} from '../../util/wait';
 
 /**
@@ -300,6 +301,7 @@ export class EmailComposeComponent
 			cc: this.cc.value,
 			from,
 			subject: this.subject.value,
+			timestamp: await getTimestamp(),
 			to: this.to.value
 		});
 	}
