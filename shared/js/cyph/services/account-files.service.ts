@@ -816,143 +816,7 @@ export class AccountFilesService extends BaseProvider {
 						(
 							await Promise.all(
 								arr.map(async ({value}) =>
-									getOrSetDefaultAsync(
-										this.incomingFileCache,
-										value,
-										async () => {
-											try {
-												const currentUser =
-													this.accountDatabaseService
-														.currentUser.value;
-
-												if (!currentUser) {
-													return this.nonexistentFile;
-												}
-
-												const referenceContainer =
-													await deserialize(
-														AccountFileReferenceContainer,
-														await this.potassiumService.box.open(
-															value,
-															currentUser.keys
-																.encryptionKeyPair
-														)
-													);
-
-												let record: IAccountFileRecord;
-												let reference: IAccountFileReference;
-
-												if (
-													referenceContainer.anonymousShare
-												) {
-													record =
-														referenceContainer
-															.anonymousShare
-															.accountFileRecord;
-
-													record.wasAnonymousShare =
-														true;
-
-													if (record.replyToEmail) {
-														record.replyToEmail =
-															record.replyToEmail.trim();
-														if (
-															!isValidEmail(
-																record.replyToEmail
-															)
-														) {
-															record.replyToEmail =
-																undefined;
-														}
-													}
-
-													if (record.replyToName) {
-														record.replyToName =
-															record.replyToName
-																.replace(
-																	/\s+/g,
-																	' '
-																)
-																.trim();
-													}
-
-													reference = {
-														id: record.id,
-														key: referenceContainer
-															.anonymousShare.key,
-														owner: currentUser.user
-															.username
-													};
-												}
-												else if (
-													referenceContainer.signedShare
-												) {
-													reference =
-														await deserialize(
-															AccountFileReference,
-															await this.potassiumService.sign.open(
-																referenceContainer
-																	.signedShare
-																	.accountFileReference,
-																(
-																	await this.accountDatabaseService.getUserPublicKeys(
-																		referenceContainer
-																			.signedShare
-																			.owner
-																	)
-																).signing
-															)
-														);
-
-													record =
-														await this.accountDatabaseService.getItem(
-															`users/${reference.owner}/fileRecords/${reference.id}`,
-															AccountFileRecord,
-															undefined,
-															reference.key
-														);
-												}
-												else {
-													return this.nonexistentFile;
-												}
-
-												const incomingFile = {
-													id: record.id,
-													key: reference.key,
-													mediaType: record.mediaType,
-													name: record.name,
-													owner: reference.owner,
-													recordType:
-														record.recordType,
-													replyToEmail:
-														record.replyToEmail,
-													replyToName:
-														record.replyToName,
-													size: record.size,
-													timestamp: record.timestamp,
-													wasAnonymousShare:
-														record.wasAnonymousShare
-												};
-
-												if (
-													await this.hasFile(
-														incomingFile.id
-													)
-												) {
-													await this.acceptIncomingFile(
-														incomingFile,
-														false
-													);
-													return this.nonexistentFile;
-												}
-
-												return incomingFile;
-											}
-											catch {
-												return this.nonexistentFile;
-											}
-										}
-									)
+									this.processIncomingFile(value)
 								)
 							)
 						).filter(file => file !== this.nonexistentFile)
@@ -1294,7 +1158,8 @@ export class AccountFilesService extends BaseProvider {
 			| (IAccountFileRecord & IAccountFileReference)
 			| Promise<IAccountFileRecord & IAccountFileReference>,
 		proto: IProto<T>,
-		securityModel?: SecurityModels
+		securityModel?: SecurityModels,
+		incoming: boolean = false
 	) : {
 		progress: Observable<number>;
 		result: Promise<T>;
@@ -1303,7 +1168,9 @@ export class AccountFilesService extends BaseProvider {
 
 		showSpinner.next(0);
 
-		const filePromise = !(id instanceof Promise) ? this.getFile(id) : id;
+		const filePromise = !(id instanceof Promise) ?
+			this.getFile(id, undefined, incoming) :
+			id;
 
 		filePromise.catch(() => {});
 
@@ -1493,6 +1360,106 @@ export class AccountFilesService extends BaseProvider {
 	}
 
 	/** @ignore */
+	private async processIncomingFile (
+		value: Uint8Array
+	) : Promise<IAccountFileRecord & IAccountFileReference> {
+		return getOrSetDefaultAsync(this.incomingFileCache, value, async () => {
+			try {
+				const currentUser =
+					this.accountDatabaseService.currentUser.value;
+
+				if (!currentUser) {
+					return this.nonexistentFile;
+				}
+
+				const referenceContainer = await deserialize(
+					AccountFileReferenceContainer,
+					await this.potassiumService.box.open(
+						value,
+						currentUser.keys.encryptionKeyPair
+					)
+				);
+
+				let record: IAccountFileRecord;
+				let reference: IAccountFileReference;
+
+				if (referenceContainer.anonymousShare) {
+					record =
+						referenceContainer.anonymousShare.accountFileRecord;
+
+					record.wasAnonymousShare = true;
+
+					if (record.replyToEmail) {
+						record.replyToEmail = record.replyToEmail.trim();
+						if (!isValidEmail(record.replyToEmail)) {
+							record.replyToEmail = undefined;
+						}
+					}
+
+					if (record.replyToName) {
+						record.replyToName = record.replyToName
+							.replace(/\s+/g, ' ')
+							.trim();
+					}
+
+					reference = {
+						id: record.id,
+						key: referenceContainer.anonymousShare.key,
+						owner: currentUser.user.username
+					};
+				}
+				else if (referenceContainer.signedShare) {
+					reference = await deserialize(
+						AccountFileReference,
+						await this.potassiumService.sign.open(
+							referenceContainer.signedShare.accountFileReference,
+							(
+								await this.accountDatabaseService.getUserPublicKeys(
+									referenceContainer.signedShare.owner
+								)
+							).signing
+						)
+					);
+
+					record = await this.accountDatabaseService.getItem(
+						`users/${reference.owner}/fileRecords/${reference.id}`,
+						AccountFileRecord,
+						undefined,
+						reference.key
+					);
+				}
+				else {
+					return this.nonexistentFile;
+				}
+
+				const incomingFile = {
+					id: record.id,
+					key: reference.key,
+					mediaType: record.mediaType,
+					name: record.name,
+					owner: reference.owner,
+					recordType: record.recordType,
+					replyToEmail: record.replyToEmail,
+					replyToName: record.replyToName,
+					size: record.size,
+					timestamp: record.timestamp,
+					wasAnonymousShare: record.wasAnonymousShare
+				};
+
+				if (await this.hasFile(incomingFile.id)) {
+					await this.acceptIncomingFile(incomingFile, false);
+					return this.nonexistentFile;
+				}
+
+				return incomingFile;
+			}
+			catch {
+				return this.nonexistentFile;
+			}
+		});
+	}
+
+	/** @ignore */
 	private watchFileData<T> (
 		id: string | IAccountFileRecord,
 		recordType: AccountFileRecord.RecordTypes
@@ -1545,9 +1512,11 @@ export class AccountFilesService extends BaseProvider {
 		const incomingFile =
 			typeof id === 'object' && 'key' in id ?
 				id :
-			typeof id === 'object' ?
-				this.incomingFiles().value.find(o => o.id === id.id) :
-				this.incomingFiles().value.find(o => o.id === id);
+				await this.getFile(
+					typeof id === 'object' ? id.id : id,
+					undefined,
+					true
+				);
 
 		if (incomingFile === undefined) {
 			throw new Error('Incoming file not found.');
@@ -1703,7 +1672,8 @@ export class AccountFilesService extends BaseProvider {
 			| string
 			| IAccountFileRecord
 			| (IAccountFileRecord & IAccountFileReference),
-		recordType: AccountFileRecord.RecordTypes.Appointment
+		recordType: AccountFileRecord.RecordTypes.Appointment,
+		incoming?: boolean
 	) : {
 		progress: Observable<number>;
 		result: Promise<IAppointment>;
@@ -1713,14 +1683,16 @@ export class AccountFilesService extends BaseProvider {
 			| string
 			| IAccountFileRecord
 			| (IAccountFileRecord & IAccountFileReference),
-		recordType: AccountFileRecord.RecordTypes.Doc
+		recordType: AccountFileRecord.RecordTypes.Doc,
+		incoming?: boolean
 	) : never;
 	public downloadFile (
 		id:
 			| string
 			| IAccountFileRecord
 			| (IAccountFileRecord & IAccountFileReference),
-		recordType: AccountFileRecord.RecordTypes.EhrApiKey
+		recordType: AccountFileRecord.RecordTypes.EhrApiKey,
+		incoming?: boolean
 	) : {
 		progress: Observable<number>;
 		result: Promise<IEhrApiKey>;
@@ -1730,7 +1702,8 @@ export class AccountFilesService extends BaseProvider {
 			| string
 			| IAccountFileRecord
 			| (IAccountFileRecord & IAccountFileReference),
-		recordType: AccountFileRecord.RecordTypes.Email
+		recordType: AccountFileRecord.RecordTypes.Email,
+		incoming?: boolean
 	) : {
 		progress: Observable<number>;
 		result: Promise<IEmailMessage>;
@@ -1742,7 +1715,8 @@ export class AccountFilesService extends BaseProvider {
 			| (IAccountFileRecord & IAccountFileReference),
 		recordType:
 			| AccountFileRecord.RecordTypes.File
-			| AccountFileRecord.RecordTypes.Note
+			| AccountFileRecord.RecordTypes.Note,
+		incoming?: boolean
 	) : {
 		progress: Observable<number>;
 		result: Promise<Uint8Array>;
@@ -1752,7 +1726,8 @@ export class AccountFilesService extends BaseProvider {
 			| string
 			| IAccountFileRecord
 			| (IAccountFileRecord & IAccountFileReference),
-		recordType: AccountFileRecord.RecordTypes.Form
+		recordType: AccountFileRecord.RecordTypes.Form,
+		incoming?: boolean
 	) : {
 		progress: Observable<number>;
 		result: Promise<IForm>;
@@ -1762,7 +1737,8 @@ export class AccountFilesService extends BaseProvider {
 			| string
 			| IAccountFileRecord
 			| (IAccountFileRecord & IAccountFileReference),
-		recordType: AccountFileRecord.RecordTypes.MessagingGroup
+		recordType: AccountFileRecord.RecordTypes.MessagingGroup,
+		incoming?: boolean
 	) : {
 		progress: Observable<number>;
 		result: Promise<IAccountMessagingGroup>;
@@ -1772,7 +1748,8 @@ export class AccountFilesService extends BaseProvider {
 			| string
 			| IAccountFileRecord
 			| (IAccountFileRecord & IAccountFileReference),
-		recordType: AccountFileRecord.RecordTypes.RedoxPatient
+		recordType: AccountFileRecord.RecordTypes.RedoxPatient,
+		incoming?: boolean
 	) : {
 		progress: Observable<number>;
 		result: Promise<IRedoxPatient>;
@@ -1782,7 +1759,8 @@ export class AccountFilesService extends BaseProvider {
 			| string
 			| IAccountFileRecord
 			| (IAccountFileRecord & IAccountFileReference),
-		recordType: AccountFileRecord.RecordTypes
+		recordType: AccountFileRecord.RecordTypes,
+		incoming: boolean = false
 	) : any {
 		const fileConfig = this.config[recordType];
 
@@ -1797,7 +1775,8 @@ export class AccountFilesService extends BaseProvider {
 		return this.downloadItem<any>(
 			id,
 			fileConfig.proto,
-			fileConfig.securityModel
+			fileConfig.securityModel,
+			incoming
 		);
 	}
 
@@ -2019,7 +1998,7 @@ export class AccountFilesService extends BaseProvider {
 			| IAccountFileRecord
 			| (IAccountFileRecord & IAccountFileReference)
 	) : Promise<IEmailMessage> {
-		return this.downloadFile(id, AccountFileRecord.RecordTypes.Email)
+		return this.downloadFile(id, AccountFileRecord.RecordTypes.Email, true)
 			.result;
 	}
 
@@ -2029,7 +2008,8 @@ export class AccountFilesService extends BaseProvider {
 			| string
 			| IAccountFileRecord
 			| (IAccountFileRecord & IAccountFileReference),
-		recordType?: AccountFileRecord.RecordTypes
+		recordType?: AccountFileRecord.RecordTypes,
+		incoming: boolean = false
 	) : Promise<IAccountFileRecord & IAccountFileReference> {
 		if (typeof id !== 'string') {
 			const maybeFileReference: any = id;
@@ -2044,23 +2024,45 @@ export class AccountFilesService extends BaseProvider {
 
 		await this.accountDatabaseService.getCurrentUser();
 
-		const reference = await this.accountDatabaseService.getItem(
-			`fileReferences/${id}`,
-			AccountFileReference
-		);
+		const fileRecordReferenceUnion = incoming ?
+			await (async () => {
+				const incomingFile = await this.processIncomingFile(
+						await this.accountDatabaseService.getItem(
+							`incomingFiles/${id}`,
+							BinaryProto,
+							SecurityModels.unprotected
+						)
+					);
 
-		const record = await this.accountDatabaseService.getItem(
-			`users/${reference.owner}/fileRecords/${reference.id}`,
-			AccountFileRecord,
-			undefined,
-			reference.key
-		);
+				return incomingFile === this.nonexistentFile ?
+					undefined :
+					incomingFile;
+			})() :
+			await (async () => {
+				const reference = await this.accountDatabaseService.getItem(
+						`fileReferences/${id}`,
+						AccountFileReference
+					);
 
-		if (recordType !== undefined && record.recordType !== recordType) {
+				const record = await this.accountDatabaseService.getItem(
+						`users/${reference.owner}/fileRecords/${reference.id}`,
+						AccountFileRecord,
+						undefined,
+						reference.key
+					);
+
+				return {...record, ...reference};
+			})();
+
+		if (
+			fileRecordReferenceUnion === undefined ||
+			(recordType !== undefined &&
+				fileRecordReferenceUnion.recordType !== recordType)
+		) {
 			throw new Error('Specified file does not exist.');
 		}
 
-		return {...record, ...reference};
+		return fileRecordReferenceUnion;
 	}
 
 	/** Gets file size. */

@@ -65,7 +65,8 @@ export class AccountEmailViewComponent extends BaseProvider implements OnInit {
 						const emailRecord =
 							await this.accountFilesService.getFile(
 								id,
-								AccountFileRecord.RecordTypes.Email
+								AccountFileRecord.RecordTypes.Email,
+								true
 							);
 
 						const email = await this.accountFilesService.getEmail(
