@@ -1998,8 +1998,24 @@ export class AccountFilesService extends BaseProvider {
 			| IAccountFileRecord
 			| (IAccountFileRecord & IAccountFileReference)
 	) : Promise<IEmailMessage> {
-		return this.downloadFile(id, AccountFileRecord.RecordTypes.Email, true)
-			.result;
+		if (typeof id === 'object') {
+			return this.downloadFile(id, AccountFileRecord.RecordTypes.Email)
+				.result;
+		}
+
+		try {
+			return await this.downloadFile(
+				id,
+				AccountFileRecord.RecordTypes.Email
+			).result;
+		}
+		catch {
+			return this.downloadFile(
+				id,
+				AccountFileRecord.RecordTypes.Email,
+				true
+			).result;
+		}
 	}
 
 	/** Gets the specified file record. */

@@ -62,11 +62,14 @@ export class AccountEmailViewComponent extends BaseProvider implements OnInit {
 
 						this.accountService.interstitial.next(true);
 
-						const emailRecord =
-							await this.accountFilesService.getFile(
-								id,
-								AccountFileRecord.RecordTypes.Email,
-								true
+						const emailRecord = await this.accountFilesService
+							.getFile(id, AccountFileRecord.RecordTypes.Email)
+							.catch(async () =>
+								this.accountFilesService.getFile(
+									id,
+									AccountFileRecord.RecordTypes.Email,
+									true
+								)
 							);
 
 						const email = await this.accountFilesService.getEmail(
