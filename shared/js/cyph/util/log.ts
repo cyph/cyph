@@ -4,12 +4,13 @@ import {lockFunction} from './lock';
 import {
 	dynamicDeserialize,
 	dynamicSerializeBytes,
-	prettyPrint
+	prettyPrint,
+	stringify
 } from './serialization';
 
 const logs: {
 	args: any[];
-	argsCopy: string;
+	argsCopy?: any[];
 	error?: true;
 	timeDifference: number;
 	timestamp: number;
@@ -36,7 +37,7 @@ const debugLogInternal = async (
 	| undefined
 	| {
 			args: any[];
-			argsCopy: string;
+			argsCopy?: any[];
 			error?: true;
 			timeDifference: number;
 			timestamp: number;
@@ -48,19 +49,29 @@ const debugLogInternal = async (
 
 	const args = await Promise.all(argFunctions.map(async f => f()));
 
-	let argsCopy: any | undefined;
+	let argsCopy: any[] | undefined;
 	let argsString: string | undefined;
 
 	try {
 		argsCopy = dynamicDeserialize(dynamicSerializeBytes(args));
-		argsString =
-			argsCopy.length > 1 ?
-				prettyPrint(argsCopy) :
-			typeof argsCopy[0] === 'string' ?
-				argsCopy[0] :
-				prettyPrint(argsCopy[0]);
 	}
 	catch {}
+
+	for (const argsArray of [args, argsCopy]) {
+		if (typeof argsString === 'string' || !(argsArray instanceof Array)) {
+			continue;
+		}
+
+		try {
+			argsString =
+				argsArray.length > 1 ?
+					prettyPrint(argsArray) :
+				typeof argsArray[0] === 'string' ?
+					argsArray[0] :
+					prettyPrint(argsArray[0]);
+		}
+		catch {}
+	}
 
 	/* eslint-disable-next-line @typescript-eslint/tslint/config */
 	const timestamp = Date.now();
@@ -89,11 +100,11 @@ const debugLogInternal = async (
 	if (env.debugLogID) {
 		let logString = `[Invalid Log] ${date.toString()}`;
 		try {
-			logString = JSON.stringify(log);
+			logString = stringify(log);
 		}
 		catch {
 			try {
-				logString = JSON.stringify(
+				logString = stringify(
 					dynamicDeserialize(dynamicSerializeBytes(log))
 				);
 			}

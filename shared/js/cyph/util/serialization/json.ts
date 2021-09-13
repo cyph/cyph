@@ -5,7 +5,9 @@ const stringifyInternal = <T>(value: T, space?: string) : string => {
 	/* eslint-disable-next-line @typescript-eslint/tslint/config */
 	return JSON.stringify(
 		value,
-		(_, v) =>
+		(k, v: unknown) =>
+			k !== 'errorObject' && v instanceof Error ?
+				{errorObject: v, errorString: v.toString()} :
 			v instanceof Uint8Array ?
 				{data: potassiumUtil.toBase64(v), isUint8Array: true} :
 			v instanceof Map ?
