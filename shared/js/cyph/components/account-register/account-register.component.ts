@@ -70,7 +70,7 @@ export class AccountRegisterComponent
 	private inviteCodeDebounceLast?: string;
 
 	/** @ignore */
-	public readonly postSimpleRegisterSetupWatcher =
+	private readonly postSimpleRegisterSetupWatcher =
 		new BehaviorSubject<boolean>(false);
 
 	/** @ignore */
