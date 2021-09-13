@@ -17,8 +17,10 @@ import {DialogService} from '../../services/dialog.service';
 import {EnvService} from '../../services/env.service';
 import {StringsService} from '../../services/strings.service';
 import {trackBySelf} from '../../track-by/track-by-self';
+import {filterUndefined} from '../../util/filter';
 import {readableByteLength} from '../../util/formatting';
 import {saveFile} from '../../util/save-file';
+import {getDateTimeString} from '../../util/time';
 import {waitForValue} from '../../util/wait';
 
 /**
@@ -56,8 +58,17 @@ export class EmailViewComponent
 	/** Email to display. */
 	@Input() public email?: IEmailMessage;
 
+	/** @see getDateTimeString */
+	public readonly getDateTimeString = getDateTimeString;
+
 	/** @see readableByteLength */
 	public readonly readableByteLength = readableByteLength;
+
+	/** Recipient summary data. */
+	public readonly recipientSummary = new BehaviorSubject({
+		allVerified: true,
+		text: ''
+	});
 
 	/** @see DocumentEditorContainerComponent */
 	@ViewChild('statusBarUI')
@@ -68,10 +79,24 @@ export class EmailViewComponent
 
 	/** @ignore */
 	private async onChanges () : Promise<void> {
-		const {body} = this.email || {};
+		const {body, to} = this.email || {};
 		if (!body) {
 			return;
 		}
+
+		const fullText = to ?
+			filterUndefined(
+				to.map(o => o.name.split(' ')[0] || undefined)
+			).join(', ') :
+			'';
+
+		this.recipientSummary.next({
+			allVerified: (to || [])
+				.map(o => !!o.verified)
+				.reduce((a, b) => a && b, true),
+			text:
+				fullText.length > 50 ? `${fullText.slice(0, 50)}...` : fullText
+		});
 
 		const documentEditor = await waitForValue(
 			() => this.documentEditorContainer?.documentEditor

@@ -68,6 +68,19 @@ ejs-documenteditorcontainer ::ng-deep {
 	}
 }
 
+/* https://material.angular.io/components/expansion/examples#expansion-steps */
+mat-expansion-panel.recipients-panel ::ng-deep {
+	.mat-expansion-panel-header-title,
+	.mat-expansion-panel-header-description {
+		flex-basis: 0;
+	}
+
+	.mat-expansion-panel-header-description {
+		justify-content: space-between;
+		align-items: center;
+	}
+}
+
 .document-editor-container-wrapper {
 	height: 100%;
 	overflow: hidden;
@@ -92,11 +105,25 @@ ejs-documenteditorcontainer ::ng-deep {
 	min-height: $minHeight;
 
 	mat-card .document-editor-container-wrapper {
-		$heightOffset: 133px;
+		$heightOffset: 162px;
 		height: calc(var(--height) - #{$heightOffset});
 		min-height: $minHeight - $heightOffset;
 
 		margin-left: -16px;
 		width: calc(100% + 32px);
+	}
+}
+
+.email-header {
+	font-size: 1.07em;
+
+	.from-name {
+		font-weight: bold;
+	}
+
+	.from-warning {
+		margin-right: 8px;
+		margin-top: -8px;
+		transform: translateY(6px);
 	}
 }

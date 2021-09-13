@@ -20,10 +20,15 @@
 			</button>
 
 			<mat-card-title>
-				<span>{{
-					email?.subject || stringsService.emailNoSubject
-				}}</span>
+				<ng-container
+					*ngTemplateOutlet="emailSubjectUI; context: {email: email}"
+				></ng-container>
 			</mat-card-title>
+			<mat-card-subtitle>
+				<ng-container
+					*ngTemplateOutlet="emailFromUI; context: {email: email}"
+				></ng-container>
+			</mat-card-subtitle>
 			<mat-card-content>
 				<ng-container *ngTemplateOutlet="emailViewUI"></ng-container>
 			</mat-card-content>
@@ -31,17 +36,81 @@
 	</div>
 </div>
 
+<ng-template #emailFromUI let-email="email">
+	<div fxLayout="row" class="email-header">
+		<div
+			fxFlex
+			[attr.aria-label]="stringsService.emailLabelFrom"
+			[matTooltip]="stringsService.emailAddressUnverifiedWarning"
+			[matTooltipDisabled]="!!email?.from?.verified"
+		>
+			<mat-icon
+				class="from-warning"
+				color="warn"
+				*ngIf="!email?.from?.verified"
+			>
+				warning
+			</mat-icon>
+			<span *ngIf="!!email?.from?.email; else noSenderSubtitle">
+				<span class="from-name">{{
+					email?.from?.name ? (email?.from?.name || '') + ' ' : ''
+				}}</span
+				>&lt;{{ email?.from?.email || ''
+				}}{{
+					email?.from?.username ?
+						' | @' + (email?.from?.username || '') :
+						''
+				}}&gt;
+			</span>
+			<ng-template #noSenderSubtitle>
+				<strong>{{ stringsService.emailNoSender }}</strong>
+			</ng-template>
+		</div>
+		<div [attr.aria-label]="stringsService.emailLabelTimestamp">
+			{{ getDateTimeString(email?.timestamp || 0) }}
+		</div>
+	</div>
+</ng-template>
+
+<ng-template #emailSubjectUI let-email="email">
+	<span [attr.aria-label]="stringsService.emailLabelSubject">{{
+		email?.subject || stringsService.emailNoSubject
+	}}</span>
+</ng-template>
+
 <ng-template #emailViewUI>
-	<div fxFlexFill fxLayout="column" *ngIf="!!email">
-		<h2 [attr.aria-label]="stringsService.emailSubject" *ngIf="!fullPage">
-			{{ email?.subject || stringsService.emailNoSubject }}
+	<div fxFlexFill fxLayout="column" fxLayoutGap="8px" *ngIf="!!email">
+		<h2 *ngIf="!fullPage">
+			<ng-container
+				*ngTemplateOutlet="emailSubjectUI; context: {email: email}"
+			></ng-container>
 		</h2>
 
-		<mat-form-field fxFlex>
-			<mat-chip-list
-				#chipList
-				[attr.aria-label]="stringsService.emailRecipients"
-			>
+		<h3 *ngIf="!fullPage">
+			<ng-container
+				*ngTemplateOutlet="emailFromUI; context: {email: email}"
+			></ng-container>
+		</h3>
+
+		<mat-expansion-panel
+			class="recipients-panel"
+			[attr.aria-label]="stringsService.emailLabelRecipients"
+			[matTooltip]="stringsService.emailAddressUnverifiedWarningGroup"
+			[matTooltipDisabled]="summary.allVerified"
+			*ngIf="recipientSummary | await as summary"
+		>
+			<mat-expansion-panel-header>
+				<mat-panel-title>
+					<span cyphTranslate>To</span>
+				</mat-panel-title>
+				<mat-panel-description>
+					<span>{{ summary.text }}</span>
+					<mat-icon color="warn" *ngIf="!summary.allVerified">
+						warning
+					</mat-icon>
+				</mat-panel-description>
+			</mat-expansion-panel-header>
+			<mat-chip-list fxFlex>
 				<mat-chip
 					[matTooltip]="stringsService.emailAddressUnverifiedWarning"
 					[matTooltipDisabled]="o.verified"
@@ -58,16 +127,10 @@
 						}}{{ o.username ? ' | @' + o.username : '' }}&gt;
 					</span>
 				</mat-chip>
-
-				<input
-					#chipListInput
-					cyphTranslate
-					disabled
-					placeholder="To"
-					[matChipInputFor]="chipList"
-				/>
 			</mat-chip-list>
-		</mat-form-field>
+		</mat-expansion-panel>
+
+		<div></div>
 
 		<div class="document-editor-container-wrapper">
 			<ejs-documenteditorcontainer
@@ -87,7 +150,11 @@
 	<mat-form-field
 		appearance="fill"
 		class="attachments-list"
-		[matTooltip]="stringsService.attachmentsViewTooltip"
+		[matTooltip]="
+			((attachments | await) || []).length > 0 ?
+				stringsService.attachmentsViewTooltip :
+				stringsService.attachmentsViewEmptyTooltip
+		"
 		matTooltipPosition="above"
 	>
 		<mat-label cyphTranslate>Attachments</mat-label>

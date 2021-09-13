@@ -137,6 +137,9 @@ export class StringsService extends BaseProvider {
 	public readonly attachmentsComposeTooltip = `Manage Attachments`;
 
 	/** @see StringsService */
+	public readonly attachmentsViewEmptyTooltip = `No Attachments`;
+
+	/** @see StringsService */
 	public readonly attachmentsViewTooltip = `View Attachments`;
 
 	/** @see StringsService */
@@ -413,6 +416,24 @@ export class StringsService extends BaseProvider {
 	public readonly emailAddressUnverifiedWarning = `WARNING: Could not verify ownership of this email address by this user.`;
 
 	/** @see StringsService */
+	public readonly emailAddressUnverifiedWarningGroup = `WARNING: Could not verify the email address of at least one user.`;
+
+	/** @see StringsService */
+	public readonly emailLabelFrom = `Sender`;
+
+	/** @see StringsService */
+	public readonly emailLabelRecipients = `Recipients`;
+
+	/** @see StringsService */
+	public readonly emailLabelSubject = `Subject`;
+
+	/** @see StringsService */
+	public readonly emailLabelTimestamp = `Timestamp`;
+
+	/** @see StringsService */
+	public readonly emailNoSender = `(anonymous)`;
+
+	/** @see StringsService */
 	public readonly emailNoSubject = `(no subject)`;
 
 	/** @see StringsService */
@@ -426,9 +447,6 @@ export class StringsService extends BaseProvider {
 
 	/** @see StringsService */
 	public readonly emailPublishTooltip = `Publish your email address so that others can use it to look up your account.`;
-
-	/** @see StringsService */
-	public readonly emailRecipients = `Recipients`;
 
 	/** @see StringsService */
 	public readonly emailRecipientAddFailure = `Failed to add the following recipients: \${RECIPIENTS}.`;
