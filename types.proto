@@ -1090,29 +1090,29 @@ message EmailMessage {
 
 /** External email message data to import. */
 message EmailMessageExternal {
-	/** Attachments. */
-	repeated bytes attachments = 1;
+	/** @see EmailMessage.attachments */
+	repeated FileContainer attachments = 1;
 
-	/** BCC email address(es). */
-	string bcc = 2;
+	/** @see EmailMessage.bcc */
+	repeated EmailMessage.Contact bcc = 2;
 
-	/** CC email address(es). */
-	string cc = 3;
+	/** @see EmailMessage.cc */
+	repeated EmailMessage.Contact cc = 3;
 
-	/** Sender email address. */
-	string from = 4;
+	/** @see EmailMessage.from */
+	EmailMessage.Contact from = 4;
 
 	/** HTML body. */
 	string html = 5;
 
-	/** Subject. */
+	/** @see EmailMessage.subject */
 	string subject = 6;
 
 	/** Text body. */
 	string text = 7;
 
-	/** Recipient email address(es). */
-	string to = 8;
+	/** @see EmailMessage.to */
+	repeated EmailMessage.Contact to = 8;
 }
 
 /** Angular CLI environment configuration. */
