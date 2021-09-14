@@ -6,6 +6,7 @@ import {
 	HttpResponse
 } from '@angular/common/http';
 import {BehaviorSubject, Observable} from 'rxjs';
+import {potassiumUtil} from '../crypto/potassium/potassium-util';
 import {MaybePromise} from '../maybe-promise-type';
 import {parse, stringify, toQueryString} from './serialization';
 import {staticHttpClient} from './static-services';
@@ -17,10 +18,10 @@ const baseRequest = <R, T>(
 		contentType?: string;
 		data?: any;
 		debug?: {tries?: number};
-
 		discardErrors?: boolean;
 		headers?: Record<string, string | string[]>;
 		method?: string;
+		rawData?: Uint8Array;
 		retries?: number;
 		timeout?: number;
 		url: string;
@@ -41,6 +42,7 @@ const baseRequest = <R, T>(
 
 			const headers = o.headers || {};
 			const method = o.method || 'GET';
+			const rawData = o.rawData;
 			const retries = o.retries === undefined ? 0 : o.retries;
 			let contentType = o.contentType || '';
 			let data = o.data;
@@ -69,6 +71,11 @@ const baseRequest = <R, T>(
 					contentType === 'application/json' ?
 						stringify(data) :
 						toQueryString(data);
+			}
+
+			if (rawData) {
+				data = rawData;
+				contentType = 'application/octet-stream';
 			}
 
 			let response: R | undefined;
@@ -132,7 +139,13 @@ const baseRequest = <R, T>(
 			if (!statusOk || response === undefined) {
 				const err =
 					(error instanceof HttpErrorResponse && error.error ?
-						new Error(error.error) :
+						error.error instanceof ArrayBuffer ?
+							new Error(
+								potassiumUtil.toString(
+									new Uint8Array(error.error)
+								)
+							) :
+							new Error(error.error) :
 						undefined) ||
 					error ||
 					response ||
@@ -156,6 +169,7 @@ export const request = async (o: {
 	debug?: {tries?: number};
 	headers?: Record<string, string | string[]>;
 	method?: string;
+	rawData?: Uint8Array;
 	retries?: number;
 	timeout?: number;
 	url: string;
@@ -172,6 +186,7 @@ export const requestByteStream = (o: {
 	debug?: {tries?: number};
 	headers?: Record<string, string | string[]>;
 	method?: string;
+	rawData?: Uint8Array;
 	retries?: number;
 	timeout?: number;
 	url: string;
@@ -191,6 +206,7 @@ export const requestBytes = async (o: {
 	debug?: {tries?: number};
 	headers?: Record<string, string | string[]>;
 	method?: string;
+	rawData?: Uint8Array;
 	retries?: number;
 	timeout?: number;
 	url: string;
@@ -205,6 +221,7 @@ export const requestMaybeJSON = async (o: {
 	debug?: {tries?: number};
 	headers?: Record<string, string | string[]>;
 	method?: string;
+	rawData?: Uint8Array;
 	retries?: number;
 	timeout?: number;
 	url: string;
@@ -226,6 +243,7 @@ export const requestJSON = async (o: {
 	debug?: {tries?: number};
 	headers?: Record<string, string | string[]>;
 	method?: string;
+	rawData?: Uint8Array;
 	retries?: number;
 	timeout?: number;
 	url: string;
