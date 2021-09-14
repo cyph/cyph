@@ -28,6 +28,11 @@ type BillingStatus struct {
 	Stripe       bool
 }
 
+// Blob : Blob of data
+type Blob struct {
+	Data []byte
+}
+
 // BurnerChannel : Burner channel
 type BurnerChannel struct {
 	ChannelID string
@@ -181,7 +186,7 @@ var config = struct {
 
 	AllowedCyphIDLength: 7,
 
-	AllowedHeaders: "Access-Control-Request-Method,Authorization,X-Forwarded-For",
+	AllowedHeaders: "Access-Control-Request-Method,Access-Control-Request-Headers,Authorization,Content-Type,X-Forwarded-For",
 
 	AllowedMethods: "GET,HEAD,POST,PUT,DELETE,OPTIONS",
 

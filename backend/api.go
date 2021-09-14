@@ -31,6 +31,8 @@ import (
 func main() {
 	handleFuncs("/analytics/*", false, Handlers{methods.GET: analytics, methods.POST: analytics})
 	handleFuncs("/billingstatus/{userToken}", false, Handlers{methods.GET: getBillingStatus})
+	handleFuncs("/blobs", false, Handlers{methods.PUT: blobUpload})
+	handleFuncs("/blobs/{id}", false, Handlers{methods.DELETE: blobDelete, methods.GET: blobDownload})
 	handleFuncs("/braintree/token", false, Handlers{methods.GET: braintreeToken})
 	handleFuncs("/channels/{id}", false, Handlers{methods.DELETE: channelDelete, methods.POST: channelSetup})
 	handleFuncs("/checkout", false, Handlers{methods.POST: checkout})
@@ -103,6 +105,54 @@ func analytics(h HandlerArgs) (interface{}, int) {
 	}
 
 	return resp.Body, resp.StatusCode
+}
+
+func blobDelete(h HandlerArgs) (interface{}, int) {
+	id := sanitize(h.Vars["id"])
+	if id == "" {
+		return "invalid ID", http.StatusForbidden
+	}
+
+	err := h.Datastore.Delete(h.Context, datastoreKey("Blob", id))
+	if err != nil {
+		return err.Error(), http.StatusBadRequest
+	}
+
+	return "", http.StatusOK
+}
+
+func blobDownload(h HandlerArgs) (interface{}, int) {
+	id := sanitize(h.Vars["id"])
+	if id == "" {
+		return "invalid ID", http.StatusForbidden
+	}
+
+	blob := &Blob{}
+
+	err := h.Datastore.Get(h.Context, datastoreKey("Blob", id), blob)
+	if err != nil {
+		return err.Error(), http.StatusBadRequest
+	}
+
+	return blob.Data, http.StatusOK
+}
+
+func blobUpload(h HandlerArgs) (interface{}, int) {
+	data, err := ioutil.ReadAll(
+		http.MaxBytesReader(h.Writer, h.Request.Body, int64(134217728)),
+	)
+	if err != nil {
+		return err.Error(), http.StatusBadRequest
+	}
+
+	id := generateCustomRandomID(32)
+
+	_, err = h.Datastore.Put(h.Context, datastoreKey("Blob", id), &Blob{Data: data})
+	if err != nil {
+		return err.Error(), http.StatusBadRequest
+	}
+
+	return id, http.StatusOK
 }
 
 func braintreeToken(h HandlerArgs) (interface{}, int) {

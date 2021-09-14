@@ -279,13 +279,17 @@ func isValidCyphID(id string) bool {
 	return len(id) >= config.AllowedCyphIDLength && config.AllowedCyphIDs.MatchString(id)
 }
 
-func generateRandomID() string {
-	bytes := make([]byte, config.APIKeyByteLength)
+func generateCustomRandomID(byteLength int) string {
+	bytes := make([]byte, byteLength)
 	if _, err := rand.Read(bytes); err != nil {
 		panic(err)
 	}
 
 	return hex.EncodeToString(bytes)
+}
+
+func generateRandomID() string {
+	return generateCustomRandomID(config.APIKeyByteLength)
 }
 
 func generateAPIKey(h HandlerArgs, kind string) (string, *datastore.Key, error) {
@@ -1330,7 +1334,9 @@ func handleFuncs(pattern string, cron bool, handlers Handlers) {
 
 			w.WriteHeader(responseCode)
 
-			if responseBody != nil {
+			if responseBodyBytes, ok := responseBody.([]byte); ok {
+				w.Write(responseBodyBytes)
+			} else if responseBody != nil {
 				output := ""
 
 				if s, ok := responseBody.(string); ok {
