@@ -23,6 +23,7 @@ import (
 	"time"
 
 	"cloud.google.com/go/datastore"
+	"cloud.google.com/go/storage"
 	"github.com/buu700/braintree-go-tmp"
 	"github.com/buu700/mustache-tmp"
 	gorillaHandlers "github.com/gorilla/handlers"
@@ -273,6 +274,16 @@ func datastoreKey(kind string, name string) *datastore.Key {
 
 func datastoreQuery(kind string) *datastore.Query {
 	return datastore.NewQuery(kind).Namespace(apiNamespace)
+}
+
+func getStorageObject(h HandlerArgs, id string) (*storage.ObjectHandle, error) {
+	storageClient, err := storage.NewClient(h.Context)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return storageClient.Bucket("Blobs").Object(id), nil
 }
 
 func isValidCyphID(id string) bool {

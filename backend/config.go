@@ -28,12 +28,6 @@ type BillingStatus struct {
 	Stripe       bool
 }
 
-// Blob : Blob of data
-type Blob struct {
-	Data []byte `datastore:",noindex"`
-	ID   string
-}
-
 // BurnerChannel : Burner channel
 type BurnerChannel struct {
 	ChannelID string

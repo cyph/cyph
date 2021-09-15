@@ -6,6 +6,7 @@ require (
 	cloud.google.com/go v0.94.1 // indirect
 	cloud.google.com/go/cloudtasks v0.1.0
 	cloud.google.com/go/datastore v1.5.0
+	cloud.google.com/go/storage v1.10.0
 	github.com/buu700/braintree-go-tmp v0.0.0-20200503224113-916e4842cf47
 	github.com/buu700/mustache-tmp v1.0.1
 	github.com/felixge/httpsnoop v1.0.2 // indirect

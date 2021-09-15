@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
+	"io"
 	"io/ioutil"
 	"log"
 	"net/http"
@@ -113,9 +114,13 @@ func blobDelete(h HandlerArgs) (interface{}, int) {
 		return "invalid ID", http.StatusForbidden
 	}
 
-	err := h.Datastore.Delete(h.Context, datastoreKey("Blob", id))
+	storageObject, err := getStorageObject(h, id)
 	if err != nil {
-		return err.Error(), http.StatusBadRequest
+		return err.Error(), http.StatusForbidden
+	}
+
+	if err := storageObject.Delete(h.Context); err != nil {
+		return err.Error(), http.StatusInternalServerError
 	}
 
 	return "", http.StatusOK
@@ -127,29 +132,42 @@ func blobDownload(h HandlerArgs) (interface{}, int) {
 		return "invalid ID", http.StatusForbidden
 	}
 
-	blob := &Blob{ID: id}
-
-	err := h.Datastore.Get(h.Context, datastoreKey("Blob", id), blob)
+	storageObject, err := getStorageObject(h, id)
 	if err != nil {
-		return err.Error(), http.StatusBadRequest
+		return err.Error(), http.StatusForbidden
 	}
 
-	return blob.Data, http.StatusOK
+	sr, err := storageObject.NewReader(h.Context)
+	if err != nil {
+		return err.Error(), http.StatusInternalServerError
+	}
+
+	data, err := ioutil.ReadAll(sr)
+	if err != nil {
+		return err.Error(), http.StatusInternalServerError
+	}
+
+	return data, http.StatusOK
 }
 
 func blobUpload(h HandlerArgs) (interface{}, int) {
-	data, err := ioutil.ReadAll(
-		http.MaxBytesReader(h.Writer, h.Request.Body, int64(134217728)),
-	)
+	id := generateCustomRandomID(32)
+
+	storageObject, err := getStorageObject(h, id)
 	if err != nil {
+		return err.Error(), http.StatusForbidden
+	}
+	sw := storageObject.NewWriter(h.Context)
+
+	if _, err := io.Copy(
+		sw,
+		http.MaxBytesReader(h.Writer, h.Request.Body, int64(134217728)),
+	); err != nil {
 		return err.Error(), http.StatusBadRequest
 	}
 
-	id := generateCustomRandomID(32)
-
-	_, err = h.Datastore.Put(h.Context, datastoreKey("Blob", id), &Blob{Data: data, ID: id})
-	if err != nil {
-		return err.Error(), http.StatusBadRequest
+	if err := sw.Close(); err != nil {
+		return err.Error(), http.StatusInternalServerError
 	}
 
 	return id, http.StatusOK
