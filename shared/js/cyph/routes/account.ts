@@ -251,6 +251,14 @@ export const account: Route = {
 			component: AccountEmailComposeComponent
 		},
 		{
+			path: 'email/compose/:draftID',
+			component: AccountEmailComposeComponent
+		},
+		{
+			path: 'email/compose/:draftID/:redirectURL',
+			component: AccountEmailComposeComponent
+		},
+		{
 			path: 'email/:id',
 			component: AccountEmailViewComponent
 		},

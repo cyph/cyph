@@ -1,7 +1,8 @@
 <cyph-email-compose
-	[from]="from"
+	[from]="o.from"
 	[fullPage]="true"
+	[initialDraft]="o.initialDraft"
 	[preprocessRecipient]="preprocessRecipient"
 	(sentContent)="send($event)"
-	*ngIf="senderData | await as from"
+	*ngIf="emailComposeData | await as o"
 ></cyph-email-compose>

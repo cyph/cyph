@@ -6,6 +6,7 @@ import {
 	EventEmitter,
 	Input,
 	OnChanges,
+	OnInit,
 	Output,
 	ViewChild
 } from '@angular/core';
@@ -41,7 +42,7 @@ import {waitForValue} from '../../util/wait';
 })
 export class EmailComposeComponent
 	extends BaseProvider
-	implements AfterViewInit, OnChanges
+	implements AfterViewInit, OnChanges, OnInit
 {
 	/** @see DocumentEditorContainerComponent */
 	@ViewChild('documentEditorContainer', {
@@ -202,6 +203,10 @@ export class EmailComposeComponent
 
 		await this.onChanges();
 
+		if (this.initialDraft?.body) {
+			documentEditorContainer.documentEditor.open(this.initialDraft.body);
+		}
+
 		const statusBarUI = this.statusBarUI?.nativeElement;
 		const statusBar =
 			documentEditorContainer.element.querySelector('.e-de-status-bar');
@@ -231,6 +236,33 @@ export class EmailComposeComponent
 	/** @inheritDoc */
 	public async ngOnChanges () : Promise<void> {
 		await this.onChanges();
+	}
+
+	/** @inheritDoc */
+	public async ngOnInit () : Promise<void> {
+		if (!this.initialDraft) {
+			return;
+		}
+
+		if (this.initialDraft.attachments) {
+			this.attachments.next(this.initialDraft.attachments);
+		}
+
+		if (this.initialDraft.bcc) {
+			this.bcc.next(this.initialDraft.bcc);
+		}
+
+		if (this.initialDraft.cc) {
+			this.cc.next(this.initialDraft.cc);
+		}
+
+		if (this.initialDraft.subject) {
+			this.subject.next(this.initialDraft.subject);
+		}
+
+		if (this.initialDraft.to) {
+			this.to.next(this.initialDraft.to);
+		}
 	}
 
 	/** Function to preprocess each new recipient, for example to populate usernames. */
