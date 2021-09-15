@@ -30,7 +30,8 @@ type BillingStatus struct {
 
 // Blob : Blob of data
 type Blob struct {
-	Data []byte
+	Data []byte `datastore:",noindex"`
+	ID   string
 }
 
 // BurnerChannel : Burner channel

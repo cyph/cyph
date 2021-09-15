@@ -127,7 +127,7 @@ func blobDownload(h HandlerArgs) (interface{}, int) {
 		return "invalid ID", http.StatusForbidden
 	}
 
-	blob := &Blob{}
+	blob := &Blob{ID: id}
 
 	err := h.Datastore.Get(h.Context, datastoreKey("Blob", id), blob)
 	if err != nil {
@@ -147,7 +147,7 @@ func blobUpload(h HandlerArgs) (interface{}, int) {
 
 	id := generateCustomRandomID(32)
 
-	_, err = h.Datastore.Put(h.Context, datastoreKey("Blob", id), &Blob{Data: data})
+	_, err = h.Datastore.Put(h.Context, datastoreKey("Blob", id), &Blob{Data: data, ID: id})
 	if err != nil {
 		return err.Error(), http.StatusBadRequest
 	}
