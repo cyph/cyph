@@ -25,19 +25,19 @@ index 2e3e50d..7598df9 100644
      }
      if (helperRendererPlist != null) {
 diff --git a/node_modules/app-builder-lib/out/util/yarn.js b/node_modules/app-builder-lib/out/util/yarn.js
-index ee0d8db..0402674 100644
+index 7715c4a..bdc7027 100644
 --- a/node_modules/app-builder-lib/out/util/yarn.js
 +++ b/node_modules/app-builder-lib/out/util/yarn.js
-@@ -75,7 +75,7 @@ function installDependencies(appDir, options) {
+@@ -67,7 +67,7 @@ function installDependencies(appDir, options) {
      const arch = options.arch || process.arch;
      const additionalArgs = options.additionalArgs;
      builder_util_1.log.info({ platform, arch, appDir }, `installing production dependencies`);
 -    let execPath = process.env.npm_execpath || process.env.NPM_CLI_JS;
 +    let execPath = require('child_process').spawnSync('which', ['npm']).stdout.toString().trim();
      const execArgs = ["install"];
-     const isYarnBerry = checkYarnBerry();
-     if (!isYarnBerry) {
-@@ -129,7 +129,7 @@ async function rebuild(appDir, options) {
+     const npmUserAgent = process.env["npm_config_user_agent"];
+     const isYarn2 = npmUserAgent != null && npmUserAgent.startsWith("yarn/2.");
+@@ -122,7 +122,7 @@ async function rebuild(appDir, options) {
          platform: options.platform || process.platform,
          arch: options.arch || process.arch,
          additionalArgs: options.additionalArgs,
