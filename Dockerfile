@@ -72,6 +72,8 @@ RUN apt-get -y --allow-downgrades autoremove
 
 RUN pip install grpcio
 
+RUN ln -s /usr/bin/chromium /usr/bin/chromium-browser
+
 RUN echo '\
 	export GIT_EDITOR="vim"; \
 	export GOPATH="/home/gibson/go"; \
