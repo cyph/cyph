@@ -18,7 +18,10 @@
 
 	<icon src="res/icon/default.png" />
 
-	<plugin name="@havesource/cordova-plugin-push" spec="dev" />
+	<plugin
+		name="@havesource/cordova-plugin-push"
+		spec="@havesource/cordova-plugin-push@dev"
+	/>
 	<!-- <plugin name="cordova-call" spec="*" /> --> -->
 	<plugin name="cordova-clipboard" spec="*" />
 	<plugin
