@@ -47,7 +47,10 @@ export const updatePublishedEmail = async (
 	if (!email || !signature) {
 		await Promise.all([
 			publicEmailsRef.child(username).remove(),
-			publicUsernamesRef.child(emailHex).remove()
+			email ? publicUsernamesRef.child(emailHex).remove() : undefined,
+			oldPublicEmail && oldPublicEmail !== email ?
+				publicUsernamesRef.child(oldPublicEmailHex).remove() :
+				undefined
 		]);
 
 		return;
