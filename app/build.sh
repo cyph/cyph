@@ -406,7 +406,7 @@ if [ "${electron}" ] ; then
 		};
 
 		// Workaround for Cordova oversight
-		const originalOptionsSet = 'this.options = (0, _builderUtil().deepAssign)({}, this.packager.platformSpecificBuildOptions, this.packager.config.appx);';
+		const originalOptionsSet = 'builder_util_1.deepAssign({}, this.packager.platformSpecificBuildOptions, this.packager.config.appx);';
 
 		fs.writeFileSync(
 			'node_modules/app-builder-lib/out/targets/AppxTarget.js',
