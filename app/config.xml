@@ -359,6 +359,6 @@
 	</platform>
 
 	<engine name="android" spec="~10.0" />
-	<engine name="electron" spec="^3" />
+	<engine name="electron" spec="git+https://github.com/buu700/cordova-electron-tmp" />
 	<engine name="ios" spec="^6" />
 </widget>
