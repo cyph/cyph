@@ -14,7 +14,7 @@ import {SecurityModels, User, usernameMask} from '../../account';
 import {BaseProvider} from '../../base-provider';
 import {InAppPurchaseComponent} from '../../components/in-app-purchase';
 import {emailPattern} from '../../email-pattern';
-import {BinaryProto, BooleanProto, CyphPlans, StringProto} from '../../proto';
+import {BinaryProto, BooleanProto, CyphPlans} from '../../proto';
 import {AccountEmailService} from '../../services/account-email.service';
 import {AccountSettingsService} from '../../services/account-settings.service';
 import {AccountService} from '../../services/account.service';
@@ -75,24 +75,43 @@ export class AccountSettingsComponent extends BaseProvider implements OnInit {
 	public readonly emailPattern = emailPattern;
 
 	/** Indicates whether this user's email address is published. */
-	public readonly emailPublished: Observable<boolean>;
+	public readonly emailPublished: Observable<boolean> =
+		this.accountDatabaseService
+			.watch(
+				'emailPublishUpdateTimestamp',
+				BinaryProto,
+				SecurityModels.unprotected,
+				undefined,
+				undefined,
+				this.subscriptions
+			)
+			.pipe(
+				switchMap(async () => {
+					const [email, emailVerified] = await Promise.all([
+						this.accountSettingsService.email.getValue(),
+						this.accountSettingsService.emailVerified.getValue()
+					]);
+
+					return (
+						!!email &&
+						email === emailVerified &&
+						(
+							await this.accountEmailService
+								.getEmailData({email})
+								.catch(() => {})
+						)?.username ===
+							this.accountDatabaseService.currentUser.value?.user
+								.username
+					);
+				})
+			);
 
 	/** Indicates whether this user's email address is verified. */
 	public readonly emailVerified = observableAll([
 		this.accountSettingsService.email.watch(),
-		this.accountDatabaseService.watch(
-			'emailVerified',
-			StringProto,
-			SecurityModels.unprotected,
-			undefined,
-			undefined,
-			this.subscriptions
-		)
+		this.accountSettingsService.emailVerified.watch()
 	]).pipe(
-		map(
-			([email, {value: emailVerified}]) =>
-				!!email && email === emailVerified
-		)
+		map(([email, emailVerified]) => !!email && email === emailVerified)
 	);
 
 	/** Gets session data to activate new device. */
@@ -505,24 +524,6 @@ export class AccountSettingsComponent extends BaseProvider implements OnInit {
 		public readonly stringsService: StringsService
 	) {
 		super();
-
-		/* TODO: Update data model to properly keep this in sync */
-		this.emailPublished = observableAll([
-			this.accountSettingsService.email.watch(),
-			this.emailVerified
-		]).pipe(
-			switchMap(
-				async ([email, emailVerified]) =>
-					emailVerified &&
-					(
-						await this.accountEmailService
-							.getEmailData({email})
-							.catch(() => {})
-					)?.username ===
-						this.accountDatabaseService.currentUser.value?.user
-							.username
-			)
-		);
 
 		this.ready = toBehaviorSubject(
 			observableAll([this.data, this.user]).pipe(

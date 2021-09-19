@@ -1,6 +1,7 @@
-import {util} from '@cyph/sdk';
-import {database} from './init.js';
+import {proto, util} from '@cyph/sdk';
+import {database, setItem} from './init.js';
 
+const {NumberProto} = proto;
 const {normalize} = util;
 
 export const updatePublishedEmail = async (
@@ -44,6 +45,14 @@ export const updatePublishedEmail = async (
 		Buffer.from(oldPublicEmail).toString('hex') :
 		undefined;
 
+	const updateTimestamp = async () =>
+		setItem(
+			namespace,
+			`users/${username}/emailPublishUpdateTimestamp`,
+			NumberProto,
+			Date.now()
+		);
+
 	if (!email || !signature) {
 		await Promise.all([
 			publicEmailsRef.child(username).remove(),
@@ -52,6 +61,8 @@ export const updatePublishedEmail = async (
 				publicUsernamesRef.child(oldPublicEmailHex).remove() :
 				undefined
 		]);
+
+		await updateTimestamp();
 
 		return;
 	}
@@ -74,6 +85,8 @@ export const updatePublishedEmail = async (
 			publicUsernamesRef.child(oldPublicEmailHex).remove() :
 			undefined
 	]);
+
+	await updateTimestamp();
 
 	return email;
 };

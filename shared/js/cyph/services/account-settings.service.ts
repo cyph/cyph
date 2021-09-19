@@ -47,6 +47,17 @@ export class AccountSettingsService extends BaseProvider {
 		this.subscriptions
 	);
 
+	/** User's verified email address. */
+	public readonly emailVerified = this.accountDatabaseService.getAsyncValue(
+		'emailVerified',
+		StringProto,
+		SecurityModels.unprotected,
+		undefined,
+		undefined,
+		undefined,
+		this.subscriptions
+	);
+
 	/** User-set flags to enable/disable features. */
 	public readonly featureFlags = {
 		docs: this.getFeatureFlag('docs'),
