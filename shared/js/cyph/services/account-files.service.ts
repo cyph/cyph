@@ -214,6 +214,7 @@ export class AccountFilesService extends BaseProvider {
 				{data: any; owner: string; record: IAccountFileRecord}[]
 			>;
 			mediaType?: string;
+			notificationCyphertextAttach: boolean;
 			proto?: IProto<any>;
 			recordType: AccountFileRecord.RecordTypes;
 			route: string;
@@ -229,6 +230,7 @@ export class AccountFilesService extends BaseProvider {
 			isOfType: (file: any) => typeof file.calendarInvite === 'object',
 			list: () => this.filesListFiltered.appointments(),
 			mediaType: 'cyph/appointment',
+			notificationCyphertextAttach: false,
 			proto: Appointment,
 			recordType: AccountFileRecord.RecordTypes.Appointment,
 			route: 'appointments',
@@ -243,6 +245,7 @@ export class AccountFilesService extends BaseProvider {
 			isOfType: (file: any) => file instanceof Array,
 			list: () => this.filesListFiltered.docs(),
 			mediaType: 'cyph/doc',
+			notificationCyphertextAttach: false,
 			proto: undefined,
 			recordType: AccountFileRecord.RecordTypes.Doc,
 			route: 'docs',
@@ -259,6 +262,7 @@ export class AccountFilesService extends BaseProvider {
 				typeof file.isMaster === 'boolean',
 			list: () => this.filesListFilteredWithData.ehrApiKeys(),
 			mediaType: 'cyph/ehr-api-key',
+			notificationCyphertextAttach: false,
 			proto: EhrApiKey,
 			recordType: AccountFileRecord.RecordTypes.EhrApiKey,
 			route: 'ehr-access',
@@ -277,6 +281,7 @@ export class AccountFilesService extends BaseProvider {
 				typeof file.from.name === 'string',
 			list: () => this.filesListFilteredWithData.emails(),
 			mediaType: 'cyph/email',
+			notificationCyphertextAttach: true,
 			proto: EmailMessage,
 			recordType: AccountFileRecord.RecordTypes.Email,
 			route: 'email/inbox',
@@ -294,6 +299,7 @@ export class AccountFilesService extends BaseProvider {
 					typeof file.mediaType === 'string'),
 			list: () => this.filesListFiltered.files(),
 			mediaType: undefined,
+			notificationCyphertextAttach: false,
 			proto: BlobProto,
 			recordType: AccountFileRecord.RecordTypes.File,
 			route: 'files',
@@ -308,6 +314,7 @@ export class AccountFilesService extends BaseProvider {
 			isOfType: (file: any) => file.components instanceof Array,
 			list: () => this.filesListFiltered.forms(),
 			mediaType: 'cyph/form',
+			notificationCyphertextAttach: false,
 			proto: Form,
 			recordType: AccountFileRecord.RecordTypes.Form,
 			route: 'forms',
@@ -322,6 +329,7 @@ export class AccountFilesService extends BaseProvider {
 			isOfType: (file: any) => typeof file.castleSessionID === 'string',
 			list: () => this.filesListFiltered.messagingGroups(),
 			mediaType: 'cyph/messaging-group',
+			notificationCyphertextAttach: false,
 			proto: AccountMessagingGroup,
 			recordType: AccountFileRecord.RecordTypes.MessagingGroup,
 			route: '',
@@ -337,6 +345,7 @@ export class AccountFilesService extends BaseProvider {
 				typeof file.chop === 'function' || file.ops instanceof Array,
 			list: () => this.filesListFiltered.notes(),
 			mediaType: 'cyph/note',
+			notificationCyphertextAttach: false,
 			proto: BinaryProto,
 			recordType: AccountFileRecord.RecordTypes.Note,
 			route: 'notes',
@@ -351,6 +360,7 @@ export class AccountFilesService extends BaseProvider {
 			isOfType: (file: any) => typeof file.password === 'string',
 			list: () => this.filesListFiltered.passwords(),
 			mediaType: 'cyph/password',
+			notificationCyphertextAttach: false,
 			proto: Password,
 			recordType: AccountFileRecord.RecordTypes.Password,
 			route: 'passwords',
@@ -365,6 +375,7 @@ export class AccountFilesService extends BaseProvider {
 			isOfType: (file: any) => typeof file.pgpMetadata === 'object',
 			list: () => this.filesListFiltered.pgpKeys(),
 			mediaType: 'cyph/pgp-key',
+			notificationCyphertextAttach: false,
 			proto: PGPKey,
 			recordType: AccountFileRecord.RecordTypes.PGPKey,
 			route: 'pgp',
@@ -379,6 +390,7 @@ export class AccountFilesService extends BaseProvider {
 			isOfType: (file: any) => typeof file.Demographics === 'object',
 			list: () => this.filesListFiltered.redoxPatients(),
 			mediaType: 'cyph/redox-patient',
+			notificationCyphertextAttach: false,
 			proto: RedoxPatient,
 			recordType: AccountFileRecord.RecordTypes.RedoxPatient,
 			route: 'incoming-patient-info',
@@ -393,6 +405,7 @@ export class AccountFilesService extends BaseProvider {
 			isOfType: (file: any) => typeof file.cryptocurrency === 'number',
 			list: () => this.filesListFiltered.wallets(),
 			mediaType: 'cyph/wallet',
+			notificationCyphertextAttach: false,
 			proto: Wallet,
 			recordType: AccountFileRecord.RecordTypes.Wallet,
 			route: 'wallets',
@@ -2449,7 +2462,7 @@ export class AccountFilesService extends BaseProvider {
 
 		const constID = id;
 
-		const fileType =
+		const fileTypePromise =
 			typeof constID !== 'string' ?
 				constID.accountFileRecord.recordType :
 				this.accountDatabaseService
@@ -2493,21 +2506,25 @@ export class AccountFilesService extends BaseProvider {
 			throw new Error('Invalid AccountFilesService.shareFile input.');
 		}
 
+		let cyphertext: Uint8Array | undefined;
+
 		try {
+			cyphertext = await this.potassiumService.box.seal(
+				await serialize(
+					AccountFileReferenceContainer,
+					accountFileReferenceContainer
+				),
+				(
+					await this.accountDatabaseService.getUserPublicKeys(
+						username
+					)
+				).encryption
+			);
+
 			await this.databaseService.setItem(
 				`users/${username}/incomingFiles/${id}`,
 				BinaryProto,
-				await this.potassiumService.box.seal(
-					await serialize(
-						AccountFileReferenceContainer,
-						accountFileReferenceContainer
-					),
-					(
-						await this.accountDatabaseService.getUserPublicKeys(
-							username
-						)
-					).encryption
-				)
+				cyphertext
 			);
 		}
 		catch {
@@ -2516,10 +2533,16 @@ export class AccountFilesService extends BaseProvider {
 			return;
 		}
 
+		const fileType = await fileTypePromise;
+
+		if (!this.config[fileType].notificationCyphertextAttach) {
+			cyphertext = undefined;
+		}
+
 		await this.accountDatabaseService.notify(
 			username,
 			NotificationTypes.File,
-			{fileType: await fileType, id}
+			{cyphertext, fileType, id}
 		);
 	}
 

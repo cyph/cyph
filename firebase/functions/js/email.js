@@ -86,7 +86,8 @@ export const sendEmailInternal = async (
 	eventDetails,
 	eventInviter,
 	accountsURL,
-	noUnsubscribe
+	noUnsubscribe,
+	attachments = []
 ) => {
 	const markdown = (typeof text === 'object' ? text.markdown : text) || '';
 
@@ -134,6 +135,7 @@ export const sendEmailInternal = async (
 	const mailObject = !to ?
 		undefined :
 		{
+			attachments,
 			bcc: from,
 			from: fromFormatted,
 			html:
@@ -370,7 +372,8 @@ export const sendEmail = async (
 	subject,
 	text,
 	eventDetails,
-	noUnsubscribe
+	noUnsubscribe,
+	attachments
 ) => {
 	const to = await getEmailAddress(database, namespace, username);
 
@@ -394,6 +397,7 @@ export const sendEmail = async (
 		eventDetails,
 		eventInviter,
 		namespaces[namespace].accountsURL,
-		noUnsubscribe
+		noUnsubscribe,
+		attachments
 	);
 };

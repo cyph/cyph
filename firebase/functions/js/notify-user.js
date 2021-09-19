@@ -336,7 +336,17 @@ export const notifyUser = async (
 				tag: `${notification.type}_${tag}`
 			},
 			true,
-			emailOnly
+			emailOnly,
+			undefined,
+			metadata.cyphertext instanceof Uint8Array ?
+				[
+					{
+						content: metadata.cyphertext,
+						contentType: 'application/octet-stream',
+						filename: 'encrypted-content.cyph'
+					}
+				] :
+				undefined
 		),
 		pushItem(
 			namespace,

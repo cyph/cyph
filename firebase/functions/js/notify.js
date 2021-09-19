@@ -18,8 +18,13 @@ export const initNotify = (database, messaging) => ({
 		pushNotificationOptions,
 		preferPush,
 		emailOnly,
-		noUnsubscribe
+		noUnsubscribe,
+		attachments = []
 	) => {
+		if (attachments.length > 0) {
+			emailOnly = true;
+		}
+
 		subject = dompurifyHtmlSanitizer.sanitize(subject);
 		text =
 			typeof text === 'string' ?
