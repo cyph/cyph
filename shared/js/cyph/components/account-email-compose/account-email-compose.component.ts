@@ -191,15 +191,14 @@ export class AccountEmailComposeComponent
 						name: 'encrypted-content.cyph'
 					}
 				],
-				html: `<p><strong><a href="${emailViewURL}">Decrypt Email</a></strong></p>`,
-				subject: '(encrypted email)',
+				html: emailViewURL,
 				to: to.map(o => ({email: o.email, name: o.name}))
 			})
 		);
 
 		location.href = `${
 			this.redirectURL.split('#')[0] || ''
-		}#${emailMessageExternalID}`;
+		}#cyphEmailID=${emailMessageExternalID}`;
 	}
 
 	constructor (
