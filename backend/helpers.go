@@ -22,10 +22,12 @@ import (
 	"sync"
 	"time"
 
+	"cloud.google.com/go/compute/metadata"
 	"cloud.google.com/go/datastore"
 	"cloud.google.com/go/storage"
 	"github.com/buu700/braintree-go-tmp"
 	"github.com/buu700/mustache-tmp"
+	"github.com/fsouza/fake-gcs-server/fakestorage"
 	gorillaHandlers "github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
 	"github.com/microcosm-cc/bluemonday"
@@ -266,6 +268,14 @@ var plans = func() map[string]Plan {
 	return o
 }()
 
+var storageEmulatorServer = func() *fakestorage.Server {
+	if !isLocalEnv {
+		return nil
+	}
+
+	return fakestorage.NewServer([]fakestorage.Object{})
+}()
+
 func datastoreKey(kind string, name string) *datastore.Key {
 	key := datastore.NameKey(kind, name, nil)
 	key.Namespace = apiNamespace
@@ -277,13 +287,42 @@ func datastoreQuery(kind string) *datastore.Query {
 }
 
 func getStorageObject(h HandlerArgs, id string) (*storage.ObjectHandle, error) {
-	storageClient, err := storage.NewClient(h.Context)
+	var err error
+	var storageClient *storage.Client
+
+	if isLocalEnv {
+		storageClient = storageEmulatorServer.Client()
+	} else {
+		storageClient, err = storage.NewClient(h.Context)
+	}
 
 	if err != nil {
 		return nil, err
 	}
 
-	return storageClient.Bucket("Blobs").Object(id), nil
+	bucket := storageClient.Bucket(config.BlobStorageBucket)
+
+	if _, err := bucket.Attrs(h.Context); err != nil {
+		projectID := config.LocalProjectID
+		if !isLocalEnv {
+			projectID, err = metadata.ProjectID()
+			if err != nil {
+				return nil, err
+			}
+		}
+
+		if err := bucket.Create(h.Context, projectID, nil); err != nil {
+			return nil, err
+		}
+	}
+
+	o := bucket.Object(id)
+
+	if o == nil {
+		err = errors.New("failed get storage object")
+	}
+
+	return o, err
 }
 
 func isValidCyphID(id string) bool {
@@ -1318,7 +1357,7 @@ func handleFuncs(pattern string, cron bool, handlers Handlers) {
 			} else {
 				projectID := datastore.DetectProjectID
 				if isLocalEnv {
-					projectID = "test"
+					projectID = config.LocalProjectID
 				}
 
 				context := r.Context()

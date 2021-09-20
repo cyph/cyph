@@ -144,6 +144,7 @@ var config = struct {
 	AnalID                     string
 	APIKeyByteLength           int
 	BitPayToken                string
+	BlobStorageBucket          string
 	BurnerChannelExpiration    int64
 	CacheControlHeader         string
 	CloudFunctionRoutes        []string
@@ -169,6 +170,7 @@ var config = struct {
 	HPKPHeader                 string
 	HSTSHeader                 string
 	IPFSGatewayUptimeCheckTTL  time.Duration
+	LocalProjectID             string
 	MaxChannelDescriptorLength int
 	MaxSignupValueLength       int
 	NewCyphTimeout             int64
@@ -226,6 +228,8 @@ var config = struct {
 	APIKeyByteLength: 16,
 
 	BitPayToken: "CsLk78BjUj81tBENkNpZxoPFGJWWss5qsga86xDKFWBR",
+
+	BlobStorageBucket: "cyph-blobs",
 
 	BurnerChannelExpiration: 172800000,
 
@@ -328,6 +332,8 @@ var config = struct {
 	HSTSHeader: "max-age=31536000; includeSubdomains; preload",
 
 	IPFSGatewayUptimeCheckTTL: time.Millisecond * time.Duration(1800),
+
+	LocalProjectID: "test",
 
 	MaxChannelDescriptorLength: 150,
 

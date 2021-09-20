@@ -3,13 +3,14 @@ module api
 go 1.15
 
 require (
-	cloud.google.com/go v0.94.1 // indirect
+	cloud.google.com/go v0.94.1
 	cloud.google.com/go/cloudtasks v0.1.0
 	cloud.google.com/go/datastore v1.5.0
-	cloud.google.com/go/storage v1.10.0
+	cloud.google.com/go/storage v1.16.0
 	github.com/buu700/braintree-go-tmp v0.0.0-20200503224113-916e4842cf47
 	github.com/buu700/mustache-tmp v1.0.1
 	github.com/felixge/httpsnoop v1.0.2 // indirect
+	github.com/fsouza/fake-gcs-server v1.30.1
 	github.com/golang/groupcache v0.0.0-20210331224755-41bb18bfe9da // indirect
 	github.com/gorilla/handlers v1.5.1
 	github.com/gorilla/mux v1.8.0
