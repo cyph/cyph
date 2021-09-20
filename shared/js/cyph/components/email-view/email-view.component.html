@@ -151,7 +151,7 @@
 		appearance="fill"
 		class="attachments-list"
 		[matTooltip]="
-			((attachments | await) || []).length > 0 ?
+			(email?.attachments || []).length > 0 ?
 				stringsService.attachmentsViewTooltip :
 				stringsService.attachmentsViewEmptyTooltip
 		"
@@ -161,7 +161,7 @@
 		<mat-select
 			#attachmentsDropdown
 			multiple
-			[disabled]="((attachments | await) || []).length < 1"
+			[disabled]="(email?.attachments || []).length < 1"
 			panelClass="email-view-attachments-panel"
 			(openedChange)="attachmentsPanelOpen()"
 			[ngModel]="(attachmentsToDownload | await) || []"
@@ -170,7 +170,7 @@
 			<mat-option
 				[value]="attachment"
 				*ngFor="
-					let attachment of attachments | await;
+					let attachment of email?.attachments || [];
 					trackBy: trackBySelf
 				"
 			>

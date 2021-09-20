@@ -36,9 +36,6 @@ export class EmailViewComponent
 	extends BaseProvider
 	implements AfterViewInit, OnChanges
 {
-	/** @see IEmailMessage.attachments */
-	public readonly attachments = new BehaviorSubject<IFile[]>([]);
-
 	/** Attachments dropdown. */
 	@ViewChild('attachmentsDropdown', {read: MatSelect})
 	public attachmentsDropdown?: MatSelect;
