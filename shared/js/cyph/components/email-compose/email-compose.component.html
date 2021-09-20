@@ -112,6 +112,12 @@
 		matTooltip="Send Email"
 		matTooltipPosition="above"
 		cyphTranslate
+		[disabled]="
+			((bcc | await) || []).length +
+				((cc | await) || []).length +
+				((to | await) || []).length <
+			1
+		"
 		(click)="send()"
 	>
 		Send
