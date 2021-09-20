@@ -112,6 +112,48 @@ export class EmailComposeComponent
 		documentEditor.useCtrlClickToFollowHyperlink = !this.readOnly;
 	}
 
+	/** @ignore */
+	private async processRecipients (
+		recipients: EmailMessage.IContact[],
+		recipientsSubject: BehaviorSubject<EmailMessage.IContact[]>
+	) : Promise<void> {
+		const newRecipients = await Promise.all(
+			recipients.map(async contact => {
+				try {
+					return await this.preprocessRecipient(contact);
+				}
+				catch {
+					return undefined;
+				}
+			})
+		);
+
+		const failures = filterUndefined(
+			newRecipients.map((o, i) =>
+				o === undefined ? recipients[i].email : undefined
+			)
+		);
+
+		recipientsSubject.next(
+			Array.from(
+				recipientsSubject.value.concat(filterUndefined(newRecipients))
+			)
+		);
+
+		if (failures.length < 1) {
+			return;
+		}
+
+		await this.dialogService.toast(
+			this.stringsService.setParameters(
+				this.stringsService.emailRecipientAddFailure,
+				{recipients: failures.join(', ')}
+			),
+			-1,
+			this.stringsService.ok
+		);
+	}
+
 	/** Adds a list of recipients to `to`. */
 	public async addRecipients (
 		recipientsInput: BehaviorSubject<string>,
@@ -139,43 +181,9 @@ export class EmailComposeComponent
 						{email: s.toLowerCase(), name: s};
 				});
 
-		const newRecipients = await Promise.all(
-			parsedInput.map(async contact => {
-				try {
-					return await this.preprocessRecipient(contact);
-				}
-				catch {
-					return undefined;
-				}
-			})
-		);
-
-		const failures = filterUndefined(
-			newRecipients.map((o, i) =>
-				o === undefined ? parsedInput[i].email : undefined
-			)
-		);
-
-		recipientsSubject.next(
-			Array.from(
-				recipientsSubject.value.concat(filterUndefined(newRecipients))
-			)
-		);
+		await this.processRecipients(parsedInput, recipientsSubject);
 
 		recipientsInput.next('');
-
-		if (failures.length < 1) {
-			return;
-		}
-
-		await this.dialogService.toast(
-			this.stringsService.setParameters(
-				this.stringsService.emailRecipientAddFailure,
-				{recipients: failures.join(', ')}
-			),
-			-1,
-			this.stringsService.ok
-		);
 	}
 
 	/** Attachments panel open event. */
@@ -248,20 +256,20 @@ export class EmailComposeComponent
 			this.attachments.next(this.initialDraft.attachments);
 		}
 
-		if (this.initialDraft.bcc) {
-			this.bcc.next(this.initialDraft.bcc);
+		if (this.initialDraft.bcc && this.initialDraft.bcc.length > 0) {
+			await this.processRecipients(this.initialDraft.bcc, this.bcc);
 		}
 
-		if (this.initialDraft.cc) {
-			this.cc.next(this.initialDraft.cc);
+		if (this.initialDraft.cc && this.initialDraft.cc.length > 0) {
+			await this.processRecipients(this.initialDraft.cc, this.cc);
 		}
 
 		if (this.initialDraft.subject) {
 			this.subject.next(this.initialDraft.subject);
 		}
 
-		if (this.initialDraft.to) {
-			this.to.next(this.initialDraft.to);
+		if (this.initialDraft.to && this.initialDraft.to.length > 0) {
+			await this.processRecipients(this.initialDraft.to, this.to);
 		}
 	}
 
