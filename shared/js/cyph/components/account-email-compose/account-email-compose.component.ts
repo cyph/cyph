@@ -5,7 +5,14 @@ import {BehaviorSubject} from 'rxjs';
 import {take} from 'rxjs/operators';
 import {SecurityModels} from '../../account';
 import {BaseProvider} from '../../base-provider';
-import {EmailMessage, IEmailMessage, StringProto} from '../../proto';
+import {
+	BinaryProto,
+	EmailMessage,
+	EmailMessageExternal,
+	IEmailMessage,
+	IEmailMessageExternal,
+	StringProto
+} from '../../proto';
 import {AccountEmailService} from '../../services/account-email.service';
 import {AccountFilesService} from '../../services/account-files.service';
 import {AccountUserLookupService} from '../../services/account-user-lookup.service';
@@ -14,10 +21,10 @@ import {AccountDatabaseService} from '../../services/crypto/account-database.ser
 import {PotassiumService} from '../../services/crypto/potassium.service';
 import {DialogService} from '../../services/dialog.service';
 import {StringsService} from '../../services/strings.service';
-import {downloadBlob} from '../../util/blobs';
+import {deleteBlob, downloadBlob, uploadBlob} from '../../util/blobs';
 import {filterUndefined} from '../../util/filter';
 import {debugLog} from '../../util/log';
-import {deserialize} from '../../util/serialization';
+import {deserialize, serialize} from '../../util/serialization';
 
 /**
  * Angular component for account email compose UI.
@@ -40,6 +47,7 @@ export class AccountEmailComposeComponent
 		| {
 				from?: EmailMessage.IContact;
 				initialDraft?: IEmailMessage;
+				initialDraftID?: string;
 		  }
 		| undefined
 	>(undefined);
@@ -94,6 +102,9 @@ export class AccountEmailComposeComponent
 			this.activatedRoute.params.pipe(take(1)).toPromise()
 		]);
 
+		const initialDraftID =
+			typeof draftID === 'string' && draftID ? draftID : undefined;
+
 		this.accountService.interstitial.next(false);
 
 		if (!email) {
@@ -119,13 +130,13 @@ export class AccountEmailComposeComponent
 				name,
 				username
 			},
-			initialDraft:
-				typeof draftID === 'string' && draftID ?
-					await deserialize(
-						EmailMessage,
-						await downloadBlob(draftID)
-					) :
-					undefined
+			initialDraft: initialDraftID ?
+				await deserialize(
+					EmailMessage,
+					await downloadBlob(initialDraftID)
+				) :
+				undefined,
+			initialDraftID
 		});
 	}
 
@@ -133,18 +144,62 @@ export class AccountEmailComposeComponent
 	public async send (message: IEmailMessage) : Promise<void> {
 		debugLog(() => ({accountEmailComposeComponentSend: message}));
 
+		const to = filterUndefined(
+			message.to?.map(o =>
+				o.username ?
+					<EmailMessage.IContact & {username: string}> o :
+					undefined
+			) || []
+		);
+
 		const id = await this.accountFilesService.upload(
 			'',
 			message,
-			filterUndefined(message.to?.map(o => o.username) || [])
+			to.map(o => o.username),
+			undefined,
+			undefined,
+			undefined,
+			undefined,
+			undefined,
+			undefined,
+			!!this.redirectURL
 		).result;
 
-		if (this.redirectURL) {
-			location.href = this.redirectURL;
+		if (this.emailComposeData.value?.initialDraftID) {
+			await deleteBlob(this.emailComposeData.value.initialDraftID);
+		}
+
+		if (!this.redirectURL) {
+			await this.router.navigate(['email', id]);
 			return;
 		}
 
-		await this.router.navigate(['email', id]);
+		const cyphertext = await this.accountDatabaseService.getItem(
+			`files/${id}`,
+			BinaryProto,
+			SecurityModels.unprotected
+		);
+
+		const emailViewURL = `${locationData.origin}/email/${id}`;
+
+		const emailMessageExternalID = await uploadBlob(
+			await serialize<IEmailMessageExternal>(EmailMessageExternal, {
+				attachments: [
+					{
+						data: cyphertext,
+						mediaType: 'application/octet-stream',
+						name: 'encrypted-content.cyph'
+					}
+				],
+				html: `<p><strong><a href="${emailViewURL}">Decrypt Email</a></strong></p>`,
+				subject: '(encrypted email)',
+				to: to.map(o => ({email: o.email, name: o.name}))
+			})
+		);
+
+		location.href = `${
+			this.redirectURL.split('#')[0] || ''
+		}#${emailMessageExternalID}`;
 	}
 
 	constructor (

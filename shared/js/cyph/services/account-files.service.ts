@@ -2448,7 +2448,8 @@ export class AccountFilesService extends BaseProvider {
 	/** Shares file with another user. */
 	public async shareFile (
 		id: string | AccountFileReferenceContainer.IAnonymousShare,
-		username: string
+		username: string,
+		skipNotification: boolean = false
 	) : Promise<void> {
 		if (
 			this.accountDatabaseService.currentUser.value &&
@@ -2530,6 +2531,10 @@ export class AccountFilesService extends BaseProvider {
 		catch {
 			/* setItem will fail with permission denied when
 				trying to share the same file more than once. */
+			return;
+		}
+
+		if (skipNotification) {
 			return;
 		}
 
@@ -2747,7 +2752,8 @@ export class AccountFilesService extends BaseProvider {
 		wasAnonymousShare: boolean = false,
 		timestamp?: number,
 		id: string = uuid(),
-		parentPath?: string
+		parentPath?: string,
+		skipNotification: boolean = false
 	) : {
 		progress: Observable<number>;
 		result: Promise<string>;
@@ -2932,7 +2938,9 @@ export class AccountFilesService extends BaseProvider {
 					}
 
 					await Promise.all(
-						shareWithUsers.map(async u => this.shareFile(id, u))
+						shareWithUsers.map(async u =>
+							this.shareFile(id, u, skipNotification)
+						)
 					);
 				}
 
