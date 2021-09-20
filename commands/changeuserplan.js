@@ -133,7 +133,7 @@ export const changeUserPlan = async (
 		stripe:
 			oldPaymentInfo.stripe?.subscriptionItemID !==
 			paymentInfo?.stripe?.subscriptionItemID ?
-				oldPaymentInfo.stripe.subscriptionItemID :
+				oldPaymentInfo.stripe?.subscriptionItemID :
 				undefined
 	});
 

@@ -181,7 +181,7 @@ for f in $(find . -name '*.html') ; do node -e "(async () => {
 	const fetch = (await import('node-fetch')).default;
 	const superSphincs = require('supersphincs');
 
-	const fetch = (url, opts) =>
+	const fetchAndRetry = (url, opts) =>
 		fetch(url, opts).catch(() => fetch(url, opts))
 	;
 
@@ -251,7 +251,7 @@ for f in $(find . -name '*.html') ; do node -e "(async () => {
 				return;
 			}
 
-			const content = await fetch(url, {
+			const content = await fetchAndRetry(url, {
 				headers: {
 					'User-Agent': 'Mozilla/5.0 (compatible; MSIE 10.0; Windows NT 6.1; Trident/6.0)'
 				}

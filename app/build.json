@@ -7,6 +7,7 @@
 			"package": ["snap"]
 		},
 		"mac": {
+			"arch": ["universal"],
 			"package": ["dmg", "mas"],
 			"signing": {
 				"store": {
@@ -18,6 +19,7 @@
 		},
 		"windows": {
 			"applicationId": "Cyph.Cyph",
+			"arch": ["arm64", "x64"],
 			"package": ["appx", "nsis"],
 			"publisher": "CN=D116D532-5873-4FAE-9CA2-6E026A5288B7",
 			"signing": {

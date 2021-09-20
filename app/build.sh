@@ -406,7 +406,7 @@ if [ "${electron}" ] ; then
 		};
 
 		// Workaround for Cordova oversight
-		const originalOptionsSet = 'this.options = (0, _builderUtil().deepAssign)({}, this.packager.platformSpecificBuildOptions, this.packager.config.appx);';
+		const originalOptionsSet = 'builder_util_1.deepAssign({}, this.packager.platformSpecificBuildOptions, this.packager.config.appx);';
 
 		fs.writeFileSync(
 			'node_modules/app-builder-lib/out/targets/AppxTarget.js',
@@ -429,10 +429,11 @@ if [ "${electron}" ] ; then
 		build({windows: windowsExe});
 		build({windows: windowsAppStore});
 	"
-	cp -a platforms/electron/build/mas-universal/*.pkg build/${packageName}.pkg || exit 1
-	cp platforms/electron/build/*.appx build/${packageName}.appx || exit 1
-	cp platforms/electron/build/*.dmg build/${packageName}.dmg || exit 1
-	cp platforms/electron/build/*.exe build/${packageName}.exe || exit 1
+	mv platforms/electron/build/mas-universal/*.pkg build/${packageName}.pkg || exit 1
+	mv platforms/electron/build/*\ arm64.appx build/${packageName}.arm64.appx || exit 1
+	mv platforms/electron/build/*.appx build/${packageName}.x64.appx || exit 1
+	mv platforms/electron/build/*.dmg build/${packageName}.dmg || exit 1
+	mv platforms/electron/build/*.exe build/${packageName}.exe || exit 1
 
 	cp -f build.json.bak build.json
 	node -e "
@@ -441,8 +442,8 @@ if [ "${electron}" ] ; then
 		build({mac: macDmgDebug});
 		build({windows: windowsExeDebug});
 	"
-	cp platforms/electron/build/*.dmg build/${packageName}.debug.dmg || exit 1
-	cp platforms/electron/build/*.exe build/${packageName}.debug.exe || exit 1
+	mv platforms/electron/build/*.dmg build/${packageName}.debug.dmg || exit 1
+	mv platforms/electron/build/*.exe build/${packageName}.debug.exe || exit 1
 
 	cp -f build.json.bak build.json
 	node -e "

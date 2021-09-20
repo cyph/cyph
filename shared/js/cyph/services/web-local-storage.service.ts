@@ -11,7 +11,6 @@ import {lockFunction} from '../util/lock';
 import {debugLogError} from '../util/log';
 import {resolvable} from '../util/wait/resolvable';
 import {sleep} from '../util/wait/sleep';
-
 import {LocalStorageService} from './local-storage.service';
 
 localforageGetItemsInit(localforage);
