@@ -63,8 +63,6 @@ service firebase.storage {
 				;
 			}
 
-			// match /notifications/{notification}/{hash} {}
-
 			// match /pendingSignups/{hash} {}
 
 			match /privatePostLists/{circleID}/{postID}/{hash} {
@@ -260,6 +258,8 @@ service firebase.storage {
 					allow read;
 					allow write: if resource == null && request.resource != null;
 				}
+
+				// match /notifications/{notification}/{hash} {}
 
 				match /organizationMembers/{hash} {
 					allow read;
