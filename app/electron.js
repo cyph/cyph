@@ -24,8 +24,9 @@ const {app, BrowserWindow, Menu, shell} = require('electron');
 const {setup: setupPushReceiver} = require('electron-push-receiver');
 // Electron settings from .json file.
 const cdvElectronSettings = require('./cdv-electron-settings.json');
+const electronRemote = require('@electron/remote/main');
 
-require('@electron/remote/main').initialize();
+electronRemote.initialize();
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
@@ -65,6 +66,7 @@ const createWindow = () => {
 	mainWindow.loadURL(`file://${__dirname}/index.html`);
 
 	setupPushReceiver(mainWindow.webContents);
+	electronRemote.enable(mainWindow.webContents);
 
 	mainWindow.webContents.on('did-finish-load', () => {
 		mainWindow.webContents.send('window-id', mainWindow.id);
