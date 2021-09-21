@@ -6,7 +6,7 @@
 		"electron-push-receiver": "*",
 		"ipfs-fetch": "*",
 		"levelup": "*",
-		"rocksdb": "*"
+		"rocksdb": "https://github.com/buu700/rocksdb-tmp"
 	},
 	"devDependencies": {
 		"@cyph/prettier": "*",
