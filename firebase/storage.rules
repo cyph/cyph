@@ -259,6 +259,8 @@ service firebase.storage {
 					allow write: if resource == null && request.resource != null;
 				}
 
+				// match /masterKeyUnconfirmed/{hash} {}
+
 				// match /notifications/{notification}/{hash} {}
 
 				match /organizationMembers/{hash} {

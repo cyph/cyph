@@ -17,12 +17,12 @@ import memoize from 'lodash-es/memoize';
 import {BehaviorSubject, concat, from, Observable, of} from 'rxjs';
 import {filter, map, take} from 'rxjs/operators';
 import {xkcdPassphrase} from 'xkcd-passphrase';
-import {usernameMask} from '../../account';
+import {SecurityModels, usernameMask} from '../../account';
 import {BaseProvider} from '../../base-provider';
 import {AccountNewDeviceActivationComponent} from '../../components/account-new-device-activation';
 import {InAppPurchaseComponent} from '../../components/in-app-purchase';
 import {emailPattern, emailRegex} from '../../email-pattern';
-import {CyphPlans, IPGPMetadata} from '../../proto';
+import {BinaryProto, CyphPlans, IPGPMetadata} from '../../proto';
 import {AccountFilesService} from '../../services/account-files.service';
 import {AccountUserLookupService} from '../../services/account-user-lookup.service';
 import {AccountService} from '../../services/account.service';
@@ -507,9 +507,14 @@ export class AccountRegisterComponent
 						)
 					)
 					.then(async () =>
-						this.localStorageService.removeItem(
-							'unconfirmedMasterKey'
-						)
+						Promise.all([
+							this.accountDatabaseService.removeItem(
+								'masterKeyUnconfirmed'
+							),
+							this.localStorageService.removeItem(
+								'unconfirmedMasterKey'
+							)
+						])
 					),
 				sleep(random(750, 250))
 			]);
@@ -847,6 +852,15 @@ export class AccountRegisterComponent
 					undefined :
 					this.stringsService.signupFailed
 			);
+
+			if (!this.submitError.value && this.simple.value) {
+				await this.accountDatabaseService.setItem(
+					'masterKeyUnconfirmed',
+					BinaryProto,
+					new Uint8Array(0),
+					SecurityModels.unprotected
+				);
+			}
 
 			if (
 				!this.submitError.value &&

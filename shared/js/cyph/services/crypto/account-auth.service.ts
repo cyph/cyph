@@ -409,31 +409,32 @@ export class AccountAuthService extends BaseProvider {
 				return;
 			}
 
-			const [masterKeyUnconfirmed, pinDuration, pinTimestamp, timestamp] =
-				await Promise.all([
-					this.localStorageService.hasItem(
-						'unconfirmedMasterKey',
-						true
-					),
-					this.envService.environment.debug ?
-						this.localStorageService.getItem(
-							'pinDuration',
-							NumberProto,
-							undefined,
-							true
-						) :
-						this.defaultPinDuration,
+			const [
+				hasUnconfirmedMasterKey,
+				pinDuration,
+				pinTimestamp,
+				timestamp
+			] = await Promise.all([
+				this.localStorageService.hasItem('unconfirmedMasterKey', true),
+				this.envService.environment.debug ?
 					this.localStorageService.getItem(
-						'pinTimestamp',
+						'pinDuration',
 						NumberProto,
 						undefined,
 						true
-					),
-					getTimestamp()
-				]);
+					) :
+					this.defaultPinDuration,
+				this.localStorageService.getItem(
+					'pinTimestamp',
+					NumberProto,
+					undefined,
+					true
+				),
+				getTimestamp()
+			]);
 
 			if (
-				masterKeyUnconfirmed ||
+				hasUnconfirmedMasterKey ||
 				timestamp > pinDuration + pinTimestamp
 			) {
 				await removePIN();
@@ -576,8 +577,8 @@ export class AccountAuthService extends BaseProvider {
 						KeyPair,
 						loginData.symmetricKey
 					),
-					this.localStorageService
-						.hasItem('unconfirmedMasterKey', true)
+					this.databaseService
+						.hasItem('masterKeyUnconfirmed')
 						.then(b => !b),
 					this.getItem(
 						`users/${username}/pin/hash`,
