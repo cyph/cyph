@@ -647,8 +647,10 @@
 														stringsService.registerConfirmedInviteCode
 													"
 													[matTooltipDisabled]="
-														currentInviteCode.enabled
+														(inviteCodeData | await)
+															?.isValid !== true
 													"
+													matTooltipPosition="above"
 													*ngIf="
 														inviteCodeWatcher
 															| await as currentInviteCode
@@ -694,7 +696,11 @@
 														</mat-icon>
 														<mat-icon
 															*ngIf="
-																!currentInviteCode.enabled
+																(
+																	inviteCodeData
+																	| await
+																)?.isValid ===
+																true
 															"
 														>
 															check

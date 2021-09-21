@@ -429,13 +429,6 @@ export class AccountRegisterComponent
 
 		const invalid = !this.inviteCodeData.value.isValid;
 
-		if (invalid) {
-			this.inviteCode.enable();
-		}
-		else {
-			this.inviteCode.disable();
-		}
-
 		this.inviteCode.setErrors(
 			invalid ?
 				{inviteCodeInvalid: true} :
