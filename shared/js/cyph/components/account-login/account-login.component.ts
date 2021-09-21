@@ -187,7 +187,12 @@ export class AccountLoginComponent extends BaseProvider implements OnInit {
 					.getItem('masterKey', BinaryProto, undefined, true)
 					.catch(() => undefined),
 				this.localStorageService
-					.getString('unconfirmedMasterKey')
+					.getItem(
+						'unconfirmedMasterKey',
+						StringProto,
+						undefined,
+						true
+					)
 					.catch(() => undefined),
 				this.localStorageService
 					.getItem('username', StringProto, undefined, true)

@@ -22,7 +22,7 @@ import {BaseProvider} from '../../base-provider';
 import {AccountNewDeviceActivationComponent} from '../../components/account-new-device-activation';
 import {InAppPurchaseComponent} from '../../components/in-app-purchase';
 import {emailPattern, emailRegex} from '../../email-pattern';
-import {BinaryProto, CyphPlans, IPGPMetadata} from '../../proto';
+import {BinaryProto, CyphPlans, IPGPMetadata, StringProto} from '../../proto';
 import {AccountFilesService} from '../../services/account-files.service';
 import {AccountUserLookupService} from '../../services/account-user-lookup.service';
 import {AccountService} from '../../services/account.service';
@@ -806,17 +806,24 @@ export class AccountRegisterComponent
 
 		try {
 			if (this.simple.value) {
-				await this.localStorageService.setString(
+				await this.localStorageService.setItem(
 					'unconfirmedMasterKey',
-					masterKey
+					StringProto,
+					masterKey,
+					undefined,
+					undefined,
+					true
 				);
 
 				/* Confirm successful set */
 				if (
 					!safeStringCompare(
 						masterKey,
-						await this.localStorageService.getString(
-							'unconfirmedMasterKey'
+						await this.localStorageService.getItem(
+							'unconfirmedMasterKey',
+							StringProto,
+							undefined,
+							true
 						)
 					)
 				) {
