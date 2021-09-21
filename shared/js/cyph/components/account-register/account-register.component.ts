@@ -337,6 +337,14 @@ export class AccountRegisterComponent
 	);
 
 	/** @ignore */
+	private async postSimpleRegisterSetupSubmit () : Promise<void> {
+		await this.confirmMasterKey({
+			skipMasterKeyConfirm: true,
+			updatePIN: true
+		});
+	}
+
+	/** @ignore */
 	private async validateInviteCode (value: string) : Promise<void> {
 		const id = uuid();
 		this.inviteCodeDebounceLast = id;
@@ -440,7 +448,11 @@ export class AccountRegisterComponent
 	}
 
 	/** Marks master key as confirmed. */
-	public async confirmMasterKey () : Promise<void> {
+	public async confirmMasterKey (options?: {
+		skipMasterKeyConfirm?: boolean;
+		skipPinConfirm?: boolean;
+		updatePIN?: boolean;
+	}) : Promise<void> {
 		if (!this.accountDatabaseService.currentUser.value) {
 			return;
 		}
@@ -454,8 +466,23 @@ export class AccountRegisterComponent
 				await this.xkcdPassphrases[this.xkcdPassphrase.value]() :
 				'';
 
+			const pin = this.useLockScreenPIN.value ?
+				this.lockScreenPIN.value :
+				this.lockScreenPassword.value;
+
+			const pinConfirm = this.useLockScreenPIN.value ?
+				this.lockScreenPinConfirm.value :
+				this.lockScreenPasswordConfirm.value;
+
 			if (
-				!safeStringCompare(masterKey, this.finalConfirmation.masterKey)
+				(!options?.skipMasterKeyConfirm &&
+					!safeStringCompare(
+						masterKey,
+						this.finalConfirmation.masterKey
+					)) ||
+				(options?.updatePIN &&
+					!options?.skipPinConfirm &&
+					!safeStringCompare(pin, pinConfirm))
 			) {
 				await sleep(random(750, 250));
 				this.submitError.next(this.stringsService.invalidMasterKey);
@@ -463,8 +490,23 @@ export class AccountRegisterComponent
 			}
 
 			await Promise.all([
-				this.accountAuthService
-					.changeMasterKey(masterKey, true, false)
+				(options?.updatePIN ?
+					this.accountAuthService.changePIN(
+						{
+							isCustom: !this.useLockScreenPIN.value,
+							value: pin
+						},
+						true
+					) :
+					Promise.resolve()
+				)
+					.then(async () =>
+						this.accountAuthService.changeMasterKey(
+							masterKey,
+							true,
+							false
+						)
+					)
 					.then(async () =>
 						this.localStorageService.removeItem(
 							'unconfirmedMasterKey'
@@ -737,6 +779,10 @@ export class AccountRegisterComponent
 	public async submit () : Promise<void> {
 		if (!this.simple.value && this.tabIndex.value !== this.totalSteps) {
 			return;
+		}
+
+		if (this.postSimpleRegisterSetup) {
+			return this.postSimpleRegisterSetupSubmit();
 		}
 
 		this.checking.next(false);

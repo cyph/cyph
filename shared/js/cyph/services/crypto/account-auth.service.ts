@@ -277,21 +277,29 @@ export class AccountAuthService extends BaseProvider {
 	}
 
 	/** Changes lock screen password. */
-	public async changePIN (pin: {
-		isCustom: boolean;
-		value: string;
-	}) : Promise<void> {
+	public async changePIN (
+		pin: {
+			isCustom: boolean;
+			value: string;
+		},
+		saveCredentials: boolean = false
+	) : Promise<void> {
 		const currentUser = await this.accountDatabaseService.getCurrentUser();
 
 		if (!currentUser.user.username || !pin.value) {
 			return;
 		}
 
-		await Promise.all([
+		const pinHash = await this.passwordHash(
+			currentUser.user.username,
+			pin.value
+		);
+
+		await Promise.all<unknown>([
 			this.setItem(
 				`users/${currentUser.user.username}/pin/hash`,
 				BinaryProto,
-				await this.passwordHash(currentUser.user.username, pin.value),
+				pinHash,
 				currentUser.keys.symmetricKey
 			),
 			this.setItem(
@@ -300,7 +308,9 @@ export class AccountAuthService extends BaseProvider {
 				pin.isCustom,
 				currentUser.keys.symmetricKey
 			),
-			this.removeSavedCredentials()
+			!saveCredentials ?
+				this.removeSavedCredentials() :
+				this.savePIN(pinHash)
 		]);
 	}
 
