@@ -183,13 +183,8 @@ export const initDatabaseService = (config, isCloudFunction) => {
 			return value;
 		},
 		async hasItem (namespace, url)  {
-			try {
-				await databaseService.getItem(namespace, url, BinaryProto);
-				return true;
-			}
-			catch (_) {
-				return false;
-			}
+			url = processURL(namespace, url);
+			return (await database.ref(url).once('value')).exists();
 		},
 		async pushItem (namespace, url, proto, value)  {
 			/* TODO: Copy the FirebaseDatabaseService implementation or use nextPushId */
