@@ -1704,7 +1704,7 @@ export class StringsService extends BaseProvider {
 	public readonly welcomeComma = `Welcome,`;
 
 	/** @see StringsService */
-	public readonly welcomInitialSetup = `Your account will be submitted for verification after the initial setup. Your username is guaranteed so long as this is completed within 30 days.`;
+	public readonly welcomeInitialSetup = `Your account will be submitted for verification after the initial setup. Your username is guaranteed so long as this is completed within 30 days from registration.`;
 
 	/** @see StringsService */
 	public readonly welcomeMasterKeySetup = `IMPORTANT: Confirm Your Master Key`;
