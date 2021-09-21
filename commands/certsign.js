@@ -99,9 +99,18 @@ export const certSign = async (projectId, standalone, namespace) => {
 		const usernames = [];
 
 		for (const username of Object.keys(pendingSignups)) {
+			/*
+				Process cert signing for user if they:
+
+				* Have submitted a CSR
+
+				* Have confirmed their master key
+
+				* Used a valid invite code (if required)
+			*/
+
 			const pendingSignup = pendingSignups[username];
 
-			/* If user has submitted a CSR and has a valid invite (if required), continue */
 			if (
 				(await hasItem(
 					namespace,
@@ -114,7 +123,17 @@ export const certSign = async (projectId, standalone, namespace) => {
 						StringProto
 					).catch(() => ' ')) !== ' ')
 			) {
-				usernames.push(username);
+				if (
+					await hasItem(
+						namespace,
+						`users/${username}/masterKeyUnconfirmed`
+					)
+				) {
+					continue;
+				}
+				else {
+					usernames.push(username);
+				}
 			}
 			/* Otherwise, if signup has been pending for at least 3 hours, delete the user */
 			else if (Date.now() - pendingSignup.timestamp > 10800000) {

@@ -84,7 +84,7 @@ export const getUserMetadata = async (projectId, username, namespace) => {
 
 	username = normalize(username);
 
-	const {auth, database, getItem} = initDatabaseService(projectId);
+	const {auth, database, getItem, hasItem} = initDatabaseService(projectId);
 
 	const [
 		certTimestamp,
@@ -92,6 +92,7 @@ export const getUserMetadata = async (projectId, username, namespace) => {
 		inviteCode,
 		inviterUsername,
 		lastLogin,
+		masterKeyConfirmed,
 		plan,
 		profile,
 		profileExtra
@@ -122,6 +123,9 @@ export const getUserMetadata = async (projectId, username, namespace) => {
 					new Date(o.metadata.lastSignInTime)
 			)
 			.catch(() => undefined),
+		hasItem(namespace, `users/${username}/masterKeyUnconfirmed`).then(
+			b => !b
+		),
 		getItem(namespace, `users/${username}/plan`, CyphPlan)
 			.then(o => o.plan)
 			.catch(() => CyphPlans.Free),
@@ -152,6 +156,7 @@ export const getUserMetadata = async (projectId, username, namespace) => {
 			),
 			timestamp: lastLogin.toLocaleString()
 		},
+		masterKeyConfirmed,
 		pgpPublicKey:
 			profileExtra.pgp &&
 			profileExtra.pgp.publicKey &&
