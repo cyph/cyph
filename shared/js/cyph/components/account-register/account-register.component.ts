@@ -31,7 +31,6 @@ import {ConfigService} from '../../services/config.service';
 import {AccountAuthService} from '../../services/crypto/account-auth.service';
 import {AccountDatabaseService} from '../../services/crypto/account-database.service';
 import {PGPService} from '../../services/crypto/pgp.service';
-import {DatabaseService} from '../../services/database.service';
 import {DialogService} from '../../services/dialog.service';
 import {EnvService} from '../../services/env.service';
 import {LocalStorageService} from '../../services/local-storage.service';
@@ -356,7 +355,7 @@ export class AccountRegisterComponent
 			).then(async () => {
 				let o =
 					this.inviteCodeDebounceLast === id && value ?
-						await this.databaseService
+						await this.accountDatabaseService
 							.callFunction('checkInviteCode', {
 								inviteCode: value
 							})
@@ -958,9 +957,6 @@ export class AccountRegisterComponent
 
 		/** @ignore */
 		private readonly analyticsService: AnalyticsService,
-
-		/** @ignore */
-		private readonly databaseService: DatabaseService,
 
 		/** @ignore */
 		private readonly dialogService: DialogService,
