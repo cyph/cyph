@@ -10,6 +10,7 @@ import {resolvable} from '../util/wait/resolvable';
 import {openWindow} from '../util/window';
 import {AccountSettingsService} from './account-settings.service';
 import {ConfigService} from './config.service';
+import {AccountDatabaseService} from './crypto/account-database.service';
 import {DialogService} from './dialog.service';
 import {EnvService} from './env.service';
 import {LocalStorageService} from './local-storage.service';
@@ -19,14 +20,13 @@ import {StringsService} from './strings.service';
 @Injectable()
 export class SalesService extends BaseProvider {
 	/** @see AccountService.accountBillingStatus */
-	private readonly accountBillingStatus =
-		resolvable<
-			BehaviorSubject<{
-				admin: boolean;
-				goodStanding: boolean;
-				stripe: boolean;
-			}>
-		>();
+	private readonly accountBillingStatus = resolvable<
+		BehaviorSubject<{
+			admin: boolean;
+			goodStanding: boolean;
+			stripe: boolean;
+		}>
+	>();
 
 	/** @ignore */
 	private readonly canOpenMobileApp =
@@ -87,6 +87,7 @@ export class SalesService extends BaseProvider {
 		const url = userToken ?
 			await request({
 				data: {
+					namespace: this.accountDatabaseService.namespace,
 					userToken
 				},
 				method: 'POST',
@@ -147,6 +148,9 @@ export class SalesService extends BaseProvider {
 	}
 
 	constructor (
+		/** @ignore */
+		private readonly accountDatabaseService: AccountDatabaseService,
+
 		/** @ignore */
 		private readonly accountSettingsService: AccountSettingsService,
 

@@ -31,17 +31,17 @@ import (
 
 func main() {
 	handleFuncs("/analytics/*", false, Handlers{methods.GET: analytics, methods.POST: analytics})
-	handleFuncs("/billingstatus/{userToken}", false, Handlers{methods.GET: getBillingStatus})
+	handleFuncs("/billingstatus/{userToken}/{namespace}", false, Handlers{methods.GET: getBillingStatus})
 	handleFuncs("/blobs", false, Handlers{methods.PUT: blobUpload})
 	handleFuncs("/blobs/{id}", false, Handlers{methods.DELETE: blobDelete, methods.GET: blobDownload})
 	handleFuncs("/braintree/token", false, Handlers{methods.GET: braintreeToken})
 	handleFuncs("/channels/{id}", false, Handlers{methods.DELETE: channelDelete, methods.POST: channelSetup})
 	handleFuncs("/checkout", false, Handlers{methods.POST: checkout})
 	handleFuncs("/continent", false, Handlers{methods.GET: getContinent})
-	handleFuncs("/downgradeaccount/{userToken}", false, Handlers{methods.GET: downgradeAccount})
+	handleFuncs("/downgradeaccount/{userToken}/{namespace}", false, Handlers{methods.GET: downgradeAccount})
 	handleFuncs("/geolocation/{language}", false, Handlers{methods.GET: getGeolocation})
 	handleFuncs("/iceservers", false, Handlers{methods.GET: getIceServers})
-	handleFuncs("/invitecode", false, Handlers{methods.GET: getInviteCode})
+	handleFuncs("/invitecode/{namespace}", false, Handlers{methods.GET: getInviteCode})
 	handleFuncs("/package/*", false, Handlers{methods.GET: getPackage})
 	handleFuncs("/packagetimestamp/*", false, Handlers{methods.GET: getPackageTimestamp})
 	handleFuncs("/preauth/{id}", false, Handlers{methods.POST: preAuth})
@@ -341,7 +341,7 @@ func checkout(h HandlerArgs) (interface{}, int) {
 
 	username := ""
 	if userToken != "" {
-		username, _ = getUsername(userToken)
+		username, _ = getUsername(userToken, namespace)
 		if username == "" {
 			return "invalid or expired token", http.StatusBadRequest
 		}
@@ -796,7 +796,21 @@ func checkout(h HandlerArgs) (interface{}, int) {
 		""), "")
 
 	if success && plan.AccountsPlan != "" {
-		_inviteCode, oldBraintreeSubscriptionID, welcomeLetter, err := generateInvite(email, name, plan.AccountsPlan, appStoreReceipt, braintreeIDs, braintreeSubscriptionIDs, []string{}, inviteCode, username, plan.GiftPack, true, false)
+		_inviteCode, oldBraintreeSubscriptionID, welcomeLetter, err := generateInvite(
+			email,
+			name,
+			plan.AccountsPlan,
+			appStoreReceipt,
+			braintreeIDs,
+			braintreeSubscriptionIDs,
+			[]string{},
+			inviteCode,
+			username,
+			plan.GiftPack,
+			true,
+			false,
+			"",
+		)
 
 		inviteCode := _inviteCode
 
@@ -870,18 +884,24 @@ func checkout(h HandlerArgs) (interface{}, int) {
 }
 
 func downgradeAccount(h HandlerArgs) (interface{}, int) {
+	namespace, err := getNamespace(h.Vars["namespace"])
+	if err != nil {
+		return err.Error(), http.StatusBadRequest
+	}
+
 	userToken := sanitize(h.Vars["userToken"])
 
 	appStoreReceipt, braintreeSubscriptionID, stripeData, _ := downgradeAccountHelper(
 		userToken,
 		false,
+		namespace,
 	)
 
 	if appStoreReceipt != "" {
 		_, err := getAppStoreTransactionData(appStoreReceipt)
 
 		if err != nil {
-			downgradeAccountHelper(userToken, true)
+			downgradeAccountHelper(userToken, true, namespace)
 			return false, http.StatusOK
 		}
 
@@ -901,7 +921,7 @@ func downgradeAccount(h HandlerArgs) (interface{}, int) {
 
 	bt := braintreeInit(h)
 
-	_, err := bt.Subscription().Cancel(h.Context, braintreeSubscriptionID)
+	_, err = bt.Subscription().Cancel(h.Context, braintreeSubscriptionID)
 	if err != nil {
 		return err.Error(), http.StatusInternalServerError
 	}
@@ -910,9 +930,14 @@ func downgradeAccount(h HandlerArgs) (interface{}, int) {
 }
 
 func getBillingStatus(h HandlerArgs) (interface{}, int) {
+	namespace, err := getNamespace(h.Vars["namespace"])
+	if err != nil {
+		return err.Error(), http.StatusBadRequest
+	}
+
 	userToken := sanitize(h.Vars["userToken"])
 
-	appStoreReceipt, braintreeSubscriptionID, userEmail, planTrialEnd, stripeData, username, _ := getSubscriptionData(userToken)
+	appStoreReceipt, braintreeSubscriptionID, userEmail, planTrialEnd, stripeData, username, _ := getSubscriptionData(userToken, namespace)
 
 	billingAdmin, _ := isStripeBillingAdminInternal(userEmail, stripeData, username)
 	goodStanding := isAccountInGoodStanding(h, appStoreReceipt, braintreeSubscriptionID, planTrialEnd, stripeData)
@@ -930,6 +955,11 @@ func getContinent(h HandlerArgs) (interface{}, int) {
 }
 
 func getInviteCode(h HandlerArgs) (interface{}, int) {
+	namespace, err := getNamespace(h.Vars["namespace"])
+	if err != nil {
+		return err.Error(), http.StatusBadRequest
+	}
+
 	inviteCode, _, _, err := generateInvite(
 		"",
 		"",
@@ -943,6 +973,7 @@ func getInviteCode(h HandlerArgs) (interface{}, int) {
 		false,
 		false,
 		false,
+		namespace,
 	)
 
 	if err != nil {
@@ -1368,7 +1399,21 @@ func rollOutWaitlistInvites(h HandlerArgs) (interface{}, int) {
 			break
 		}
 
-		_, _, _, err = generateInvite(betaSignup.Email, betaSignup.Name, "", "", []string{""}, []string{""}, []string{}, "", "", false, false, false)
+		_, _, _, err = generateInvite(
+			betaSignup.Email,
+			betaSignup.Name,
+			"",
+			"",
+			[]string{""},
+			[]string{""},
+			[]string{},
+			"",
+			"",
+			false,
+			false,
+			false,
+			"",
+		)
 
 		if err != nil {
 			log.Printf("Failed to invite %s in rollOutWaitlistInvites: %v", betaSignup.Email, err)
@@ -1440,11 +1485,16 @@ func signUp(h HandlerArgs) (interface{}, int) {
 }
 
 func stripeBillingPortal(h HandlerArgs) (interface{}, int) {
+	namespace, err := getNamespace(h.Request.PostFormValue("namespace"))
+	if err != nil {
+		return err.Error(), http.StatusBadRequest
+	}
+
 	email := sanitize(h.Request.PostFormValue("email"))
 	userToken := sanitize(h.Request.PostFormValue("userToken"))
 
 	if userToken != "" {
-		_, stripeData, err := isStripeBillingAdmin(userToken)
+		_, stripeData, err := isStripeBillingAdmin(userToken, namespace)
 		if err != nil {
 			return err.Error(), http.StatusInternalServerError
 		}
@@ -1511,13 +1561,18 @@ func stripeBillingPortal(h HandlerArgs) (interface{}, int) {
 
 /* TODO: Factor out common logic with checkout */
 func stripeSession(h HandlerArgs) (interface{}, int) {
+	namespace, err := getNamespace(h.Request.PostFormValue("namespace"))
+	if err != nil {
+		return err.Error(), http.StatusBadRequest
+	}
+
 	inviteCode := sanitize(h.Request.PostFormValue("inviteCode"))
 	partnerTransactionID := sanitize(h.Request.PostFormValue("partnerTransactionID"))
 	userToken := sanitize(h.Request.PostFormValue("userToken"))
 
 	username := ""
 	if userToken != "" {
-		username, _ = getUsername(userToken)
+		username, _ = getUsername(userToken, namespace)
 		if username == "" {
 			return "invalid or expired token", http.StatusBadRequest
 		}
@@ -1922,7 +1977,21 @@ func stripeWebhookWorker(h HandlerArgs) (interface{}, int) {
 		}
 	}
 
-	inviteCode, oldSubscriptionID, _, err := generateInvite(email, name, plan.AccountsPlan, "", customerIDs, subscriptionIDs, subscriptionItemIDs, inviteCode, username, plan.GiftPack, true, true)
+	inviteCode, oldSubscriptionID, _, err := generateInvite(
+		email,
+		name,
+		plan.AccountsPlan,
+		"",
+		customerIDs,
+		subscriptionIDs,
+		subscriptionItemIDs,
+		inviteCode,
+		username,
+		plan.GiftPack,
+		true,
+		true,
+		"",
+	)
 
 	if err != nil {
 		return sendFailureEmail(

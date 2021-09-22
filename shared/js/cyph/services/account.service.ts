@@ -429,7 +429,7 @@ export class AccountService extends BaseProvider {
 
 			await request({
 				retries: 5,
-				url: this.envService.baseUrl + `downgradeaccount/${userToken}`
+				url: `${this.envService.baseUrl}downgradeaccount/${userToken}/${this.accountDatabaseService.namespace}`
 			});
 		}
 		finally {
@@ -577,7 +577,7 @@ export class AccountService extends BaseProvider {
 
 			const billingStatus = await requestJSON({
 				retries: 5,
-				url: this.envService.baseUrl + `billingstatus/${userToken}`
+				url: `${this.envService.baseUrl}billingstatus/${userToken}/${this.accountDatabaseService.namespace}`
 			}).catch(() => ({}));
 
 			this.billingStatus.next({

@@ -713,8 +713,8 @@ func getStripeProduct(planID string) string {
 	return planID
 }
 
-func isStripeBillingAdmin(userToken string) (bool, *StripeData, error) {
-	_, _, userEmail, _, stripeData, username, err := getSubscriptionData(userToken)
+func isStripeBillingAdmin(userToken string, namespace string) (bool, *StripeData, error) {
+	_, _, userEmail, _, stripeData, username, err := getSubscriptionData(userToken, namespace)
 	if err != nil {
 		return false, stripeData, err
 	}
@@ -747,15 +747,19 @@ func isStripeBillingAdminInternal(userEmail string, stripeData *StripeData, user
 	return true, nil
 }
 
-func downgradeAccountHelper(userToken string, removeAppStoreReceiptRef bool) (string, string, *StripeData, error) {
-	isBillingAdmin, _, err := isStripeBillingAdmin(userToken)
+func downgradeAccountHelper(userToken string, removeAppStoreReceiptRef bool, namespace string) (string, string, *StripeData, error) {
+	if namespace == "" {
+		namespace = config.DefaultFirebaseNamespace
+	}
+
+	isBillingAdmin, _, err := isStripeBillingAdmin(userToken, namespace)
 
 	if !isBillingAdmin {
 		return "", "", nil, err
 	}
 
 	body, _ := json.Marshal(map[string]interface{}{
-		"namespace":                "cyph.ws",
+		"namespace":                namespace,
 		"removeAppStoreReceiptRef": removeAppStoreReceiptRef,
 		"userToken":                userToken,
 	})
@@ -808,7 +812,11 @@ func downgradeAccountHelper(userToken string, removeAppStoreReceiptRef bool) (st
 	return appStoreReceipt, braintreeSubscriptionID, stripeData, nil
 }
 
-func generateInvite(email, name, plan, appStoreReceipt string, customerIDs, subscriptionIDs, subscriptionItemIDs []string, inviteCode, username string, giftPack, purchased, useStripe bool) (string, string, string, error) {
+func generateInvite(email, name, plan, appStoreReceipt string, customerIDs, subscriptionIDs, subscriptionItemIDs []string, inviteCode, username string, giftPack, purchased, useStripe bool, namespace string) (string, string, string, error) {
+	if namespace == "" {
+		namespace = config.DefaultFirebaseNamespace
+	}
+
 	body, _ := json.Marshal(map[string]interface{}{
 		"appStoreReceipt":     appStoreReceipt,
 		"customerIDs":         strings.Join(customerIDs, "\n"),
@@ -816,7 +824,7 @@ func generateInvite(email, name, plan, appStoreReceipt string, customerIDs, subs
 		"giftPack":            giftPack,
 		"inviteCode":          inviteCode,
 		"name":                name,
-		"namespace":           "cyph.ws",
+		"namespace":           namespace,
 		"plan":                plan,
 		"purchased":           purchased,
 		"subscriptionIDs":     strings.Join(subscriptionIDs, "\n"),
@@ -878,9 +886,13 @@ func generateInvite(email, name, plan, appStoreReceipt string, customerIDs, subs
 	return inviteCode, oldSubscriptionID, welcomeLetter, nil
 }
 
-func getSubscriptionData(userToken string) (string, string, string, int64, *StripeData, string, error) {
+func getSubscriptionData(userToken string, namespace string) (string, string, string, int64, *StripeData, string, error) {
+	if namespace == "" {
+		namespace = config.DefaultFirebaseNamespace
+	}
+
 	body, _ := json.Marshal(map[string]interface{}{
-		"namespace": "cyph.ws",
+		"namespace": namespace,
 		"userToken": userToken,
 	})
 
@@ -956,9 +968,13 @@ func getSubscriptionData(userToken string) (string, string, string, int64, *Stri
 	return appStoreReceipt, braintreeSubscriptionID, email, planTrialEnd, stripeData, username, nil
 }
 
-func getUsername(userToken string) (string, error) {
+func getUsername(userToken string, namespace string) (string, error) {
+	if namespace == "" {
+		namespace = config.DefaultFirebaseNamespace
+	}
+
 	body, _ := json.Marshal(map[string]interface{}{
-		"namespace": "cyph.ws",
+		"namespace": namespace,
 		"userToken": userToken,
 	})
 
@@ -1462,7 +1478,7 @@ func getEmail(email string) (string, error) {
 
 func getNamespace(namespace string) (string, error) {
 	if namespace == "" {
-		return "cyph.ws", nil
+		return config.DefaultFirebaseNamespace, nil
 	}
 
 	namespace = sanitize(namespace)

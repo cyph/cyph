@@ -250,6 +250,9 @@ export class AccountDatabaseService extends BaseProvider {
 	public readonly currentUserFiltered: Observable<ICurrentUser> =
 		this.currentUser.pipe(filterUndefinedOperator<ICurrentUser>());
 
+	/** @see DatabaseService.namespace */
+	public readonly namespace = this.databaseService.namespace;
+
 	/** Database namespace + a random 64-byte string, used for verification purposes. */
 	public readonly verificationString = `${this.databaseService.namespace}:DQPcViq0Fmr8NZ1NTqyEFFjvUqqcplaGdE2rqjYOercYO/t1/CxBY0cRohegDPf/gqhUJmZ58YMzogCIT2zScA==`;
 

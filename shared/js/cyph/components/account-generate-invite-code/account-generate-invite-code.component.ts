@@ -3,6 +3,7 @@ import {Router} from '@angular/router';
 import {BaseProvider} from '../../base-provider';
 import {StringProto} from '../../proto';
 import {AccountService} from '../../services/account.service';
+import {AccountDatabaseService} from '../../services/crypto/account-database.service';
 import {DialogService} from '../../services/dialog.service';
 import {EnvService} from '../../services/env.service';
 import {LocalStorageService} from '../../services/local-storage.service';
@@ -35,7 +36,9 @@ export class AccountGenerateInviteCodeComponent
 			StringProto,
 			async () => {
 				newInviteCodeGenerated = true;
-				return request({url: this.envService.baseUrl + 'invitecode'});
+				return request({
+					url: `${this.envService.baseUrl}invitecode/${this.accountDatabaseService.namespace}`
+				});
 			}
 		);
 
@@ -56,6 +59,9 @@ export class AccountGenerateInviteCodeComponent
 	constructor (
 		/** @ignore */
 		private readonly router: Router,
+
+		/** @ignore */
+		private readonly accountDatabaseService: AccountDatabaseService,
 
 		/** @ignore */
 		private readonly accountService: AccountService,

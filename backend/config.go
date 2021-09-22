@@ -153,6 +153,7 @@ var config = struct {
 	DefaultContinent           string
 	DefaultContinentCode       string
 	DefaultContinentCodeBackup string
+	DefaultFirebaseNamespace   string
 	DefaultFirebaseRegion      string
 	DefaultLanguageCode        string
 	DefaultPackage             string
@@ -283,6 +284,8 @@ var config = struct {
 	DefaultContinentCode: "eu",
 
 	DefaultContinentCodeBackup: "na",
+
+	DefaultFirebaseNamespace: "cyph.ws",
 
 	DefaultFirebaseRegion: "us-central1",
 
