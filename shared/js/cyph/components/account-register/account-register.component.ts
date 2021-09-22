@@ -646,6 +646,16 @@ export class AccountRegisterComponent
 		this.accountService.transitionEnd();
 		this.postSimpleRegisterSetupWatcher.next(this.postSimpleRegisterSetup);
 
+		if (
+			this.accountAuthService.registrationMetadata.value
+				?.initialEmailCompose?.fromEmail
+		) {
+			this.email.next(
+				this.accountAuthService.registrationMetadata.value
+					.initialEmailCompose.fromEmail
+			);
+		}
+
 		const pendingInviteCodePromise = this.localStorageService
 			.getString('pendingInviteCode')
 			.catch(() => '');
