@@ -54,22 +54,22 @@ export class AccountGenerateInviteCodeComponent
 	}
 
 	constructor (
-		/** @see Router */
+		/** @ignore */
 		private readonly router: Router,
 
-		/** @see AccountService */
+		/** @ignore */
 		private readonly accountService: AccountService,
 
-		/** @see DialogService */
+		/** @ignore */
 		private readonly dialogService: DialogService,
 
-		/** @see EnvService */
+		/** @ignore */
 		private readonly envService: EnvService,
 
-		/** @see LocalStorageService */
+		/** @ignore */
 		private readonly localStorageService: LocalStorageService,
 
-		/** @see StringsService */
+		/** @ignore */
 		private readonly stringsService: StringsService
 	) {
 		super();
