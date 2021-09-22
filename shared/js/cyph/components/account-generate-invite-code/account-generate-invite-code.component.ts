@@ -24,6 +24,8 @@ export class AccountGenerateInviteCodeComponent
 {
 	/** @inheritDoc */
 	public async ngOnInit () : Promise<void> {
+		this.accountService.transitionEnd();
+		this.accountService.resolveUiReady();
 		this.accountService.interstitial.next(true);
 
 		let newInviteCodeGenerated = false;
