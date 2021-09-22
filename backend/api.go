@@ -809,7 +809,7 @@ func checkout(h HandlerArgs) (interface{}, int) {
 			plan.GiftPack,
 			true,
 			false,
-			"",
+			namespace,
 		)
 
 		inviteCode := _inviteCode
@@ -1607,6 +1607,7 @@ func stripeSession(h HandlerArgs) (interface{}, int) {
 
 	metadata := map[string]string{
 		"inviteCode":           inviteCode,
+		"namespace":            namespace,
 		"partnerTransactionID": partnerTransactionID,
 		"planID":               planID,
 		"username":             username,
@@ -1990,7 +1991,7 @@ func stripeWebhookWorker(h HandlerArgs) (interface{}, int) {
 		plan.GiftPack,
 		true,
 		true,
-		"",
+		metadata["namespace"],
 	)
 
 	if err != nil {
