@@ -22,7 +22,13 @@ import {BaseProvider} from '../../base-provider';
 import {AccountNewDeviceActivationComponent} from '../../components/account-new-device-activation';
 import {InAppPurchaseComponent} from '../../components/in-app-purchase';
 import {emailPattern, emailRegex} from '../../email-pattern';
-import {BinaryProto, CyphPlans, IPGPMetadata, StringProto} from '../../proto';
+import {
+	AccountRegistrationMetadata,
+	BinaryProto,
+	CyphPlans,
+	IPGPMetadata,
+	StringProto
+} from '../../proto';
 import {AccountFilesService} from '../../services/account-files.service';
 import {AccountUserLookupService} from '../../services/account-user-lookup.service';
 import {AccountService} from '../../services/account.service';
@@ -860,25 +866,44 @@ export class AccountRegisterComponent
 					this.stringsService.signupFailed
 			);
 
-			if (!this.submitError.value && this.simple.value) {
-				await this.accountDatabaseService.setItem(
-					'masterKeyUnconfirmed',
-					BinaryProto,
-					new Uint8Array(0),
-					SecurityModels.unprotected
-				);
-			}
+			if (!this.submitError.value) {
+				const promises: Promise<unknown>[] = [];
 
-			if (
-				!this.submitError.value &&
-				this.pgp.value?.pgpMetadata?.fingerprint &&
-				this.pgp.value.pgpMetadata.keyID &&
-				this.pgp.value.publicKeyBytes
-			) {
-				await this.accountFilesService.uploadPGPKey({
-					pgpMetadata: this.pgp.value.pgpMetadata,
-					publicKey: this.pgp.value.publicKeyBytes
-				});
+				if (this.simple.value) {
+					promises.push(
+						this.accountDatabaseService.setItem(
+							'masterKeyUnconfirmed',
+							BinaryProto,
+							new Uint8Array(0),
+							SecurityModels.unprotected
+						)
+					);
+				}
+
+				if (this.accountAuthService.registrationMetadata.value) {
+					promises.push(
+						this.accountDatabaseService.setItem(
+							'registrationMetadata',
+							AccountRegistrationMetadata,
+							this.accountAuthService.registrationMetadata.value
+						)
+					);
+				}
+
+				if (
+					this.pgp.value?.pgpMetadata?.fingerprint &&
+					this.pgp.value.pgpMetadata.keyID &&
+					this.pgp.value.publicKeyBytes
+				) {
+					promises.push(
+						this.accountFilesService.uploadPGPKey({
+							pgpMetadata: this.pgp.value.pgpMetadata,
+							publicKey: this.pgp.value.publicKeyBytes
+						})
+					);
+				}
+
+				await Promise.all(promises);
 			}
 		}
 		catch {

@@ -5,6 +5,7 @@ import {BaseProvider} from '../../base-provider';
 import {AccountFileRecord, EmailMessage, IEmailMessage} from '../../proto';
 import {AccountEmailService} from '../../services/account-email.service';
 import {AccountFilesService} from '../../services/account-files.service';
+import {AccountDatabaseService} from '../../services/crypto/account-database.service';
 import {AccountService} from '../../services/account.service';
 import {StringsService} from '../../services/strings.service';
 import {lockFunction} from '../../util/lock';
@@ -46,6 +47,16 @@ export class AccountEmailViewComponent extends BaseProvider implements OnInit {
 
 	/** @inheritDoc */
 	public async ngOnInit () : Promise<void> {
+		if (!this.accountDatabaseService.currentUser.value) {
+			await this.router.navigate([
+				'login',
+				...this.activatedRoute.snapshot.pathFromRoot
+					.flatMap(o => o.url)
+					.map(o => o.path)
+			]);
+			return;
+		}
+
 		this.accountService.transitionEnd();
 		this.accountService.resolveUiReady();
 
@@ -115,6 +126,9 @@ export class AccountEmailViewComponent extends BaseProvider implements OnInit {
 
 		/** @ignore */
 		private readonly router: Router,
+
+		/** @ignore */
+		private readonly accountDatabaseService: AccountDatabaseService,
 
 		/** @ignore */
 		private readonly accountEmailService: AccountEmailService,

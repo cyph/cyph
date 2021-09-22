@@ -17,6 +17,7 @@ import {AccountEmailService} from '../../services/account-email.service';
 import {AccountFilesService} from '../../services/account-files.service';
 import {AccountUserLookupService} from '../../services/account-user-lookup.service';
 import {AccountService} from '../../services/account.service';
+import {AccountAuthService} from '../../services/crypto/account-auth.service';
 import {AccountDatabaseService} from '../../services/crypto/account-database.service';
 import {PotassiumService} from '../../services/crypto/potassium.service';
 import {DialogService} from '../../services/dialog.service';
@@ -74,6 +75,41 @@ export class AccountEmailComposeComponent
 
 	/** @inheritDoc */
 	public async ngOnInit () : Promise<void> {
+		const {draftID, redirectURL} = await this.activatedRoute.params
+			.pipe(take(1))
+			.toPromise();
+
+		const initialDraftID =
+			typeof draftID === 'string' && draftID ? draftID : undefined;
+
+		this.redirectURL =
+			typeof redirectURL === 'string' && redirectURL ?
+				this.potassiumService.toString(
+					this.potassiumService.fromBase64URL(redirectURL)
+				) :
+				undefined;
+
+		if (!this.accountDatabaseService.currentUser.value) {
+			if (initialDraftID) {
+				this.accountAuthService.registrationMetadata.next({
+					initialEmailCompose: {
+						draftID: initialDraftID,
+						fromEmail: (
+							await deserialize(
+								EmailMessage,
+								await downloadBlob(initialDraftID)
+							)
+						).from.email,
+						pending: true,
+						redirectURL: this.redirectURL
+					}
+				});
+			}
+
+			await this.router.navigate(['register']);
+			return;
+		}
+
 		this.accountService.interstitial.next(true);
 		this.accountService.transitionEnd();
 		this.accountService.resolveUiReady();
@@ -85,8 +121,7 @@ export class AccountEmailComposeComponent
 				user: {username}
 			},
 			{name},
-			email,
-			{draftID, redirectURL}
+			email
 		] = await Promise.all([
 			currentUserPromise,
 			currentUserPromise.then(async o =>
@@ -98,12 +133,8 @@ export class AccountEmailComposeComponent
 					StringProto,
 					SecurityModels.unprotected
 				)
-				.catch(() => undefined),
-			this.activatedRoute.params.pipe(take(1)).toPromise()
+				.catch(() => undefined)
 		]);
-
-		const initialDraftID =
-			typeof draftID === 'string' && draftID ? draftID : undefined;
 
 		this.accountService.interstitial.next(false);
 
@@ -116,13 +147,6 @@ export class AccountEmailComposeComponent
 			);
 			return;
 		}
-
-		this.redirectURL =
-			typeof redirectURL === 'string' && redirectURL ?
-				this.potassiumService.toString(
-					this.potassiumService.fromBase64URL(redirectURL)
-				) :
-				undefined;
 
 		this.emailComposeData.next({
 			from: {
@@ -207,6 +231,9 @@ export class AccountEmailComposeComponent
 
 		/** @ignore */
 		private readonly router: Router,
+
+		/** @ignore */
+		private readonly accountAuthService: AccountAuthService,
 
 		/** @ignore */
 		private readonly accountDatabaseService: AccountDatabaseService,

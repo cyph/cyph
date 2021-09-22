@@ -15,6 +15,7 @@ import {
 	BinaryProto,
 	BooleanProto,
 	IAccountLoginData,
+	IAccountRegistrationMetadata,
 	IAccountUserProfile,
 	IAccountUserProfileExtra,
 	IAGSEPKICSR,
@@ -61,6 +62,11 @@ export class AccountAuthService extends BaseProvider {
 
 	/** If true, the login prompt will be used to create a pseudo-account. */
 	public readonly pseudoAccountLogin = new BehaviorSubject<boolean>(false);
+
+	/** Metadata to set upon registration. */
+	public readonly registrationMetadata = new BehaviorSubject<
+		IAccountRegistrationMetadata | undefined
+	>(undefined);
 
 	/** @ignore */
 	private async getItem<T> (

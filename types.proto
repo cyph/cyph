@@ -299,6 +299,27 @@ message AccountPostReference {
 	required string id = 2;
 }
 
+/** Metadata captured during registration. */
+message AccountRegistrationMetadata {
+	/** Metadata from email compose attempt. */
+	message InitialEmailCompose {
+		/** Draft ID. */
+		string draftID = 1;
+
+		/** @see EmailMessage.from.email */
+		string fromEmail = 2;
+
+		/** Indicates whether this draft is still pending. */
+		bool pending = 3;
+
+		/** Redirect URL. */
+		string redirectURL = 4;
+	}
+
+	/** @see InitialEmailCompose */
+	InitialEmailCompose initialEmailCompose = 1;
+}
+
 /** Completion state of recommended tasks for new accounts. */
 message AccountSetupChecklist {
 	/** Adding contacts. */
