@@ -114,6 +114,26 @@ export const updateRepos = async () => {
 			stdio: 'inherit'
 		});
 	}
+
+	/* Temporary workaround */
+	childProcess.spawnSync(
+		'git',
+		[
+			'checkout',
+			'--track',
+			'origin/raptor-env-tmp',
+			'-b',
+			'raptor-env-tmp'
+		],
+		{
+			cwd: `${repoRoot}/custom-builds`,
+			stdio: 'inherit'
+		}
+	);
+	childProcess.spawnSync('git', ['checkout', 'raptor-env-tmp'], {
+		cwd: `${repoRoot}/custom-builds`,
+		stdio: 'inherit'
+	});
 };
 
 if (isCLI) {
