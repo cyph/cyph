@@ -3,11 +3,13 @@ import {Router} from '@angular/router';
 import {BehaviorSubject, Observable} from 'rxjs';
 import {map} from 'rxjs/operators';
 import {BaseProvider} from '../../base-provider';
+import {AccountRegistrationMetadata} from '../../proto';
 import {AccountContactsService} from '../../services/account-contacts.service';
 import {AccountFilesService} from '../../services/account-files.service';
 import {AccountSettingsService} from '../../services/account-settings.service';
 import {AccountService} from '../../services/account.service';
 import {AccountDatabaseService} from '../../services/crypto/account-database.service';
+import {PotassiumService} from '../../services/crypto/potassium.service';
 import {EnvService} from '../../services/env.service';
 import {StringsService} from '../../services/strings.service';
 
@@ -49,6 +51,31 @@ export class AccountHomeComponent extends BaseProvider implements OnInit {
 			return;
 		}
 
+		const {initialEmailCompose} =
+			(await this.accountDatabaseService
+				.getItem('registrationMetadata', AccountRegistrationMetadata)
+				.catch(() => undefined)) || {};
+
+		if (this.destroyed.value) {
+			return;
+		}
+
+		if (initialEmailCompose?.pending && initialEmailCompose.draftID) {
+			await this.router.navigate([
+				'email',
+				'compose',
+				initialEmailCompose.draftID,
+				...(initialEmailCompose.redirectURL ?
+					[
+						this.potassiumService.toBase64URL(
+							initialEmailCompose.redirectURL
+						)
+					] :
+					[])
+			]);
+			return;
+		}
+
 		const homePage =
 			this.accountSettingsService.homePage.value ||
 			(await this.accountSettingsService.homePage);
@@ -81,6 +108,9 @@ export class AccountHomeComponent extends BaseProvider implements OnInit {
 
 		/** @see EnvService */
 		public readonly envService: EnvService,
+
+		/** @see PotassiumService */
+		public readonly potassiumService: PotassiumService,
 
 		/** @see StringsService */
 		public readonly stringsService: StringsService

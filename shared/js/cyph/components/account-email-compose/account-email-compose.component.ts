@@ -6,9 +6,11 @@ import {take} from 'rxjs/operators';
 import {SecurityModels} from '../../account';
 import {BaseProvider} from '../../base-provider';
 import {
+	AccountRegistrationMetadata,
 	BinaryProto,
 	EmailMessage,
 	EmailMessageExternal,
+	IAccountRegistrationMetadata,
 	IEmailMessage,
 	IEmailMessageExternal,
 	StringProto
@@ -162,6 +164,33 @@ export class AccountEmailComposeComponent
 				undefined,
 			initialDraftID
 		});
+
+		if (!initialDraftID) {
+			return;
+		}
+
+		const registrationMetadata = await this.accountDatabaseService
+			.getItem('registrationMetadata', AccountRegistrationMetadata)
+			.catch(() => undefined);
+
+		if (
+			registrationMetadata?.initialEmailCompose?.pending !== true ||
+			registrationMetadata.initialEmailCompose.draftID !== initialDraftID
+		) {
+			return;
+		}
+
+		await this.accountDatabaseService.setItem<IAccountRegistrationMetadata>(
+			'registrationMetadata',
+			AccountRegistrationMetadata,
+			{
+				...registrationMetadata,
+				initialEmailCompose: {
+					...registrationMetadata.initialEmailCompose,
+					pending: false
+				}
+			}
+		);
 	}
 
 	/** Sends email. */
