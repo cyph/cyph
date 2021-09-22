@@ -76,8 +76,8 @@ export class AccountLoginComponent extends BaseProvider implements OnInit {
 	public readonly masterKey = new BehaviorSubject<string>('');
 
 	/** @see ICurrentUser.masterKeyConfirmed */
-	public readonly masterKeyConfirmed = this.accountDatabaseService
-		.hasItem('masterKeyUnconfirmed')
+	public readonly masterKeyConfirmed = this.localStorageService
+		.hasItem('unconfirmedMasterKey', true)
 		.then(b => !b);
 
 	/** Master key input element. */
