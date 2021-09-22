@@ -584,7 +584,9 @@ export class AccountAuthService extends BaseProvider {
 						loginData.symmetricKey
 					),
 					Promise.all([
-						this.databaseService.hasItem('masterKeyUnconfirmed'),
+						this.databaseService.hasItem(
+							`users/${username}/masterKeyUnconfirmed`
+						),
 						this.localStorageService.hasItem(
 							'unconfirmedMasterKey',
 							true
