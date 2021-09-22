@@ -15,6 +15,17 @@ export class AccountEmailService extends BaseProvider {
 		return `${username}:publicEmailData`;
 	}
 
+	/** Generates signature for publication. */
+	public async generateSignature (email: string) : Promise<Uint8Array> {
+		const currentUser = await this.accountDatabaseService.getCurrentUser();
+
+		return this.potassiumService.sign.signDetached(
+			email,
+			currentUser.keys.signingKeyPair.privateKey,
+			this.getAdditionalData(currentUser.user.username)
+		);
+	}
+
 	/** Gets email data. */
 	public async getEmailData (query: {
 		email?: string;
@@ -60,8 +71,6 @@ export class AccountEmailService extends BaseProvider {
 
 	/** Publishes email data. */
 	public async publishEmailData (unpublish: boolean = false) : Promise<void> {
-		const currentUser = await this.accountDatabaseService.getCurrentUser();
-
 		const email = await this.accountDatabaseService.getItem(
 			'emailVerified',
 			StringProto,
@@ -72,14 +81,8 @@ export class AccountEmailService extends BaseProvider {
 			throw new Error('Verified email not set.');
 		}
 
-		const signature = await this.potassiumService.sign.signDetached(
-			email,
-			currentUser.keys.signingKeyPair.privateKey,
-			this.getAdditionalData(currentUser.user.username)
-		);
-
 		await this.accountDatabaseService.callFunction('publishEmail', {
-			signature,
+			signature: await this.generateSignature(email),
 			unpublish
 		});
 	}

@@ -151,6 +151,8 @@ service firebase.storage {
 
 				// match /email/{hash} {}
 
+				// match /emailAutoPublish/{hash} {}
+
 				match /emailPublishUpdateTimestamp/{hash} {
 					allow write: if false;
 				}

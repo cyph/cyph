@@ -1067,6 +1067,15 @@ message EhrApiKey {
 	required bool isMaster = 2;
 }
 
+/** Data for auto-publishing email address. */
+message EmailAutoPublish {
+	/** Email address. */
+	required string email = 1;
+
+	/** Signature. */
+	required bytes signature = 2;
+}
+
 /** Email message data. */
 message EmailMessage {
 	/** Email contact data for a user. */

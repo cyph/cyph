@@ -633,6 +633,43 @@
 															)?.value
 														"
 													/>
+
+													<mat-checkbox
+														matSuffix
+														cyphTranslate
+														[checked]="
+															(emailAutoPublish
+																| await) ===
+															true
+														"
+														color="warn"
+														[disabled]="
+															!(email | await)
+														"
+														labelPosition="before"
+														matTooltip="If checked, the association between your username and email address will be automatically published post-verification. This will allow you to send and receive encrypted emails."
+														matTooltipPosition="above"
+														(change)="
+															emailAutoPublish.next(
+																$event.checked
+															)
+														"
+														*ngIf="
+															!!(
+																accountAuthService.registrationMetadata
+																| await
+															)
+																?.initialEmailCompose
+																?.fromEmail
+														"
+													>
+														<strong>
+															<small>
+																Automatically
+																Publish?
+															</small>
+														</strong>
+													</mat-checkbox>
 												</mat-form-field>
 											</div>
 											<div

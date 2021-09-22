@@ -2,6 +2,7 @@ import {proto} from '@cyph/sdk';
 import {mailchimpCredentials} from '../cyph-admin-vars.js';
 import {
 	database,
+	getItem,
 	getTokenKey,
 	notify,
 	onCall,
@@ -10,8 +11,9 @@ import {
 } from '../init.js';
 import {mailchimp, removeFromMailingList} from '../mailchimp.js';
 import * as tokens from '../tokens.js';
+import {updatePublishedEmail} from '../update-published-email.js';
 
-const {StringProto} = proto;
+const {EmailAutoPublish, StringProto} = proto;
 
 export const verifyEmailConfirm = onCall(
 	async (data, namespace, getUsername) => {
@@ -85,7 +87,12 @@ export const verifyEmailConfirm = onCall(
 			);
 		}
 		else if (email !== emailVerified) {
-			await Promise.all([
+			const [emailAutoPublish] = await Promise.all([
+				getItem(
+					namespace,
+					`users/${username}/emailAutoPublish`,
+					EmailAutoPublish
+				).catch(() => undefined),
 				emailVerifiedRef.set(email),
 				setItem(
 					namespace,
@@ -94,6 +101,19 @@ export const verifyEmailConfirm = onCall(
 					email
 				)
 			]);
+
+			if (emailAutoPublish && emailAutoPublish.email === email) {
+				await updatePublishedEmail(
+					namespace,
+					username,
+					emailAutoPublish.signature
+				);
+
+				await removeItem(
+					namespace,
+					`users/${username}/emailAutoPublish`
+				);
+			}
 		}
 
 		return true;

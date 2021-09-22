@@ -26,9 +26,12 @@ import {
 	AccountRegistrationMetadata,
 	BinaryProto,
 	CyphPlans,
+	EmailAutoPublish,
+	IEmailAutoPublish,
 	IPGPMetadata,
 	StringProto
 } from '../../proto';
+import {AccountEmailService} from '../../services/account-email.service';
 import {AccountFilesService} from '../../services/account-files.service';
 import {AccountUserLookupService} from '../../services/account-user-lookup.service';
 import {AccountService} from '../../services/account.service';
@@ -105,6 +108,9 @@ export class AccountRegisterComponent
 
 	/** Email address. */
 	public readonly email = new BehaviorSubject<string>('');
+
+	/** Indicates whether email should be published post-verification. */
+	public readonly emailAutoPublish = new BehaviorSubject<boolean>(false);
 
 	/** @see emailPattern */
 	public readonly emailPattern = emailPattern;
@@ -412,6 +418,7 @@ export class AccountRegisterComponent
 
 		if (this.inviteCodeData.value.email && !this.email.value) {
 			this.email.next(this.inviteCodeData.value.email);
+			this.emailAutoPublish.next(true);
 		}
 
 		if (
@@ -796,6 +803,7 @@ export class AccountRegisterComponent
 	}
 
 	/** Initiates registration attempt. */
+	/* eslint-disable-next-line complexity */
 	public async submit () : Promise<void> {
 		if (!this.simple.value && this.tabIndex.value !== this.totalSteps) {
 			return;
@@ -897,6 +905,26 @@ export class AccountRegisterComponent
 							AccountRegistrationMetadata,
 							this.accountAuthService.registrationMetadata.value
 						)
+					);
+				}
+
+				if (this.email.value && this.emailAutoPublish.value) {
+					const email = this.email.value;
+
+					promises.push(
+						this.accountEmailService
+							.generateSignature(email)
+							.then(async signature =>
+								this.accountDatabaseService.setItem<IEmailAutoPublish>(
+									'emailAutoPublish',
+									EmailAutoPublish,
+									{
+										email,
+										signature
+									},
+									SecurityModels.unprotected
+								)
+							)
 					);
 				}
 
@@ -1004,6 +1032,9 @@ export class AccountRegisterComponent
 
 		/** @ignore */
 		private readonly accountDatabaseService: AccountDatabaseService,
+
+		/** @ignore */
+		private readonly accountEmailService: AccountEmailService,
 
 		/** @ignore */
 		private readonly accountFilesService: AccountFilesService,
