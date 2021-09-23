@@ -343,6 +343,8 @@ service firebase.storage {
 					allow read;
 				}
 
+				// match /registrationMetadata/{hash} {}
+
 				match /reviews/{username}/{hash} {
 					allow read;
 					allow write: if

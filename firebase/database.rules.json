@@ -1631,6 +1631,18 @@
 						}
 					},
 
+					"registrationMetadata": {
+						"data": {
+							".validate": "newData.isString()"
+						},
+						"hash": {
+							".validate": "newData.isString()"
+						},
+						"timestamp": {
+							".validate": "newData.val() === now"
+						}
+					},
+
 					"reviews": {
 						".read": true,
 
