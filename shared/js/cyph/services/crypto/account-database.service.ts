@@ -1177,13 +1177,25 @@ export class AccountDatabaseService extends BaseProvider {
 
 	/** Gets public keys belonging to the specified user. */
 	public async getUserPublicKeys (
-		username: string
+		username: string,
+		skipValidationForCurrentUserKeys: boolean = true
 	) : Promise<IAccountUserPublicKeys> {
 		if (!username) {
 			throw new Error('Invalid username.');
 		}
 
 		username = normalize(username);
+
+		if (
+			skipValidationForCurrentUserKeys &&
+			username === this.currentUser.value?.user.username
+		) {
+			return {
+				encryption:
+					this.currentUser.value.keys.encryptionKeyPair.publicKey,
+				signing: this.currentUser.value.keys.signingKeyPair.publicKey
+			};
+		}
 
 		return this.localStorageService.getOrSetDefault(
 			`AccountDatabaseService.getUserPublicKeys/${username}`,
