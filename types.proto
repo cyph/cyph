@@ -306,8 +306,8 @@ message AccountRegistrationMetadata {
 		/** Draft ID. */
 		string draftID = 1;
 
-		/** @see EmailMessage.from.email */
-		string fromEmail = 2;
+		/** @see EmailMessage.from */
+		EmailMessage.Contact from = 2;
 
 		/** Indicates whether this draft is still pending. */
 		bool pending = 3;

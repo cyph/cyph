@@ -663,6 +663,11 @@
 														"
 														color="warn"
 														[disabled]="
+															(
+																emailOptions
+																| await
+															)?.allowEditing ===
+																false ||
 															!(email | await)
 														"
 														labelPosition="before"

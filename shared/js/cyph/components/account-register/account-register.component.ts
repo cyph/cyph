@@ -212,7 +212,7 @@ export class AccountRegisterComponent
 	/** Route to login page. */
 	public readonly loginRoute =
 		this.accountAuthService.registrationMetadata.pipe(
-			map(o => ['login', ...(o?.initialRoute || [])])
+			map(o => ['/login', ...(o?.initialRoute || [])])
 		);
 
 	/** Master key (main account password). */
@@ -434,12 +434,6 @@ export class AccountRegisterComponent
 
 		if (this.inviteCodeData.value.email && !this.email.value) {
 			this.email.next(this.inviteCodeData.value.email);
-			this.emailOptions.next({
-				allowEditing: false,
-				autoPublish: true,
-				required: true,
-				showAutoPublishCheckbox: true
-			});
 		}
 
 		if (
@@ -676,11 +670,28 @@ export class AccountRegisterComponent
 
 		if (
 			this.accountAuthService.registrationMetadata.value
-				?.initialEmailCompose?.fromEmail
+				?.initialEmailCompose?.from?.email
 		) {
 			this.email.next(
 				this.accountAuthService.registrationMetadata.value
-					.initialEmailCompose.fromEmail
+					.initialEmailCompose.from.email
+			);
+
+			this.emailOptions.next({
+				allowEditing: false,
+				autoPublish: true,
+				required: true,
+				showAutoPublishCheckbox: true
+			});
+		}
+
+		if (
+			this.accountAuthService.registrationMetadata.value
+				?.initialEmailCompose?.from?.name
+		) {
+			this.name.next(
+				this.accountAuthService.registrationMetadata.value
+					.initialEmailCompose.from.name
 			);
 		}
 

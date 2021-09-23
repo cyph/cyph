@@ -96,12 +96,12 @@ export class AccountEmailComposeComponent
 				this.accountAuthService.registrationMetadata.next({
 					initialEmailCompose: {
 						draftID: initialDraftID,
-						fromEmail: (
+						from: (
 							await deserialize(
 								EmailMessage,
 								await downloadBlob(initialDraftID)
 							)
-						).from.email,
+						).from,
 						pending: true,
 						redirectURL: this.redirectURL
 					},
