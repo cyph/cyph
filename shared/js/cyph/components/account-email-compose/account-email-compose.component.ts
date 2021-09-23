@@ -104,7 +104,10 @@ export class AccountEmailComposeComponent
 						).from.email,
 						pending: true,
 						redirectURL: this.redirectURL
-					}
+					},
+					initialRoute: this.activatedRoute.snapshot.pathFromRoot
+						.flatMap(o => o.url)
+						.map(o => o.path)
 				});
 			}
 

@@ -209,6 +209,12 @@ export class AccountRegisterComponent
 	/** Lock screen PIN confirmation. */
 	public readonly lockScreenPinConfirm = new BehaviorSubject<string>('');
 
+	/** Route to login page. */
+	public readonly loginRoute =
+		this.accountAuthService.registrationMetadata.pipe(
+			map(o => ['login', ...(o?.initialRoute || [])])
+		);
+
 	/** Master key (main account password). */
 	public readonly masterKey = new BehaviorSubject<string>('');
 

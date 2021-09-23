@@ -318,6 +318,9 @@ message AccountRegistrationMetadata {
 
 	/** @see InitialEmailCompose */
 	InitialEmailCompose initialEmailCompose = 1;
+
+	/** Route that user was redirected to /register from, if applicable. */
+	repeated string initialRoute = 2;
 }
 
 /** Completion state of recommended tasks for new accounts. */
