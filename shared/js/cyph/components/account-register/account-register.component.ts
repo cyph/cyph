@@ -109,8 +109,18 @@ export class AccountRegisterComponent
 	/** Email address. */
 	public readonly email = new BehaviorSubject<string>('');
 
-	/** Indicates whether email should be published post-verification. */
-	public readonly emailAutoPublish = new BehaviorSubject<boolean>(false);
+	/** Email field options. */
+	public readonly emailOptions = new BehaviorSubject<{
+		allowEditing: boolean;
+		autoPublish: boolean;
+		required: boolean;
+		showAutoPublishCheckbox: boolean;
+	}>({
+		allowEditing: true,
+		autoPublish: false,
+		required: false,
+		showAutoPublishCheckbox: false
+	});
 
 	/** @see emailPattern */
 	public readonly emailPattern = emailPattern;
@@ -418,7 +428,12 @@ export class AccountRegisterComponent
 
 		if (this.inviteCodeData.value.email && !this.email.value) {
 			this.email.next(this.inviteCodeData.value.email);
-			this.emailAutoPublish.next(true);
+			this.emailOptions.next({
+				allowEditing: false,
+				autoPublish: true,
+				required: true,
+				showAutoPublishCheckbox: true
+			});
 		}
 
 		if (
@@ -908,7 +923,7 @@ export class AccountRegisterComponent
 					);
 				}
 
-				if (this.email.value && this.emailAutoPublish.value) {
+				if (this.email.value && this.emailOptions.value.autoPublish) {
 					const email = this.email.value;
 
 					promises.push(

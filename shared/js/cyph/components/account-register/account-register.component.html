@@ -607,6 +607,13 @@
 													<input
 														matInput
 														cyphTranslate
+														[disabled]="
+															(
+																emailOptions
+																| await
+															)?.allowEditing ===
+															false
+														"
 														[ngModel]="
 															email | await
 														"
@@ -618,6 +625,11 @@
 														[pattern]="emailPattern"
 														[placeholder]="
 															envService.isTelehealth ||
+															(
+																emailOptions
+																| await
+															)?.required ===
+																true ||
 															!(
 																inviteCodeWatcher
 																| await
@@ -627,6 +639,11 @@
 														"
 														[required]="
 															envService.isTelehealth ||
+															(
+																emailOptions
+																| await
+															)?.required ===
+																true ||
 															!(
 																inviteCodeWatcher
 																| await
@@ -638,8 +655,10 @@
 														matSuffix
 														cyphTranslate
 														[checked]="
-															(emailAutoPublish
-																| await) ===
+															(
+																emailOptions
+																| await
+															)?.autoPublish ===
 															true
 														"
 														color="warn"
@@ -650,17 +669,36 @@
 														matTooltip="If checked, the association between your username and email address will be automatically published post-verification. This will allow you to send and receive encrypted emails."
 														matTooltipPosition="above"
 														(change)="
-															emailAutoPublish.next(
-																$event.checked
-															)
+															emailOptions.next({
+																allowEditing:
+																	emailOptions
+																		.value
+																		.allowEditing,
+																autoPublish:
+																	emailOptions
+																		.value
+																		.allowEditing ?
+																		$event.checked :
+																		emailOptions
+																			.value
+																			.autoPublish,
+																required:
+																	emailOptions
+																		.value
+																		.required,
+																showAutoPublishCheckbox:
+																	emailOptions
+																		.value
+																		.showAutoPublishCheckbox
+															})
 														"
 														*ngIf="
-															!!(
-																accountAuthService.registrationMetadata
+															(
+																emailOptions
 																| await
 															)
-																?.initialEmailCompose
-																?.fromEmail
+																?.showAutoPublishCheckbox ===
+															true
 														"
 													>
 														<strong>
