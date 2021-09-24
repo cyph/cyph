@@ -97,6 +97,7 @@
 @ngxs/store
 @node-rs/crc32
 @opentok/client
+@prettier/plugin-xml
 @stripe/stripe-js
 @syncfusion/ej2
 @syncfusion/ej2-angular-barcode-generator
@@ -374,6 +375,7 @@ pdfjs-dist
 pdfkit
 pinch-zoom-js
 prettier
+prettier-plugin-java
 primeng
 promise-semaphore
 protobufjs@6.8.8

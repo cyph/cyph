@@ -4,4 +4,4 @@
 cacheBustedProjects='cyph.app cyph.com'
 compiledProjects='cyph.app'
 webSignedProject='cyph.app'
-prodOnlyProjects='nakedredirect test websign'
+prodOnlyProjects='nakedredirect syncfusion test websign'

@@ -376,7 +376,11 @@ elif [ "${prodAndBeta}" ] ; then
 	git checkout beta
 	./commands/copyworkspace.sh ${branchDir}
 	git clean -dfx
-	rm -rf ${branchDir}/backend ${branchDir}/firebase ${branchDir}/nakedredirect
+	rm -rf \
+		${branchDir}/backend \
+		${branchDir}/firebase \
+		${branchDir}/nakedredirect \
+		${branchDir}/syncfusion
 fi
 
 cd ~/.build

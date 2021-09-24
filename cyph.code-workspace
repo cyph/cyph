@@ -26,6 +26,7 @@
 		}
 	],
 	"settings": {
+		"java.configuration.updateBuildConfiguration": "automatic",
 		"typescript.tsdk": "shared/node_modules/typescript/lib",
 		"workbench.colorCustomizations": {}
 	}

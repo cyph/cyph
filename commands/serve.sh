@@ -192,6 +192,11 @@ bash -c "
 	)")
 	gin --all -i -p 42000 -a \${PORT} run *.go
 " &
+bash -c "
+	cd syncfusion
+	export PORT=42004
+	mvn compile exec:java -Dexec.mainClass='com.cyph.syncfusion.Main'
+" &
 if [ "${site}" == 'backend' ] ; then sleep Infinity ; fi
 
 ./commands/buildunbundledassets.sh \

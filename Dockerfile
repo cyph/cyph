@@ -45,6 +45,7 @@ RUN apt-get -y --allow-downgrades install \
 	libtool \
 	libxi-dev \
 	libxss1 \
+	maven \
 	nano \
 	nodejs \
 	openjdk-11-jdk \
@@ -169,7 +170,7 @@ VOLUME /home/gibson/.ssh
 
 WORKDIR /cyph/commands
 
-EXPOSE 9005 9876 31337 42000 42001 42002 42003 44000
+EXPOSE 9005 9876 31337 42000 42001 42002 42003 42004 44000
 
 
 CMD /bin/bash

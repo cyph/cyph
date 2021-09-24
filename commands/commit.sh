@@ -62,7 +62,7 @@ for f in $(rg -l '/\*\*[^@\.]+\*/' shared/js | grep -P '\.ts$') ; do
 	mv "${f}.new" "${f}"
 done
 
-cyph-prettier --write '**/*.{css,html,js,json,scss,ts,tsx}'
+cyph-prettier --write '**/*.{css,html,java,js,json,scss,ts,tsx,xml}'
 
 find shared/assets/img -type f \( -name '*.jpg' -or -name '*.png' \) -exec bash -c '
 	curl -sf "$(node -e "console.log(JSON.parse('"'"'$(

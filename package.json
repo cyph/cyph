@@ -16,7 +16,8 @@
 		"singleQuote": true,
 		"tabWidth": 4,
 		"trailingComma": "none",
-		"useTabs": true
+		"useTabs": true,
+		"xmlWhitespaceSensitivity": "ignore"
 	},
 	"scripts": {
 		"prettyQuick": "node scripts/pretty-quick.js",

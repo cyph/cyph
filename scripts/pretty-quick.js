@@ -9,7 +9,7 @@ childProcess.spawnSync(
 		path.join('shared', 'node_modules', '.bin', 'cyph-pretty-quick'),
 		'--staged',
 		'--pattern',
-		'**/*.{css,html,js,json,scss,ts,tsx}'
+		'**/*.{css,html,java,js,json,scss,ts,tsx,xml}'
 	],
 	{cwd: path.join(__dirname, '..'), stdio: 'inherit'}
 );

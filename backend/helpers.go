@@ -88,6 +88,12 @@ var backendURL = func() string {
 	}
 	return os.Getenv("BACKEND_URL")
 }()
+var syncfusionURL = func() string {
+	if isLocalEnv {
+		return "http://localhost:42004"
+	}
+	return os.Getenv("SYNCFUSION_URL")
+}()
 var websiteURL = func() string {
 	if isLocalEnv {
 		return "http://localhost:43000"

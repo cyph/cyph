@@ -56,6 +56,7 @@ func main() {
 	handleFuncs("/stripe/session", false, Handlers{methods.POST: stripeSession})
 	handleFuncs("/stripe/webhook", false, Handlers{methods.POST: stripeWebhook})
 	handleFuncs("/stripe/webhook/worker", false, Handlers{methods.POST: stripeWebhookWorker})
+	handleFuncs("/syncfusion/convert", false, Handlers{methods.POST: syncfusionConvert})
 	handleFuncs("/timestamp", false, Handlers{methods.GET: getTimestampHandler})
 	handleFuncs("/waitlist/invite", true, Handlers{methods.GET: rollOutWaitlistInvites})
 	handleFuncs("/warmupcloudfunctions", true, Handlers{methods.GET: warmUpCloudFunctions})
@@ -2009,6 +2010,28 @@ func stripeWebhookWorker(h HandlerArgs) (interface{}, int) {
 	}
 
 	return "", http.StatusOK
+}
+
+func syncfusionConvert(h HandlerArgs) (interface{}, int) {
+	client := &http.Client{}
+
+	req, _ := http.NewRequest(
+		methods.POST,
+		syncfusionURL+"/convert",
+		h.Request.Body,
+	)
+
+	resp, err := client.Do(req)
+	if err != nil {
+		return err.Error(), http.StatusInternalServerError
+	}
+
+	result, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return err.Error(), http.StatusInternalServerError
+	}
+
+	return string(result), resp.StatusCode
 }
 
 func warmUpCloudFunctions(h HandlerArgs) (interface{}, int) {

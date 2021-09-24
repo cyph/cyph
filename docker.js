@@ -769,7 +769,13 @@ switch (args.command) {
 
 	case 'serve':
 		const base = 'http://localhost';
-		const projects = ['backend', 'cyph.com', 'cyph.app', 'docs'];
+		const projects = [
+			'backend',
+			'cyph.com',
+			'cyph.app',
+			'docs',
+			'syncfusion'
+		];
 		const postOpenLogs = [];
 
 		for (let i = 0; i < projects.length; ++i) {
