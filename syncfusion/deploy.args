@@ -1,0 +1,1 @@
+syncfusion-convert --entry-point functions.Convert --runtime java11 --trigger-http --memory 512MB --allow-unauthenticated --security-level secure-always

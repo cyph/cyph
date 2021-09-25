@@ -212,7 +212,7 @@ if [ "${test}" ] ; then
 		sed -i "s|staging|${version}|g" backend/config.go
 		echo "  APP_URL: '${appURL}'" >> backend/app.yaml
 		echo "  BACKEND_URL: 'https://${version}-dot-cyphme.appspot.com'" >> backend/app.yaml
-		echo "  SYNCFUSION_URL: 'https://syncfusion-dot-cyphme.appspot.com'" >> backend/app.yaml
+		echo "  SYNCFUSION_URL: 'https://us-central1-cyphme.cloudfunctions.net/syncfusion-convert'" >> backend/app.yaml
 		echo "  WEBSITE_URL: 'https://${version}-dot-cyph-com-dot-cyphme.appspot.com'" >> backend/app.yaml
 	fi
 
@@ -274,7 +274,7 @@ else
 	if [ -d backend ] ; then
 		echo "  APP_URL: 'https://cyph.app'" >> backend/app.yaml
 		echo "  BACKEND_URL: 'https://api.cyph.com'" >> backend/app.yaml
-		echo "  SYNCFUSION_URL: 'https://syncfusion-dot-cyphme.appspot.com'" >> backend/app.yaml
+		echo "  SYNCFUSION_URL: 'https://us-central1-cyphme.cloudfunctions.net/syncfusion-convert'" >> backend/app.yaml
 		echo "  WEBSITE_URL: 'https://www.cyph.com'" >> backend/app.yaml
 	fi
 

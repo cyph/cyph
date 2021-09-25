@@ -194,8 +194,7 @@ bash -c "
 " &
 bash -c "
 	cd syncfusion
-	export PORT=42004
-	mvn compile exec:java -Dexec.mainClass='com.cyph.syncfusion.Main'
+	mvn function:run -Drun.port=42004
 " &
 if [ "${site}" == 'backend' ] ; then sleep Infinity ; fi
 

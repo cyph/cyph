@@ -5,7 +5,7 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
 >
 	<modelVersion>4.0.0</modelVersion>
-	<groupId>com.cyph.syncfusion</groupId>
+	<groupId>functions</groupId>
 	<artifactId>syncfusion</artifactId>
 	<version>1.0.0</version>
 
@@ -17,37 +17,24 @@
 	<build>
 		<plugins>
 			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-jar-plugin</artifactId>
-				<version>3.2.0</version>
+				<groupId>com.google.cloud.functions</groupId>
+				<artifactId>function-maven-plugin</artifactId>
+				<version>0.9.7</version>
 				<configuration>
-					<archive>
-						<manifest>
-							<mainClass>com.cyph.syncfusion.Main</mainClass>
-						</manifest>
-					</archive>
-				</configuration>
-			</plugin>
-
-			<plugin>
-				<groupId>org.codehaus.mojo</groupId>
-				<artifactId>exec-maven-plugin</artifactId>
-				<version>3.0.0</version>
-			</plugin>
-
-			<plugin>
-				<groupId>com.google.cloud.tools</groupId>
-				<artifactId>appengine-maven-plugin</artifactId>
-				<version>2.4.1</version>
-				<configuration>
-					<projectId>GCLOUD_CONFIG</projectId>
-					<version>syncfusion</version>
+					<functionTarget>functions.Convert</functionTarget>
 				</configuration>
 			</plugin>
 		</plugins>
 	</build>
 
 	<dependencies>
+		<dependency>
+			<groupId>com.google.cloud.functions</groupId>
+			<artifactId>functions-framework-api</artifactId>
+			<version>1.0.4</version>
+			<scope>provided</scope>
+		</dependency>
+
 		<dependency>
 			<groupId>com.syncfusion</groupId>
 			<artifactId>syncfusion-ej2-wordprocessor</artifactId>

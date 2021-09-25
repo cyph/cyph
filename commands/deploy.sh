@@ -1077,6 +1077,12 @@ if [ "${site}" != 'firebase' ] ; then
 		fi
 	)
 
+	if [ -d syncfusion ] ; then
+		cd syncfusion
+		gcloud functions deploy $(cat deploy.args)
+		cd ..
+	fi
+
 	mv .test test 2> /dev/null
 	# if [ -d test ] && ( [ ! "${site}" ] || [ "${site}" == 'test' ] ) ; then
 	# 	gcloud app services delete --quiet --project cyphme test
