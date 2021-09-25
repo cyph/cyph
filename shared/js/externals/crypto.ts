@@ -2,4 +2,4 @@
 
 /** @file crypto external. */
 
-export * from 'crypto-browserify';
+module.exports = <any> require('crypto-browserify');

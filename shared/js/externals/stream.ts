@@ -2,4 +2,4 @@
 
 /** @file stream external. */
 
-export * from 'stream-browserify';
+module.exports = <any> require('stream-browserify');

@@ -3,4 +3,4 @@
 /** @file _stream_writable external. */
 
 import * as stream from 'stream-browserify';
-export default (<any> stream).Writable;
+module.exports = (<any> stream).Writable;

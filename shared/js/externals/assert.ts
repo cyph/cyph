@@ -2,4 +2,4 @@
 
 /** @file assert external. */
 
-export * from 'assert-browserify';
+module.exports = <any> require('assert-browserify');
