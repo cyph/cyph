@@ -12,7 +12,7 @@ import org.jsoup.nodes.Document;
 public class Convert implements HttpFunction {
 
 	@Override
-	public void service(HttpRequest request, HttpResponse response)
+	public void service(final HttpRequest request, final HttpResponse response)
 		throws IOException {
 		String result = "";
 		int status = 500;
