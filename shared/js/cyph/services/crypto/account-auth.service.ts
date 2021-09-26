@@ -482,7 +482,8 @@ export class AccountAuthService extends BaseProvider {
 		username: string,
 		masterKey: string | Uint8Array,
 		pin?: string | Uint8Array,
-		altMasterKey: boolean = false
+		altMasterKey: boolean = false,
+		midRegistration?: boolean
 	) : Promise<boolean> {
 		this.loginErrorMessage.next(undefined);
 
@@ -584,9 +585,10 @@ export class AccountAuthService extends BaseProvider {
 						loginData.symmetricKey
 					),
 					Promise.all([
-						this.databaseService.hasItem(
-							`users/${username}/masterKeyUnconfirmed`
-						),
+						midRegistration ||
+							this.databaseService.hasItem(
+								`users/${username}/masterKeyUnconfirmed`
+							),
 						this.localStorageService.hasItem(
 							'unconfirmedMasterKey',
 							true
@@ -1157,7 +1159,13 @@ export class AccountAuthService extends BaseProvider {
 				}
 			);
 
-			const loginSuccess = await this.login(username, masterKeyHash);
+			const loginSuccess = await this.login(
+				username,
+				masterKeyHash,
+				undefined,
+				undefined,
+				true
+			);
 
 			if (inviteCode) {
 				const inviterUsername = await this.databaseService
