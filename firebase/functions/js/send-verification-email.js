@@ -1,6 +1,9 @@
+import {proto} from '@cyph/sdk';
 import {database, getTokenKey, notify, removeItem, setItem} from './init.js';
 import * as tokens from './tokens.js';
 import {validateEmail} from './validation.js';
+
+const {StringProto} = proto;
 
 export const sendVerificationEmail = async (namespace, username, newEmail) => {
 	const userURL = `${namespace}/users/${username}`;
