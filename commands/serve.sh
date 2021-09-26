@@ -7,6 +7,7 @@ cd $(cd "$(dirname "$0")" ; pwd)/..
 
 customBuild=''
 firebaseBackup=''
+includeSyncfusion=''
 noLockDown=''
 e2e=''
 unitTest=''
@@ -31,6 +32,10 @@ if [ "${1}" == '--unit-test' ] ; then
 fi
 if [ "${1}" == '--firebase-backup' ] ; then
 	firebaseBackup=true
+	shift
+fi
+if [ "${1}" == '--include-syncfusion' ] ; then
+	includeSyncfusion=true
 	shift
 fi
 if [ "${1}" == '--no-lock-down' ] ; then
@@ -192,10 +197,12 @@ bash -c "
 	)")
 	gin --all -i -p 42000 -a \${PORT} run *.go
 " &
-bash -c "
-	cd syncfusion
-	mvn function:run -Drun.port=42004
-" &
+if [ "${includeSyncfusion}" ] ; then
+	bash -c "
+		cd syncfusion
+		mvn function:run -Drun.port=42004
+	" &
+fi
 if [ "${site}" == 'backend' ] ; then sleep Infinity ; fi
 
 ./commands/buildunbundledassets.sh \
