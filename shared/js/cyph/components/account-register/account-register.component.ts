@@ -1216,6 +1216,7 @@ export class AccountRegisterComponent
 				)
 			]).pipe(
 				map(
+					/* eslint-disable-next-line complexity */
 					([
 						additionalDevicesReady,
 						checking,
@@ -1243,7 +1244,9 @@ export class AccountRegisterComponent
 									[this.stringsService.registerErrorEmail] :
 									[]),
 								...(!postSimpleRegisterSetup &&
-								(!inviteCode.value || inviteCode.errors) ?
+								(!inviteCode.value ||
+									inviteCode.errors ||
+									inviteCode.pending) ?
 									[
 										this.stringsService
 											.registerErrorInviteCode
@@ -1259,7 +1262,9 @@ export class AccountRegisterComponent
 									[this.stringsService.registerErrorName] :
 									[]),
 								...(!postSimpleRegisterSetup &&
-								(!username.value || username.errors) ?
+								(!username.value ||
+									username.errors ||
+									username.pending) ?
 									[
 										this.stringsService
 											.registerErrorUsername
