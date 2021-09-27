@@ -824,6 +824,9 @@ export class StringsService extends BaseProvider {
 	public readonly masterKeyMismatch = `Master Keys don't match`;
 
 	/** @see StringsService */
+	public readonly masterKeyStrength = `Master Key Strength`;
+
+	/** @see StringsService */
 	public readonly masterKeyStrengthDetailHigh = `**Very Strong:** This is a strong key! It will likely never be cracked within the lifetime of the universe.`;
 
 	/** @see StringsService */
@@ -1704,7 +1707,7 @@ export class StringsService extends BaseProvider {
 	public readonly welcomeComma = `Welcome,`;
 
 	/** @see StringsService */
-	public readonly welcomeInitialSetup = `Your account will be submitted for verification after the initial setup. Your username is guaranteed so long as this is completed within 30 days from registration.`;
+	public readonly welcomeInitialSetup = `Your account activation will be initiated after this setup. Your username is guaranteed so long as this is completed within 30 days from registration.`;
 
 	/** @see StringsService */
 	public readonly welcomeMasterKeySetup = `IMPORTANT: Confirm Your Master Key`;

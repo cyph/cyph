@@ -101,9 +101,13 @@
 		[inviteCodeFormControl]="inviteCode"
 	></cyph-in-app-purchase>
 
-	<h3 class="cyph-banner alert">
+	<h3 class="cyph-banner alert" [class.mobile]="envService.isMobile | await">
 		<div fxFlex fxLayout="row">
-			<div fxLayoutAlign="center center" class="visibility-hidden">
+			<div
+				fxLayoutAlign="center center"
+				class="visibility-hidden"
+				*ngIf="false"
+			>
 				<button
 					mat-icon-button
 					cyphTranslate
@@ -212,7 +216,11 @@
 					</div>
 				</ng-template>
 			</div>
-			<div fxLayoutAlign="center center" class="visibility-hidden">
+			<div
+				fxLayoutAlign="center center"
+				class="visibility-hidden"
+				*ngIf="false"
+			>
 				<button
 					mat-icon-button
 					cyphTranslate
@@ -1025,6 +1033,9 @@
 									<div fxLayout="row" fxLayoutAlign="center">
 										<h3
 											class="cyph-banner warn"
+											[class.mobile]="
+												envService.isMobile | await
+											"
 											*ngIf="
 												(submitError | await) !==
 												undefined
@@ -1184,6 +1195,7 @@
 									fxLayout="row"
 									fxLayoutAlign="center center"
 									class="cyph-banner default-align warn"
+									[class.mobile]="envService.isMobile | await"
 									*ngIf="
 										!(simple | await) &&
 										(errors?.length || 0) > 0
@@ -1342,7 +1354,11 @@
 					</div>
 				</div>
 				<div fxLayout="row" fxLayoutAlign="center center">
-					<h3 class="cyph-banner warn" cyphTranslate>
+					<h3
+						cyphTranslate
+						class="cyph-banner warn"
+						[class.mobile]="envService.isMobile | await"
+					>
 						Make sure that you're alone before you proceed!
 					</h3>
 				</div>
@@ -1408,6 +1424,7 @@
 	<div fxLayout="row" fxLayoutAlign="center">
 		<h3
 			class="cyph-banner warn"
+			[class.mobile]="envService.isMobile | await"
 			*ngIf="(submitError | await) !== undefined"
 		>
 			{{ submitError | await }}
@@ -1476,13 +1493,14 @@
 
 <ng-template #masterKeyUI>
 	<div fxLayout="column" fxLayoutGap="48px" cyphTranslate>
-		<div></div>
+		<div *ngIf="(envService.isMobile | await) === false"></div>
 
 		<div fxLayout="row" fxLayoutAlign="center center">
 			<h3
 				fxLayout="column"
 				fxLayoutGap="24px"
-				class="cyph-banner inverted default-align"
+				class="cyph-banner inverted default-align master-key"
+				[class.mobile]="envService.isMobile | await"
 			>
 				<div cyphTranslate>
 					<h4>Understanding your Master Key:</h4>
@@ -1551,7 +1569,7 @@
 						(click)="opsecAcknowledgement.next(true)"
 						required
 					>
-						I understand and am ready to view my Master Key
+						Acknowledge Guidelines
 					</button>
 				</div>
 			</h3>
@@ -1577,11 +1595,30 @@
 								{{ stringsService.masterKeyInfo }}
 							</div>
 						</div>
-						<div fxLayoutAlign="center center" fxLayoutGap="16px">
-							<div></div>
-							<div cyphTranslate class="slider-label">
-								Master Key Strength
+						<ng-container
+							*ngIf="(envService.isMobile | await) === true"
+						>
+							<div fxLayoutAlign="center center">
+								<div
+									class="
+										slider-label
+										master-key-strength
+										mobile
+									"
+								>
+									{{ stringsService.masterKeyStrength }}
+								</div>
 							</div>
+						</ng-container>
+						<div fxLayoutAlign="center center" fxLayoutGap="16px">
+							<ng-container
+								*ngIf="(envService.isMobile | await) === false"
+							>
+								<div></div>
+								<div class="slider-label master-key-strength">
+									{{ stringsService.masterKeyStrength }}
+								</div>
+							</ng-container>
 							<mat-slider
 								fxFlex
 								class="cdk-focused"
@@ -1608,7 +1645,9 @@
 							>
 								help
 							</mat-icon>
-							<div></div>
+							<div
+								*ngIf="(envService.isMobile | await) === false"
+							></div>
 						</div>
 					</div>
 				</div>
@@ -1662,6 +1701,7 @@
 							<h3
 								fxFlex
 								class="cyph-banner warn password"
+								[class.mobile]="envService.isMobile | await"
 								[ngClass]="
 									configService.masterKey.sizeStrength(
 										(xkcdPassphrase | await) || 0
@@ -1864,7 +1904,12 @@
 			</mat-accordion>
 		</div>
 
-		<div *ngIf="(opsecAcknowledgement | await) === true"></div>
+		<div
+			*ngIf="
+				(opsecAcknowledgement | await) === true ||
+				(envService.isMobile | await) === true
+			"
+		></div>
 	</div>
 </ng-template>
 

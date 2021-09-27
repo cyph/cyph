@@ -133,7 +133,12 @@ mat-card-content {
 	margin-right: 0 !important;
 }
 
-.cyph-banner {
+.slider-label.master-key-strength.mobile {
+	margin: 16px 0;
+}
+
+.cyph-banner:not(.mobile),
+.cyph-banner.master-key {
 	font-size: 1em;
 	line-height: 1.75em;
 	padding: 1em 2em;
