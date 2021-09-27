@@ -1,6 +1,7 @@
 import {proto, util} from '@cyph/sdk';
 import fs from 'fs';
 import ical from 'ical-generator';
+import moment from 'moment-timezone';
 import mustache from 'mustache';
 import nodemailer from 'nodemailer';
 import icalTimezones from '@touch4it/ical-timezones';
@@ -77,6 +78,12 @@ const recurrenceDayToString = dayOfWeek =>
 
 const recurrenceFrequencyToString = frequency =>
 	CalendarRecurrenceRules.Frequency[frequency].toUpperCase();
+
+/* Workaround for odd behavior of @touch4it/ical-timezones */
+const getDate = (timestamp, timeZone) =>
+	new Date(
+		timestamp + (timeZone ? moment.tz(timeZone).utcOffset() * 60000 : 0)
+	);
 
 export const sendEmailInternal = async (
 	to,
@@ -181,7 +188,10 @@ export const sendEmailInternal = async (
 								...(eventDescription ?
 									{description: eventDescription} :
 									{}),
-								end: new Date(eventDetails.endTime),
+								end: getDate(
+									eventDetails.endTime,
+									eventDetails.timeZone
+								),
 								...(eventDetails.location ?
 									{location: eventDetails.location} :
 									{}),
@@ -243,8 +253,9 @@ export const sendEmailInternal = async (
 													exclude:
 														eventDetails.recurrence.excludeDates.map(
 															timestamp =>
-																new Date(
-																	timestamp
+																getDate(
+																	timestamp,
+																	eventDetails.timeZone
 																)
 														)
 												} :
@@ -271,8 +282,10 @@ export const sendEmailInternal = async (
 												{}),
 											...(eventDetails.recurrence.until ?
 												{
-													until: new Date(
-														eventDetails.recurrence.until
+													until: getDate(
+														eventDetails.recurrence
+															.until,
+														eventDetails.timeZone
 													)
 												} :
 												{}),
@@ -287,7 +300,10 @@ export const sendEmailInternal = async (
 												{})
 										}} : {}),
 								sequence: Math.floor(Date.now() / 1000),
-								start: new Date(eventDetails.startTime),
+								start: getDate(
+									eventDetails.startTime,
+									eventDetails.timeZone
+								),
 								status: cancelEvent ? 'cancelled' : 'confirmed',
 								timezone: eventDetails.timeZone || 'UTC',
 								summary: eventDetails.title || subject,

@@ -31,6 +31,7 @@
 		"mailchimp-api-v3": "*",
 		"markdown-escapes": "*",
 		"markdown-it": "*",
+		"moment-timezone": "*",
 		"mustache": "*",
 		"node": "14",
 		"nodemailer": "*",
