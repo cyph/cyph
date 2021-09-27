@@ -68,7 +68,9 @@ export class AccountHomeComponent extends BaseProvider implements OnInit {
 				...(initialEmailCompose.redirectURL ?
 					[
 						this.potassiumService.toBase64URL(
-							initialEmailCompose.redirectURL
+							this.potassiumService.fromString(
+								initialEmailCompose.redirectURL
+							)
 						)
 					] :
 					[])
