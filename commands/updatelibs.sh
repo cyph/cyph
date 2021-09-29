@@ -63,3 +63,5 @@ find . -maxdepth 2 -type f -name .go.mod -exec bash -c '
 ' \;
 
 ./commands/commit.sh --gc "${@}" updatelibs
+
+notify --admins "updatelibs complete"
