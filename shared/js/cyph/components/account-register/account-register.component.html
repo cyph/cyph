@@ -106,7 +106,7 @@
 			<div
 				fxLayoutAlign="center center"
 				class="visibility-hidden"
-				*ngIf="false"
+				*ngIf="postSimpleRegisterSetup && (envService.isMobile | await)"
 			>
 				<button
 					mat-icon-button
@@ -218,8 +218,7 @@
 			</div>
 			<div
 				fxLayoutAlign="center center"
-				class="visibility-hidden"
-				*ngIf="false"
+				*ngIf="postSimpleRegisterSetup && (envService.isMobile | await)"
 			>
 				<button
 					mat-icon-button

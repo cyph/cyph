@@ -34,7 +34,10 @@ export class AccountAfterRegisterComponent
 		this.accountService.setHeader(
 			this.accountDatabaseService.currentUser.value?.masterKeyConfirmed ?
 				this.stringsService.welcomeToProduct :
-				{disable: true}
+				{
+					mobile: this.stringsService
+						.registerPostSimpleRegisterSetupTitle
+				}
 		);
 
 		this.accountService.transitionEnd();
