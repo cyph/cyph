@@ -14,7 +14,12 @@ import {SecurityModels, User, usernameMask} from '../../account';
 import {BaseProvider} from '../../base-provider';
 import {InAppPurchaseComponent} from '../../components/in-app-purchase';
 import {emailPattern} from '../../email-pattern';
-import {BinaryProto, BooleanProto, CyphPlans} from '../../proto';
+import {
+	AccountRegistrationMetadata,
+	BinaryProto,
+	BooleanProto,
+	CyphPlans
+} from '../../proto';
 import {AccountEmailService} from '../../services/account-email.service';
 import {AccountSettingsService} from '../../services/account-settings.service';
 import {AccountService} from '../../services/account.service';
@@ -148,6 +153,12 @@ export class AccountSettingsComponent extends BaseProvider implements OnInit {
 
 	/** Indicates whether data is ready to save. */
 	public readonly ready: BehaviorSubject<boolean>;
+
+	/** Indicates whether email publish button should be displayed (when applicable). */
+	public readonly showEmailPublish = this.accountDatabaseService
+		.getItem('registrationMetadata', AccountRegistrationMetadata)
+		.then(o => !!o.initialEmailCompose?.draftID)
+		.catch(() => false);
 
 	/** UI state. */
 	public readonly state = this.activatedRoute.data.pipe(

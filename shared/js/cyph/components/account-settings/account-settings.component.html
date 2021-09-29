@@ -68,6 +68,7 @@
 							verifyEmail()
 					"
 					[class.visibility-hidden]="
+						(o.verified && !o.published && !o.showPublish) ||
 						!(data | await)?.modified?.email ||
 						(data | await)?.current?.email !==
 							(data | await)?.modified?.email
@@ -79,6 +80,7 @@
 					"
 					*ngIf="{
 						published: (emailPublished | await) === true,
+						showPublish: (showEmailPublish | await) === true,
 						verified: (emailVerified | await) === true
 					} as o"
 				>
