@@ -160,7 +160,12 @@ log () {
 }
 
 notify () {
-	/node_modules/.bin/notify --text "${*}" > /dev/null
+	/cyph/commands/notify.js "${@}" > /dev/null
+
+	if [ "${1}" == '--admins' ] ; then
+		shift
+	fi
+
 	log "${*}"
 }
 
@@ -218,11 +223,6 @@ export -f unbindmountInternal
 
 
 export FIREBASE_CONFIG='{}'
-
-if [ -f ~/.cyph/notify.key ] && [ -f /node_modules/.bin/notify ] ; then
-	rm ~/.notifyreg 2> /dev/null
-	/node_modules/.bin/notify -r "$(cat ~/.cyph/notify.key)" > /dev/null
-fi
 
 
 # Setup for documentation generation

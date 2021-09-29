@@ -11,6 +11,7 @@ import fs from 'fs';
 import lz4 from 'lz4';
 import os from 'os';
 import * as brotli from './brotli.js';
+import {sendMessageInternal} from './messaging-internal.js';
 
 const {BinaryProto, StringProto} = proto;
 const {deserialize, retryUntilSuccessful, serialize, sleep, uuid} = util;
@@ -26,7 +27,7 @@ export const initDatabaseService = (config, isCloudFunction) => {
 		const keyFilename = `${configDir}/firebase-credentials/${projectId}.json`;
 
 		config = {
-			fcmServerKey: fs.readFileSync(fcmKeyFilename).toString(),
+			fcmServerKey: fs.readFileSync(fcmKeyFilename).toString().trim(),
 			firebase: {
 				credential: admin.credential.cert(
 					JSON.parse(fs.readFileSync(keyFilename).toString())
@@ -209,6 +210,16 @@ export const initDatabaseService = (config, isCloudFunction) => {
 			else {
 				await retry(async () => database.ref(url).remove());
 			}
+		},
+		async sendMessage (namespace, username, body, options)  {
+			return sendMessageInternal(
+				database,
+				messaging,
+				namespace,
+				username,
+				body,
+				options
+			);
 		},
 		async setArchive (archiveName, bytes)  {
 			if (!archiveStorage) {

@@ -277,7 +277,9 @@ const shellScripts = {
 		${containerInitScript}
 		source ~/.bashrc
 		/cyph/commands/${commandScript} ${shellCommandArgs}
-		notify 'Command complete: ${args.command}' &> /dev/null
+		if [ '${args.command}' != 'notify' ] ; then
+			notify 'Command complete: ${args.command}' &> /dev/null
+		fi
 	`,
 	libUpdate: {
 		command: `

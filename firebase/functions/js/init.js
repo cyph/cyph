@@ -24,6 +24,7 @@ export const {
 	messaging,
 	pushItem,
 	removeItem,
+	sendMessage,
 	setItem,
 	setItemInternal,
 	storage
@@ -41,7 +42,7 @@ export const {
 
 export const {getTokenKey} = initTokenKey(database);
 
-export const {notify} = initNotify(database, messaging);
+export const {notify} = initNotify(database, sendMessage);
 
 export const getRealUsername = async (namespace, username) => {
 	if (!username) {

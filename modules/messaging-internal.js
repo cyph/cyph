@@ -2,7 +2,7 @@ import {util} from '@cyph/sdk';
 
 const {normalize} = util;
 
-export const sendMessage = async (
+export const sendMessageInternal = async (
 	database,
 	messaging,
 	namespace,
@@ -10,7 +10,12 @@ export const sendMessage = async (
 	body,
 	{actions, additionalData, badge, inboxStyle = true, ring, tag} = {}
 ) => {
-	username = normalize(username);
+	namespace = namespace.replace(/\./g, '_');
+	username = normalize(username || '');
+
+	if (!namespace || !username) {
+		return;
+	}
 
 	const ref = database.ref(`${namespace}/users/${username}/messagingTokens`);
 
@@ -32,7 +37,7 @@ export const sendMessage = async (
 
 				const notification = {
 					badge,
-					body,
+					body: body.trim(),
 					sound:
 						ring && platform === 'android' ? 'ringtone' : 'default',
 					tag,

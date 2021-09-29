@@ -3,13 +3,13 @@
 import {getMeta} from '../modules/base.js';
 const {__dirname, isCLI} = getMeta(import.meta);
 
-import childProcess from 'child_process';
 import crypto from 'crypto';
 import dgram from 'dgram';
 import fs from 'fs';
 import read from 'read';
 import sodiumUtil from 'sodiumutil';
 import superSphincs from 'supersphincs';
+import {notify} from './notify.js';
 
 // Temporary workaround pending AGSE update to SuperSPHINCS v6
 import oldSuperSphincs from '/home/gibson/oldsupersphincs/node_modules/supersphincs/supersphincs.js';
@@ -148,11 +148,7 @@ export const sign = async (inputs, testSign, demoSign, skipNotify = false) =>
 		}
 
 		if (!skipNotify) {
-			childProcess.spawnSync(
-				'bash',
-				['-c', 'notify "Starting signing process"'],
-				{stdio: 'inherit'}
-			);
+			await notify('Starting signing process');
 		}
 
 		const publicKeys = getPublicKeys(demoSign);
