@@ -1134,6 +1134,44 @@
 											<div
 												fxLayout="row"
 												fxLayoutAlign="center center"
+											>
+												<strong cyphTranslate>
+													Master Key:
+												</strong>
+												&nbsp;
+												<span>
+													{{
+														(useXkcdPassphrase
+															| await) === false ?
+															stringsService.masterKeyCustom :
+															stringsService.setParameters(
+																stringsService.masterKeyStrengthBits,
+																{
+																	bits: configService.masterKey.sizes[
+																		(xkcdPassphrase
+																			| await) ||
+																			0
+																	].toString(),
+																	strength:
+																		configService.masterKey
+																			.sizeStrength(
+																				(xkcdPassphrase
+																					| await) ||
+																					0
+																			)
+																			.replace(
+																				'-',
+																				' '
+																			)
+																}
+															)
+													}}
+												</span>
+											</div>
+
+											<div
+												fxLayout="row"
+												fxLayoutAlign="center center"
 												*ngIf="!postSimpleRegisterSetup"
 											>
 												<strong cyphTranslate

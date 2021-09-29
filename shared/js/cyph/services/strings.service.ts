@@ -818,6 +818,9 @@ export class StringsService extends BaseProvider {
 	public readonly masterKey = `Paper Master Key`;
 
 	/** @see StringsService */
+	public readonly masterKeyCustom = `Custom Password`;
+
+	/** @see StringsService */
 	public readonly masterKeyInfo = `Master Key is space- and case-sensitive`;
 
 	/** @see StringsService */
@@ -825,6 +828,9 @@ export class StringsService extends BaseProvider {
 
 	/** @see StringsService */
 	public readonly masterKeyStrength = `Master Key Strength`;
+
+	/** @see StringsService */
+	public readonly masterKeyStrengthBits = `\${BITS} bits of entropy (\${STRENGTH} strength)`;
 
 	/** @see StringsService */
 	public readonly masterKeyStrengthDetailHigh = `**Very Strong:** This is a strong key! It will likely never be cracked within the lifetime of the universe.`;

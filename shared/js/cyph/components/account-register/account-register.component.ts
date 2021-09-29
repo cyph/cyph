@@ -280,7 +280,11 @@ export class AccountRegisterComponent
 	 * Master key submission.
 	 * @see getMasterKeyOnly
 	 */
-	@Output() public readonly submitMasterKey = new EventEmitter<string>();
+	@Output() public readonly submitMasterKey = new EventEmitter<{
+		masterKey: string;
+		useXkcdPassphrase: boolean;
+		xkcdPassphrase: number;
+	}>();
 
 	/**
 	 * Lock screen password submission.
@@ -579,7 +583,11 @@ export class AccountRegisterComponent
 			}
 
 			this.submitError.next(undefined);
-			this.submitMasterKey.emit(masterKey);
+			this.submitMasterKey.emit({
+				masterKey,
+				xkcdPassphrase: this.xkcdPassphrase.value,
+				useXkcdPassphrase: this.useXkcdPassphrase.value
+			});
 		}
 		finally {
 			this.checking.next(false);
@@ -789,7 +797,12 @@ export class AccountRegisterComponent
 
 	/** Sets up a paper master key. */
 	public async paperMasterKeySetup () : Promise<void> {
-		const submitMasterKey = resolvable<string>();
+		const submitMasterKey = resolvable<{
+			masterKey: string;
+			xkcdPassphrase: number;
+			useXkcdPassphrase: boolean;
+		}>();
+
 		const closeFunction = resolvable<() => void>();
 
 		const closed = this.dialogService.baseDialog(
@@ -810,10 +823,13 @@ export class AccountRegisterComponent
 			}
 		);
 
-		const masterKey = await submitMasterKey;
+		const {masterKey, useXkcdPassphrase, xkcdPassphrase} =
+			await submitMasterKey;
 
-		if (masterKey) {
+		if (masterKey.length > 0) {
 			this.masterKey.next(masterKey);
+			this.useXkcdPassphrase.next(useXkcdPassphrase);
+			this.xkcdPassphrase.next(xkcdPassphrase);
 			this.additionalDevices.paperMasterKey.next(true);
 		}
 

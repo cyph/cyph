@@ -423,7 +423,7 @@
 				<cyph-account-register
 					[getMasterKeyOnly]="stateValue === states.masterKey"
 					[getPinOnly]="stateValue === states.pin"
-					(submitMasterKey)="changeMasterKey($event)"
+					(submitMasterKey)="changeMasterKey($event.masterKey)"
 					(submitPIN)="changePIN($event)"
 				></cyph-account-register>
 			</div>
