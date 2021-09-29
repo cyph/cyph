@@ -1135,3 +1135,5 @@ if [ "${websign}" ] && ( [ "${test}" ] || [ "${debug}" ] || [ "${betaProd}" ] ) 
 	git pull
 	./commands/deploy.sh --prod --fast --site backend
 fi
+
+notify --admins "deploy complete: ${version}$(test "${site}" && echo ", ${site}")"
