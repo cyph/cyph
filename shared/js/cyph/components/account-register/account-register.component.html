@@ -283,6 +283,23 @@
 								>
 									<div
 										fxLayout="row"
+										fxLayoutAlign="center"
+										*ngIf="
+											(simple | await) &&
+											(submitError | await) !== undefined
+										"
+									>
+										<h3
+											class="cyph-banner warn"
+											[class.mobile]="
+												envService.isMobile | await
+											"
+										>
+											{{ submitError | await }}
+										</h3>
+									</div>
+									<div
+										fxLayout="row"
 										fxLayoutAlign="center center"
 										class="description"
 										*ngIf="!(simple | await)"
