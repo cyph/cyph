@@ -344,6 +344,7 @@ microlight-string
 minimist
 mkdirp
 moment
+moment-timezone
 mustache
 ng-animate
 ng-packagr
