@@ -237,5 +237,6 @@ for p in ${ports} ; do
 	while ! curl http://localhost:${p} &> /dev/null ; do sleep 1 ; done
 done
 echo "${ports}" > serve.ready
+notify serve ready
 
 sleep Infinity
