@@ -434,6 +434,9 @@ export class FirebaseDatabaseService extends DatabaseService {
 			);
 
 			if (err !== undefined) {
+				debugLogError(() => ({
+					databaseCallFunctionServerError: [name, o, err]
+				}));
 				throw err;
 			}
 
