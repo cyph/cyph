@@ -536,8 +536,8 @@ export class AccountRegisterComponent
 					)
 					.then(async () =>
 						Promise.all([
-							this.accountDatabaseService.removeItem(
-								'masterKeyUnconfirmed'
+							this.accountDatabaseService.callFunction(
+								'confirmMasterKey'
 							),
 							this.localStorageService.removeItem(
 								'unconfirmedMasterKey'

@@ -48,6 +48,10 @@ exports.checkInviteCode = onRequest(async (...args) =>
 	(await importFunction('check-invite-code')).checkInviteCode(...args)
 );
 
+exports.confirmMasterKey = onRequest(async (...args) =>
+	(await importFunction('confirm-master-key')).confirmMasterKey(...args)
+);
+
 exports.downgradeAccount = onRequest(async (...args) =>
 	(await importFunction('downgrade-account')).downgradeAccount(...args)
 );
