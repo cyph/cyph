@@ -77,11 +77,20 @@ export class SearchBarComponent<T extends any>
 	/** Search bar autocomplete options list length. */
 	@Input() public listLength: number = 10;
 
+	/** Input `name`. */
+	@Input() public name?: string;
+
 	/** Search bar autocomplete options. */
 	@Input() public options?: Observable<ISearchOptions>;
 
 	/** Placeholder string. */
 	@Input() public placeholder: string = this.stringsService.search;
+
+	/** Input `readonly`. */
+	@Input() public readonly?: boolean;
+
+	/** Input `required`. */
+	@Input() public required?: boolean;
 
 	/** Search bar input element. */
 	@ViewChild('searchInput') public searchInput?: ElementRef;
@@ -90,7 +99,7 @@ export class SearchBarComponent<T extends any>
 	@Input() public spinner: Observable<boolean> = of(false);
 
 	/** Search query. */
-	@Input() public query?: Observable<string>;
+	@Input() public query?: Observable<string> | string;
 
 	/** @see trackBySelf */
 	public readonly trackBySelf = trackBySelf;
@@ -124,6 +133,10 @@ export class SearchBarComponent<T extends any>
 		value?: string
 	) => MaybePromise<T | undefined> = value => <any> value;
 
+	/** Transforms filter set value. */
+	@Input() public filterSetTransform: (filter: Set<T>) => Set<T> = value =>
+		value;
+
 	/** @inheritDoc */
 	public ngOnChanges (changes: SimpleChanges) : void {
 		if (!changes.query) {
@@ -138,7 +151,9 @@ export class SearchBarComponent<T extends any>
 			return;
 		}
 
-		this.querySubscription = this.query.subscribe(value => {
+		this.querySubscription = (typeof this.query === 'string' ?
+			of(this.query) :
+			this.query).subscribe(value => {
 			this.control.setValue(value);
 			this.pushToFilter(value);
 		});
@@ -146,7 +161,7 @@ export class SearchBarComponent<T extends any>
 
 	/** @inheritDoc */
 	public ngOnDestroy () : void {
-		this.clearFilter();
+		this.clearInput();
 		/* eslint-disable-next-line @typescript-eslint/tslint/config */
 		super.ngOnDestroy();
 	}
@@ -165,7 +180,8 @@ export class SearchBarComponent<T extends any>
 		if (this.chipInput) {
 			if (o !== undefined) {
 				const newFilterValue = new Set(this.filter.value);
-				this.filter.next(newFilterValue.add(o));
+				newFilterValue.add(o);
+				this.filter.next(this.filterSetTransform(newFilterValue));
 				this.clearInput();
 			}
 
@@ -185,7 +201,7 @@ export class SearchBarComponent<T extends any>
 		if (this.chipInput) {
 			const newFilterValue = new Set(this.filter.value);
 			newFilterValue.delete(value);
-			this.filter.next(newFilterValue);
+			this.filter.next(this.filterSetTransform(newFilterValue));
 			return;
 		}
 

@@ -5,6 +5,7 @@ import {EventSettingsModel} from '@syncfusion/ej2-angular-schedule';
 import memoize from 'lodash-es/memoize';
 import {firstValueFrom, Observable, of} from 'rxjs';
 import {map, switchMap} from 'rxjs/operators';
+import {IAppointmentGroupMember} from '../account';
 import {BaseProvider} from '../base-provider';
 import {
 	AppointmentSharing,
@@ -388,11 +389,7 @@ export class AccountAppointmentsService extends BaseProvider {
 	/** Creates appointment object. */
 	public createAppointment (
 		calendarInvite: ICalendarInvite,
-		appointmentGroupMembers: {
-			email?: string;
-			name: string;
-			phoneNumber?: string;
-		}[] = [],
+		appointmentGroupMembers: IAppointmentGroupMember[] = [],
 		appointmentSharing?: AppointmentSharing,
 		forms?: IForm[],
 		recipientUsernames: string[] = []
@@ -404,7 +401,7 @@ export class AccountAppointmentsService extends BaseProvider {
 		calendarInvite.url = `${this.envService.appUrl}account-burner/${calendarInvite.uid}`;
 
 		const members = appointmentGroupMembers.map(o => ({
-			...o,
+			...(o.user ? {username: o.user.username} : o.anonymousGuest),
 			id: readableID(this.configService.secretLength)
 		}));
 
@@ -440,11 +437,7 @@ export class AccountAppointmentsService extends BaseProvider {
 	/** Creates appointment object and sends invite. */
 	public async sendAppointment (
 		calendarInvite: ICalendarInvite,
-		appointmentGroupMembers?: {
-			email?: string;
-			name: string;
-			phoneNumber?: string;
-		}[],
+		appointmentGroupMembers?: IAppointmentGroupMember[],
 		appointmentSharing?: AppointmentSharing,
 		forms?: IForm[],
 		recipientUsernames?: string[]
@@ -478,11 +471,7 @@ export class AccountAppointmentsService extends BaseProvider {
 	/** Creates appointment object and sends invite (no upload). */
 	public async sendAppointmentNoUpload (
 		calendarInvite: ICalendarInvite,
-		appointmentGroupMembers?: {
-			email?: string;
-			name: string;
-			phoneNumber?: string;
-		}[],
+		appointmentGroupMembers?: IAppointmentGroupMember[],
 		appointmentSharing?: AppointmentSharing,
 		forms?: IForm[],
 		recipientUsernames?: string[]

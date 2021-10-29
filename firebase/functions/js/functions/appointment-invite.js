@@ -30,12 +30,14 @@ export const appointmentInvite = onCall(
 				email: validateEmail(o.email, true),
 				id: (o.id || '').trim(),
 				name: (o.name || '').trim(),
-				phoneNumber: (o.phoneNumber || '').trim()
+				phoneNumber: (o.phoneNumber || '').trim(),
+				username: (o.username || '').trim()
 			}))
+			.map(o => (o.username ? {id: o.id, username: o.username} : o))
 			.filter(
 				o =>
 					o.id.length >= config.cyphIDLength &&
-					(o.email || o.phoneNumber)
+					(o.email || o.phoneNumber || o.username)
 			);
 
 		if (members.length < 1) {
@@ -88,15 +90,42 @@ export const appointmentInvite = onCall(
 		const messageAddendumEmail = `You may also add the attached invitation to your calendar.`;
 
 		const memberListToShare = data.shareMemberList ?
-			members
-				.map(o =>
-					!data.shareMemberContactInfo ?
-						o.name :
-					!o.name ?
-						o.email || o.phoneNumber :
-						`${o.name} <${o.email || o.phoneNumber}>`
+			(
+				await Promise.all(
+					members.map(async o => {
+						const userRef =
+							o.username &&
+							database.ref(
+								`${namespace}/users/${o.username}/internal/name`
+							);
+
+						const [userName, userRealUsername] = await Promise.all([
+								userRef && userRef
+										.child('name')
+										.once('value')
+										.then(o => (o.val() || '').trim()),
+								userRef && userRef
+										.child('realUsername')
+										.once('value')
+										.then(
+											o =>
+												(o.val() || '').trim() ||
+												o.username
+										)
+							]);
+
+						return userName ?
+							`${userName} <@${userRealUsername}>` :
+						userRealUsername ?
+							`@${userRealUsername}` :
+						!data.shareMemberContactInfo ?
+							o.name :
+						!o.name ?
+							o.email || o.phoneNumber :
+							`${o.name} <${o.email || o.phoneNumber}>`;
+					})
 				)
-				.filter(s => s) :
+			).filter(s => s) :
 			[];
 
 		const messageAddendumMembers =
@@ -151,7 +180,9 @@ export const appointmentInvite = onCall(
 			),
 			Promise.all(
 				members.map(async o => {
-					const emailTo = {email: o.email, name: o.name};
+					const emailTo =
+						o.username ||
+						(o.email ? {email: o.email, name: o.name} : undefined);
 
 					const inviteeLink = getBurnerLink(
 						namespace,
@@ -178,7 +209,7 @@ export const appointmentInvite = onCall(
 					);
 
 					return Promise.all([
-						o.email &&
+						emailTo &&
 							sendEmail(
 								database,
 								namespace,

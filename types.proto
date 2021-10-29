@@ -646,6 +646,9 @@ message BurnerGroupMemberInitiator {
 
 	/** Phone number. */
 	string phoneNumber = 4;
+
+	/** Cyph username. */
+	string username = 5;
 }
 
 /** Burner session init data. */
@@ -1351,6 +1354,7 @@ message Form {
 		enum Types {
 			Text = 0;
 			Checkbox = 1;
+			CyphUsername = 15;
 			Datepicker = 2;
 			Email = 3;
 			File = 14;
@@ -1412,6 +1416,9 @@ message Form {
 			double valueNumber = 11;
 			string valueString = 12;
 		}
+
+		/** Value (string array). */
+		repeated string valueStrings = 19;
 
 		/** Flexbox column width (as a percentage of the total row width). */
 		uint32 width = 13;

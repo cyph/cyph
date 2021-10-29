@@ -1,6 +1,4 @@
 import {NgModule} from '@angular/core';
-import {ReactiveFormsModule} from '@angular/forms';
-import {MatAutocompleteModule} from '@angular/material/autocomplete';
 import {MatBadgeModule} from '@angular/material/badge';
 import {MatBottomSheetModule} from '@angular/material/bottom-sheet';
 import {MatButtonToggleModule} from '@angular/material/button-toggle';
@@ -91,7 +89,6 @@ import {CyphSharedModule} from './cyph-shared.module';
 		EmojiModule,
 		FileManagerComponent,
 		InitDirective,
-		MatAutocompleteModule,
 		MatBadgeModule,
 		MatBottomSheetModule,
 		MatButtonToggleModule,
@@ -109,7 +106,6 @@ import {CyphSharedModule} from './cyph-shared.module';
 		MatTabsModule,
 		MatToolbarModule,
 		PickerModule,
-		ReactiveFormsModule,
 		RecurrenceEditorModule,
 		RouterModule,
 		ScheduleAllModule,
@@ -130,7 +126,6 @@ import {CyphSharedModule} from './cyph-shared.module';
 		DxFileManagerModule,
 		EmojiModule,
 		FontAwesomeModule,
-		MatAutocompleteModule,
 		MatBadgeModule,
 		MatBottomSheetModule,
 		MatCardModule,
@@ -147,7 +142,6 @@ import {CyphSharedModule} from './cyph-shared.module';
 		MatTabsModule,
 		MatToolbarModule,
 		PickerModule,
-		ReactiveFormsModule,
 		RecurrenceEditorModule,
 		RouterModule,
 		ScheduleAllModule,

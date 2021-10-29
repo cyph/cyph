@@ -9,13 +9,14 @@ import {
 import {ActivatedRoute, Router} from '@angular/router';
 import {BehaviorSubject, firstValueFrom} from 'rxjs';
 import {map} from 'rxjs/operators';
-import {User} from '../../account';
+import {IAppointmentGroupMember, User} from '../../account';
 import {slideInOutTop} from '../../animations';
 import {BaseProvider} from '../../base-provider';
 import {AppointmentSharing} from '../../calendar';
 import {States} from '../../chat/enums';
 import {emailPattern, isValidEmail} from '../../email-pattern';
 import {
+	cyphUsernameInput,
 	email as emailElement,
 	getFormValue,
 	input,
@@ -37,6 +38,7 @@ import {AccountChatService} from '../../services/account-chat.service';
 import {AccountContactsService} from '../../services/account-contacts.service';
 import {AccountFilesService} from '../../services/account-files.service';
 import {AccountSettingsService} from '../../services/account-settings.service';
+import {AccountUserLookupService} from '../../services/account-user-lookup.service';
 import {AccountService} from '../../services/account.service';
 import {AccountAuthService} from '../../services/crypto/account-auth.service';
 import {AccountDatabaseService} from '../../services/crypto/account-database.service';
@@ -46,7 +48,9 @@ import {ScrollService} from '../../services/scroll.service';
 import {SessionService} from '../../services/session.service';
 import {StringsService} from '../../services/strings.service';
 import {trackBySelf} from '../../track-by/track-by-self';
+import {filterUndefined} from '../../util/filter/base';
 import {toBehaviorSubject} from '../../util/flatten-observable';
+import {normalizeArray} from '../../util/formatting';
 import {sleep} from '../../util/wait/sleep';
 
 /**
@@ -85,11 +89,7 @@ export class AccountComposeComponent
 
 	/** Appointment group members. */
 	public readonly appointmentGroupMembers = new BehaviorSubject<
-		{
-			email?: string;
-			name: string;
-			phoneNumber?: string;
-		}[]
+		IAppointmentGroupMember[]
 	>([]);
 
 	/** @see AppointmentSharing */
@@ -198,6 +198,7 @@ export class AccountComposeComponent
 	public readonly trackBySelf = trackBySelf;
 
 	/** Adds a value to the group. */
+	/* eslint-disable-next-line complexity */
 	public async addToGroup (allowEmptyInput: boolean = true) : Promise<void> {
 		const groupInput = this.appointmentGroupMemberDraft.value;
 
@@ -207,26 +208,57 @@ export class AccountComposeComponent
 
 		/* TODO: Factor out this and EmailComposeComponent.addRecipients */
 		const parsedInput =
+			groupInput.indexOf('@') === 0 ?
+				[{cyphUsername: groupInput, email: '', name: ''}] :
 			groupInput.indexOf('<') < 0 ?
-				[{email: '', name: groupInput}] :
+				[{cyphUsername: '', email: '', name: groupInput}] :
 				groupInput.split(',').map(s => {
 					s = s.trim();
 					const parts = s.match(/^"?(.*?)"?\s*<(.*?)>$/) || [];
 
-					return parts[1] && parts[2] ?
-						{email: parts[2].toLowerCase(), name: parts[1]} :
-						{email: s.toLowerCase(), name: s};
+					return parts[1] && parts[2] ? {
+							cyphUsername: '',
+							email: parts[2].toLowerCase(),
+							name: parts[1]
+						} : {cyphUsername: '', email: s.toLowerCase(), name: s};
 				});
 
 		if (parsedInput.length === 0) {
 			return;
 		}
 
-		if (!parsedInput.find(({email}) => !isValidEmail(email))) {
+		const parsedInputEmailGuests = parsedInput.filter(({email}) =>
+			isValidEmail(email)
+		);
+
+		const parsedInputUsers = filterUndefined(
+			await Promise.all(
+				parsedInput.map(async ({cyphUsername}) =>
+					this.accountUserLookupService.getUser(cyphUsername)
+				)
+			)
+		);
+
+		if (
+			parsedInput.length ===
+			parsedInputEmailGuests.length + parsedInputUsers.length
+		) {
 			this.appointmentGroupMemberDraft.next('');
+
 			this.appointmentGroupMembers.next(
-				this.appointmentGroupMembers.value.concat(parsedInput)
+				this.appointmentGroupMembers.value.concat([
+					...parsedInputEmailGuests.map(o => ({
+						anonymousGuest: {
+							email: o.email,
+							name: o.name
+						}
+					})),
+					...parsedInputUsers.map(user => ({
+						user
+					}))
+				])
 			);
+
 			return;
 		}
 
@@ -234,6 +266,7 @@ export class AccountComposeComponent
 			return;
 		}
 
+		const {cyphUsername: initialCyphUsernameValue} = parsedInput[0];
 		let {email, name} = parsedInput[0];
 
 		const contactInfoForm = await this.dialogService.prompt({
@@ -257,6 +290,11 @@ export class AccountComposeComponent
 						})
 					]),
 					newFormContainer([
+						cyphUsernameInput({
+							value: initialCyphUsernameValue
+						})
+					]),
+					newFormContainer([
 						emailElement(undefined, {email}, undefined, false)
 					]),
 					newFormContainer([phoneElement(undefined, undefined, 100)])
@@ -269,36 +307,51 @@ export class AccountComposeComponent
 			return;
 		}
 
+		const cyphUsernames = normalizeArray(
+			getFormValue(contactInfoForm, 'string[]', 1, 1, 0) || []
+		);
+
 		name = (getFormValue(contactInfoForm, 'string', 0, 0, 0) || '').trim();
 
-		email = (getFormValue(contactInfoForm, 'string', 1, 1, 0) || '')
+		email = (getFormValue(contactInfoForm, 'string', 1, 2, 0) || '')
 			.trim()
 			.toLowerCase();
 
+		if (!isValidEmail(email)) {
+			email = '';
+		}
+
 		let phoneNumber = (
-			getFormValue(contactInfoForm, 'string', 1, 2, 0) || ''
+			getFormValue(contactInfoForm, 'string', 1, 3, 0) || ''
 		).trim();
 
 		if (phoneNumber.indexOf('_') > -1) {
 			phoneNumber = '';
 		}
 
-		if (
-			!name ||
-			(!email && !phoneNumber) ||
-			(email && !isValidEmail(email))
-		) {
+		const users = filterUndefined(
+			await Promise.all(
+				cyphUsernames.map(async username =>
+					this.accountUserLookupService.getUser(username)
+				)
+			)
+		);
+
+		const newGroupMembers = [
+			...(name && (email || phoneNumber) ?
+				[{anonymousGuest: {email, name, phoneNumber}}] :
+				[]),
+			...users.map(user => ({user}))
+		];
+
+		if (newGroupMembers.length < 1) {
 			return;
 		}
 
 		this.appointmentGroupMemberDraft.next('');
 
 		this.appointmentGroupMembers.next(
-			this.appointmentGroupMembers.value.concat({
-				email,
-				name,
-				phoneNumber
-			})
+			this.appointmentGroupMembers.value.concat(newGroupMembers)
 		);
 	}
 
@@ -348,11 +401,7 @@ export class AccountComposeComponent
 	}
 
 	/** Removes a value from the group. */
-	public removeFromGroup (value: {
-		email?: string;
-		name: string;
-		phoneNumber?: string;
-	}) : void {
+	public removeFromGroup (value: IAppointmentGroupMember) : void {
 		const i = this.appointmentGroupMembers.value.indexOf(value);
 
 		if (i < 0) {
@@ -581,6 +630,9 @@ export class AccountComposeComponent
 
 		/** @ignore */
 		private readonly accountFilesService: AccountFilesService,
+
+		/** @ignore */
+		private readonly accountUserLookupService: AccountUserLookupService,
 
 		/** @ignore */
 		private readonly dialogService: DialogService,

@@ -41,11 +41,19 @@ export const {getFormValue} = class {
 	/** @ignore */
 	public static getFormValue (
 		form: IForm | undefined,
-		value: 'boolean' | 'bytes' | 'number' | 'string',
+		value: 'string[]',
 		componentIndex: number,
 		containerIndex: number,
 		elementIndex: number
-	) : boolean | number | string | Uint8Array | undefined {
+	) : string[] | undefined;
+	/** @ignore */
+	public static getFormValue (
+		form: IForm | undefined,
+		value: 'boolean' | 'bytes' | 'number' | 'string' | 'string[]',
+		componentIndex: number,
+		containerIndex: number,
+		elementIndex: number
+	) : boolean | number | string | string[] | Uint8Array | undefined {
 		const component = form?.components ?
 			form.components[componentIndex] :
 			undefined;
@@ -78,6 +86,8 @@ export const {getFormValue} = class {
 			element.element.valueNumber :
 		value === 'string' ?
 			element.element.valueString :
+		value === 'string[]' ?
+			element.element.valueStrings :
 			undefined;
 	}
 };
@@ -193,6 +203,16 @@ export const checkbox = newFormElement<{
 	value?: boolean;
 	width?: number;
 }>(Form.Element.Types.Checkbox);
+
+/** Creates a new Cyph username form element. */
+export const cyphUsernameInput = newFormElement<{
+	id?: string;
+	label?: string;
+	noGrow?: boolean;
+	required?: boolean;
+	value?: string;
+	width?: number;
+}>(Form.Element.Types.CyphUsername);
 
 /** Creates a new datepicker form element. */
 export const datepicker = newFormElement<{

@@ -38,7 +38,11 @@ import {cacheObservable, toBehaviorSubject} from '../util/flatten-observable';
 import {normalize, normalizeArray} from '../util/formatting';
 import {observableAll} from '../util/observable-all';
 import {uuid} from '../util/uuid';
-import {resolvable, retryUntilSuccessful} from '../util/wait';
+import {
+	resolvable,
+	resolvedResolvable,
+	retryUntilSuccessful
+} from '../util/wait';
 import {AccountFilesService} from './account-files.service';
 import {AccountInviteService} from './account-invite.service';
 import {AccountPostsService} from './account-posts.service';
@@ -59,21 +63,18 @@ export class AccountContactsService extends BaseProvider {
 	 * Resolves circular dependency needed for addContactPrompt to work.
 	 * @see AccountContactsSearchComponent
 	 */
-	public static readonly accountContactsSearchComponent =
-		resolvable<
-			ComponentType<{
-				changeDetectorRef: ChangeDetectorRef;
-				chipInput: boolean;
-				contactList:
-					| Observable<(IContactListItem | User)[]>
-					| undefined;
-				externalUsers: boolean;
-				getContacts?: IResolvable<User[]>;
-				includeGroups?: boolean;
-				minimum?: number;
-				title?: string;
-			}>
-		>();
+	public static readonly accountContactsSearchComponent = resolvable<
+		ComponentType<{
+			changeDetectorRef: ChangeDetectorRef;
+			chipInput: boolean;
+			contactList: Observable<(IContactListItem | User)[]> | undefined;
+			externalUsers: boolean;
+			getContacts?: IResolvable<User[]>;
+			includeGroups?: boolean;
+			minimum?: number;
+			title?: string;
+		}>
+	>();
 
 	/** @ignore */
 	private readonly contactListHelpers = {
@@ -82,7 +83,7 @@ export class AccountContactsService extends BaseProvider {
 				group: IAccountMessagingGroup;
 				id: string;
 				incoming: boolean;
-			}) => ({
+			}) : IContactListItem => ({
 				contactState: this.watchContactState(groupData.id),
 				groupData,
 				unreadMessageCount: toBehaviorSubject<number>(
@@ -95,15 +96,17 @@ export class AccountContactsService extends BaseProvider {
 						.watchSize(),
 					0
 				),
-				user: Promise.resolve(undefined),
+				user: resolvedResolvable<User | undefined>(undefined),
 				username: `group: ${groupData.group.castleSessionID}`
 			}),
 			(groupData: {id: string; incoming: boolean}) =>
 				`${groupData.id} ${groupData.incoming.toString()}`
 		),
 		user: memoize((accountUserLookupService: AccountUserLookupService) =>
-			memoize((username: string) => {
-				const user = accountUserLookupService.getUser(username, true);
+			memoize((username: string) : IContactListItem => {
+				const user = resolvedResolvable(
+					accountUserLookupService.getUser(username, true)
+				);
 
 				return {
 					contactState: this.watchContactState(username),
@@ -265,26 +268,30 @@ export class AccountContactsService extends BaseProvider {
 	);
 
 	/** Gets contact username or group metadata based on ID. */
-	public readonly getChatData = memoize(async (id?: string) : Promise<
-		{group: IAccountMessagingGroup; id: string} | {username: string}
-	> => {
-		if (!id) {
-			throw new Error('Invalid contact ID.');
-		}
+	public readonly getChatData = memoize(
+		async (
+			id?: string
+		) : Promise<
+			{group: IAccountMessagingGroup; id: string} | {username: string}
+		> => {
+			if (!id) {
+				throw new Error('Invalid contact ID.');
+			}
 
-		try {
-			return {username: await this.getContactUsername(id)};
+			try {
+				return {username: await this.getContactUsername(id)};
+			}
+			catch {
+				return {
+					group: await this.accountFilesService.downloadFile(
+						id,
+						AccountFileRecord.RecordTypes.MessagingGroup
+					).result,
+					id
+				};
+			}
 		}
-		catch {
-			return {
-				group: await this.accountFilesService.downloadFile(
-					id,
-					AccountFileRecord.RecordTypes.MessagingGroup
-				).result,
-				id
-			};
-		}
-	});
+	);
 
 	/** Gets contact ID based on username. */
 	public readonly getContactID = memoize(

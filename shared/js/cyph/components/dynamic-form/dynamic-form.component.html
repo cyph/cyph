@@ -122,6 +122,23 @@
 			{{ o.label }}
 		</mat-checkbox>
 
+		<ng-container *ngIf="o.type === types.CyphUsername">
+			<cyph-account-contacts-search
+				[chipInput]="true"
+				[matTooltip]="o.tooltip"
+				[matTooltipDisabled]="!o.tooltip"
+				[placeholder]="
+					o.label ||
+					(o.multiple ? stringsService.users : stringsService.user)
+				"
+				[name]="getName(o)"
+				[readonly]="isDisabled"
+				[required]="o.required"
+				[searchUsername]="o.valueString"
+				(userFilterChange)="setCyphUsernames(o, $event)"
+			></cyph-account-contacts-search>
+		</ng-container>
+
 		<ng-container *ngIf="o.type === types.Datepicker">
 			<mat-form-field>
 				<input

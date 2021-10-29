@@ -1,16 +1,20 @@
+/* eslint-disable max-lines */
+
 import {
 	ChangeDetectionStrategy,
 	Component,
 	EventEmitter,
 	Inject,
 	Input,
+	OnDestroy,
 	OnInit,
 	Optional,
 	Output
 } from '@angular/core';
 import memoize from 'lodash-es/memoize';
 import * as mexp from 'math-expression-evaluator';
-import {BehaviorSubject} from 'rxjs';
+import {BehaviorSubject, Observable, Subscription} from 'rxjs';
+import {User} from '../../account/user';
 import {BaseProvider} from '../../base-provider';
 import {emailPattern} from '../../email-pattern';
 import {IAsyncValue} from '../../iasync-value';
@@ -38,12 +42,18 @@ import {uuid} from '../../util/uuid';
 	styleUrls: ['./dynamic-form.component.scss'],
 	templateUrl: './dynamic-form.component.html'
 })
-export class DynamicFormComponent extends BaseProvider implements OnInit {
+export class DynamicFormComponent
+	extends BaseProvider
+	implements OnDestroy, OnInit
+{
 	/** @ignore */
-	private readonly maskDefaultKey: Uint8Array = new Uint8Array(0);
+	private cyphUsernamesSubscription?: Subscription;
 
 	/** @ignore */
-	private readonly maskCache: Map<Uint8Array, any> = new Map();
+	private readonly maskCache = new Map<Uint8Array, any>();
+
+	/** @ignore */
+	private readonly maskDefaultKey = new Uint8Array(0);
 
 	/** @ignore */
 	private readonly processCalcs = memoize((formula: string) : string => {
@@ -160,14 +170,18 @@ export class DynamicFormComponent extends BaseProvider implements OnInit {
 	/** @ignore */
 	private getElementValue (
 		element: Form.IElement
-	) : boolean | number | string | Uint8Array | undefined {
+	) : boolean | number | string | string[] | Uint8Array | undefined {
 		return element.valueBoolean !== undefined ?
 			element.valueBoolean :
+		element.valueBytes && element.valueBytes.length > 0 ?
+			element.valueBytes :
 		element.valueNumber !== undefined ?
 			element.valueNumber :
 		element.valueString !== undefined ?
 			element.valueString :
-			element.valueBytes;
+		element.valueStrings && element.valueStrings.length > 0 ?
+			element.valueStrings :
+			undefined;
 	}
 
 	/** @ignore */
@@ -177,9 +191,17 @@ export class DynamicFormComponent extends BaseProvider implements OnInit {
 			id: string,
 			segments: (number | string)[],
 			element: Form.IElement | undefined,
-			elementValue: boolean | number | string | Uint8Array | undefined,
+			elementValue:
+				| boolean
+				| number
+				| string
+				| string[]
+				| Uint8Array
+				| undefined,
 			getElementValue:
-				| ((val: string) => (boolean | number | string | Uint8Array)[])
+				| ((
+						val: string
+				  ) => (boolean | number | string | string[] | Uint8Array)[])
 				| undefined
 		) => void
 	) : void {
@@ -340,8 +362,20 @@ export class DynamicFormComponent extends BaseProvider implements OnInit {
 			element.valueBoolean ||
 			(element.valueBytes && element.valueBytes.length > 0) ||
 			element.valueNumber ||
-			element.valueString
+			element.valueString ||
+			(element.valueStrings && element.valueStrings.length > 0)
 		);
+	}
+
+	/** @inheritDoc */
+	public async ngOnDestroy () : Promise<void> {
+		super.ngOnDestroy();
+
+		if (!this.cyphUsernamesSubscription) {
+			return;
+		}
+
+		this.cyphUsernamesSubscription.unsubscribe();
 	}
 
 	/** @inheritDoc */
@@ -460,6 +494,25 @@ export class DynamicFormComponent extends BaseProvider implements OnInit {
 		}
 
 		this.submitForm.emit(this.form);
+	}
+
+	/** Cyph username update handler. */
+	public setCyphUsernames (
+		element: Form.IElement,
+		usersObservable: Observable<Set<User>>
+	) : void {
+		if (this.cyphUsernamesSubscription) {
+			this.cyphUsernamesSubscription.unsubscribe();
+		}
+
+		this.cyphUsernamesSubscription = usersObservable.subscribe(users => {
+			element.valueString = undefined;
+			element.valueStrings = Array.from(users)
+				.map(o => o.username)
+				.sort();
+
+			this.changeForm.emit();
+		});
 	}
 
 	constructor (

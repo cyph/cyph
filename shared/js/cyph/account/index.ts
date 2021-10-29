@@ -2,6 +2,7 @@ export * from './account-file-share-type';
 export * from './account-file-type';
 export * from './enums';
 export * from './iaccount-post-data';
+export * from './iappointment-group-member';
 export * from './icontact-list-item';
 export * from './icurrent-user';
 export * from './public-signing-keys';

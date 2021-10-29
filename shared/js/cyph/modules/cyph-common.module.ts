@@ -16,7 +16,6 @@ import {LogoComponent} from '../components/logo';
 import {PinInputComponent} from '../components/pin-input';
 import {QuillComponent} from '../components/quill';
 import {RedirectComponent} from '../components/redirect';
-import {SearchBarComponent} from '../components/search-bar';
 import {SignupFormComponent} from '../components/signup-form';
 import {commonModuleProviders} from '../providers/common-module';
 import {CyphWebModule} from './cyph-web.module';
@@ -43,7 +42,6 @@ import {CyphWebModule} from './cyph-web.module';
 		PinInputComponent,
 		QuillComponent,
 		RedirectComponent,
-		SearchBarComponent,
 		SignupFormComponent
 	],
 	exports: [
@@ -65,7 +63,6 @@ import {CyphWebModule} from './cyph-web.module';
 		PinInputComponent,
 		QuillComponent,
 		RedirectComponent,
-		SearchBarComponent,
 		SignupFormComponent
 	],
 	imports: [CyphWebModule],

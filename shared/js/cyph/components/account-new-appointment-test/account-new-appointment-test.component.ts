@@ -68,11 +68,13 @@ export class AccountNewAppointmentTestComponent
 					title: ''
 				},
 				new Array(numberOfGuests).fill(0).map((_, i) => ({
-					email: guestEmail,
-					name: this.stringsService.setParameters(
-						this.stringsService.burnerGroupDefaultMemberName,
-						{i: (i + 1).toString()}
-					)
+					anonymousGuest: {
+						email: guestEmail,
+						name: this.stringsService.setParameters(
+							this.stringsService.burnerGroupDefaultMemberName,
+							{i: (i + 1).toString()}
+						)
+					}
 				}))
 			);
 

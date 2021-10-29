@@ -3,7 +3,9 @@ import {
 	ChangeDetectorRef,
 	Component,
 	EventEmitter,
+	Inject,
 	Input,
+	Optional,
 	Output,
 	ViewChild
 } from '@angular/core';
@@ -18,7 +20,6 @@ import {ISearchOptions} from '../../isearch-options';
 import {AccountUserProfileExtra} from '../../proto';
 import {AccountContactsService} from '../../services/account-contacts.service';
 import {AccountUserLookupService} from '../../services/account-user-lookup.service';
-import {AccountService} from '../../services/account.service';
 import {EnvService} from '../../services/env.service';
 import {StringsService} from '../../services/strings.service';
 import {filterUndefined} from '../../util/filter/base';
@@ -43,7 +44,7 @@ export class AccountContactsSearchComponent extends BaseProvider {
 	/** List of users to search. */
 	@Input() public contactList:
 		| Observable<(IContactListItem | User)[]>
-		| undefined = this.accountContactsService.contactList();
+		| undefined = this.accountContactsService?.contactList();
 
 	/** Allows looking up non-contact users by exact username match and opening their profiles. */
 	@Input() public externalUsers: boolean = false;
@@ -57,8 +58,17 @@ export class AccountContactsSearchComponent extends BaseProvider {
 	/** Minimum number of contacts to require. */
 	@Input() public minimum: number = 1;
 
+	/** @see SearchBarComponent.name */
+	@Input() public name?: string;
+
 	/** @see SearchBarComponent.placeholder */
 	@Input() public placeholder?: string;
+
+	/** @see SearchBarComponent.readonly */
+	@Input() public readonly?: boolean;
+
+	/** @see SearchBarComponent.required */
+	@Input() public required?: boolean;
 
 	/** @see SearchBarComponent */
 	@ViewChild('searchBar', {read: SearchBarComponent})
@@ -81,7 +91,13 @@ export class AccountContactsSearchComponent extends BaseProvider {
 				this.searchSpinner.next(true);
 
 				let users = this.contactList ?
-					await firstValueFrom(this.contactList) :
+					(await firstValueFrom(this.contactList)).map(o =>
+						o instanceof User ?
+							o :
+						o.user.value instanceof User ?
+							o.user.value :
+							o
+					) :
 					[];
 
 				if (!this.includeGroups) {
@@ -156,7 +172,10 @@ export class AccountContactsSearchComponent extends BaseProvider {
 					this.externalUsers &&
 					(results.length < 1 ||
 						results[0].user.username !== query) &&
-					(await this.accountUserLookupService.exists(query, false)) ?
+					(await this.accountUserLookupService?.exists(
+						query,
+						false
+					)) ?
 						query :
 						undefined;
 
@@ -164,7 +183,7 @@ export class AccountContactsSearchComponent extends BaseProvider {
 
 				if (this.chipInput && externalUser) {
 					externalUser = undefined;
-					const user = await this.accountUserLookupService.getUser(
+					const user = await this.accountUserLookupService?.getUser(
 						query
 					);
 
@@ -182,7 +201,10 @@ export class AccountContactsSearchComponent extends BaseProvider {
 						smallText:
 							user instanceof User ?
 								user.realUsername.pipe(
-									map(realUsername => `@${realUsername}`)
+									map(
+										realUsername =>
+											`@${realUsername || user.username}`
+									)
 								) :
 								of(undefined),
 						text:
@@ -213,7 +235,7 @@ export class AccountContactsSearchComponent extends BaseProvider {
 		new BehaviorSubject<boolean>(false);
 
 	/** @see SearchBarComponent.query */
-	@Input() public searchUsername?: Observable<string>;
+	@Input() public searchUsername?: Observable<string> | string;
 
 	/** Title. */
 	@Input() public title?: string;
@@ -225,7 +247,7 @@ export class AccountContactsSearchComponent extends BaseProvider {
 
 	/** @see SearchBarComponent.filterTransform */
 	public readonly userFilterTransform = async (username?: string) =>
-		this.accountUserLookupService.getUser(username);
+		this.accountUserLookupService?.getUser(username);
 
 	/** Default placeholder. */
 	public get defaultPlaceHolder () : string {
@@ -255,22 +277,29 @@ export class AccountContactsSearchComponent extends BaseProvider {
 		!user ?
 			{text: Promise.resolve('')} :
 			{
-				smallText: user.realUsername.pipe(map(s => `@${s}`)),
+				smallText: user.realUsername.pipe(
+						map(s => `@${s || user.username}`)
+					),
 				text: user.name
 			};
 
 	constructor (
 		/** @ignore */
-		private readonly accountContactsService: AccountContactsService,
+		@Inject(AccountContactsService)
+		@Optional()
+		private readonly accountContactsService:
+			| AccountContactsService
+			| undefined,
 
 		/** @ignore */
-		private readonly accountUserLookupService: AccountUserLookupService,
+		@Inject(AccountUserLookupService)
+		@Optional()
+		private readonly accountUserLookupService:
+			| AccountUserLookupService
+			| undefined,
 
 		/** @see ChangeDetectorRef */
 		public readonly changeDetectorRef: ChangeDetectorRef,
-
-		/** @see AccountService */
-		public readonly accountService: AccountService,
 
 		/** @see StringsService */
 		public readonly envService: EnvService,

@@ -335,6 +335,12 @@ export class StringsService extends BaseProvider {
 	public readonly cypherToast3 = `Thou art amazed.`;
 
 	/** @see StringsService */
+	public readonly cyphUsername = `${this.internalProduct} Username`;
+
+	/** @see StringsService */
+	public readonly cyphUsernames = `${this.internalProduct} Usernames`;
+
+	/** @see StringsService */
 	public readonly deactivateAccountConfirm = `Are you sure that you want to **\${ACTION}** your account? NOTE: This will not downgrade paid plans or cancel your subscription. Use the downgrade button if you wish to revert to a free plan.`;
 
 	/** @see StringsService */

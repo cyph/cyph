@@ -38,6 +38,7 @@ import {trackByUser} from '../../track-by/track-by-user';
 import {filterUndefined, filterUndefinedOperator} from '../../util/filter';
 import {toBehaviorSubject} from '../../util/flatten-observable';
 import {observableAll} from '../../util/observable-all';
+import {resolvedResolvable} from '../../util/wait/resolvable';
 import {AccountContactsSearchComponent} from '../account-contacts-search';
 
 /**
@@ -328,8 +329,8 @@ export class AccountContactsComponent
 								this.accountUserLookupService.getUnreadMessageCount(
 									username
 								),
-							user: this.accountUserLookupService.getUser(
-								username
+							user: resolvedResolvable(
+								this.accountUserLookupService.getUser(username)
 							),
 							username
 						},

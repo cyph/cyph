@@ -76,9 +76,12 @@
 			cyphAutofocus
 			[cyphAutofocusEnabled]="autofocus"
 			[formControl]="control"
-			[placeholder]="placeholder"
 			[matAutocomplete]="autoComplete"
 			[matChipInputFor]="chipList"
+			[name]="name"
+			[placeholder]="placeholder"
+			[readonly]="!!readonly"
+			[required]="!!required"
 			(blur)="inputBlur.emit()"
 		/>
 	</mat-chip-list>
@@ -89,8 +92,11 @@
 		cyphAutofocus
 		[cyphAutofocusEnabled]="autofocus"
 		[formControl]="control"
-		[placeholder]="placeholder"
 		[matAutocomplete]="autoComplete"
+		[name]="name"
+		[placeholder]="placeholder"
+		[readonly]="!!readonly"
+		[required]="!!required"
 		(blur)="inputBlur.emit()"
 		*ngIf="!chipInput"
 	/>

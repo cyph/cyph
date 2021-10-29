@@ -1,5 +1,6 @@
 import {Observable} from 'rxjs';
 import {AccountContactState, IAccountMessagingGroup} from '../proto/types';
+import {IResolvable} from '../iresolvable';
 import {User} from './user';
 
 /** A contact list item. */
@@ -23,7 +24,7 @@ export interface IContactListItem {
 	unreadMessageCount: Observable<number>;
 
 	/** @see User */
-	user: Promise<User | undefined>;
+	user: IResolvable<User | undefined>;
 
 	/** @see User.username */
 	username: string;

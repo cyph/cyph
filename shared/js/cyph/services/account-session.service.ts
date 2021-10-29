@@ -22,7 +22,7 @@ import {
 import {normalizeArray} from '../util/formatting';
 import {debugLog} from '../util/log';
 import {uuid} from '../util/uuid';
-import {resolvable} from '../util/wait/resolvable';
+import {resolvable, resolvedResolvable} from '../util/wait/resolvable';
 import {AccountContactsService} from './account-contacts.service';
 import {AccountSessionInitService} from './account-session-init.service';
 import {AccountUserLookupService} from './account-user-lookup.service';
@@ -437,9 +437,11 @@ export class AccountSessionService extends SessionService {
 						(username) : IContactListItem => ({
 							contactState: of(AccountContactState.States.None),
 							unreadMessageCount: of(0),
-							user: this.accountUserLookupService
-								.getUser(username)
-								.catch(() => undefined),
+							user: resolvedResolvable(
+								this.accountUserLookupService
+									.getUser(username)
+									.catch(() => undefined)
+							),
 							username
 						})
 					)

@@ -110,7 +110,6 @@
 					</ng-container>
 
 					<cyph-account-contacts-search
-						#accountContactsSearch
 						fxHide="!!searchUsername.value && (
 							(messageType | await) === chatMessageValueTypes.CalendarInvite ||
 							(messageType | await) === chatMessageValueTypes.Form
@@ -464,21 +463,44 @@
 				<mat-chip
 					[removable]="true"
 					[selectable]="true"
-					[value]="o"
+					[value]="groupMember"
 					(removed)="removeFromGroup($event.chip.value)"
 					*ngFor="
-						let o of appointmentGroupMembers | await;
+						let groupMember of appointmentGroupMembers | await;
 						trackBy: trackBySelf
 					"
 				>
-					{{
-						o.name +
-							' <' +
-							(o.email && o.phoneNumber ?
-								o.email + ', ' + o.phoneNumber :
-								o.email || o.phoneNumber) +
-							'>'
-					}}
+					<ng-container
+						*ngIf="
+							groupMember.anonymousGuest as o;
+							else guestChipUser
+						"
+					>
+						{{
+							o.name +
+								' <' +
+								(o.email && o.phoneNumber ?
+									o.email + ', ' + o.phoneNumber :
+									o.email || o.phoneNumber) +
+								'>'
+						}}
+					</ng-container>
+					<ng-template #guestChipUser>
+						<ng-container *ngIf="groupMember.user as o">
+							<span *ngIf="o.name | await as chipText">
+								{{ chipText }}
+							</span>
+							<ng-container
+								*ngIf="
+									(o.realUsername | await) ||
+									o.username as chipSmallText
+								"
+							>
+								&nbsp;
+								<small>&lt;@{{ chipSmallText }}&gt;</small>
+							</ng-container>
+						</ng-container>
+					</ng-template>
 					<mat-icon matChipRemove>cancel</mat-icon>
 				</mat-chip>
 				<input

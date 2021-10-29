@@ -1,7 +1,7 @@
 import {Injectable} from '@angular/core';
 import {BehaviorSubject, of} from 'rxjs';
 import {map} from 'rxjs/operators';
-import {IContactListItem} from '../account';
+import {IContactListItem, User} from '../account';
 import {AccountContactsComponent} from '../components/account-contacts';
 import {BaseProvider} from '../base-provider';
 import {IP2PHandlers} from '../p2p/ip2p-handlers';
@@ -9,6 +9,7 @@ import {AccountContactState, IAppointment} from '../proto';
 import {filterUndefinedOperator} from '../util/filter';
 import {observableAll} from '../util/observable-all';
 import {prettyPrint} from '../util/serialization';
+import {resolvedResolvable} from '../util/wait/resolvable';
 import {AccountUserLookupService} from './account-user-lookup.service';
 import {ChatService} from './chat.service';
 import {DialogService} from './dialog.service';
@@ -36,9 +37,11 @@ export class P2PService extends BaseProvider {
 										AccountContactState.States.None
 									),
 								unreadMessageCount: of(0),
-								user: this.accountUserLookupService
-									.getUser(username)
-									.catch(() => undefined),
+								user: resolvedResolvable(
+									this.accountUserLookupService
+										.getUser(username)
+										.catch(() => undefined)
+								),
 								username
 							} :
 							{
@@ -51,7 +54,9 @@ export class P2PService extends BaseProvider {
 										AccountContactState.States.None
 									),
 								unreadMessageCount: of(0),
-								user: Promise.resolve(undefined),
+								user: resolvedResolvable<User | undefined>(
+									undefined
+								),
 								username: ''
 							}
 				)

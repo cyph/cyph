@@ -2,7 +2,8 @@ import {CommonModule} from '@angular/common';
 import {HttpClientModule} from '@angular/common/http';
 import {NgModule} from '@angular/core';
 import {FlexLayoutModule} from '@angular/flex-layout';
-import {FormsModule} from '@angular/forms';
+import {FormsModule, ReactiveFormsModule} from '@angular/forms';
+import {MatAutocompleteModule} from '@angular/material/autocomplete';
 import {MatButtonModule} from '@angular/material/button';
 import {MatCheckboxModule} from '@angular/material/checkbox';
 import {MatChipsModule} from '@angular/material/chips';
@@ -24,12 +25,14 @@ import lottiePlayer from 'lottie-web';
 import {NgxCaptchaModule} from 'ngx-captcha';
 import {ImageCropperModule} from 'ngx-image-cropper';
 import {LottieModule} from 'ngx-lottie';
+import {AccountContactsSearchComponent} from '../components/account-contacts-search';
 import {CheckoutComponent} from '../components/checkout';
 import {DialogAlertComponent} from '../components/dialog-alert';
 import {DialogConfirmComponent} from '../components/dialog-confirm';
 import {DialogMediaComponent} from '../components/dialog-media';
 import {DynamicFormComponent} from '../components/dynamic-form';
 import {MarkdownComponent} from '../components/markdown';
+import {SearchBarComponent} from '../components/search-bar';
 import {SpinnerComponent} from '../components/spinner';
 import {AnchorDirective} from '../directives/anchor.directive';
 import {AutofocusDirective} from '../directives/autofocus.directive';
@@ -55,6 +58,7 @@ export const lottiePlayerFactory = () => {
  */
 @NgModule({
 	declarations: [
+		AccountContactsSearchComponent,
 		AnchorDirective,
 		ArrayPipe,
 		AutofocusDirective,
@@ -70,10 +74,12 @@ export const lottiePlayerFactory = () => {
 		MarkdownComponent,
 		NanoScrollerDirective,
 		RouterLinkDirective,
+		SearchBarComponent,
 		SpinnerComponent,
 		TranslateDirective
 	],
 	exports: [
+		AccountContactsSearchComponent,
 		AnchorDirective,
 		ArrayPipe,
 		AutofocusDirective,
@@ -95,6 +101,7 @@ export const lottiePlayerFactory = () => {
 		ImageCropperModule,
 		LottieModule,
 		MarkdownComponent,
+		MatAutocompleteModule,
 		MatButtonModule,
 		MatCheckboxModule,
 		MatChipsModule,
@@ -111,7 +118,9 @@ export const lottiePlayerFactory = () => {
 		MatTooltipModule,
 		NanoScrollerDirective,
 		NgxCaptchaModule,
+		ReactiveFormsModule,
 		RouterLinkDirective,
+		SearchBarComponent,
 		SpinnerComponent,
 		TextMaskModule,
 		TranslateDirective
@@ -125,6 +134,7 @@ export const lottiePlayerFactory = () => {
 		HttpClientModule,
 		ImageCropperModule,
 		LottieModule.forRoot({player: lottiePlayerFactory}),
+		MatAutocompleteModule,
 		MatButtonModule,
 		MatCheckboxModule,
 		MatChipsModule,
@@ -140,6 +150,7 @@ export const lottiePlayerFactory = () => {
 		MatSlideToggleModule,
 		MatTooltipModule,
 		NgxCaptchaModule,
+		ReactiveFormsModule,
 		TextMaskModule
 	],
 	providers: sharedModuleProviders

@@ -5,6 +5,7 @@ import {AccountChatService} from '../../services/account-chat.service';
 import {AccountContactsService} from '../../services/account-contacts.service';
 import {AccountFilesService} from '../../services/account-files.service';
 import {AccountSettingsService} from '../../services/account-settings.service';
+import {AccountUserLookupService} from '../../services/account-user-lookup.service';
 import {AccountService} from '../../services/account.service';
 import {AccountAuthService} from '../../services/crypto/account-auth.service';
 import {AccountDatabaseService} from '../../services/crypto/account-database.service';
@@ -36,6 +37,7 @@ export class AccountComposeNoProvidersComponent extends AccountComposeComponent 
 		accountAuthService: AccountAuthService,
 		accountContactsService: AccountContactsService,
 		accountFilesService: AccountFilesService,
+		accountUserLookupService: AccountUserLookupService,
 		dialogService: DialogService,
 		scrollService: ScrollService,
 		sessionService: SessionService,
@@ -53,6 +55,7 @@ export class AccountComposeNoProvidersComponent extends AccountComposeComponent 
 			accountAuthService,
 			accountContactsService,
 			accountFilesService,
+			accountUserLookupService,
 			dialogService,
 			scrollService,
 			sessionService,

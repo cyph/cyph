@@ -52,6 +52,16 @@ export const normalizeArray = memoize(
 	) : string[] => normalizeArrayInternal(arr)(compareFn)
 );
 
+/**
+ * Normalizes and sorts set.
+ */
+export const normalizeSet = memoize(
+	(arr: string[] | Set<string>) : Set<string> =>
+		new Set(
+			(arr instanceof Set ? Array.from(new Set(arr)) : arr).map(normalize)
+		)
+);
+
 /** Converts number to readable string. */
 export const numberToString = memoize((n: number) : string =>
 	n.toFixed(2).replace(/\.?0+$/, '')
