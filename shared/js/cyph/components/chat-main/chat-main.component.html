@@ -378,14 +378,14 @@
 			<mat-icon>forum</mat-icon>
 		</button>
 
-		<smd-fab-speed-dial
+		<ngx-speed-dial
 			class="io-switcher"
 			animationMode="scale"
 			direction="down"
 			[open]="(p2pService.ioSwitcher.isOpen | await) === true"
 			(mouseleave)="p2pService.ioSwitcher.close()"
 		>
-			<smd-fab-trigger
+			<ngx-speed-dial-trigger
 				[spin]="true"
 				(mouseenter)="
 					envService.isMobileOS ?
@@ -404,8 +404,8 @@
 				>
 					<mat-icon>settings</mat-icon>
 				</button>
-			</smd-fab-trigger>
-			<smd-fab-actions>
+			</ngx-speed-dial-trigger>
+			<ngx-speed-dial-actions>
 				<button
 					mat-mini-fab
 					[matTooltip]="stringsService.cameraSwitchTitle"
@@ -484,8 +484,8 @@
 				>
 					<mat-icon>person_add</mat-icon>
 				</button>
-			</smd-fab-actions>
-		</smd-fab-speed-dial>
+			</ngx-speed-dial-actions>
+		</ngx-speed-dial>
 
 		<mat-slide-toggle
 			class="gallery-view-toggle"

@@ -592,7 +592,7 @@ $default-white: map-get($mat-grey, 100);
 		}
 	}
 
-	smd-fab-actions {
+	ngx-speed-dial-actions {
 		@include mat-button-theme($cyph-speed-dial-action-theme);
 	}
 

@@ -407,13 +407,13 @@
 		</ng-template>
 	</ng-container>
 
-	<smd-fab-speed-dial
+	<ngx-speed-dial
 		class="fixed-fab"
 		animationMode="scale"
 		[open]="(isSpeedDialOpen | await) === true"
 		(mouseleave)="isSpeedDialOpen.next(false)"
 	>
-		<smd-fab-trigger
+		<ngx-speed-dial-trigger
 			[spin]="true"
 			(mouseenter)="
 				envService.isMobileOS ? undefined : isSpeedDialOpen.next(true)
@@ -440,8 +440,8 @@
 					*ngIf="isSpeedDialOpen | await"
 				></mat-icon>
 			</button>
-		</smd-fab-trigger>
-		<smd-fab-actions>
+		</ngx-speed-dial-trigger>
+		<ngx-speed-dial-actions>
 			<button
 				mat-mini-fab
 				cyphTranslate
@@ -460,6 +460,6 @@
 			>
 				<mat-icon>remove_red_eye</mat-icon>
 			</button>
-		</smd-fab-actions>
-	</smd-fab-speed-dial>
+		</ngx-speed-dial-actions>
+	</ngx-speed-dial>
 </div>

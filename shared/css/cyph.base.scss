@@ -313,12 +313,12 @@ button {
 	}
 }
 
-smd-fab-speed-dial:not(.smd-opened) {
+ngx-speed-dial:not(.ngx-speed-dial-opened) {
 	pointer-events: none;
 }
 
 [mat-fab],
-smd-fab-speed-dial {
+ngx-speed-dial {
 	&.absolute-fab,
 	&.fixed-fab {
 		right: 16px;

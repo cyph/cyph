@@ -222,7 +222,6 @@
 @yaga/leaflet-ng2
 abort-controller
 angular-fittext
-angular-speed-dial
 angular2-draggable
 angular2-text-mask
 animate.css
@@ -361,6 +360,7 @@ ngx-material-timepicker
 ngx-progressbar
 ngx-scrollbar
 ngx-sharebuttons@8.0.4
+ngx-speed-dial
 ngx-teximate
 node-fetch
 nodemailer

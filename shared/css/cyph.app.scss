@@ -66,7 +66,9 @@ body:not(.mobile) {
 	}
 }
 
-cyph-chat-message-box smd-fab-speed-dial:not(.smd-opened) smd-fab-actions {
+cyph-chat-message-box
+	ngx-speed-dial:not(.ngx-speed-dial-opened)
+	ngx-speed-dial-actions {
 	height: 0 !important;
 }
 

@@ -200,21 +200,21 @@
 				</mat-menu>
 			</div>
 
-			<smd-fab-speed-dial
+			<ngx-speed-dial
 				animationMode="scale"
 				[open]="(isSpeedDialOpen | await) === true"
 				(mouseleave)="isSpeedDialOpen.next(false)"
 				*ngIf="(envService.isMobile | await) === false"
 			>
-				<smd-fab-trigger
+				<ngx-speed-dial-trigger
 					[spin]="true"
 					(mouseenter)="isSpeedDialOpen.next(true)"
 				>
 					<button mat-fab>
 						<mat-icon>add</mat-icon>
 					</button>
-				</smd-fab-trigger>
-				<smd-fab-actions>
+				</ngx-speed-dial-trigger>
+				<ngx-speed-dial-actions>
 					<button
 						mat-mini-fab
 						cyphDropZone
@@ -278,8 +278,8 @@
 					>
 						<mat-icon>close</mat-icon>
 					</button>
-				</smd-fab-actions>
-			</smd-fab-speed-dial>
+				</ngx-speed-dial-actions>
+			</ngx-speed-dial>
 
 			<ng-container *ngIf="showUnreadCount">
 				<ng-container

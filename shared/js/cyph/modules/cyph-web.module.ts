@@ -54,7 +54,7 @@ import {
 	ScheduleAllModule
 } from '@syncfusion/ej2-angular-schedule';
 import {SplitButtonModule} from '@syncfusion/ej2-angular-splitbuttons';
-import {SmdFabSpeedDialModule} from 'angular-speed-dial';
+import {NgxSpeedDialModule} from 'ngx-speed-dial';
 import {AngularDraggableModule} from 'angular2-draggable';
 import {DxFileManagerModule} from 'devextreme-angular/ui/file-manager';
 import {ShareModule} from 'ngx-sharebuttons';
@@ -118,7 +118,7 @@ import {CyphSharedModule} from './cyph-shared.module';
 		ShareIconsModule,
 		SidenavComponent,
 		SimpleEmojiPickerComponent,
-		SmdFabSpeedDialModule,
+		NgxSpeedDialModule,
 		SocialShareComponent,
 		SplitButtonModule,
 		VideoComponent
@@ -154,7 +154,7 @@ import {CyphSharedModule} from './cyph-shared.module';
 		ShareModule,
 		ShareButtonsModule,
 		ShareIconsModule,
-		SmdFabSpeedDialModule
+		NgxSpeedDialModule
 	],
 	providers: webModuleProviders
 })
