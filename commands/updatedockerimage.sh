@@ -3,9 +3,74 @@
 
 source ~/.bashrc
 
+sudo cat > /etc/apt/sources.list.d/cyph.list <<- EOM
+	deb https://deb.nodesource.com/node_14.x bullseye main
+	deb https://dl.yarnpkg.com/debian/ stable main
+EOM
+
+curl -s https://deb.nodesource.com/gpgkey/nodesource.gpg.key | sudo apt-key add -
+curl -s https://dl.yarnpkg.com/debian/pubkey.gpg | sudo apt-key add -
+
 sudo apt-get -y --allow-downgrades update
 sudo apt-get -y --allow-downgrades upgrade
+
+sudo apt-get -y --allow-downgrades install \
+	autoconf \
+	automake \
+	build-essential \
+	chromium \
+	cmake \
+	devscripts \
+	dos2unix \
+	expect \
+	g++ \
+	gcc \
+	git \
+	golang-go \
+	htop \
+	imagemagick \
+	inotify-tools \
+	jq \
+	libgbm-dev \
+	libgconf-2-4 \
+	libglew-dev \
+	libglu1-mesa-dev \
+	libsodium-dev \
+	libtool \
+	libxi-dev \
+	libxss1 \
+	maven \
+	nano \
+	nodejs \
+	openjdk-11-jdk \
+	perl \
+	pinentry-curses \
+	pkg-config \
+	procps \
+	python \
+	python3 \
+	python3-docutils \
+	python3-pip \
+	ripgrep \
+	rpm \
+	rsync \
+	shellcheck \
+	sudo \
+	tightvncserver \
+	wget \
+	yarn \
+	zopfli
+
+sudo apt-get -y --allow-downgrades update
+sudo apt-get -y --allow-downgrades upgrade
+sudo apt-get -y --allow-downgrades autoremove
 sudo apt-get -y --allow-downgrades clean
+
+sudo pip install -U grpcio
+
+if [ ! -f /usr/bin/chromium-browser ] ; then
+	sudo ln -s /usr/bin/chromium /usr/bin/chromium-browser
+fi
 
 sudo npm -g install npm
 sudo npm -g install @mapbox/node-pre-gyp
@@ -58,6 +123,16 @@ if [ ! -d ~/.ipfs ] ; then
 	ipfs init
 fi
 
+
+if [ ! -d ~/google-cloud-sdk ] ; then
+	wget \
+		"https://dl.google.com/dl/cloudsdk/channels/rapid/downloads/google-cloud-sdk-338.0.0-linux-$( \
+			if [ "$(arch)" == aarch64 ] ; then echo arm ; else echo x86_64 ; fi \
+		).tar.gz" \
+		-O ~/gcloud-sdk.tar.gz
+	ls ~/*.tar.gz | xargs -I% tar xvzf % -C ~
+	rm ~/*.tar.gz
+fi
 
 # app-engine-go currently fails on ARM, but the others work
 for component in app-engine-go beta cloud-datastore-emulator ; do

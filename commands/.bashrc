@@ -1,5 +1,40 @@
 # Sourced by bashrc within Docker
 
+export GIT_EDITOR='vim'
+export GOPATH='/home/gibson/go'
+export ANDROID_HOME='/home/gibson/androidsdk'
+export JAVA_HOME="$(
+	update-alternatives --query javac | sed -n -e "s/Best: *\(.*\)\/bin\/javac/\1/p"
+)"
+
+export PATH="$(
+	echo -n '/opt/local/bin:' ;
+	echo -n '/opt/local/sbin:' ;
+	echo -n '/usr/local/opt/go/libexec/bin:' ;
+	echo -n "${GOPATH}/bin:" ;
+	echo -n "${ANDROID_HOME}/platform-tools:" ;
+	echo -n "${ANDROID_HOME}/tools:" ;
+	echo -n "${PATH}:" ;
+	echo -n '/node_modules/.bin'
+)"
+
+if [ ! -f ~/.gnupg/keycache -a -d ~/.gnupg.original ] ; then
+	rm -rf ~/.gnupg 2> /dev/null
+	cp -a ~/.gnupg.original ~/.gnupg
+fi
+export GPG_TTY="$(tty)"
+eval $(gpg-agent --daemon 2> /dev/null) &> /dev/null
+
+eval $(ssh-agent 2> /dev/null) &> /dev/null
+
+if [ -f ~/google-cloud-sdk/path.bash.inc ] ; then
+	source ~/google-cloud-sdk/path.bash.inc
+fi
+if [ -f ~/google-cloud-sdk/completion.bash.inc ] ; then
+	source ~/google-cloud-sdk/completion.bash.inc
+fi
+
+
 export NEWLINE=$'\n'
 export NODE_OPTIONS='--max-old-space-size=8192'
 

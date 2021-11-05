@@ -603,9 +603,6 @@ const updateCircleCI = () => {
 			fs
 				.readFileSync('Dockerfile')
 				.toString()
-				.split('\n')
-				.filter(s => !s.startsWith('VOLUME'))
-				.join('\n')
 				.replace('WORKDIR /cyph/commands', 'WORKDIR /cyph')
 				.replace(/#CIRCLECI:/g, '')
 				.replace(/#SETUP:/g, '')
