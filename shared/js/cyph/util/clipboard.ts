@@ -1,4 +1,4 @@
-import * as clipboard from 'clipboard-polyfill';
+import * as clipboard from 'clipboard-polyfill/text';
 import {staticDialogService} from './static-services';
 
 /** Copies text to clipboard. */

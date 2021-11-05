@@ -237,7 +237,7 @@ braintree-web-drop-in
 chalk
 cheerio@1.0.0-rc.3
 clean-css-cli
-clipboard-polyfill@^2
+clipboard-polyfill
 codelyzer
 comlink
 core-js
