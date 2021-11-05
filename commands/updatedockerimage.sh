@@ -4,7 +4,7 @@
 source ~/.bashrc
 
 sudo cat > /etc/apt/sources.list.d/cyph.list <<- EOM
-	deb https://deb.nodesource.com/node_14.x bullseye main
+	deb https://deb.nodesource.com/node_16.x bullseye main
 	deb https://dl.yarnpkg.com/debian/ stable main
 EOM
 
