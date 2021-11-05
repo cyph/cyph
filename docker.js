@@ -139,7 +139,11 @@ const gitconfigPath = path.join(homeDir, '.gitconfig');
 const gitconfigDockerPath = `${dockerHomeDir}/.gitconfig`;
 const serveReadyPath = path.join(__dirname, 'serve.ready');
 const webSignServeReadyPath = path.join(__dirname, 'websign-serve.ready');
-const dockerfiles = ['Dockerfile.circleci', 'Dockerfile.local'];
+const dockerfiles = [
+	'Dockerfile.circleci',
+	'Dockerfile.codespace',
+	'Dockerfile.local'
+];
 
 const needAGSE =
 	(args.command === 'sign' && process.argv[4] !== '--test') ||
@@ -595,10 +599,6 @@ const dockerBase64Files = s =>
 	);
 
 const updateDockerImages = () => {
-	if (args.noUpdates) {
-		return Promise.resolve();
-	}
-
 	killEverything();
 
 	fs.writeFileSync(
@@ -687,6 +687,20 @@ const updateDockerImages = () => {
 				'cyph/circleci:latest',
 				'-f',
 				'Dockerfile.circleci',
+				'.'
+			])
+		)
+		.then(() =>
+			spawnAsync('docker', [
+				'buildx',
+				'build',
+				'--push',
+				'--platform',
+				targetArch,
+				'-t',
+				'cyph/codespace:latest',
+				'-f',
+				'Dockerfile.codespace',
 				'.'
 			])
 		);

@@ -1,4 +1,4 @@
 FROM cyph/base
 
 WORKDIR /cyph/commands
-CMD /bin/bash
+CMD /bin/bash serve.sh

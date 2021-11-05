@@ -1,4 +1,4 @@
-FROM cyph/base@sha256:686ac998161e582bdc0c5f528e4ea4fada1968a1ff043e3d452ea7d5b94932d3
+FROM cyph/base
 
 RUN sudo mkdir /cyph
 RUN sudo chmod 777 /cyph
