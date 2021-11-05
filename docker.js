@@ -299,21 +299,16 @@ const shellScripts = {
 			! cmp /cyph/shared/node_modules/package-lock.json /node_modules/package-lock.json &> /dev/null
 		`
 	},
-	setup: `
-		${containerInitScript}
-		/cyph/commands/dockerpostmake.sh
-		source ~/.bashrc
-		notify 'Make complete'
-		${
-			!isCyphInternal ?
-				'' :
-				`
-					gcloud init
-					echo
-					firebase login --no-localhost
-				`
-		}
-	`
+	setup: !isCyphInternal ?
+		'' :
+		`
+			${containerInitScript}
+			source ~/.bashrc
+			notify 'Post-make authentication'
+			gcloud init
+			echo
+			firebase login --no-localhost
+		`
 };
 
 const backup = () => {
@@ -748,19 +743,21 @@ const make = () => {
 		'.'
 	])
 		.then(() =>
-			spawnAsync('docker', [
-				'tag',
-				`${image}:latest`,
-				`${image}_original:latest`
-			])
-		)
-		.then(() => editImage(shellScripts.setup))
-		.then(() =>
-			spawnAsync('docker', [
-				'tag',
-				`${image}:latest`,
-				`${image}_original:latest`
-			])
+			shellScripts.setup ?
+				spawnAsync('docker', [
+					'tag',
+					`${image}:latest`,
+					`${image}_original:latest`
+				])
+					.then(() => editImage(shellScripts.setup))
+					.then(() =>
+						spawnAsync('docker', [
+							'tag',
+							`${image}:latest`,
+							`${image}_original:latest`
+						])
+					) :
+				undefined
 		)
 		.then(() => {
 			removeDirectory('shared/node_modules');
@@ -908,11 +905,12 @@ initPromise.then(() => {
 			args.command === 'verify'
 	)
 		.then(() => {
-			if (args.command === 'addlib') {
-				return editImage(shellScripts.command);
-			}
-			if (args.command === 'getlibs') {
-				return;
+			switch (args.command) {
+				case 'addlib':
+					return editImage(shellScripts.command);
+
+				case 'getlibs':
+					return;
 			}
 
 			return dockerRun(
@@ -924,8 +922,12 @@ initPromise.then(() => {
 			);
 		})
 		.then(() => {
-			if (args.command === 'updatelibs') {
-				updateDockerImages();
+			switch (args.command) {
+				case 'make':
+					return spawnAsync('node', ['docker.js', 'protobuf']);
+
+				case 'updatelibs':
+					return updateDockerImages();
 			}
 		});
 });

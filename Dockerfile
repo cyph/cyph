@@ -33,7 +33,6 @@ ENV HOME /home/gibson
 #SETUP:RUN chmod -R 777 ~/getlibs
 #SETUP:RUN ~/getlibs/commands/updatedockerimage.sh
 #SETUP:RUN ~/getlibs/commands/getlibs.sh
-#SETUP:RUN ~/getlibs/commands/dockerpostmake.sh
 #CIRCLECI:RUN sudo mkdir /cyph
 #CIRCLECI:RUN sudo chmod 777 /cyph
 
