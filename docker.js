@@ -139,6 +139,7 @@ const gitconfigPath = path.join(homeDir, '.gitconfig');
 const gitconfigDockerPath = `${dockerHomeDir}/.gitconfig`;
 const serveReadyPath = path.join(__dirname, 'serve.ready');
 const webSignServeReadyPath = path.join(__dirname, 'websign-serve.ready');
+const dockerfiles = ['Dockerfile.circleci', 'Dockerfile.local'];
 
 const needAGSE =
 	(args.command === 'sign' && process.argv[4] !== '--test') ||
@@ -158,6 +159,7 @@ const branch = (
 ).toLowerCase();
 
 const image = `cyph/${branch === 'prod' ? 'prod' : 'dev'}`;
+const targetArch = 'linux/arm64,linux/amd64';
 
 const imageAlreadyBuilt = spawn('docker', ['images'])
 	.split('\n')
@@ -592,10 +594,12 @@ const dockerBase64Files = s =>
 			.join('\n')
 	);
 
-const updateCircleCI = () => {
+const updateDockerImages = () => {
 	if (args.noUpdates) {
 		return Promise.resolve();
 	}
+
+	killEverything();
 
 	fs.writeFileSync(
 		'Dockerfile.tmp',
@@ -603,8 +607,6 @@ const updateCircleCI = () => {
 			fs
 				.readFileSync('Dockerfile')
 				.toString()
-				.replace('WORKDIR /cyph/commands', 'WORKDIR /cyph')
-				.replace(/#CIRCLECI:/g, '')
 				.replace(/#SETUP:/g, '')
 		)
 	);
@@ -620,15 +622,16 @@ const updateCircleCI = () => {
 			]) :
 			undefined
 	)
+		.then(() => spawnAsync('docker', ['buildx', 'use', 'default']))
 		.then(() =>
 			spawnAsync('docker', [
 				'buildx',
 				'build',
 				'--push',
 				'--platform',
-				'linux/amd64',
+				targetArch,
 				'-t',
-				'cyph/circleci:latest',
+				'cyph/base:latest',
 				'-f',
 				'Dockerfile.tmp',
 				'.'
@@ -636,15 +639,56 @@ const updateCircleCI = () => {
 		)
 		.then(() => {
 			fs.unlinkSync('Dockerfile.tmp');
+
+			const digests = spawn('docker', [
+				'buildx',
+				'imagetools',
+				'inspect',
+				'cyph/base'
+			])
+				.split('Manifests:')[1]
+				.split('Name:')
+				.map(s => s.trim())
+				.filter(s => s)
+				.map(s => ({
+					digest: s.match(/sha256:[^\s]+/)[0],
+					platform: s.split('Platform:')[1].split('\n')[0].trim()
+				}))
+				.map(o => `FROM --platform=${o.platform} cyph/base@${o.digest}`)
+				.join('\n');
+
+			for (const dockerfile of dockerfiles) {
+				fs.writeFileSync(
+					dockerfile,
+					`${digests}${fs
+						.readFileSync(dockerfile)
+						.toString()
+						.replace(/FROM .*\n/g, '')}`
+				);
+			}
+
+			childProcess.spawnSync('git', [
+				'commit',
+				'-S',
+				'-m',
+				'updatedockerimages',
+				...dockerfiles
+			]);
+			childProcess.spawnSync('git', ['push']);
 		})
 		.then(() =>
-			Promise.all(
-				spawn('docker', ['images', '-a'])
-					.split('\n')
-					.slice(1)
-					.filter(s => s.indexOf('cyph/circleci') > -1)
-					.map(s => spawnAsync('docker', ['rmi', s.split(/\s+/)[0]]))
-			)
+			spawnAsync('docker', [
+				'buildx',
+				'build',
+				'--push',
+				'--platform',
+				targetArch,
+				'-t',
+				'cyph/circleci:latest',
+				'-f',
+				'Dockerfile.circleci',
+				'.'
+			])
 		);
 };
 
@@ -652,6 +696,8 @@ const waitUntilFileExists = filePath =>
 	new Promise(resolve => setTimeout(resolve, 5000))
 		.then(() => new Promise(resolve => fs.exists(filePath, resolve)))
 		.then(exists => (exists ? undefined : waitUntilFileExists(filePath)));
+
+process.env.DOCKER_BUILDKIT = '1';
 
 if (!isCyphInternal && needAGSE) {
 	fail('Non-Cyph-employee. AGSE unsupported.');
@@ -679,22 +725,12 @@ const removeDirectory = dir => {
 const make = () => {
 	killEverything();
 
-	fs.writeFileSync(
-		'Dockerfile.tmp',
-		dockerBase64Files(
-			fs
-				.readFileSync('Dockerfile')
-				.toString()
-				.replace(/#SETUP:/g, '')
-		)
-	);
-
 	initPromise = spawnAsync('docker', [
 		'build',
 		'-t',
 		image,
 		'-f',
-		'Dockerfile.tmp',
+		'Dockerfile.local',
 		'.'
 	])
 		.then(() =>
@@ -704,9 +740,6 @@ const make = () => {
 				`${image}_original:latest`
 			])
 		)
-		.then(() => {
-			fs.unlinkSync('Dockerfile.tmp');
-		})
 		.then(() => editImage(shellScripts.setup))
 		.then(() =>
 			spawnAsync('docker', [
@@ -820,8 +853,8 @@ switch (args.command) {
 		commandAdditionalArgs.push('-p', '44000:44000');
 		break;
 
-	case 'updatecircleci':
-		updateCircleCI();
+	case 'updatedockerimages':
+		updateDockerImages();
 		break;
 
 	case 'websign/serve':
@@ -878,7 +911,7 @@ initPromise.then(() => {
 		})
 		.then(() => {
 			if (args.command === 'updatelibs') {
-				updateCircleCI();
+				updateDockerImages();
 			}
 		});
 });
