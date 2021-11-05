@@ -163,7 +163,7 @@ const branch = (
 ).toLowerCase();
 
 const image = `cyph/${branch === 'prod' ? 'prod' : 'dev'}`;
-const targetArch = 'linux/arm64,linux/amd64';
+const targetArch = 'linux/amd64,linux/arm64';
 
 const imageAlreadyBuilt = spawn('docker', ['images'])
 	.split('\n')
@@ -563,7 +563,6 @@ const dockerBase64Files = s =>
 		/BASE64_FILES/,
 		[
 			'commands/.bashrc',
-			'commands/dockerpostmake.sh',
 			'commands/getlibs.sh',
 			'commands/updatedockerimage.sh',
 			'native/plugins.list',
@@ -620,6 +619,8 @@ const updateDockerImages = (pushImageUpdates = true) => {
 		)
 	);
 
+	let buildxInstance = '';
+
 	return Promise.resolve(
 		dockerCredentials ?
 			spawnAsync('docker', [
@@ -631,7 +632,9 @@ const updateDockerImages = (pushImageUpdates = true) => {
 			]) :
 			undefined
 	)
-		.then(() => spawnAsync('docker', ['buildx', 'use', 'default']))
+		.then(() => {
+			buildxInstance = spawn('docker', ['buildx', 'create', '--use']);
+		})
 		.then(() =>
 			spawnAsync('docker', [
 				'buildx',
@@ -664,12 +667,13 @@ const updateDockerImages = (pushImageUpdates = true) => {
 					platform: s.split('Platform:')[1].split('\n')[0].trim()
 				}))
 				.map(o => `FROM --platform=${o.platform} cyph/base@${o.digest}`)
+				.sort()
 				.join('\n');
 
 			for (const dockerfile of dockerfiles) {
 				fs.writeFileSync(
 					dockerfile,
-					`${digests}${fs
+					`${digests}\n${fs
 						.readFileSync(dockerfile)
 						.toString()
 						.replace(/FROM .*\n/g, '')}`
@@ -716,7 +720,14 @@ const updateDockerImages = (pushImageUpdates = true) => {
 				'Dockerfile.codespace',
 				'.'
 			])
-		);
+		)
+		.then(() => {
+			if (!buildxInstance) {
+				return;
+			}
+
+			return spawnAsync('docker', ['buildx', 'rm', buildxInstance]);
+		});
 };
 
 const waitUntilFileExists = filePath =>

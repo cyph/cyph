@@ -8,7 +8,15 @@ RUN apt-get -y --allow-downgrades install \
 	curl \
 	gnupg \
 	lsb-release \
-	software-properties-common
+	software-properties-common \
+	sudo
+
+RUN echo 'deb https://deb.nodesource.com/node_16.x bullseye main' \
+	> /etc/apt/sources.list.d/cyph.list
+RUN curl -s https://deb.nodesource.com/gpgkey/nodesource.gpg.key | apt-key add -
+RUN apt-get -y --allow-downgrades update
+RUN apt-get -y --allow-downgrades upgrade
+RUN apt-get -y --allow-downgrades install nodejs
 
 RUN echo '\
 	if [ -f /cyph/commands/.bashrc ] ; then \

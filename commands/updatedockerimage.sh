@@ -55,7 +55,6 @@ sudo apt-get -y --allow-downgrades install \
 	rpm \
 	rsync \
 	shellcheck \
-	sudo \
 	tightvncserver \
 	wget \
 	yarn \
