@@ -359,7 +359,7 @@ ngx-lottie
 ngx-material-timepicker
 ngx-progressbar
 ngx-scrollbar
-ngx-sharebuttons@8.0.4
+ngx-sharebuttons
 ngx-speed-dial
 ngx-teximate
 node-fetch
