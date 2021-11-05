@@ -260,7 +260,7 @@ dope-qr
 dropzone
 dwv
 eslint
-eslint-plugin-import@~2.22
+eslint-plugin-import
 eslint-plugin-no-null
 eslint-plugin-prefer-arrow
 eslint-plugin-unicorn
