@@ -352,7 +352,7 @@ ng2-pdf-viewer
 ng2-truncate
 ngx-bar-rating
 ngx-build-plus
-ngx-captcha@https://github.com/buu700/ngx-captcha-tmp
+ngx-captcha
 ngx-contextmenu
 ngx-image-cropper
 ngx-lottie
