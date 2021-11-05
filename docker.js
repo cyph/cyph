@@ -607,7 +607,7 @@ const dockerBase64Files = s =>
 			.join('\n')
 	);
 
-const updateDockerImages = () => {
+const updateDockerImages = (pushImageUpdates = true) => {
 	killEverything();
 
 	fs.writeFileSync(
@@ -674,6 +674,10 @@ const updateDockerImages = () => {
 						.toString()
 						.replace(/FROM .*\n/g, '')}`
 				);
+			}
+
+			if (!pushImageUpdates) {
+				return;
 			}
 
 			childProcess.spawnSync('git', [
@@ -944,7 +948,23 @@ initPromise.then(() => {
 					return spawnAsync('node', ['docker.js', 'protobuf']);
 
 				case 'updatelibs':
-					return updateDockerImages();
+					return updateDockerImages(false)
+						.then(() =>
+							spawnAsync('node', [
+								'docker.js',
+								'commit',
+								'--gc',
+								'updatelibs'
+							])
+						)
+						.then(() =>
+							spawnAsync('node', [
+								'docker.js',
+								'notify',
+								'--admins',
+								'updatelibs complete'
+							])
+						);
 			}
 		});
 });
