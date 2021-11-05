@@ -1,4 +1,10 @@
 FROM cyph/base
 
+COPY .local-docker-context /home/gibson/
+RUN test -d /home/gibson/.local-docker-context/config && \
+	rm -rf /home/gibson/.config 2> /dev/null && \
+	mv /home/gibson/.local-docker-context/config /home/gibson/.config ; \
+	rm -rf /home/gibson/.local-docker-context
+
 WORKDIR /cyph/commands
 CMD /bin/bash

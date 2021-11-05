@@ -384,7 +384,11 @@ const dockerRun = (
 	}
 };
 
-const dockerCP = (src, dest) => {
+const dockerCP = (src, dest, removeDestDir = false) => {
+	if (removeDestDir) {
+		removeDirectory(dest);
+	}
+
 	const container = containerName(crypto.randomBytes(32).toString('hex'));
 
 	dockerRun('sleep Infinity', container).catch(() => {});
@@ -402,19 +406,20 @@ const dockerCP = (src, dest) => {
 	return f();
 };
 
+const dockerCheckCondition = condition =>
+	!!condition &&
+	dockerRun(
+		`if ${condition}\nthen echo dothemove\nfi`,
+		undefined,
+		undefined,
+		undefined,
+		undefined,
+		true
+	) === 'dothemove';
+
 const editImage = (command, condition, dryRunName, useOriginal = false) =>
 	Promise.resolve().then(() => {
-		if (
-			condition &&
-			dockerRun(
-				`if ${condition}\nthen echo dothemove\nfi`,
-				undefined,
-				undefined,
-				undefined,
-				undefined,
-				true
-			) !== 'dothemove'
-		) {
+		if (!dockerCheckCondition(condition)) {
 			return false;
 		}
 
@@ -488,10 +493,20 @@ const huskySetup = () => {
 };
 
 const pullUpdates = (forceUpdate = false, initialSetup = false) => {
-	if (args.noUpdates) {
+	if (
+		args.noUpdates ||
+		!dockerCheckCondition(shellScripts.libUpdate.condition)
+	) {
 		return Promise.resolve();
 	}
 
+	if (shellScripts.setup) {
+		dockerCP('/home/gibson/.config', '.local-docker-context/config', true);
+	}
+
+	return make();
+
+	/*
 	return editImage(
 		shellScripts.libUpdate.command,
 		shellScripts.libUpdate.condition,
@@ -514,7 +529,6 @@ const pullUpdates = (forceUpdate = false, initialSetup = false) => {
 
 			return huskySetup();
 		});
-	/*
 		.then(() => {
 			const libNative = path.join('shared', 'lib', 'native');
 			const ready = path.join(__dirname, libNative, '.ready');
@@ -743,7 +757,8 @@ const make = () => {
 		'.'
 	])
 		.then(() =>
-			shellScripts.setup ?
+			shellScripts.setup &&
+			!fs.existsSync('.local-docker-context/config') ?
 				spawnAsync('docker', [
 					'tag',
 					`${image}:latest`,
@@ -760,10 +775,12 @@ const make = () => {
 				undefined
 		)
 		.then(() => {
-			removeDirectory('shared/node_modules');
-			return dockerCP('/node_modules', 'shared/node_modules');
+			removeDirectory('.local-docker-context/config');
+			return dockerCP('/node_modules', 'shared/node_modules', true);
 		})
 		.then(() => huskySetup());
+
+	return initPromise;
 };
 
 if (!imageAlreadyBuilt) {
