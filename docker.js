@@ -724,10 +724,10 @@ const removeDirectory = dir => {
 	}
 
 	if (typeof fs.rmSync === 'function') {
-		fs.rmSync(dir, {recursive: true});
+		fs.rmSync(dir, {force: true, recursive: true});
 	}
 	else {
-		fs.rmdirSync(dir, {recursive: true});
+		fs.rmdirSync(dir, {force: true, recursive: true});
 	}
 };
 
