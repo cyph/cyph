@@ -1,6 +1,6 @@
 import {Injectable} from '@angular/core';
-import {concat, Observable, of} from 'rxjs';
-import {map, switchMap, take} from 'rxjs/operators';
+import {concat, firstValueFrom, Observable, of} from 'rxjs';
+import {map, switchMap} from 'rxjs/operators';
 import {SecurityModels} from '../account';
 import {BaseProvider} from '../base-provider';
 import {IAsyncValue} from '../iasync-value';
@@ -211,14 +211,12 @@ export class AccountSettingsService extends BaseProvider {
 
 	/** User's plan / premium status configuration. */
 	public async getPlanConfig () : Promise<CyphPlanConfig> {
-		return this.configService.planConfig[
-			await this.plan.pipe(take(1)).toPromise()
-		];
+		return this.configService.planConfig[await firstValueFrom(this.plan)];
 	}
 
 	/** User's plan / premium status (string representation). */
 	public async getPlanString () : Promise<string> {
-		return CyphPlans[await this.plan.pipe(take(1)).toPromise()];
+		return CyphPlans[await firstValueFrom(this.plan)];
 	}
 
 	/** Sets the currently signed in user's avatar. */

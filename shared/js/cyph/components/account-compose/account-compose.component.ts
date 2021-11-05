@@ -7,8 +7,8 @@ import {
 	OnInit
 } from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
-import {BehaviorSubject} from 'rxjs';
-import {map, take} from 'rxjs/operators';
+import {BehaviorSubject, firstValueFrom} from 'rxjs';
+import {map} from 'rxjs/operators';
 import {User} from '../../account';
 import {slideInOutTop} from '../../animations';
 import {BaseProvider} from '../../base-provider';
@@ -369,9 +369,7 @@ export class AccountComposeComponent
 	/** Sends message. */
 	/* eslint-disable-next-line complexity */
 	public readonly send = async () => {
-		const routeData = await this.activatedRoute.data
-			.pipe(take(1))
-			.toPromise();
+		const routeData = await firstValueFrom(this.activatedRoute.data);
 
 		const fromName =
 			this.accountService.fromName.value || this.stringsService.anonymous;

@@ -1,6 +1,5 @@
 import * as fileSaver from 'file-saver';
-import {Subject} from 'rxjs';
-import {take} from 'rxjs/operators';
+import {firstValueFrom, Subject} from 'rxjs';
 import {env} from '../env';
 import {shareFile} from './cordova/share-file';
 import {staticDialogService, staticStringsService} from './static-services';
@@ -111,9 +110,7 @@ export const saveFile = async (
 				);
 
 			for (const fileBlobPart of fileBlobParts) {
-				const filePartWriteComplete = fileWriteEvent
-					.pipe(take(1))
-					.toPromise();
+				const filePartWriteComplete = firstValueFrom(fileWriteEvent);
 
 				if (fileWriter.length > 0) {
 					fileWriter.seek(fileWriter.length);

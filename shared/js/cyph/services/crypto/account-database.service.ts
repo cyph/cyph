@@ -2,8 +2,8 @@
 
 import {Injectable} from '@angular/core';
 import memoize from 'lodash-es/memoize';
-import {BehaviorSubject, Observable, Subscription} from 'rxjs';
-import {map, switchMap, take} from 'rxjs/operators';
+import {BehaviorSubject, firstValueFrom, Observable, Subscription} from 'rxjs';
+import {map, skip, switchMap} from 'rxjs/operators';
 import {ICurrentUser, publicSigningKeys, SecurityModels} from '../../account';
 import {BaseProvider} from '../../base-provider';
 import {IAsyncList} from '../../iasync-list';
@@ -990,7 +990,7 @@ export class AccountDatabaseService extends BaseProvider {
 						);
 					}).catch(async () =>
 						blockGetValue ?
-							watch().pipe(take(2)).toPromise() :
+							firstValueFrom(watch().pipe(skip(1))) :
 							proto.create()
 					),
 				lock: async (f, reason) => (await asyncValue).lock(f, reason),
@@ -1037,7 +1037,7 @@ export class AccountDatabaseService extends BaseProvider {
 	public async getCurrentUser () : Promise<ICurrentUser> {
 		const currentUser =
 			this.currentUser.value ||
-			(await this.currentUserFiltered.pipe(take(1)).toPromise());
+			(await firstValueFrom(this.currentUserFiltered));
 
 		if (!currentUser) {
 			throw new Error('Cannot get current user.');

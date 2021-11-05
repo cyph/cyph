@@ -401,7 +401,7 @@ run-node
 rxfire
 rxjs-tslint-rules
 rxjs-tslint@0.1.5
-rxjs@^6
+rxjs@^7
 sass
 shelljs
 sidh

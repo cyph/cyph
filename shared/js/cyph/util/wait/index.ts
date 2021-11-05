@@ -1,5 +1,4 @@
-import {Observable} from 'rxjs';
-import {take} from 'rxjs/operators';
+import {firstValueFrom, Observable} from 'rxjs';
 import {Async} from '../../async-type';
 import {config} from '../../config';
 import {sleep} from './sleep';
@@ -9,13 +8,8 @@ export * from './retry-until-successful';
 export * from './sleep';
 
 /** Converts Async to awaitable Promise. */
-export const awaitAsync = async <T>(value: Async<T>) : Promise<T> => {
-	if (value instanceof Observable) {
-		return value.pipe(take(1)).toPromise();
-	}
-
-	return value;
-};
+export const awaitAsync = async <T>(value: Async<T>) : Promise<T> =>
+	value instanceof Observable ? firstValueFrom(value) : value;
 
 /** Sleeps forever. */
 export const infiniteSleep = async () : Promise<void> => {

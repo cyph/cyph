@@ -8,8 +8,8 @@ import {
 	OnInit
 } from '@angular/core';
 import {ActivatedRoute, Router, UrlSegment} from '@angular/router';
-import {BehaviorSubject} from 'rxjs';
-import {filter, map, take} from 'rxjs/operators';
+import {BehaviorSubject, firstValueFrom} from 'rxjs';
+import {filter, map} from 'rxjs/operators';
 import {UserPresence} from '../../account/enums';
 import {BaseProvider} from '../../base-provider';
 import {States, UiStyles} from '../../chat/enums';
@@ -442,12 +442,9 @@ export class AccountChatComponent
 									callType !== undefined
 								);
 
-								const destroyed = this.destroyed
-									.pipe(
-										filter(b => b),
-										take(1)
-									)
-									.toPromise();
+								const destroyed = firstValueFrom(
+									this.destroyed.pipe(filter(b => b))
+								);
 
 								if (burnerSession) {
 									beforeUnloadMessage =
@@ -520,12 +517,11 @@ export class AccountChatComponent
 										.ring(
 											async () =>
 												Promise.race([
-													this.p2pWebRTCService.loading
-														.pipe(
-															filter(b => !b),
-															take(1)
+													firstValueFrom(
+														this.p2pWebRTCService.loading.pipe(
+															filter(b => !b)
 														)
-														.toPromise(),
+													),
 													destroyed.then(() => false)
 												]),
 											true
@@ -567,48 +563,43 @@ export class AccountChatComponent
 										});
 								}
 
-								this.p2pWebRTCService.disconnect
-									.pipe(take(1))
-									.toPromise()
-									.then(async () => {
-										if (this.destroyed.value) {
-											return;
-										}
+								firstValueFrom(
+									this.p2pWebRTCService.disconnect
+								).then(async () => {
+									if (this.destroyed.value) {
+										return;
+									}
 
-										this.router.navigate(callEndRoute);
+									this.router.navigate(callEndRoute);
 
-										if (!(appointment && appointmentID)) {
-											return;
-										}
+									if (!(appointment && appointmentID)) {
+										return;
+									}
 
-										appointment.occurred = true;
+									appointment.occurred = true;
 
-										await this.accountFilesService.updateAppointment(
-											appointmentID,
-											appointment,
-											undefined,
-											true
-										);
+									await this.accountFilesService.updateAppointment(
+										appointmentID,
+										appointment,
+										undefined,
+										true
+									);
 
-										if (
-											!(
-												appointment.notes &&
-												appointmentOther
-											)
-										) {
-											return;
-										}
+									if (
+										!(appointment.notes && appointmentOther)
+									) {
+										return;
+									}
 
-										await this.accountFilesService.upload(
-											`Notes about ${appointmentOther} (${
-												appointment.calendarInvite.title
-											}, ${getDateTimeString(
-												appointment.calendarInvite
-													.startTime
-											)})`,
-											appointment.notes
-										).result;
-									});
+									await this.accountFilesService.upload(
+										`Notes about ${appointmentOther} (${
+											appointment.calendarInvite.title
+										}, ${getDateTimeString(
+											appointment.calendarInvite.startTime
+										)})`,
+										appointment.notes
+									).result;
+								});
 							}
 							catch (err) {
 								debugLogError(() => ({

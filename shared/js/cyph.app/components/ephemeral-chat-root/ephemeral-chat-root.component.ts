@@ -2,7 +2,8 @@ import {AfterViewInit, ChangeDetectionStrategy, Component} from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
 import * as $ from 'jquery';
 import * as Konami from 'konami';
-import {filter, take} from 'rxjs/operators';
+import {firstValueFrom} from 'rxjs';
+import {filter} from 'rxjs/operators';
 import {fadeIn} from '../../../cyph/animations';
 import {BaseProvider} from '../../../cyph/base-provider';
 import {States as ChatStates} from '../../../cyph/chat/enums';
@@ -83,9 +84,9 @@ export class EphemeralChatRootComponent
 			this.sessionService.beginChat.resolve();
 
 			if (this.sessionInitService.callType) {
-				await this.p2pWebRTCService.webRTC
-					.pipe(filterUndefinedOperator(), take(1))
-					.toPromise();
+				await firstValueFrom(
+					this.p2pWebRTCService.webRTC.pipe(filterUndefinedOperator())
+				);
 
 				this.p2pWebRTCService.loading.next(false);
 
@@ -265,21 +266,15 @@ export class EphemeralChatRootComponent
 			this.router.navigate([burnerRoot, '404']);
 		});
 
-		this.sessionService.joinConfirmationWait
-			.pipe(
-				filter(b => b),
-				take(1)
-			)
-			.toPromise()
-			.then(() => {
-				if (this.destroyed.value) {
-					return;
-				}
+		firstValueFrom(
+			this.sessionService.joinConfirmationWait.pipe(filter(b => b))
+		).then(() => {
+			if (this.destroyed.value) {
+				return;
+			}
 
-				this.appService.chatRootState.next(
-					ChatRootStates.waitingForFriend
-				);
-			});
+			this.appService.chatRootState.next(ChatRootStates.waitingForFriend);
+		});
 
 		/* Cyphertext easter egg */
 

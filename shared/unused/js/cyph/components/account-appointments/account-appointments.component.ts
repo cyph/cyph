@@ -9,7 +9,7 @@ import {
 import {Options} from 'fullcalendar';
 import memoize from 'lodash-es/memoize';
 import {CalendarComponent} from 'ng-fullcalendar';
-import {take} from 'rxjs/operators';
+import {firstValueFrom} from 'rxjs';
 import {BaseProvider} from '../../base-provider';
 import {
 	AccountUserTypes,
@@ -141,9 +141,9 @@ export class AccountAppointmentsComponent
 					},
 					telehealth:
 						this.configService.planConfig[
-							await this.accountSettingsService.plan
-								.pipe(take(1))
-								.toPromise()
+							await firstValueFrom(
+								this.accountSettingsService.plan
+							)
 						].telehealth,
 					to: {
 						members: [friend || {
@@ -169,7 +169,7 @@ export class AccountAppointmentsComponent
 		this.accountService.transitionEnd();
 
 		if (this.calendar) {
-			await this.calendar.initialized.pipe(take(1)).toPromise();
+			await firstValueFrom(this.calendar.initialized);
 		}
 
 		this.subscriptions.push(

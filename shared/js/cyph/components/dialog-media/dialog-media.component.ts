@@ -9,6 +9,7 @@ import {MatDialogRef} from '@angular/material/dialog';
 import {DomSanitizer, SafeUrl} from '@angular/platform-browser';
 import memoize from 'lodash-es/memoize';
 import PinchZoom from 'pinch-zoom-js';
+import {lastValueFrom} from 'rxjs';
 import {BaseProvider} from '../../base-provider';
 import {IResolvable} from '../../iresolvable';
 import {DataURIProto} from '../../proto';
@@ -99,7 +100,7 @@ export class DialogMediaComponent extends BaseProvider implements OnInit {
 	public async ngOnInit () : Promise<void> {
 		super.ngOnInit();
 
-		await this.matDialogRef.afterOpened().toPromise();
+		await lastValueFrom(this.matDialogRef.afterOpened());
 
 		if (!(this.elementRef.nativeElement instanceof HTMLElement)) {
 			return;

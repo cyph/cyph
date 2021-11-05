@@ -18,8 +18,8 @@ import {SafeStyle} from '@angular/platform-browser';
 import Hammer from 'hammerjs';
 import * as $ from 'jquery';
 import debounce from 'lodash-es/debounce';
-import {BehaviorSubject, Observable} from 'rxjs';
-import {map, skip, take} from 'rxjs/operators';
+import {BehaviorSubject, firstValueFrom, Observable} from 'rxjs';
+import {map, skip} from 'rxjs/operators';
 import {fadeInOut} from '../../animations';
 import {BaseProvider} from '../../base-provider';
 import {IChatData, IMessageListItem, UiStyles} from '../../chat';
@@ -318,9 +318,9 @@ export class ChatMessageListComponent
 
 		this.chatService.scrollTransition.next(true);
 
-		const messageListItems = await this.messageListItems
-			.pipe(skip(1), take(1))
-			.toPromise();
+		const messageListItems = await firstValueFrom(
+			this.messageListItems.pipe(skip(1))
+		);
 
 		if (messageListItems.length < 1) {
 			this.chatService.scrollTransition.next(false);

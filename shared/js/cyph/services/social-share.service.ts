@@ -1,5 +1,5 @@
 import {Injectable} from '@angular/core';
-import {take} from 'rxjs/operators';
+import {firstValueFrom} from 'rxjs';
 import {BaseProvider} from '../base-provider';
 import {SocialShareComponent} from '../components/social-share';
 import {resolvable} from '../util/wait/resolvable';
@@ -33,7 +33,7 @@ export class SocialShareService extends BaseProvider {
 				o.title = title;
 				o.url = url;
 
-				socialShareOpened.resolve(o.opened.pipe(take(1)).toPromise());
+				socialShareOpened.resolve(firstValueFrom(o.opened));
 			},
 			closeFunction,
 			true

@@ -7,8 +7,8 @@ import {
 } from '@angular/core';
 import {DomSanitizer, SafeUrl} from '@angular/platform-browser';
 import * as $ from 'jquery';
-import {BehaviorSubject} from 'rxjs';
-import {filter, take} from 'rxjs/operators';
+import {BehaviorSubject, firstValueFrom} from 'rxjs';
+import {filter} from 'rxjs/operators';
 import {BaseProvider} from '../../base-provider';
 import {ChatService} from '../../services/chat.service';
 import {ConfigService} from '../../services/config.service';
@@ -133,12 +133,11 @@ export class LinkConnectionComponent
 
 	/** @inheritDoc */
 	public async ngAfterViewInit () : Promise<void> {
-		await this.sessionService.state.ephemeralStateInitialized
-			.pipe(
-				filter(b => b),
-				take(1)
+		await firstValueFrom(
+			this.sessionService.state.ephemeralStateInitialized.pipe(
+				filter(b => b)
 			)
-			.toPromise();
+		);
 
 		if (
 			this.sessionService.state.wasInitiatedByAPI.value ||
@@ -151,12 +150,11 @@ export class LinkConnectionComponent
 		let isWaiting = true;
 
 		const sharedSecret = (
-			await this.sessionService.state.sharedSecrets
-				.pipe(
-					filter(arr => arr.length > 0 && arr[0].length > 0),
-					take(1)
+			await firstValueFrom(
+				this.sessionService.state.sharedSecrets.pipe(
+					filter(arr => arr.length > 0 && arr[0].length > 0)
 				)
-				.toPromise()
+			)
 		)[0].split(' ')[0];
 
 		this.linkConstant = this.newDeviceActivation ?

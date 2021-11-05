@@ -1,8 +1,7 @@
 import {ChangeDetectionStrategy, Component, OnInit} from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
 import memoize from 'lodash-es/memoize';
-import {BehaviorSubject} from 'rxjs';
-import {take} from 'rxjs/operators';
+import {BehaviorSubject, firstValueFrom} from 'rxjs';
 import {SecurityModels} from '../../account';
 import {BaseProvider} from '../../base-provider';
 import {
@@ -77,9 +76,9 @@ export class AccountEmailComposeComponent
 
 	/** @inheritDoc */
 	public async ngOnInit () : Promise<void> {
-		const {draftID, redirectURL} = await this.activatedRoute.params
-			.pipe(take(1))
-			.toPromise();
+		const {draftID, redirectURL} = await firstValueFrom(
+			this.activatedRoute.params
+		);
 
 		const initialDraftID =
 			typeof draftID === 'string' && draftID ? draftID : undefined;

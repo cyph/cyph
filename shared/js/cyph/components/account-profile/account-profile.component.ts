@@ -3,8 +3,8 @@
 import {ChangeDetectionStrategy, Component, Input, OnInit} from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
 import memoize from 'lodash-es/memoize';
-import {BehaviorSubject, Observable, of} from 'rxjs';
-import {map, switchMap, take} from 'rxjs/operators';
+import {BehaviorSubject, firstValueFrom, Observable, of} from 'rxjs';
+import {map, switchMap} from 'rxjs/operators';
 import {
 	SecurityModels,
 	User,
@@ -185,9 +185,10 @@ export class AccountProfileComponent extends BaseProvider implements OnInit {
 						.organization &&
 					this.home &&
 					this.accountDatabaseService.currentUser.value &&
-					(await this.accountDatabaseService.currentUser.value.user.userType
-						.pipe(take(1))
-						.toPromise()) === AccountUserTypes.Standard
+					(await firstValueFrom(
+						this.accountDatabaseService.currentUser.value.user
+							.userType
+					)) === AccountUserTypes.Standard
 				) {
 					/* Redirect telehealth patient home page to /doctors */
 					this.router.navigate(['doctors']);

@@ -2,9 +2,15 @@
 
 import {Inject, Injectable, Optional} from '@angular/core';
 import memoize from 'lodash-es/memoize';
-import {BehaviorSubject, interval, Observable} from 'rxjs';
+import {
+	BehaviorSubject,
+	firstValueFrom,
+	interval,
+	lastValueFrom,
+	Observable
+} from 'rxjs';
 /* eslint-disable-next-line @typescript-eslint/tslint/config */
-import {map, switchMap, take, takeWhile} from 'rxjs/operators';
+import {map, switchMap, takeWhile} from 'rxjs/operators';
 import {UserLike} from '../account/user-like-type';
 import {BaseProvider} from '../base-provider';
 import {
@@ -195,11 +201,10 @@ export class ChatService extends BaseProvider {
 	);
 
 	/** @see P2PService */
-	public readonly p2pService =
-		resolvable<{
-			isActive: BehaviorSubject<boolean>;
-			isSidebarOpen: BehaviorSubject<boolean>;
-		}>();
+	public readonly p2pService = resolvable<{
+		isActive: BehaviorSubject<boolean>;
+		isSidebarOpen: BehaviorSubject<boolean>;
+	}>();
 
 	/** Remote User object where applicable. */
 	public readonly remoteUser = resolvable<UserLike | undefined>();
@@ -535,50 +540,58 @@ export class ChatService extends BaseProvider {
 		debugLogTime(() => 'Chat Message Send: session send');
 
 		const {confirmPromise, newMessages} = await this.sessionService.send(
-			...outgoingMessages.map(({messageData}) : [
-				string,
-				(timestamp: number) => Promise<ISessionMessageAdditionalData>
-			] => [
-				RpcEvents.text,
-				async timestamp => {
-					const [
-						chatMessage,
-						id,
-						predecessors,
-						key,
-						selfDestructChat,
-						selfDestructTimeout,
-						value
-					] = await Promise.all(messageData);
-
-					debugLogTime(() => 'Chat Message Send: hashing message');
-
-					const hash = await this.messageValues.getItemHash(
-						id,
-						key,
-						this.messageValueHasher({
-							...chatMessage,
-							authorType: ChatMessage.AuthorTypes.App,
+			...outgoingMessages.map(
+				({
+					messageData
+				}) : [
+					string,
+					(
+						timestamp: number
+					) => Promise<ISessionMessageAdditionalData>
+				] => [
+					RpcEvents.text,
+					async timestamp => {
+						const [
+							chatMessage,
+							id,
 							predecessors,
-							timestamp
-						}),
-						value
-					);
-
-					debugLogTime(() => 'Chat Message Send: hashed message');
-
-					return {
-						id,
-						text: {
-							hash,
 							key,
-							predecessors,
 							selfDestructChat,
-							selfDestructTimeout
-						}
-					};
-				}
-			])
+							selfDestructTimeout,
+							value
+						] = await Promise.all(messageData);
+
+						debugLogTime(
+							() => 'Chat Message Send: hashing message'
+						);
+
+						const hash = await this.messageValues.getItemHash(
+							id,
+							key,
+							this.messageValueHasher({
+								...chatMessage,
+								authorType: ChatMessage.AuthorTypes.App,
+								predecessors,
+								timestamp
+							}),
+							value
+						);
+
+						debugLogTime(() => 'Chat Message Send: hashed message');
+
+						return {
+							id,
+							text: {
+								hash,
+								key,
+								predecessors,
+								selfDestructChat,
+								selfDestructTimeout
+							}
+						};
+					}
+				]
+			)
 		);
 
 		debugLogTime(() => 'Chat Message Send: awaiting confirmation');
@@ -597,9 +610,7 @@ export class ChatService extends BaseProvider {
 		author: Observable<string>
 	) : Promise<string | undefined> {
 		if (author === this.sessionService.remoteUserString) {
-			return author
-				.pipe(take(1))
-				.toPromise()
+			return firstValueFrom(author)
 				.then(normalize)
 				.catch(() => undefined);
 		}
@@ -1298,9 +1309,9 @@ export class ChatService extends BaseProvider {
 			telehealth:
 				this.envService.isTelehealth ||
 				(!!this.accountSettingsService &&
-					(await this.accountSettingsService.telehealth
-						.pipe(take(1))
-						.toPromise())),
+					(await firstValueFrom(
+						this.accountSettingsService.telehealth
+					))),
 			username
 		});
 
@@ -1520,9 +1531,9 @@ export class ChatService extends BaseProvider {
 
 			const messages =
 				this.messages.value ||
-				(await this.messages
-					.pipe(filterUndefinedOperator(), take(1))
-					.toPromise());
+				(await firstValueFrom(
+					this.messages.pipe(filterUndefinedOperator())
+				));
 
 			for (let i = messages.length - 1; i >= 0; --i) {
 				const o = await this.getMessageMetadata(messages[i]).then(
@@ -1972,15 +1983,14 @@ export class ChatService extends BaseProvider {
 								continue;
 							}
 
-							newLastConfirmedMessage =
-								await this.chat.messageList
+							newLastConfirmedMessage = await firstValueFrom(
+								this.chat.messageList
 									.watchFlat()
 									.pipe(
 										map(getNewLastConfirmedMesssage),
-										filterUndefinedOperator(),
-										take(1)
+										filterUndefinedOperator()
 									)
-									.toPromise();
+							);
 						}
 
 						this.chat.lastConfirmedMessage.updateValue(
@@ -2042,7 +2052,7 @@ export class ChatService extends BaseProvider {
 										'receiveTextLock release: sessionService closed'
 								);
 							}),
-							lockData.stillOwner.toPromise().then(() => {
+							lastValueFrom(lockData.stillOwner).then(() => {
 								debugLog(
 									() =>
 										'receiveTextLock release: no longer owner'

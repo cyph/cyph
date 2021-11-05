@@ -8,8 +8,8 @@ import {
 } from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
 import memoize from 'lodash-es/memoize';
-import {BehaviorSubject, Observable} from 'rxjs';
-import {map, switchMap, take} from 'rxjs/operators';
+import {BehaviorSubject, firstValueFrom, Observable} from 'rxjs';
+import {map, switchMap} from 'rxjs/operators';
 import {SecurityModels, User, usernameMask} from '../../account';
 import {BaseProvider} from '../../base-provider';
 import {InAppPurchaseComponent} from '../../components/in-app-purchase';
@@ -193,10 +193,7 @@ export class AccountSettingsComponent extends BaseProvider implements OnInit {
 		changePassword: (password: T) => Promise<void>
 	) : Promise<void> {
 		const user = this.user.value;
-		if (
-			!user ||
-			(await this.state.pipe(take(1)).toPromise()) !== requiredState
-		) {
+		if (!user || (await firstValueFrom(this.state)) !== requiredState) {
 			return;
 		}
 

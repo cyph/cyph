@@ -2,8 +2,8 @@
 
 import {Injectable} from '@angular/core';
 import memoize from 'lodash-es/memoize';
-import {BehaviorSubject, Observable, Subscription} from 'rxjs';
-import {map, switchMap, take} from 'rxjs/operators';
+import {BehaviorSubject, firstValueFrom, Observable, Subscription} from 'rxjs';
+import {map, skip, switchMap} from 'rxjs/operators';
 import {potassiumUtil} from '../crypto/potassium/potassium-util';
 import {IAsyncList} from '../iasync-list';
 import {IAsyncMap} from '../iasync-map';
@@ -573,7 +573,7 @@ export class DatabaseService extends DataManagerService {
 					return currentValue;
 				}).catch(async () =>
 					blockGetValue ?
-						asyncValue.watch().pipe(take(2)).toPromise() :
+						firstValueFrom(asyncValue.watch().pipe(skip(1))) :
 						proto.create()
 				),
 			lock,

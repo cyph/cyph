@@ -1,5 +1,5 @@
 import {Injectable} from '@angular/core';
-import {take} from 'rxjs/operators';
+import {firstValueFrom} from 'rxjs';
 import {
 	AnonymousLocalUser,
 	AnonymousRemoteUser,
@@ -58,10 +58,11 @@ export class BasicCastleService extends CastleService {
 					sessionService.remoteUserString
 				);
 
-		await this.handshakeState.initialSecret
-			.watch()
-			.pipe(filterUndefinedOperator(), take(1))
-			.toPromise();
+		await firstValueFrom(
+			this.handshakeState.initialSecret
+				.watch()
+				.pipe(filterUndefinedOperator())
+		);
 
 		this.pairwiseSession.resolve(
 			new PairwiseSessionLite(

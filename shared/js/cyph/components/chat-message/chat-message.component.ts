@@ -17,8 +17,8 @@ import {
 import {MatMenuTrigger} from '@angular/material/menu';
 import Hammer from 'hammerjs';
 import * as $ from 'jquery';
-import {BehaviorSubject} from 'rxjs';
-import {filter, take} from 'rxjs/operators';
+import {BehaviorSubject, firstValueFrom} from 'rxjs';
+import {filter} from 'rxjs/operators';
 import {BaseProvider} from '../../base-provider';
 import {ChatMessage, UiStyles} from '../../chat';
 import {IQuillDelta} from '../../iquill-delta';
@@ -301,19 +301,13 @@ export class ChatMessageComponent
 			!ChatMessageComponent.mediaSpoilerReveals.has(id)
 		);
 		if (this.mediaSpoiler.value) {
-			this.mediaSpoiler
-				.pipe(
-					filter(b => !b),
-					take(1)
-				)
-				.toPromise()
-				.then(() => {
-					if (!(this.message instanceof ChatMessage)) {
-						return;
-					}
+			firstValueFrom(this.mediaSpoiler.pipe(filter(b => !b))).then(() => {
+				if (!(this.message instanceof ChatMessage)) {
+					return;
+				}
 
-					ChatMessageComponent.mediaSpoilerReveals.add(id);
-				});
+				ChatMessageComponent.mediaSpoilerReveals.add(id);
+			});
 		}
 
 		await this.chatService.getMessageValue(this.message);
@@ -376,12 +370,9 @@ export class ChatMessageComponent
 
 		await this.windowWatcherService.waitUntilVisible();
 
-		await ChatMessageComponent.appeared
-			.pipe(
-				filter(arr => arr.has(id)),
-				take(1)
-			)
-			.toPromise();
+		await firstValueFrom(
+			ChatMessageComponent.appeared.pipe(filter(arr => arr.has(id)))
+		);
 
 		if (
 			id ===
@@ -395,13 +386,8 @@ export class ChatMessageComponent
 	/** Resolves after view init. */
 	public async waitUntilInitiated () : Promise<void> {
 		await Promise.all([
-			this.loaded.pipe(take(1)).toPromise(),
-			this.viewReady
-				.pipe(
-					filter(b => b),
-					take(1)
-				)
-				.toPromise()
+			firstValueFrom(this.loaded),
+			firstValueFrom(this.viewReady.pipe(filter(b => b)))
 		]);
 	}
 

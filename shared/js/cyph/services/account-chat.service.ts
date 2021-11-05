@@ -1,8 +1,8 @@
 import {Injectable} from '@angular/core';
 import {Router} from '@angular/router';
 import memoize from 'lodash-es/memoize';
-import {BehaviorSubject, Observable} from 'rxjs';
-import {map, take} from 'rxjs/operators';
+import {BehaviorSubject, firstValueFrom, Observable} from 'rxjs';
+import {map} from 'rxjs/operators';
 import {SecurityModels} from '../account';
 import {IChatData, IChatMessageLiveValue, States} from '../chat';
 import {IAsyncSet} from '../iasync-set';
@@ -57,13 +57,12 @@ export class AccountChatService extends ChatService {
 	private readonly chats = new Map<string, IChatData>();
 
 	/** @ignore */
-	private readonly notificationData =
-		resolvable<{
-			castleSessionID: string;
-			groupID?: string;
-			unreadMessagesID: string;
-			usernames: string[];
-		}>();
+	private readonly notificationData = resolvable<{
+		castleSessionID: string;
+		groupID?: string;
+		unreadMessagesID: string;
+		usernames: string[];
+	}>();
 
 	/** @inheritDoc */
 	protected readonly account: boolean = true;
@@ -80,9 +79,7 @@ export class AccountChatService extends ChatService {
 		author === this.sessionService.localUsername ?
 			(await this.accountDatabaseService.getCurrentUser()).user.username :
 		!this.sessionInitService.ephemeral ?
-			author
-				.pipe(take(1))
-				.toPromise()
+			firstValueFrom(author)
 				.then(normalize)
 				.catch(() => undefined) :
 			super.getAuthorID(author);

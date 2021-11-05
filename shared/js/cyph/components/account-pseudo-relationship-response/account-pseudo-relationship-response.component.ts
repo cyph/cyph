@@ -1,7 +1,7 @@
 import {ChangeDetectionStrategy, Component, OnInit} from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
-import {BehaviorSubject} from 'rxjs';
-import {map, take} from 'rxjs/operators';
+import {BehaviorSubject, firstValueFrom} from 'rxjs';
+import {map} from 'rxjs/operators';
 import {BaseProvider} from '../../base-provider';
 import {AccountService} from '../../services/account.service';
 import {DatabaseService} from '../../services/database.service';
@@ -30,20 +30,18 @@ export class AccountPseudoRelationshipResponseComponent
 		super.ngOnInit();
 
 		const [accept, id] = await Promise.all([
-			this.activatedRoute.data
-				.pipe(
+			firstValueFrom(
+				this.activatedRoute.data.pipe(
 					map((o: {accept?: boolean}) => o.accept),
-					filterUndefinedOperator(),
-					take(1)
+					filterUndefinedOperator()
 				)
-				.toPromise(),
-			this.activatedRoute.params
-				.pipe(
+			),
+			firstValueFrom(
+				this.activatedRoute.params.pipe(
 					map((o: {id?: string}) => o.id),
-					filterUndefinedOperator(),
-					take(1)
+					filterUndefinedOperator()
 				)
-				.toPromise()
+			)
 		]);
 
 		if (accept) {

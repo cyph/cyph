@@ -3,8 +3,8 @@
 import {Injectable} from '@angular/core';
 import * as hark from 'hark';
 import * as RecordRTC from 'recordrtc';
-import {BehaviorSubject, Observable, Subject} from 'rxjs';
-import {map, take} from 'rxjs/operators';
+import {BehaviorSubject, firstValueFrom, Observable, Subject} from 'rxjs';
+import {map} from 'rxjs/operators';
 import SimplePeer from 'simple-peer';
 import {BaseProvider} from '../base-provider';
 import {env} from '../env';
@@ -382,7 +382,7 @@ export class P2PWebRTCService
 		}[];
 		timer: Timer;
 	}> {
-		return this.webRTC.pipe(filterUndefinedOperator(), take(1)).toPromise();
+		return firstValueFrom(this.webRTC.pipe(filterUndefinedOperator()));
 	}
 
 	/** @ignore */
@@ -1007,9 +1007,7 @@ export class P2PWebRTCService
 
 			this.subscriptions.push(sub);
 
-			await this.webRTC
-				.pipe(filterUndefinedOperator(), take(1))
-				.toPromise();
+			await firstValueFrom(this.webRTC.pipe(filterUndefinedOperator()));
 
 			if (this.sessionService.group.value) {
 				this.loading.next(false);
@@ -1308,59 +1306,52 @@ export class P2PWebRTCService
 			);
 		});
 
-		this.sessionServices
-			.pipe(filterUndefinedOperator(), take(1))
-			.toPromise()
-			.then(() => {
-				if (!this.sessionService.group.value) {
-					this.sessionService.on(RpcEvents.p2pKill, async () =>
-						this.close(true)
-					);
+		firstValueFrom(
+			this.sessionServices.pipe(filterUndefinedOperator())
+		).then(() => {
+			if (!this.sessionService.group.value) {
+				this.sessionService.on(RpcEvents.p2pKill, async () =>
+					this.close(true)
+				);
+			}
+
+			this.sessionService.on(RpcEvents.p2pRequest, async newEvents => {
+				const p2pSessionData =
+					newEvents[0]?.bytes &&
+					dynamicDeserialize(newEvents[0]?.bytes);
+
+				if (
+					!(
+						typeof p2pSessionData === 'object' &&
+						p2pSessionData &&
+						(p2pSessionData.callType === 'audio' ||
+							p2pSessionData.callType === 'video') &&
+						typeof p2pSessionData.iceServers === 'string' &&
+						typeof p2pSessionData.id === 'string'
+					)
+				) {
+					return;
 				}
 
-				this.sessionService.on(
-					RpcEvents.p2pRequest,
-					async newEvents => {
-						const p2pSessionData =
-							newEvents[0]?.bytes &&
-							dynamicDeserialize(newEvents[0]?.bytes);
-
-						if (
-							!(
-								typeof p2pSessionData === 'object' &&
-								p2pSessionData &&
-								(p2pSessionData.callType === 'audio' ||
-									p2pSessionData.callType === 'video') &&
-								typeof p2pSessionData.iceServers === 'string' &&
-								typeof p2pSessionData.id === 'string'
-							)
-						) {
-							return;
-						}
-
-						const ok = await (
-							await this.handlers
-						).acceptConfirm(
-							p2pSessionData.callType,
-							500000,
-							this.isAccepted
-						);
-
-						if (!ok) {
-							if (!this.sessionService.group.value) {
-								await this.sessionService.send([
-									RpcEvents.p2pKill,
-									{}
-								]);
-							}
-
-							return;
-						}
-
-						await this.join(p2pSessionData);
-					}
+				const ok = await (
+					await this.handlers
+				).acceptConfirm(
+					p2pSessionData.callType,
+					500000,
+					this.isAccepted
 				);
+
+				if (!ok) {
+					if (!this.sessionService.group.value) {
+						await this.sessionService.send([RpcEvents.p2pKill, {}]);
+					}
+
+					return;
+				}
+
+				await this.join(p2pSessionData);
 			});
+		});
 
 		let lastSessionProcessed = 0;
 

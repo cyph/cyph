@@ -1,5 +1,6 @@
 /* eslint-disable max-lines */
 
+import {lastValueFrom} from 'rxjs';
 import {IAsyncList} from '../../iasync-list';
 import {IAsyncValue} from '../../iasync-value';
 import {IResolvable} from '../../iresolvable';
@@ -643,7 +644,7 @@ export class PairwiseSession implements IPairwiseSession {
 
 						await Promise.race([
 							this.transport.closed,
-							o.stillOwner.toPromise()
+							lastValueFrom(o.stillOwner)
 						]);
 
 						decryptSub.unsubscribe();

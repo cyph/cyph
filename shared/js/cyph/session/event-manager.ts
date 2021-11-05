@@ -1,5 +1,4 @@
-import {ReplaySubject, Subscription} from 'rxjs';
-import {take} from 'rxjs/operators';
+import {firstValueFrom, ReplaySubject, Subscription} from 'rxjs';
 import {getOrSetDefault} from '../util/get-or-set-default';
 import {RpcEvents} from './enums';
 import {ISessionMessageData} from './isession-message-data';
@@ -83,7 +82,7 @@ export class EventManager {
 	/** Resolves on first occurrence of event. */
 	/* eslint-disable-next-line @typescript-eslint/tslint/config */
 	public async one (event: RpcEvents) : Promise<ISessionMessageData[]> {
-		return this.getSubject(event).pipe(take(1)).toPromise();
+		return firstValueFrom(this.getSubject(event));
 	}
 
 	/** Triggers event. */

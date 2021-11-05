@@ -936,13 +936,9 @@ export class FirebaseDatabaseService extends DatabaseService {
 						Conflicts with workaround in constructor:
 
 						Kill lock on disconnect
-						this.connectionStatus()
-							.pipe(
-								filter(b => !b),
-								take(1)
-							)
-							.toPromise()
-							.then(surrenderLock);
+						firstValueFrom(
+							this.connectionStatus().pipe(filter(b => !b))
+						).then(surrenderLock);
 						*/
 
 						/* eslint-disable-next-line @typescript-eslint/tslint/config */

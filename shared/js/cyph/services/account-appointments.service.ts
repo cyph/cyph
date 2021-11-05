@@ -3,8 +3,8 @@
 import {Injectable} from '@angular/core';
 import {EventSettingsModel} from '@syncfusion/ej2-angular-schedule';
 import memoize from 'lodash-es/memoize';
-import {Observable, of} from 'rxjs';
-import {map, switchMap, take} from 'rxjs/operators';
+import {firstValueFrom, Observable, of} from 'rxjs';
+import {map, switchMap} from 'rxjs/operators';
 import {BaseProvider} from '../base-provider';
 import {
 	AppointmentSharing,
@@ -303,9 +303,9 @@ export class AccountAppointmentsService extends BaseProvider {
 		burnerSession: IBurnerSession | undefined
 	) : Promise<void> {
 		if (
-			!(await this.accountSettingsService.staticFeatureFlags.scheduler
-				.pipe(take(1))
-				.toPromise())
+			!(await firstValueFrom(
+				this.accountSettingsService.staticFeatureFlags.scheduler
+			))
 		) {
 			return;
 		}
@@ -366,9 +366,7 @@ export class AccountAppointmentsService extends BaseProvider {
 			shareMemberList: !!sharing?.memberList,
 			telehealth:
 				this.configService.planConfig[
-					await this.accountSettingsService.plan
-						.pipe(take(1))
-						.toPromise()
+					await firstValueFrom(this.accountSettingsService.plan)
 				].telehealth,
 			to: {
 				members: (burnerSession.members || []).map(o => ({

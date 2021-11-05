@@ -14,8 +14,15 @@ import {
 import {FormControl} from '@angular/forms';
 import {ActivatedRoute, Router} from '@angular/router';
 import memoize from 'lodash-es/memoize';
-import {BehaviorSubject, concat, from, Observable, of} from 'rxjs';
-import {filter, map, take} from 'rxjs/operators';
+import {
+	BehaviorSubject,
+	concat,
+	firstValueFrom,
+	from,
+	Observable,
+	of
+} from 'rxjs';
+import {filter, map} from 'rxjs/operators';
 import {xkcdPassphrase} from 'xkcd-passphrase';
 import {SecurityModels, usernameMask} from '../../account';
 import {BaseProvider} from '../../base-provider';
@@ -616,13 +623,10 @@ export class AccountRegisterComponent
 				o.sessionData = sessionData;
 
 				activationComplete.resolve(
-					o.activationComplete
-						.pipe(take(1))
-						.toPromise()
-						.then(b => {
-							mobile = o.mobileDeviceActivation.value;
-							return b;
-						})
+					firstValueFrom(o.activationComplete).then(b => {
+						mobile = o.mobileDeviceActivation.value;
+						return b;
+					})
 				);
 			},
 			closeFunction,
@@ -811,9 +815,7 @@ export class AccountRegisterComponent
 				o.getMasterKeyOnly = true;
 				o.paperMasterKeySetupMode = true;
 
-				submitMasterKey.resolve(
-					o.submitMasterKey.pipe(take(1)).toPromise()
-				);
+				submitMasterKey.resolve(firstValueFrom(o.submitMasterKey));
 			},
 			closeFunction,
 			false,

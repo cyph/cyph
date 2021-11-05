@@ -1,8 +1,15 @@
 /* eslint-disable max-lines */
 
 import {Injectable} from '@angular/core';
-import {BehaviorSubject, Observable, of, ReplaySubject} from 'rxjs';
-import {map, take} from 'rxjs/operators';
+import {
+	BehaviorSubject,
+	firstValueFrom,
+	lastValueFrom,
+	Observable,
+	of,
+	ReplaySubject
+} from 'rxjs';
+import {map} from 'rxjs/operators';
 import {UserLike} from '../account';
 import {BaseProvider} from '../base-provider';
 import {HandshakeSteps, IHandshakeState} from '../crypto/castle';
@@ -408,9 +415,7 @@ export abstract class SessionService
 		return (
 			this.symmetricKey.value ||
 			/* eslint-disable-next-line @typescript-eslint/tslint/config */
-			this.symmetricKey
-				.pipe(filterUndefinedOperator(), take(1))
-				.toPromise()
+			firstValueFrom(this.symmetricKey.pipe(filterUndefinedOperator()))
 		);
 	}
 
@@ -669,9 +674,7 @@ export abstract class SessionService
 					sessionCastleReceiveMessages: {data, messages}
 				}));
 
-				const authorID = normalize(
-					await data.author.pipe(take(1)).toPromise()
-				);
+				const authorID = normalize(await firstValueFrom(data.author));
 
 				await this.cyphertextReceiveHandler(
 					filterUndefined(
@@ -864,7 +867,7 @@ export abstract class SessionService
 				}
 			);
 
-			await Promise.race([this.closed, o.stillOwner.toPromise()]);
+			await Promise.race([this.closed, lastValueFrom(o.stillOwner)]);
 			sub.unsubscribe();
 		});
 	}

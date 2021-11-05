@@ -1,6 +1,6 @@
 import {Inject, Injectable} from '@angular/core';
-import {BehaviorSubject} from 'rxjs';
-import {map, filter, take} from 'rxjs/operators';
+import {BehaviorSubject, firstValueFrom} from 'rxjs';
+import {map, filter} from 'rxjs/operators';
 import {BaseProvider} from '../base-provider';
 import {toBehaviorSubject} from '../util/flatten-observable';
 import {sleep} from '../util/wait/sleep';
@@ -70,12 +70,9 @@ export class WindowWatcherService extends BaseProvider {
 		visible?: boolean
 	) : Promise<boolean> {
 		const initialValue = this.visibility.value;
-		const newValue = await this.visibility
-			.pipe(
-				filter(value => value !== initialValue),
-				take(1)
-			)
-			.toPromise();
+		const newValue = await firstValueFrom(
+			this.visibility.pipe(filter(value => value !== initialValue))
+		);
 
 		if (typeof visible === 'boolean' && newValue !== visible) {
 			return this.waitForVisibilityChange(visible);

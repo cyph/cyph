@@ -5,7 +5,7 @@ import {
 	ViewChild
 } from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
-import {take} from 'rxjs/operators';
+import {firstValueFrom} from 'rxjs';
 import {BaseProvider} from '../../base-provider';
 import {InAppPurchaseComponent} from '../../components/in-app-purchase';
 import {CyphPlans} from '../../proto';
@@ -41,7 +41,7 @@ export class AccountUpgradeComponent
 				category?: string;
 				item?: string;
 			}
-		> await this.activatedRoute.params.pipe(take(1)).toPromise();
+		> await firstValueFrom(this.activatedRoute.params);
 
 		await this.salesService.openPricing(
 			category && item ?
@@ -58,9 +58,7 @@ export class AccountUpgradeComponent
 					this.envService.homeUrl,
 					'pricing?current=',
 					CyphPlans[
-						await this.accountSettingsService.plan
-							.pipe(take(1))
-							.toPromise()
+						await firstValueFrom(this.accountSettingsService.plan)
 					],
 					'&userToken=',
 					this.userToken

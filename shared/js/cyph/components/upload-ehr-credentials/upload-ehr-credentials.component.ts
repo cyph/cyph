@@ -1,7 +1,6 @@
 import {ChangeDetectionStrategy, Component, OnInit} from '@angular/core';
 import {ActivatedRoute} from '@angular/router';
-import {BehaviorSubject} from 'rxjs';
-import {take} from 'rxjs/operators';
+import {BehaviorSubject, firstValueFrom} from 'rxjs';
 import {BaseProvider} from '../../base-provider';
 import {AccountFilesService} from '../../services/account-files.service';
 import {AccountService} from '../../services/account.service';
@@ -48,7 +47,7 @@ export class UploadEhrCredentialsComponent
 					redoxSecret: string;
 					username: string;
 				}
-			> await this.activatedRoute.params.pipe(take(1)).toPromise();
+			> await firstValueFrom(this.activatedRoute.params);
 
 			const apiKey = await this.ehrIntegrationService.addCredentials(
 				cyphAdminKey,

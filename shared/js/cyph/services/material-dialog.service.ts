@@ -6,7 +6,8 @@ import {MatBottomSheet} from '@angular/material/bottom-sheet';
 import {MatDialog, MatDialogRef} from '@angular/material/dialog';
 import {MatSnackBar} from '@angular/material/snack-bar';
 import {SafeUrl} from '@angular/platform-browser';
-import {map, take} from 'rxjs/operators';
+import {firstValueFrom, lastValueFrom} from 'rxjs';
+import {map} from 'rxjs/operators';
 import {Async} from '../async-type';
 import {BaseProvider} from '../base-provider';
 import {DialogAlertComponent} from '../components/dialog-alert';
@@ -128,15 +129,13 @@ export class MaterialDialogService
 				closeFunction.resolve(close);
 			}
 
-			const ok = afterClosed().toPromise<boolean | undefined>();
+			const ok = lastValueFrom<boolean>(afterClosed());
 
-			const promptResponse = beforeClosed()
-				.toPromise()
-				.then(() =>
-					instance.multipleChoiceSelection !== undefined ?
-						instance.multipleChoiceSelection :
-						instance.form || instance.prompt
-				);
+			const promptResponse = lastValueFrom(beforeClosed()).then(() =>
+				instance.multipleChoiceSelection !== undefined ?
+					instance.multipleChoiceSelection :
+					instance.form || instance.prompt
+			);
 
 			let hasReturned = false;
 			if (o.timeout !== undefined && !isNaN(o.timeout)) {
@@ -205,15 +204,12 @@ export class MaterialDialogService
 
 			const afterOpenedResolvable = afterOpened;
 			if (afterOpenedResolvable) {
-				matDialogRef
-					.afterOpened()
-					.toPromise()
-					.then(() => {
-						afterOpenedResolvable.resolve();
-					});
+				lastValueFrom(matDialogRef.afterOpened()).then(() => {
+					afterOpenedResolvable.resolve();
+				});
 			}
 
-			await matDialogRef.afterClosed().toPromise();
+			await lastValueFrom(matDialogRef.afterClosed());
 		});
 	}
 
@@ -272,12 +268,12 @@ export class MaterialDialogService
 
 				instance.changeDetectorRef.markForCheck();
 
-				await matDialogRef.afterOpened().pipe(take(1)).toPromise();
+				await firstValueFrom(matDialogRef.afterOpened());
 
 				instance.changeDetectorRef.markForCheck();
 			}
 
-			await afterClosed().toPromise();
+			await lastValueFrom(afterClosed());
 		});
 	}
 
@@ -324,7 +320,7 @@ export class MaterialDialogService
 
 			return Promise.race([
 				cropResult,
-				matDialogRef.afterClosed().toPromise()
+				lastValueFrom(matDialogRef.afterClosed())
 			]);
 		});
 	}
@@ -361,7 +357,7 @@ export class MaterialDialogService
 				});
 			}
 
-			await matDialogRef.afterClosed().toPromise();
+			await lastValueFrom(matDialogRef.afterClosed());
 		});
 	}
 
@@ -476,10 +472,9 @@ export class MaterialDialogService
 			}
 
 			const wasManuallyDismissed =
-				(await snackbar
-					.onAction()
-					.pipe(map(() => true))
-					.toPromise()) || false;
+				(await lastValueFrom(
+					snackbar.onAction().pipe(map(() => true))
+				)) || false;
 
 			if (wasManuallyDismissed) {
 				return true;

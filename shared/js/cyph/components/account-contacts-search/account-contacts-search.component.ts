@@ -8,8 +8,8 @@ import {
 	ViewChild
 } from '@angular/core';
 import {FormControl} from '@angular/forms';
-import {BehaviorSubject, Observable, of} from 'rxjs';
-import {map, switchMap, take} from 'rxjs/operators';
+import {BehaviorSubject, firstValueFrom, Observable, of} from 'rxjs';
+import {map, switchMap} from 'rxjs/operators';
 import {IContactListItem, User} from '../../account';
 import {Async} from '../../async-type';
 import {BaseProvider} from '../../base-provider';
@@ -81,7 +81,7 @@ export class AccountContactsSearchComponent extends BaseProvider {
 				this.searchSpinner.next(true);
 
 				let users = this.contactList ?
-					await this.contactList.pipe(take(1)).toPromise() :
+					await firstValueFrom(this.contactList) :
 					[];
 
 				if (!this.includeGroups) {

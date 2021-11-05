@@ -6,8 +6,8 @@ import {
 } from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
 import Delta from 'quill-delta';
-import {BehaviorSubject, Observable} from 'rxjs';
-import {filter, map, take} from 'rxjs/operators';
+import {BehaviorSubject, firstValueFrom, Observable} from 'rxjs';
+import {filter, map} from 'rxjs/operators';
 import {BaseProvider} from '../../base-provider';
 import {IAsyncList} from '../../iasync-list';
 import {IQuillDelta} from '../../iquill-delta';
@@ -114,12 +114,9 @@ export class AccountNoteComponent
 	/** @ignore */
 	private async setNote (id: string) : Promise<void> {
 		const record = this.accountFilesService.watchMetadata(id);
-		const recordValue = await record
-			.pipe(
-				filter(o => !!o.id),
-				take(1)
-			)
-			.toPromise();
+		const recordValue = await firstValueFrom(
+			record.pipe(filter(o => !!o.id))
+		);
 
 		this.note.next({record});
 		this.updateNoteData({
@@ -322,7 +319,7 @@ export class AccountNoteComponent
 
 			if (!noteData.content) {
 				noteData.content = this.note.value?.content ?
-					await this.note.value.content.pipe(take(1)).toPromise() :
+					await firstValueFrom(this.note.value.content) :
 					<IQuillDelta> (<any> {clientID: '', ops: []});
 			}
 
@@ -345,7 +342,7 @@ export class AccountNoteComponent
 			}
 			else if (
 				this.note.value &&
-				(await this.note.value.record.pipe(take(1)).toPromise()).id ===
+				(await firstValueFrom(this.note.value.record)).id ===
 					noteData.id
 			) {
 				await this.accountFilesService.updateNote(

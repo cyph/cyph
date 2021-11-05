@@ -34,8 +34,8 @@ cat > server.js <<- EOM
 	const http2 = require('http2');
 	const app = new (require('koa'))();
 	const {isEqual} = require('lodash');
-	const {ReplaySubject, timer} = require('rxjs');
-	const {filter, switchMap, take} = require('rxjs/operators');
+	const {firstValueFrom, ReplaySubject, timer} = require('rxjs');
+	const {filter, switchMap} = require('rxjs/operators');
 	const util = require('util');
 
 	const cache = {
@@ -305,12 +305,11 @@ cat > server.js <<- EOM
 	timer(0, 60000).pipe(switchMap(getDomains)).subscribe(domainWatcher);
 
 	(async () => { while (true) {
-		const domains =
-			await domainWatcher.pipe(
-				filter(newDomains => newDomains.length > 0),
-				take(1)
-			).toPromise()
-		;
+		const domains = await firstValueFrom(
+			domainWatcher.pipe(
+				filter(newDomains => newDomains.length > 0)
+			)
+		);
 
 		while (true) {
 			try {
@@ -354,10 +353,9 @@ cat > server.js <<- EOM
 			util.promisify(setTimeout)(1296000000).then(async () =>
 				util.promisify(setTimeout)(1296000000)
 			),
-			domainWatcher.pipe(
-				filter(newDomains => !isEqual(domains, newDomains)),
-				take(1)
-			).toPromise()
+			firstValueFrom(domainWatcher.pipe(
+				filter(newDomains => !isEqual(domains, newDomains))
+			))
 		]);
 	} })();
 EOM

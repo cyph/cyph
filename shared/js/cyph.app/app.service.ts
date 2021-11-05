@@ -7,8 +7,8 @@ import {
 	RouterStateSnapshot
 } from '@angular/router';
 import * as $ from 'jquery';
-import {BehaviorSubject} from 'rxjs';
-import {filter, first, take} from 'rxjs/operators';
+import {BehaviorSubject, firstValueFrom} from 'rxjs';
+import {filter} from 'rxjs/operators';
 import {BaseProvider} from '../cyph/base-provider';
 import {config} from '../cyph/config';
 import {BooleanProto} from '../cyph/proto';
@@ -232,13 +232,13 @@ export class AppService extends BaseProvider implements CanActivate {
 				this.loadComplete();
 			}
 
-			await (
-				await waitForValue(
-					() => router.routerState.root.firstChild || undefined
-				)
-			).url
-				.pipe(first())
-				.toPromise();
+			await firstValueFrom(
+				(
+					await waitForValue(
+						() => router.routerState.root.firstChild || undefined
+					)
+				).url
+			);
 
 			const urlSegmentPaths = router.url.split('/');
 
@@ -264,12 +264,11 @@ export class AppService extends BaseProvider implements CanActivate {
 				await this.accountService.uiReady;
 			}
 			else {
-				await this.chatRootState
-					.pipe(
-						filter(state => state !== ChatRootStates.blank),
-						take(1)
+				await firstValueFrom(
+					this.chatRootState.pipe(
+						filter(state => state !== ChatRootStates.blank)
 					)
-					.toPromise();
+				);
 
 				await sleep();
 			}

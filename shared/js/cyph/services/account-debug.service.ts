@@ -1,5 +1,6 @@
 import {Injectable} from '@angular/core';
-import {filter, take} from 'rxjs/operators';
+import {firstValueFrom} from 'rxjs';
+import {filter} from 'rxjs/operators';
 import {BaseProvider} from '../base-provider';
 import {prettyPrint, stringify} from '../util/serialization';
 import {uuid} from '../util/uuid';
@@ -16,12 +17,9 @@ export class AccountDebugService extends BaseProvider {
 	public async shareLogsWithCyph (
 		targetUser: string = 'cyph'
 	) : Promise<void> {
-		await this.accountService.interstitial
-			.pipe(
-				filter(b => !b),
-				take(1)
-			)
-			.toPromise();
+		await firstValueFrom(
+			this.accountService.interstitial.pipe(filter(b => !b))
+		);
 
 		this.accountService.interstitial.next(true);
 

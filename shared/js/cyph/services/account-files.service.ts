@@ -9,8 +9,8 @@ import memoize from 'lodash-es/memoize';
 import {DeltaOperation} from 'quill';
 import Delta from 'quill-delta';
 import {QuillDeltaToHtmlConverter} from 'quill-delta-to-html';
-import {BehaviorSubject, concat, Observable, of} from 'rxjs';
-import {filter, map, skip, switchMap, take} from 'rxjs/operators';
+import {BehaviorSubject, concat, firstValueFrom, Observable, of} from 'rxjs';
+import {filter, map, skip, switchMap} from 'rxjs/operators';
 import {AccountFile, AccountFileShare, SecurityModels} from '../account';
 import {Async} from '../async-type';
 import {BaseProvider} from '../base-provider';
@@ -1359,16 +1359,12 @@ export class AccountFilesService extends BaseProvider {
 			this._showSpinner.next(undefined);
 		}
 		else {
-			this.filesList()
-				.pipe(
-					filter(arr => arr.length > 0),
-					take(1)
-				)
-				.toPromise()
-				.then(() => {
-					this._initiated.next(true);
-					this._showSpinner.next(undefined);
-				});
+			firstValueFrom(
+				this.filesList().pipe(filter(arr => arr.length > 0))
+			).then(() => {
+				this._initiated.next(true);
+				this._showSpinner.next(undefined);
+			});
 		}
 	}
 
@@ -1986,10 +1982,9 @@ export class AccountFilesService extends BaseProvider {
 	 * TODO: Support cases where user has multiple EHR API keys to choose from.
 	 */
 	public async getEhrApiKey () : Promise<IEhrApiKey> {
-		const ehrApiKeys = await this.filesListFiltered
-			.ehrApiKeys()
-			.pipe(take(1))
-			.toPromise();
+		const ehrApiKeys = await firstValueFrom(
+			this.filesListFiltered.ehrApiKeys()
+		);
 
 		if (ehrApiKeys.length < 1) {
 			throw new Error('No EHR API keys.');
