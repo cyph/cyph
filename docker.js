@@ -815,7 +815,7 @@ const make = () => {
 	return initPromise;
 };
 
-if (!imageAlreadyBuilt) {
+if (!imageAlreadyBuilt && args.command !== 'updatedockerimages') {
 	if (args.noAutoMake) {
 		if (args.command !== 'make') {
 			fail('Image not yet built. Run `./docker.js make` first.');
