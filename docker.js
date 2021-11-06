@@ -419,7 +419,7 @@ const dockerCheckCondition = condition =>
 
 const editImage = (command, condition, dryRunName, useOriginal = false) =>
 	Promise.resolve().then(() => {
-		if (!dockerCheckCondition(condition)) {
+		if (condition && !dockerCheckCondition(condition)) {
 			return false;
 		}
 
