@@ -761,7 +761,9 @@ const make = () => {
 	killEverything();
 
 	initPromise = spawnAsync('docker', [
+		'buildx',
 		'build',
+		'--load',
 		'-t',
 		image,
 		'-f',
