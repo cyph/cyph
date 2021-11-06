@@ -139,11 +139,16 @@ const gitconfigPath = path.join(homeDir, '.gitconfig');
 const gitconfigDockerPath = `${dockerHomeDir}/.gitconfig`;
 const serveReadyPath = path.join(__dirname, 'serve.ready');
 const webSignServeReadyPath = path.join(__dirname, 'websign-serve.ready');
+
 const dockerfiles = [
 	'Dockerfile.circleci',
 	'Dockerfile.codespace',
 	'Dockerfile.local'
 ];
+const dockerfileHostedImages = {
+	'Dockerfile.circleci': 'cyph/circleci',
+	'Dockerfile.codespace': 'cyph/codespace'
+};
 
 const needAGSE =
 	(args.command === 'sign' && process.argv[4] !== '--test') ||
@@ -694,32 +699,24 @@ const updateDockerImages = (pushImageUpdates = true) => {
 			childProcess.spawnSync('git', ['push']);
 		})
 		.then(() =>
-			spawnAsync('docker', [
-				'buildx',
-				'build',
-				'--push',
-				'--platform',
-				targetArch,
-				'-t',
-				'cyph/circleci:latest',
-				'-f',
-				'Dockerfile.circleci',
-				'.'
-			])
-		)
-		.then(() =>
-			spawnAsync('docker', [
-				'buildx',
-				'build',
-				'--push',
-				'--platform',
-				targetArch,
-				'-t',
-				'cyph/codespace:latest',
-				'-f',
-				'Dockerfile.codespace',
-				'.'
-			])
+			Array.from(Object.entries(dockerfileHostedImages)).reduce(
+				(acc, [dockerfile, image]) =>
+					acc.then(() =>
+						spawnAsync('docker', [
+							'buildx',
+							'build',
+							'--push',
+							'--platform',
+							targetArch,
+							'-t',
+							image,
+							'-f',
+							dockerfile,
+							'.'
+						])
+					),
+				Promise.resolve()
+			)
 		)
 		.then(() => {
 			if (!buildxInstance) {
