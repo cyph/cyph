@@ -770,35 +770,41 @@ const removeDirectory = dir => {
 const make = () => {
 	killEverything();
 
-	initPromise = spawnAsync('docker', [
-		'buildx',
-		'build',
-		'--load',
-		'-t',
-		image,
-		'-f',
-		'Dockerfile.local',
-		'--build-arg',
-		`BASE_DIGEST=${baseImageDigests[currentArch]}`,
-		'.'
-	])
+	const buildLocalImage = () =>
+		spawnAsync('docker', [
+			'buildx',
+			'build',
+			'--load',
+			'-t',
+			image,
+			'-f',
+			'Dockerfile.local',
+			'--build-arg',
+			`BASE_DIGEST=${baseImageDigests[currentArch]}`,
+			'.'
+		]);
+
+	initPromise = buildLocalImage()
 		.then(() =>
 			shellScripts.setup &&
 			!fs.existsSync('.local-docker-context/config') ?
-				spawnAsync('docker', [
-					'tag',
-					`${image}:latest`,
-					`${image}_original:latest`
-				])
-					.then(() => editImage(shellScripts.setup))
-					.then(() =>
-						spawnAsync('docker', [
-							'tag',
-							`${image}:latest`,
-							`${image}_original:latest`
-						])
-					) :
+				editImage(shellScripts.setup).then(() => {
+					dockerCP(
+						'/home/gibson/.config',
+						'.local-docker-context/config',
+						true
+					);
+
+					return buildLocalImage();
+				}) :
 				undefined
+		)
+		.then(() =>
+			spawnAsync('docker', [
+				'tag',
+				`${image}:latest`,
+				`${image}_original:latest`
+			])
 		)
 		.then(() => {
 			removeDirectory('.local-docker-context/config');
