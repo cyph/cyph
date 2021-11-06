@@ -135,20 +135,21 @@ fs.existsSync(path.join(__dirname, 'commands', `${args.command}.js`)) ?
 	`${args.command}.js` :
 	undefined;
 
+const baseImageDigestsPath = path.join(__dirname, 'base-image-digests.json');
 const gitconfigPath = path.join(homeDir, '.gitconfig');
 const gitconfigDockerPath = `${dockerHomeDir}/.gitconfig`;
 const serveReadyPath = path.join(__dirname, 'serve.ready');
 const webSignServeReadyPath = path.join(__dirname, 'websign-serve.ready');
 
-const dockerfiles = [
-	'Dockerfile.circleci',
-	'Dockerfile.codespace',
-	'Dockerfile.local'
-];
 const dockerfileHostedImages = {
 	'Dockerfile.circleci': 'cyph/circleci',
 	'Dockerfile.codespace': 'cyph/codespace'
 };
+
+let baseImageDigests = catJSON(baseImageDigestsPath);
+
+/* TODO: Support more architectures and get exact arch name */
+const currentArch = os.arch() === 'arm64' ? 'linux/arm64' : 'linux/amd64';
 
 const needAGSE =
 	(args.command === 'sign' && process.argv[4] !== '--test') ||
@@ -168,7 +169,6 @@ const branch = (
 ).toLowerCase();
 
 const image = `cyph/${branch === 'prod' ? 'prod' : 'dev'}`;
-const targetArch = 'linux/amd64,linux/arm64';
 
 const imageAlreadyBuilt = spawn('docker', ['images'])
 	.split('\n')
@@ -646,7 +646,7 @@ const updateDockerImages = (pushImageUpdates = true) => {
 				'build',
 				'--push',
 				'--platform',
-				targetArch,
+				Object.keys(baseImageDigests).join(','),
 				'-t',
 				'cyph/base:latest',
 				'-f',
@@ -657,7 +657,7 @@ const updateDockerImages = (pushImageUpdates = true) => {
 		.then(() => {
 			fs.unlinkSync('Dockerfile.tmp');
 
-			const digests = spawn('docker', [
+			baseImageDigests = spawn('docker', [
 				'buildx',
 				'imagetools',
 				'inspect',
@@ -671,19 +671,15 @@ const updateDockerImages = (pushImageUpdates = true) => {
 					digest: s.match(/sha256:[^\s]+/)[0],
 					platform: s.split('Platform:')[1].split('\n')[0].trim()
 				}))
-				.map(o => `FROM --platform=${o.platform} cyph/base@${o.digest}`)
-				.sort()
-				.join('\n');
-
-			for (const dockerfile of dockerfiles) {
-				fs.writeFileSync(
-					dockerfile,
-					`${digests}\n${fs
-						.readFileSync(dockerfile)
-						.toString()
-						.replace(/FROM .*\n/g, '')}`
+				.reduce(
+					(o, {digest, platform}) => ({...o, [platform]: digest}),
+					{}
 				);
-			}
+
+			fs.writeFileSync(
+				baseImageDigestsPath,
+				JSON.stringify(baseImageDigests, undefined, '\t') + '\n'
+			);
 
 			if (!pushImageUpdates) {
 				return;
@@ -694,29 +690,43 @@ const updateDockerImages = (pushImageUpdates = true) => {
 				'-S',
 				'-m',
 				'updatedockerimages',
-				...dockerfiles
+				baseImageDigestsPath
 			]);
 			childProcess.spawnSync('git', ['push']);
 		})
 		.then(() =>
-			Array.from(Object.entries(dockerfileHostedImages)).reduce(
-				(acc, [dockerfile, image]) =>
-					acc.then(() =>
-						spawnAsync('docker', [
-							'buildx',
-							'build',
-							'--push',
-							'--platform',
-							targetArch,
-							'-t',
-							image,
-							'-f',
+			Array.from(Object.entries(dockerfileHostedImages))
+				.map(([dockerfile, image]) =>
+					Array.from(Object.entries(baseImageDigests)).map(
+						([platform, digest]) => ({
+							digest,
 							dockerfile,
-							'.'
-						])
-					),
-				Promise.resolve()
-			)
+							image,
+							platform
+						})
+					)
+				)
+				.reduce((a, b) => a.concat(b), [])
+				.reduce(
+					(acc, {digest, dockerfile, image, platform}) =>
+						acc.then(() =>
+							spawnAsync('docker', [
+								'buildx',
+								'build',
+								'--push',
+								'--platform',
+								platform,
+								'-t',
+								image,
+								'-f',
+								dockerfile,
+								'--build-arg',
+								`BASE_DIGEST=${digest}`,
+								'.'
+							])
+						),
+					Promise.resolve()
+				)
 		)
 		.then(() => {
 			if (!buildxInstance) {
@@ -768,6 +778,8 @@ const make = () => {
 		image,
 		'-f',
 		'Dockerfile.local',
+		'--build-arg',
+		`BASE_DIGEST=${baseImageDigests[currentArch]}`,
 		'.'
 	])
 		.then(() =>
