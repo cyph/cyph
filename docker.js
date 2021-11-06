@@ -810,6 +810,17 @@ const make = () => {
 			removeDirectory('.local-docker-context/config');
 			return dockerCP('/node_modules', 'shared/node_modules', true);
 		})
+		.then(() => spawnAsync('docker', ['system', 'prune', '-f']))
+		.then(() =>
+			spawnAsync('docker', [
+				'run',
+				'--pid=host',
+				'--privileged',
+				'--rm',
+				'docker/desktop-reclaim-space'
+			])
+		)
+		.then(() => spawnAsync('docker', ['system', 'prune', '-f']))
 		.then(() => huskySetup());
 
 	return initPromise;
