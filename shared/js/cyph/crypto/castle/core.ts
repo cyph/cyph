@@ -5,6 +5,7 @@ import {
 	ICastleRatchetState,
 	ICastleRatchetUpdate
 } from '../../proto';
+import {errorToString} from '../../util/error';
 import {getOrSetDefault} from '../../util/get-or-set-default';
 import {lockFunction} from '../../util/lock';
 import {IPotassium} from '../potassium/ipotassium';
@@ -289,9 +290,7 @@ export class Core {
 				}
 				catch (err) {
 					if (err) {
-						lastErrorMessage = err.message ?
-							err.message :
-							err.toString();
+						lastErrorMessage = errorToString(err);
 					}
 				}
 			}

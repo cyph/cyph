@@ -37,7 +37,6 @@ export class ImportHelper {
 			| RsaHashedImportParams
 			| EcKeyImportParams
 			| HmacImportParams
-			| DhImportKeyParams
 			| AesKeyAlgorithm,
 		purpose: KeyUsage
 	) : Promise<CryptoKey> {
@@ -62,7 +61,6 @@ export class ImportHelper {
 			| RsaHashedImportParams
 			| EcKeyImportParams
 			| HmacImportParams
-			| DhImportKeyParams
 			| AesKeyAlgorithm,
 		purpose: KeyUsage
 	) : Promise<CryptoKey> {

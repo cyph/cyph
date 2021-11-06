@@ -25,6 +25,7 @@ import {EnvService} from '../../services/env.service';
 import {StringsService} from '../../services/strings.service';
 import {trackBySelf} from '../../track-by/track-by-self';
 import {copyToClipboard} from '../../util/clipboard';
+import {errorToString} from '../../util/error';
 import {filterUndefined} from '../../util/filter/base';
 import {debugLogError} from '../../util/log';
 
@@ -329,10 +330,7 @@ export class AccountPGPComponent extends BaseProvider implements OnInit {
 					this.stringsService.setParameters(
 						this.stringsService.errorMessage,
 						{
-							error: (err.message || err.toString()).replace(
-								/\.$/g,
-								''
-							)
+							error: errorToString(err).replace(/\.$/g, '')
 						}
 					),
 					0,
@@ -395,10 +393,7 @@ export class AccountPGPComponent extends BaseProvider implements OnInit {
 					this.stringsService.setParameters(
 						this.stringsService.errorMessage,
 						{
-							error: (err.message || err.toString()).replace(
-								/\.$/g,
-								''
-							)
+							error: errorToString(err).replace(/\.$/g, '')
 						}
 					),
 					0,

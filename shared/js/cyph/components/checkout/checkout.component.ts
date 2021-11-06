@@ -28,6 +28,7 @@ import {EnvService} from '../../services/env.service';
 import {StringsService} from '../../services/strings.service';
 import {trackBySelf} from '../../track-by/track-by-self';
 import {trackByValue} from '../../track-by/track-by-value';
+import {errorToString} from '../../util/error';
 import {roundToString} from '../../util/formatting';
 import {debugLogError} from '../../util/log';
 import {request, requestJSON} from '../../util/request';
@@ -879,9 +880,9 @@ export class CheckoutComponent
 				return;
 			}
 
-			errorMessage = `${this.stringsService.checkoutErrorStart}: "${(
-				err.message || err.toString()
-			)
+			errorMessage = `${
+				this.stringsService.checkoutErrorStart
+			}: "${errorToString(err)
 				.replace(/\s+/g, ' ')
 				.trim()
 				.replace(/\.$/, '')}".`;

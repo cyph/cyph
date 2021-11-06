@@ -362,7 +362,7 @@ export class P2PWebRTCService
 
 		try {
 			return await new Promise<MediaStream>((resolve, reject) => {
-				navigator.getUserMedia(constraints, resolve, reject);
+				(<any> navigator).getUserMedia(constraints, resolve, reject);
 			});
 		}
 		catch (err) {

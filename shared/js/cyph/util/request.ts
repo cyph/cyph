@@ -79,7 +79,7 @@ const baseRequest = <R, T>(
 			}
 
 			let response: R | undefined;
-			let error: Error | undefined;
+			let error: any;
 			let statusOk = false;
 
 			for (let i = 0; !statusOk && i <= retries; ++i) {

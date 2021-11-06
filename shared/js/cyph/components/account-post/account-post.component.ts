@@ -40,10 +40,11 @@ export class AccountPostComponent
 
 	/** Post comments. */
 	public readonly commentsObservable = new ReplaySubject<
-		{
-			author: User | undefined;
-			comment: IAccountPostComment;
-		}[]
+		| {
+				author: User | undefined;
+				comment: IAccountPostComment;
+		  }[]
+		| undefined
 	>(1);
 
 	/** @see getDateTimeString */

@@ -400,16 +400,16 @@ mat-card {
 				}
 
 				&.doctor-list-only {
-					max-height: calc('95vh - #{$header-size}');
+					max-height: calc(95vh - #{$header-size});
 
 					/*
 					.member-list {
-						max-height: calc('75vh - #{$header-size}');
+						max-height: calc(75vh - #{$header-size});
 					}
 					*/
 
 					&.lt-md {
-						height: calc('100vh - #{$header-size}');
+						height: calc(100vh - #{$header-size});
 					}
 				}
 			}

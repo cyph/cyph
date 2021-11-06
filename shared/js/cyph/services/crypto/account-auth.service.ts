@@ -24,6 +24,7 @@ import {
 	NumberProto,
 	StringProto
 } from '../../proto';
+import {errorToString} from '../../util/error';
 import {normalize} from '../../util/formatting';
 import {debugLog} from '../../util/log';
 import {deserialize, serialize} from '../../util/serialization';
@@ -657,7 +658,9 @@ export class AccountAuthService extends BaseProvider {
 					this.loginErrorMessage.next(
 						this.stringsService.setParameters(
 							this.stringsService.authError,
-							{error: err.message}
+							{
+								error: errorToString(err)
+							}
 						)
 					);
 
