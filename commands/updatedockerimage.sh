@@ -144,5 +144,6 @@ done
 
 source ~/google-cloud-sdk/path.bash.inc
 gcloud components update --quiet
+gcloud config set project cyphme
 
 touch ~/.updated
