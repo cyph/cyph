@@ -408,7 +408,7 @@
 		"stylelint": "^14.0.1",
 		"stylelint-scss": "^4.0.0",
 		"supersphincs": "^6.3.2",
-		"tab-indent": "^1.0.2",
+		"tab-indent": "^1.1.0",
 		"tailwindcss": "^2.2.19",
 		"terser": "^5.9.0",
 		"terser-webpack-plugin": "^5.2.4",
