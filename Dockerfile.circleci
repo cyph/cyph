@@ -1,7 +1,7 @@
 FROM --platform=linux/amd64 cyph/base@sha256:ae51bba39478c18cace7d759fb3e7d6b8c90e924692e1f8b7cef49e09b2d1d0d
 FROM --platform=linux/arm64 cyph/base@sha256:98e5a863c51fec8d36038568e2768102e786f1cb601f47da51757eacf62ee953
 
-RUN sudo mkdir /cyph
+RUN test -d /cyph || sudo mkdir /cyph
 RUN sudo chmod 777 /cyph
 
 WORKDIR /cyph

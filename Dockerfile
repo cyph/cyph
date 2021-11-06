@@ -41,8 +41,6 @@ ENV HOME /home/gibson
 #SETUP:RUN chmod -R 777 ~/getlibs
 #SETUP:RUN ~/getlibs/commands/updatedockerimage.sh
 #SETUP:RUN ~/getlibs/commands/getlibs.sh
-#CIRCLECI:RUN sudo mkdir /cyph
-#CIRCLECI:RUN sudo chmod 777 /cyph
 
 WORKDIR /cyph/commands
 EXPOSE 9005 9876 31337 42000 42001 42002 42003 42004 44000
