@@ -1,14 +1,4 @@
-FROM scratch AS scratch-amd64
-ARG BASE_DIGEST_AMD64
-ARG BASE_DIGEST=${BASE_DIGEST_AMD64}
-
-FROM scratch AS scratch-arm64
-ARG BASE_DIGEST_ARM64
-ARG BASE_DIGEST=${BASE_DIGEST_ARM64}
-
-FROM scratch-${TARGETARCH}
-ARG BASE_DIGEST
-FROM cyph/base@${BASE_DIGEST}
+FROM cyph/base
 
 WORKDIR /cyph/commands
 CMD /bin/bash serve.sh

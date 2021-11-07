@@ -708,14 +708,6 @@ const updateDockerImages = (pushImageUpdates = true) => {
 							image,
 							'-f',
 							dockerfile,
-							...Array.from(Object.entries(baseImageDigests))
-								.map(([platform, digest]) => [
-									'--build-arg',
-									`BASE_DIGEST_${platform
-										.split('/')[1]
-										.toUpperCase()}=${digest}`
-								])
-								.reduce((a, b) => a.concat(b), []),
 							'.'
 						])
 					),
