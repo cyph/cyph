@@ -64,6 +64,7 @@
 @firebase/auth-types
 @firebase/component
 @firebase/database
+@firebase/database-compat@0.1.2
 @firebase/database-types
 @firebase/firestore
 @firebase/firestore-types
