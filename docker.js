@@ -695,38 +695,32 @@ const updateDockerImages = (pushImageUpdates = true) => {
 			childProcess.spawnSync('git', ['push']);
 		})
 		.then(() =>
-			Array.from(Object.entries(dockerfileHostedImages))
-				.map(([dockerfile, image]) =>
-					Array.from(Object.entries(baseImageDigests)).map(
-						([platform, digest]) => ({
-							digest,
-							dockerfile,
+			Array.from(Object.entries(dockerfileHostedImages)).reduce(
+				(acc, [dockerfile, image]) =>
+					acc.then(() =>
+						spawnAsync('docker', [
+							'buildx',
+							'build',
+							'--push',
+							'--platform',
+							Object.keys(baseImageDigests).join(','),
+							'-t',
 							image,
-							platform
-						})
-					)
-				)
-				.reduce((a, b) => a.concat(b), [])
-				.reduce(
-					(acc, {digest, dockerfile, image, platform}) =>
-						acc.then(() =>
-							spawnAsync('docker', [
-								'buildx',
-								'build',
-								'--push',
-								'--platform',
-								platform,
-								'-t',
-								image,
-								'-f',
-								dockerfile,
-								'--build-arg',
-								`BASE_DIGEST=${digest}`,
-								'.'
-							])
-						),
-					Promise.resolve()
-				)
+							'-f',
+							dockerfile,
+							...Array.from(Object.entries(baseImageDigests))
+								.map(([platform, digest]) => [
+									'--build-arg',
+									`BASE_DIGEST_${platform
+										.split('/')[1]
+										.toUpperCase()}=${digest}`
+								])
+								.reduce((a, b) => a.concat(b), []),
+							'.'
+						])
+					),
+				Promise.resolve()
+			)
 		)
 		.then(() => {
 			if (!buildxInstance) {
