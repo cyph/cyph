@@ -1,9 +1,7 @@
-version: 2
+version: 2.1
+
 jobs:
   build:
-    branches:
-      only:
-        - prod
     docker:
       - image: cyph/circleci:latest
     resource_class: large
@@ -15,3 +13,11 @@ jobs:
             source ~/.bashrc
             /cyph/commands/test.sh --build
           no_output_timeout: 1800
+
+workflows:
+  build:
+    jobs:
+      - build:
+          filters:
+            branches:
+              only: prod
