@@ -42,6 +42,5 @@ ENV HOME /home/gibson
 #SETUP:RUN ~/getlibs/commands/updatedockerimage.sh
 #SETUP:RUN ~/getlibs/commands/getlibs.sh
 
-WORKDIR /cyph/commands
 EXPOSE 9005 9876 31337 42000 42001 42002 42003 42004 44000
 CMD /bin/bash

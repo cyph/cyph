@@ -1,6 +1,6 @@
 FROM cyph/base
 
-RUN test -d /cyph || sudo mkdir /cyph
+RUN sudo mkdir /cyph
 RUN sudo chmod 777 /cyph
 
 WORKDIR /cyph
