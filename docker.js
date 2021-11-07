@@ -136,6 +136,7 @@ fs.existsSync(path.join(__dirname, 'commands', `${args.command}.js`)) ?
 	undefined;
 
 const baseImageDigestsPath = path.join(__dirname, 'base-image-digests.json');
+const circleciConfigPath = path.join(__dirname, 'circle.yml');
 const codespaceDockerfilePath = path.join(__dirname, 'Dockerfile.codespace');
 const gitconfigPath = path.join(homeDir, '.gitconfig');
 const gitconfigDockerPath = `${dockerHomeDir}/.gitconfig`;
@@ -611,6 +612,18 @@ const dockerBase64Files = s =>
 			.join('\n')
 	);
 
+const getImageDigests = image =>
+	spawn('docker', ['buildx', 'imagetools', 'inspect', image])
+		.split('Manifests:')[1]
+		.split('Name:')
+		.map(s => s.trim())
+		.filter(s => s)
+		.map(s => ({
+			digest: s.match(/sha256:[^\s]+/)[0],
+			platform: s.split('Platform:')[1].split('\n')[0].trim()
+		}))
+		.reduce((o, {digest, platform}) => ({...o, [platform]: digest}), {});
+
 const updateDockerImages = (pushImageUpdates = true) => {
 	killEverything();
 
@@ -657,54 +670,7 @@ const updateDockerImages = (pushImageUpdates = true) => {
 		.then(() => {
 			fs.unlinkSync('Dockerfile.tmp');
 
-			baseImageDigests = spawn('docker', [
-				'buildx',
-				'imagetools',
-				'inspect',
-				'cyph/base'
-			])
-				.split('Manifests:')[1]
-				.split('Name:')
-				.map(s => s.trim())
-				.filter(s => s)
-				.map(s => ({
-					digest: s.match(/sha256:[^\s]+/)[0],
-					platform: s.split('Platform:')[1].split('\n')[0].trim()
-				}))
-				.reduce(
-					(o, {digest, platform}) => ({...o, [platform]: digest}),
-					{}
-				);
-
-			fs.writeFileSync(
-				baseImageDigestsPath,
-				JSON.stringify(baseImageDigests, undefined, '\t') + '\n'
-			);
-
-			fs.writeFileSync(
-				codespaceDockerfilePath,
-				fs
-					.readFileSync(codespaceDockerfilePath)
-					.toString()
-					.replace(
-						/^FROM .*/,
-						`FROM cyph/base@${baseImageDigests['linux/amd64']}`
-					)
-			);
-
-			if (!pushImageUpdates) {
-				return;
-			}
-
-			childProcess.spawnSync('git', [
-				'commit',
-				'-S',
-				'-m',
-				'updatedockerimages',
-				baseImageDigestsPath,
-				codespaceDockerfilePath
-			]);
-			childProcess.spawnSync('git', ['push']);
+			baseImageDigests = getImageDigests('cyph/base');
 		})
 		.then(() =>
 			Array.from(Object.entries(dockerfileHostedImages)).reduce(
@@ -732,6 +698,51 @@ const updateDockerImages = (pushImageUpdates = true) => {
 			}
 
 			return spawnAsync('docker', ['buildx', 'rm', buildxInstance]);
+		})
+		.then(() => {
+			fs.writeFileSync(
+				baseImageDigestsPath,
+				JSON.stringify(baseImageDigests, undefined, '\t') + '\n'
+			);
+
+			fs.writeFileSync(
+				circleciConfigPath,
+				fs
+					.readFileSync(circleciConfigPath)
+					.toString()
+					.replace(
+						/image: .*/,
+						`image: cyph/circleci@${
+							getImageDigests('cyph/circleci')['linux/amd64']
+						}`
+					)
+			);
+
+			fs.writeFileSync(
+				codespaceDockerfilePath,
+				fs
+					.readFileSync(codespaceDockerfilePath)
+					.toString()
+					.replace(
+						/^FROM .*/,
+						`FROM cyph/base@${baseImageDigests['linux/amd64']}`
+					)
+			);
+
+			if (!pushImageUpdates) {
+				return;
+			}
+
+			childProcess.spawnSync('git', [
+				'commit',
+				'-S',
+				'-m',
+				'updatedockerimages',
+				baseImageDigestsPath,
+				circleciConfigPath,
+				codespaceDockerfilePath
+			]);
+			childProcess.spawnSync('git', ['push']);
 		});
 };
 
