@@ -136,14 +136,14 @@ fs.existsSync(path.join(__dirname, 'commands', `${args.command}.js`)) ?
 	undefined;
 
 const baseImageDigestsPath = path.join(__dirname, 'base-image-digests.json');
+const codespaceDockerfilePath = path.join(__dirname, 'Dockerfile.codespace');
 const gitconfigPath = path.join(homeDir, '.gitconfig');
 const gitconfigDockerPath = `${dockerHomeDir}/.gitconfig`;
 const serveReadyPath = path.join(__dirname, 'serve.ready');
 const webSignServeReadyPath = path.join(__dirname, 'websign-serve.ready');
 
 const dockerfileHostedImages = {
-	'Dockerfile.circleci': 'cyph/circleci',
-	'Dockerfile.codespace': 'cyph/codespace'
+	'Dockerfile.circleci': 'cyph/circleci'
 };
 
 let baseImageDigests = catJSON(baseImageDigestsPath);
@@ -681,6 +681,17 @@ const updateDockerImages = (pushImageUpdates = true) => {
 				JSON.stringify(baseImageDigests, undefined, '\t') + '\n'
 			);
 
+			fs.writeFileSync(
+				codespaceDockerfilePath,
+				fs
+					.readFileSync(codespaceDockerfilePath)
+					.toString()
+					.replace(
+						/^FROM .*/,
+						`FROM cyph/base@${baseImageDigests['linux/amd64']}`
+					)
+			);
+
 			if (!pushImageUpdates) {
 				return;
 			}
@@ -690,7 +701,8 @@ const updateDockerImages = (pushImageUpdates = true) => {
 				'-S',
 				'-m',
 				'updatedockerimages',
-				baseImageDigestsPath
+				baseImageDigestsPath,
+				codespaceDockerfilePath
 			]);
 			childProcess.spawnSync('git', ['push']);
 		})

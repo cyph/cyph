@@ -1,4 +1,4 @@
-FROM cyph/base
+FROM cyph/base@sha256:39b9915cb6de60c7fd93853e2ff7a0a951989502577e5f6b4bf29516a762b440
 
 WORKDIR /cyph/commands
 CMD /bin/bash serve.sh
