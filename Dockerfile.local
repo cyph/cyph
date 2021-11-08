@@ -1,6 +1,8 @@
 ARG BASE_DIGEST
 FROM cyph/base@${BASE_DIGEST}
 
+COPY base-image-digests.json /home/gibson/.base-image-digests.json
+
 COPY .local-docker-context /home/gibson/
 RUN test -d /home/gibson/.local-docker-context/config && \
 	rm -rf /home/gibson/.config 2> /dev/null && \

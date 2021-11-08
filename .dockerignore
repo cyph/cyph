@@ -1,2 +1,3 @@
 *
 !.local-docker-context
+!base-image-digests.json

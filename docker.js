@@ -301,8 +301,7 @@ const shellScripts = {
 			/cyph/commands/getlibs.sh
 		`,
 		condition: `
-			! cmp /cyph/shared/lib/js/package-lock.json /node_modules/package-lock.json &> /dev/null ||
-			! cmp /cyph/shared/node_modules/package-lock.json /node_modules/package-lock.json &> /dev/null
+			! cmp /cyph/base-image-digests.json /home/gibson/.base-image-digests.json &> /dev/null
 		`
 	},
 	setup: !isCyphInternal ?

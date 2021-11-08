@@ -89,8 +89,6 @@ mkdir node_modules
 cp ~/lib/js/package.json ~/lib/js/package-lock.json ./
 npm ci -f || exit 1
 
-cp -f package-lock.json ~/
-
 rm -rf ~/node_modules 2> /dev/null
 mv node_modules ~/
 # NATIVESCRIPT: mv ~/native_node_modules ./node_modules
@@ -486,12 +484,6 @@ if [ ! "${skipNodeModules}" ] ; then
 	ng build --optimization false
 	../commands/ngprojectinit.sh --deinit
 fi
-
-cd ..
-mv ~/package-lock.json ./
-cyph-prettier --write package-lock.json || exit 1
-cp -f package-lock.json ${dir}/shared/node_modules/ 2> /dev/null
-mv package-lock.json /node_modules/
 
 cd
 rm -rf ~/cyph.tmp 2> /dev/null
