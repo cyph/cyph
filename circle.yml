@@ -3,7 +3,7 @@ version: 2.1
 jobs:
   build:
     docker:
-      - image: cyph/circleci@sha256:b89dce040181a5cc70a7d9f62e8d174fc4561f96a0c4bee8348a5b7b7a3daa64
+      - image: cyph/circleci@sha256:b786d357ffd59ba651bca18fb5203fb7ad07a1d8ef6ba6d45ab8758cc4910d9f
     resource_class: large
     working_directory: /cyph
     steps:
