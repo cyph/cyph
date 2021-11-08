@@ -452,6 +452,7 @@ export class AccountFilesService extends BaseProvider {
 				);
 
 				if (parent.children) {
+					/* eslint-disable-next-line @typescript-eslint/no-dynamic-delete */
 					delete parent.children[pathToDelete];
 				}
 

@@ -7,7 +7,7 @@ import {openWindow} from '../util/window';
  * Adds rel='noopener noreferrer' to all anchor elements.
  */
 @Directive({
-	/* eslint-disable-next-line @typescript-eslint/tslint/config */
+	/* eslint-disable-next-line @angular-eslint/directive-selector */
 	selector: 'a:not([routerLink])'
 })
 export class AnchorDirective extends BaseProvider implements OnInit {

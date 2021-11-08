@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/tslint/config */
+/* eslint-disable import/no-unassigned-import */
 
 /**
  * @file

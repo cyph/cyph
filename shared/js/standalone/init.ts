@@ -6,7 +6,7 @@
 import * as $ from 'jquery';
 
 /* TODO: Handle this properly instead of relying on side effects */
-/* eslint-disable-next-line @typescript-eslint/tslint/config */
+/* eslint-disable-next-line import/no-unassigned-import */
 import '../environments';
 
 import {env} from '../cyph/env';
@@ -31,7 +31,7 @@ if (env.isLocalEnv && !env.isCordova && location.pathname !== '/') {
 
 /* Mobile CSS class */
 
-/* eslint-disable-next-line @typescript-eslint/tslint/config */
+/* eslint-disable-next-line rxjs/no-ignored-subscription */
 env.isMobile.subscribe(isMobile => {
 	document.body.classList.toggle('mobile', isMobile);
 });

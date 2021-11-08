@@ -605,19 +605,19 @@ export class FirebaseDatabaseService extends DatabaseService {
 				url: await this.getStorageDownloadURL(storageRef)
 			});
 
-			/* eslint-disable-next-line @typescript-eslint/tslint/config */
-			req.progress.subscribe(
-				n => {
+			/* eslint-disable-next-line rxjs/no-ignored-subscription */
+			req.progress.subscribe({
+				error: (err: unknown) => {
+					this.ngZone.run(() => {
+						progress.error(err);
+					});
+				},
+				next: n => {
 					this.ngZone.run(() => {
 						progress.next(n);
 					});
-				},
-				err => {
-					this.ngZone.run(() => {
-						progress.next(err);
-					});
 				}
-			);
+			});
 
 			const value = await req.result;
 
@@ -1695,7 +1695,7 @@ export class FirebaseDatabaseService extends DatabaseService {
 			urlPromise,
 			() =>
 				this.ngZone.runOutsideAngular(() => {
-					const subject = new ReplaySubject<ITimedValue<T>>();
+					const subject = new ReplaySubject<ITimedValue<T>>(Infinity);
 
 					let lastValue: T | undefined;
 
@@ -1771,7 +1771,7 @@ export class FirebaseDatabaseService extends DatabaseService {
 			urlPromise,
 			() =>
 				this.ngZone.runOutsideAngular(() => {
-					const subject = new ReplaySubject<boolean>();
+					const subject = new ReplaySubject<boolean>(Infinity);
 
 					const onValue = (
 						/* eslint-disable-next-line no-null/no-null */
@@ -1809,7 +1809,7 @@ export class FirebaseDatabaseService extends DatabaseService {
 				this.ngZone.runOutsideAngular(() => {
 					const subject = new ReplaySubject<
 						ITimedValue<T | ListHoleError>[]
-					>();
+					>(Infinity);
 
 					(async () => {
 						const url = await urlPromise;
@@ -1992,7 +1992,7 @@ export class FirebaseDatabaseService extends DatabaseService {
 					const subject = new ReplaySubject<{
 						key: string;
 						previousKey?: string;
-					}>();
+					}>(Infinity);
 
 					(async () => {
 						const url = await urlPromise;
@@ -2055,7 +2055,7 @@ export class FirebaseDatabaseService extends DatabaseService {
 			urlPromise,
 			() =>
 				this.ngZone.runOutsideAngular(() => {
-					const subject = new ReplaySubject<string[]>();
+					const subject = new ReplaySubject<string[]>(Infinity);
 
 					(async () => {
 						const url = await urlPromise;
@@ -2131,7 +2131,7 @@ export class FirebaseDatabaseService extends DatabaseService {
 							previousKey?: string;
 							url: string;
 						}
-					>();
+					>(Infinity);
 
 					const pushedKeys = new Set<string>();
 					const keySubscriptionLock = lockFunction();

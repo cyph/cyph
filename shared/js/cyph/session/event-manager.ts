@@ -26,7 +26,7 @@ export class EventManager {
 		return getOrSetDefault(
 			this.subjects,
 			event,
-			() => new ReplaySubject<ISessionMessageData[]>()
+			() => new ReplaySubject<ISessionMessageData[]>(Infinity)
 		);
 	}
 

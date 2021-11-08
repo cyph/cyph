@@ -551,7 +551,7 @@ export class DatabaseService extends DataManagerService {
 				localLock(async () : Promise<T> => {
 					const {hash} = await this.getMetadata(url);
 
-					/* eslint-disable-next-line @typescript-eslint/tslint/config */
+					/* eslint-disable-next-line security/detect-possible-timing-attacks */
 					if (currentHash === hash) {
 						return currentValue;
 					}
@@ -562,7 +562,7 @@ export class DatabaseService extends DataManagerService {
 
 					const value = await this.getItem(url, proto);
 
-					/* eslint-disable-next-line @typescript-eslint/tslint/config */
+					/* eslint-disable-next-line security/detect-possible-timing-attacks */
 					if (hash !== (await this.getMetadata(url)).hash) {
 						return asyncValue.getValue();
 					}

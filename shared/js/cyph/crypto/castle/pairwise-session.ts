@@ -114,6 +114,7 @@ export class PairwiseSession implements IPairwiseSession {
 					}));
 					await core.decrypt(cyphertextBytes);
 					debugLog(() => ({castleDecryptSuccess: {id}}));
+					/* eslint-disable-next-line @typescript-eslint/no-dynamic-delete */
 					delete incomingMessages.queue[id];
 					break;
 				}

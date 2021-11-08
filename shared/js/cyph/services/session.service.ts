@@ -138,7 +138,7 @@ export abstract class SessionService
 	public readonly cyphertext = new ReplaySubject<{
 		author: Observable<string>;
 		cyphertext: Uint8Array;
-	}>();
+	}>(Infinity);
 
 	/** @inheritDoc */
 	public readonly freezePong: BehaviorSubject<boolean> =

@@ -106,17 +106,26 @@ const baseRequest = <R, T>(
 
 					const res = await Promise.race([
 						new Promise<HttpResponse<T>>((resolve, reject) => {
-							/* eslint-disable-next-line @typescript-eslint/tslint/config */
-							req.subscribe(e => {
-								if (e.type === HttpEventType.DownloadProgress) {
-									progress.next(
-										(e.loaded / (e.total || e.loaded)) * 100
-									);
+							/* eslint-disable-next-line rxjs/no-ignored-subscription */
+							req.subscribe({
+								error: reject,
+								next: e => {
+									if (
+										e.type ===
+										HttpEventType.DownloadProgress
+									) {
+										progress.next(
+											(e.loaded / (e.total || e.loaded)) *
+												100
+										);
+									}
+									else if (
+										e.type === HttpEventType.Response
+									) {
+										resolve(e);
+									}
 								}
-								else if (e.type === HttpEventType.Response) {
-									resolve(e);
-								}
-							}, reject);
+							});
 						}),
 						...(!o.timeout ?
 							[] :

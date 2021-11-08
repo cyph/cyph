@@ -3,13 +3,13 @@
 /* eslint-disable-next-line @typescript-eslint/triple-slash-reference */
 /// <reference path="../typings/index.d.ts" />
 
-/* eslint-disable-next-line @typescript-eslint/tslint/config */
+/* eslint-disable-next-line import/no-unassigned-import */
 import './polyfills';
 
-/* eslint-disable-next-line @typescript-eslint/tslint/config */
+/* eslint-disable-next-line import/no-unassigned-import */
 import '../standalone/global';
 
-/* eslint-disable-next-line @typescript-eslint/tslint/config */
+/* eslint-disable-next-line import/no-unassigned-import */
 import '../environments';
 
 import {HttpClient, HttpClientModule} from '@angular/common/http';

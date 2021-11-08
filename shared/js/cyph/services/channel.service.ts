@@ -19,12 +19,11 @@ import {DatabaseService} from './database.service';
 @Injectable()
 export class ChannelService extends BaseProvider implements IChannelService {
 	/** @ignore */
-	private readonly _STATE =
-		resolvable<{
-			lock: LockFunction;
-			messagesURL: string;
-			url: string;
-		}>();
+	private readonly _STATE = resolvable<{
+		lock: LockFunction;
+		messagesURL: string;
+		url: string;
+	}>();
 
 	/** @ignore */
 	private ephemeral: boolean = false;
@@ -250,8 +249,23 @@ export class ChannelService extends BaseProvider implements IChannelService {
 					true,
 					this.subscriptions
 				)
-				.subscribe(
-					async users => {
+				.subscribe({
+					complete: async () => {
+						debugLog(() => ({
+							channelInitUsersClose: debugLogData()
+						}));
+
+						await handlers.onClose();
+					},
+					error: async (err: unknown) => {
+						debugLogError(() => ({
+							channelInitUsersError: {...debugLogData(), err}
+						}));
+
+						await handlers.onClose();
+						throw err;
+					},
+					next: async users => {
 						debugLog(() => ({channelInitUsers: debugLogData()}));
 
 						if (users.length < 1) {
@@ -266,23 +280,8 @@ export class ChannelService extends BaseProvider implements IChannelService {
 						}
 						await handlers.onConnect();
 						connected.resolve();
-					},
-					async err => {
-						debugLogError(() => ({
-							channelInitUsersError: {...debugLogData(), err}
-						}));
-
-						await handlers.onClose();
-						throw err;
-					},
-					async () => {
-						debugLog(() => ({
-							channelInitUsersClose: debugLogData()
-						}));
-
-						await handlers.onClose();
 					}
-				)
+				})
 		);
 	}
 

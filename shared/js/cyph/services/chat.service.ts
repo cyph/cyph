@@ -348,7 +348,7 @@ export class ChatService extends BaseProvider {
 						this.chat.messageList
 							.watchFlat(true)
 							.pipe(map(messageIDs => messageIDs.length === 0))
-							/* eslint-disable-next-line @typescript-eslint/tslint/config */
+							/* eslint-disable-next-line rxjs/no-ignored-subscription */
 							.subscribe(this.chatSelfDestructed);
 
 						this.chatSelfDestructTimer.next(
@@ -1213,6 +1213,7 @@ export class ChatService extends BaseProvider {
 		this.subscriptions.push(
 			interval(timeInterval)
 				.pipe(
+					/* eslint-disable-next-line rxjs/no-ignored-takewhile-value */
 					takeWhile(() => this.chat.initProgress.value < 125),
 					map(() => this.chat.initProgress.value + increment * 100)
 				)

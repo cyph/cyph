@@ -217,7 +217,7 @@ const getMetadataInternal = async (
 				sessionService.group.value[groupIndex].remoteUserString :
 				sessionService.remoteUserString
 			)
-				/* eslint-disable-next-line @typescript-eslint/tslint/config */
+				/* eslint-disable-next-line rxjs/no-ignored-subscription */
 				.subscribe(authorSubject);
 
 			return user;

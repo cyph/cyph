@@ -20,7 +20,9 @@ export class LocalAsyncList<T> implements IAsyncList<T> {
 	protected nextID: number;
 
 	/** @ignore */
-	protected readonly pushes = new ReplaySubject<{id: number; value: T}>();
+	protected readonly pushes = new ReplaySubject<{id: number; value: T}>(
+		Infinity
+	);
 
 	/** @inheritDoc */
 	public readonly lock: LockFunction;

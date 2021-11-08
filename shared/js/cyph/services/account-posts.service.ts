@@ -468,16 +468,20 @@ export class AccountPostsService extends BaseProvider {
 									.filterListHoles<string>(
 										await o.ids.getTimedValue()
 									)
-									.map((id) : [
-										string,
-										{
-											circleWrapper: typeof o;
-											timedValue: ITimedValue<string>;
-										}
-									] => [
-										id.value,
-										{circleWrapper: o, timedValue: id}
-									])
+									.map(
+										(
+											id
+										) : [
+											string,
+											{
+												circleWrapper: typeof o;
+												timedValue: ITimedValue<string>;
+											}
+										] => [
+											id.value,
+											{circleWrapper: o, timedValue: id}
+										]
+									)
 							)
 						)
 					).flat();
@@ -586,7 +590,7 @@ export class AccountPostsService extends BaseProvider {
 						initPrivatePostDataPartUpdates(currentCircle);
 
 					for (const circle of oldCircles) {
-						/* eslint-disable-next-line @typescript-eslint/tslint/config */
+						/* eslint-disable-next-line rxjs/no-ignored-observable */
 						initPrivatePostDataPartUpdates(circle);
 					}
 

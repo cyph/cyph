@@ -13,7 +13,7 @@ import {BaseProvider} from '../base-provider';
  * Adds router-link CSS class to router links.
  */
 @Directive({
-	/* eslint-disable-next-line @typescript-eslint/tslint/config */
+	/* eslint-disable-next-line @angular-eslint/directive-selector */
 	selector: '[routerLink]'
 })
 export class RouterLinkDirective

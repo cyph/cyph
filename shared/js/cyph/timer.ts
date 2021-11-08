@@ -107,13 +107,9 @@ export class Timer {
 					takeWhile(o => o.continue),
 					map(o => o.next)
 				)
-				/* eslint-disable-next-line @typescript-eslint/tslint/config */
-				.subscribe(
-					s => {
-						this.timestamp.next(s);
-					},
-					reject,
-					async () => {
+				/* eslint-disable-next-line rxjs/no-ignored-subscription */
+				.subscribe({
+					complete: async () => {
 						if (!this.countUp) {
 							this.timestamp.next(
 								this.includeHours ?
@@ -127,8 +123,12 @@ export class Timer {
 						resolve();
 						await sleep(1000);
 						this.isComplete.next(true);
+					},
+					error: reject,
+					next: s => {
+						this.timestamp.next(s);
 					}
-				);
+				});
 		});
 
 		return this.startPromise;

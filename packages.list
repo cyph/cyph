@@ -19,6 +19,7 @@
 @angular-devkit/core
 @angular-devkit/schematics
 @angular-devkit/schematics-cli
+@angular-eslint/eslint-plugin
 @angular/animations
 @angular/bazel
 @angular/cdk
@@ -222,6 +223,7 @@
 @webcomponents/custom-elements
 @yaga/leaflet-ng2
 abort-controller
+angular-eslint
 angular-fittext
 angular2-draggable
 angular2-text-mask
@@ -239,7 +241,6 @@ chalk
 cheerio@1.0.0-rc.3
 clean-css-cli
 clipboard-polyfill
-codelyzer
 comlink
 core-js
 core-js-bundle
@@ -262,8 +263,14 @@ dropzone
 dwv
 eslint
 eslint-plugin-import
+eslint-plugin-jsdoc
 eslint-plugin-no-null
 eslint-plugin-prefer-arrow
+eslint-plugin-rxjs
+eslint-plugin-rxjs-angular
+eslint-plugin-security
+eslint-plugin-sonarjs
+eslint-plugin-unicorn
 eslint-plugin-unicorn
 fast-crc32c
 faye-websocket
@@ -400,8 +407,6 @@ rrule
 rsvp
 run-node
 rxfire
-rxjs-tslint-rules
-rxjs-tslint@0.1.5
 rxjs@^7
 sass
 shelljs

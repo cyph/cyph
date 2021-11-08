@@ -541,18 +541,18 @@ export class AccountDatabaseService extends BaseProvider {
 				anonymous
 			);
 
-			/* eslint-disable-next-line @typescript-eslint/tslint/config */
-			downloadTask.progress.subscribe(
-				n => {
-					progress.next(n);
+			/* eslint-disable-next-line rxjs/no-ignored-subscription */
+			downloadTask.progress.subscribe({
+				complete: () => {
+					progress.complete();
 				},
-				err => {
+				error: (err: unknown) => {
 					progress.error(err);
 				},
-				() => {
-					progress.complete();
+				next: n => {
+					progress.next(n);
 				}
-			);
+			});
 
 			return downloadTask;
 		})();
@@ -1544,18 +1544,18 @@ export class AccountDatabaseService extends BaseProvider {
 				uploadTask.cancel();
 			});
 
-			/* eslint-disable-next-line @typescript-eslint/tslint/config */
-			uploadTask.progress.subscribe(
-				n => {
-					progress.next(n);
+			/* eslint-disable-next-line rxjs/no-ignored-subscription */
+			uploadTask.progress.subscribe({
+				complete: () => {
+					progress.complete();
 				},
-				err => {
+				error: (err: unknown) => {
 					progress.error(err);
 				},
-				() => {
-					progress.complete();
+				next: n => {
+					progress.next(n);
 				}
-			);
+			});
 
 			return uploadTask.result;
 		})();

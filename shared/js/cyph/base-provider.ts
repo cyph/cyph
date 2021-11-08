@@ -38,7 +38,7 @@ export class BaseProvider implements OnDestroy, OnInit {
 	}
 
 	/** @inheritDoc */
-	/* eslint-disable-next-line @typescript-eslint/tslint/config */
+	/* eslint-disable-next-line @angular-eslint/contextual-lifecycle */
 	public ngOnInit () : void {
 		this.lifecycleOnInit.emit();
 	}

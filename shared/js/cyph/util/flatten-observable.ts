@@ -45,7 +45,7 @@ export const cacheObservable = <T>(
 	subscriptions?: Subscription[]
 ) : Observable<T> => {
 	const subscribe = subscribeFactory(observable, subscriptions);
-	const subject = new ReplaySubject<T>();
+	const subject = new ReplaySubject<T>(Infinity);
 	let subscribed = false;
 
 	return new Observable<T>(observer => {

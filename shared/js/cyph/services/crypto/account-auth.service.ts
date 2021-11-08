@@ -97,7 +97,7 @@ export class AccountAuthService extends BaseProvider {
 		username: string,
 		password?: string
 	) : Promise<Uint8Array> {
-		if (password === undefined) {
+		if (typeof password === 'undefined') {
 			return new Uint8Array(0);
 		}
 

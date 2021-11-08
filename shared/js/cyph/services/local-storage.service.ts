@@ -498,7 +498,7 @@ export class LocalStorageService extends DataManagerService {
 		_SUBSCRIPTIONS?: Subscription[]
 	) : Observable<ITimedValue<T>> {
 		return getOrSetDefault(this.observableCaches.watch, url, () => {
-			const subject = new ReplaySubject<ITimedValue<T>>();
+			const subject = new ReplaySubject<ITimedValue<T>>(Infinity);
 
 			const channel =
 				/* eslint-disable-next-line @typescript-eslint/tslint/config */
