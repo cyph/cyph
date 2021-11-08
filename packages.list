@@ -20,6 +20,8 @@
 @angular-devkit/schematics
 @angular-devkit/schematics-cli
 @angular-eslint/eslint-plugin
+@angular-eslint/eslint-plugin-template
+@angular-eslint/template-parser
 @angular/animations
 @angular/bazel
 @angular/cdk
@@ -270,7 +272,6 @@ eslint-plugin-rxjs
 eslint-plugin-rxjs-angular
 eslint-plugin-security
 eslint-plugin-sonarjs
-eslint-plugin-unicorn
 eslint-plugin-unicorn
 fast-crc32c
 faye-websocket
