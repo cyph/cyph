@@ -432,6 +432,7 @@ textillate
 ts-loader
 ts-node
 tslib
+tslint
 tslint-consistent-codestyle
 tslint-eslint-rules
 tslint-immutable
