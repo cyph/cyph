@@ -834,20 +834,6 @@ const make = () => {
 	return initPromise;
 };
 
-if (!imageAlreadyBuilt && args.command !== 'updatedockerimages') {
-	if (args.noAutoMake) {
-		if (args.command !== 'make') {
-			fail('Image not yet built. Run `./docker.js make` first.');
-		}
-	}
-	else {
-		console.error(
-			'WARNING: Building your local development image. This may take a while.'
-		);
-		make();
-	}
-}
-
 if (needAGSE) {
 	commandAdditionalArgs.push('-p', '31337:31337/udp');
 
@@ -855,24 +841,30 @@ if (needAGSE) {
 	initPromise = runScript(shellScripts.agseInit);
 }
 
+let makeRequired = true;
+
 switch (args.command) {
 	case 'editimage':
 		editImage(`source ~/.bashrc ; ${baseShellCommandArgs[0]}`);
 		break;
 
 	case 'huskysetup':
+		makeRequired = false;
 		huskySetup();
 		break;
 
 	case 'kill':
+		makeRequired = false;
 		killEverything();
 		break;
 
 	case 'make':
+		makeRequired = false;
 		make();
 		break;
 
 	case 'makeclean':
+		makeRequired = false;
 		killEverything();
 		removeImage('cyph');
 		removeImage(undefined, ['--filter', 'dangling=true']);
@@ -933,10 +925,13 @@ switch (args.command) {
 		break;
 
 	case 'updatedockerimages':
+		makeRequired = false;
 		updateDockerImages();
 		break;
 
 	case 'websign/serve':
+		makeRequired = false;
+
 		if (fs.existsSync(webSignServeReadyPath)) {
 			fs.unlinkSync(webSignServeReadyPath);
 		}
@@ -952,6 +947,18 @@ switch (args.command) {
 		if (!commandScript) {
 			fail('fak u gooby');
 		}
+}
+
+if (makeRequired && !imageAlreadyBuilt) {
+	if (args.noAutoMake) {
+		fail('Image not yet built. Run `./docker.js make` first.');
+	}
+	else {
+		console.error(
+			'WARNING: Building your local development image. This may take a while.'
+		);
+		make();
+	}
 }
 
 process.on('exit', exitCleanup);
