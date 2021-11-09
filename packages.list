@@ -19,11 +19,11 @@
 @angular-devkit/core
 @angular-devkit/schematics
 @angular-devkit/schematics-cli
-@angular-eslint/builder
-@angular-eslint/eslint-plugin
-@angular-eslint/eslint-plugin-template
-@angular-eslint/schematics
-@angular-eslint/template-parser
+@angular-eslint/builder@next
+@angular-eslint/eslint-plugin@next
+@angular-eslint/eslint-plugin-template@next
+@angular-eslint/schematics@next
+@angular-eslint/template-parser@next
 @angular/animations
 @angular/bazel
 @angular/cdk
