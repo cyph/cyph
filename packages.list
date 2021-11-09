@@ -19,8 +19,10 @@
 @angular-devkit/core
 @angular-devkit/schematics
 @angular-devkit/schematics-cli
+@angular-eslint/builder
 @angular-eslint/eslint-plugin
 @angular-eslint/eslint-plugin-template
+@angular-eslint/schematics
 @angular-eslint/template-parser
 @angular/animations
 @angular/bazel
@@ -225,7 +227,6 @@
 @webcomponents/custom-elements
 @yaga/leaflet-ng2
 abort-controller
-angular-eslint
 angular-fittext
 angular2-draggable
 angular2-text-mask
