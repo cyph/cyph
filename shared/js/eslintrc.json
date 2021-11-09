@@ -520,7 +520,6 @@
 							"const-parameters": true,
 							"early-exit": true,
 							"encoding": true,
-							"import-spacing": true,
 							"insecure-random": true,
 							"invalid-void": true,
 							"no-accessor-recursion": true,
