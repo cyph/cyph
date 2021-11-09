@@ -349,8 +349,8 @@
 		<mat-form-field *ngIf="o.type === types.Textarea">
 			<textarea
 				matInput
-				[matTextareaAutosize]="true"
-				[matAutosizeMinRows]="4"
+				[cdkTextareaAutosize]="true"
+				[cdkAutosizeMinRows]="4"
 				[(ngModel)]="o.valueString"
 				(ngModelChange)="changeForm.emit()"
 				[matTooltip]="o.tooltip"

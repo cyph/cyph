@@ -116,8 +116,8 @@
 							<textarea
 								cyphTranslate
 								matInput
-								[matAutosizeMinRows]="4"
-								[matTextareaAutosize]="
+								[cdkAutosizeMinRows]="4"
+								[cdkTextareaAutosize]="
 									(envService.isMobile | await) === true
 								"
 								[ngModel]="''"
@@ -142,9 +142,9 @@
 							<textarea
 								cyphTranslate
 								matInput
-								[matAutosizeMaxRows]="8"
-								[matAutosizeMinRows]="4"
-								[matTextareaAutosize]="
+								[cdkAutosizeMaxRows]="8"
+								[cdkAutosizeMinRows]="4"
+								[cdkTextareaAutosize]="
 									(envService.isMobile | await) === true
 								"
 								[ngModel]="outgoingMessage.cyphertext | await"
@@ -288,9 +288,9 @@
 							<textarea
 								cyphTranslate
 								matInput
-								[matAutosizeMaxRows]="8"
-								[matAutosizeMinRows]="4"
-								[matTextareaAutosize]="
+								[cdkAutosizeMaxRows]="8"
+								[cdkAutosizeMinRows]="4"
+								[cdkTextareaAutosize]="
 									(envService.isMobile | await) === true
 								"
 								[ngModel]="''"
@@ -315,7 +315,7 @@
 							<textarea
 								cyphTranslate
 								matInput
-								[matTextareaAutosize]="
+								[cdkTextareaAutosize]="
 									(envService.isMobile | await) === true
 								"
 								[ngModel]="incomingMessage.plaintext | await"
