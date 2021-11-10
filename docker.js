@@ -276,15 +276,6 @@ const shellScripts = {
 			sleep 1
 		" &
 	`,
-	aptUpdate: {
-		command: `
-			${containerInitScript}
-			/cyph/commands/updatedockerimage.sh
-		`,
-		condition: `
-			[ ! -f ~/.updated ] || test "$(find ~/.updated -mtime +3)"
-		`
-	},
 	command: `
 		${containerInitScript}
 		source ~/.bashrc
@@ -311,6 +302,7 @@ const shellScripts = {
 			source ~/.bashrc
 			notify 'Post-make authentication'
 			gcloud init
+			gcloud config set project cyphme
 			echo
 			firebase login --no-localhost
 		`
@@ -497,11 +489,16 @@ const huskySetup = () => {
 	);
 };
 
-const pullUpdates = (forceUpdate = false, initialSetup = false) => {
+const pullUpdates = (forceUpdate = false) => {
 	if (
 		args.noUpdates ||
 		!dockerCheckCondition(shellScripts.libUpdate.condition)
 	) {
+		return Promise.resolve();
+	}
+
+	if (!forceUpdate) {
+		console.error(`WARNING: Skipping pending image update`);
 		return Promise.resolve();
 	}
 
@@ -512,44 +509,22 @@ const pullUpdates = (forceUpdate = false, initialSetup = false) => {
 	return make();
 
 	/*
-	return editImage(
-		shellScripts.libUpdate.command,
-		shellScripts.libUpdate.condition,
-		forceUpdate ? undefined : 'getlibs',
-		true
-	)
-		.then(didUpdate =>
-			didUpdate ?
-				true :
-				editImage(
-					shellScripts.aptUpdate.command,
-					shellScripts.aptUpdate.condition,
-					forceUpdate ? undefined : 'APT update'
-				)
-		)
-		.then(didUpdate => {
-			if (!initialSetup && !didUpdate) {
-				return;
-			}
+	return make().then(() => {
+		const libNative = path.join('shared', 'lib', 'native');
+		const ready = path.join(__dirname, libNative, '.ready');
 
-			return huskySetup();
-		});
-		.then(() => {
-			const libNative = path.join('shared', 'lib', 'native');
-			const ready = path.join(__dirname, libNative, '.ready');
+		if (fs.existsSync(ready)) {
+			return;
+		}
 
-			if (fs.existsSync(ready)) {
-				return;
-			}
+		console.log(spawn('npm', ['-g', 'update']));
+		console.log(spawn('npm', ['-g', 'install', 'nativescript']));
+		for (const platform of ['android', 'ios']) {
+			spawn('tns', ['platform', 'add', platform], libNative);
+		}
 
-			console.log(spawn('npm', ['-g', 'update']));
-			console.log(spawn('npm', ['-g', 'install', 'nativescript']));
-			for (const platform of ['android', 'ios']) {
-				spawn('tns', ['platform', 'add', platform], libNative);
-			}
-
-			fs.writeFileSync(ready, '');
-		});
+		fs.writeFileSync(ready, '');
+	});
 	*/
 };
 
