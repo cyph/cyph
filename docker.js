@@ -636,8 +636,6 @@ const updateDockerImages = (pushImageUpdates = true) => {
 		)
 	);
 
-	let buildxInstance = '';
-
 	return Promise.resolve(
 		dockerCredentials ?
 			spawnAsync('docker', [
@@ -649,9 +647,17 @@ const updateDockerImages = (pushImageUpdates = true) => {
 			]) :
 			undefined
 	)
-		.then(() => {
-			buildxInstance = spawn('docker', ['buildx', 'create', '--use']);
-		})
+		.then(() =>
+			spawnAsync('docker', [
+				'buildx',
+				'create',
+				'--name',
+				'cyph_build_context'
+			])
+		)
+		.then(() =>
+			spawnAsync('docker', ['buildx', 'use', 'cyph_build_context'])
+		)
 		.then(() =>
 			spawnAsync('docker', [
 				'buildx',
@@ -691,13 +697,6 @@ const updateDockerImages = (pushImageUpdates = true) => {
 				Promise.resolve()
 			)
 		)
-		.then(() => {
-			if (!buildxInstance) {
-				return;
-			}
-
-			return spawnAsync('docker', ['buildx', 'rm', buildxInstance]);
-		})
 		.then(() => {
 			fs.writeFileSync(
 				baseImageDigestsPath,
