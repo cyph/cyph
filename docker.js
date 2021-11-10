@@ -39,18 +39,47 @@ const spawn = (command, args, cwd, env) =>
 		.toString()
 		.trim();
 
-const spawnAsync = (command, args, cwd, env) =>
-	new Promise(resolve =>
-		childProcess
-			.spawn(command, args, {
-				cwd: path.join(__dirname, cwd || ''),
-				...(env ? {env: {...process.env, ...env}} : {}),
-				stdio: 'inherit'
-			})
-			.on('exit', () => {
-				resolve();
-			})
-	);
+const spawnAsync = (command, args, cwd, env, retryInterval) => {
+	const promise = new Promise(resolve => {
+		const result = childProcess.spawn(command, args, {
+			cwd: path.join(__dirname, cwd || ''),
+			...(env ? {env: {...process.env, ...env}} : {}),
+			stdio: 'inherit'
+		});
+
+		return result.on('exit', () => {
+			resolve(result);
+		});
+	});
+
+	if (
+		typeof retryInterval !== 'number' ||
+		isNaN(retryInterval) ||
+		retryInterval < 0
+	) {
+		return promise;
+	}
+
+	return promise.then(result => {
+		if (result.exitCode === 0) {
+			return result;
+		}
+
+		console.error(
+			`retrying failed spawnAsync: ${JSON.stringify({
+				command,
+				args,
+				cwd,
+				env,
+				retryInterval
+			})}`
+		);
+
+		return new Promise(resolve => setTimeout(resolve, retryInterval)).then(
+			() => spawnAsync(command, args, cwd, env, retryInterval)
+		);
+	});
+};
 
 const runScript = script => {
 	const tmpFile = path.join(
@@ -634,18 +663,24 @@ const updateDockerImages = (pushImageUpdates = true) => {
 			spawnAsync('docker', ['buildx', 'use', 'cyph_build_context'])
 		)
 		.then(() =>
-			spawnAsync('docker', [
-				'buildx',
-				'build',
-				'--push',
-				'--platform',
-				Object.keys(baseImageDigests).join(','),
-				'-t',
-				'cyph/base:latest',
-				'-f',
-				'Dockerfile.tmp',
-				'.'
-			])
+			spawnAsync(
+				'docker',
+				[
+					'buildx',
+					'build',
+					'--push',
+					'--platform',
+					Object.keys(baseImageDigests).join(','),
+					'-t',
+					'cyph/base:latest',
+					'-f',
+					'Dockerfile.tmp',
+					'.'
+				],
+				undefined,
+				undefined,
+				30000
+			)
 		)
 		.then(() => {
 			fs.unlinkSync('Dockerfile.tmp');
@@ -656,18 +691,24 @@ const updateDockerImages = (pushImageUpdates = true) => {
 			Array.from(Object.entries(dockerfileHostedImages)).reduce(
 				(acc, [dockerfile, image]) =>
 					acc.then(() =>
-						spawnAsync('docker', [
-							'buildx',
-							'build',
-							'--push',
-							'--platform',
-							Object.keys(baseImageDigests).join(','),
-							'-t',
-							image,
-							'-f',
-							dockerfile,
-							'.'
-						])
+						spawnAsync(
+							'docker',
+							[
+								'buildx',
+								'build',
+								'--push',
+								'--platform',
+								Object.keys(baseImageDigests).join(','),
+								'-t',
+								image,
+								'-f',
+								dockerfile,
+								'.'
+							],
+							undefined,
+							undefined,
+							30000
+						)
 					),
 				Promise.resolve()
 			)
