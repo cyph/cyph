@@ -535,7 +535,7 @@ const pullUpdates = (forceUpdate = false) => {
 		dockerCP('/home/gibson/.config', '.local-docker-context/config', true);
 	}
 
-	return make();
+	return make(true);
 
 	/*
 	return make().then(() => {
@@ -790,7 +790,7 @@ const removeDirectory = dir => {
 	}
 };
 
-const make = () => {
+const make = (pullingUpdates = false) => {
 	killEverything();
 
 	const buildLocalImage = () =>
@@ -809,6 +809,7 @@ const make = () => {
 
 	initPromise = buildLocalImage()
 		.then(() =>
+			!pullingUpdates &&
 			shellScripts.setup &&
 			!fs.existsSync('.local-docker-context/config') ?
 				editImage(shellScripts.setup).then(() => {
