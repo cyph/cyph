@@ -89,13 +89,6 @@ mkdir node_modules
 cp ~/lib/js/package.json ~/lib/js/package-lock.json ./
 npm ci -f || exit 1
 
-cp -f package-lock.json ~/
-
-# Temporary workaround for "typings.replace is not a function" bug
-sed -i \
-	"s/\!typings/\!typings || typeof typings.replace \!== 'function'/g" \
-	node_modules/@angular/compiler-cli/ngcc/src/packages/entry_point.js
-
 rm -rf ~/node_modules 2> /dev/null
 mv node_modules ~/
 # NATIVESCRIPT: mv ~/native_node_modules ./node_modules
