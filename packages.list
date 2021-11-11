@@ -13,8 +13,6 @@
 @angular-devkit/architect
 @angular-devkit/architect-cli
 @angular-devkit/build-angular
-@angular-devkit/build-ng-packagr
-@angular-devkit/build-optimizer
 @angular-devkit/build-webpack
 @angular-devkit/core
 @angular-devkit/schematics
@@ -41,8 +39,6 @@
 @angular/platform-browser
 @angular/platform-browser-dynamic
 @angular/platform-server
-@angular/platform-webworker
-@angular/platform-webworker-dynamic
 @angular/router
 @angular/service-worker
 @asymmetrik/ngx-leaflet
