@@ -45,6 +45,7 @@
 @babel/cli
 @babel/core
 @babel/helpers
+@babel/plugin-external-helpers
 @babel/plugin-transform-runtime
 @babel/preset-env
 @babel/runtime
