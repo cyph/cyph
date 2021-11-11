@@ -5,6 +5,7 @@ eval "$(parseArgs \
 	--opt-bool block-failing-build \
 	--opt-bool cleanup \
 	--opt-bool gc \
+	--opt-bool skip-push \
 	--pos comment \
 )"
 
@@ -14,6 +15,7 @@ cd $(cd "$(dirname "$0")" ; pwd)/..
 
 blockFailingBuild="$(getBoolArg ${_arg_block_failing_build})"
 gc="$(getBoolArg ${_arg_gc})"
+skipPush="$(getBoolArg ${_arg_skip_push})"
 
 noCleanup=''
 if [ "${_arg_cleanup}" == 'off' ] ; then
@@ -25,8 +27,16 @@ if [ ! "${comment}" ] ; then
 	comment='commit.sh'
 fi
 
+gitPush () {
+	if [ ! "${skipPush}" ] ; then
+		git push
+	fi
+}
+
 rm -rf .git/index.lock .git/hooks.tmp 2> /dev/null
-mv .git/hooks .git/hooks.tmp
+if [ -d .git/hooks ] ; then
+	mv .git/hooks .git/hooks.tmp
+fi
 
 ./commands/keycache.sh
 
@@ -37,7 +47,7 @@ git add .
 git commit --no-verify -S -a -m "${comment}"
 
 if [ "${noCleanup}" ] ; then
-	git push
+	gitPush
 	exit
 fi
 
@@ -90,5 +100,8 @@ if [ "${gc}" ] ; then
 	git gc --aggressive --prune
 fi
 
-git push
-mv .git/hooks.tmp .git/hooks
+gitPush
+
+if [ -d .git/hooks.tmp ] ; then
+	mv .git/hooks.tmp .git/hooks
+fi

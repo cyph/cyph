@@ -627,7 +627,7 @@ const getImageDigests = image =>
 		}))
 		.reduce((o, {digest, platform}) => ({...o, [platform]: digest}), {});
 
-const updateDockerImages = (pushImageUpdates = true) => {
+const updateDockerImages = (amendCommit = false) => {
 	killEverything();
 
 	fs.writeFileSync(
@@ -743,15 +743,12 @@ const updateDockerImages = (pushImageUpdates = true) => {
 					)
 			);
 
-			if (!pushImageUpdates) {
-				return;
-			}
-
 			childProcess.spawnSync('git', [
 				'commit',
 				'-S',
-				'-m',
-				'updatedockerimages',
+				...(amendCommit ?
+					['--amend', '--no-edit', '--no-verify'] :
+					['-m', 'updatedockerimages']),
 				baseImageDigestsPath,
 				circleciConfigPath,
 				codespaceDockerfilePath
@@ -1018,23 +1015,14 @@ initPromise.then(() => {
 					return spawnAsync('node', ['docker.js', 'protobuf']);
 
 				case 'updatelibs':
-					return updateDockerImages(false)
-						.then(() =>
-							spawnAsync('node', [
-								'docker.js',
-								'commit',
-								'--gc',
-								'updatelibs'
-							])
-						)
-						.then(() =>
-							spawnAsync('node', [
-								'docker.js',
-								'notify',
-								'--admins',
-								'updatelibs complete'
-							])
-						);
+					return updateDockerImages(true).then(() =>
+						spawnAsync('node', [
+							'docker.js',
+							'notify',
+							'--admins',
+							'updatelibs complete'
+						])
+					);
 			}
 		});
 });

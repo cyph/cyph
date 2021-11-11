@@ -61,3 +61,5 @@ find . -maxdepth 2 -type f -name .go.mod -exec bash -c '
 	go mod tidy
 	go get -u ./...
 ' \;
+
+./commands/commit.sh --gc --skip-push "${@}" updatelibs
