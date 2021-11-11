@@ -15,10 +15,13 @@
 		"build": "ng build"
 	},
 	"dependencies": {
+		"@babel/helpers": "*",
+		"@babel/runtime": "*",
 		"fetch-blob": ">=3",
 		"firebase": ">=9",
 		"generate-rsa-keypair": "*",
 		"node-fetch": ">=3",
+		"regenerator-runtime": "*",
 		"tslib": "*",
 		"xhr2": "*"
 	},

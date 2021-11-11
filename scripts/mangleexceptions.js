@@ -6,7 +6,9 @@ const tslib = require('tslib');
 
 const mangleExceptions = Array.from(
 	new Set([
+		'babelHelpers',
 		'firebase',
+		'regeneratorRuntime',
 		...Object.keys(tslib),
 		...(fs
 			.readFileSync(

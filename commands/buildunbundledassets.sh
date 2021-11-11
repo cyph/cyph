@@ -71,7 +71,7 @@ typescriptAssets="$(
 		if [ "${libpotassium}" ] ; then echo cyph/crypto/potassium/index ; fi;
 		grep -roP "importScripts\('/assets/js/.*?\.js'\)" shared/js |
 			perl -pe "s/^.*?'\/assets\/js\/(.*?)\.js'.*/\1/g" |
-			grep -vP '^standalone/global$' \
+			grep -vP '^(babel|standalone/global)$' \
 		;
 	} |
 		sort |
@@ -210,6 +210,8 @@ rm -rf firebase.tmp
 
 
 cd ../js
+
+babel-external-helpers | terser -cm > babel.js
 
 node -e "
 	const tsconfig = JSON.parse(

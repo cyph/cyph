@@ -28,6 +28,9 @@ import 'zone.js/dist/zone';
  * TYPESCRIPT HELPERS
  */
 
+import 'regenerator-runtime/runtime.js';
+import '../../assets/js/babel.js';
+
 import * as tslib from 'tslib';
 
 for (const [k, v] of Object.entries(tslib)) {

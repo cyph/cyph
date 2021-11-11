@@ -30,6 +30,8 @@ cd cyph.com
 cp ../shared/assets/js/standalone/cyph.com.js dist/
 cp ../shared/assets/js/standalone/global.js dist/
 cp ../shared/assets/node_modules/core-js-bundle/minified.js dist/
+cp ../shared/assets/node_modules/regenerator-runtime/runtime.js dist/regenerator-runtime.js
 cp ../shared/assets/node_modules/tslib/tslib.js dist/
+cp ../shared/assets/js/babel.js dist/
 rm -rf "${dir}/cyph.com/dist"
 mv dist "${dir}/cyph.com/"

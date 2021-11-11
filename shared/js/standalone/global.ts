@@ -100,6 +100,24 @@ try {
 catch {}
 
 try {
+	(<any> self).babelHelpers = {};
+	/* eslint-disable-next-line no-eval */
+	for (const k of eval('require')('@babel/helpers').list) {
+		/* eslint-disable-next-line no-eval */
+		(<any> self).babelHelpers[k] = eval('require')(
+			`@babel/runtime/helpers/${k}`
+		);
+	}
+}
+catch {}
+
+try {
+	/* eslint-disable-next-line no-eval */
+	(<any> self).regeneratorRuntime = eval('require')('regenerator-runtime');
+}
+catch {}
+
+try {
 	if (typeof Blob === 'undefined') {
 		/* eslint-disable-next-line no-eval */
 		(<any> self).Blob = eval('require')('fetch-blob');

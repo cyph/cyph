@@ -44,8 +44,10 @@
 @asymmetrik/ngx-leaflet
 @babel/cli
 @babel/core
+@babel/helpers
 @babel/plugin-transform-runtime
 @babel/preset-env
+@babel/runtime
 @compodoc/compodoc
 @covalent/core
 @covalent/dynamic-forms
@@ -397,6 +399,7 @@ readable-stream
 recorder.js
 recordrtc
 reflect-metadata
+regenerator-runtime
 resize-observer-polyfill
 retire
 rlwe
