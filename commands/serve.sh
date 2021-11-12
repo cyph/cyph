@@ -182,6 +182,7 @@ export DATASTORE_EMULATOR_HOST=0.0.0.0:6000
 gcloud beta emulators datastore start \
 	--host-port ${DATASTORE_EMULATOR_HOST} \
 	--no-store-on-disk \
+	--project cyphme \
 &
 bash -c "
 	cd backend
