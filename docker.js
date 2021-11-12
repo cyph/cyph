@@ -417,11 +417,10 @@ const dockerCP = (src, dest, removeDestDir = false) => {
 
 	const container = containerName(crypto.randomBytes(32).toString('hex'));
 
-	dockerRun('sleep Infinity', container).catch(() => {});
-
 	const f = () => {
 		if (getContainerPIDs(container).length < 1) {
-			return new Promise(resolve => setTimeout(resolve, 1000)).then(f);
+			dockerRun('sleep Infinity', container).catch(() => {});
+			return new Promise(resolve => setTimeout(resolve, 2500)).then(f);
 		}
 
 		spawn('docker', ['cp', '-a', `${container}:${src}`, dest]);
