@@ -484,7 +484,7 @@ fi
 if [ ! "${skipNodeModules}" ] ; then
 	../commands/protobuf.sh
 	../commands/ngprojectinit.sh
-	ng build --optimization false
+	ng build
 	../commands/ngprojectinit.sh --deinit
 fi
 

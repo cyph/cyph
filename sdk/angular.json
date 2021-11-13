@@ -156,7 +156,7 @@
 							]
 						},
 						"prodOptimized": {
-							"optimization": false,
+							"optimization": true,
 							"outputHashing": "none",
 							"sourceMap": false,
 							"namedChunks": false,

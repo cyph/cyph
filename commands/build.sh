@@ -34,7 +34,6 @@ for d in ${projects} ; do
 	ng build \
 		--aot true \
 		--common-chunk false \
-		--optimization false \
 		--source-map false \
 		--vendor-chunk false
 	checkfail

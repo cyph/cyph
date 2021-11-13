@@ -72,7 +72,7 @@ ngProdFlags='
 	--build-optimizer true
 	--extract-licenses true
 	--named-chunks false
-	--optimization false
+	--optimization true
 	--output-hashing none
 	--source-map false
 	--vendor-chunk false
