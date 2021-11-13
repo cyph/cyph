@@ -7,9 +7,6 @@
 import './polyfills';
 
 /* eslint-disable-next-line import/no-unassigned-import */
-import '../standalone/global';
-
-/* eslint-disable-next-line import/no-unassigned-import */
 import '../environments';
 
 import {HttpClient, HttpClientModule} from '@angular/common/http';

@@ -383,7 +383,12 @@ fi
 
 # Compile + translate + minify
 
-if [ ! "${site}" ] || [ "${site}" == 'cyph.app' ] || [ "${site}" == 'cyph.com' ] ; then
+if \
+	[ ! "${site}" ] || \
+	[ "${site}" == 'cyph.app' ] || \
+	[ "${site}" == 'cyph.com' ] || \
+	[ "${site}" == 'sdk' ]
+then
 	./commands/buildunbundledassets.sh $(
 		if [ "${simple}" ] || ( [ "${debug}" ] && [ ! "${debugProdBuild}" ] ) ; then
 			if [ "${simpleProdBuild}" ] ; then
@@ -411,6 +416,10 @@ if [ "${site}" == 'sdk' ] ; then
 		perl -pe 's/process\.on\("(uncaughtException|unhandledRejection)",(\s*function.*?\}\)|.*?\))/0/g' |
 		perl -pe 's/7f7c3a9622cf98c2855f41e2dabe854803c963cdce6132a1f9281df67b6d81e6/\n/g' \
 	> dist/main.js.new
+	mv dist/main.js.new dist/main.js
+
+	cp ../shared/assets/js/standalone/global.js dist/main.js.new
+	cat dist/main.js >> dist/main.js.new
 	mv dist/main.js.new dist/main.js
 
 	echo -n 'module.exports=module.exports.default;' >> dist/main.js
