@@ -343,7 +343,8 @@ for f in ${typescriptAssets} ; do
 						.reduce((o, [k, v]) => ({...o, [k]: v}), {})
 				},
 				extensions: ['.js', '.ts']
-			}
+			},
+			target: ['web', 'es5']
 		};
 	EOM
 done
