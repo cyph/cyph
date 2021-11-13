@@ -3,6 +3,7 @@ import {mceliece} from 'mceliece';
 import {ntru} from 'ntru';
 import {sidh} from 'sidh';
 import {IKeyPair} from '../../proto/types';
+import {errorToString} from '../../util/error';
 import {debugLog} from '../../util/log';
 import {retryUntilSuccessful} from '../../util/wait/retry-until-successful';
 import {IBox} from './ibox';
@@ -135,9 +136,7 @@ export class Box implements IBox {
 			}
 		}
 		catch (err) {
-			throw new Error(
-				`${name} decryption error: ${err ? err.message : 'undefined'}`
-			);
+			throw new Error(`${name} decryption error: ${errorToString(err)}`);
 		}
 		finally {
 			if (clearCyphertext) {
@@ -200,9 +199,7 @@ export class Box implements IBox {
 			);
 		}
 		catch (err) {
-			throw new Error(
-				`${name} encryption error: ${err ? err.message : 'undefined'}`
-			);
+			throw new Error(`${name} encryption error: ${errorToString(err)}`);
 		}
 		finally {
 			if (clearPlaintext) {

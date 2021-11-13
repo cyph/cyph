@@ -28,6 +28,13 @@ export class Box {
 			])
 		);
 
+		if (
+			keyPair.publicKey === undefined ||
+			keyPair.privateKey === undefined
+		) {
+			throw new Error('Failed to generate key pair.');
+		}
+
 		const publicKey = new Uint8Array(this.publicKeyBytes);
 		const privateKey = new Uint8Array(this.privateKeyBytes);
 
