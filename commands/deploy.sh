@@ -176,8 +176,8 @@ if \
 	[ "${websign}" ] || \
 	[ "${site}" == 'backend' ] || \
 	[ "${site}" == 'firebase' ] || \
-	[ "${site}" == 'websign' ] \
-; then
+	[ "${site}" == 'websign' ]
+then
 	./commands/keycache.sh
 fi
 
@@ -305,8 +305,8 @@ if \
 	[ "${websign}" ] || \
 	[ ! "${site}" ] || \
 	[ "${site}" == 'backend' ] || \
-	[ "${site}" == 'websign' ] \
-; then
+	[ "${site}" == 'websign' ]
+then
 	./commands/updaterepos.js
 	cp ~/.cyph/repos/chat-widget/dist/index.js backend/chat-widget.js
 fi
@@ -629,8 +629,8 @@ if \
 	[ "${websign}" ] || \
 	[ ! "${site}" ] || \
 	[ "${site}" == 'backend' ] || \
-	[ "${site}" == 'websign' ] \
-; then
+	[ "${site}" == 'websign' ]
+then
 	rm -rf backend/assets 2> /dev/null
 	mkdir backend/assets
 
@@ -1039,8 +1039,8 @@ if \
 		[ ! "${site}" ] || \
 		[ "${site}" == 'backend' ] || \
 		[ "${site}" == 'websign' ] \
-	) && [ ! "${betaProd}" ] \
-; then
+	) && [ ! "${betaProd}" ]
+then
 	cd backend
 	goBuildSuccess=''
 	for i in {1..5} ; do
