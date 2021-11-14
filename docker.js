@@ -191,6 +191,8 @@ const needAGSE =
 
 const isProdAGSEDeploy = needAGSE && args.command === 'deploy' && args.prod;
 
+const initImage = 'cyph/init';
+
 const image =
 	'cyph/' +
 	(
@@ -393,7 +395,8 @@ const dockerRun = (
 	background,
 	noCleanup,
 	additionalArgs,
-	getOutput
+	getOutput,
+	imageName = image
 ) => {
 	const processArgs = ['run', '--privileged', getOutput ? '-i' : '-it']
 		.concat(name ? [`--name=${name}`] : [])
@@ -401,7 +404,7 @@ const dockerRun = (
 		.concat(!noCleanup ? [`--rm=true`] : [])
 		.concat(mounts)
 		.concat(additionalArgs || [])
-		.concat([image, 'bash', '-c', command]);
+		.concat([imageName, 'bash', '-c', command]);
 
 	if (getOutput) {
 		return spawn('docker', processArgs);
@@ -411,7 +414,7 @@ const dockerRun = (
 	}
 };
 
-const dockerCP = (src, dest, removeDestDir = false) => {
+const dockerCP = (src, dest, removeDestDir = false, imageName = image) => {
 	if (removeDestDir) {
 		removeDirectory(dest);
 	}
@@ -420,7 +423,15 @@ const dockerCP = (src, dest, removeDestDir = false) => {
 
 	const f = () => {
 		if (getContainerPIDs(container).length < 1) {
-			dockerRun('sleep Infinity', container).catch(() => {});
+			dockerRun(
+				'sleep Infinity',
+				container,
+				undefined,
+				undefined,
+				undefined,
+				undefined,
+				imageName
+			).catch(() => {});
 			return new Promise(resolve => setTimeout(resolve, 2500)).then(f);
 		}
 
@@ -443,7 +454,13 @@ const dockerCheckCondition = condition =>
 		true
 	) === 'dothemove';
 
-const editImage = (command, condition, dryRunName, useOriginal = false) =>
+const editImage = (
+	command,
+	condition,
+	dryRunName,
+	useOriginal = false,
+	imageName = image
+) =>
 	Promise.resolve().then(() => {
 		if (condition && !dockerCheckCondition(condition)) {
 			return false;
@@ -462,18 +479,25 @@ const editImage = (command, condition, dryRunName, useOriginal = false) =>
 			useOriginal ?
 				spawnAsync('docker', [
 					'tag',
-					`${image}_original:latest`,
-					`${image}:latest`
+					`${imageName}_original:latest`,
+					`${imageName}:latest`
 				]) :
 				undefined
 		)
 			.then(() =>
-				dockerRun(command, tmpContainer, undefined, true, [
-					'-p',
-					'9005:9005'
-				])
+				dockerRun(
+					command,
+					tmpContainer,
+					undefined,
+					true,
+					['-p', '9005:9005'],
+					undefined,
+					imageName
+				)
 			)
-			.then(() => spawnAsync('docker', ['commit', tmpContainer, image]))
+			.then(() =>
+				spawnAsync('docker', ['commit', tmpContainer, imageName])
+			)
 			.then(() => spawnAsync('docker', ['rm', '-f', tmpContainer]))
 			.then(() => spawnAsync('docker', ['system', 'prune', '-f']))
 			.then(() =>
@@ -790,13 +814,13 @@ const removeDirectory = dir => {
 const make = (pullingUpdates = false) => {
 	killEverything();
 
-	const buildLocalImage = () =>
+	const buildLocalImage = (imageName = image) =>
 		spawnAsync('docker', [
 			'buildx',
 			'build',
 			'--load',
 			'-t',
-			image,
+			imageName,
 			'-f',
 			'Dockerfile.local',
 			'--build-arg',
@@ -804,21 +828,34 @@ const make = (pullingUpdates = false) => {
 			'.'
 		]);
 
-	initPromise = buildLocalImage()
-		.then(() =>
-			!pullingUpdates &&
-			shellScripts.setup &&
-			!fs.existsSync('.local-docker-context/config') ?
-				editImage(shellScripts.setup).then(() => {
-					dockerCP(
-						'/home/gibson/.config',
-						'.local-docker-context/config',
-						true
-					);
+	initPromise = (pullingUpdates ||
+	!shellScripts.setup ||
+	fs.existsSync('.local-docker-context/config') ?
+		buildLocalImage() :
+		buildLocalImage(initImage).then(() =>
+			editImage(
+				shellScripts.setup,
+				undefined,
+				undefined,
+				undefined,
+				initImage
+			).then(() => {
+				dockerCP(
+					'/home/gibson/.config',
+					'.local-docker-context/config',
+					true,
+					initImage
+				);
 
-					return buildLocalImage();
-				}) :
-				undefined
+				return buildLocalImage();
+			})
+		))
+		.then(() =>
+			spawnAsync('docker', [
+				'tag',
+				`${image}:latest`,
+				`${initImage}:latest`
+			])
 		)
 		.then(() =>
 			spawnAsync('docker', [
