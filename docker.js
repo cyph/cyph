@@ -190,15 +190,16 @@ const needAGSE =
 		(!args.site || args.site === 'cyph.app'));
 
 const isProdAGSEDeploy = needAGSE && args.command === 'deploy' && args.prod;
-const branch = (
-	spawn('git', ['describe', '--tags', '--exact-match']) ||
-	spawn('git', ['branch'])
-		.split('\n')
-		.filter(s => s && s.indexOf('*') === 0)[0]
-		.split(/\s+/)[1]
-).toLowerCase();
 
-const image = `cyph/${branch === 'prod' ? 'prod' : 'dev'}`;
+const image =
+	'cyph/' +
+	(
+		spawn('git', ['describe', '--tags', '--exact-match']) ||
+		spawn('git', ['branch'])
+			.split('\n')
+			.filter(s => s && s.indexOf('*') === 0)[0]
+			.split(/\s+/)[1]
+	).toLowerCase();
 
 const imageAlreadyBuilt = spawn('docker', ['images'])
 	.split('\n')
