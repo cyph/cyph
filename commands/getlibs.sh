@@ -45,7 +45,9 @@ find . -maxdepth 2 -type f -name .go.mod -exec bash -c '
 	go get -u ./...
 ' \;
 
-go get -u github.com/codegangsta/gin
+# Temporary workaround for https://github.com/codegangsta/gin/issues/169
+# go get -u github.com/codegangsta/gin
+go get -u github.com/buu700/gin
 
 
 # NATIVESCRIPT: nativePlugins="$(cat native/plugins.list)"
