@@ -25,7 +25,7 @@ import lottiePlayer from 'lottie-web';
 import {NgxCaptchaModule} from 'ngx-captcha';
 import {ImageCropperModule} from 'ngx-image-cropper';
 import {LottieModule} from 'ngx-lottie';
-import {AccountContactsSearchComponent} from '../components/account-contacts-search';
+import {AccountContactsSearchOptionalComponent} from '../components/account-contacts-search-optional';
 import {CheckoutComponent} from '../components/checkout';
 import {DialogAlertComponent} from '../components/dialog-alert';
 import {DialogConfirmComponent} from '../components/dialog-confirm';
@@ -58,7 +58,7 @@ export const lottiePlayerFactory = () => {
  */
 @NgModule({
 	declarations: [
-		AccountContactsSearchComponent,
+		AccountContactsSearchOptionalComponent,
 		AnchorDirective,
 		ArrayPipe,
 		AutofocusDirective,
@@ -79,7 +79,7 @@ export const lottiePlayerFactory = () => {
 		TranslateDirective
 	],
 	exports: [
-		AccountContactsSearchComponent,
+		AccountContactsSearchOptionalComponent,
 		AnchorDirective,
 		ArrayPipe,
 		AutofocusDirective,

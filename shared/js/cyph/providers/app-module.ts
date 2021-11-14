@@ -1,3 +1,4 @@
+import {AccountContactsSearchComponent} from '../components/account-contacts-search';
 import {AccountAppointmentsService} from '../services/account-appointments.service';
 import {AccountAuthGuardService} from '../services/account-auth-guard.service';
 import {AccountContactsService} from '../services/account-contacts.service';
@@ -49,6 +50,10 @@ export const appModuleProviders = [
 	ProductTourService,
 	QRService,
 	WorkerService,
+	{
+		provide: 'AccountContactsSearchComponent',
+		useExisting: AccountContactsSearchComponent
+	},
 	{
 		provide: DatabaseService,
 		useClass: FirebaseDatabaseService

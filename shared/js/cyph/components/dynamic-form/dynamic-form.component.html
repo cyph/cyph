@@ -123,7 +123,7 @@
 		</mat-checkbox>
 
 		<ng-container *ngIf="o.type === types.CyphUsername">
-			<cyph-account-contacts-search
+			<cyph-account-contacts-search-optional
 				[chipInput]="true"
 				[matTooltip]="o.tooltip"
 				[matTooltipDisabled]="!o.tooltip"
@@ -136,7 +136,7 @@
 				[required]="o.required"
 				[searchUsername]="o.valueString"
 				(userFilterChange)="setCyphUsernames(o, $event)"
-			></cyph-account-contacts-search>
+			></cyph-account-contacts-search-optional>
 		</ng-container>
 
 		<ng-container *ngIf="o.type === types.Datepicker">
