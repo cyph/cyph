@@ -11,10 +11,7 @@
 		"e2e": "ng e2e"
 	},
 	"browserslist": [
-		"since 2015",
-		"not IE 11",
-		"not IE_Mob 11",
-		"maintained node versions"
+		"defaults"
 	],
 	"devDependencies": {
 		"@angular/cli": "*",
