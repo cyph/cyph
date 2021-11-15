@@ -100,13 +100,15 @@ try {
 catch {}
 
 try {
-	(<any> self).babelHelpers = {};
-	/* eslint-disable-next-line no-eval */
-	for (const k of eval('require')('@babel/helpers').list) {
+	if ((<any> self).babelHelpers === undefined) {
+		(<any> self).babelHelpers = {};
 		/* eslint-disable-next-line no-eval */
-		(<any> self).babelHelpers[k] = eval('require')(
-			`@babel/runtime/helpers/${k}`
-		);
+		for (const k of eval('require')('@babel/helpers').list) {
+			/* eslint-disable-next-line no-eval */
+			(<any> self).babelHelpers[k] = eval('require')(
+				`@babel/runtime/helpers/${k}`
+			);
+		}
 	}
 }
 catch {}
