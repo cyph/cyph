@@ -254,6 +254,7 @@ for f in ${typescriptAssets} ; do
 		const fs = require('fs');
 		const path = require('path');
 		const TerserPlugin = require('terser-webpack-plugin');
+		const {ProvidePlugin} = require('webpack');
 		const {mangleExceptions} = require('../../../scripts/mangleexceptions');
 
 		const tsconfig = JSON.parse(
@@ -328,6 +329,9 @@ for f in ${typescriptAssets} ; do
 					typescript: {
 						configFile: 'tsconfig.json'
 					}
+				}),
+				new ProvidePlugin({
+					Buffer: ['buffer', 'Buffer'],
 				})
 			],
 			resolve: {
