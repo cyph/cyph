@@ -332,6 +332,7 @@ for f in ${typescriptAssets} ; do
 				}),
 				new ProvidePlugin({
 					Buffer: ['buffer', 'Buffer'],
+					process: 'process'
 				})
 			],
 			resolve: {
