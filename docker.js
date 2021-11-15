@@ -203,10 +203,11 @@ const image =
 			.split(/\s+/)[1]
 	).toLowerCase();
 
-const imageAlreadyBuilt = spawn('docker', ['images'])
-	.split('\n')
-	.slice(1)
-	.some(s => s.trim().split(/\s+/)[0] === image);
+const imageAlreadyBuilt = (imageName = image) =>
+	spawn('docker', ['images'])
+		.split('\n')
+		.slice(1)
+		.some(s => s.trim().split(/\s+/)[0] === imageName);
 
 const isCyphInternal = fs.existsSync(cyphConfigDir);
 
@@ -555,11 +556,7 @@ const pullUpdates = (forceUpdate = false) => {
 		return Promise.resolve();
 	}
 
-	if (shellScripts.setup) {
-		dockerCP('/home/gibson/.config', '.local-docker-context/config', true);
-	}
-
-	return make(true);
+	return make();
 
 	/*
 	return make().then(() => {
@@ -811,7 +808,7 @@ const removeDirectory = dir => {
 	}
 };
 
-const make = (pullingUpdates = false) => {
+const make = () => {
 	killEverything();
 
 	const buildLocalImage = (imageName = image) =>
@@ -828,11 +825,20 @@ const make = (pullingUpdates = false) => {
 			'.'
 		]);
 
-	initPromise = (pullingUpdates ||
-	!shellScripts.setup ||
-	fs.existsSync('.local-docker-context/config') ?
-		buildLocalImage() :
-		buildLocalImage(initImage).then(() =>
+	const copyConfig = () =>
+		dockerCP(
+			'/home/gibson/.config',
+			'.local-docker-context/config',
+			true,
+			initImage
+		);
+
+	if (shellScripts.setup && imageAlreadyBuilt(initImage)) {
+		copyConfig();
+		initPromise = buildLocalImage();
+	}
+	else {
+		initPromise = buildLocalImage(initImage).then(() =>
 			editImage(
 				shellScripts.setup,
 				undefined,
@@ -840,16 +846,13 @@ const make = (pullingUpdates = false) => {
 				undefined,
 				initImage
 			).then(() => {
-				dockerCP(
-					'/home/gibson/.config',
-					'.local-docker-context/config',
-					true,
-					initImage
-				);
-
+				copyConfig();
 				return buildLocalImage();
 			})
-		))
+		);
+	}
+
+	initPromise = initPromise
 		.then(() =>
 			spawnAsync('docker', [
 				'tag',
@@ -999,7 +1002,7 @@ switch (args.command) {
 		}
 }
 
-if (makeRequired && !imageAlreadyBuilt) {
+if (makeRequired && !imageAlreadyBuilt()) {
 	if (args.noAutoMake) {
 		fail('Image not yet built. Run `./docker.js make` first.');
 	}
