@@ -11,7 +11,7 @@ require (
 	github.com/buu700/mustache-tmp v1.0.1
 	github.com/census-instrumentation/opencensus-proto v0.3.0 // indirect
 	github.com/cespare/xxhash/v2 v2.1.2 // indirect
-	github.com/envoyproxy/go-control-plane v0.10.0 // indirect
+	github.com/envoyproxy/go-control-plane v0.10.1 // indirect
 	github.com/envoyproxy/protoc-gen-validate v0.6.2 // indirect
 	github.com/felixge/httpsnoop v1.0.2 // indirect
 	github.com/fsouza/fake-gcs-server v1.30.2
@@ -20,11 +20,11 @@ require (
 	github.com/gorilla/mux v1.8.0
 	github.com/microcosm-cc/bluemonday v1.0.16
 	github.com/oschwald/geoip2-golang v1.5.0
-	github.com/stripe/stripe-go/v72 v72.74.0
-	golang.org/x/net v0.0.0-20211112202133-69e39bad7dc2 // indirect
+	github.com/stripe/stripe-go/v72 v72.75.0
+	golang.org/x/net v0.0.0-20211116231205-47ca1ff31462 // indirect
 	golang.org/x/oauth2 v0.0.0-20211104180415-d3ed0bb246c8 // indirect
-	golang.org/x/sys v0.0.0-20211113001501-0c823b97ae02 // indirect
+	golang.org/x/sys v0.0.0-20211116061358-0a5406a5449c // indirect
 	google.golang.org/api v0.60.0
-	google.golang.org/genproto v0.0.0-20211115160612-a5da7257a6f7
+	google.golang.org/genproto v0.0.0-20211116182654-e63d96a377c4
 	google.golang.org/grpc v1.42.0 // indirect
 )
