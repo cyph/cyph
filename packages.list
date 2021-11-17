@@ -10,6 +10,8 @@
 # NATIVESCRIPT: tns-ios
 # NATIVESCRIPT: tns-platform-declarations
 @agm/core
+@angular-builders/bazel
+@angular-builders/custom-webpack
 @angular-devkit/architect
 @angular-devkit/architect-cli
 @angular-devkit/build-angular
