@@ -15,54 +15,41 @@ fi
 
 # Temporary workarounds for https://github.com/angular/angular-cli/issues/10525
 
-minifyScripts="$(
-	grep -rlP "this\.options(\.sequences|\[['\"]sequences['\"]\])" \
-		/node_modules/@angular* \
-		/node_modules/ng-* \
-		/node_modules/*terse* \
-		/node_modules/*uglify* \
-		/node_modules/*webpack*
-)"
+minifyScript='/node_modules/@angular-devkit/build-angular/src/webpack/plugins/javascript-optimizer-worker.js'
+
+cp ${minifyScript} ${minifyScript}.bak
+
+patch "${minifyScript}" << EOM
+64c64
+<             minifyIdentifiers: !options.keepNames,
+---
+>             minifyIdentifiers: false,
+73c73
+<             keepNames: options.keepNames,
+---
+>             keepNames: true,
+111a112
+>             sequences: false,
+115c116,121
+<         mangle: false,
+---
+>         mangle: {
+>             reserved: require(
+>                 '$(cd "$(dirname "$0")" ; pwd)/../scripts/mangleexceptions'
+>             ).mangleExceptions,
+>             safari10: true,
+>         },
+EOM
 
 onexit () {
-	for minifyScript in ${minifyScripts} ; do
-		minifyScriptMin="$(echo "${minifyScript}" | sed 's|\.js$|.min.js|')"
-
-		mv ${minifyScript}.bak ${minifyScript} 2> /dev/null
-
-		if [ -f "${minifyScriptMin}.bak" ] ; then
-			mv ${minifyScriptMin}.bak ${minifyScriptMin}
-		fi
-	done
+	mv ${minifyScript}.bak ${minifyScript}
 }
 
 if [ "${noBuild}" ] || [ "${fullMinify}" ] ; then
-	minifyScripts=''
+	onexit
 else
 	trap onexit EXIT
 fi
-
-for minifyScript in ${minifyScripts} ; do
-	minifyScriptMin="$(echo "${minifyScript}" | sed 's|\.js$|.min.js|')"
-
-	cp ${minifyScript} ${minifyScript}.bak
-
-	commandsDir="$(cd "$(dirname "$0")" ; pwd)"
-
-	cat ${minifyScript} |
-		perl -pe "s/this\.options\[['\"]sequences['\"]\]/this.options.sequences/g" |
-		perl -pe "s/this\.options\.sequences/this.options.sequences = false/g" |
-		perl -pe "s/reserved:\s*?\[\]/reserved: require('$(echo "${commandsDir}" | sed 's|/|\\/|g')\\/..\\/scripts\\/mangleexceptions').mangleExceptions/g" |
-		perl -pe "s/safari10\s*?=.*?;/safari10 = true;/g" |
-		perl -pe "s/safari10\s*?:\s*?false/safari10: true/g" \
-	> ${minifyScript}.new
-	mv ${minifyScript}.new ${minifyScript}
-
-	if [ -f "${minifyScriptMin}" ] ; then
-		mv ${minifyScriptMin} ${minifyScriptMin}.bak
-		cp ${minifyScript} ${minifyScriptMin}
-	fi
-done
 
 
 # Workaround for https://github.com/angular/angular-cli/issues/10612
