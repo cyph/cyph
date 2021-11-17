@@ -1,4 +1,6 @@
 FROM cyph/base@sha256:a039c1c450cee18b60c15e30316b2d3bf88807d4c9485c9bdf484079ddd6d810
 
-WORKDIR /cyph/commands
-CMD /bin/bash serve.sh
+RUN sudo ln -s /workspaces/cyph /cyph
+
+WORKDIR /workspaces/cyph/commands
+CMD /bin/bash

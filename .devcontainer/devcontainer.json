@@ -1,0 +1,14 @@
+{
+	"name": "Cyph",
+	"build": {
+		"context": "..",
+		"dockerfile": "../Dockerfile.codespace"
+	},
+	"forwardPorts": [42000, 42001, 42002],
+	"postAttachCommand": [
+		"/bin/bash",
+		"commands/serve.sh",
+		"--disable-host-check"
+	],
+	"runArgs": ["--privileged"]
+}
