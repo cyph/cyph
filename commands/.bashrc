@@ -1,5 +1,8 @@
 # Sourced by bashrc within Docker
 
+if [ ! "${CYPH_BASHRC_INIT_COMPLETE}" ] ; then
+
+
 export GIT_EDITOR='vim'
 export GOPATH='/home/gibson/go'
 export ANDROID_HOME='/home/gibson/androidsdk'
@@ -271,4 +274,8 @@ fi
 # Workaround for localhost not working in CircleCI
 if [ "${CIRCLECI}" ] ; then
 	sed -i 's|localhost|0.0.0.0|g' /cyph/commands/serve.sh /cyph/*/protractor.conf.js
+fi
+
+
+export CYPH_BASHRC_INIT_COMPLETE=true
 fi

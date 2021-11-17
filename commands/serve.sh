@@ -3,6 +3,7 @@
 
 dir="$PWD"
 cd $(cd "$(dirname "$0")" ; pwd)/..
+source ~/.bashrc
 
 
 customBuild=''
@@ -189,12 +190,18 @@ bash -c "
 	export LOCAL_ENV=true
 	export PORT=45000
 	$(node -e "console.log(
-		fs.readFileSync('backend/.build.yaml').toString()
-			.split('env_variables:')[1]
-			.trim()
-			.split('\n')
-			.map(s => s.trim().split(':'))
-			.map(([k, v]) => 'export ' + k + '=' + v.trim()).join('\n')
+		fs.existsSync('backend/.build.yaml') ?
+			(
+				fs.readFileSync('backend/.build.yaml').toString()
+					.split('env_variables:')[1] ||
+					''
+			)
+				.trim()
+				.split('\n')
+				.filter(s => s)
+				.map(s => s.trim().split(':'))
+				.map(([k, v]) => 'export ' + k + '=' + v.trim()).join('\n') :
+			''
 	)")
 	gin --all -i -p 42000 -a \${PORT} run *.go
 " &
