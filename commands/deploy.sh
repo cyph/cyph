@@ -532,6 +532,8 @@ if [ "${websign}" ] ; then
 
 	log 'Compressing resources for deployment to CDN'
 
+	ipfsInit
+
 	if [ -d pkg/cyph.app-subresources ] ; then
 		find pkg/cyph.app-subresources -type f -not -name '*.srihash' -print0 | xargs -0 -P4 -I% bash -c ' \
 			gzip -k9 %; \

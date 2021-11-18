@@ -115,11 +115,7 @@ ipfsAdd () {
 }
 
 ipfsAddNative () {
-	if ! ps ux | grep 'ipfs daemon' | grep -v grep &> /dev/null ; then
-		bash -c 'ipfs daemon &' &> /dev/null
-		while ! ipfs swarm peers &> /dev/null ; do sleep 1 ; done
-	fi
-
+	ipfsInit
 	ipfs add -q "${@}"
 }
 
@@ -137,6 +133,13 @@ ipfsGateways () {
 
 ipfsHash () {
 	ipfs add -qn "${1}"
+}
+
+ipfsInit () {
+	if ! ps ux | grep 'ipfs daemon' | grep -v grep &> /dev/null ; then
+		bash -c 'ipfs daemon &' &> /dev/null
+		while ! ipfs swarm peers &> /dev/null ; do sleep 1 ; done
+	fi
 }
 
 export defaultGateway='https://gateway.ipfs.io/ipfs/:hash'
@@ -249,6 +252,7 @@ export -f ipfsAdd
 export -f ipfsAddNative
 export -f ipfsGateways
 export -f ipfsHash
+export -f ipfsInit
 export -f ipfsWarmUp
 export -f ipfsWarmUpAll
 export -f log
