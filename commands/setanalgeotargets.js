@@ -3,7 +3,7 @@
 import {getMeta} from '../modules/base.js';
 const {__dirname} = getMeta(import.meta);
 
-import parse from 'csv-parse/lib/sync.js';
+import {parse} from 'csv-parse/sync';
 import fs from 'fs';
 import os from 'os';
 
