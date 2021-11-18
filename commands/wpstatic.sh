@@ -256,7 +256,7 @@ for f in $(find . -name '*.html') ; do node -e "(async () => {
 					'User-Agent': 'Mozilla/5.0 (compatible; MSIE 10.0; Windows NT 6.1; Trident/6.0)'
 				}
 			}).then(res =>
-				res.buffer()
+				res.arrayBuffer()
 			);
 
 			const hash = (await superSphincs.hash(content)).hex;
