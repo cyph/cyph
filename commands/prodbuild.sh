@@ -20,17 +20,19 @@ minifyScript='/node_modules/@angular-devkit/build-angular/src/webpack/plugins/ja
 cp ${minifyScript} ${minifyScript}.bak
 
 patch "${minifyScript}" << EOM
-64c64
-<             minifyIdentifiers: !options.keepNames,
+27d26
+<     const esbuildResult = await optimizeWithEsbuild(asset.code, asset.name, options);
+29c28
+<     const terserResult = await optimizeWithTerser(asset.name, esbuildResult.code, options.sourcemap, options.target, options.advanced);
 ---
->             minifyIdentifiers: false,
-73c73
-<             keepNames: options.keepNames,
+>     const terserResult = await optimizeWithTerser(asset.name, asset.code, options.sourcemap, options.target, options.advanced);
+110c109
+<             passes: advanced ? 2 : 1,
 ---
->             keepNames: true,
-111a112
+>             passes: 3,
+111a111
 >             sequences: false,
-115c116,121
+115c115,120
 <         mangle: false,
 ---
 >         mangle: {
