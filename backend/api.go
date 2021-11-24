@@ -1620,7 +1620,7 @@ func stripeSession(h HandlerArgs) (interface{}, int) {
 	mode := stripe.CheckoutSessionModePayment
 	var recurring *stripe.CheckoutSessionLineItemPriceDataRecurringParams
 	var paymentIntentData *stripe.CheckoutSessionPaymentIntentDataParams
-	var subscriptioData *stripe.CheckoutSessionSubscriptionDataParams
+	var subscriptionData *stripe.CheckoutSessionSubscriptionDataParams
 
 	if interval != "" {
 		mode = stripe.CheckoutSessionModeSubscription
@@ -1629,7 +1629,7 @@ func stripeSession(h HandlerArgs) (interface{}, int) {
 			Interval: stripe.String(interval),
 		}
 
-		subscriptioData = &stripe.CheckoutSessionSubscriptionDataParams{
+		subscriptionData = &stripe.CheckoutSessionSubscriptionDataParams{
 			Metadata: metadata,
 		}
 	} else {
@@ -1680,7 +1680,7 @@ func stripeSession(h HandlerArgs) (interface{}, int) {
 		PaymentMethodTypes: stripe.StringSlice([]string{
 			"card",
 		}),
-		SubscriptionData: subscriptioData,
+		SubscriptionData: subscriptionData,
 		SuccessURL:       stripe.String(websiteURL + "/checkout-success"),
 	}
 
