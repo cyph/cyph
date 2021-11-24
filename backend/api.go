@@ -1633,8 +1633,6 @@ func stripeSession(h HandlerArgs) (interface{}, int) {
 			Metadata: metadata,
 		}
 	} else {
-		adjustableQuantity.Enabled = stripe.Bool(false)
-
 		paymentIntentData = &stripe.CheckoutSessionPaymentIntentDataParams{
 			Metadata: metadata,
 		}
@@ -1878,6 +1876,7 @@ func stripeWebhookWorker(h HandlerArgs) (interface{}, int) {
 		amount = originalSubscriptionItem.Price.UnitAmount * quantity
 	} else {
 		amount = paymentIntent.Amount
+		quantity = paymentIntent.Invoice.Subscription.Quantity
 	}
 
 	amountString := strconv.FormatInt(amount, 10)
@@ -1976,6 +1975,10 @@ func stripeWebhookWorker(h HandlerArgs) (interface{}, int) {
 			customerIDs = append(customerIDs, customerID)
 			subscriptionIDs = append(subscriptionIDs, subscriptionID)
 			subscriptionItemIDs = append(subscriptionItemIDs, subscriptionItem.ID)
+		}
+	} else {
+		for i := int64(1); i < quantity; i++ {
+			subscriptionItemIDs = append(subscriptionItemIDs, "")
 		}
 	}
 
