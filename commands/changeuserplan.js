@@ -4,12 +4,25 @@ import {getMeta} from '../modules/base.js';
 const {isCLI} = getMeta(import.meta);
 
 import {configService as config, proto, util} from '@cyph/sdk';
+import read from 'read';
 import {initDatabaseService} from '../modules/database-service.js';
 import {sendEmail} from './email.js';
 import {cancelSubscriptions} from './subscriptions.js';
 
 const {CyphPlan, CyphPlans, CyphPlanTypes} = proto;
 const {readableByteLength, normalize, readableID, titleize} = util;
+
+const readInput = async prompt =>
+	new Promise(resolve => {
+		read(
+			{
+				prompt
+			},
+			(err, s) => {
+				resolve(err ? undefined : s);
+			}
+		);
+	});
 
 export const changeUserPlan = async (
 	projectId,
@@ -118,24 +131,38 @@ export const changeUserPlan = async (
 		throw new Error(`User already has plan "${plan}".`);
 	}
 
-	await cancelSubscriptions({
-		apple:
-			oldPaymentInfo.appStoreReceipt &&
-			oldPaymentInfo.appStoreReceipt !== paymentInfo?.appStoreReceipt ?
-				oldPaymentInfo.appStoreReceipt :
-				undefined,
-		braintree:
-			oldPaymentInfo.braintreeSubscriptionID &&
-			oldPaymentInfo.braintreeSubscriptionID !==
-				paymentInfo?.braintreeSubscriptionID ?
-				oldPaymentInfo.braintreeSubscriptionID :
-				undefined,
-		stripe:
-			oldPaymentInfo.stripe?.subscriptionItemID !==
-			paymentInfo?.stripe?.subscriptionItemID ?
-				oldPaymentInfo.stripe?.subscriptionItemID :
-				undefined
-	});
+	console.dir({oldPaymentInfo, paymentInfo}, {depth: undefined});
+
+	let removePaymentInfo;
+	while (!paymentInfo && removePaymentInfo === undefined) {
+		const response = await readInput(
+			`Remove old payment info for @${username}? [y/n]`
+		);
+		removePaymentInfo =
+			response === 'y' ? true : response === 'n' ? false : undefined;
+	}
+
+	if (removePaymentInfo) {
+		await cancelSubscriptions({
+			apple:
+				oldPaymentInfo.appStoreReceipt &&
+				oldPaymentInfo.appStoreReceipt !==
+					paymentInfo?.appStoreReceipt ?
+					oldPaymentInfo.appStoreReceipt :
+					undefined,
+			braintree:
+				oldPaymentInfo.braintreeSubscriptionID &&
+				oldPaymentInfo.braintreeSubscriptionID !==
+					paymentInfo?.braintreeSubscriptionID ?
+					oldPaymentInfo.braintreeSubscriptionID :
+					undefined,
+			stripe:
+				oldPaymentInfo.stripe?.subscriptionItemID !==
+				paymentInfo?.stripe?.subscriptionItemID ?
+					oldPaymentInfo.stripe?.subscriptionItemID :
+					undefined
+		});
+	}
 
 	const planConfig = config.planConfig[cyphPlan];
 	const oldPlanConfig = config.planConfig[oldPlan];
@@ -151,26 +178,23 @@ export const changeUserPlan = async (
 		}),
 		paymentInfo?.appStoreReceipt ?
 			appStoreReceiptRef.set(paymentInfo?.appStoreReceipt) :
-			appStoreReceiptRef.remove(),
+			removePaymentInfo && appStoreReceiptRef.remove(),
 		paymentInfo?.braintreeID ?
 			braintreeIDRef.set(paymentInfo?.braintreeID) :
-			braintreeIDRef.remove(),
+			removePaymentInfo && braintreeIDRef.remove(),
 		paymentInfo?.braintreeSubscriptionID ?
 			braintreeSubscriptionIDRef.set(
 				paymentInfo?.braintreeSubscriptionID
 			) :
-			braintreeSubscriptionIDRef.remove(),
+			removePaymentInfo && braintreeSubscriptionIDRef.remove(),
 		paymentInfo?.stripe ?
 			stripeRef.set(paymentInfo?.stripe) :
-			stripeRef.remove(),
-		database
-			.ref(`${namespacePath}/users/${username}/internal/planTrialEnd`)
-			.remove(),
+			removePaymentInfo && stripeRef.remove(),
 		trialMonths ?
 			planTrialEndRef.set(
 				new Date().setMonth(new Date().getMonth() + trialMonths)
 			) :
-			planTrialEndRef.remove(),
+			removePaymentInfo && planTrialEndRef.remove(),
 		(async () => {
 			if (planConfig.initialInvites === undefined) {
 				return;
