@@ -3,7 +3,7 @@ module api
 go 1.15
 
 require (
-	cloud.google.com/go v0.97.0
+	cloud.google.com/go v0.99.0
 	cloud.google.com/go/cloudtasks v1.0.0
 	cloud.google.com/go/datastore v1.6.0
 	cloud.google.com/go/storage v1.18.2
@@ -11,20 +11,19 @@ require (
 	github.com/buu700/mustache-tmp v1.0.1
 	github.com/census-instrumentation/opencensus-proto v0.3.0 // indirect
 	github.com/cespare/xxhash/v2 v2.1.2 // indirect
+	github.com/cncf/xds/go v0.0.0-20211130200136-a8f946100490 // indirect
 	github.com/envoyproxy/go-control-plane v0.10.1 // indirect
 	github.com/envoyproxy/protoc-gen-validate v0.6.2 // indirect
 	github.com/felixge/httpsnoop v1.0.2 // indirect
-	github.com/fsouza/fake-gcs-server v1.30.2
+	github.com/fsouza/fake-gcs-server v1.31.0
 	github.com/golang/groupcache v0.0.0-20210331224755-41bb18bfe9da // indirect
 	github.com/gorilla/handlers v1.5.1
 	github.com/gorilla/mux v1.8.0
 	github.com/microcosm-cc/bluemonday v1.0.16
 	github.com/oschwald/geoip2-golang v1.5.0
-	github.com/stripe/stripe-go/v72 v72.75.0
-	golang.org/x/net v0.0.0-20211116231205-47ca1ff31462 // indirect
-	golang.org/x/oauth2 v0.0.0-20211104180415-d3ed0bb246c8 // indirect
-	golang.org/x/sys v0.0.0-20211116061358-0a5406a5449c // indirect
-	google.golang.org/api v0.60.0
-	google.golang.org/genproto v0.0.0-20211116182654-e63d96a377c4
+	github.com/stripe/stripe-go/v72 v72.77.0
+	golang.org/x/net v0.0.0-20211208012354-db4efeb81f4b // indirect
+	google.golang.org/api v0.62.0
+	google.golang.org/genproto v0.0.0-20211208223120-3a66f561d7aa
 	google.golang.org/grpc v1.42.0 // indirect
 )
