@@ -139,7 +139,7 @@ export class Analytics {
 
 		this.visitor = (async () => {
 			const visitor = ua(config.analConfig.accountID, await this.uid, {
-				hostname: this.env.baseUrl.split('/')[2],
+				hostname: this.env.baseUrl.split('/').slice(0, 3).join('/'),
 				https: this.env.baseUrl.startsWith('https://'),
 				path: '/analytics/collect',
 				strictCidFormat: false
