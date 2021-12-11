@@ -833,6 +833,8 @@ const make = () => {
 			initImage
 		);
 
+	removeDirectory('.local-docker-context/config');
+
 	if (shellScripts.setup && imageAlreadyBuilt(initImage)) {
 		copyConfig();
 		initPromise = buildLocalImage();
