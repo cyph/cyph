@@ -28,6 +28,8 @@
 			"debug": ["js/externals/debug"],
 			"faye-websocket": ["js/externals/faye-websocket"],
 			/* "fs": ["js/externals/fs"], */
+			"http": ["js/externals/http"],
+			"https": ["js/externals/https"],
 			"libsodium": ["js/externals/libsodium"],
 			"lodash/*": ["../node_modules/@types/lodash-es/*"],
 			"request": ["js/externals/request"],

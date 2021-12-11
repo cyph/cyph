@@ -10,6 +10,8 @@
 			"_stream_writable": ["app/js/externals/_stream_writable"],
 			"debug": ["app/js/externals/debug"],
 			"faye-websocket": ["app/js/externals/faye-websocket"],
+			"http": ["app/js/externals/http"],
+			"https": ["app/js/externals/https"],
 			"jquery": ["app/externals/jquery"],
 			"libsodium": ["app/js/externals/libsodium"],
 			"request": ["app/js/externals/request"],

@@ -282,8 +282,10 @@ done
 for anyType in \
 	assert-browserify \
 	crypto-browserify \
+	https-browserify \
 	readable-stream \
-	stream-browserify
+	stream-browserify \
+	stream-http
 do
 	anyTypePackage="$(echo "${anyType}" | sed 's|/|__|g')"
 	mkdir -p "@types/${anyTypePackage}"

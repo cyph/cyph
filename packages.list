@@ -298,6 +298,7 @@ html-to-text
 html2canvas
 htmlencode
 htmllint
+https-browserify
 husky
 ical-generator
 image-type
@@ -422,6 +423,7 @@ sodiumutil
 sphincs
 stacktrace-js
 stream-browserify
+stream-http
 stripe
 stripe-angular
 stylelint
