@@ -825,36 +825,34 @@ const make = () => {
 			'.'
 		]);
 
-	const copyConfig = () =>
-		dockerCP(
-			'/home/gibson/.config',
-			'.local-docker-context/config',
-			true,
-			initImage
-		);
-
 	removeDirectory('.local-docker-context/config');
 
-	if (shellScripts.setup && imageAlreadyBuilt(initImage)) {
-		copyConfig();
-		initPromise = buildLocalImage();
-	}
-	else {
-		initPromise = buildLocalImage(initImage).then(() =>
-			editImage(
-				shellScripts.setup,
-				undefined,
-				undefined,
-				undefined,
-				initImage
-			).then(() => {
-				copyConfig();
-				return buildLocalImage();
-			})
-		);
-	}
-
 	initPromise = initPromise
+		.then(
+			() =>
+				shellScripts.setup &&
+				!imageAlreadyBuilt(initImage) &&
+				buildLocalImage(initImage).then(() =>
+					editImage(
+						shellScripts.setup,
+						undefined,
+						undefined,
+						undefined,
+						initImage
+					)
+				)
+		)
+		.then(
+			() =>
+				shellScripts.setup &&
+				dockerCP(
+					'/home/gibson/.config',
+					'.local-docker-context/config',
+					true,
+					initImage
+				)
+		)
+		.then(() => buildLocalImage())
 		.then(() =>
 			spawnAsync('docker', [
 				'tag',
