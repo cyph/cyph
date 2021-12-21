@@ -136,10 +136,18 @@ ipfsHash () {
 }
 
 ipfsInit () {
-	if ! ps ux | grep 'ipfs daemon' | grep -v grep &> /dev/null ; then
+	newDaemonInit=''
+	while ! ps ux | grep 'ipfs daemon' | grep -v grep &> /dev/null ; do
+		newDaemonInit=true
+		rm ~/.ipfs/repo.lock &> /dev/null
 		bash -c 'ipfs daemon &' &> /dev/null
-		while ! ipfs swarm peers &> /dev/null ; do sleep 1 ; done
-	fi
+		sleep 5
+	done
+
+	while [ "${newDaemonInit}" ] ; do
+		ipfs swarm peers &> /dev/null && break
+		sleep 1
+	done
 }
 
 export defaultGateway='https://gateway.ipfs.io/ipfs/:hash'
