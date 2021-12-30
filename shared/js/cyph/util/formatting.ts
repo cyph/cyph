@@ -53,7 +53,7 @@ export const normalizeArray = memoize(
 );
 
 /**
- * Normalizes and sorts set.
+ * Normalizes set.
  */
 export const normalizeSet = memoize(
 	(arr: string[] | Set<string>) : Set<string> =>
