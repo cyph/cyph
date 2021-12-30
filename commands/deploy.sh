@@ -1128,14 +1128,20 @@ elif [ "${saveBuildArtifacts}" ] ; then
 	cp -rf ~/.build ./
 fi
 
-# Push out latest package data
-if [ "${websign}" ] && ( [ "${test}" ] || [ "${debug}" ] || [ "${betaProd}" ] ) ; then
-	mv ~/.build ~/.build.test
-	touch ~/.noupdaterepos
-	cd ~/.cyph/repos/internal
-	git checkout public
-	git pull
-	./commands/deploy.sh --prod --fast --site backend
+notificationMessage=''
+if [ -f .public-backend-deployment ] ; then
+	notificationMessage="$(cat .public-backend-deployment)"
+	rm .public-backend-deployment
+else
+	notificationMessage="deploy complete: ${version}$(test "${site}" && echo ", ${site}")"
+
+	# Push out latest package data
+	if [ "${websign}" ] && ( [ "${test}" ] || [ "${debug}" ] || [ "${betaProd}" ] ) ; then
+		echo "${notificationMessage}" > .public-backend-deployment
+		notificationMessage=''
+	fi
 fi
 
-notify --admins "deploy complete: ${version}$(test "${site}" && echo ", ${site}")"
+if [ "${notificationMessage}" ] ; then
+	notify --admins "${notificationMessage}"
+fi

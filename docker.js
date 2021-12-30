@@ -169,6 +169,10 @@ const circleciConfigPath = path.join(__dirname, 'circle.yml');
 const codespaceDockerfilePath = path.join(__dirname, 'Dockerfile.codespace');
 const gitconfigPath = path.join(homeDir, '.gitconfig');
 const gitconfigDockerPath = `${dockerHomeDir}/.gitconfig`;
+const publicBackendDeploymentPath = path.join(
+	__dirname,
+	'.public-backend-deployment'
+);
 const serveReadyPath = path.join(__dirname, 'serve.ready');
 const webSignServeReadyPath = path.join(__dirname, 'websign-serve.ready');
 
@@ -192,6 +196,7 @@ const needAGSE =
 const isProdAGSEDeploy = needAGSE && args.command === 'deploy' && args.prod;
 
 const initImage = 'cyph/init';
+const publicImage = 'cyph/public';
 
 const image =
 	'cyph/' +
@@ -309,10 +314,11 @@ const shellScripts = {
 			sleep 1
 		" &
 	`,
-	command: `
+	command: '',
+	commandBase: `
 		${containerInitScript}
 		source ~/.bashrc
-		/cyph/commands/${commandScript} ${shellCommandArgs}
+		\${RUN_COMMAND}
 		if [ '${args.command}' != 'notify' ] ; then
 			notify 'Command complete: ${args.command}' &> /dev/null
 		fi
@@ -340,6 +346,11 @@ const shellScripts = {
 			firebase login --no-localhost
 		`
 };
+
+shellScripts.command = shellScripts.commandBase.replace(
+	'${RUN_COMMAND}',
+	`/cyph/commands/${commandScript} ${shellCommandArgs}`
+);
 
 const backup = () => {
 	if (!isCyphInternal || isWindows) {
@@ -455,6 +466,19 @@ const dockerCheckCondition = condition =>
 		true
 	) === 'dothemove';
 
+const dockerPrune = () =>
+	spawnAsync('docker', ['system', 'prune', '-f'])
+		.then(() =>
+			spawnAsync('docker', [
+				'run',
+				'--pid=host',
+				'--privileged',
+				'--rm',
+				'docker/desktop-reclaim-space'
+			])
+		)
+		.then(() => spawnAsync('docker', ['system', 'prune', '-f']));
+
 const editImage = (
 	command,
 	condition,
@@ -500,17 +524,7 @@ const editImage = (
 				spawnAsync('docker', ['commit', tmpContainer, imageName])
 			)
 			.then(() => spawnAsync('docker', ['rm', '-f', tmpContainer]))
-			.then(() => spawnAsync('docker', ['system', 'prune', '-f']))
-			.then(() =>
-				spawnAsync('docker', [
-					'run',
-					'--pid=host',
-					'--privileged',
-					'--rm',
-					'docker/desktop-reclaim-space'
-				])
-			)
-			.then(() => spawnAsync('docker', ['system', 'prune', '-f']))
+			.then(() => dockerPrune())
 			.then(() => true);
 	});
 
@@ -808,24 +822,32 @@ const removeDirectory = dir => {
 	}
 };
 
+const buildLocalImage = (imageName = image, digests = baseImageDigests) =>
+	spawnAsync('docker', [
+		'buildx',
+		'build',
+		'--load',
+		'-t',
+		imageName,
+		'-f',
+		'Dockerfile.local',
+		'--build-arg',
+		`BASE_DIGEST=${digests[currentArch]}`,
+		'.'
+	]);
+
 const make = () => {
 	killEverything();
 
-	const buildLocalImage = (imageName = image) =>
-		spawnAsync('docker', [
-			'buildx',
-			'build',
-			'--load',
-			'-t',
-			imageName,
-			'-f',
-			'Dockerfile.local',
-			'--build-arg',
-			`BASE_DIGEST=${baseImageDigests[currentArch]}`,
-			'.'
-		]);
-
 	removeDirectory('.local-docker-context/config');
+
+	childProcess.spawnSync('git', [
+		'remote',
+		'add',
+		'public',
+		'https://github.com/cyph/cyph'
+	]);
+	childProcess.spawnSync('git', ['fetch', '--all']);
 
 	initPromise = initPromise
 		.then(
@@ -867,24 +889,59 @@ const make = () => {
 				`${image}_original:latest`
 			])
 		)
+		.then(() =>
+			buildLocalImage(
+				publicImage,
+				JSON.parse(
+					spawn('git', [
+						'show',
+						'public/master:base-image-digests.json'
+					])
+				)
+			)
+		)
 		.then(() => {
 			removeDirectory('.local-docker-context/config');
 			return dockerCP('/node_modules', 'shared/node_modules', true);
 		})
-		.then(() => spawnAsync('docker', ['system', 'prune', '-f']))
-		.then(() =>
-			spawnAsync('docker', [
-				'run',
-				'--pid=host',
-				'--privileged',
-				'--rm',
-				'docker/desktop-reclaim-space'
-			])
-		)
-		.then(() => spawnAsync('docker', ['system', 'prune', '-f']))
+		.then(() => dockerPrune())
 		.then(() => huskySetup());
 
 	return initPromise;
+};
+
+const makePublicImage = () => {
+	killEverything();
+
+	childProcess.spawnSync('git', [
+		'remote',
+		'add',
+		'public',
+		'https://github.com/cyph/cyph'
+	]);
+	childProcess.spawnSync('git', ['fetch', '--all']);
+
+	return dockerCP(
+		'/home/gibson/.config',
+		'.local-docker-context/config',
+		true,
+		initImage
+	)
+		.then(() =>
+			buildLocalImage(
+				publicImage,
+				JSON.parse(
+					spawn('git', [
+						'show',
+						'public/master:base-image-digests.json'
+					])
+				)
+			)
+		)
+		.then(() => {
+			removeDirectory('.local-docker-context/config');
+			return dockerPrune();
+		});
 };
 
 if (needAGSE) {
@@ -1051,6 +1108,25 @@ initPromise.then(() => {
 		})
 		.then(() => {
 			switch (args.command) {
+				case 'deploy':
+					if (!fs.existsSync(publicBackendDeploymentPath)) {
+						return;
+					}
+
+					return makePublicImage().then(() =>
+						dockerRun(
+							shellScripts.commandBase.replace(
+								'${RUN_COMMAND}',
+								'/cyph/commands/deploy.sh --prod --site backend'
+							),
+							containerName(args.command),
+							args.background,
+							false,
+							commandAdditionalArgs,
+							undefined,
+							publicImage
+						)
+					);
 				case 'make':
 					return spawnAsync('node', ['docker.js', 'protobuf']);
 

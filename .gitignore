@@ -1,5 +1,6 @@
 /.bootstrap.original
 /.build
+/.public-backend-deployment
 /.websign.tmp
 /account-backups
 /docs
