@@ -96,7 +96,7 @@ export const appointmentInvite = onCall(
 						const userRef =
 							o.username &&
 							database.ref(
-								`${namespace}/users/${o.username}/internal/name`
+								`${namespace}/users/${o.username}/internal`
 							);
 
 						const [userName, userRealUsername] = await Promise.all([
@@ -216,8 +216,8 @@ export const appointmentInvite = onCall(
 								emailTo,
 								`${messageStatusPrefixSpace}Cyph Appointment with @${inviterUsername}`,
 								{
-									markdown: `${messageStatusPrefixLineBreak}${inviteeMessagePart1}.\n\n${inviteeMessagePart2}\n\n${messageAddendumEmail}${messageAddendumMembers}`,
-									noUnsubscribe: true
+									noUnsubscribe: true,
+									text: `${messageStatusPrefixLineBreak}${inviteeMessagePart1}.\n\n${inviteeMessagePart2}\n\n${messageAddendumEmail}${messageAddendumMembers}`
 								},
 								{
 									attendees: members,

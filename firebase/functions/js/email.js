@@ -110,7 +110,9 @@ export const sendEmailInternal = async (
 			accountsURLShort: accountsURL.split('://')[1]
 		};
 
-		text = text.template ?
+		text = text.text ?
+			text.text :
+		text.template ?
 			render(text.template, data) :
 		text.templateName ?
 			await renderTemplate(text.templateName, data) :
