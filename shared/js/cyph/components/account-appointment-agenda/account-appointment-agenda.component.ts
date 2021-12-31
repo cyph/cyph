@@ -19,6 +19,7 @@ import {
 import {ItemModel, MenuEventArgs} from '@syncfusion/ej2-angular-splitbuttons';
 import {Internationalization} from '@syncfusion/ej2-base';
 import memoize from 'lodash-es/memoize';
+import unescape from 'lodash-es/unescape';
 import {BaseProvider} from '../../base-provider';
 import {ISchedulerObject} from '../../calendar';
 import {IAppointment} from '../../proto/types';
@@ -286,25 +287,39 @@ export class AccountAppointmentAgendaComponent
 			return;
 		}
 
+		const transformRecord = (o: any) : any => {
+			if (typeof o !== 'object' || !o) {
+				return o;
+			}
+
+			for (const k of Object.keys(o)) {
+				if (typeof o[k] === 'string') {
+					o[k] = unescape(o[k]);
+				}
+			}
+
+			return o;
+		};
+
 		try {
 			this.accountService.interstitial.next(true);
 
 			await Promise.all(
-				(e.addedRecords || []).map(async (o: any) =>
-					this.appointmentFork(o)
-				)
+				(e.addedRecords || [])
+					.map(transformRecord)
+					.map(async (o: any) => this.appointmentFork(o))
 			);
 
 			await Promise.all(
-				(e.changedRecords || []).map(async (o: any) =>
-					this.appointmentEdit(o)
-				)
+				(e.changedRecords || [])
+					.map(transformRecord)
+					.map(async (o: any) => this.appointmentEdit(o))
 			);
 
 			await Promise.all(
-				(e.deletedRecords || []).map(async (o: any) =>
-					this.appointmentDelete(o)
-				)
+				(e.deletedRecords || [])
+					.map(transformRecord)
+					.map(async (o: any) => this.appointmentDelete(o))
 			);
 		}
 		finally {
