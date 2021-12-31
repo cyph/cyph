@@ -808,17 +808,20 @@ const removeDirectory = dir => {
 	}
 };
 
-const imageUpToDate = (imageName = image, digests = baseImageDigests) => {
+const getBaseImageDigest = (imageName = image) => {
 	try {
-		return (
-			JSON.parse(spawn('docker', ['image', 'inspect', imageName]))[0]
-				.Config.Labels.BASE_DIGEST === digests[currentArch]
-		);
+		return JSON.parse(spawn('docker', ['image', 'inspect', imageName]))[0]
+			.Config.Labels.BASE_DIGEST;
 	}
 	catch (_) {
-		return false;
+		return '';
 	}
 };
+
+const imageUpToDate = (imageName = image, digests = baseImageDigests) =>
+	digests &&
+	digests[currentArch] &&
+	digests[currentArch] === getBaseImageDigest(imageName);
 
 const buildLocalImage = (
 	imageName = image,
@@ -858,6 +861,8 @@ const make = () => {
 	killEverything();
 
 	removeDirectory('.local-docker-context/config');
+
+	const publicImageDigests = getPublicImageDigests();
 
 	initPromise = initPromise
 		.then(
@@ -899,7 +904,15 @@ const make = () => {
 				`${image}_original:latest`
 			])
 		)
-		.then(() => buildLocalImage(publicImage, getPublicImageDigests()))
+		.then(() =>
+			publicImageDigests[currentArch] === baseImageDigests[currentArch] ?
+				spawnAsync('docker', [
+					'tag',
+					`${image}:latest`,
+					`${publicImage}:latest`
+				]) :
+				buildLocalImage(publicImage, publicImageDigests)
+		)
 		.then(() => {
 			removeDirectory('.local-docker-context/config');
 			return dockerCP('/node_modules', 'shared/node_modules', true);
@@ -914,10 +927,18 @@ const makePublicImage = () => {
 	const publicImageDigests = getPublicImageDigests();
 
 	if (imageUpToDate(publicImage, publicImageDigests)) {
-		return;
+		return Promise.resolve();
 	}
 
 	killEverything();
+
+	if (publicImageDigests[currentArch] === getBaseImageDigest()) {
+		return spawnAsync('docker', [
+			'tag',
+			`${image}:latest`,
+			`${publicImage}:latest`
+		]);
+	}
 
 	return dockerCP(
 		'/home/gibson/.config',
