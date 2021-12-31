@@ -323,17 +323,6 @@ const shellScripts = {
 			notify 'Command complete: ${args.command}' &> /dev/null
 		fi
 	`,
-	libUpdate: {
-		command: `
-			${containerInitScript}
-			source ~/.bashrc
-			/cyph/commands/updatedockerimage.sh
-			/cyph/commands/getlibs.sh
-		`,
-		condition: `
-			! cmp /cyph/base-image-digests.json /home/gibson/.base-image-digests.json &> /dev/null
-		`
-	},
 	setup: !isCyphInternal ?
 		'' :
 		`
@@ -558,10 +547,7 @@ const huskySetup = () => {
 };
 
 const pullUpdates = (forceUpdate = false) => {
-	if (
-		args.noUpdates ||
-		!dockerCheckCondition(shellScripts.libUpdate.condition)
-	) {
+	if (args.noUpdates || imageUpToDate()) {
 		return Promise.resolve();
 	}
 
@@ -822,25 +808,39 @@ const removeDirectory = dir => {
 	}
 };
 
-const buildLocalImage = (imageName = image, digests = baseImageDigests) =>
-	spawnAsync('docker', [
-		'buildx',
-		'build',
-		'--load',
-		'-t',
-		imageName,
-		'-f',
-		'Dockerfile.local',
-		'--build-arg',
-		`BASE_DIGEST=${digests[currentArch]}`,
-		'.'
-	]);
+const imageUpToDate = (imageName = image, digests = baseImageDigests) => {
+	try {
+		return (
+			JSON.parse(spawn('docker', ['image', 'inspect', imageName]))[0]
+				.Config.Labels.BASE_DIGEST === digests[currentArch]
+		);
+	}
+	catch (_) {
+		return false;
+	}
+};
 
-const make = () => {
-	killEverything();
+const buildLocalImage = (
+	imageName = image,
+	digests = baseImageDigests,
+	updatesOnly = false
+) =>
+	!updatesOnly || !imageUpToDate(image, digests) ?
+		spawnAsync('docker', [
+			'buildx',
+			'build',
+			'--load',
+			'-t',
+			imageName,
+			'-f',
+			'Dockerfile.local',
+			'--build-arg',
+			`BASE_DIGEST=${digests[currentArch]}`,
+			'.'
+		]) :
+		undefined;
 
-	removeDirectory('.local-docker-context/config');
-
+const getPublicImageDigests = () => {
 	childProcess.spawnSync('git', [
 		'remote',
 		'add',
@@ -848,6 +848,16 @@ const make = () => {
 		'https://github.com/cyph/cyph'
 	]);
 	childProcess.spawnSync('git', ['fetch', '--all']);
+
+	return JSON.parse(
+		spawn('git', ['show', 'public/master:base-image-digests.json'])
+	);
+};
+
+const make = () => {
+	killEverything();
+
+	removeDirectory('.local-docker-context/config');
 
 	initPromise = initPromise
 		.then(
@@ -889,17 +899,7 @@ const make = () => {
 				`${image}_original:latest`
 			])
 		)
-		.then(() =>
-			buildLocalImage(
-				publicImage,
-				JSON.parse(
-					spawn('git', [
-						'show',
-						'public/master:base-image-digests.json'
-					])
-				)
-			)
-		)
+		.then(() => buildLocalImage(publicImage, getPublicImageDigests()))
 		.then(() => {
 			removeDirectory('.local-docker-context/config');
 			return dockerCP('/node_modules', 'shared/node_modules', true);
@@ -911,15 +911,13 @@ const make = () => {
 };
 
 const makePublicImage = () => {
-	killEverything();
+	const publicImageDigests = getPublicImageDigests();
 
-	childProcess.spawnSync('git', [
-		'remote',
-		'add',
-		'public',
-		'https://github.com/cyph/cyph'
-	]);
-	childProcess.spawnSync('git', ['fetch', '--all']);
+	if (imageUpToDate(publicImage, publicImageDigests)) {
+		return;
+	}
+
+	killEverything();
 
 	return dockerCP(
 		'/home/gibson/.config',
@@ -927,17 +925,7 @@ const makePublicImage = () => {
 		true,
 		initImage
 	)
-		.then(() =>
-			buildLocalImage(
-				publicImage,
-				JSON.parse(
-					spawn('git', [
-						'show',
-						'public/master:base-image-digests.json'
-					])
-				)
-			)
-		)
+		.then(() => buildLocalImage(publicImage, publicImageDigests))
 		.then(() => {
 			removeDirectory('.local-docker-context/config');
 			return dockerPrune();

@@ -1,7 +1,8 @@
 ARG BASE_DIGEST
 FROM cyph/base@${BASE_DIGEST}
+ARG BASE_DIGEST
+LABEL BASE_DIGEST="${BASE_DIGEST}"
 
-COPY base-image-digests.json /home/gibson/.base-image-digests.json
 COPY .local-docker-context /home/gibson/.local-docker-context
 
 RUN sudo bash -c ' \
