@@ -103,7 +103,7 @@ export class VideoComponent
 	@Input() public showAudioLevel: boolean = false;
 
 	/** Path, URL, or `srcObject`. */
-	@Input() public src?: string | MediaStream | MediaSource | Blob;
+	@Input() public src?: string | MediaProvider;
 
 	/** Title to display in video header. */
 	@Input() public title?: string;
@@ -112,9 +112,7 @@ export class VideoComponent
 	@ViewChild('video') public video?: ElementRef<HTMLVideoElement>;
 
 	/** @ignore */
-	private setVideoSrc (
-		src?: string | MediaStream | MediaSource | Blob
-	) : void {
+	private setVideoSrc (src?: string | MediaProvider) : void {
 		if (this.audioContext) {
 			this.audioContext.alive = false;
 		}
@@ -147,7 +145,12 @@ export class VideoComponent
 			this.video.nativeElement.srcObject = src;
 		}
 		else {
-			this.srcObjectURL = URL.createObjectURL(src);
+			/*
+				MediaStream argument to URL.createObjectURL is deprecated,
+				but any environments that don't support it will support
+				HTMLVideoElement.prototype.
+			*/
+			this.srcObjectURL = URL.createObjectURL(<any> src);
 			this.video.nativeElement.src = this.srcObjectURL;
 		}
 
