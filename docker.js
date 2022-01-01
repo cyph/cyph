@@ -1126,7 +1126,7 @@ initPromise.then(() => {
 						dockerRun(
 							shellScripts.commandBase.replace(
 								'${RUN_COMMAND}',
-								'/cyph/commands/deploy.sh --prod --site backend'
+								'/cyph/commands/deploy.sh --public-backend-deployment'
 							),
 							containerName(args.command),
 							args.background,

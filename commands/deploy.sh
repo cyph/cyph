@@ -11,6 +11,7 @@ eval "$(parseArgs \
 	--opt-bool firebase-local \
 	--opt-bool pack \
 	--opt-bool prod \
+	--opt-bool public-backend-deployment \
 	--opt-bool save-build-artifacts \
 	--opt-bool simple \
 	--opt simple-custom-build \
@@ -55,6 +56,22 @@ skipWebsite=''
 test=true
 websign=true
 assetsFrozen=''
+
+if [ "${_arg_public_backend_deployment}" == 'on' ] ; then
+	./commands/updaterepos.js
+	touch ~/.noupdaterepos
+	cd ~/.cyph/repos/internal
+	git checkout public
+
+	if [ -f ${dir}/.public-backend-deployment ] ; then
+		mv ${dir}/.public-backend-deployment ./
+	else
+		fail '.public-backend-deployment not found'
+	fi
+
+	./commands/deploy.sh --prod --fast --site backend
+	exit ${?}
+fi
 
 if [ "${_arg_simple}" == 'on' ] ; then
 	simple=true
