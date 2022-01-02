@@ -905,7 +905,7 @@ const make = () => {
 			])
 		)
 		.then(() =>
-			!shellScripts.setup ?
+			!shellScripts.setup || currentArch !== 'linux/amd64' ?
 				undefined :
 			publicImageDigests[currentArch] === baseImageDigests[currentArch] ?
 				spawnAsync('docker', [
