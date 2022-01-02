@@ -905,6 +905,8 @@ const make = () => {
 			])
 		)
 		.then(() =>
+			!shellScripts.setup ?
+				undefined :
 			publicImageDigests[currentArch] === baseImageDigests[currentArch] ?
 				spawnAsync('docker', [
 					'tag',
