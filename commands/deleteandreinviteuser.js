@@ -76,7 +76,7 @@ export const deleteAndReinviteUser = async (projectId, username) => {
 		projectId,
 		metadata.internal.email,
 		metadata.internal.name,
-		metadata.plan,
+		metadata.plan.name,
 		{permanent: username},
 		0,
 		1,

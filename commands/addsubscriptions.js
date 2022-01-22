@@ -100,7 +100,7 @@ export const addSubscriptions = async (projectId, username, count) => {
 		projectId,
 		metadata.internal.email,
 		metadata.internal.name,
-		metadata.plan,
+		metadata.plan.name,
 		undefined,
 		0,
 		count,

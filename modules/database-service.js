@@ -107,16 +107,35 @@ export const initDatabaseService = (config, isCloudFunction) => {
 				)
 			);
 		},
-		async getItem (namespace, url, proto, skipSignature, decompress)  {
-			url = processURL(namespace, url);
+		async getItem (
+			namespace,
+			url,
+			proto,
+			skipSignature,
+			decompress,
+			inlineDataOnly = false
+		)  {
+			const providedData =
+				url && typeof url === 'object' ? url : undefined;
 
-			const {data, hash} = await retry(async () =>
-				(await database.ref(url).once('value')).val()
-			);
+			url = processURL(namespace, providedData?.url || url);
+
+			const {data, hash} =
+				providedData ||
+				(await retry(async () =>
+					(await database.ref(url).once('value')).val()
+				));
 
 			let bytes = data ?
 				Buffer.from(data, 'base64') :
-				await databaseService.storageGetItem(undefined, url, hash);
+			!inlineDataOnly ?
+				await databaseService.storageGetItem(undefined, url, hash) :
+				undefined;
+
+			if (bytes === undefined) {
+				return proto.create();
+			}
+
 			if (skipSignature) {
 				bytes = bytes.slice(41256);
 			}

@@ -86,7 +86,7 @@ export const reinviteUser = async (projectId, username) => {
 		projectId,
 		metadata.internal.email,
 		metadata.internal.name,
-		metadata.plan,
+		metadata.plan.name,
 		reservedUsername,
 		0,
 		1,

@@ -8,6 +8,7 @@
 /serve.ready
 /threadpack.log
 /users.json
+/users.processed
 /websign/lib/*.webpack.js
 /websign-serve.ready
 .angular
