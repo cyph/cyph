@@ -149,6 +149,10 @@ export class AppModule {
 		potassiumService: PotassiumService,
 		stringsService: StringsService
 	) {
+		(<any> self).Zone[
+			(<any> self).Zone.__symbol__('ignoreConsoleErrorUncaughtError')
+		] = true;
+
 		for (const [k, v] of Array.from(
 			Object.entries({
 				accountAppointmentsService,
