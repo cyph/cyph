@@ -90,20 +90,58 @@ export const userStats = async (projectId, namespace) => {
 		totalContacts += contactCount;
 	}
 
-	return {
-		plans: Array.from(planCounts.entries()).map(([plan, userCount]) => [
-			plan,
-			{
-				averageContactCount: (
-					planContactCounts.get(plan) / userCount
-				).toFixed(2),
-				userCount
-			}
-		]),
-		total: {
-			averageContactCount: (totalContacts / users.length).toFixed(2),
-			userCount: users.length
+	const planGroups = users.reduce(
+		(o, user) => ({
+			...o,
+			[user.plan.name]: (o[user.plan.name] || []).concat(user)
+		}),
+		{}
+	);
+
+	const getGroupData = group => {
+		const totals = {
+			accountAgeDays: 0,
+			contactCount: 0,
+			daysSinceLastLogin: 0,
+			masterKeyConfirmedCount: 0,
+			messageCount: 0,
+			planAgeDays: 0,
+			userCount: group.length
+		};
+
+		for (const user of group) {
+			totals.accountAgeDays += user.dates.signup.daysSince;
+			totals.contactCount += user.contactCount;
+			totals.daysSinceLastLogin += user.dates.lastLogin.daysSince;
+			totals.masterKeyConfirmedCount += user.masterKeyConfirmed ? 1 : 0;
+			totals.messageCount += user.messageCount;
+			totals.planAgeDays += user.plan.lastChange.daysSince;
 		}
+
+		return {
+			averages: Object.entries(totals)
+				.map(([k, v]) =>
+					k === 'userCount' ?
+						{} :
+					k === 'masterKeyConfirmedCount' ?
+						{
+							masterKeyConfirmedPercentage: parseFloat(
+									((v / group.length) * 100).toFixed(2)
+								)
+						} :
+						{[k]: parseFloat((v / group.length).toFixed(2))}
+				)
+				.reduce((a, b) => ({...a, ...b}), {}),
+			totals
+		};
+	};
+
+	return {
+		plans: Object.entries(planGroups).map(([plan, group]) => [
+			plan,
+			getGroupData(group)
+		]),
+		total: getGroupData(users)
 	};
 };
 
