@@ -3,11 +3,7 @@
 import {getMeta} from '../modules/base.js';
 const {isCLI} = getMeta(import.meta);
 
-import {
-	batchUpdateMailingList,
-	mailingListIDs,
-	splitName
-} from './mailchimp.js';
+import {batchUpdateMailingList, mailingListIDs} from './mailchimp.js';
 import {userDataExport} from './userdataexport.js';
 
 export const updateMailchimp = async (projectId, namespace) => {
@@ -17,21 +13,13 @@ export const updateMailchimp = async (projectId, namespace) => {
 		mailingListIDs.users,
 		users
 			.filter(user => user.internal?.email)
-			.map(user => {
-				const {firstName, lastName} = splitName(user.internal.name);
-
-				return {
-					email: user.internal.email,
-					mergeFields: {
-						FNAME: firstName,
-						LNAME: lastName,
-						PLAN: user.plan.name,
-						TRIAL: user.internal.planTrialEnd ? 'true' : '',
-						USERNAME: user.username
-					},
-					statusIfNew: 'subscribed'
-				};
-			})
+			.map(user => ({
+				email: user.internal.email,
+				mergeFields: {
+					user
+				},
+				statusIfNew: 'subscribed'
+			}))
 	);
 };
 

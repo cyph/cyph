@@ -10,7 +10,7 @@ import {
 	onCall,
 	setItem
 } from '../init.js';
-import {addToMailingList, splitName} from '../mailchimp.js';
+import {addToMailingList} from '../mailchimp.js';
 import {namespaces} from '../namespaces.js';
 import {validateEmail, validateInput} from '../validation.js';
 
@@ -84,8 +84,6 @@ export const sendInvite = onCall(async (data, namespace, getUsername) => {
 	const plan =
 		inviteData.plan in CyphPlans ? inviteData.plan : CyphPlans.Free;
 
-	const {firstName, lastName} = splitName(name || '');
-
 	await Promise.all([
 		inviterPlanConfig.initialInvites !== undefined &&
 			inviteCodesRef.child(inviteCode).remove(),
@@ -118,11 +116,10 @@ export const sendInvite = onCall(async (data, namespace, getUsername) => {
 				}
 			),
 		addToMailingList(mailchimpCredentials?.listIDs?.pendingInvites, email, {
-			FNAME: firstName,
-			ICODE: inviteCode,
-			LNAME: lastName,
-			PLAN: CyphPlans[plan],
-			TRIAL: inviteData.planTrialEnd ? 'true' : ''
+			inviteCode,
+			name,
+			plan,
+			trial: !!inviteData.planTrialEnd
 		})
 			.then(async () =>
 				database

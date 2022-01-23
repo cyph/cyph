@@ -35,6 +35,7 @@ const {
 	batchUpdateMailingList,
 	getMailingList,
 	mailingListIDs,
+	mailingListMemberMetadata,
 	removeFromMailingList,
 	splitName
 } = (
@@ -46,6 +47,7 @@ export {
 	batchUpdateMailingList,
 	getMailingList,
 	mailingListIDs,
+	mailingListMemberMetadata,
 	removeFromMailingList,
 	splitName
 };

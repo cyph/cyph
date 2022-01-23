@@ -21,6 +21,7 @@ export const {
 	batchUpdateMailingList,
 	getMailingList,
 	mailingListIDs,
+	mailingListMemberMetadata,
 	removeFromMailingList,
 	splitName
 } = initMailchimp(mailchimp, mailchimpCredentials);

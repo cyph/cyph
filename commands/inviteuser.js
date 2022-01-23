@@ -7,7 +7,7 @@ import {configService as config, proto, util} from '@cyph/sdk';
 import {initDatabaseService} from '../modules/database-service.js';
 import {addInviteCode} from './addinvitecode.js';
 import {sendEmail} from './email.js';
-import {addToMailingList, mailingListIDs, splitName} from './mailchimp.js';
+import {addToMailingList, mailingListIDs} from './mailchimp.js';
 
 const {CyphPlans, CyphPlanTypes} = proto;
 const {readableByteLength, titleize} = util;
@@ -57,14 +57,11 @@ export const inviteUser = async (
 
 	if (projectId === 'cyphme' && email) {
 		try {
-			const {firstName, lastName} = splitName(name);
-
 			await addToMailingList(mailingListIDs.pendingInvites, email, {
-				FNAME: firstName,
-				ICODE: inviteCode,
-				LNAME: lastName,
-				PLAN: CyphPlans[cyphPlan],
-				TRIAL: trialMonths ? 'true' : ''
+				inviteCode,
+				name,
+				plan,
+				trial: !!trialMonths
 			});
 
 			await database

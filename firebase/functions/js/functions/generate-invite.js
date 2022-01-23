@@ -3,7 +3,7 @@ import {mailchimpCredentials} from '../cyph-admin-vars.js';
 import {getInviteTemplateData} from '../get-invite-template-data.js';
 import {sendEmailInternal} from '../email.js';
 import {database, getItem, getTokenKey, onRequest, setItem} from '../init.js';
-import {addToMailingList, splitName} from '../mailchimp.js';
+import {addToMailingList} from '../mailchimp.js';
 import {namespaces} from '../namespaces.js';
 import {stripe} from '../stripe.js';
 import * as tokens from '../tokens.js';
@@ -205,8 +205,6 @@ export const generateInvite = onRequest(true, async (req, res, namespace) => {
 			preexistingInviteCodeData.braintreeSubscriptionID;
 	}
 
-	const {firstName, lastName} = splitName(name);
-
 	const isPlanGroupPurchase = req.body.plan.startsWith('[');
 
 	const planGroups = isPlanGroupPurchase ?
@@ -307,13 +305,10 @@ export const generateInvite = onRequest(true, async (req, res, namespace) => {
 											?.pendingInvites,
 										email,
 										{
-											FNAME: firstName,
-											ICODE: inviteCode,
-											LNAME: lastName,
-											PLAN: CyphPlans[planGroup.plan],
-											TRIAL: planGroup.planTrialEnd ?
-												'true' :
-												''
+											inviteCode,
+											name,
+											plan: planGroup.plan,
+											trial: !!planGroup.planTrialEnd
 										}
 									)
 										.then(async () =>

@@ -1,3 +1,7 @@
+import {proto} from '@cyph/sdk';
+
+const {CyphPlans} = proto;
+
 export const initMailchimp = (mailchimp, mailchimpCredentials) => {
 	const addToMailingList = async (listID, email, mergeFields) =>
 		batchUpdateMailingList(listID, [
@@ -21,7 +25,11 @@ export const initMailchimp = (mailchimp, mailchimpCredentials) => {
 						o.email,
 						{
 							...(o.mergeFields ?
-								{merge_fields: o.mergeFields} :
+								{
+									merge_fields: mailingListMemberMetadata(
+											o.mergeFields
+										)
+								} :
 								{}),
 							...(o.status ? {status: o.status} : {}),
 							...(o.statusIfNew ?
@@ -76,6 +84,44 @@ export const initMailchimp = (mailchimp, mailchimpCredentials) => {
 	const getMailingList = async listID =>
 		mailchimp && listID ? mailchimp.lists.getList(listID) : [];
 
+	const mailingListMemberMetadata = ({
+		inviteCode = '',
+		name = '',
+		plan = '',
+		trial = false,
+		username = '',
+		user
+	} = {}) => {
+		if (user) {
+			inviteCode = user.inviteCode || inviteCode;
+			name = user.internal?.name || name;
+			plan = user.plan?.name || plan;
+			trial =
+				user.internal?.planTrialEnd === undefined ?
+					trial :
+					!!user.internal?.planTrialEnd;
+			username = user.username || username;
+		}
+
+		if (typeof plan === 'number') {
+			plan = CyphPlans[plan];
+		}
+		if (typeof plan !== 'string' || !plan || !(plan in CyphPlans)) {
+			plan = CyphPlans[CyphPlans.Free];
+		}
+
+		const {firstName, lastName} = splitName(name);
+
+		return {
+			...(username ? {USERNAME: username} : {}),
+			FNAME: firstName,
+			ICODE: inviteCode,
+			LNAME: lastName,
+			PLAN: plan,
+			TRIAL: trial ? 'true' : ''
+		};
+	};
+
 	const removeFromMailingList = async (listID, email) =>
 		batchUpdateMailingList(listID, [
 			{
@@ -98,6 +144,7 @@ export const initMailchimp = (mailchimp, mailchimpCredentials) => {
 		batchUpdateMailingList,
 		getMailingList,
 		mailingListIDs: mailchimpCredentials.listIDs,
+		mailingListMemberMetadata,
 		removeFromMailingList,
 		splitName
 	};

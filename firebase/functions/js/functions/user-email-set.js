@@ -8,7 +8,7 @@ import {
 	removeItem,
 	setItem
 } from '../init.js';
-import {addToMailingList, mailchimp, splitName} from '../mailchimp.js';
+import {addToMailingList, mailchimp} from '../mailchimp.js';
 import {sendVerificationEmail} from '../send-verification-email.js';
 import {updatePublishedEmail} from '../update-published-email.js';
 import {validateEmail} from '../validation.js';
@@ -79,19 +79,24 @@ export const userEmailSet = async ({after: data}, {params}) => {
 					return;
 				}
 
-				const {firstName, lastName} = splitName(
-					(await nameRef.once('value')).val()
-				);
+				const [inviteCode, name] = await Promise.all([
+					getItem(
+						params.namespace,
+						`users/${username}/inviteCode`,
+						StringProto
+					).catch(() => ''),
+					nameRef.once('value').then(o => o.val())
+				]);
 
 				await addToMailingList(
 					mailchimpCredentials.listIDs.users,
 					email,
 					{
-						FNAME: firstName,
-						LNAME: lastName,
-						PLAN: CyphPlans[plan],
-						TRIAL: planTrialEnd ? 'true' : '',
-						USERNAME: username
+						inviteCode,
+						name,
+						plan,
+						trial: !!planTrialEnd,
+						username
 					}
 				);
 			})().catch(() => {})
