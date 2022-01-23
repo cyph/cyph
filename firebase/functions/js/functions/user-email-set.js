@@ -75,12 +75,7 @@ export const userEmailSet = async ({after: data}, {params}) => {
 				) :
 				undefined,
 			(async () => {
-				if (
-					!mailchimp ||
-					!mailchimpCredentials ||
-					!mailchimpCredentials.listIDs ||
-					!mailchimpCredentials.listIDs.users
-				) {
+				if (!mailchimp || !mailchimpCredentials?.listIDs?.users) {
 					return;
 				}
 

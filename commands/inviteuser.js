@@ -59,21 +59,17 @@ export const inviteUser = async (
 		try {
 			const {firstName, lastName} = splitName(name);
 
-			const mailingListID = await addToMailingList(
-				mailingListIDs.pendingInvites,
-				email,
-				{
-					FNAME: firstName,
-					ICODE: inviteCode,
-					LNAME: lastName,
-					PLAN: CyphPlans[cyphPlan],
-					TRIAL: !!trialMonths
-				}
-			);
+			await addToMailingList(mailingListIDs.pendingInvites, email, {
+				FNAME: firstName,
+				ICODE: inviteCode,
+				LNAME: lastName,
+				PLAN: CyphPlans[cyphPlan],
+				TRIAL: !!trialMonths
+			});
 
 			await database
 				.ref(`${namespacePath}/pendingInvites/${inviteCode}`)
-				.set(mailingListID);
+				.set(email);
 		}
 		catch {}
 	}

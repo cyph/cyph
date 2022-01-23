@@ -13,6 +13,8 @@
 		"@firebase/messaging": "*",
 		"@firebase/storage": "*",
 		"@google-cloud/storage": "*",
+		"@mailchimp/mailchimp_marketing": "*",
+		"@mailchimp/mailchimp_transactional": "*",
 		"@msgpack/msgpack": "*",
 		"@node-rs/crc32": "*",
 		"@touch4it/ical-timezones": "*",

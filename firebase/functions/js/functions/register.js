@@ -10,7 +10,7 @@ import {
 	removeItem,
 	setItem
 } from '../init.js';
-import {mailchimp, removeFromMailingList} from '../mailchimp.js';
+import {removeFromMailingList} from '../mailchimp.js';
 import {stripe} from '../stripe.js';
 import {validateEmail} from '../validation.js';
 
@@ -214,16 +214,11 @@ export const register = onCall(
 				undefined,
 			pendingInviteRef
 				.once('value')
-				.then(
-					async o =>
-						mailchimp &&
-						mailchimpCredentials &&
-						mailchimpCredentials.listIDs &&
-						mailchimpCredentials.listIDs.pendingInvites &&
-						removeFromMailingList(
-							mailchimpCredentials.listIDs.pendingInvites,
-							o.val()
-						)
+				.then(async o =>
+					removeFromMailingList(
+						mailchimpCredentials?.listIDs?.pendingInvites,
+						o.val()
+					)
 				)
 				.catch(() => {})
 				.then(async () => pendingInviteRef.remove())

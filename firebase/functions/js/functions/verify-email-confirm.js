@@ -9,7 +9,7 @@ import {
 	removeItem,
 	setItem
 } from '../init.js';
-import {mailchimp, removeFromMailingList} from '../mailchimp.js';
+import {removeFromMailingList} from '../mailchimp.js';
 import * as tokens from '../tokens.js';
 import {updatePublishedEmail} from '../update-published-email.js';
 
@@ -58,14 +58,10 @@ export const verifyEmailConfirm = onCall(
 				emailVerifiedRef.remove(),
 				removeItem(namespace, `users/${username}/email`),
 				removeItem(namespace, `users/${username}/emailVerified`),
-				mailchimp &&
-					mailchimpCredentials &&
-					mailchimpCredentials.listIDs &&
-					mailchimpCredentials.listIDs.users &&
-					removeFromMailingList(
-						mailchimpCredentials.listIDs.users,
-						email
-					)
+				removeFromMailingList(
+					mailchimpCredentials?.listIDs?.users,
+					email
+				).catch(() => {})
 			]);
 
 			await notify(

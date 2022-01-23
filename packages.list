@@ -87,6 +87,8 @@
 @google-cloud/storage
 @ignatiusmb/scramble
 @isomorphic-git/lightning-fs
+@mailchimp/mailchimp_marketing
+@mailchimp/mailchimp_transactional
 @msgpack/msgpack
 @ngrx/core
 @ngrx/effects

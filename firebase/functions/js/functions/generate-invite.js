@@ -3,7 +3,7 @@ import {mailchimpCredentials} from '../cyph-admin-vars.js';
 import {getInviteTemplateData} from '../get-invite-template-data.js';
 import {sendEmailInternal} from '../email.js';
 import {database, getItem, getTokenKey, onRequest, setItem} from '../init.js';
-import {addToMailingList, mailchimp, splitName} from '../mailchimp.js';
+import {addToMailingList, splitName} from '../mailchimp.js';
 import {namespaces} from '../namespaces.js';
 import {stripe} from '../stripe.js';
 import * as tokens from '../tokens.js';
@@ -302,14 +302,9 @@ export const generateInvite = onRequest(true, async (req, res, namespace) => {
 										.catch(() => {}) :
 									undefined,
 								i === 0 &&
-								email &&
-								mailchimp &&
-								mailchimpCredentials &&
-								mailchimpCredentials.listIDs &&
-								mailchimpCredentials.listIDs.pendingInvites ?
 									addToMailingList(
-										mailchimpCredentials.listIDs
-											.pendingInvites,
+										mailchimpCredentials?.listIDs
+											?.pendingInvites,
 										email,
 										{
 											FNAME: firstName,
@@ -319,15 +314,14 @@ export const generateInvite = onRequest(true, async (req, res, namespace) => {
 											TRIAL: !!planGroup.planTrialEnd
 										}
 									)
-										.then(async mailingListID =>
+										.then(async () =>
 											database
 												.ref(
 													`${namespace}/pendingInvites/${inviteCode}`
 												)
-												.set(mailingListID)
+												.set(email)
 										)
-										.catch(() => {}) :
-									undefined
+										.catch(() => {})
 							]);
 
 							return inviteCode;

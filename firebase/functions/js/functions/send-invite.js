@@ -10,7 +10,7 @@ import {
 	onCall,
 	setItem
 } from '../init.js';
-import {addToMailingList, mailchimp, splitName} from '../mailchimp.js';
+import {addToMailingList, splitName} from '../mailchimp.js';
 import {namespaces} from '../namespaces.js';
 import {validateEmail, validateInput} from '../validation.js';
 
@@ -117,29 +117,19 @@ export const sendInvite = onCall(async (data, namespace, getUsername) => {
 					templateName: 'new-cyph-invite'
 				}
 			),
-		email &&
-		mailchimp &&
-		mailchimpCredentials &&
-		mailchimpCredentials.listIDs &&
-		mailchimpCredentials.listIDs.pendingInvites ?
-			addToMailingList(
-				mailchimpCredentials.listIDs.pendingInvites,
-				email,
-				{
-					FNAME: firstName,
-					ICODE: inviteCode,
-					LNAME: lastName,
-					PLAN: CyphPlans[plan],
-					TRIAL: !!inviteData.planTrialEnd
-				}
+		addToMailingList(mailchimpCredentials?.listIDs?.pendingInvites, email, {
+			FNAME: firstName,
+			ICODE: inviteCode,
+			LNAME: lastName,
+			PLAN: CyphPlans[plan],
+			TRIAL: !!inviteData.planTrialEnd
+		})
+			.then(async () =>
+				database
+					.ref(`${namespace}/pendingInvites/${inviteCode}`)
+					.set(email)
 			)
-				.then(async mailingListID =>
-					database
-						.ref(`${namespace}/pendingInvites/${inviteCode}`)
-						.set(mailingListID)
-				)
-				.catch(() => {}) :
-			undefined
+			.catch(() => {})
 	]);
 
 	return inviteCode;

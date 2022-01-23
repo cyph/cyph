@@ -795,7 +795,8 @@ then
 			export const cyphAdminKey = $(getBackendVar CYPH_FIREBASE_ADMIN_KEY);
 
 			export const mailchimpCredentials = {
-				apiKey: $(getBackendVar MAILCHIMP_API_KEY),
+				apiKey: $(getBackendVar MAILCHIMP_API_KEY).split('-')[0],
+				apiServer: $(getBackendVar MAILCHIMP_API_KEY).split('-')[1],
 				listIDs: {
 					pendingInvites: $(getBackendVar MAILCHIMP_LIST_ID_PENDING_INVITES),
 					users: $(getBackendVar MAILCHIMP_LIST_ID_USERS)

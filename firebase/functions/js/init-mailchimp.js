@@ -1,49 +1,55 @@
 export const initMailchimp = (mailchimp, mailchimpCredentials) => {
 	const addToMailingList = async (listID, email, mergeFields) =>
-		(
-			await mailchimp.post(`/lists/${listID}/members`, {
-				email_address: email,
-				status: 'subscribed',
-				merge_fields: mergeFields
-			})
-		).id;
-
-	const removeFromMailingList = async (listID, idOrEmail) => {
-		let id = typeof idOrEmail === 'string' ? idOrEmail : undefined;
-
-		if (!id) {
-			const email =
-				typeof idOrEmail === 'object' ?
-					(idOrEmail.email || '').toLowerCase().trim() :
-					undefined;
-
-			if (!email) {
-				return;
+		batchUpdateMailingList(listID, [
+			{
+				email,
+				mergeFields,
+				statusIfNew: 'subscribed'
 			}
+		]);
 
-			const res =
-				(await mailchimp.get('/search-members', {
-					list_id: listID,
-					query: email
-				})) || {};
-
-			const matches = [res.exact_matches, res.full_search]
-				.map(o => (o || {}).members || [])
-				.reduce((a, b) => a.concat(b));
-
-			id = (
-				matches.find(
-					o => email === o.email_address.toLowerCase().trim()
-				) || {}
-			).id;
-		}
-
-		if (!id) {
+	const batchUpdateMailingList = async (listID, members) => {
+		if (!mailchimp || !listID) {
 			return;
 		}
 
-		await mailchimp.delete(`/lists/${listID}/members/${id}`);
+		return mailchimp.lists
+			.batchListMembers(listID, {
+				members: members
+					.filter(o => !!o.email)
+					.map(o => ({
+						...(o.mergeFields ? {merge_fields: o.mergeFields} : {}),
+						...(o.status ? {status: o.status} : {}),
+						...(o.statusIfNew ?
+							{status_if_new: o.statusIfNew} :
+							{}),
+						email_address: o.email
+					})),
+				update_existing: true
+			})
+			.catch(err => {
+				console.error({
+					batchUpdateMailingListFailure: {
+						err,
+						listID,
+						members
+					}
+				});
+
+				throw err;
+			});
 	};
+
+	const getMailingList = async listID =>
+		mailchimp && listID ? mailchimp.lists.getList(listID) : [];
+
+	const removeFromMailingList = async (listID, email) =>
+		batchUpdateMailingList(listID, [
+			{
+				email,
+				status: 'unsubscribed'
+			}
+		]);
 
 	const splitName = name => {
 		const nameSplit = (name || '').split(' ');
@@ -56,6 +62,8 @@ export const initMailchimp = (mailchimp, mailchimpCredentials) => {
 
 	return {
 		addToMailingList,
+		batchUpdateMailingList,
+		getMailingList,
 		mailingListIDs: mailchimpCredentials.listIDs,
 		removeFromMailingList,
 		splitName
