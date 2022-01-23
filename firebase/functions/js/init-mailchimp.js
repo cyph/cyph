@@ -13,27 +13,37 @@ export const initMailchimp = (mailchimp, mailchimpCredentials) => {
 			return;
 		}
 
-		const memberGroups = members
-			.filter(o => !!o.email)
-			.map(o => ({
-				...(o.mergeFields ? {merge_fields: o.mergeFields} : {}),
-				...(o.status ? {status: o.status} : {}),
-				...(o.statusIfNew ? {status_if_new: o.statusIfNew} : {}),
-				email_address: o.email
-			}))
-			.reduce(
-				(arr, member) => {
-					if (arr[arr.length - 1].length >= 500) {
-						arr.push([member]);
-					}
-					else {
-						arr[arr.length - 1].push(member);
-					}
+		const memberGroups = Array.from(
+			new Map(
+				members
+					.filter(o => !!o.email)
+					.map(o => [
+						o.email,
+						{
+							...(o.mergeFields ?
+								{merge_fields: o.mergeFields} :
+								{}),
+							...(o.status ? {status: o.status} : {}),
+							...(o.statusIfNew ?
+								{status_if_new: o.statusIfNew} :
+								{}),
+							email_address: o.email
+						}
+					])
+			).values()
+		).reduce(
+			(arr, member) => {
+				if (arr[arr.length - 1].length >= 500) {
+					arr.push([member]);
+				}
+				else {
+					arr[arr.length - 1].push(member);
+				}
 
-					return arr;
-				},
-				[[]]
-			);
+				return arr;
+			},
+			[[]]
+		);
 
 		const responses = [];
 
