@@ -8,7 +8,7 @@ import fs from 'fs';
 import {initDatabaseService} from '../modules/database-service.js';
 import {getUserMetadata} from './getusermetadata.js';
 
-const {dynamicDeserialize, dynamicSerializeBytes, getOrSetDefault} = util;
+const {dynamicDeserialize, dynamicSerializeBytes} = util;
 
 export const userStats = async (projectId, namespace) => {
 	if (typeof projectId !== 'string' || projectId.indexOf('cyph') !== 0) {
@@ -71,24 +71,6 @@ export const userStats = async (projectId, namespace) => {
 	}
 
 	console.error('\n');
-
-	const planCounts = new Map();
-	const planContactCounts = new Map();
-	let totalContacts = 0;
-
-	for (const {
-		contactCount,
-		plan: {name: plan}
-	} of users) {
-		planCounts.set(plan, getOrSetDefault(planCounts, plan, () => 0) + 1);
-
-		planContactCounts.set(
-			plan,
-			getOrSetDefault(planContactCounts, plan, () => 0) + contactCount
-		);
-
-		totalContacts += contactCount;
-	}
 
 	const planGroups = users.reduce(
 		(o, user) => ({
