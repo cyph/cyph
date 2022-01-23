@@ -13,31 +13,54 @@ export const initMailchimp = (mailchimp, mailchimpCredentials) => {
 			return;
 		}
 
-		return mailchimp.lists
-			.batchListMembers(listID, {
-				members: members
-					.filter(o => !!o.email)
-					.map(o => ({
-						...(o.mergeFields ? {merge_fields: o.mergeFields} : {}),
-						...(o.status ? {status: o.status} : {}),
-						...(o.statusIfNew ?
-							{status_if_new: o.statusIfNew} :
-							{}),
-						email_address: o.email
-					})),
-				update_existing: true
-			})
-			.catch(err => {
+		const memberGroups = members
+			.filter(o => !!o.email)
+			.map(o => ({
+				...(o.mergeFields ? {merge_fields: o.mergeFields} : {}),
+				...(o.status ? {status: o.status} : {}),
+				...(o.statusIfNew ? {status_if_new: o.statusIfNew} : {}),
+				email_address: o.email
+			}))
+			.reduce(
+				(arr, member) => {
+					if (arr[arr.length - 1].length >= 500) {
+						arr.push([member]);
+					}
+					else {
+						arr[arr.length - 1].push(member);
+					}
+
+					return arr;
+				},
+				[[]]
+			);
+
+		const responses = [];
+
+		for (const group of memberGroups) {
+			try {
+				responses.push(
+					await mailchimp.lists.batchListMembers(listID, {
+						members: group,
+						update_existing: true
+					})
+				);
+			}
+			catch (err) {
 				console.error({
 					batchUpdateMailingListFailure: {
 						err,
+						group,
 						listID,
 						members
 					}
 				});
 
 				throw err;
-			});
+			}
+		}
+
+		return responses;
 	};
 
 	const getMailingList = async listID =>
