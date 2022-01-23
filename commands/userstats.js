@@ -103,6 +103,8 @@ export const userStats = async (projectId, namespace) => {
 			accountAgeDays: 0,
 			contactCount: 0,
 			daysSinceLastLogin: 0,
+			hasEmailAddressCount: 0,
+			hasVerifiedEmailCount: 0,
 			masterKeyConfirmedCount: 0,
 			messageCount: 0,
 			planAgeDays: 0,
@@ -113,6 +115,10 @@ export const userStats = async (projectId, namespace) => {
 			totals.accountAgeDays += user.dates.signup.daysSince;
 			totals.contactCount += user.contactCount;
 			totals.daysSinceLastLogin += user.dates.lastLogin.daysSince;
+			totals.hasEmailAddressCount += user.internal?.email ? 1 : 0;
+			totals.hasVerifiedEmailCount += user.internal?.emailVerified ?
+				1 :
+				0;
 			totals.masterKeyConfirmedCount += user.masterKeyConfirmed ? 1 : 0;
 			totals.messageCount += user.messageCount;
 			totals.planAgeDays += user.plan.lastChange.daysSince;
@@ -123,9 +129,9 @@ export const userStats = async (projectId, namespace) => {
 				.map(([k, v]) =>
 					k === 'userCount' ?
 						{} :
-					k === 'masterKeyConfirmedCount' ?
+					k.endsWith('Count') ?
 						{
-							masterKeyConfirmedPercentage: parseFloat(
+							[`${k.slice(0, -5)}Percentage`]: parseFloat(
 									((v / group.length) * 100).toFixed(2)
 								)
 						} :
