@@ -122,7 +122,7 @@ export const sendInvite = onCall(async (data, namespace, getUsername) => {
 			ICODE: inviteCode,
 			LNAME: lastName,
 			PLAN: CyphPlans[plan],
-			TRIAL: !!inviteData.planTrialEnd
+			TRIAL: inviteData.planTrialEnd ? 'true' : ''
 		})
 			.then(async () =>
 				database

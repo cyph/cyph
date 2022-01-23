@@ -90,7 +90,7 @@ export const userEmailSet = async ({after: data}, {params}) => {
 						FNAME: firstName,
 						LNAME: lastName,
 						PLAN: CyphPlans[plan],
-						TRIAL: !!planTrialEnd,
+						TRIAL: planTrialEnd ? 'true' : '',
 						USERNAME: username
 					}
 				);

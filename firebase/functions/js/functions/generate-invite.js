@@ -311,7 +311,9 @@ export const generateInvite = onRequest(true, async (req, res, namespace) => {
 											ICODE: inviteCode,
 											LNAME: lastName,
 											PLAN: CyphPlans[planGroup.plan],
-											TRIAL: !!planGroup.planTrialEnd
+											TRIAL: planGroup.planTrialEnd ?
+												'true' :
+												''
 										}
 									)
 										.then(async () =>

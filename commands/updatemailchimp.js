@@ -26,7 +26,7 @@ export const updateMailchimp = async (projectId, namespace) => {
 						FNAME: firstName,
 						LNAME: lastName,
 						PLAN: user.plan.name,
-						TRIAL: !!user.internal.planTrialEnd,
+						TRIAL: user.internal.planTrialEnd ? 'true' : '',
 						USERNAME: user.username
 					},
 					statusIfNew: 'subscribed'

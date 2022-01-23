@@ -64,7 +64,7 @@ export const inviteUser = async (
 				ICODE: inviteCode,
 				LNAME: lastName,
 				PLAN: CyphPlans[cyphPlan],
-				TRIAL: !!trialMonths
+				TRIAL: trialMonths ? 'true' : ''
 			});
 
 			await database
