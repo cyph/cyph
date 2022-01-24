@@ -11,15 +11,15 @@ export const updateMailchimp = async (projectId, namespace) => {
 
 	const pendingInvitesUpdateResponse = await batchUpdateMailingList(
 		mailingListIDs.pendingInvites,
-		Object.entries(inviteCodes)
-			.filter(([_, inviteCodeData]) => inviteCodeData.email)
-			.map(([inviteCode, inviteCodeData]) => ({
-				email: inviteCodeData.email,
+		inviteCodes
+			.filter(inviteCode => inviteCode.email)
+			.map(inviteCode => ({
+				email: inviteCode.email,
 				mergeFields: {
-					inviteCode,
-					inviterUsername: inviteCodeData.inviterUsername,
-					plan: inviteCodeData.plan,
-					trial: !!inviteCodeData.planTrialEnd
+					inviteCode: inviteCode.code,
+					inviterUsername: inviteCode.inviterUsername,
+					plan: inviteCode.plan,
+					trial: !!inviteCode.planTrialEnd
 				},
 				statusIfNew: 'subscribed'
 			}))

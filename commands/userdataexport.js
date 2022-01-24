@@ -26,15 +26,50 @@ export const userDataExport = async (projectId, namespace) => {
 
 		if (fs.existsSync(inviteCodesPath)) {
 			console.error('using cached invite-codes.json');
-			return JSON.parse(fs.readFileSync(inviteCodesPath).toString());
+			return fs
+				.readFileSync(inviteCodesPath)
+				.toString()
+				.trim()
+				.split('\n')
+				.map(s => JSON.parse(s));
 		}
 
-		const _inviteCodes = (
-			await database.ref(`${namespacePath}/inviteCodes`).once('value')
-		).val();
+		const _inviteCodes = [];
+		const inviteCodesRef = database.ref(`${namespacePath}/inviteCodes`);
+		let lastItemKey = undefined;
+		const paginationSize = 10000;
+
+		while (true) {
+			const chunk =
+				(
+					await (lastItemKey ?
+						inviteCodesRef.startAfter(undefined, lastItemKey) :
+						inviteCodesRef
+					)
+						.limitToFirst(paginationSize)
+						.once('value')
+				).val() || {};
+
+			const keys = Object.keys(chunk).sort();
+			if (keys.length < 1) {
+				break;
+			}
+
+			_inviteCodes.push(
+				...keys.map(k => ({
+					...chunk[k],
+					code: k
+				}))
+			);
+
+			lastItemKey = keys.slice(-1)[0];
+		}
 
 		console.error('caching invite code data at invite-codes.json');
-		fs.writeFileSync(inviteCodesPath, JSON.stringify(_inviteCodes));
+		fs.writeFileSync(
+			inviteCodesPath,
+			_inviteCodes.map(o => JSON.stringify(o)).join('\n')
+		);
 
 		return _inviteCodes;
 	})();
