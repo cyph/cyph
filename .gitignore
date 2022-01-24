@@ -4,6 +4,7 @@
 /.websign.tmp
 /account-backups
 /docs
+/invite-codes.json
 /qr-invite-codes
 /serve.ready
 /threadpack.log

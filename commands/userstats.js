@@ -6,7 +6,7 @@ const {isCLI} = getMeta(import.meta);
 import {userDataExport} from './userdataexport.js';
 
 export const userStats = async (projectId, namespace) => {
-	const users = await userDataExport(projectId, namespace);
+	const {users} = await userDataExport(projectId, namespace);
 
 	const planGroups = users.reduce(
 		(o, user) => ({

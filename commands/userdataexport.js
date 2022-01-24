@@ -21,58 +21,70 @@ export const userDataExport = async (projectId, namespace) => {
 	const {database} = initDatabaseService(projectId);
 	const namespacePath = namespace.replace(/\./g, '_');
 
-	const usersPath = `${__dirname}/../users.processed`;
-	const usersExists = fs.existsSync(usersPath);
+	const inviteCodes = await (async () => {
+		const inviteCodesPath = `${__dirname}/../invite-codes.json`;
 
-	const users = usersExists ?
-		dynamicDeserialize(fs.readFileSync(usersPath)) :
-		await (async () => {
-			const rawUsersPath = `${__dirname}/../users.json`;
-			const rawUsersExists = fs.existsSync(rawUsersPath);
+		if (fs.existsSync(inviteCodesPath)) {
+			console.error('using cached invite-codes.json');
+			return JSON.parse(fs.readFileSync(inviteCodesPath).toString());
+		}
 
-			const rawUsers = rawUsersExists ?
-					JSON.parse(fs.readFileSync(rawUsersPath).toString()) :
-					(
-						await database
-							.ref(`${namespacePath}/users`)
-							.once('value')
-					).val();
+		const _inviteCodes = (
+			await database.ref(`${namespacePath}/inviteCodes`).once('value')
+		).val();
 
-			if (rawUsersExists) {
-				console.error('using cached users.json');
-			}
-			else {
-				console.error('caching user data at users.json');
-				fs.writeFileSync(rawUsersPath, JSON.stringify(rawUsers));
-			}
+		console.error('caching invite code data at invite-codes.json');
+		fs.writeFileSync(inviteCodesPath, JSON.stringify(_inviteCodes));
 
-			return Promise.all(
-				Array.from(Object.entries(rawUsers)).map(
-					async ([username, user]) =>
-						getUserMetadata(
-							projectId,
-							{
-								...user,
-								username
-							},
-							namespace,
-							true
-						)
+		return _inviteCodes;
+	})();
+
+	const users = await (async () => {
+		const usersPath = `${__dirname}/../users.processed`;
+
+		if (fs.existsSync(usersPath)) {
+			console.error('using cached users.processed');
+			return dynamicDeserialize(fs.readFileSync(usersPath));
+		}
+
+		const rawUsersPath = `${__dirname}/../users.json`;
+		const rawUsersExists = fs.existsSync(rawUsersPath);
+
+		const rawUsers = rawUsersExists ?
+			JSON.parse(fs.readFileSync(rawUsersPath).toString()) :
+			(await database.ref(`${namespacePath}/users`).once('value')).val();
+
+		if (rawUsersExists) {
+			console.error('using cached users.json');
+		}
+		else {
+			console.error('caching user data at users.json');
+			fs.writeFileSync(rawUsersPath, JSON.stringify(rawUsers));
+		}
+
+		const _users = Promise.all(
+			Array.from(Object.entries(rawUsers)).map(async ([username, user]) =>
+				getUserMetadata(
+					projectId,
+					{
+						...user,
+						username
+					},
+					namespace,
+					true
 				)
-			);
-		})();
+			)
+		);
 
-	if (usersExists) {
-		console.error('using cached users.processed');
-	}
-	else {
 		console.error('caching processed user data at users.processed');
-		fs.writeFileSync(usersPath, dynamicSerializeBytes(users));
-	}
+		fs.writeFileSync(usersPath, dynamicSerializeBytes(_users));
+
+		return _users;
+	})();
 
 	console.error('\n');
 
-	return users;
+	return {inviteCodes, users};
 };
 
 if (isCLI) {

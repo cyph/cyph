@@ -134,10 +134,9 @@ export const initMailchimp = (mailchimp, mailchimpCredentials) => {
 				{SIGNUPDATE: user.dates.signup.date} :
 				{}),
 
+			...(name ? {FNAME: firstName, LNAME: lastName} : {}),
 			...(username ? {USERNAME: username} : {}),
-			FNAME: firstName,
 			ICODE: inviteCode,
-			LNAME: lastName,
 			PLAN: plan,
 			TRIAL: trial ? 'true' : ''
 		};

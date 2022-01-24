@@ -7,9 +7,24 @@ import {batchUpdateMailingList, mailingListIDs} from './mailchimp.js';
 import {userDataExport} from './userdataexport.js';
 
 export const updateMailchimp = async (projectId, namespace) => {
-	const users = await userDataExport(projectId, namespace);
+	const {inviteCodes, users} = await userDataExport(projectId, namespace);
 
-	return batchUpdateMailingList(
+	const pendingInvitesUpdateResponse = await batchUpdateMailingList(
+		mailingListIDs.pendingInvites,
+		Object.entries(inviteCodes)
+			.filter(([_, inviteCodeData]) => inviteCodeData.email)
+			.map(([inviteCode, inviteCodeData]) => ({
+				email: inviteCodeData.email,
+				mergeFields: {
+					inviteCode,
+					plan: inviteCodeData.plan,
+					trial: !!inviteCodeData.planTrialEnd
+				},
+				statusIfNew: 'subscribed'
+			}))
+	);
+
+	const usersUpdateResponse = await batchUpdateMailingList(
 		mailingListIDs.users,
 		users
 			.filter(user => user.internal?.email)
@@ -21,6 +36,8 @@ export const updateMailchimp = async (projectId, namespace) => {
 				statusIfNew: 'subscribed'
 			}))
 	);
+
+	return {pendingInvitesUpdateResponse, usersUpdateResponse};
 };
 
 if (isCLI) {
