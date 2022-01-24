@@ -636,6 +636,38 @@ const dockerBase64Files = s =>
 			.join('\n')
 	);
 
+let dockerBuildInitResult = undefined;
+const dockerBuildInit = () => {
+	if (dockerBuildInitResult === undefined) {
+		dockerBuildInitResult = Promise.resolve(
+			dockerCredentials ?
+				spawnAsync('docker', [
+					'login',
+					'-u',
+					dockerCredentials.username,
+					'-p',
+					dockerCredentials.password
+				]) :
+				undefined
+		)
+			.then(() =>
+				spawnAsync('docker', [
+					'buildx',
+					'create',
+					'--buildkitd-flags',
+					'--oci-worker-gc --oci-worker-gc-keepstorage 50000',
+					'--name',
+					'cyph_build_context'
+				])
+			)
+			.then(() =>
+				spawnAsync('docker', ['buildx', 'use', 'cyph_build_context'])
+			);
+	}
+
+	return dockerBuildInitResult;
+};
+
 const getImageDigests = image =>
 	spawn('docker', ['buildx', 'imagetools', 'inspect', image])
 		.split('Manifests:')[1]
@@ -661,30 +693,7 @@ const updateDockerImages = (amendCommit = false) => {
 		)
 	);
 
-	return Promise.resolve(
-		dockerCredentials ?
-			spawnAsync('docker', [
-				'login',
-				'-u',
-				dockerCredentials.username,
-				'-p',
-				dockerCredentials.password
-			]) :
-			undefined
-	)
-		.then(() =>
-			spawnAsync('docker', [
-				'buildx',
-				'create',
-				'--buildkitd-flags',
-				'--oci-worker-gc --oci-worker-gc-keepstorage 50000',
-				'--name',
-				'cyph_build_context'
-			])
-		)
-		.then(() =>
-			spawnAsync('docker', ['buildx', 'use', 'cyph_build_context'])
-		)
+	return dockerBuildInit()
 		.then(() =>
 			spawnAsync(
 				'docker',
@@ -831,18 +840,20 @@ const buildLocalImage = (
 	updatesOnly = false
 ) =>
 	!updatesOnly || !imageUpToDate(image, digests) ?
-		spawnAsync('docker', [
-			'buildx',
-			'build',
-			'--load',
-			'-t',
-			imageName,
-			'-f',
-			'Dockerfile.local',
-			'--build-arg',
-			`BASE_DIGEST=${digests[currentArch]}`,
-			'.'
-		]) :
+		dockerBuildInit().then(() =>
+			spawnAsync('docker', [
+				'buildx',
+				'build',
+				'--load',
+				'-t',
+				imageName,
+				'-f',
+				'Dockerfile.local',
+				'--build-arg',
+				`BASE_DIGEST=${digests[currentArch]}`,
+				'.'
+			])
+		) :
 		undefined;
 
 const getPublicImageDigests = () => {
