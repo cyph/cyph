@@ -5,6 +5,7 @@ const {__dirname, isCLI} = getMeta(import.meta);
 
 import {util} from '@cyph/sdk';
 import fs from 'fs';
+import readline from 'readline';
 import {initDatabaseService} from '../modules/database-service.js';
 import {getUserMetadata} from './getusermetadata.js';
 
@@ -22,19 +23,22 @@ export const userDataExport = async (projectId, namespace) => {
 	const namespacePath = namespace.replace(/\./g, '_');
 
 	const inviteCodes = await (async () => {
+		const _inviteCodes = [];
 		const inviteCodesPath = `${__dirname}/../invite-codes.json`;
 
 		if (fs.existsSync(inviteCodesPath)) {
 			console.error('using cached invite-codes.json');
-			return fs
-				.readFileSync(inviteCodesPath)
-				.toString()
-				.trim()
-				.split('\n')
-				.map(s => JSON.parse(s));
+
+			for await (const s of readline.createInterface({
+				crlfDelay: Infinity,
+				input: fs.createReadStream(inviteCodesPath)
+			})) {
+				_inviteCodes.push(JSON.parse(s));
+			}
+
+			return _inviteCodes;
 		}
 
-		const _inviteCodes = [];
 		const inviteCodesRef = database.ref(`${namespacePath}/inviteCodes`);
 		let lastItemKey = undefined;
 		const paginationSize = 10000;
@@ -66,10 +70,10 @@ export const userDataExport = async (projectId, namespace) => {
 		}
 
 		console.error('caching invite code data at invite-codes.json');
-		fs.writeFileSync(
-			inviteCodesPath,
-			_inviteCodes.map(o => JSON.stringify(o)).join('\n')
-		);
+		for (const o of _inviteCodes) {
+			fs.appendFileSync(inviteCodesPath, JSON.stringify(o) + '\n');
+		}
+		console.error('finished caching invite code data at invite-codes.json');
 
 		return _inviteCodes;
 	})();
@@ -95,6 +99,7 @@ export const userDataExport = async (projectId, namespace) => {
 		else {
 			console.error('caching user data at users.json');
 			fs.writeFileSync(rawUsersPath, JSON.stringify(rawUsers));
+			console.error('finished caching user data at users.json');
 		}
 
 		const _users = Promise.all(
@@ -113,6 +118,9 @@ export const userDataExport = async (projectId, namespace) => {
 
 		console.error('caching processed user data at users.processed');
 		fs.writeFileSync(usersPath, dynamicSerializeBytes(_users));
+		console.error(
+			'finished caching processed user data at users.processed'
+		);
 
 		return _users;
 	})();
