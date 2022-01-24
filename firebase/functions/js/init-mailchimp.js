@@ -113,6 +113,27 @@ export const initMailchimp = (mailchimp, mailchimpCredentials) => {
 		const {firstName, lastName} = splitName(name);
 
 		return {
+			/* TODO: Keep these continually in sync server-side */
+			...(user ?
+				{
+					CONTACTS: user.contactCount,
+					MESSAGES: user.messageCount,
+					MKCONFIRM: user.masterKeyConfirmed ? 'true' : ''
+				} :
+				{}),
+			...(user?.dates?.certIssuance?.date ?
+				{CERTDATE: user.dates.certIssuance.date} :
+				{}),
+			...(user?.dates?.lastLogin?.date ?
+				{LOGINDATE: user.dates.lastLogin.date} :
+				{}),
+			...(user?.plan?.lastChange?.date ?
+				{PLANDATE: user.plan.lastChange.date} :
+				{}),
+			...(user?.dates?.signup?.date ?
+				{SIGNUPDATE: user.dates.signup.date} :
+				{}),
+
 			...(username ? {USERNAME: username} : {}),
 			FNAME: firstName,
 			ICODE: inviteCode,
