@@ -59,6 +59,7 @@ export const inviteUser = async (
 		try {
 			await addToMailingList(mailingListIDs.pendingInvites, email, {
 				inviteCode,
+				keybaseUsername: misc.keybaseUsername,
 				name,
 				plan,
 				trial: !!trialMonths

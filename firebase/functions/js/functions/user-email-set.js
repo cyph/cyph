@@ -13,7 +13,7 @@ import {sendVerificationEmail} from '../send-verification-email.js';
 import {updatePublishedEmail} from '../update-published-email.js';
 import {validateEmail} from '../validation.js';
 
-const {CyphPlan, CyphPlans, StringProto} = proto;
+const {AccountUserProfileExtra, CyphPlan, CyphPlans, StringProto} = proto;
 
 export const userEmailSet = async ({after: data}, {params}) => {
 	const username = params.user;
@@ -79,19 +79,27 @@ export const userEmailSet = async ({after: data}, {params}) => {
 					return;
 				}
 
-				const [inviteCode, inviterUsername, name] = await Promise.all([
-					getItem(
-						params.namespace,
-						`users/${username}/inviteCode`,
-						StringProto
-					).catch(() => ''),
-					getItem(
-						params.namespace,
-						`users/${username}/inviterUsernamePlaintext`,
-						StringProto
-					).catch(() => ''),
-					nameRef.once('value').then(o => o.val())
-				]);
+				const [inviteCode, inviterUsername, name, publicProfileExtra] =
+					await Promise.all([
+						getItem(
+							params.namespace,
+							`users/${username}/inviteCode`,
+							StringProto
+						).catch(() => ''),
+						getItem(
+							params.namespace,
+							`users/${username}/inviterUsernamePlaintext`,
+							StringProto
+						).catch(() => ''),
+						nameRef.once('value').then(o => o.val()),
+						getItem(
+							params.namespace,
+							`users/${username}/publicProfileExtra`,
+							AccountUserProfileExtra,
+							true,
+							true
+						).catch(() => ({}))
+					]);
 
 				await addToMailingList(
 					mailchimpCredentials.listIDs.users,
@@ -99,6 +107,8 @@ export const userEmailSet = async ({after: data}, {params}) => {
 					{
 						inviteCode,
 						inviterUsername,
+						keybaseUsername:
+							publicProfileExtra.pgp?.keybaseUsername,
 						name,
 						plan,
 						trial: !!planTrialEnd,
