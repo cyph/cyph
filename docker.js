@@ -676,6 +676,8 @@ const updateDockerImages = (amendCommit = false) => {
 			spawnAsync('docker', [
 				'buildx',
 				'create',
+				'--buildkitd-flags',
+				'--oci-worker-gc --oci-worker-gc-keepstorage 50000',
 				'--name',
 				'cyph_build_context'
 			])
