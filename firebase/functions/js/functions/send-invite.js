@@ -117,6 +117,7 @@ export const sendInvite = onCall(async (data, namespace, getUsername) => {
 			),
 		addToMailingList(mailchimpCredentials?.listIDs?.pendingInvites, email, {
 			inviteCode,
+			inviterUsername,
 			name,
 			plan,
 			trial: !!inviteData.planTrialEnd

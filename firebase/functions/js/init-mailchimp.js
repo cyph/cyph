@@ -86,6 +86,7 @@ export const initMailchimp = (mailchimp, mailchimpCredentials) => {
 
 	const mailingListMemberMetadata = ({
 		inviteCode = '',
+		inviterUsername = '',
 		name = '',
 		plan = '',
 		trial = false,
@@ -94,6 +95,7 @@ export const initMailchimp = (mailchimp, mailchimpCredentials) => {
 	} = {}) => {
 		if (user) {
 			inviteCode = user.inviteCode || inviteCode;
+			inviterUsername = user.inviterUsername || inviterUsername;
 			name = user.internal?.name || name;
 			plan = user.plan?.name || plan;
 			trial =
@@ -137,6 +139,7 @@ export const initMailchimp = (mailchimp, mailchimpCredentials) => {
 			...(name ? {FNAME: firstName, LNAME: lastName} : {}),
 			...(username ? {USERNAME: username} : {}),
 			ICODE: inviteCode,
+			INVITER: inviterUsername,
 			PLAN: plan,
 			TRIAL: trial ? 'true' : ''
 		};

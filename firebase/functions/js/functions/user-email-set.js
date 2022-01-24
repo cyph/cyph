@@ -79,10 +79,15 @@ export const userEmailSet = async ({after: data}, {params}) => {
 					return;
 				}
 
-				const [inviteCode, name] = await Promise.all([
+				const [inviteCode, inviterUsername, name] = await Promise.all([
 					getItem(
 						params.namespace,
 						`users/${username}/inviteCode`,
+						StringProto
+					).catch(() => ''),
+					getItem(
+						params.namespace,
+						`users/${username}/inviterUsernamePlaintext`,
 						StringProto
 					).catch(() => ''),
 					nameRef.once('value').then(o => o.val())
@@ -93,6 +98,7 @@ export const userEmailSet = async ({after: data}, {params}) => {
 					email,
 					{
 						inviteCode,
+						inviterUsername,
 						name,
 						plan,
 						trial: !!planTrialEnd,

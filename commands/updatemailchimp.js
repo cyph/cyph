@@ -17,6 +17,7 @@ export const updateMailchimp = async (projectId, namespace) => {
 				email: inviteCodeData.email,
 				mergeFields: {
 					inviteCode,
+					inviterUsername: inviteCodeData.inviterUsername,
 					plan: inviteCodeData.plan,
 					trial: !!inviteCodeData.planTrialEnd
 				},
