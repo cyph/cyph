@@ -59,7 +59,7 @@ export class AccountContactsSearchComponent extends BaseProvider {
 	@Input() public minimum: number = 1;
 
 	/** @see SearchBarComponent.name */
-	@Input() public name?: string;
+	@Input() public name: string = 'account-contacts-search-input';
 
 	/** @see SearchBarComponent.placeholder */
 	@Input() public placeholder?: string;

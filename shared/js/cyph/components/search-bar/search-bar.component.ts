@@ -78,7 +78,7 @@ export class SearchBarComponent<T extends any>
 	@Input() public listLength: number = 10;
 
 	/** Input `name`. */
-	@Input() public name?: string;
+	@Input() public name: string = 'search-bar-input';
 
 	/** Search bar autocomplete options. */
 	@Input() public options?: Observable<ISearchOptions>;
