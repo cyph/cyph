@@ -22,7 +22,10 @@
 							"src/manifest.json",
 							"src/serviceworker.js"
 						],
-						"styles": ["src/css/cyph.app.scss"],
+						"styles": [
+							"node_modules/ngx-sharebuttons/themes/material.scss",
+							"src/css/cyph.app.scss"
+						],
 						"scripts": []
 					},
 					"configurations": {
@@ -313,7 +316,10 @@
 						"polyfills": "src/js/cyph.app/polyfills.ts",
 						"tsConfig": "src/tsconfig.spec.json",
 						"scripts": [],
-						"styles": ["src/css/cyph.app.scss"],
+						"styles": [
+							"node_modules/ngx-sharebuttons/themes/material.scss",
+							"src/css/cyph.app.scss"
+						],
 						"assets": [
 							"src/assets",
 							"src/favicon.ico",
