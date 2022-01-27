@@ -1,6 +1,7 @@
-import {proto} from '@cyph/sdk';
+import {proto, util} from '@cyph/sdk';
 
 const {CyphPlans} = proto;
+const {retryUntilSuccessful} = util;
 
 export const initMailchimp = (mailchimp, mailchimpCredentials) => {
 	const addToMailingList = async (listID, email, mergeFields) =>
@@ -58,10 +59,16 @@ export const initMailchimp = (mailchimp, mailchimpCredentials) => {
 		for (const group of memberGroups) {
 			try {
 				responses.push(
-					await mailchimp.lists.batchListMembers(listID, {
-						members: group,
-						update_existing: true
-					})
+					await retryUntilSuccessful(
+						async () =>
+							mailchimp.lists.batchListMembers(listID, {
+								members: group,
+								update_existing: true
+							}),
+						undefined,
+						undefined,
+						600000
+					)
 				);
 			}
 			catch (err) {
@@ -82,7 +89,14 @@ export const initMailchimp = (mailchimp, mailchimpCredentials) => {
 	};
 
 	const getMailingList = async listID =>
-		mailchimp && listID ? mailchimp.lists.getList(listID) : [];
+		mailchimp && listID ?
+			retryUntilSuccessful(
+				async () => mailchimp.lists.getList(listID),
+				undefined,
+				undefined,
+				60000
+			) :
+			[];
 
 	const mailingListMemberMetadata = ({
 		inviteCode = '',
