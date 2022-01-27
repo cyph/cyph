@@ -184,7 +184,7 @@ export const initMailchimp = (mailchimp, mailchimpCredentials) => {
 		addToMailingList,
 		batchUpdateMailingList,
 		getMailingList,
-		mailingListIDs: mailchimpCredentials.listIDs,
+		mailingListIDs: mailchimpCredentials?.listIDs || {},
 		mailingListMemberMetadata,
 		removeFromMailingList,
 		splitName

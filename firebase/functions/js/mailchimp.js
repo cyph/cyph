@@ -1,4 +1,4 @@
-import mailchimp from '@mailchimp/mailchimp_marketing';
+import mailchimpAPI from '@mailchimp/mailchimp_marketing';
 import {mailchimpCredentials} from './cyph-admin-vars.js';
 import {initMailchimp} from './init-mailchimp.js';
 
@@ -11,10 +11,10 @@ const config =
 		undefined;
 
 if (config) {
-	mailchimp.setConfig(config);
+	mailchimpAPI.setConfig(config);
 }
 
-export const mailchimp = config ? mailchimp : undefined;
+export const mailchimp = config ? mailchimpAPI : undefined;
 
 export const {
 	addToMailingList,
