@@ -325,7 +325,7 @@ div.author-remote .hide-content-button.mobile {
 
 			.media-message {
 				width: calc(80vw - 1px);
-				height: 128px;
+				height: auto;
 				margin: 0;
 				border-top-right-radius: $mobileMessageBorderRadius;
 				clip-path: inset(0 0 -100% 0);
