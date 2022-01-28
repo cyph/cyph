@@ -565,15 +565,16 @@
 							"
 							[fxShow]="menuExpanded | await"
 						>
-							<b>Account Status:</b>
-							{{
+							<strong cyphTranslate>Account Status:</strong>
+							&ngsp;
+							<span>{{
 								titleize(
 									cyphPlans[
 										(accountSettingsService.plan | await) ||
 											cyphPlans.Free
 									]
 								)
-							}}
+							}}</span>
 						</div>
 					</div>
 
