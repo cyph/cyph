@@ -486,18 +486,22 @@
 									class="avatar"
 									[ngClass]="
 										userPresence[
-											(currentUser?.user?.status | await) || 0
+											(currentUser?.user?.status
+												| await) || 0
 										]
 									"
 									alt="Profile Picture"
 									[src]="
-										(currentUser?.user?.avatar | await) || ''
+										(currentUser?.user?.avatar | await) ||
+										''
 									"
 									routerLink="/profile"
 									(click)="click()"
 								/>
 								<h3 matLine [fxShow]="menuExpanded | await">
-									{{ (currentUser?.user?.name | await) || '' }}
+									{{
+										(currentUser?.user?.name | await) || ''
+									}}
 								</h3>
 								<div
 									matLine
@@ -515,7 +519,8 @@
 									<mat-select
 										cyphTranslate
 										[ngModel]="
-											(currentUser?.user?.status | await) || 0
+											(currentUser?.user?.status
+												| await) || 0
 										"
 										(ngModelChange)="
 											currentUser?.user?.accountUserPresence?.setValue(
@@ -538,7 +543,6 @@
 										</mat-option>
 									</mat-select>
 								</div>
-
 							</mat-list-item>
 						</mat-list>
 						<div
@@ -560,14 +564,17 @@
 								click()
 							"
 							[fxShow]="menuExpanded | await"
-						><b>Account Status:</b> {{
-							titleize(
-								cyphPlans[
-									(accountSettingsService.plan | await) ||
-										cyphPlans.Free
-								]
-							)
-						}}</div>
+						>
+							<b>Account Status:</b>
+							{{
+								titleize(
+									cyphPlans[
+										(accountSettingsService.plan | await) ||
+											cyphPlans.Free
+									]
+								)
+							}}
+						</div>
 					</div>
 
 					<ng-container *ngTemplateOutlet="buttons"></ng-container>
