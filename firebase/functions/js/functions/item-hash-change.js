@@ -1,4 +1,7 @@
+import {util} from '@cyph/sdk';
 import {getURL, storage} from '../init.js';
+
+const {retryUntilSuccessful} = util;
 
 export const itemHashChange = async ({after: data}, {params}) => {
 	if (!data.exists()) {

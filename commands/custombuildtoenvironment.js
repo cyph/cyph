@@ -16,8 +16,10 @@ import {customBuild} from './custombuild.js';
 
 	const o = customBuild(args.id, args.version);
 
-	o.css = `${o.preLoadCSS || ''}\n${o.css || ''}`.trim();
-	delete o.preLoadCSS;
+	if (o.preLoadCSS) {
+		o.css = o.preLoadCSS(o.css);
+		delete o.preLoadCSS;
+	}
 
 	const baseEnvironment = (args.baseEnvironment || 'local').replace(
 		/[A-Z]/,

@@ -23,23 +23,28 @@ export const customBuildIds = fs
 
 const cssRoot = `${__dirname}/../shared/css`;
 
-const compileSCSS = scss =>
-	childProcess
-		.spawnSync('cleancss', [], {
-			input: childProcess
-				.spawnSync('sass', ['--stdin', `-I${cssRoot}`], {
-					input: `
-						${fs.readFileSync(`${cssRoot}/mixins.scss`).toString()}
-						${fs.readFileSync(`${cssRoot}/theme.scss`).toString()}
-						${scss}
-					`
-						.replace(/@import '\.\/mixins';/g, '')
-						.replace(/@import '~/g, "@import '/node_modules/")
-				})
-				.stdout.toString()
-		})
-		.stdout.toString()
-		.trim();
+const compileSCSS = scss => {
+	const tmpdir = os.tmpdir();
+	const tmpfile = `${tmpdir}/tmp.css`;
+
+	childProcess.spawnSync('sass', ['--stdin', `-I${cssRoot}`, tmpfile], {
+		input: `
+			${fs.readFileSync(`${cssRoot}/mixins.scss`).toString()}
+			${fs.readFileSync(`${cssRoot}/theme.scss`).toString()}
+			${scss}
+		`
+			.replace(/@import '\.\/mixins';/g, '')
+			.replace(/@import '~/g, "@import '/node_modules/")
+	});
+
+	childProcess.spawnSync('cleancss', [tmpfile, '-o', tmpfile]);
+
+	const output = fs.readFileSync(tmpfile).toString().trim();
+
+	fs.rmSync(tmpdir, {force: true, recursive: true});
+
+	return output;
+};
 
 const tryReadFile = (path, jsonParse) => {
 	const buffer = fs.existsSync(path) ? fs.readFileSync(path) : undefined;
@@ -126,7 +131,7 @@ export const customBuild = (id, version) => {
 	if (preLoadSCSS || preLoadLogoPath) {
 		const preLoadCSS = compileSCSS(preLoadSCSS);
 
-		o.preLoadCSS = originalCSS => {
+		o.preLoadCSS = (originalCSS = '') => {
 			if (preLoadLogoPath) {
 				originalCSS = originalCSS
 					.replace(/body\.cordova/g, 'body')
@@ -142,7 +147,7 @@ export const customBuild = (id, version) => {
 					);
 			}
 
-			return preLoadCSS + originalCSS;
+			return preLoadCSS + '\n' + originalCSS.trim();
 		};
 	}
 

@@ -23,16 +23,16 @@ patch "${minifyScript}" << EOM
 27d26
 <     const esbuildResult = await optimizeWithEsbuild(asset.code, asset.name, options);
 29c28
-<     const terserResult = await optimizeWithTerser(asset.name, esbuildResult.code, options.sourcemap, options.target, options.advanced);
+<     const terserResult = await optimizeWithTerser(asset.name, esbuildResult.code, options.sourcemap, 
 ---
->     const terserResult = await optimizeWithTerser(asset.name, asset.code, options.sourcemap, options.target, options.advanced);
-110c109
+>     const terserResult = await optimizeWithTerser(asset.name, asset.code, options.sourcemap, 
+116c115
 <             passes: advanced ? 2 : 1,
 ---
 >             passes: 3,
-111a111
+117a117
 >             sequences: false,
-115c115,120
+121c121,126
 <         mangle: false,
 ---
 >         mangle: {
