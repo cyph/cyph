@@ -64,19 +64,18 @@
 		.message-item.ui-style-default {
 			position: relative;
 			min-width: 120px;
-			padding-left: 15px;
-			padding-right: 15px;
-			padding-top: 10px;
-			padding-bottom: 25px;
+			padding-left: 8px;
+			padding-right: 8px;
+			padding-top: 12px;
+			padding-bottom: 28px;
 			margin-left: auto;
 			margin-right: auto;
-			margin-top: 5px;
-			font-size: 1.2em;
+			margin-top: 4px;
+			font-size: 16px;
 
 			.message {
 				width: 100%;
 				max-width: 100%;
-				padding-bottom: 0;
 			}
 
 			img:not(.avatar-image),
@@ -87,9 +86,10 @@
 			.message-timestamp {
 				position: absolute;
 				bottom: 5px;
-				font-size: 0.55em;
+				font-size: 12px;
 				opacity: 0.9;
 				text-align: initial;
+				height: 16px;
 			}
 		}
 
