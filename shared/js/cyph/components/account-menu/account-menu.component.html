@@ -435,110 +435,140 @@
 		<div fxFlex>
 			<div cyphNanoScroller>
 				<div fxFlex fxFlexFill>
-					<div
-						class="cover-image"
-						[class.hidden]="envService.isTelehealth"
-						[style.background-image]="
-							urlToSafeStyle(
-								currentUser?.user?.coverImage | await
-							) | await
-						"
-						*ngIf="menuExpanded | await"
-					></div>
+					<div fxLayout="column">
+						<div
+							class="cover-image"
+							[class.hidden]="envService.isTelehealth"
+							[style.background-image]="
+								urlToSafeStyle(
+									currentUser?.user?.coverImage | await
+								) | await
+							"
+							*ngIf="menuExpanded | await"
+						></div>
 
-					<div class="context-menu" *ngIf="menuExpanded | await">
-						<ng-content></ng-content>
-					</div>
+						<div class="context-menu" *ngIf="menuExpanded | await">
+							<ng-content></ng-content>
+						</div>
 
-					<cyph-account-notification-center
-						[menuButton]="true"
-					></cyph-account-notification-center>
+						<cyph-account-notification-center
+							[menuButton]="true"
+						></cyph-account-notification-center>
 
-					<mat-nav-list class="home-list">
-						<a
-							mat-list-item
-							cyphTranslate
-							class="home"
-							aria-label="Home"
-							routerLink="/"
-							(click)="click()"
-						>
-							<cyph-logo
-								mat-list-icon
-								icon
-								white
-								*ngIf="(menuExpanded | await) === false"
-							></cyph-logo>
-							<cyph-logo
-								matLine
-								white
-								*ngIf="menuExpanded | await"
-							></cyph-logo>
-						</a>
-					</mat-nav-list>
-
-					<mat-list class="avatar-list">
-						<mat-list-item>
-							<img
+						<mat-nav-list class="home-list">
+							<a
+								mat-list-item
 								cyphTranslate
-								matListAvatar
-								class="avatar"
-								[ngClass]="
-									userPresence[
-										(currentUser?.user?.status | await) || 0
-									]
-								"
-								alt="Profile Picture"
-								[src]="
-									(currentUser?.user?.avatar | await) || ''
-								"
-								routerLink="/profile"
+								class="home"
+								aria-label="Home"
+								routerLink="/"
 								(click)="click()"
-							/>
-							<h3 matLine [fxShow]="menuExpanded | await">
-								{{ (currentUser?.user?.name | await) || '' }}
-							</h3>
-							<div
-								matLine
-								[fxShow]="menuExpanded | await"
-								fxLayoutAlign="row"
 							>
-								<div class="username">
-									@{{
-										(currentUser?.user?.realUsername
-											| await) ||
-											currentUser?.user?.username ||
-											''
-									}}
-								</div>
-								<mat-select
+								<cyph-logo
+									mat-list-icon
+									icon
+									white
+									*ngIf="(menuExpanded | await) === false"
+								></cyph-logo>
+								<cyph-logo
+									matLine
+									white
+									*ngIf="menuExpanded | await"
+								></cyph-logo>
+							</a>
+						</mat-nav-list>
+
+						<mat-list class="avatar-list">
+							<mat-list-item>
+								<img
 									cyphTranslate
-									[ngModel]="
-										(currentUser?.user?.status | await) || 0
+									matListAvatar
+									class="avatar"
+									[ngClass]="
+										userPresence[
+											(currentUser?.user?.status | await) || 0
+										]
 									"
-									(ngModelChange)="
-										currentUser?.user?.accountUserPresence?.setValue(
-											{status: $event}
-										)
+									alt="Profile Picture"
+									[src]="
+										(currentUser?.user?.avatar | await) || ''
 									"
-									name="status"
-									class="status"
-									placeholder="Status"
-									*ngIf="!envService.isTelehealth"
+									routerLink="/profile"
+									(click)="click()"
+								/>
+								<h3 matLine [fxShow]="menuExpanded | await">
+									{{ (currentUser?.user?.name | await) || '' }}
+								</h3>
+								<div
+									matLine
+									[fxShow]="menuExpanded | await"
+									fxLayoutAlign="row"
 								>
-									<mat-option
-										*ngFor="
-											let status of statuses;
-											trackBy: trackByValue
+									<div class="username">
+										@{{
+											(currentUser?.user?.realUsername
+												| await) ||
+												currentUser?.user?.username ||
+												''
+										}}
+									</div>
+									<mat-select
+										cyphTranslate
+										[ngModel]="
+											(currentUser?.user?.status | await) || 0
 										"
-										[value]="status.value"
+										(ngModelChange)="
+											currentUser?.user?.accountUserPresence?.setValue(
+												{status: $event}
+											)
+										"
+										name="status"
+										class="status"
+										placeholder="Status"
+										*ngIf="!envService.isTelehealth"
 									>
-										{{ status.text }}
-									</mat-option>
-								</mat-select>
-							</div>
-						</mat-list-item>
-					</mat-list>
+										<mat-option
+											*ngFor="
+												let status of statuses;
+												trackBy: trackByValue
+											"
+											[value]="status.value"
+										>
+											{{ status.text }}
+										</mat-option>
+									</mat-select>
+								</div>
+
+							</mat-list-item>
+						</mat-list>
+						<div
+							class="premium-status"
+							(click)="
+								salesService.openPricing(
+									[
+										envService.homeUrl,
+										'pricing?current=',
+										accountSettingsService.getPlanString(),
+										'&userToken=',
+										accountService.getUserToken(
+											accountService.interstitial
+										)
+									],
+									undefined,
+									inAppPurchase
+								);
+								click()
+							"
+							[fxShow]="menuExpanded | await"
+						><b>Account Status:</b> {{
+							titleize(
+								cyphPlans[
+									(accountSettingsService.plan | await) ||
+										cyphPlans.Free
+								]
+							)
+						}}</div>
+					</div>
 
 					<ng-container *ngTemplateOutlet="buttons"></ng-container>
 				</div>

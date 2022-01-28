@@ -23,6 +23,7 @@ import {StringsService} from '../../services/strings.service';
 import {trackByValue} from '../../track-by/track-by-value';
 import {urlToSafeStyle} from '../../util/safe-values';
 import {getDateTimeString} from '../../util/time';
+import {titleize} from '../../util/titleize';
 
 /**
  * Angular component for account home UI.
@@ -56,6 +57,9 @@ export class AccountMenuComponent extends BaseProvider {
 
 	/** @see UserPresence */
 	public readonly statuses = userPresenceSelectOptions;
+
+	/** @see titleize */
+	public readonly titleize = titleize;
 
 	/** @see trackByValue */
 	public readonly trackByValue = trackByValue;
