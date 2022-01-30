@@ -38,8 +38,8 @@ rm -rf ${dir}/sdk/dist 2> /dev/null
 mkdir ${dir}/sdk/dist
 cp -f LICENSE ${dir}/sdk/
 
-cat > ${dir}/sdk/sdk.js <<- EOM
-import cyphSDK from './dist/main.cjs';
+cat > ${dir}/sdk/index.js <<- EOM
+import cyphSDK from './dist/sdk.cjs';
 await cyphSDK.ready;
 
 $(
@@ -55,11 +55,16 @@ export default cyphSDK;
 EOM
 
 if [ "${version}" != 'prod' ] ; then
-	cp sdk/dist/main.js ${dir}/sdk/dist/main.cjs
+	cp sdk/dist/main.js ${dir}/sdk/dist/sdk.cjs
 	exit
 fi
 
-cp sdk/dist/main.js ${dir}/sdk/dist/main.debug.cjs
+cat > ${dir}/sdk/index.debug.js <<- EOM
+import cyphSDK from './dist/sdk.debug.cjs';
+$(tail -n+2 ${dir}/sdk/index.js)
+EOM
+
+cp sdk/dist/main.js ${dir}/sdk/dist/sdk.debug.cjs
 
 ./commands/buildpackage.sh \
 	--branch-dir ~/.build \
@@ -68,4 +73,4 @@ cp sdk/dist/main.js ${dir}/sdk/dist/main.debug.cjs
 	--version prodOptimized \
 || fail
 
-cp sdk/dist/main.js ${dir}/sdk/dist/main.cjs
+cp sdk/dist/main.js ${dir}/sdk/dist/sdk.cjs
