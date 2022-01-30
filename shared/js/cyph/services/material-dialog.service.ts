@@ -129,13 +129,15 @@ export class MaterialDialogService
 				closeFunction.resolve(close);
 			}
 
-			const ok = lastValueFrom<boolean>(afterClosed());
+			const ok = lastValueFrom<boolean>(afterClosed()).catch(() => false);
 
-			const promptResponse = lastValueFrom(beforeClosed()).then(() =>
-				instance.multipleChoiceSelection !== undefined ?
-					instance.multipleChoiceSelection :
-					instance.form || instance.prompt
-			);
+			const promptResponse = lastValueFrom(beforeClosed())
+				.catch(() => {})
+				.then(() =>
+					instance.multipleChoiceSelection !== undefined ?
+						instance.multipleChoiceSelection :
+						instance.form || instance.prompt
+				);
 
 			let hasReturned = false;
 			if (o.timeout !== undefined && !isNaN(o.timeout)) {
@@ -204,12 +206,14 @@ export class MaterialDialogService
 
 			const afterOpenedResolvable = afterOpened;
 			if (afterOpenedResolvable) {
-				lastValueFrom(matDialogRef.afterOpened()).then(() => {
-					afterOpenedResolvable.resolve();
-				});
+				lastValueFrom(matDialogRef.afterOpened())
+					.catch(() => {})
+					.then(() => {
+						afterOpenedResolvable.resolve();
+					});
 			}
 
-			await lastValueFrom(matDialogRef.afterClosed());
+			await lastValueFrom(matDialogRef.afterClosed()).catch(() => {});
 		});
 	}
 
@@ -268,12 +272,14 @@ export class MaterialDialogService
 
 				instance.changeDetectorRef.markForCheck();
 
-				await firstValueFrom(matDialogRef.afterOpened());
+				await firstValueFrom(matDialogRef.afterOpened()).catch(
+					() => {}
+				);
 
 				instance.changeDetectorRef.markForCheck();
 			}
 
-			await lastValueFrom(afterClosed());
+			await lastValueFrom(afterClosed()).catch(() => {});
 		});
 	}
 
@@ -320,7 +326,7 @@ export class MaterialDialogService
 
 			return Promise.race([
 				cropResult,
-				lastValueFrom(matDialogRef.afterClosed())
+				lastValueFrom(matDialogRef.afterClosed()).catch(() => {})
 			]);
 		});
 	}
@@ -357,7 +363,7 @@ export class MaterialDialogService
 				});
 			}
 
-			await lastValueFrom(matDialogRef.afterClosed());
+			await lastValueFrom(matDialogRef.afterClosed()).catch(() => {});
 		});
 	}
 
@@ -471,10 +477,9 @@ export class MaterialDialogService
 				});
 			}
 
-			const wasManuallyDismissed =
-				(await lastValueFrom(
-					snackbar.onAction().pipe(map(() => true))
-				)) || false;
+			const wasManuallyDismissed = await lastValueFrom(
+				snackbar.onAction().pipe(map(() => true))
+			).catch(() => false);
 
 			if (wasManuallyDismissed) {
 				return true;
