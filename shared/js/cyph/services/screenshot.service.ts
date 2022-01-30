@@ -16,7 +16,7 @@ export class ScreenshotService extends BaseProvider {
 		return this.fileService.canvasToBytes(await html2canvas(document.body));
 	}
 
-	/** Gets screenshot. */
+	/** Saves screenshot. */
 	public async saveScreenshot (delay: number = 0) : Promise<void> {
 		if (delay > 0) {
 			await sleep(delay);
