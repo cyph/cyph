@@ -177,8 +177,12 @@ mat-divider {
 }
 
 .premium-status {
-	margin: -4px 16px 4px 20px;
+	margin: -8px 16px 4px 83px;
 	color: #eeecf1;
 	position: relative;
 	cursor: pointer;
+
+	> :first-child {
+		margin-right: 8px;
+	}
 }
