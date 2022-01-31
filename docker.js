@@ -109,6 +109,7 @@ if (!spawn('docker', ['-v'])) {
 }
 
 const args = {
+	amendCommit: process.argv.indexOf('--amend-commit') > -1,
 	command: process.argv[2],
 	background: process.argv.indexOf('--background') > -1,
 	noAutoMake:
@@ -1060,7 +1061,7 @@ switch (args.command) {
 
 	case 'updatedockerimages':
 		makeRequired = false;
-		updateDockerImages();
+		updateDockerImages(args.amendCommit);
 		break;
 
 	case 'websign/serve':
