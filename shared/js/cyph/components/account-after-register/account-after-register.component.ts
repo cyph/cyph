@@ -53,6 +53,7 @@ export class AccountAfterRegisterComponent
 				}
 		);
 
+		this.salesService.dismissUpsellBanner(false);
 		this.accountService.transitionEnd();
 		this.accountService.resolveUiReady();
 	}

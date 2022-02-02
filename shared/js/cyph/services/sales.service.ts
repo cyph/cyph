@@ -34,6 +34,9 @@ export class SalesService extends BaseProvider {
 		(this.envService.isAndroid || this.envService.isIOS) &&
 		this.envService.appUrl === 'https://cyph.app/';
 
+	/** @ignore */
+	private upsellBannerDismissed = false;
+
 	/** Controls whether upsell banner is enabled. */
 	public readonly mobileAppBanner = new ReplaySubject<boolean>(Infinity);
 
@@ -68,8 +71,15 @@ export class SalesService extends BaseProvider {
 	}
 
 	/** Closes upsell banner. */
-	public async dismissUpsellBanner () : Promise<void> {
+	public async dismissUpsellBanner (
+		persistent: boolean = true
+	) : Promise<void> {
+		this.upsellBannerDismissed = true;
 		this.upsellBanner.next(false);
+
+		if (!persistent) {
+			return;
+		}
 
 		await this.localStorageService.setItem(
 			'disableUpsellBanner',
@@ -215,7 +225,9 @@ export class SalesService extends BaseProvider {
 					this.upsellAllowed
 				]).subscribe(([disableUpsellBanner, upsellAllowed]) => {
 					this.upsellBanner.next(
-						!disableUpsellBanner.value && upsellAllowed
+						!this.upsellBannerDismissed &&
+							!disableUpsellBanner.value &&
+							upsellAllowed
 					);
 				})
 			);
