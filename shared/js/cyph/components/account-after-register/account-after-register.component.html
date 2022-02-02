@@ -1,35 +1,51 @@
 <ng-container *ngIf="accountDatabaseService.currentUser | await as currentUser">
 	<div
+		cyphTranslate
 		fxFlexFill
 		fxLayout="column"
 		fxLayoutAlign="center center"
-		*ngIf="(upsell | await)"
+		*ngIf="upsell | await"
 	>
-		As a limited-time special, we would like to offer you a $100 Lifetime Platinum upgrade! (normally $48/mo)
-
-		In addition to rewarding our early supporters, this will go a long way toward helping us improve Cyph in various ways, such as dramatically optimizing performance, polishing the interface, fleshing out the current features, and considering new features based on popular demand.
-		
-		In exchange for a one-time payment, the following will be added to your account:
+		<div>
+			As a limited-time special, we would like to offer you a $100
+			Lifetime Platinum upgrade! (normally $48/mo) In addition to
+			rewarding our early supporters, this will go a long way toward
+			helping us improve Cyph in various ways, such as dramatically
+			optimizing performance, polishing the interface, fleshing out the
+			current features, and considering new features based on popular
+			demand. In exchange for a one-time payment, the following will be
+			added to your account:
+		</div>
 		<ul>
 			<li>File storage: 500 MB -> 1 TB</li>
-			<li>Access to new & experimental features, like our E2EE cryptocurrency wallet</li>
-			<li>Short username: You can bypass our minimum of 5 characters and register a username as short as you'd like, if you upgrade before registering</li>
-			<li>Verification: You'll be first in line when we set up a "verified accounts" system like Twitter's</li>
-			<li>Lifetime priority support: Email us any time at founders@cyph.com — or just add @ryan and @josh on Cyph :)</li>
+			<li>
+				Access to new & experimental features, like our E2EE
+				cryptocurrency wallet
+			</li>
+			<li>
+				Short username: You can bypass our minimum of 5 characters and
+				register a username as short as you'd like, if you upgrade
+				before registering
+			</li>
+			<li>
+				Verification: You'll be first in line when we set up a "verified
+				accounts" system like Twitter's
+			</li>
+			<li>
+				Lifetime priority support: Email us any time at
+				founders@cyph.com — or just add @ryan and @josh on Cyph :)
+			</li>
 		</ul>
-	
+
 		<div fxflex fxLayout="row" fxLayoutGap="16px">
-			<button 
+			<button
 				mat-raised-button
 				color="primary"
-				[routerLink]="'/upgrade/flash-sale/lifetime-platinum'"
+				routerLink="/upgrade/flash-sale/lifetime-platinum"
 			>
 				Upgrade Account
 			</button>
-			<button 
-				mat-raised-button
-				(click)="skipUpsell.next(true)"
-			>
+			<button mat-raised-button (click)="skipUpsell.next(true)">
 				Not Now
 			</button>
 		</div>
@@ -37,7 +53,10 @@
 	<div
 		fxFlex
 		fxLayout="column"
-		*ngIf="!currentUser?.masterKeyConfirmed && !(upsell | await); else agseConfirmationMessage"
+		*ngIf="
+			!currentUser?.masterKeyConfirmed && !(upsell | await);
+			else agseConfirmationMessage
+		"
 	>
 		<br />
 		<cyph-account-register

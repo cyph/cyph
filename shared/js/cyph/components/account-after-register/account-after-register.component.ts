@@ -1,6 +1,7 @@
 import {ChangeDetectionStrategy, Component, OnInit} from '@angular/core';
 import {Router} from '@angular/router';
-import {BehaviorSubject, map} from 'rxjs';
+import {BehaviorSubject} from 'rxjs';
+import {map} from 'rxjs/operators';
 import {BaseProvider} from '../../base-provider';
 import {AccountService} from '../../services/account.service';
 import {observableAll} from '../../util/observable-all';
@@ -22,9 +23,14 @@ export class AccountAfterRegisterComponent
 	extends BaseProvider
 	implements OnInit
 {
-	public readonly skipUpsell: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
+	/** Indicates whether user has dismissed the upsell. */
+	public readonly skipUpsell = new BehaviorSubject<boolean>(false);
 
-	public readonly upsell = observableAll([this.skipUpsell, this.salesService.upsellAllowed]).pipe(map(([skipUpsell, upsellAllowed]) => !skipUpsell && upsellAllowed));
+	/** Indicates whether upsell should be displayed. */
+	public readonly upsell = observableAll([
+		this.skipUpsell,
+		this.salesService.upsellAllowed
+	]).pipe(map(([skipUpsell, upsellAllowed]) => !skipUpsell && upsellAllowed));
 
 	/** @inheritDoc */
 	public ngOnInit () : void {
