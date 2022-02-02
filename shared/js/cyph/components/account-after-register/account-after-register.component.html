@@ -74,6 +74,7 @@
 		<cyph-account-register
 			fxFlex
 			[postSimpleRegisterSetup]="true"
+			(masterKeyConfirmationComplete)="skipUpsell.next(false)"
 		></cyph-account-register>
 		<br />
 	</div>

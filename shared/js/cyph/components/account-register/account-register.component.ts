@@ -228,6 +228,10 @@ export class AccountRegisterComponent
 	/** Master key confirmation. */
 	public readonly masterKeyConfirm = formControlMatch(this.masterKey);
 
+	/** Master key confirmation completion event. */
+	@Output() public readonly masterKeyConfirmationComplete =
+		new EventEmitter<void>();
+
 	/** Watches masterKeyConfirm. */
 	public readonly masterKeyConfirmWatcher = watchFormControl(
 		this.masterKeyConfirm
@@ -564,6 +568,8 @@ export class AccountRegisterComponent
 				...this.accountDatabaseService.currentUser.value,
 				masterKeyConfirmed: true
 			});
+
+			this.masterKeyConfirmationComplete.emit();
 		}
 		finally {
 			this.checking.next(false);
