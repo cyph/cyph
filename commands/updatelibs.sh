@@ -9,6 +9,9 @@ dir="$PWD"
 
 sudo npm -g install npm || fail
 sudo npm -g install @mapbox/node-pre-gyp || fail
+npm config set fetch-retries 5
+npm config set fetch-retry-maxtimeout 36000000
+npm config set fetch-timeout 216000000
 npm config set legacy-peer-deps true
 rm -rf ~/.npm
 

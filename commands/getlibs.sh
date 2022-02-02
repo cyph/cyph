@@ -17,6 +17,9 @@ skipNodeModules="$(getBoolArg ${_arg_skip_node_modules})"
 
 sudo npm -g install npm || exit 1
 sudo npm -g install @mapbox/node-pre-gyp || exit 1
+npm config set fetch-retries 5
+npm config set fetch-retry-maxtimeout 36000000
+npm config set fetch-timeout 216000000
 npm config set legacy-peer-deps true
 rm -rf ~/.npm
 

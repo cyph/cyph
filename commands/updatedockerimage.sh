@@ -3,8 +3,7 @@
 
 source ~/.bashrc
 
-sudo cat > /etc/apt/sources.list.d/cyph.list <<- EOM
-	deb https://deb.nodesource.com/node_16.x bullseye main
+sudo tee -a /etc/apt/sources.list.d/cyph.list > /dev/null <<- EOM
 	deb https://dl.yarnpkg.com/debian/ stable main
 EOM
 
