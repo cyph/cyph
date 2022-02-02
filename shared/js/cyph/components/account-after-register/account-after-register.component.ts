@@ -1,9 +1,12 @@
 import {ChangeDetectionStrategy, Component, OnInit} from '@angular/core';
 import {Router} from '@angular/router';
+import {BehaviorSubject, map} from 'rxjs';
 import {BaseProvider} from '../../base-provider';
 import {AccountService} from '../../services/account.service';
+import {observableAll} from '../../util/observable-all';
 import {AccountDatabaseService} from '../../services/crypto/account-database.service';
 import {EnvService} from '../../services/env.service';
+import {SalesService} from '../../services/sales.service';
 import {StringsService} from '../../services/strings.service';
 
 /**
@@ -19,6 +22,10 @@ export class AccountAfterRegisterComponent
 	extends BaseProvider
 	implements OnInit
 {
+	public readonly skipUpsell: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
+
+	public readonly upsell = observableAll([this.skipUpsell, this.salesService.upsellAllowed]).pipe(map(([skipUpsell, upsellAllowed]) => !skipUpsell && upsellAllowed));
+
 	/** @inheritDoc */
 	public ngOnInit () : void {
 		super.ngOnInit();
@@ -56,6 +63,9 @@ export class AccountAfterRegisterComponent
 
 		/** @see EnvService */
 		public readonly envService: EnvService,
+
+		/** @see SalesService */
+		public readonly salesService: SalesService,
 
 		/** @see StringsService */
 		public readonly stringsService: StringsService
