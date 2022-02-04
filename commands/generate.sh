@@ -30,7 +30,7 @@ if \
 	) || \
 	[ "${name}" == '' ]
 then
-	echo 'Usage: docker.js generate [component|directive|resolver|service] MyNewThing'
+	echo 'Usage: run.js generate [component|directive|resolver|service] MyNewThing'
 	exit 1
 fi
 

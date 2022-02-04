@@ -1,5 +1,5 @@
 all:
-	node docker.js make
+	node run.js make
 
 clean:
-	node docker.js makeclean
+	node run.js makeclean

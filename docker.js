@@ -98,6 +98,8 @@ const fail = errorMessage => {
 const isMacOS = process.platform === 'darwin';
 const isWindows = process.platform === 'win32';
 
+console.error('DEPRECATION WARNING: prefer run.js.');
+
 if (!spawn('docker', ['-v'])) {
 	fail(
 		`Install Docker first and try again: ${
