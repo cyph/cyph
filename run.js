@@ -98,13 +98,9 @@ const fail = errorMessage => {
 const isMacOS = process.platform === 'darwin';
 const isWindows = process.platform === 'win32';
 
-if (!spawn('docker', ['-v'])) {
+if (!spawn('nerdctl', ['-v'])) {
 	fail(
-		`Install Docker first and try again: ${
-			isMacOS || isWindows ?
-				'https://www.docker.com/products/docker-desktop' :
-				'https://docs.docker.com/install/#server'
-		}`
+		'Install Rancher Desktop first and try again: https://rancherdesktop.io'
 	);
 }
 
@@ -210,7 +206,7 @@ const image =
 	).toLowerCase();
 
 const imageAlreadyBuilt = (imageName = image) =>
-	spawn('docker', ['images'])
+	spawn('nerdctl', ['images'])
 		.split('\n')
 		.slice(1)
 		.some(s => s.trim().split(/\s+/)[0] === imageName);
@@ -409,10 +405,10 @@ const dockerRun = (
 		.concat([imageName, 'bash', '-c', command]);
 
 	if (getOutput) {
-		return spawn('docker', processArgs);
+		return spawn('nerdctl', processArgs);
 	}
 	else {
-		return spawnAsync('docker', processArgs);
+		return spawnAsync('nerdctl', processArgs);
 	}
 };
 
@@ -437,7 +433,7 @@ const dockerCP = (src, dest, removeDestDir = false, imageName = image) => {
 			return new Promise(resolve => setTimeout(resolve, 2500)).then(f);
 		}
 
-		spawn('docker', ['cp', '-a', `${container}:${src}`, dest]);
+		spawn('nerdctl', ['cp', '-a', `${container}:${src}`, dest]);
 		killContainer(container);
 		return Promise.resolve();
 	};
@@ -455,19 +451,6 @@ const dockerCheckCondition = condition =>
 		undefined,
 		true
 	) === 'dothemove';
-
-const dockerPrune = () =>
-	spawnAsync('docker', ['system', 'prune', '-f'])
-		.then(() =>
-			spawnAsync('docker', [
-				'run',
-				'--pid=host',
-				'--privileged',
-				'--rm',
-				'docker/desktop-reclaim-space'
-			])
-		)
-		.then(() => spawnAsync('docker', ['system', 'prune', '-f']));
 
 const editImage = (
 	command,
@@ -488,11 +471,11 @@ const editImage = (
 
 		const tmpContainer = containerName('tmp');
 
-		spawn('docker', ['rm', '-f', tmpContainer]);
+		spawn('nerdctl', ['rm', '-f', tmpContainer]);
 
 		return Promise.resolve(
 			useOriginal ?
-				spawnAsync('docker', [
+				spawnAsync('nerdctl', [
 					'tag',
 					`${imageName}_original:latest`,
 					`${imageName}:latest`
@@ -511,15 +494,14 @@ const editImage = (
 				)
 			)
 			.then(() =>
-				spawnAsync('docker', ['commit', tmpContainer, imageName])
+				spawnAsync('nerdctl', ['commit', tmpContainer, imageName])
 			)
-			.then(() => spawnAsync('docker', ['rm', '-f', tmpContainer]))
-			.then(() => dockerPrune())
+			.then(() => spawnAsync('nerdctl', ['rm', '-f', tmpContainer]))
 			.then(() => true);
 	});
 
 const getContainerPIDs = name =>
-	spawn('docker', ['ps', '-a'])
+	spawn('nerdctl', ['ps', '-a'])
 		.split('\n')
 		.slice(1)
 		.filter(s => s.indexOf(name) > -1)
@@ -527,8 +509,8 @@ const getContainerPIDs = name =>
 
 const killContainer = name => {
 	for (const pid of getContainerPIDs(name)) {
-		console.log(spawn('docker', ['kill', '-s', '9', pid]));
-		console.log(spawn('docker', ['rm', '-f', pid]));
+		console.log(spawn('nerdctl', ['kill', '-s', '9', pid]));
+		console.log(spawn('nerdctl', ['rm', '-f', pid]));
 	}
 };
 
@@ -580,12 +562,12 @@ const pullUpdates = (forceUpdate = false) => {
 };
 
 const removeImage = (name, opts) => {
-	for (const imageId of spawn('docker', ['images'].concat(opts || []))
+	for (const imageId of spawn('nerdctl', ['images'].concat(opts || []))
 		.split('\n')
 		.slice(1)
 		.filter(s => (name ? s.indexOf(name) > -1 : true))
 		.map(s => s.split(/\s+/)[2])) {
-		console.log(spawn('docker', ['rmi', '-f', imageId]));
+		console.log(spawn('nerdctl', ['rmi', '-f', imageId]));
 	}
 };
 
@@ -642,7 +624,7 @@ const dockerBuildInit = () => {
 	if (dockerBuildInitResult === undefined) {
 		dockerBuildInitResult = Promise.resolve(
 			dockerCredentials ?
-				spawnAsync('docker', [
+				spawnAsync('nerdctl', [
 					'login',
 					'-u',
 					dockerCredentials.username,
@@ -650,34 +632,25 @@ const dockerBuildInit = () => {
 					dockerCredentials.password
 				]) :
 				undefined
-		)
-			.then(() =>
-				spawnAsync('docker', [
-					'buildx',
-					'create',
-					'--buildkitd-flags',
-					'--oci-worker-gc --oci-worker-gc-keepstorage 50000',
-					'--name',
-					'cyph_build_context'
-				])
-			)
-			.then(() =>
-				spawnAsync('docker', ['buildx', 'use', 'cyph_build_context'])
-			);
+		);
 	}
 
 	return dockerBuildInitResult;
 };
 
 const getImageDigests = image =>
-	spawn('docker', ['buildx', 'imagetools', 'inspect', image])
-		.split('Manifests:')[1]
-		.split('Name:')
-		.map(s => s.trim())
-		.filter(s => s)
-		.map(s => ({
-			digest: s.match(/sha256:[^\s]+/)[0],
-			platform: s.split('Platform:')[1].split('\n')[0].trim()
+	Object.keys(baseImageDigests)
+		.map(platform => ({
+			digest: JSON.parse(
+				spawn('nerdctl', [
+					'image',
+					'inspect',
+					'--platform',
+					platform,
+					image
+				])
+			)[0].Id,
+			platform
 		}))
 		.reduce((o, {digest, platform}) => ({...o, [platform]: digest}), {});
 
@@ -697,11 +670,9 @@ const updateDockerImages = (amendCommit = false) => {
 	return dockerBuildInit()
 		.then(() =>
 			spawnAsync(
-				'docker',
+				'nerdctl',
 				[
-					'buildx',
 					'build',
-					'--push',
 					'--platform',
 					Object.keys(baseImageDigests).join(','),
 					'-t',
@@ -715,6 +686,15 @@ const updateDockerImages = (amendCommit = false) => {
 				30000
 			)
 		)
+		.then(() =>
+			spawnAsync(
+				'nerdctl',
+				['push', '--all-platforms', 'cyph/base:latest'],
+				undefined,
+				undefined,
+				30000
+			)
+		)
 		.then(() => {
 			fs.unlinkSync('Dockerfile.tmp');
 
@@ -723,26 +703,34 @@ const updateDockerImages = (amendCommit = false) => {
 		.then(() =>
 			Array.from(Object.entries(dockerfileHostedImages)).reduce(
 				(acc, [dockerfile, image]) =>
-					acc.then(() =>
-						spawnAsync(
-							'docker',
-							[
-								'buildx',
-								'build',
-								'--push',
-								'--platform',
-								Object.keys(baseImageDigests).join(','),
-								'-t',
-								image,
-								'-f',
-								dockerfile,
-								'.'
-							],
-							undefined,
-							undefined,
-							30000
+					acc
+						.then(() =>
+							spawnAsync(
+								'nerdctl',
+								[
+									'build',
+									'--platform',
+									Object.keys(baseImageDigests).join(','),
+									'-t',
+									image,
+									'-f',
+									dockerfile,
+									'.'
+								],
+								undefined,
+								undefined,
+								30000
+							)
 						)
-					),
+						.then(() =>
+							spawnAsync(
+								'nerdctl',
+								['push', '--all-platforms', image],
+								undefined,
+								undefined,
+								30000
+							)
+						),
 				Promise.resolve()
 			)
 		)
@@ -822,7 +810,7 @@ const removeDirectory = dir => {
 
 const getBaseImageDigest = (imageName = image) => {
 	try {
-		return JSON.parse(spawn('docker', ['image', 'inspect', imageName]))[0]
+		return JSON.parse(spawn('nerdctl', ['image', 'inspect', imageName]))[0]
 			.Config.Labels.BASE_DIGEST;
 	}
 	catch (_) {
@@ -842,10 +830,8 @@ const buildLocalImage = (
 ) =>
 	!updatesOnly || !imageUpToDate(image, digests) ?
 		dockerBuildInit().then(() =>
-			spawnAsync('docker', [
-				'buildx',
+			spawnAsync('nerdctl', [
 				'build',
-				'--load',
 				'-t',
 				imageName,
 				'-f',
@@ -905,14 +891,14 @@ const make = () => {
 		)
 		.then(() => buildLocalImage())
 		.then(() =>
-			spawnAsync('docker', [
+			spawnAsync('nerdctl', [
 				'tag',
 				`${image}:latest`,
 				`${initImage}:latest`
 			])
 		)
 		.then(() =>
-			spawnAsync('docker', [
+			spawnAsync('nerdctl', [
 				'tag',
 				`${image}:latest`,
 				`${image}_original:latest`
@@ -922,7 +908,7 @@ const make = () => {
 			!shellScripts.setup || currentArch !== 'linux/amd64' ?
 				undefined :
 			publicImageDigests[currentArch] === baseImageDigests[currentArch] ?
-				spawnAsync('docker', [
+				spawnAsync('nerdctl', [
 					'tag',
 					`${image}:latest`,
 					`${publicImage}:latest`
@@ -933,7 +919,6 @@ const make = () => {
 			removeDirectory('.local-docker-context/config');
 			return dockerCP('/node_modules', 'shared/node_modules', true);
 		})
-		.then(() => dockerPrune())
 		.then(() => huskySetup());
 
 	return initPromise;
@@ -949,7 +934,7 @@ const makePublicImage = () => {
 	killEverything();
 
 	if (publicImageDigests[currentArch] === getBaseImageDigest()) {
-		return spawnAsync('docker', [
+		return spawnAsync('nerdctl', [
 			'tag',
 			`${image}:latest`,
 			`${publicImage}:latest`
@@ -965,7 +950,6 @@ const makePublicImage = () => {
 		.then(() => buildLocalImage(publicImage, publicImageDigests))
 		.then(() => {
 			removeDirectory('.local-docker-context/config');
-			return dockerPrune();
 		});
 };
 
@@ -1086,7 +1070,7 @@ switch (args.command) {
 
 if (makeRequired && !imageAlreadyBuilt()) {
 	if (args.noAutoMake) {
-		fail('Image not yet built. Run `./docker.js make` first.');
+		fail('Image not yet built. Run `./run.js make` first.');
 	}
 	else {
 		console.error(
@@ -1153,12 +1137,12 @@ initPromise.then(() => {
 						)
 					);
 				case 'make':
-					return spawnAsync('node', ['docker.js', 'protobuf']);
+					return spawnAsync('node', ['run.js', 'protobuf']);
 
 				case 'updatelibs':
 					return updateDockerImages(true).then(() =>
 						spawnAsync('node', [
-							'docker.js',
+							'run.js',
 							'notify',
 							'--admins',
 							'updatelibs complete'
