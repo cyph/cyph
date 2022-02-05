@@ -32,9 +32,11 @@
 			"https": ["js/externals/https"],
 			"libsodium": ["js/externals/libsodium"],
 			"lodash/*": ["../node_modules/@types/lodash-es/*"],
+			"querystring": ["js/externals/querystring"],
 			"request": ["js/externals/request"],
 			"rsvp": ["js/externals/rsvp"],
 			"stream": ["js/externals/stream"],
+			"url": ["js/externals/url"],
 			"vm": ["js/externals/vm"]
 		},
 		"resolveJsonModule": true,

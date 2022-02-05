@@ -397,6 +397,7 @@ protobufjs@6.8.8
 protractor
 pulltorefreshjs
 puppeteer
+querystring-es3
 quill
 quill-delta
 quill-delta-to-html
@@ -452,6 +453,7 @@ u2f-api-polyfill
 uglify-js
 universal-analytics
 unsemantic
+url
 video.js
 videojs-background
 videojs-brand

@@ -14,9 +14,11 @@
 			"https": ["app/js/externals/https"],
 			"jquery": ["app/externals/jquery"],
 			"libsodium": ["app/js/externals/libsodium"],
+			"querystring": ["app/js/externals/querystring"],
 			"request": ["app/js/externals/request"],
 			"rsvp": ["app/js/externals/rsvp"],
-			"simplewebrtc": ["app/externals/simplewebrtc"]
+			"simplewebrtc": ["app/externals/simplewebrtc"],
+			"url": ["app/js/externals/url"]
 		}
 	},
 	"exclude": ["node_modules", "platforms", "**/*.aot.ts"]

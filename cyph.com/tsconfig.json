@@ -16,6 +16,8 @@
 		"src/js/externals/debug.ts",
 		"src/js/externals/http.ts",
 		"src/js/externals/https.ts",
-		"src/js/externals/request.ts"
+		"src/js/externals/querystring.ts",
+		"src/js/externals/request.ts",
+		"src/js/externals/url.ts"
 	]
 }

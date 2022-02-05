@@ -19,10 +19,12 @@
 			"lodash/*": ["../node_modules/@types/lodash-es/*"],
 			"materialize-css": ["js/externals/materialize-css"],
 			"microlight-string": ["js/externals/microlight-string"],
+			"querystring": ["js/externals/querystring"],
 			"quill": ["js/externals/quill"],
 			"recordrtc": ["js/externals/recordrtc"],
 			"request": ["js/externals/request"],
-			"rsvp": ["js/externals/rsvp"]
+			"rsvp": ["js/externals/rsvp"],
+			"url": ["js/externals/url"]
 		},
 		"typeRoots": ["node_modules/@types"]
 	},
