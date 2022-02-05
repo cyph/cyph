@@ -419,6 +419,18 @@ const dockerCP = (src, dest, removeDestDir = false, imageName = image) => {
 
 	const container = containerName(crypto.randomBytes(32).toString('hex'));
 
+	/* Temporary workaround pending https://github.com/containerd/nerdctl/pull/643 */
+	return dockerRun(
+		`cd /cyph ; cp -rf '${src}' '${dest}'`,
+		container,
+		undefined,
+		undefined,
+		undefined,
+		undefined,
+		imageName
+	);
+
+	/*
 	const f = () => {
 		if (getContainerPIDs(container).length < 1) {
 			dockerRun(
@@ -439,6 +451,7 @@ const dockerCP = (src, dest, removeDestDir = false, imageName = image) => {
 	};
 
 	return f();
+	*/
 };
 
 const dockerCheckCondition = condition =>
