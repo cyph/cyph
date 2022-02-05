@@ -358,6 +358,7 @@ mkdirp
 moment
 moment-timezone
 mustache
+native-url
 ng-animate
 ng-packagr
 ng2-fittext
@@ -453,7 +454,6 @@ u2f-api-polyfill
 uglify-js
 universal-analytics
 unsemantic
-url
 video.js
 videojs-background
 videojs-brand

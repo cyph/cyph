@@ -2,4 +2,4 @@
 
 /** @file url external. */
 
-module.exports = <any> require('url/url.js');
+module.exports = <any> require('native-url');
