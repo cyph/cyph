@@ -5,14 +5,13 @@ cd $(cd "$(dirname "$0")" ; pwd)/..
 dir="$PWD"
 
 
+checkfail "$(./commands/buildunbundledassets.sh 2>&1)"
+
 if [ "${1}" != '--angular-only' ] ; then
 	cd backend
 	go build
 	checkfail
 	cd ..
-
-	output="$(./commands/buildunbundledassets.sh 2>&1)"
-	checkfail "${output}"
 
 	./commands/lint.sh
 	checkfail
