@@ -243,6 +243,21 @@ const containerInitScript =
 							'base64'
 						)}' | base64 --decode > ${gitconfigDockerPath}
 		`) +
+	`
+		sudo mv /bin/cp /bin/cp.old
+		echo '
+			#!/bin/bash
+
+			if [ "\${1}" == "-a" ] ; then
+				shift
+				/bin/cp.old -rf "\${@}"
+			else
+				/bin/cp.old "\${@}"
+			fi
+		' |
+			sudo tee -a /bin/cp > /dev/null
+		sudo chmod +x /bin/cp
+	` +
 	(!isWindows ?
 		'' :
 		`
@@ -263,7 +278,7 @@ const containerInitScript =
 			' |
 				sudo tee -a /bin/ln > /dev/null
 			sudo chmod +x /bin/ln
-	`);
+		`);
 
 const shellScripts = {
 	agseInit: `
@@ -421,7 +436,7 @@ const dockerCP = (src, dest, removeDestDir = false, imageName = image) => {
 
 	/* Temporary workaround pending https://github.com/containerd/nerdctl/pull/643 */
 	return dockerRun(
-		`cd /cyph ; cp -rf '${src}' '${dest}'`,
+		`cd /cyph ; cp -a '${src}' '${dest}'`,
 		container,
 		undefined,
 		undefined,
