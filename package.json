@@ -21,7 +21,7 @@
 	},
 	"scripts": {
 		"prettyQuick": "node scripts/pretty-quick.js",
-		"serve": "node run.js serve",
-		"verify": "node run.js verify"
+		"serve": "node docker.js serve",
+		"verify": "node docker.js verify"
 	}
 }

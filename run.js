@@ -98,6 +98,11 @@ const fail = errorMessage => {
 const isMacOS = process.platform === 'darwin';
 const isWindows = process.platform === 'win32';
 
+console.error(
+	'WARNING: Awaiting fix for https://github.com/containerd/nerdctl/issues/769. ' +
+		'Use docker.js for now.'
+);
+
 if (!spawn('nerdctl', ['-v'])) {
 	fail(
 		'Install Rancher Desktop first and try again: https://rancherdesktop.io'
