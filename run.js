@@ -1076,7 +1076,7 @@ switch (args.command) {
 					{url: 'js', watchPath: jsPath}
 				]) {
 					fs.watch(watchPath, {recursive: true}, () => {
-						http.get(`http://localhost:45001/${url}`);
+						http.get(`http://0.0.0.0:45001/${url}`);
 					});
 				}
 			});

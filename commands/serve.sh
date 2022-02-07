@@ -1,8 +1,8 @@
 #!/bin/bash
 
 
-dir="$PWD"
 cd $(cd "$(dirname "$0")" ; pwd)/..
+dir="$PWD"
 source ~/.bashrc
 
 
