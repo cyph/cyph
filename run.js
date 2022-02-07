@@ -248,6 +248,7 @@ const containerInitScript =
 							'base64'
 						)}' | base64 --decode > ${gitconfigDockerPath}
 		`) +
+	/* Temporary workaround for https://github.com/lima-vm/lima/issues/231 */
 	`
 		sudo mv /bin/cp /bin/cp.old
 		echo '
@@ -441,7 +442,7 @@ const dockerCP = (src, dest, removeDestDir = false, imageName = image) => {
 
 	/* Temporary workaround pending https://github.com/containerd/nerdctl/pull/643 */
 	return dockerRun(
-		`cd /cyph ; cp -a '${src}' '${dest}'`,
+		`cd /cyph ; cp -rf '${src}' '${dest}'`,
 		container,
 		undefined,
 		undefined,
