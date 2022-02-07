@@ -11,10 +11,10 @@ mkdir -p "${1}/shared/lib"
 dir="$(realpath "${1}")"
 
 cd "${source}"
-cp -a $(ls | grep -vP '^shared$') "${dir}/"
+rsync -a $(ls | grep -vP '^shared$') "${dir}/"
 cd shared
-cp -a $(ls | grep -vP '^(lib|node_modules)$') "${dir}/shared/"
-cp -a lib/js lib/ipfs-gateways.json "${dir}/shared/lib/"
+rsync -a $(ls | grep -vP '^(lib|node_modules)$') "${dir}/shared/"
+rsync -a lib/js lib/ipfs-gateways.json "${dir}/shared/lib/"
 
 for d in cyph.app cyph.com sdk ; do
 	cd "${dir}/${d}"
@@ -22,6 +22,6 @@ for d in cyph.app cyph.com sdk ; do
 done
 
 # NATIVESCRIPT: cd "${dir}/shared/js/native/js"
-# NATIVESCRIPT: for d in $(ls | grep -v standalone) ; do rm ${d} ; cp -a ../../${d} ${d} ; done
+# NATIVESCRIPT: for d in $(ls | grep -v standalone) ; do rm ${d} ; rsync -a ../../${d} ${d} ; done
 # NATIVESCRIPT: cd standalone
-# NATIVESCRIPT: for f in * ; do rm ${f} ; cp ../../../standalone/${f} ./ ; done
+# NATIVESCRIPT: for f in * ; do rm ${f} ; rsync ../../../standalone/${f} ./ ; done

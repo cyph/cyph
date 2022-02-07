@@ -17,7 +17,6 @@ site='cyph.app'
 prod=''
 prodBuild=''
 environment='local'
-poll=''
 if [ "${1}" == '--environment' ] ; then
 	shift
 	environment="${1}"
@@ -45,13 +44,6 @@ if [ "${1}" == '--no-lock-down' ] ; then
 fi
 if [ "${1}" == '--poll' ] ; then
 	poll=true
-	shift
-fi
-if [ -f /windows ] ; then
-	poll=true
-fi
-if [ "${1}" == '--prod' ] ; then
-	prod=true
 	shift
 fi
 if [ "${1}" == '--prod-build' ] ; then
@@ -151,10 +143,28 @@ ngserve () {
 			../commands/prodbuild.sh --no-build |
 				grep -vP '(build-optimizer|extract-licenses|named-chunks|output-hashing)'
 		fi) \
-		$(if [ "${poll}" ] ; then echo '--poll 1000' ; fi) \
 		${args} \
 		"${@}"
 }
+
+
+./commands/copyworkspace.sh ~/.build
+
+node -e "http.createServer((req, res) => {
+	child_process.spawn(
+		'rsync',
+		req.url.endsWith('/backend') ?
+			['-a', 'backend', os.homedir() + '/.build/'] :
+			['-a', 'shared/js', os.homedir() + '/.build/shared/'],
+		{stdio: 'inherit'}
+	);
+
+	res.statusCode = 200;
+	res.write('');
+	res.end();
+}).listen(45001)" &
+
+cd ~/.build
 
 
 # node /node_modules/.bin/firebase-server -p 44000 &
@@ -203,7 +213,7 @@ bash -c "
 				.map(([k, v]) => 'export ' + k + '=' + v.trim()).join('\n') :
 			''
 	)")
-	gin --all -i -p 42000 -a \${PORT} run *.go
+	gin --all -i -l 0.0.0.0 -p 42000 -a \${PORT} run *.go
 " &
 if [ "${includeSyncfusion}" ] ; then
 	bash -c "
@@ -244,7 +254,7 @@ done
 for p in ${ports} ; do
 	while ! curl http://localhost:${p} &> /dev/null ; do sleep 1 ; done
 done
-echo "${ports}" > serve.ready
+echo "${ports}" > ${dir}/serve.ready
 notify serve ready
 
 sleep Infinity

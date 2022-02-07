@@ -42,5 +42,5 @@ ENV HOME /home/gibson
 #SETUP:RUN ~/getlibs/commands/updatedockerimage.sh
 #SETUP:RUN ~/getlibs/commands/getlibs.sh
 
-EXPOSE 9005 9876 31337 42000 42001 42002 42003 42004 44000
+EXPOSE 9005 9876 31337 42000 42001 42002 42003 42004 44000 45001
 CMD /bin/bash

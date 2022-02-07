@@ -3,6 +3,7 @@
 const childProcess = require('child_process');
 const crypto = require('crypto');
 const fs = require('fs');
+const http = require('http');
 const os = require('os');
 const path = require('path');
 const zlib = require('zlib');
@@ -166,11 +167,13 @@ fs.existsSync(path.join(__dirname, 'commands', `${args.command}.js`)) ?
 	`${args.command}.js` :
 	undefined;
 
+const backendPath = path.join(__dirname, 'backend');
 const baseImageDigestsPath = path.join(__dirname, 'base-image-digests.json');
 const circleciConfigPath = path.join(__dirname, 'circle.yml');
 const codespaceDockerfilePath = path.join(__dirname, 'Dockerfile.codespace');
 const gitconfigPath = path.join(homeDir, '.gitconfig');
 const gitconfigDockerPath = `${dockerHomeDir}/.gitconfig`;
+const jsPath = path.join(__dirname, 'shared', 'js');
 const publicBackendDeploymentPath = path.join(
 	__dirname,
 	'.public-backend-deployment'
@@ -1042,6 +1045,7 @@ switch (args.command) {
 		}
 
 		commandAdditionalArgs.push('-p', '44000:44000');
+		commandAdditionalArgs.push('-p', '45001:45001');
 
 		console.log('\n\n');
 
@@ -1066,6 +1070,15 @@ switch (args.command) {
 					console.log(postOpenLog);
 				}
 				fs.unlinkSync(serveReadyPath);
+
+				for (const {url, watchPath} of [
+					{url: 'backend', watchPath: backendPath},
+					{url: 'js', watchPath: jsPath}
+				]) {
+					fs.watch(watchPath, {recursive: true}, () => {
+						http.get(`http://localhost:45001/${url}`);
+					});
+				}
 			});
 		break;
 
