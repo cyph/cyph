@@ -8,6 +8,7 @@ import crypto from 'crypto';
 import FCM from 'fcm-node';
 import admin from 'firebase-admin';
 import fs from 'fs';
+import memoize from 'lodash-es/memoize.js';
 import lz4 from 'lz4';
 import os from 'os';
 import * as brotli from './brotli.js';
@@ -19,7 +20,7 @@ const {deserialize, retryUntilSuccessful, serialize, sleep, uuid} = util;
 /** Max number of bytes to upload to non-blob storage. */
 const nonBlobStorageLimit = 8192;
 
-export const initDatabaseService = (config, isCloudFunction) => {
+export const initDatabaseService = memoize((config, isCloudFunction) => {
 	if (typeof config === 'string') {
 		const projectId = config;
 		const configDir = `${os.homedir()}/.cyph`;
@@ -313,4 +314,4 @@ export const initDatabaseService = (config, isCloudFunction) => {
 	};
 
 	return databaseService;
-};
+});
