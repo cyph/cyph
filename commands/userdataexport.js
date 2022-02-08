@@ -110,9 +110,12 @@ export const userDataExport = async (projectId, namespace) => {
 				async ([username, user]) => {
 					const userPath = `${usersPath}/${username}`;
 
-					if (fs.existsSync(userPath)) {
-						return dynamicDeserialize(fs.readFileSync(userPath));
+					try {
+						return dynamicDeserialize(
+							await fs.promises.readFile(userPath)
+						);
 					}
+					catch {}
 
 					const o = await getUserMetadata(
 						projectId,
@@ -124,7 +127,10 @@ export const userDataExport = async (projectId, namespace) => {
 						true
 					);
 
-					fs.writeFileSync(userPath, dynamicSerializeBytes(o));
+					await fs.promises.writeFile(
+						userPath,
+						dynamicSerializeBytes(o)
+					);
 
 					return o;
 				}
