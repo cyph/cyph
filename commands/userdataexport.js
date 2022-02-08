@@ -81,11 +81,6 @@ export const userDataExport = async (projectId, namespace) => {
 	const users = await (async () => {
 		const usersPath = `${__dirname}/../users.processed`;
 
-		if (fs.existsSync(usersPath)) {
-			console.error('using cached users.processed');
-			return dynamicDeserialize(fs.readFileSync(usersPath));
-		}
-
 		const rawUsersPath = `${__dirname}/../users.json`;
 		const rawUsersExists = fs.existsSync(rawUsersPath);
 
@@ -102,24 +97,38 @@ export const userDataExport = async (projectId, namespace) => {
 			console.error('finished caching user data at users.json');
 		}
 
-		const _users = Promise.all(
-			Array.from(Object.entries(rawUsers)).map(async ([username, user]) =>
-				getUserMetadata(
-					projectId,
-					{
-						...user,
-						username
-					},
-					namespace,
-					true
-				)
-			)
-		);
+		if (fs.existsSync(usersPath)) {
+			console.error('using cached users.processed');
+		}
+		else {
+			console.error('caching processed user data at users.processed');
+			fs.mkdirSync(usersPath);
+		}
 
-		console.error('caching processed user data at users.processed');
-		fs.writeFileSync(usersPath, dynamicSerializeBytes(_users));
-		console.error(
-			'finished caching processed user data at users.processed'
+		const _users = await Promise.all(
+			Array.from(Object.entries(rawUsers)).map(
+				async ([username, user]) => {
+					const userPath = `${usersPath}/${username}`;
+
+					if (fs.existsSync(userPath)) {
+						return dynamicDeserialize(fs.readFileSync(userPath));
+					}
+
+					const o = await getUserMetadata(
+						projectId,
+						{
+							...user,
+							username
+						},
+						namespace,
+						true
+					);
+
+					fs.writeFileSync(userPath, dynamicSerializeBytes(o));
+
+					return o;
+				}
+			)
 		);
 
 		return _users;
