@@ -5,6 +5,7 @@ const {__dirname, isCLI} = getMeta(import.meta);
 
 import {util} from '@cyph/sdk';
 import fs from 'fs';
+import Semaphore from 'promise-semaphore';
 import readline from 'readline';
 import {initDatabaseService} from '../modules/database-service.js';
 import {getUserMetadata} from './getusermetadata.js';
@@ -105,9 +106,11 @@ export const userDataExport = async (projectId, namespace) => {
 			fs.mkdirSync(usersPath);
 		}
 
+		const semaphore = new Semaphore({rooms: 10});
+
 		const _users = await Promise.all(
-			Array.from(Object.entries(rawUsers)).map(
-				async ([username, user]) => {
+			Array.from(Object.entries(rawUsers)).map(async ([username, user]) =>
+				semaphore.add(async () => {
 					const userPath = `${usersPath}/${username}`;
 
 					try {
@@ -133,7 +136,7 @@ export const userDataExport = async (projectId, namespace) => {
 					);
 
 					return o;
-				}
+				})
 			)
 		);
 
