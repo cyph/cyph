@@ -8,7 +8,7 @@ img-src 'self' data:;
 media-src 'self' data: blob:;
 object-src 'none';
 referrer no-referrer;
-script-src 'self' 'unsafe-eval' blob:;
+script-src 'self' 'wasm-unsafe-eval' blob:;
 style-src 'self' 'unsafe-inline';
 upgrade-insecure-requests;
 worker-src 'self' 'unsafe-eval' blob:
