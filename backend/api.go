@@ -1675,11 +1675,8 @@ func stripeSession(h HandlerArgs) (interface{}, int) {
 		},
 		Mode:              stripe.String(string(mode)),
 		PaymentIntentData: paymentIntentData,
-		PaymentMethodTypes: stripe.StringSlice([]string{
-			"card",
-		}),
-		SubscriptionData: subscriptionData,
-		SuccessURL:       stripe.String(websiteURL + "/checkout-success"),
+		SubscriptionData:  subscriptionData,
+		SuccessURL:        stripe.String(websiteURL + "/checkout-success"),
 	}
 
 	session, err := stripeSessionAPI.New(params)
@@ -1713,6 +1710,7 @@ func stripeWebhook(h HandlerArgs) (interface{}, int) {
 		return err.Error(), http.StatusInternalServerError
 	}
 
+	/* TODO: Consider handling async payment methods differently */
 	if event.Type != "checkout.session.completed" {
 		return "", http.StatusOK
 	}
