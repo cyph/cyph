@@ -1609,6 +1609,7 @@ func stripeSession(h HandlerArgs) (interface{}, int) {
 	metadata := map[string]string{
 		"inviteCode":           inviteCode,
 		"namespace":            namespace,
+		"originalAmount":       amountString,
 		"partnerTransactionID": partnerTransactionID,
 		"planID":               planID,
 		"username":             username,
@@ -1873,8 +1874,14 @@ func stripeWebhookWorker(h HandlerArgs) (interface{}, int) {
 		quantity = subscription.Quantity
 		amount = originalSubscriptionItem.Price.UnitAmount * quantity
 	} else {
+		originalAmount, err := strconv.ParseInt(metadata["originalAmount"], 10, 64)
+		if err != nil {
+			log.Println(fmt.Errorf("stripeWebhookParseAmountError: %v", err))
+			return err.Error(), http.StatusInternalServerError
+		}
+
 		amount = paymentIntent.Amount
-		quantity = paymentIntent.Invoice.Subscription.Quantity
+		quantity = amount / originalAmount
 	}
 
 	amountString := strconv.FormatInt(amount, 10)
