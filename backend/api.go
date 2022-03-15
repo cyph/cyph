@@ -1940,6 +1940,18 @@ func stripeWebhookWorker(h HandlerArgs) (interface{}, int) {
 		"\n\n" + requestBody +
 		""), "")
 
+	if planID == "10000-0" {
+		sendEmail(email, "Thank You!", "", ""+
+			"<p>Thanks so much for your donation "+name+"!</p>"+
+			"<p>"+
+			"Your support means a lot to us, and helps ensure "+
+			"that we're able to keep the lights on and continue "+
+			"our work to protect user privacy."+
+			"</p>"+
+			"")
+		return "", http.StatusOK
+	}
+
 	customerIDs := []string{customerID}
 	subscriptionIDs := []string{subscriptionID}
 	subscriptionItemIDs := []string{originalSubscriptionItem.ID}
