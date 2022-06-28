@@ -13,7 +13,7 @@ try {
 		test: process.argv.indexOf('--test') > -1
 	};
 
-	const signatureTTL = 8; // Months
+	const signatureTTL = 18; // Months
 	const timestamp = Date.now();
 
 	const inputs = args.inputs
