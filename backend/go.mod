@@ -3,21 +3,21 @@ module api
 go 1.15
 
 require (
-	cloud.google.com/go/cloudtasks v1.1.0
-	cloud.google.com/go/compute v1.2.0
-	cloud.google.com/go/datastore v1.6.0
-	cloud.google.com/go/storage v1.20.0
+	cloud.google.com/go/cloudtasks v1.3.0
+	cloud.google.com/go/compute v1.7.0
+	cloud.google.com/go/datastore v1.8.0
+	cloud.google.com/go/storage v1.23.0
 	github.com/buu700/braintree-go-tmp v0.0.0-20200503224113-916e4842cf47
 	github.com/buu700/mustache-tmp v1.0.1
-	github.com/fsouza/fake-gcs-server v1.34.1
+	github.com/felixge/httpsnoop v1.0.3 // indirect
+	github.com/fsouza/fake-gcs-server v1.38.3
 	github.com/gorilla/handlers v1.5.1
 	github.com/gorilla/mux v1.8.0
-	github.com/microcosm-cc/bluemonday v1.0.17
-	github.com/oschwald/geoip2-golang v1.6.1
-	github.com/stripe/stripe-go/v72 v72.86.0
-	golang.org/x/net v0.0.0-20220127200216-cd36cc0744dd // indirect
-	golang.org/x/sys v0.0.0-20220204135822-1c1b9b1eba6a // indirect
-	google.golang.org/api v0.67.0
-	google.golang.org/genproto v0.0.0-20220204002441-d6cc3cc0770e
-	google.golang.org/grpc v1.44.0 // indirect
+	github.com/microcosm-cc/bluemonday v1.0.18
+	github.com/oschwald/geoip2-golang v1.7.0
+	github.com/stripe/stripe-go/v72 v72.116.0
+	golang.org/x/oauth2 v0.0.0-20220628200809-02e64fa58f26 // indirect
+	golang.org/x/sys v0.0.0-20220627191245-f75cf1eec38b // indirect
+	google.golang.org/api v0.86.0
+	google.golang.org/genproto v0.0.0-20220627200112-0a929928cb33
 )
