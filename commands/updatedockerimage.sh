@@ -4,7 +4,8 @@
 source ~/.bashrc
 
 sudo tee -a /etc/apt/sources.list.d/cyph.list > /dev/null <<- EOM
-	deb https://dl.yarnpkg.com/debian/ stable main
+	deb https://deb.debian.org/debian bullseye-backports main
+	deb https://dl.yarnpkg.com/debian stable main
 EOM
 
 curl -s https://deb.nodesource.com/gpgkey/nodesource.gpg.key | sudo apt-key add -
@@ -25,7 +26,8 @@ sudo apt-get -y --allow-downgrades install \
 	g++ \
 	gcc \
 	git \
-	golang-go \
+	golang-go/bullseye-backports \
+	golang-src/bullseye-backports \
 	htop \
 	imagemagick \
 	inotify-tools \
