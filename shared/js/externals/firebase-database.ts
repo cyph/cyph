@@ -4,8 +4,6 @@
 
 const database = eval('require')('firebase/database');
 
-export const _BrowserPollConnection: any = database._BrowserPollConnection;
-
 export const child: any = database.child;
 
 export const Database: any = database.Database;

@@ -13,6 +13,7 @@ import {
 	Database,
 	DatabaseReference,
 	DataSnapshot,
+	forceWebSockets,
 	get as databaseRefGet,
 	getDatabase,
 	goOffline as databaseRefGoOffline,
@@ -90,11 +91,7 @@ import {NotificationService} from './notification.service';
 import {WorkerService} from './worker.service';
 
 try {
-	/*
-	TODO: Migrate to Firebase v9:
-
-	(<any> firebase).database.INTERNAL.forceWebSockets();
-	*/
+	forceWebSockets();
 }
 catch (err) {
 	debugLogError(() => ({firebaseForceWebSocketsError: err}));
