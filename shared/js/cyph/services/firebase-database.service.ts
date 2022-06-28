@@ -9,7 +9,6 @@ import {
 	updatePassword
 } from 'firebase/auth';
 import {
-	_BrowserPollConnection,
 	child as databaseRefChild,
 	Database,
 	DatabaseReference,
@@ -91,7 +90,11 @@ import {NotificationService} from './notification.service';
 import {WorkerService} from './worker.service';
 
 try {
-	_BrowserPollConnection.forceDisallow();
+	/*
+	TODO: Migrate to Firebase v9:
+
+	(<any> firebase).database.INTERNAL.forceWebSockets();
+	*/
 }
 catch (err) {
 	debugLogError(() => ({firebaseForceWebSocketsError: err}));
