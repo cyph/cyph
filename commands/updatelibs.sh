@@ -38,7 +38,7 @@ mv ~/lib shared/
 rm -rf ~/tmplib
 
 wget \
-	https://github.com/ipfs/public-gateway-checker/raw/master/gateways.json \
+	https://github.com/ipfs/public-gateway-checker/raw/master/src/gateways.json \
 	-O shared/lib/ipfs-gateways.json
 
 ./commands/getlibs.sh --skip-node-modules
