@@ -399,7 +399,7 @@ cp -rf ../../css/* ./
 grep -rl "@import '~" | xargs -I% sed -i "s|@import '~|@import '/node_modules/|g" %
 
 echo ${scssAssets} | tr ' ' '\n' | xargs -I% -P ${parallelProcesses} \
-	sass '%.scss' '%.css'
+	../../../commands/sass.sh '%.scss' '%.css'
 checkfailretry
 echo ${scssAssets} | tr ' ' '\n' | xargs -I% -P ${parallelProcesses} \
 	cleancss --inline none '%.css' -o '%.css'
