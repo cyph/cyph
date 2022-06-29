@@ -289,6 +289,7 @@ export class AccountComponent
 			name: 'basic-gradient',
 			opacity: [1, 0.5, 0],
 			states: {
+				/* eslint-disable-next-line @typescript-eslint/naming-convention */
 				'default-state': {
 					gradients: !this.envService.telehealthTheme.value ?
 						[

@@ -142,6 +142,7 @@ export class EphemeralChatRootComponent
 		}
 
 		const granimStates = {
+			/* eslint-disable-next-line @typescript-eslint/naming-convention */
 			'default-state': !this.envService.telehealthTheme.value ?
 				{
 					gradients: [

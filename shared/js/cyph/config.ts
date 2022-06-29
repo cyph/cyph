@@ -247,13 +247,21 @@ export class Config {
 
 	/** Mapping of WebSign redirect hostnames to routes. */
 	public readonly webSignRedirects: Record<string, string[]> = {
+		/* eslint-disable-next-line @typescript-eslint/naming-convention */
 		'burner.cyph.app': ['burner'],
+		/* eslint-disable-next-line @typescript-eslint/naming-convention */
 		'cyph.audio': ['burner', 'audio'],
+		/* eslint-disable-next-line @typescript-eslint/naming-convention */
 		'cyph.download': ['download'],
+		/* eslint-disable-next-line @typescript-eslint/naming-convention */
 		'cyph.im': ['burner'],
+		/* eslint-disable-next-line @typescript-eslint/naming-convention */
 		'cyph.io': ['burner', 'io'],
+		/* eslint-disable-next-line @typescript-eslint/naming-convention */
 		'cyph.me': ['profile'],
+		/* eslint-disable-next-line @typescript-eslint/naming-convention */
 		'cyph.video': ['burner', 'video'],
+		/* eslint-disable-next-line @typescript-eslint/naming-convention */
 		'cyph.ws': ['burner']
 	};
 

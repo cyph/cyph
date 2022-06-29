@@ -238,6 +238,7 @@ export class CheckoutComponent
 				price: amount,
 				token: this.configService.bitPayToken
 			},
+			/* eslint-disable-next-line @typescript-eslint/naming-convention */
 			headers: {'x-accept-version': '2.0.0'},
 			method: 'POST',
 			url: 'https://bitpay.com/invoices'
