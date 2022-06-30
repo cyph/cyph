@@ -13,7 +13,7 @@ import {
 	Optional,
 	ViewChild
 } from '@angular/core';
-import {ThemePalette} from '@angular/material/core/common-behaviors/color';
+import {ThemePalette} from '@angular/material/core';
 import {SafeStyle} from '@angular/platform-browser';
 import Hammer from 'hammerjs';
 import * as $ from 'jquery';

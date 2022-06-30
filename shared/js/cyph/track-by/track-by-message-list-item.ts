@@ -1,11 +1,10 @@
-import {TrackByFunction} from '@angular/core';
 import {IMessageListItem} from '../chat/imessage-list-item';
 import {ListHoleError} from '../list-hole-error';
 
 /** IMessageListItem track by function. */
-export const trackByMessageListItem: TrackByFunction<IMessageListItem> = (
-	_,
-	item
+export const trackByMessageListItem = <T extends IMessageListItem>(
+	_I: number,
+	item: T
 ) =>
 	typeof item.message === 'string' ?
 		item.message :

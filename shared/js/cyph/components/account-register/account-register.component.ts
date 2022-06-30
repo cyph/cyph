@@ -871,7 +871,11 @@ export class AccountRegisterComponent
 
 		this.checking.next(false);
 
-		if (this.submissionReadinessErrors.value.length > 0) {
+		if (
+			this.submissionReadinessErrors.value.length > 0 ||
+			!this.inviteCode.value ||
+			!this.username.value
+		) {
 			this.submitError.next(this.stringsService.signupFailed);
 			return;
 		}
@@ -1045,7 +1049,7 @@ export class AccountRegisterComponent
 
 	/** Submits to waitlist. */
 	public async waitlistSignup () : Promise<void> {
-		if (!this.email.value || !this.name.value) {
+		if (!this.email.value || !this.name.value || !this.username.value) {
 			return;
 		}
 

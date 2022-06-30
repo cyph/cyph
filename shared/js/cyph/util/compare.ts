@@ -42,7 +42,12 @@ export const compareValues = <T>(a: T, b: T, ...values: T[]) : boolean => {
 };
 
 /** Constant time string comparison. */
-export const safeStringCompare = (a: string, b: string) : boolean => {
+/* eslint-disable-next-line no-null/no-null */
+export const safeStringCompare = (a: string, b?: string | null) : boolean => {
+	if (typeof b !== 'string') {
+		return false;
+	}
+
 	let mismatch: number;
 
 	const length = a.length;

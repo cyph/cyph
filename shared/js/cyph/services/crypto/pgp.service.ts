@@ -91,32 +91,52 @@ export class PGPService extends BaseProvider {
 								privateKeysRaw: (Uint8Array | string)[],
 								signingPublicKeysRaw:
 									| (Uint8Array | string)[]
-									| undefined,
-								bytes: boolean
+									| undefined
 							) => {
 								const [message, privateKeys, publicKeys] =
 									await Promise.all([
-										typeof cyphertext === 'string' ?
-											openpgp.readMessage({
-												armoredMessage: cyphertext
-											}) :
-											openpgp.readMessage({
-												binaryMessage: cyphertext
-											}),
+										(async () =>
+											typeof cyphertext !== 'string' ?
+												{
+													bytes: await openpgp.readMessage(
+														{
+															binaryMessage:
+																cyphertext
+														}
+													)
+												} :
+												{
+													text: await openpgp.readMessage(
+														{
+															armoredMessage:
+																cyphertext
+														}
+													)
+												})(),
 										readRawKeys(privateKeysRaw),
 										readRawKeys(signingPublicKeysRaw)
 									]);
 
-								const o = await openpgp.decrypt({
-									format: bytes ? 'binary' : undefined,
+								const decryptBaseOptions = {
 									decryptionKeys: <OpenPGP.PrivateKey[]> (
 										privateKeys
 									),
-									message,
 									verificationKeys: <OpenPGP.PublicKey[]> (
 										publicKeys
 									)
-								});
+								};
+
+								const o =
+									message.bytes !== undefined ?
+										await openpgp.decrypt({
+											...decryptBaseOptions,
+											format: 'binary',
+											message: message.bytes
+										}) :
+										await openpgp.decrypt({
+											...decryptBaseOptions,
+											message: message.text
+										});
 
 								if (
 									!(await validateSignatures(
@@ -134,49 +154,53 @@ export class PGPService extends BaseProvider {
 								publicKeysRaw: (Uint8Array | string)[],
 								signingPrivateKeysRaw:
 									| (Uint8Array | string)[]
-									| undefined,
-								bytes: boolean
+									| undefined
 							) => {
-								const armor = !bytes;
-
-								const message =
-									typeof plaintext === 'string' ?
-										await openpgp.createMessage({
-											text: plaintext
-										}) :
-										await openpgp.createMessage({
-											binary: plaintext
-										});
-
-								const [privateKeys, publicKeys] =
+								const [message, privateKeys, publicKeys] =
 									await Promise.all([
+										(async () =>
+											typeof plaintext !== 'string' ?
+												{
+													bytes: await openpgp.createMessage(
+														{
+															binary: plaintext
+														}
+													)
+												} :
+												{
+													text: await openpgp.createMessage(
+														{
+															text: plaintext
+														}
+													)
+												})(),
 										readRawKeys(signingPrivateKeysRaw),
 										readRawKeys(publicKeysRaw)
 									]);
 
-								return transfer(
-									armor ?
+								const encryptBaseOptions = {
+									encryptionKeys: <OpenPGP.PublicKey[]> (
+										publicKeys
+									),
+									signingKeys: <OpenPGP.PrivateKey[]> (
+										privateKeys
+									)
+								};
+
+								const cyphertext =
+									message.bytes !== undefined ?
 										await openpgp.encrypt({
-											encryptionKeys: <
-													OpenPGP.PublicKey[]
-												> publicKeys,
-											format: 'armored',
-											message,
-											signingKeys: <
-													OpenPGP.PrivateKey[]
-												> privateKeys
+											...encryptBaseOptions,
+											format: 'binary',
+											message: message.bytes
 										}) :
 										await openpgp.encrypt({
-											encryptionKeys: <
-													OpenPGP.PublicKey[]
-												> publicKeys,
-											format: 'binary',
-											message,
-											signingKeys: <
-													OpenPGP.PrivateKey[]
-												> privateKeys
-										})
-								);
+											...encryptBaseOptions,
+											format: 'armored',
+											message: message.text
+										});
+
+								return transfer(cyphertext);
 							},
 							getPrivateKeyArmor: async (
 								privateKeyRaw: Uint8Array | string
@@ -286,20 +310,30 @@ export class PGPService extends BaseProvider {
 														'object' &&
 													typeof signed.message ===
 														'string' ?
-														await openpgp.createCleartextMessage(
-															{
-																text: signed.message
-															}
-														) :
+														{
+															bytes: undefined,
+															cleartext:
+																await openpgp.createCleartextMessage(
+																	{
+																		text: signed.message
+																	}
+																),
+															text: undefined
+														} :
 													typeof signed ===
 															'object' &&
 														signed.message instanceof
 															Uint8Array ?
-														await openpgp.createMessage(
-															{
-																binary: signed.message
-															}
-														) :
+														{
+															bytes: await openpgp.createMessage(
+																{
+																	binary: signed.message
+																}
+															),
+															cleartext:
+																undefined,
+															text: undefined
+														} :
 														undefined,
 												signature:
 													typeof signed ===
@@ -336,34 +370,48 @@ export class PGPService extends BaseProvider {
 
 												try {
 													return {
-														message:
-															await openpgp.readCleartextMessage(
-																{
-																	cleartextMessage:
-																		signed
-																}
-															),
+														message: {
+																bytes: undefined,
+																cleartext:
+																	await openpgp.readCleartextMessage(
+																		{
+																			cleartextMessage:
+																				signed
+																		}
+																	),
+																text: undefined
+															},
 														signature: undefined
 													};
 												}
 												catch {
 													return {
-														message:
-															await openpgp.readMessage(
-																{
-																	armoredMessage:
-																		signed
-																}
-															),
+														message: {
+																bytes: undefined,
+																cleartext:
+																	undefined,
+																text: await openpgp.readMessage(
+																	{
+																		armoredMessage:
+																			signed
+																	}
+																)
+															},
 														signature: undefined
 													};
 												}
 											})() :
 											(async () => ({
-												message:
-													await openpgp.readMessage({
-														binaryMessage: signed
-													}),
+												message: {
+														bytes: await openpgp.readMessage(
+															{
+																binaryMessage:
+																	signed
+															}
+														),
+														cleartext: undefined,
+														text: undefined
+													},
 												signature: undefined
 											}))(),
 										readRawKeys(publicKeysRaw)
@@ -375,22 +423,32 @@ export class PGPService extends BaseProvider {
 
 								const detached = signature !== undefined;
 
+								const verifyBaseOptions = () => ({
+									expectSigned: true,
+									signature,
+									verificationKeys: <OpenPGP.PublicKey[]> (
+										publicKeys
+									)
+								});
+
 								const o =
-									message instanceof
-									openpgp.CleartextMessage ?
+									message.cleartext !== undefined ?
 										{
-											data: message.getText(),
-											signatures: await message.verify(
+											data: message.cleartext.getText(),
+											signatures:
+												await message.cleartext.verify(
 													publicKeys
 												)
 										} :
+									message.bytes !== undefined ?
 										await openpgp.verify({
-											expectSigned: true,
-											message,
-											signature,
-											verificationKeys: <
-													OpenPGP.PublicKey[]
-												> publicKeys
+											...verifyBaseOptions(),
+											format: 'binary',
+											message: message.bytes
+										}) :
+										await openpgp.verify({
+											...verifyBaseOptions(),
+											message: message.text
 										});
 
 								const isValid = await validateSignatures(
@@ -657,8 +715,7 @@ export class PGPService extends BaseProvider {
 				undefined :
 			signingPublicKey instanceof Array ?
 				signingPublicKey :
-				[signingPublicKey],
-			bytes
+				[signingPublicKey]
 		);
 
 		return bytes ?
@@ -694,8 +751,7 @@ export class PGPService extends BaseProvider {
 				undefined :
 			signingPrivateKey instanceof Array ?
 				signingPrivateKey :
-				[signingPrivateKey],
-			bytes
+				[signingPrivateKey]
 		);
 
 		return bytes ?

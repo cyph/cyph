@@ -5,7 +5,7 @@ import {
 	OnChanges,
 	OnInit
 } from '@angular/core';
-import {ThemePalette} from '@angular/material/core/common-behaviors/color';
+import {ThemePalette} from '@angular/material/core';
 import {ProgressSpinnerMode} from '@angular/material/progress-spinner';
 import {AnimationOptions} from 'ngx-lottie';
 import {BehaviorSubject} from 'rxjs';

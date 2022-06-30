@@ -1,7 +1,5 @@
-import {TrackByFunction} from '@angular/core';
-
 /** Value-containing-object track by function. */
-export const trackByValue: TrackByFunction<{value: number | string}> = (
-	_,
-	item
+export const trackByValue = <T extends {value: number | string}>(
+	_I: number,
+	item: T
 ) => item.value;

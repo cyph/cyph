@@ -1,4 +1,2 @@
-import {TrackByFunction} from '@angular/core';
-
 /** Self track by function. */
-export const trackBySelf: TrackByFunction<any> = (_, item) => item;
+export const trackBySelf = <T extends unknown>(_I: number, item: T) => item;

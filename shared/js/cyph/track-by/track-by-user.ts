@@ -1,7 +1,10 @@
-import {TrackByFunction} from '@angular/core';
-
 /** User track by function. */
-export const trackByUser: TrackByFunction<{
-	anonymousUser?: {name: string};
-	username: string;
-}> = (_, item) => item.anonymousUser || item.username;
+export const trackByUser = <
+	T extends {
+		anonymousUser?: {name: string};
+		username: string;
+	}
+>(
+	_I: number,
+	item: T
+) => item.anonymousUser || item.username;

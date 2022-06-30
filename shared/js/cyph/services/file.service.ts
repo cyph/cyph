@@ -229,6 +229,7 @@ export class FileService extends BaseProvider {
 
 			if (!dataURI) {
 				return {
+					colorSpace: 'srgb',
 					data: new Uint8ClampedArray(0),
 					height: 0,
 					width: 0
@@ -248,6 +249,7 @@ export class FileService extends BaseProvider {
 
 		if (height < 1 || width < 1) {
 			return {
+				colorSpace: 'srgb',
 				data: new Uint8ClampedArray(0),
 				height,
 				width
