@@ -37,6 +37,7 @@
 @angular/fire
 @angular/flex-layout
 @angular/forms
+@angular/language-service
 @angular/material
 @angular/platform-browser
 @angular/platform-browser-dynamic
