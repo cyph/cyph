@@ -212,7 +212,6 @@
 @types/markdown-it
 @types/materialize-css
 @types/node
-@types/openpgp
 @types/pdfjs-dist
 @types/pdfkit
 @types/pulltorefreshjs
