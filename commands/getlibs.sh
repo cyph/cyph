@@ -466,6 +466,9 @@ if [ ! -d oldsupersphincs ] ; then
 	npm install supersphincs@old
 fi
 
+# Temporary workaround pending https://github.com/angular/angular-cli/pull/22814
+echo | ng analytics disable --global
+
 # https://next.angular.io/guide/migration-ngcc
 cd /
 rm -rf node_modules/@covalent node_modules/ng2-truncate # entry-point compile errors
