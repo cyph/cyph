@@ -234,6 +234,9 @@ export class Config {
 		'1F44E' /* -1 */
 	];
 
+	/** @see Config.simpleEmoji */
+	public readonly simpleEmojiSet = new Set(this.simpleEmoji);
+
 	/** Stripe configuration. */
 	public readonly stripe = {
 		apiKeys: {
@@ -241,9 +244,6 @@ export class Config {
 			test: 'pk_test_q57rb0D1dJkZYKCaBlXTYiry'
 		}
 	};
-
-	/** @see Config.simpleEmoji */
-	public readonly simpleEmojiSet = new Set(this.simpleEmoji);
 
 	/** Mapping of WebSign redirect hostnames to routes. */
 	public readonly webSignRedirects: Record<string, string[]> = {
