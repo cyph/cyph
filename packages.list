@@ -277,6 +277,7 @@ eslint-plugin-rxjs-angular
 eslint-plugin-security
 eslint-plugin-sonarjs
 eslint-plugin-unicorn
+falcon-crypto
 fast-crc32c
 faye-websocket
 fcm-node
@@ -435,6 +436,7 @@ stripe
 stripe-angular
 stylelint
 stylelint-scss
+superfalcon
 supersphincs
 tab-indent
 tailwindcss
