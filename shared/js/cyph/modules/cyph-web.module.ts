@@ -52,6 +52,7 @@ import {
 	ScheduleAllModule
 } from '@syncfusion/ej2-angular-schedule';
 import {SplitButtonModule} from '@syncfusion/ej2-angular-splitbuttons';
+import {registerLicense as registerSyncfusionLicense} from '@syncfusion/ej2-base';
 import {NgxSpeedDialModule} from 'ngx-speed-dial';
 import {AngularDraggableModule} from 'angular2-draggable';
 import {DxFileManagerModule} from 'devextreme-angular/ui/file-manager';
@@ -63,11 +64,14 @@ import {SidenavComponent} from '../components/sidenav';
 import {SimpleEmojiPickerComponent} from '../components/simple-emoji-picker';
 import {SocialShareComponent} from '../components/social-share';
 import {VideoComponent} from '../components/video';
+import {config} from '../config';
 import {InitDirective} from '../directives/init.directive';
 import {env} from '../env';
 import {webModuleProviders} from '../providers/web-module';
 import {LocalStorageService} from '../services/local-storage.service';
 import {CyphSharedModule} from './cyph-shared.module';
+
+registerSyncfusionLicense(config.syncfusionLicenseKey);
 
 /**
  * Common module with shared imports for web projects.
