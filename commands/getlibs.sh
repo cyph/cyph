@@ -356,8 +356,12 @@ echo 'MTY0LDE3MWMxNjQsMTcwCjwgICAgICAgICBwbHVnaW5zLnB1c2goWwo8ICAgICAgICAgICAgIH
 rm -rf simplebtc/node_modules &> /dev/null
 
 # Temporary workaround for unwanted font import
-for f in $(rg -l '@import url' @syncfusion | grep '\.css$') ; do
-	cat ${f} | perl -pe "s/\@import url\(.*?\);//g" > ${f}.new
+for f in $(rg -l '@import' @syncfusion | rg '\.s?css$') ; do
+	cat ${f} |
+		perl -pe "s/\@import url\(.*?\);//g" |
+		perl -pe 's/\@import ?".*?";//g' |
+		perl -pe "s/\@import ?'.*?';//g" \
+	> ${f}.new
 	mv ${f}.new ${f}
 done
 
