@@ -831,13 +831,11 @@ export class AccountRegisterComponent
 			}
 		);
 
-		const {masterKey, useXkcdPassphrase, xkcdPassphrase} =
-			await submitMasterKey;
+		const {masterKey} = await submitMasterKey;
 
 		if (masterKey.length > 0) {
 			this.masterKey.next(masterKey);
-			this.useXkcdPassphrase.next(useXkcdPassphrase);
-			this.xkcdPassphrase.next(xkcdPassphrase);
+			this.useXkcdPassphrase.next(false);
 			this.additionalDevices.paperMasterKey.next(true);
 		}
 
