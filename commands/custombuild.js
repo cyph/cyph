@@ -4,6 +4,7 @@ import {getMeta} from '../modules/base.js';
 const {__dirname, isCLI} = getMeta(import.meta);
 
 import childProcess from 'child_process';
+import crypto from 'crypto';
 import datauri from 'datauri/sync.js';
 import fs from 'fs';
 import htmlencode from 'htmlencode';
@@ -24,24 +25,30 @@ export const customBuildIds = fs
 const cssRoot = `${__dirname}/../shared/css`;
 
 const compileSCSS = scss => {
-	const tmpdir = os.tmpdir();
-	const tmpfile = `${tmpdir}/tmp.css`;
+	const tmpfile = `${os.tmpdir()}/${crypto
+		.randomBytes(32)
+		.toString('hex')}.css`;
 
-	childProcess.spawnSync('sass', ['--stdin', `-I${cssRoot}`, tmpfile], {
-		input: `
-			${fs.readFileSync(`${cssRoot}/mixins.scss`).toString()}
-			${fs.readFileSync(`${cssRoot}/theme.scss`).toString()}
-			${scss}
-		`
-			.replace(/@import '\.\/mixins';/g, '')
-			.replace(/@import '~/g, "@import '/node_modules/")
+	childProcess.spawnSync(
+		'bash',
+		[
+			`${__dirname}/../commands/sass.sh`,
+			'--input-data',
+			`@import './theme';\n${scss}`,
+			'--load-path',
+			cssRoot,
+			tmpfile
+		],
+		{stdio: 'inherit'}
+	);
+
+	childProcess.spawnSync('cleancss', [tmpfile, '-o', tmpfile], {
+		stdio: 'inherit'
 	});
-
-	childProcess.spawnSync('cleancss', [tmpfile, '-o', tmpfile]);
 
 	const output = fs.readFileSync(tmpfile).toString().trim();
 
-	fs.rmSync(tmpdir, {force: true, recursive: true});
+	fs.rmSync(tmpfile, {force: true});
 
 	return output;
 };
