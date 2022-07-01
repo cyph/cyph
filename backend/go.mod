@@ -16,13 +16,13 @@ require (
 	github.com/oschwald/geoip2-golang v1.7.0
 	github.com/stripe/stripe-go/v72 v72.117.0
 	google.golang.org/api v0.86.0
-	google.golang.org/genproto v0.0.0-20220628213854-d9e0b6570c03
+	google.golang.org/genproto v0.0.0-20220630174209-ad1d48641aa7
 )
 
 require (
 	cloud.google.com/go v0.103.0 // indirect
 	cloud.google.com/go/iam v0.3.0 // indirect
-	cloud.google.com/go/pubsub v1.23.0 // indirect
+	cloud.google.com/go/pubsub v1.23.1 // indirect
 	github.com/aymerick/douceur v0.2.0 // indirect
 	github.com/felixge/httpsnoop v1.0.3 // indirect
 	github.com/golang/groupcache v0.0.0-20210331224755-41bb18bfe9da // indirect
@@ -37,8 +37,8 @@ require (
 	github.com/pkg/xattr v0.4.7 // indirect
 	github.com/sirupsen/logrus v1.8.1 // indirect
 	go.opencensus.io v0.23.0 // indirect
-	golang.org/x/net v0.0.0-20220624214902-1bab6f366d9e // indirect
-	golang.org/x/oauth2 v0.0.0-20220628200809-02e64fa58f26 // indirect
+	golang.org/x/net v0.0.0-20220630215102-69896b714898 // indirect
+	golang.org/x/oauth2 v0.0.0-20220630143837-2104d58473e0 // indirect
 	golang.org/x/sync v0.0.0-20220601150217-0de741cfad7f // indirect
 	golang.org/x/sys v0.0.0-20220627191245-f75cf1eec38b // indirect
 	golang.org/x/text v0.3.7 // indirect
