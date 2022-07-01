@@ -1,4 +1,4 @@
-runtime: go115
+runtime: go116
 
 # Prod-only:
 # instance_class: F2
