@@ -236,13 +236,17 @@
 							]
 						},
 						"tmp": {
-							"outputHashing": "all",
+							"aot": false,
+							"buildOptimizer": false,
 							"fileReplacements": [
 								{
 									"replace": "src/js/environments/environment.ts",
 									"with": "src/js/environments/.environment.tmp.ts"
 								}
-							]
+							],
+							"optimization": false,
+							"sourceMap": false,
+							"vendorChunk": true
 						}
 					}
 				},
