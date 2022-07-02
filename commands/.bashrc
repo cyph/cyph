@@ -14,6 +14,7 @@ export PATH="$(
 	echo -n '/opt/local/bin:' ;
 	echo -n '/opt/local/sbin:' ;
 	echo -n '/usr/local/opt/go/libexec/bin:' ;
+	echo -n "/usr/lib/go-1.16/bin:" ;
 	echo -n "${GOPATH}/bin:" ;
 	echo -n "${ANDROID_HOME}/platform-tools:" ;
 	echo -n "${ANDROID_HOME}/tools:" ;

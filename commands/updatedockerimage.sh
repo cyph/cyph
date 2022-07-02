@@ -26,8 +26,7 @@ sudo apt-get -y --allow-downgrades install \
 	g++ \
 	gcc \
 	git \
-	golang-go/bullseye-backports \
-	golang-src/bullseye-backports \
+	golang-1.16/bullseye-backports \
 	htop \
 	imagemagick \
 	inotify-tools \
