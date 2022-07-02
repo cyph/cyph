@@ -1224,7 +1224,7 @@ export class AccountDatabaseService extends BaseProvider {
 					AGSEPKICert,
 					await this.potassiumHelpers.sign.open(
 						signed,
-						await this.potassiumService.sign.importSuperSphincsPublicKeys(
+						await this.potassiumService.sign.importPublicKeys(
 							this.agsePublicSigningKeys.rsa[rsaKeyIndex],
 							this.agsePublicSigningKeys.sphincs[sphincsKeyIndex]
 						),

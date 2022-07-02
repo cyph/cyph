@@ -222,7 +222,7 @@ export const certSign = async (projectId, standalone, namespace) => {
 				AGSEPKIIssuanceHistory,
 				await potassium.sign.open(
 					signed,
-					await potassium.sign.importSuperSphincsPublicKeys(
+					await potassium.sign.importPublicKeys(
 						agsePublicSigningKeys.rsa[rsaKeyIndex],
 						agsePublicSigningKeys.sphincs[sphincsKeyIndex]
 					),

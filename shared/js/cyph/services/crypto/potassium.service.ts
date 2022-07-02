@@ -77,7 +77,7 @@ export class PotassiumService extends PotassiumUtil implements IPotassium {
 	/** @inheritDoc */
 	public readonly sign: ISign = {
 		bytes: this.errorValue,
-		importSuperSphincsPublicKeys: async () => this.errorValue,
+		importPublicKeys: async () => this.errorValue,
 		keyPair: async () => this.errorValue,
 		open: async () => this.errorValue,
 		privateKeyBytes: this.errorValue,

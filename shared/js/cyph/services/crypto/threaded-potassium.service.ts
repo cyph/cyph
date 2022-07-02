@@ -222,9 +222,9 @@ export class ThreadedPotassiumService
 	/** @inheritDoc */
 	public readonly sign: ISign = {
 		bytes: this.staticValues.then(async o => o.signBytes()),
-		importSuperSphincsPublicKeys: async (rsa, sphincs) =>
+		importPublicKeys: async (classical, postQuantum) =>
 			this.getPotassium(async o =>
-				o.signImportSuperSphincsPublicKeys(rsa, sphincs)
+				o.signImportPublicKeys(classical, postQuantum)
 			),
 		keyPair: async () => this.getPotassium(async o => o.signKeyPair()),
 		open: async (signed, publicKey, additionalData, decompress) =>

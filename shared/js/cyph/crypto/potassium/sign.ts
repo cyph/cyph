@@ -19,12 +19,15 @@ export class Sign implements ISign {
 		superSphincs.publicKeyBytes;
 
 	/** @inheritDoc */
-	public async importSuperSphincsPublicKeys (
-		rsa: string,
-		sphincs: string
+	public async importPublicKeys (
+		classical: string,
+		postQuantum: string
 	) : Promise<Uint8Array> {
-		return (await superSphincs.importKeys({public: {rsa, sphincs}}))
-			.publicKey;
+		return (
+			await superSphincs.importKeys({
+				public: {rsa: classical, sphincs: postQuantum}
+			})
+		).publicKey;
 	}
 
 	/** @inheritDoc */

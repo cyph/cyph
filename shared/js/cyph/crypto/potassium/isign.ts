@@ -11,10 +11,10 @@ export interface ISign {
 	/** Public key length. */
 	readonly publicKeyBytes: Promise<number>;
 
-	/** Builds ISign public key from base64-encoded RSA and SPHINCS public keys. */
-	importSuperSphincsPublicKeys (
-		rsa: string,
-		sphincs: string
+	/** Builds ISign public key from base64-encoded public sub-keys. */
+	importPublicKeys (
+		classical: string | Uint8Array,
+		postQuantum: string | Uint8Array
 	) : Promise<Uint8Array>;
 
 	/** Generates key pair. */
