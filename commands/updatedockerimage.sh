@@ -125,7 +125,7 @@ fi
 
 if [ ! -d ~/google-cloud-sdk ] ; then
 	wget \
-		"https://dl.google.com/dl/cloudsdk/channels/rapid/downloads/google-cloud-sdk-338.0.0-linux-$( \
+		"https://dl.google.com/dl/cloudsdk/channels/rapid/downloads/google-cloud-sdk-392.0.0-linux-$( \
 			if [ "$(arch)" == aarch64 ] ; then echo arm ; else echo x86_64 ; fi \
 		).tar.gz" \
 		-O ~/gcloud-sdk.tar.gz
@@ -133,14 +133,11 @@ if [ ! -d ~/google-cloud-sdk ] ; then
 	rm ~/*.tar.gz
 fi
 
-# app-engine-go currently fails on ARM, but the others work
-for component in app-engine-go beta cloud-datastore-emulator ; do
-	~/google-cloud-sdk/install.sh \
-		--additional-components ${component} \
-		--command-completion false \
-		--path-update false \
-		--usage-reporting false
-done
+~/google-cloud-sdk/install.sh \
+	--additional-components app-engine-go beta cloud-datastore-emulator \
+	--command-completion false \
+	--path-update false \
+	--usage-reporting false
 
 source ~/google-cloud-sdk/path.bash.inc
 gcloud components update --quiet
