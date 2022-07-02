@@ -191,5 +191,7 @@ export class MarkdownComponent
 			.disable('image')
 			.use(markdownItEmoji)
 			.use(markdownItSup);
+
+		this.markdownIt.linkify.tlds('app', true);
 	}
 }
