@@ -52,7 +52,7 @@ export const appModuleProviders = [
 	WorkerService,
 	{
 		provide: 'AccountContactsSearchComponent',
-		useExisting: AccountContactsSearchComponent
+		useValue: AccountContactsSearchComponent
 	},
 	{
 		provide: DatabaseService,
