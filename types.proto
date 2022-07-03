@@ -740,7 +740,7 @@ message CalendarRecurrenceRules {
 	repeated uint32 bySetPosition = 3;
 
 	/** RFC 5545 BYDAY. */
-	repeated DaysOfWeek byWeekDay = 4;
+	repeated CalendarInvite.DaysOfWeek byWeekDay = 4;
 
 	/** RFC 5545 COUNT. */
 	uint32 count = 5;
@@ -761,7 +761,7 @@ message CalendarRecurrenceRules {
 	double until = 10;
 
 	/** RFC 5545 WKST. */
-	DaysOfWeek weekStart = 11;
+	CalendarInvite.DaysOfWeek weekStart = 11;
 }
 
 /** Call types. */
