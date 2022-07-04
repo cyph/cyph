@@ -32,7 +32,9 @@ for d in ${projects} ; do
 	cd "${d}"
 	ng build \
 		--aot true \
+		--build-optimizer false \
 		--common-chunk false \
+		--optimization false \
 		--source-map false \
 		--vendor-chunk false
 	checkfail
