@@ -934,9 +934,7 @@ export class AccountAuthService extends BaseProvider {
 			secondaryPassword: this.potassiumService.toBase64(
 				this.potassiumService.randomBytes(64)
 			),
-			symmetricKey: this.potassiumService.randomBytes(
-				await this.potassiumService.secretBox.keyBytes
-			)
+			symmetricKey: await this.potassiumService.secretBox.generateKey()
 		};
 
 		try {
@@ -951,9 +949,7 @@ export class AccountAuthService extends BaseProvider {
 				this.potassiumService.sign.keyPair(),
 				typeof masterKey === 'string' ?
 					this.passwordHash(username, masterKey) :
-					this.potassiumService.secretBox.keyBytes.then(keyBytes =>
-						this.potassiumService.randomBytes(keyBytes)
-					),
+					this.potassiumService.secretBox.generateKey(),
 				typeof altMasterKey === 'string' ?
 					this.passwordHash(username, altMasterKey) :
 					undefined,

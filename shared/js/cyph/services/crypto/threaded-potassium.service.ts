@@ -9,6 +9,7 @@ import {IPotassium} from '../../crypto/potassium/ipotassium';
 import {isNativeCryptoSupported} from '../../crypto/potassium/is-native-crypto-supported';
 import {ISecretBox} from '../../crypto/potassium/isecret-box';
 import {ISign} from '../../crypto/potassium/isign';
+import {potassiumEncoding} from '../../crypto/potassium/potassium-encoding';
 import {PotassiumUtil} from '../../crypto/potassium/potassium-util';
 import {lockFunction} from '../../util/lock';
 import {EnvService} from '../env.service';
@@ -94,15 +95,16 @@ export class ThreadedPotassiumService
 
 	/** @inheritDoc */
 	public readonly box: IBox = {
+		currentAlgorithm: this.staticValues.then(async o =>
+			o.boxCurrentAlgorithm()
+		),
+		getPrivateKeyBytes: async algorithm =>
+			this.getPotassium(async o => o.boxGetPrivateKeyBytes(algorithm)),
+		getPublicKeyBytes: async algorithm =>
+			this.getPotassium(async o => o.boxGetPublicKeyBytes(algorithm)),
 		keyPair: async () => this.getPotassium(async o => o.boxKeyPair()),
 		open: async (cyphertext, keyPair) =>
 			this.getPotassium(async o => o.boxOpen(cyphertext, keyPair)),
-		privateKeyBytes: this.staticValues.then(async o =>
-			o.boxPrivateKeyBytes()
-		),
-		publicKeyBytes: this.staticValues.then(async o =>
-			o.boxPublicKeyBytes()
-		),
 		seal: async (plaintext, publicKey) =>
 			this.getPotassium(async o => o.boxSeal(plaintext, publicKey))
 	};
@@ -119,15 +121,21 @@ export class ThreadedPotassiumService
 			this.getPotassium(async o =>
 				o.ephemeralKeyExchangeBobSecret(alicePublicKey)
 			),
-		privateKeyBytes: this.staticValues.then(async o =>
-			o.ephemeralKeyExchangePrivateKeyBytes()
+		currentAlgorithm: this.staticValues.then(async o =>
+			o.ephemeralKeyExchangeCurrentAlgorithm()
 		),
-		publicKeyBytes: this.staticValues.then(async o =>
-			o.ephemeralKeyExchangePublicKeyBytes()
-		),
-		secretBytes: this.staticValues.then(async o =>
-			o.ephemeralKeyExchangeSecretBytes()
-		)
+		getPrivateKeyBytes: async algorithm =>
+			this.getPotassium(async o =>
+				o.ephemeralKeyExchangeGetPrivateKeyBytes(algorithm)
+			),
+		getPublicKeyBytes: async algorithm =>
+			this.getPotassium(async o =>
+				o.ephemeralKeyExchangeGetPublicKeyBytes(algorithm)
+			),
+		getSecretBytes: async algorithm =>
+			this.getPotassium(async o =>
+				o.ephemeralKeyExchangeGetSecretBytes(algorithm)
+			)
 	};
 
 	/** @inheritDoc */
@@ -150,8 +158,19 @@ export class ThreadedPotassiumService
 
 	/** @inheritDoc */
 	public readonly oneTimeAuth: IOneTimeAuth = {
-		bytes: this.staticValues.then(async o => o.oneTimeAuthBytes()),
-		keyBytes: this.staticValues.then(async o => o.oneTimeAuthKeyBytes()),
+		currentAlgorithm: this.staticValues.then(async o =>
+			o.oneTimeAuthCurrentAlgorithm()
+		),
+		generateKey: async algorithm =>
+			potassiumEncoding.serialize({
+				key: this.randomBytes(await this.oneTimeAuth.getKeyBytes()),
+				oneTimeAuthAlgorithm:
+					algorithm ?? (await this.oneTimeAuth.currentAlgorithm)
+			}),
+		getBytes: async algorithm =>
+			this.getPotassium(async o => o.oneTimeAuthGetBytes(algorithm)),
+		getKeyBytes: async algorithm =>
+			this.getPotassium(async o => o.oneTimeAuthGetKeyBytes(algorithm)),
 		sign: async (message, key) =>
 			this.getPotassium(async o => o.oneTimeAuthSign(message, key)),
 		verify: async (mac, message, key) =>
@@ -207,8 +226,19 @@ export class ThreadedPotassiumService
 
 	/** @inheritDoc */
 	public readonly secretBox: ISecretBox = {
-		aeadBytes: this.staticValues.then(async o => o.secretBoxAeadBytes()),
-		keyBytes: this.staticValues.then(async o => o.secretBoxKeyBytes()),
+		currentAlgorithm: this.staticValues.then(async o =>
+			o.secretBoxCurrentAlgorithm()
+		),
+		generateKey: async algorithm =>
+			potassiumEncoding.serialize({
+				key: this.randomBytes(await this.secretBox.getKeyBytes()),
+				secretBoxAlgorithm:
+					algorithm ?? (await this.secretBox.currentAlgorithm)
+			}),
+		getAeadBytes: async algorithm =>
+			this.getPotassium(async o => o.secretBoxGetAeadBytes(algorithm)),
+		getKeyBytes: async algorithm =>
+			this.getPotassium(async o => o.secretBoxGetKeyBytes(algorithm)),
 		open: async (cyphertext, key, additionalData) =>
 			this.getPotassium(async o =>
 				o.secretBoxOpen(cyphertext, key, additionalData)
@@ -221,22 +251,24 @@ export class ThreadedPotassiumService
 
 	/** @inheritDoc */
 	public readonly sign: ISign = {
-		bytes: this.staticValues.then(async o => o.signBytes()),
-		importPublicKeys: async (classical, postQuantum) =>
+		currentAlgorithm: this.staticValues.then(async o =>
+			o.signCurrentAlgorithm()
+		),
+		getBytes: async algorithm =>
+			this.getPotassium(async o => o.signGetBytes(algorithm)),
+		getPrivateKeyBytes: async algorithm =>
+			this.getPotassium(async o => o.signGetPrivateKeyBytes(algorithm)),
+		getPublicKeyBytes: async algorithm =>
+			this.getPotassium(async o => o.signGetPublicKeyBytes(algorithm)),
+		importPublicKeys: async (algorithm, classical, postQuantum) =>
 			this.getPotassium(async o =>
-				o.signImportPublicKeys(classical, postQuantum)
+				o.signImportPublicKeys(algorithm, classical, postQuantum)
 			),
 		keyPair: async () => this.getPotassium(async o => o.signKeyPair()),
 		open: async (signed, publicKey, additionalData, decompress) =>
 			this.getPotassium(async o =>
 				o.signOpen(signed, publicKey, additionalData, decompress)
 			),
-		privateKeyBytes: this.staticValues.then(async o =>
-			o.signPrivateKeyBytes()
-		),
-		publicKeyBytes: this.staticValues.then(async o =>
-			o.signPublicKeyBytes()
-		),
 		sign: async (message, privateKey, additionalData, compress) =>
 			this.getPotassium(async o =>
 				o.signSign(message, privateKey, additionalData, compress)

@@ -54,9 +54,7 @@ export class PairwiseSessionLite implements IPairwiseSession {
 
 		if (this.handshakeState.isAlice) {
 			if (!secret) {
-				secret = this.potassium.randomBytes(
-					await this.potassium.secretBox.keyBytes
-				);
+				secret = await this.potassium.secretBox.generateKey();
 
 				await this.handshakeState.initialSecret.setValue(secret);
 			}

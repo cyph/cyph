@@ -22,10 +22,11 @@ export class PotassiumService extends PotassiumUtil implements IPotassium {
 
 	/** @inheritDoc */
 	public readonly box: IBox = {
+		currentAlgorithm: this.errorValue,
+		getPrivateKeyBytes: async () => this.errorValue,
+		getPublicKeyBytes: async () => this.errorValue,
 		keyPair: async () => this.errorValue,
 		open: async () => this.errorValue,
-		privateKeyBytes: this.errorValue,
-		publicKeyBytes: this.errorValue,
 		seal: async () => this.errorValue
 	};
 
@@ -34,9 +35,10 @@ export class PotassiumService extends PotassiumUtil implements IPotassium {
 		aliceKeyPair: async () => this.errorValue,
 		aliceSecret: async () => this.errorValue,
 		bobSecret: async () => this.errorValue,
-		privateKeyBytes: this.errorValue,
-		publicKeyBytes: this.errorValue,
-		secretBytes: this.errorValue
+		currentAlgorithm: this.errorValue,
+		getPrivateKeyBytes: async () => this.errorValue,
+		getPublicKeyBytes: async () => this.errorValue,
+		getSecretBytes: async () => this.errorValue
 	};
 
 	/** @inheritDoc */
@@ -48,8 +50,10 @@ export class PotassiumService extends PotassiumUtil implements IPotassium {
 
 	/** @inheritDoc */
 	public readonly oneTimeAuth: IOneTimeAuth = {
-		bytes: this.errorValue,
-		keyBytes: this.errorValue,
+		currentAlgorithm: this.errorValue,
+		generateKey: async () => this.errorValue,
+		getBytes: async () => this.errorValue,
+		getKeyBytes: async () => this.errorValue,
 		sign: async () => this.errorValue,
 		verify: async () => this.errorValue
 	};
@@ -68,20 +72,23 @@ export class PotassiumService extends PotassiumUtil implements IPotassium {
 
 	/** @inheritDoc */
 	public readonly secretBox: ISecretBox = {
-		aeadBytes: this.errorValue,
-		keyBytes: this.errorValue,
+		currentAlgorithm: this.errorValue,
+		generateKey: async () => this.errorValue,
+		getAeadBytes: async () => this.errorValue,
+		getKeyBytes: async () => this.errorValue,
 		open: async () => this.errorValue,
 		seal: async () => this.errorValue
 	};
 
 	/** @inheritDoc */
 	public readonly sign: ISign = {
-		bytes: this.errorValue,
+		currentAlgorithm: this.errorValue,
+		getBytes: async () => this.errorValue,
+		getPrivateKeyBytes: async () => this.errorValue,
+		getPublicKeyBytes: async () => this.errorValue,
 		importPublicKeys: async () => this.errorValue,
 		keyPair: async () => this.errorValue,
 		open: async () => this.errorValue,
-		privateKeyBytes: this.errorValue,
-		publicKeyBytes: this.errorValue,
 		sign: async () => this.errorValue,
 		signDetached: async () => this.errorValue,
 		verifyDetached: async () => this.errorValue

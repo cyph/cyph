@@ -1,10 +1,24 @@
+import {PotassiumData} from '../../proto/types';
+
 /** Equivalent to sodium.crypto_secretbox. */
 export interface ISecretBox {
+	/** Current algorithm to use for new data. */
+	readonly currentAlgorithm: Promise<PotassiumData.SecretBoxAlgorithms>;
+
+	/** Generates new secret key. */
+	generateKey (
+		algorithm?: PotassiumData.SecretBoxAlgorithms
+	) : Promise<Uint8Array>;
+
 	/** Additional data length. */
-	readonly aeadBytes: Promise<number>;
+	getAeadBytes: (
+		algorithm?: PotassiumData.SecretBoxAlgorithms
+	) => Promise<number>;
 
 	/** Key length. */
-	readonly keyBytes: Promise<number>;
+	getKeyBytes: (
+		algorithm?: PotassiumData.SecretBoxAlgorithms
+	) => Promise<number>;
 
 	/** Decrypts cyphertext. */
 	open (

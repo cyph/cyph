@@ -1,18 +1,14 @@
-import {IKeyPair} from '../../proto/types';
+import {IKeyPair, PotassiumData} from '../../proto/types';
 
 /** Equivalent to sodium.crypto_scalarmult. */
 export interface IEphemeralKeyExchange {
-	/** Private key length. */
-	readonly privateKeyBytes: Promise<number>;
-
-	/** Public key length. */
-	readonly publicKeyBytes: Promise<number>;
-
-	/** Shared secret length. */
-	readonly secretBytes: Promise<number>;
+	/** Current algorithm to use for new data. */
+	readonly currentAlgorithm: Promise<PotassiumData.EphemeralKeyExchangeAlgorithms>;
 
 	/** Generates Alice's key pair. */
-	aliceKeyPair () : Promise<IKeyPair>;
+	aliceKeyPair (
+		algorithm?: PotassiumData.EphemeralKeyExchangeAlgorithms
+	) : Promise<IKeyPair>;
 
 	/** Computes secret for Alice using Bob's key. */
 	aliceSecret (
@@ -24,4 +20,19 @@ export interface IEphemeralKeyExchange {
 	bobSecret (
 		alicePublicKey: Uint8Array
 	) : Promise<{publicKey: Uint8Array; secret: Uint8Array}>;
+
+	/** Private key length. */
+	getPrivateKeyBytes: (
+		algorithm?: PotassiumData.EphemeralKeyExchangeAlgorithms
+	) => Promise<number>;
+
+	/** Public key length. */
+	getPublicKeyBytes: (
+		algorithm?: PotassiumData.EphemeralKeyExchangeAlgorithms
+	) => Promise<number>;
+
+	/** Shared secret length. */
+	getSecretBytes: (
+		algorithm?: PotassiumData.EphemeralKeyExchangeAlgorithms
+	) => Promise<number>;
 }

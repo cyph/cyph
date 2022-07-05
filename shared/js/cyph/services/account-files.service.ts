@@ -2796,9 +2796,7 @@ export class AccountFilesService extends BaseProvider {
 			.catch(async () => ({
 				fileReference: {
 					id,
-					key: this.potassiumService.randomBytes(
-						await this.potassiumService.secretBox.keyBytes
-					),
+					key: await this.potassiumService.secretBox.generateKey(),
 					metadata,
 					owner: username
 				},

@@ -111,7 +111,7 @@ export class PasswordHash implements IPasswordHash {
 		}
 
 		if (outputBytes === undefined) {
-			outputBytes = await this.secretBox.keyBytes;
+			outputBytes = await this.secretBox.getKeyBytes();
 		}
 		if (opsLimit === undefined) {
 			opsLimit = await this.opsLimitInteractive;

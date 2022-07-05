@@ -183,8 +183,7 @@ export class PairwiseSession implements IPairwiseSession {
 
 					if (!secret) {
 						secret = this.potassium.randomBytes(
-							await this.potassium.ephemeralKeyExchange
-								.secretBytes
+							await this.potassium.ephemeralKeyExchange.getSecretBytes()
 						);
 
 						await this.handshakeState.initialSecret.setValue(

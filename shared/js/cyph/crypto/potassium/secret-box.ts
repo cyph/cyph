@@ -1,7 +1,10 @@
 import {sodium} from 'libsodium';
+import memoize from 'lodash-es/memoize';
+import {IPotassiumData, PotassiumData} from '../../proto';
 import {IHash} from './ihash';
 import {ISecretBox} from './isecret-box';
 import * as NativeCrypto from './native-crypto';
+import {potassiumEncoding} from './potassium-encoding';
 import {potassiumUtil} from './potassium-util';
 
 /** @inheritDoc */
@@ -10,78 +13,157 @@ export class SecretBox implements ISecretBox {
 	private readonly chunkSize: number = 33554432;
 
 	/** @ignore */
+	private readonly currentAlgorithmInternal = !this.isNative ?
+		PotassiumData.SecretBoxAlgorithms.V1 :
+		PotassiumData.SecretBoxAlgorithms.NativeV1;
+
+	/** @see PotassiumEncoding.deserialize */
+	private readonly defaultMetadata: IPotassiumData & {
+		secretBoxAlgorithm: PotassiumData.SecretBoxAlgorithms;
+	} = {
+		secretBoxAlgorithm: PotassiumData.SecretBoxAlgorithms.V1
+	};
+
+	/** @ignore */
 	private readonly helpers = {
-		nonceBytes: sodium.ready.then(() =>
-			this.isNative ?
-				NativeCrypto.secretBox.nonceBytes :
-				sodium.crypto_aead_xchacha20poly1305_ietf_NPUBBYTES
-		),
+		getNonceBytes: async (
+			algorithm: PotassiumData.SecretBoxAlgorithms
+		) : Promise<number> => {
+			await sodium.ready;
+
+			switch (algorithm) {
+				case PotassiumData.SecretBoxAlgorithms.NativeV1:
+					return NativeCrypto.secretBox.nonceBytes;
+
+				case PotassiumData.SecretBoxAlgorithms.V1:
+					return sodium.crypto_aead_xchacha20poly1305_ietf_NPUBBYTES;
+
+				default:
+					throw new Error(
+						'Invalid SecretBox algorithm (nonce bytes).'
+					);
+			}
+		},
 
 		open: async (
+			algorithm: PotassiumData.SecretBoxAlgorithms,
 			cyphertext: Uint8Array,
 			nonce: Uint8Array,
 			key: Uint8Array,
 			additionalData?: Uint8Array
-		) : Promise<Uint8Array> =>
-			this.isNative ?
-				NativeCrypto.secretBox.open(
-					cyphertext,
-					nonce,
-					key,
-					additionalData
-				) :
-				sodium.ready.then(() =>
-					sodium.crypto_aead_xchacha20poly1305_ietf_decrypt(
+		) : Promise<Uint8Array> => {
+			await sodium.ready;
+
+			switch (algorithm) {
+				case PotassiumData.SecretBoxAlgorithms.NativeV1:
+					return NativeCrypto.secretBox.open(
+						cyphertext,
+						nonce,
+						key,
+						additionalData
+					);
+
+				case PotassiumData.SecretBoxAlgorithms.V1:
+					return sodium.crypto_aead_xchacha20poly1305_ietf_decrypt(
 						undefined,
 						cyphertext,
 						additionalData,
 						nonce,
 						key
-					)
-				),
+					);
+
+				default:
+					throw new Error('Invalid SecretBox algorithm (open).');
+			}
+		},
 		seal: async (
+			algorithm: PotassiumData.SecretBoxAlgorithms,
 			plaintext: Uint8Array,
 			nonce: Uint8Array,
 			key: Uint8Array,
 			additionalData?: Uint8Array
-		) : Promise<Uint8Array> =>
-			this.isNative ?
-				NativeCrypto.secretBox.seal(
-					plaintext,
-					nonce,
-					key,
-					additionalData
-				) :
-				sodium.ready.then(() =>
-					sodium.crypto_aead_xchacha20poly1305_ietf_encrypt(
+		) : Promise<Uint8Array> => {
+			await sodium.ready;
+
+			switch (algorithm) {
+				case PotassiumData.SecretBoxAlgorithms.NativeV1:
+					return NativeCrypto.secretBox.seal(
+						plaintext,
+						nonce,
+						key,
+						additionalData
+					);
+
+				case PotassiumData.SecretBoxAlgorithms.V1:
+					return sodium.crypto_aead_xchacha20poly1305_ietf_encrypt(
 						plaintext,
 						additionalData,
 						undefined,
 						nonce,
 						key
-					)
-				)
+					);
+
+				default:
+					throw new Error('Invalid SecretBox algorithm (seal).');
+			}
+		}
 	};
 
 	/** @inheritDoc */
-	public readonly aeadBytes: Promise<number> = sodium.ready.then(() =>
-		this.isNative ?
-			NativeCrypto.secretBox.aeadBytes :
-			sodium.crypto_aead_xchacha20poly1305_ietf_ABYTES
+	public readonly currentAlgorithm = Promise.resolve(
+		this.currentAlgorithmInternal
 	);
 
 	/** @inheritDoc */
-	public readonly keyBytes: Promise<number> = sodium.ready.then(() =>
-		this.isNative ?
-			NativeCrypto.secretBox.keyBytes :
-			sodium.crypto_aead_xchacha20poly1305_ietf_KEYBYTES
+	public readonly getAeadBytes = memoize(
+		async (
+			algorithm: PotassiumData.SecretBoxAlgorithms = this
+				.currentAlgorithmInternal
+		) : Promise<number> => {
+			await sodium.ready;
+
+			switch (algorithm) {
+				case PotassiumData.SecretBoxAlgorithms.NativeV1:
+					return NativeCrypto.secretBox.aeadBytes;
+
+				case PotassiumData.SecretBoxAlgorithms.V1:
+					return sodium.crypto_aead_xchacha20poly1305_ietf_ABYTES;
+
+				default:
+					throw new Error(
+						'Invalid SecretBox algorithm (AEAD bytes).'
+					);
+			}
+		}
+	);
+
+	/** @inheritDoc */
+	public readonly getKeyBytes = memoize(
+		async (
+			algorithm: PotassiumData.SecretBoxAlgorithms = this
+				.currentAlgorithmInternal
+		) : Promise<number> => {
+			await sodium.ready;
+
+			switch (algorithm) {
+				case PotassiumData.SecretBoxAlgorithms.NativeV1:
+					return NativeCrypto.secretBox.keyBytes;
+
+				case PotassiumData.SecretBoxAlgorithms.V1:
+					return sodium.crypto_aead_xchacha20poly1305_ietf_KEYBYTES;
+
+				default:
+					throw new Error('Invalid SecretBox algorithm (key bytes).');
+			}
+		}
 	);
 
 	/** @ignore */
 	private async getAdditionalData (
+		algorithm: PotassiumData.SecretBoxAlgorithms,
 		input?: Uint8Array
 	) : Promise<Uint8Array | undefined> {
-		const aeadBytes = await this.aeadBytes;
+		const aeadBytes = await this.getAeadBytes(algorithm);
 
 		if (!input || input.length === aeadBytes) {
 			return input;
@@ -92,25 +174,25 @@ export class SecretBox implements ISecretBox {
 
 	/** @ignore */
 	private async openChunk (
+		algorithm: PotassiumData.SecretBoxAlgorithms,
 		cyphertext: Uint8Array,
 		key: Uint8Array,
 		additionalData?: Uint8Array
 	) : Promise<Uint8Array> {
-		const keyBytes = await this.keyBytes;
+		const [keyBytes, nonceBytes] = await Promise.all([
+			this.getKeyBytes(algorithm),
+			this.helpers.getNonceBytes(algorithm)
+		]);
 
 		if (key.length === 0 || key.length % keyBytes !== 0) {
 			throw new Error('Invalid key.');
 		}
 
-		const nonce = potassiumUtil.toBytes(
-			cyphertext,
-			0,
-			await this.helpers.nonceBytes
-		);
+		const nonce = potassiumUtil.toBytes(cyphertext, 0, nonceBytes);
 
 		const symmetricCyphertext = potassiumUtil.toBytes(
 			cyphertext,
-			await this.helpers.nonceBytes
+			nonceBytes
 		);
 
 		let paddedPlaintext: Uint8Array | undefined;
@@ -119,10 +201,11 @@ export class SecretBox implements ISecretBox {
 			const dataToDecrypt = paddedPlaintext || symmetricCyphertext;
 
 			paddedPlaintext = await this.helpers.open(
+				algorithm,
 				dataToDecrypt,
 				nonce,
 				potassiumUtil.toBytes(key, i, keyBytes),
-				await this.getAdditionalData(additionalData)
+				await this.getAdditionalData(algorithm, additionalData)
 			);
 
 			if (dataToDecrypt !== symmetricCyphertext) {
@@ -142,11 +225,15 @@ export class SecretBox implements ISecretBox {
 
 	/** @ignore */
 	private async sealChunk (
+		algorithm: PotassiumData.SecretBoxAlgorithms,
 		plaintext: Uint8Array,
 		key: Uint8Array,
 		additionalData?: Uint8Array
 	) : Promise<Uint8Array> {
-		const keyBytes = await this.keyBytes;
+		const [keyBytes, nonceBytes] = await Promise.all([
+			this.getKeyBytes(algorithm),
+			this.helpers.getNonceBytes(algorithm)
+		]);
 
 		if (key.length === 0 || key.length % keyBytes !== 0) {
 			throw new Error('Invalid key.');
@@ -161,7 +248,7 @@ export class SecretBox implements ISecretBox {
 			plaintext
 		);
 
-		const nonce = potassiumUtil.randomBytes(await this.helpers.nonceBytes);
+		const nonce = potassiumUtil.randomBytes(nonceBytes);
 
 		let symmetricCyphertext: Uint8Array | undefined;
 
@@ -169,10 +256,11 @@ export class SecretBox implements ISecretBox {
 			const dataToEncrypt = symmetricCyphertext || paddedPlaintext;
 
 			symmetricCyphertext = await this.helpers.seal(
+				algorithm,
 				dataToEncrypt,
 				nonce,
 				potassiumUtil.toBytes(key, i, keyBytes),
-				await this.getAdditionalData(additionalData)
+				await this.getAdditionalData(algorithm, additionalData)
 			);
 
 			potassiumUtil.clearMemory(dataToEncrypt);
@@ -186,6 +274,17 @@ export class SecretBox implements ISecretBox {
 	}
 
 	/** @inheritDoc */
+	public async generateKey (
+		algorithm: PotassiumData.SecretBoxAlgorithms = this
+			.currentAlgorithmInternal
+	) : Promise<Uint8Array> {
+		return potassiumEncoding.serialize({
+			key: potassiumUtil.randomBytes(await this.getKeyBytes()),
+			secretBoxAlgorithm: algorithm
+		});
+	}
+
+	/** @inheritDoc */
 	public async open (
 		cyphertext: Uint8Array,
 		key: Uint8Array,
@@ -196,16 +295,36 @@ export class SecretBox implements ISecretBox {
 				potassiumUtil.fromString(additionalData) :
 				additionalData;
 
-		if (this.isNative) {
-			return this.openChunk(cyphertext, key, additionalDataBytes);
+		const potassiumCyphertext = await potassiumEncoding.deserialize(
+			this.defaultMetadata,
+			{cyphertext}
+		);
+		const potassiumKey = await potassiumEncoding.deserialize(
+			this.defaultMetadata,
+			{key}
+		);
+
+		const algorithm = potassiumKey.secretBoxAlgorithm;
+
+		if (potassiumCyphertext.secretBoxAlgorithm !== algorithm) {
+			throw new Error(
+				'Key-cyphertext SecretBox algorithm mismatch (open).'
+			);
 		}
 
 		return potassiumUtil.concatMemory(
 			true,
 			...(await Promise.all(
 				potassiumUtil
-					.splitBytes(cyphertext)
-					.map(async c => this.openChunk(c, key, additionalDataBytes))
+					.splitBytes(potassiumCyphertext.cyphertext)
+					.map(async c =>
+						this.openChunk(
+							algorithm,
+							c,
+							potassiumKey.key,
+							additionalDataBytes
+						)
+					)
 			))
 		);
 	}
@@ -221,17 +340,30 @@ export class SecretBox implements ISecretBox {
 				potassiumUtil.fromString(additionalData) :
 				additionalData;
 
-		if (this.isNative) {
-			return this.sealChunk(plaintext, key, additionalDataBytes);
-		}
-
-		return potassiumUtil.joinBytes(
-			...(await Promise.all(
-				potassiumUtil
-					.chunkBytes(plaintext, this.chunkSize)
-					.map(async m => this.sealChunk(m, key, additionalDataBytes))
-			))
+		const potassiumKey = await potassiumEncoding.deserialize(
+			this.defaultMetadata,
+			{key}
 		);
+
+		const algorithm = potassiumKey.secretBoxAlgorithm;
+
+		return potassiumEncoding.serialize({
+			cyphertext: potassiumUtil.joinBytes(
+				...(await Promise.all(
+					potassiumUtil
+						.chunkBytes(plaintext, this.chunkSize)
+						.map(async m =>
+							this.sealChunk(
+								algorithm,
+								m,
+								potassiumKey.key,
+								additionalDataBytes
+							)
+						)
+				))
+			),
+			secretBoxAlgorithm: algorithm
+		});
 	}
 
 	constructor (

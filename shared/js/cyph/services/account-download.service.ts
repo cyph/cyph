@@ -9,7 +9,8 @@ import {
 	AccountFileReference,
 	BinaryProto,
 	IAccountFileRecord,
-	IAccountFileReference
+	IAccountFileReference,
+	PotassiumData
 } from '../proto';
 import {normalize} from '../util/formatting';
 import {AccountFilesService} from './account-files.service';
@@ -21,6 +22,19 @@ import {PotassiumService} from './crypto/potassium.service';
  */
 @Injectable()
 export class AccountDownloadService extends BaseProvider {
+	/**
+	 * To optimize URL length, we are not using cryptographic agility here.
+	 * When necessary, we can address this by prepending a special character
+	 * that isn't valid in base64url encoding.
+	 */
+	private readonly secretBoxAlgorithm = this.potassiumService
+		.native()
+		.then(isNative =>
+			!isNative ?
+				PotassiumData.SecretBoxAlgorithms.V1 :
+				PotassiumData.SecretBoxAlgorithms.NativeV1
+		);
+
 	/** Watches whether the file is publicly shared. */
 	public readonly watchIfShared = memoize(
 		(downloadID: string) : Observable<boolean> =>
@@ -88,7 +102,9 @@ export class AccountDownloadService extends BaseProvider {
 	) : Promise<IAccountFileRecord & IAccountFileReference> {
 		username = normalize(username);
 
-		const keyBytes = await this.potassiumService.secretBox.keyBytes;
+		const keyBytes = await this.potassiumService.secretBox.getKeyBytes(
+			await this.secretBoxAlgorithm
+		);
 
 		const idBytes = this.potassiumService.fromBase64URL(id);
 
@@ -132,7 +148,9 @@ export class AccountDownloadService extends BaseProvider {
 				BinaryProto,
 				async () =>
 					this.potassiumService.randomBytes(
-						await this.potassiumService.secretBox.keyBytes
+						await this.potassiumService.secretBox.getKeyBytes(
+							await this.secretBoxAlgorithm
+						)
 					),
 				undefined,
 				undefined,

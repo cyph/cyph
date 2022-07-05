@@ -191,9 +191,7 @@ export class EncryptedAsyncMap<T> {
 		encryptionKey: Uint8Array;
 		getHash: () => Promise<Uint8Array>;
 	}> {
-		const encryptionKey = this.potassium.randomBytes(
-			await this.potassium.secretBox.keyBytes
-		);
+		const encryptionKey = await this.potassium.secretBox.generateKey();
 
 		const {cyphertext, plaintext} = await this.seal(
 			key,

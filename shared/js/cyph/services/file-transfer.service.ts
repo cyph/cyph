@@ -78,9 +78,7 @@ export class FileTransferService extends BaseProvider {
 		const [hash, {cyphertext, key}] = await Promise.all([
 			this.potassiumService.hash.hash(plaintext),
 			(async () => {
-				const k = this.potassiumService.randomBytes(
-					await this.potassiumService.secretBox.keyBytes
-				);
+				const k = await this.potassiumService.secretBox.generateKey();
 
 				return {
 					cyphertext: await this.potassiumService.secretBox.seal(

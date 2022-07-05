@@ -886,9 +886,7 @@ export class AccountPostsService extends BaseProvider {
 			active: true,
 			circleType,
 			id,
-			key: this.potassiumService.randomBytes(
-				await this.potassiumService.secretBox.keyBytes
-			),
+			key: await this.potassiumService.secretBox.generateKey(),
 			name,
 			predecessorID
 		});

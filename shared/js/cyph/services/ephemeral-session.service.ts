@@ -339,7 +339,7 @@ export class EphemeralSessionService extends SessionService {
 
 				await castleService.setKey(
 					new Uint8Array(
-						await this.potassiumService.secretBox.keyBytes
+						await this.potassiumService.secretBox.getKeyBytes()
 					)
 				);
 				await castleService.init(this);

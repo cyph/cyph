@@ -22,6 +22,7 @@ import {
 	IDatabaseItem,
 	MaybeTimedArrayProto,
 	NotificationTypes,
+	PotassiumData,
 	StringProto
 } from '../../proto';
 import {filterUndefinedOperator} from '../../util/filter';
@@ -1225,6 +1226,7 @@ export class AccountDatabaseService extends BaseProvider {
 					await this.potassiumHelpers.sign.open(
 						signed,
 						await this.potassiumService.sign.importPublicKeys(
+							PotassiumData.SignAlgorithms.V1,
 							this.agsePublicSigningKeys.rsa[rsaKeyIndex],
 							this.agsePublicSigningKeys.sphincs[sphincsKeyIndex]
 						),

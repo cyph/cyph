@@ -123,6 +123,7 @@ export class Core {
 			this.potassium.concatMemory(
 				true,
 				new Uint8Array([1]),
+				new Uint32Array([outgoingPublicKey.length]),
 				outgoingPublicKey
 			) :
 			new Uint8Array([0]);
@@ -225,9 +226,6 @@ export class Core {
 		const {encrypted, messageIDBytes} = setupData;
 
 		return this.lock(async () => {
-			const ephemeralKeyExchangePublicKeyBytes = await this.potassium
-				.ephemeralKeyExchange.publicKeyBytes;
-
 			if (this.ratchetState.incomingMessageID >= messageID) {
 				this.decryptCache.delete(messageID);
 				return;
@@ -258,9 +256,16 @@ export class Core {
 						messageIDBytes
 					);
 
-					const startIndex =
+					const ephemeralKeyExchangePublicKeyBytes =
 						decrypted[0] === 1 ?
-							ephemeralKeyExchangePublicKeyBytes + 1 :
+							this.potassium
+								.toDataView(decrypted)
+								.getUint32(1, true) :
+							undefined;
+
+					const startIndex =
+						ephemeralKeyExchangePublicKeyBytes !== undefined ?
+							ephemeralKeyExchangePublicKeyBytes + 5 :
 							1;
 
 					const plaintext = this.potassium.toBytes(
@@ -270,11 +275,11 @@ export class Core {
 
 					keys.incoming = incomingKey;
 
-					if (startIndex !== 1) {
+					if (ephemeralKeyExchangePublicKeyBytes !== undefined) {
 						await this.asymmetricRatchet(
 							this.potassium.toBytes(
 								decrypted,
-								1,
+								5,
 								ephemeralKeyExchangePublicKeyBytes
 							)
 						);

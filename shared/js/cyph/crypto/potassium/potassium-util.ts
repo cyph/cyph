@@ -162,6 +162,21 @@ export class PotassiumUtil {
 		return chunks;
 	}
 
+	/** Indicates whether byte array starts with the specified prefix. */
+	public startsWith (
+		a: ArrayBufferView,
+		prefix: ArrayBufferView | undefined
+	) : boolean {
+		return (
+			prefix === undefined ||
+			prefix.byteLength < 1 ||
+			this.compareMemory(
+				this.toBytes(a, undefined, prefix.byteLength),
+				prefix
+			)
+		);
+	}
+
 	/** Converts binary into base64 string. */
 	public toBase64 (a: ArrayBufferView | string) : string {
 		return typeof a === 'string' ?

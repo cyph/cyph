@@ -1,31 +1,39 @@
-import {IKeyPair} from '../../proto/types';
+import {IKeyPair, PotassiumData} from '../../proto/types';
 
 /** Equivalent to sodium.crypto_sign. */
 export interface ISign {
+	/** Current algorithm to use for new data. */
+	readonly currentAlgorithm: Promise<PotassiumData.SignAlgorithms>;
+
 	/** Signature length. */
-	readonly bytes: Promise<number>;
+	getBytes: (algorithm?: PotassiumData.SignAlgorithms) => Promise<number>;
 
 	/** Private key length. */
-	readonly privateKeyBytes: Promise<number>;
+	getPrivateKeyBytes: (
+		algorithm?: PotassiumData.SignAlgorithms
+	) => Promise<number>;
 
 	/** Public key length. */
-	readonly publicKeyBytes: Promise<number>;
+	getPublicKeyBytes: (
+		algorithm?: PotassiumData.SignAlgorithms
+	) => Promise<number>;
 
 	/** Builds ISign public key from base64-encoded public sub-keys. */
 	importPublicKeys (
+		algorithm: PotassiumData.SignAlgorithms,
 		classical: string | Uint8Array,
 		postQuantum: string | Uint8Array
 	) : Promise<Uint8Array>;
 
 	/** Generates key pair. */
-	keyPair () : Promise<IKeyPair>;
+	keyPair (algorithm?: PotassiumData.SignAlgorithms) : Promise<IKeyPair>;
 
 	/** Verifies combined signature and returns original message. */
 	open (
 		signed: Uint8Array | string,
 		publicKey: Uint8Array,
 		additionalData?: Uint8Array | string,
-		decompress?: boolean
+		decompressByDefault?: boolean
 	) : Promise<Uint8Array>;
 
 	/** Signs message and returns it combined with signature. */

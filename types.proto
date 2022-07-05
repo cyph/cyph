@@ -972,6 +972,18 @@ message ChatPendingMessage {
 	uint32 selfDestructTimeout = 4;
 }
 
+/** A combined signature. */
+message CombinedSignature {
+	/** Indicates whether `message` is compressed. */
+	bool compressed = 1;
+
+	/** Plaintext message. */
+	required bytes message = 2;
+
+	/** Signature. */
+	required bytes signature = 3;
+}
+
 /** Cryptocurrencies. */
 enum Cryptocurrencies {
 	BTC = 0;
@@ -1245,11 +1257,14 @@ message Environment {
 		/** Page title of this Cyph instance. */
 		string title = 19;
 
+		/** Sets the value of `PotassiumEncoding.useCryptographicAgilityTag`. */
+		bool useCryptographicAgilityTag = 20;
+
 		/** Indicates whether this environment should share a specific database namespace. */
-		string useNamespace = 20;
+		string useNamespace = 21;
 
 		/** If true, environment will be full white label, with no "Powered by Cyph" notices. */
-		bool whiteLabel = 21;
+		bool whiteLabel = 22;
 	}
 
 	/** Firebase configuration. */
@@ -1580,6 +1595,88 @@ message PGPMetadata {
 
 	/** Full user ID string (name + email + comment). */
 	string userID = 7;
+}
+
+/** A Potassium data object. */
+message PotassiumData {
+	/** Potassium.Box algorithms. */
+	enum BoxAlgorithms {
+		None = 0;
+		NativeV1 = 1;
+		V1 = 2;
+	}
+
+	/** Potassium.EphemeralKeyExchange algorithms. */
+	enum EphemeralKeyExchangeAlgorithms {
+		None = 0;
+		V1 = 1;
+	}
+
+	/** Potassium.OneTimeAuth algorithms. */
+	enum OneTimeAuthAlgorithms {
+		None = 0;
+		NativeV1 = 1;
+		V1 = 2;
+	}
+
+	/** Potassium.SecretBox algorithms. */
+	enum SecretBoxAlgorithms {
+		None = 0;
+		NativeV1 = 1;
+		V1 = 2;
+	}
+
+	/** Potassium.Sign algorithms. */
+	enum SignAlgorithms {
+		None = 0;
+		NativeV1 = 1;
+		V1 = 2;
+	}
+
+	/** Algorithm. */
+	oneof algorithm {
+		/** @see BoxAlgorithms */
+		BoxAlgorithms boxAlgorithm = 1;
+
+		/** @see EphemeralKeyExchangeAlgorithms */
+		EphemeralKeyExchangeAlgorithms ephemeralKeyExchangeAlgorithm = 2;
+
+		/** @see OneTimeAuthAlgorithms */
+		OneTimeAuthAlgorithms oneTimeAuthAlgorithm = 3;
+
+		/** @see SecretBoxAlgorithms */
+		SecretBoxAlgorithms secretBoxAlgorithm = 4;
+
+		/** @see SignAlgorithms */
+		SignAlgorithms signAlgorithm = 5;
+	}
+
+	/** Value. */
+	oneof value {
+		/** Cyphertext. */
+		bytes cyphertext = 6;
+
+		/** Symmetric key. */
+		bytes key = 7;
+
+		/** MAC. */
+		bytes mac = 8;
+
+		/** Private key. */
+		bytes privateKey = 9;
+
+		/** Public key. */
+		bytes publicKey = 10;
+
+		/** Key exchange secret. */
+		bytes secret = 11;
+
+		/** Signature. */
+		bytes signature = 12;
+
+		/** @see CombinedSignature */
+		CombinedSignature signed = 13;
+	}
 }
 
 /** @see https://developer.redoxengine.com/data-models/Scheduling.html#New */
