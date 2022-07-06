@@ -34,7 +34,7 @@ export class PotassiumUtil {
 
 	/** Zeroes out memory. */
 	public clearMemory (a?: ArrayBufferView) : void {
-		if (a) {
+		if (a !== undefined) {
 			sodiumUtil.memzero(this.toBytes(a));
 		}
 	}
@@ -123,7 +123,7 @@ export class PotassiumUtil {
 
 	/** Indicates whether maybe-byte-array is empty. */
 	public isEmpty (a?: ArrayBufferView) : boolean {
-		return !a || a.byteLength < 1;
+		return a === undefined || a.byteLength < 1;
 	}
 
 	/** Joins byte arrays for later separation with splitBytes. */

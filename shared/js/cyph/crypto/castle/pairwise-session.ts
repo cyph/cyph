@@ -158,7 +158,7 @@ export class PairwiseSession implements IPairwiseSession {
 		}
 
 		await this.handshakeState.initialSecret.setValue(
-			publicSigningKey ?
+			publicSigningKey !== undefined ?
 				await this.potassium.sign.open(
 					maybeSignedSecret,
 					publicSigningKey
@@ -181,7 +181,7 @@ export class PairwiseSession implements IPairwiseSession {
 					let secret =
 						await this.handshakeState.initialSecret.getValue();
 
-					if (!secret) {
+					if (secret === undefined) {
 						secret = this.potassium.randomBytes(
 							await this.potassium.ephemeralKeyExchange.getSecretBytes()
 						);
@@ -197,7 +197,7 @@ export class PairwiseSession implements IPairwiseSession {
 
 		await this.handshakeState.initialSecretCyphertext.setValue(
 			await this.potassium.box.seal(
-				signingKeyPair ?
+				signingKeyPair !== undefined ?
 					await this.potassium.sign.sign(
 						initialSecret,
 						signingKeyPair.privateKey
@@ -371,7 +371,7 @@ export class PairwiseSession implements IPairwiseSession {
 					const initialSecret =
 						await this.handshakeState.initialSecret.getValue();
 
-					if (!initialSecret) {
+					if (initialSecret === undefined) {
 						throw new Error(
 							'Invalid HandshakeSteps.PostBootstrap state.'
 						);
@@ -481,7 +481,7 @@ export class PairwiseSession implements IPairwiseSession {
 							}
 						}));
 
-						if (lastRatchetUpdate) {
+						if (lastRatchetUpdate !== undefined) {
 							await this.ratchetState.setValue(
 								lastRatchetUpdate.ratchetState
 							);
@@ -495,7 +495,7 @@ export class PairwiseSession implements IPairwiseSession {
 							this.potassium,
 							this.handshakeState.isAlice,
 							this.ratchetUpdateQueue,
-							lastRatchetUpdate ?
+							lastRatchetUpdate !== undefined ?
 								await deserialize(
 									CastleRatchetState,
 									await serialize(
@@ -568,7 +568,7 @@ export class PairwiseSession implements IPairwiseSession {
 							this.ratchetUpdateQueue.subscribeAndPop(
 								async update => {
 									if (
-										lastRatchetUpdate &&
+										lastRatchetUpdate !== undefined &&
 										lastRatchetUpdate.ratchetState
 											.incomingMessageID >=
 											update.ratchetState
@@ -601,7 +601,7 @@ export class PairwiseSession implements IPairwiseSession {
 									);
 
 									if (
-										!update.cyphertext ||
+										update.cyphertext === undefined ||
 										this.potassium.isEmpty(
 											update.cyphertext
 										)

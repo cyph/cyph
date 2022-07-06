@@ -48,12 +48,12 @@ export class PairwiseSessionLite implements IPairwiseSession {
 		let secret = await this.handshakeState.initialSecret.getValue();
 		const handshakeStep = await this.handshakeState.currentStep.getValue();
 
-		if (!secret && handshakeStep === HandshakeSteps.Complete) {
+		if (secret === undefined && handshakeStep === HandshakeSteps.Complete) {
 			throw new Error('Failed to get secret from completed handshake.');
 		}
 
 		if (this.handshakeState.isAlice) {
-			if (!secret) {
+			if (secret === undefined) {
 				secret = await this.potassium.secretBox.generateKey();
 
 				await this.handshakeState.initialSecret.setValue(secret);
@@ -69,7 +69,7 @@ export class PairwiseSessionLite implements IPairwiseSession {
 
 				await this.handshakeState.initialSecretCyphertext.setValue(
 					await this.potassium.box.seal(
-						signingKeyPair ?
+						signingKeyPair !== undefined ?
 							await this.potassium.sign.sign(
 								secret,
 								signingKeyPair.privateKey
@@ -80,7 +80,7 @@ export class PairwiseSessionLite implements IPairwiseSession {
 				);
 			}
 		}
-		else if (!secret) {
+		else if (secret === undefined) {
 			const [encryptionKeyPair, publicSigningKey, cyphertext] =
 				await Promise.all([
 					this.localUser.getEncryptionKeyPair(),
@@ -93,12 +93,13 @@ export class PairwiseSessionLite implements IPairwiseSession {
 				encryptionKeyPair
 			);
 
-			secret = publicSigningKey ?
-				await this.potassium.sign.open(
-					maybeSignedSecret,
-					publicSigningKey
-				) :
-				maybeSignedSecret;
+			secret =
+				publicSigningKey !== undefined ?
+					await this.potassium.sign.open(
+						maybeSignedSecret,
+						publicSigningKey
+					) :
+					maybeSignedSecret;
 
 			await this.handshakeState.initialSecret.setValue(secret);
 		}

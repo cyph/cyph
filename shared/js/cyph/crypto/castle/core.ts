@@ -61,7 +61,7 @@ export class Core {
 		if (
 			this.isAlice &&
 			this.potassium.isEmpty(this.ratchetState.asymmetric.privateKey) &&
-			!incomingPublicKey
+			incomingPublicKey === undefined
 		) {
 			const aliceKeyPair =
 				await this.potassium.ephemeralKeyExchange.aliceKeyPair();
@@ -74,7 +74,7 @@ export class Core {
 		else if (
 			!this.isAlice &&
 			this.potassium.isEmpty(this.ratchetState.asymmetric.publicKey) &&
-			incomingPublicKey
+			incomingPublicKey !== undefined
 		) {
 			const secretData =
 				await this.potassium.ephemeralKeyExchange.bobSecret(
@@ -90,7 +90,7 @@ export class Core {
 		else if (
 			!this.isAlice &&
 			!this.potassium.isEmpty(this.ratchetState.asymmetric.publicKey) &&
-			!incomingPublicKey
+			incomingPublicKey === undefined
 		) {
 			outgoingPublicKey = this.ratchetState.asymmetric.publicKey;
 
@@ -101,7 +101,7 @@ export class Core {
 		else if (
 			this.isAlice &&
 			!this.potassium.isEmpty(this.ratchetState.asymmetric.privateKey) &&
-			incomingPublicKey
+			incomingPublicKey !== undefined
 		) {
 			secret = await this.potassium.ephemeralKeyExchange.aliceSecret(
 				incomingPublicKey,
@@ -111,7 +111,7 @@ export class Core {
 			this.ratchetState.asymmetric.privateKey = new Uint8Array(0);
 		}
 
-		if (secret) {
+		if (secret !== undefined) {
 			this.ratchetState.symmetric.next = await Core.newSymmetricKeys(
 				this.potassium,
 				this.isAlice,
@@ -119,7 +119,7 @@ export class Core {
 			);
 		}
 
-		return outgoingPublicKey ?
+		return outgoingPublicKey !== undefined ?
 			this.potassium.concatMemory(
 				true,
 				new Uint8Array([1]),
@@ -147,7 +147,7 @@ export class Core {
 		};
 
 		await this.updateRatchetLock(async () => {
-			if (this.oldRatchetState) {
+			if (this.oldRatchetState !== undefined) {
 				if (
 					this.oldRatchetState.asymmetric.privateKey !==
 					ratchetState.asymmetric.privateKey
@@ -219,7 +219,7 @@ export class Core {
 
 		const setupData =
 			this.decryptCache.get(messageID) || this.decryptSetup(cyphertext);
-		if (!setupData) {
+		if (setupData === undefined) {
 			return;
 		}
 
