@@ -1,4 +1,9 @@
-import {IKeyPair, PotassiumData} from '../../proto/types';
+import {
+	IKeyPair,
+	IPrivateKeyring,
+	IPublicKeyring,
+	PotassiumData
+} from '../../proto/types';
 
 /** Equivalent to sodium.crypto_scalarmult. */
 export interface IEphemeralKeyExchange {
@@ -12,13 +17,13 @@ export interface IEphemeralKeyExchange {
 
 	/** Computes secret for Alice using Bob's key. */
 	aliceSecret (
-		publicKey: Uint8Array,
-		privateKey: Uint8Array
+		publicKey: Uint8Array | IPublicKeyring,
+		privateKey: Uint8Array | IPrivateKeyring
 	) : Promise<Uint8Array>;
 
 	/** Computes secret and key for Bob using Alice's key. */
 	bobSecret (
-		alicePublicKey: Uint8Array
+		alicePublicKey: Uint8Array | IPublicKeyring
 	) : Promise<{publicKey: Uint8Array; secret: Uint8Array}>;
 
 	/** Private key length. */

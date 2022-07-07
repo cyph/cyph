@@ -1,5 +1,12 @@
 import {environment} from '../../../environments/environment';
-import {ICombinedSignature, IPotassiumData, PotassiumData} from '../../proto';
+import {
+	ICombinedSignature,
+	IKeyPair,
+	IPotassiumData,
+	IPrivateKeyring,
+	IPublicKeyring,
+	PotassiumData
+} from '../../proto';
 import {deserialize, serialize} from '../../util/serialization';
 import {potassiumUtil} from './potassium-util';
 
@@ -90,6 +97,137 @@ export class PotassiumEncoding {
 		}
 
 		return <any> data;
+	}
+
+	/** Extracts a key from the keyring. */
+	public openKeyring<TKeyPair extends IKeyPair | {privateKey: Uint8Array}> (
+		algorithmType: typeof PotassiumData.BoxAlgorithms,
+		keyring: TKeyPair | IPrivateKeyring,
+		algorithm: PotassiumData.BoxAlgorithms
+	) : TKeyPair;
+	public openKeyring<TKeyPair extends IKeyPair | {privateKey: Uint8Array}> (
+		algorithmType: typeof PotassiumData.EphemeralKeyExchangeAlgorithms,
+		keyring: TKeyPair | IPrivateKeyring,
+		algorithm: PotassiumData.EphemeralKeyExchangeAlgorithms
+	) : TKeyPair;
+	public openKeyring (
+		algorithmType: typeof PotassiumData.OneTimeAuthAlgorithms,
+		keyring: Uint8Array | IPrivateKeyring,
+		algorithm: PotassiumData.OneTimeAuthAlgorithms
+	) : Uint8Array;
+	public openKeyring (
+		algorithmType: typeof PotassiumData.SecretBoxAlgorithms,
+		keyring: Uint8Array | IPrivateKeyring,
+		algorithm: PotassiumData.SecretBoxAlgorithms
+	) : Uint8Array;
+	public openKeyring<TKeyPair extends IKeyPair | {privateKey: Uint8Array}> (
+		algorithmType: typeof PotassiumData.SignAlgorithms,
+		keyring: TKeyPair | IPrivateKeyring,
+		algorithm: PotassiumData.SignAlgorithms
+	) : TKeyPair;
+	public openKeyring (
+		algorithmType: typeof PotassiumData.BoxAlgorithms,
+		keyring: Uint8Array | IPublicKeyring,
+		algorithm: PotassiumData.BoxAlgorithms
+	) : Uint8Array;
+	public openKeyring (
+		algorithmType: typeof PotassiumData.EphemeralKeyExchangeAlgorithms,
+		keyring: Uint8Array | IPublicKeyring,
+		algorithm: PotassiumData.EphemeralKeyExchangeAlgorithms
+	) : Uint8Array;
+	public openKeyring (
+		algorithmType: typeof PotassiumData.SignAlgorithms,
+		keyring: Uint8Array | IPublicKeyring,
+		algorithm: PotassiumData.SignAlgorithms
+	) : Uint8Array;
+	public openKeyring (
+		algorithmType:
+			| typeof PotassiumData.BoxAlgorithms
+			| typeof PotassiumData.EphemeralKeyExchangeAlgorithms
+			| typeof PotassiumData.OneTimeAuthAlgorithms
+			| typeof PotassiumData.SecretBoxAlgorithms
+			| typeof PotassiumData.SignAlgorithms,
+		keyring:
+			| Uint8Array
+			| IKeyPair
+			| {privateKey: Uint8Array}
+			| IPrivateKeyring
+			| IPublicKeyring,
+		algorithm:
+			| PotassiumData.BoxAlgorithms
+			| PotassiumData.EphemeralKeyExchangeAlgorithms
+			| PotassiumData.OneTimeAuthAlgorithms
+			| PotassiumData.SecretBoxAlgorithms
+			| PotassiumData.SignAlgorithms
+	) : Uint8Array | IKeyPair | {privateKey: Uint8Array} {
+		if (keyring instanceof Uint8Array || 'privateKey' in keyring) {
+			return keyring;
+		}
+
+		let algorithmTypeName: string | undefined;
+		let result:
+			| Uint8Array
+			| {privateKey: Uint8Array}
+			| IKeyPair
+			| undefined;
+
+		switch (algorithmType) {
+			case PotassiumData.BoxAlgorithms:
+				algorithmTypeName = 'BoxAlgorithms';
+				result =
+					'boxPrivateKeys' in keyring ?
+						keyring.boxPrivateKeys?.[algorithm] :
+					'boxPublicKeys' in keyring ?
+						keyring.boxPublicKeys?.[algorithm] :
+						undefined;
+				break;
+
+			case PotassiumData.EphemeralKeyExchangeAlgorithms:
+				algorithmTypeName = 'EphemeralKeyExchangeAlgorithms';
+				result =
+					'ephemeralKeyExchangePrivateKeys' in keyring ?
+						keyring.ephemeralKeyExchangePrivateKeys?.[algorithm] :
+					'ephemeralKeyExchangePublicKeys' in keyring ?
+						keyring.ephemeralKeyExchangePublicKeys?.[algorithm] :
+						undefined;
+				break;
+
+			case PotassiumData.OneTimeAuthAlgorithms:
+				algorithmTypeName = 'OneTimeAuthAlgorithms';
+				result =
+					'oneTimeAuthPrivateKeys' in keyring ?
+						keyring.oneTimeAuthPrivateKeys?.[algorithm] :
+						undefined;
+				break;
+
+			case PotassiumData.SecretBoxAlgorithms:
+				algorithmTypeName = 'SecretBoxAlgorithms';
+				result =
+					'secretBoxPrivateKeys' in keyring ?
+						keyring.secretBoxPrivateKeys?.[algorithm] :
+						undefined;
+				break;
+
+			case PotassiumData.SignAlgorithms:
+				algorithmTypeName = 'SignAlgorithms';
+				result =
+					'signPrivateKeys' in keyring ?
+						keyring.signPrivateKeys?.[algorithm] :
+					'signPublicKeys' in keyring ?
+						keyring.signPublicKeys?.[algorithm] :
+						undefined;
+				break;
+		}
+
+		if (result === undefined) {
+			throw new Error(
+				`Key not found for algorithm ${
+					algorithmTypeName ?? '(unknown)'
+				}.${algorithmType[algorithm] ?? '(unknown)'} in keyring.`
+			);
+		}
+
+		return result;
 	}
 
 	/** Serializes `PotassiumData` object to binary byte array. */

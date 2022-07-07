@@ -1,4 +1,4 @@
-import {PotassiumData} from '../../proto/types';
+import {IPrivateKeyring, PotassiumData} from '../../proto/types';
 
 /** Equivalent to sodium.crypto_onetimeauth. */
 export interface IOneTimeAuth {
@@ -21,12 +21,15 @@ export interface IOneTimeAuth {
 	) => Promise<number>;
 
 	/** Signs message. */
-	sign (message: Uint8Array, key: Uint8Array) : Promise<Uint8Array>;
+	sign (
+		message: Uint8Array,
+		key: Uint8Array | IPrivateKeyring
+	) : Promise<Uint8Array>;
 
 	/** Verifies MAC. */
 	verify (
 		mac: Uint8Array,
 		message: Uint8Array,
-		key: Uint8Array
+		key: Uint8Array | IPrivateKeyring
 	) : Promise<boolean>;
 }

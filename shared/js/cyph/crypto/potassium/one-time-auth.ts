@@ -1,6 +1,6 @@
 import {sodium} from 'libsodium';
 import memoize from 'lodash-es/memoize';
-import {IPotassiumData, PotassiumData} from '../../proto';
+import {IPotassiumData, IPrivateKeyring, PotassiumData} from '../../proto';
 import {IOneTimeAuth} from './ione-time-auth';
 import * as NativeCrypto from './native-crypto';
 import {potassiumEncoding} from './potassium-encoding';
@@ -83,9 +83,15 @@ export class OneTimeAuth implements IOneTimeAuth {
 	/** @inheritDoc */
 	public async sign (
 		message: Uint8Array,
-		key: Uint8Array
+		key: Uint8Array | IPrivateKeyring
 	) : Promise<Uint8Array> {
 		await sodium.ready;
+
+		key = potassiumEncoding.openKeyring(
+			PotassiumData.OneTimeAuthAlgorithms,
+			key,
+			this.currentAlgorithmInternal
+		);
 
 		const potassiumKey = await potassiumEncoding.deserialize(
 			this.defaultMetadata,
@@ -122,20 +128,27 @@ export class OneTimeAuth implements IOneTimeAuth {
 	public async verify (
 		mac: Uint8Array,
 		message: Uint8Array,
-		key: Uint8Array
+		key: Uint8Array | IPrivateKeyring
 	) : Promise<boolean> {
 		await sodium.ready;
 
-		const potassiumKey = await potassiumEncoding.deserialize(
-			this.defaultMetadata,
-			{key}
-		);
 		const potassiumMAC = await potassiumEncoding.deserialize(
 			this.defaultMetadata,
 			{mac}
 		);
 
 		const algorithm = potassiumMAC.oneTimeAuthAlgorithm;
+
+		key = potassiumEncoding.openKeyring(
+			PotassiumData.OneTimeAuthAlgorithms,
+			key,
+			this.currentAlgorithmInternal
+		);
+
+		const potassiumKey = await potassiumEncoding.deserialize(
+			this.defaultMetadata,
+			{key}
+		);
 
 		if (potassiumKey.oneTimeAuthAlgorithm !== algorithm) {
 			throw new Error('Key-MAC OneTimeAuth algorithm mismatch (verify).');

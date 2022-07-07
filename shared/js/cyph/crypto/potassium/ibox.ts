@@ -1,4 +1,9 @@
-import {IKeyPair, PotassiumData} from '../../proto/types';
+import {
+	IKeyPair,
+	IPrivateKeyring,
+	IPublicKeyring,
+	PotassiumData
+} from '../../proto/types';
 
 /** Equivalent to sodium.crypto_box. */
 export interface IBox {
@@ -19,8 +24,14 @@ export interface IBox {
 	keyPair (algorithm?: PotassiumData.BoxAlgorithms) : Promise<IKeyPair>;
 
 	/** Decrypts cyphertext. */
-	open (cyphertext: Uint8Array, keyPair: IKeyPair) : Promise<Uint8Array>;
+	open (
+		cyphertext: Uint8Array,
+		keyPair: IKeyPair | IPrivateKeyring
+	) : Promise<Uint8Array>;
 
 	/** Encrypts plaintext. */
-	seal (plaintext: Uint8Array, publicKey: Uint8Array) : Promise<Uint8Array>;
+	seal (
+		plaintext: Uint8Array,
+		publicKey: Uint8Array | IPublicKeyring
+	) : Promise<Uint8Array>;
 }

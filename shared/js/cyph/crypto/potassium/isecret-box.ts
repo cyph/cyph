@@ -1,4 +1,4 @@
-import {PotassiumData} from '../../proto/types';
+import {IPrivateKeyring, PotassiumData} from '../../proto/types';
 
 /** Equivalent to sodium.crypto_secretbox. */
 export interface ISecretBox {
@@ -23,14 +23,14 @@ export interface ISecretBox {
 	/** Decrypts cyphertext. */
 	open (
 		cyphertext: Uint8Array,
-		key: Uint8Array,
+		key: Uint8Array | IPrivateKeyring,
 		additionalData?: Uint8Array | string
 	) : Promise<Uint8Array>;
 
 	/** Encrypts plaintext. */
 	seal (
 		plaintext: Uint8Array,
-		key: Uint8Array,
+		key: Uint8Array | IPrivateKeyring,
 		additionalData?: Uint8Array | string
 	) : Promise<Uint8Array>;
 }

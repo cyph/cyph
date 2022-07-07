@@ -5,7 +5,13 @@ import memoize from 'lodash-es/memoize';
 import {mceliece} from 'mceliece';
 import {ntru} from 'ntru';
 import {sidh} from 'sidh';
-import {IKeyPair, IPotassiumData, PotassiumData} from '../../proto';
+import {
+	IKeyPair,
+	IPotassiumData,
+	IPrivateKeyring,
+	IPublicKeyring,
+	PotassiumData
+} from '../../proto';
 import {errorToString} from '../../util/error';
 import {debugLog} from '../../util/log';
 import {retryUntilSuccessful} from '../../util/wait/retry-until-successful';
@@ -518,12 +524,21 @@ export class Box implements IBox {
 	/** @inheritDoc */
 	public async open (
 		cyphertext: Uint8Array,
-		keyPair: IKeyPair
+		keyPair: IKeyPair | IPrivateKeyring
 	) : Promise<Uint8Array> {
 		const potassiumCyphertext = await potassiumEncoding.deserialize(
 			this.defaultMetadata,
 			{cyphertext}
 		);
+
+		const algorithm = potassiumCyphertext.boxAlgorithm;
+
+		keyPair = potassiumEncoding.openKeyring(
+			PotassiumData.BoxAlgorithms,
+			keyPair,
+			algorithm
+		);
+
 		const potassiumPrivateKey = await potassiumEncoding.deserialize(
 			this.defaultMetadata,
 			{privateKey: keyPair.privateKey}
@@ -532,8 +547,6 @@ export class Box implements IBox {
 			this.defaultMetadata,
 			{publicKey: keyPair.publicKey}
 		);
-
-		const algorithm = potassiumCyphertext.boxAlgorithm;
 
 		if (
 			potassiumPrivateKey.boxAlgorithm !== algorithm ||
@@ -594,8 +607,14 @@ export class Box implements IBox {
 	/** @inheritDoc */
 	public async seal (
 		plaintext: Uint8Array,
-		publicKey: Uint8Array
+		publicKey: Uint8Array | IPublicKeyring
 	) : Promise<Uint8Array> {
+		publicKey = potassiumEncoding.openKeyring(
+			PotassiumData.BoxAlgorithms,
+			publicKey,
+			this.currentAlgorithmInternal
+		);
+
 		const potassiumPublicKey = await potassiumEncoding.deserialize(
 			this.defaultMetadata,
 			{publicKey}

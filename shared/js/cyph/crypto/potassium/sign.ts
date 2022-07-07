@@ -1,7 +1,13 @@
 import * as lz4 from 'lz4';
 import memoize from 'lodash-es/memoize';
 import {superSphincs} from 'supersphincs';
-import {IKeyPair, IPotassiumData, PotassiumData} from '../../proto';
+import {
+	IKeyPair,
+	IPotassiumData,
+	IPrivateKeyring,
+	IPublicKeyring,
+	PotassiumData
+} from '../../proto';
 import {retryUntilSuccessful} from '../../util/wait/retry-until-successful';
 import {ISign} from './isign';
 import {potassiumEncoding} from './potassium-encoding';
@@ -155,10 +161,16 @@ export class Sign implements ISign {
 	/** @inheritDoc */
 	public async open (
 		signed: Uint8Array | string,
-		publicKey: Uint8Array,
+		publicKey: Uint8Array | IPublicKeyring,
 		additionalData: Uint8Array | string = new Uint8Array(0),
 		decompressByDefault: boolean = false
 	) : Promise<Uint8Array> {
+		publicKey = potassiumEncoding.openKeyring(
+			PotassiumData.SignAlgorithms,
+			publicKey,
+			this.currentAlgorithmInternal
+		);
+
 		const potassiumPublicKey = await potassiumEncoding.deserialize(
 			this.defaultMetadata,
 			{publicKey}
@@ -212,11 +224,17 @@ export class Sign implements ISign {
 	/** @inheritDoc */
 	public async sign (
 		message: Uint8Array | string,
-		privateKey: Uint8Array,
+		privateKey: Uint8Array | IPrivateKeyring,
 		additionalData: Uint8Array | string = new Uint8Array(0),
 		compress: boolean = false
 	) : Promise<Uint8Array> {
 		message = potassiumUtil.fromString(message);
+
+		privateKey = potassiumEncoding.openKeyring(
+			PotassiumData.SignAlgorithms,
+			privateKey instanceof Uint8Array ? {privateKey} : privateKey,
+			this.currentAlgorithmInternal
+		).privateKey;
 
 		const potassiumPrivateKey = await potassiumEncoding.deserialize(
 			this.defaultMetadata,
@@ -256,9 +274,15 @@ export class Sign implements ISign {
 	/** @inheritDoc */
 	public async signDetached (
 		message: Uint8Array | string,
-		privateKey: Uint8Array,
+		privateKey: Uint8Array | IPrivateKeyring,
 		additionalData?: Uint8Array | string
 	) : Promise<Uint8Array> {
+		privateKey = potassiumEncoding.openKeyring(
+			PotassiumData.SignAlgorithms,
+			privateKey instanceof Uint8Array ? {privateKey} : privateKey,
+			this.currentAlgorithmInternal
+		).privateKey;
+
 		const potassiumPrivateKey = await potassiumEncoding.deserialize(
 			this.defaultMetadata,
 			{privateKey}
@@ -292,9 +316,15 @@ export class Sign implements ISign {
 	public async verifyDetached (
 		signature: Uint8Array | string,
 		message: Uint8Array | string,
-		publicKey: Uint8Array,
+		publicKey: Uint8Array | IPublicKeyring,
 		additionalData?: Uint8Array | string
 	) : Promise<boolean> {
+		publicKey = potassiumEncoding.openKeyring(
+			PotassiumData.SignAlgorithms,
+			publicKey,
+			this.currentAlgorithmInternal
+		);
+
 		const potassiumPublicKey = await potassiumEncoding.deserialize(
 			this.defaultMetadata,
 			{publicKey}

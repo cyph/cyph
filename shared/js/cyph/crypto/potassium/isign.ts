@@ -1,4 +1,9 @@
-import {IKeyPair, PotassiumData} from '../../proto/types';
+import {
+	IKeyPair,
+	IPrivateKeyring,
+	IPublicKeyring,
+	PotassiumData
+} from '../../proto/types';
 
 /** Equivalent to sodium.crypto_sign. */
 export interface ISign {
@@ -31,7 +36,7 @@ export interface ISign {
 	/** Verifies combined signature and returns original message. */
 	open (
 		signed: Uint8Array | string,
-		publicKey: Uint8Array,
+		publicKey: Uint8Array | IPublicKeyring,
 		additionalData?: Uint8Array | string,
 		decompressByDefault?: boolean
 	) : Promise<Uint8Array>;
@@ -39,7 +44,7 @@ export interface ISign {
 	/** Signs message and returns it combined with signature. */
 	sign (
 		message: Uint8Array | string,
-		privateKey: Uint8Array,
+		privateKey: Uint8Array | IPrivateKeyring,
 		additionalData?: Uint8Array | string,
 		compress?: boolean
 	) : Promise<Uint8Array>;
@@ -47,7 +52,7 @@ export interface ISign {
 	/** Signs message and returns only the signature. */
 	signDetached (
 		message: Uint8Array | string,
-		privateKey: Uint8Array,
+		privateKey: Uint8Array | IPrivateKeyring,
 		additionalData?: Uint8Array | string
 	) : Promise<Uint8Array>;
 
@@ -55,7 +60,7 @@ export interface ISign {
 	verifyDetached (
 		signature: Uint8Array | string,
 		message: Uint8Array | string,
-		publicKey: Uint8Array,
+		publicKey: Uint8Array | IPublicKeyring,
 		additionalData?: Uint8Array | string
 	) : Promise<boolean>;
 }

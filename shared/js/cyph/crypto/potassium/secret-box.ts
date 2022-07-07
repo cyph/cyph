@@ -1,6 +1,6 @@
 import {sodium} from 'libsodium';
 import memoize from 'lodash-es/memoize';
-import {IPotassiumData, PotassiumData} from '../../proto';
+import {IPotassiumData, IPrivateKeyring, PotassiumData} from '../../proto';
 import {IHash} from './ihash';
 import {ISecretBox} from './isecret-box';
 import * as NativeCrypto from './native-crypto';
@@ -287,7 +287,7 @@ export class SecretBox implements ISecretBox {
 	/** @inheritDoc */
 	public async open (
 		cyphertext: Uint8Array,
-		key: Uint8Array,
+		key: Uint8Array | IPrivateKeyring,
 		additionalData?: Uint8Array | string
 	) : Promise<Uint8Array> {
 		const additionalDataBytes =
@@ -299,12 +299,19 @@ export class SecretBox implements ISecretBox {
 			this.defaultMetadata,
 			{cyphertext}
 		);
+
+		const algorithm = potassiumCyphertext.secretBoxAlgorithm;
+
+		key = potassiumEncoding.openKeyring(
+			PotassiumData.SecretBoxAlgorithms,
+			key,
+			this.currentAlgorithmInternal
+		);
+
 		const potassiumKey = await potassiumEncoding.deserialize(
 			this.defaultMetadata,
 			{key}
 		);
-
-		const algorithm = potassiumKey.secretBoxAlgorithm;
 
 		if (potassiumCyphertext.secretBoxAlgorithm !== algorithm) {
 			throw new Error(
@@ -332,13 +339,19 @@ export class SecretBox implements ISecretBox {
 	/** @inheritDoc */
 	public async seal (
 		plaintext: Uint8Array,
-		key: Uint8Array,
+		key: Uint8Array | IPrivateKeyring,
 		additionalData?: Uint8Array | string
 	) : Promise<Uint8Array> {
 		const additionalDataBytes =
 			typeof additionalData === 'string' ?
 				potassiumUtil.fromString(additionalData) :
 				additionalData;
+
+		key = potassiumEncoding.openKeyring(
+			PotassiumData.SecretBoxAlgorithms,
+			key,
+			this.currentAlgorithmInternal
+		);
 
 		const potassiumKey = await potassiumEncoding.deserialize(
 			this.defaultMetadata,

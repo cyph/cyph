@@ -1,7 +1,13 @@
 import {sodium} from 'libsodium';
 import memoize from 'lodash-es/memoize';
 import {rlwe} from 'rlwe';
-import {IKeyPair, IPotassiumData, PotassiumData} from '../../proto';
+import {
+	IKeyPair,
+	IPotassiumData,
+	IPrivateKeyring,
+	IPublicKeyring,
+	PotassiumData
+} from '../../proto';
 import {IEphemeralKeyExchange} from './iephemeral-key-exchange';
 import {IHash} from './ihash';
 import {potassiumEncoding} from './potassium-encoding';
@@ -9,6 +15,11 @@ import {potassiumUtil} from './potassium-util';
 
 /** @inheritDoc */
 export class EphemeralKeyExchange implements IEphemeralKeyExchange {
+	/** @ignore */
+	private readonly algorithmPriorityOrder = [
+		PotassiumData.EphemeralKeyExchangeAlgorithms.V1
+	];
+
 	/** @ignore */
 	private readonly currentAlgorithmInternal =
 		PotassiumData.EphemeralKeyExchangeAlgorithms.V1;
@@ -144,23 +155,75 @@ export class EphemeralKeyExchange implements IEphemeralKeyExchange {
 
 	/** @inheritDoc */
 	public async aliceSecret (
-		publicKey: Uint8Array,
-		privateKey: Uint8Array
+		publicKey: Uint8Array | IPublicKeyring,
+		privateKey: Uint8Array | IPrivateKeyring
 	) : Promise<Uint8Array> {
 		await sodium.ready;
 
-		const potassiumPrivateKey = await potassiumEncoding.deserialize(
-			this.defaultMetadata,
-			{privateKey}
+		const deserializePotassiumPrivateKey = memoize(
+			async (privateKeyBytes: Uint8Array) =>
+				potassiumEncoding.deserialize(this.defaultMetadata, {
+					privateKey: privateKeyBytes
+				})
 		);
-		const potassiumPublicKey = await potassiumEncoding.deserialize(
-			this.defaultMetadata,
-			{publicKey}
+		const getPotassiumPrivateKey = memoize(
+			async (algorithm: PotassiumData.EphemeralKeyExchangeAlgorithms) =>
+				deserializePotassiumPrivateKey(
+					privateKey instanceof Uint8Array ?
+						privateKey :
+						potassiumEncoding.openKeyring(
+							PotassiumData.EphemeralKeyExchangeAlgorithms,
+							privateKey,
+							algorithm
+						).privateKey
+				)
 		);
 
-		const algorithm = potassiumPrivateKey.ephemeralKeyExchangeAlgorithm;
+		const deserializePotassiumPublicKey = memoize(
+			async (publicKeyBytes: Uint8Array) =>
+				potassiumEncoding.deserialize(this.defaultMetadata, {
+					publicKey: publicKeyBytes
+				})
+		);
+		const getPotassiumPublicKey = memoize(
+			async (algorithm: PotassiumData.EphemeralKeyExchangeAlgorithms) =>
+				deserializePotassiumPublicKey(
+					potassiumEncoding.openKeyring(
+						PotassiumData.EphemeralKeyExchangeAlgorithms,
+						publicKey,
+						algorithm
+					)
+				)
+		);
 
-		if (potassiumPublicKey.ephemeralKeyExchangeAlgorithm !== algorithm) {
+		const algorithm =
+			publicKey instanceof Uint8Array ?
+				(await deserializePotassiumPublicKey(publicKey))
+					.ephemeralKeyExchangeAlgorithm :
+			privateKey instanceof Uint8Array ?
+				(await deserializePotassiumPrivateKey(privateKey))
+					.ephemeralKeyExchangeAlgorithm :
+				this.algorithmPriorityOrder.find(
+					alg =>
+						privateKey.ephemeralKeyExchangePrivateKeys?.[alg] !==
+							undefined &&
+						publicKey.ephemeralKeyExchangePublicKeys?.[alg] !==
+							undefined
+				);
+
+		if (algorithm === undefined) {
+			throw new Error(
+				'Failed to negotiate EphemeralKeyExchange algorithm (Alice secret).'
+			);
+		}
+
+		const potassiumPrivateKey = await getPotassiumPrivateKey(algorithm);
+		const potassiumPublicKey = await getPotassiumPublicKey(algorithm);
+
+		if (
+			potassiumPrivateKey.ephemeralKeyExchangeAlgorithm !== algorithm ||
+			potassiumPublicKey.ephemeralKeyExchangeAlgorithm !== algorithm
+		) {
 			throw new Error(
 				'Public key - private key EphemeralKeyExchange algorithm mismatch (Alice secret).'
 			);
@@ -224,11 +287,19 @@ export class EphemeralKeyExchange implements IEphemeralKeyExchange {
 	}
 
 	/** @inheritDoc */
-	public async bobSecret (alicePublicKey: Uint8Array) : Promise<{
+	public async bobSecret (
+		alicePublicKey: Uint8Array | IPublicKeyring
+	) : Promise<{
 		publicKey: Uint8Array;
 		secret: Uint8Array;
 	}> {
 		await sodium.ready;
+
+		alicePublicKey = potassiumEncoding.openKeyring(
+			PotassiumData.EphemeralKeyExchangeAlgorithms,
+			alicePublicKey,
+			this.currentAlgorithmInternal
+		);
 
 		const potassiumAlicePublicKey = await potassiumEncoding.deserialize(
 			this.defaultMetadata,
