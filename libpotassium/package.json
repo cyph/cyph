@@ -1,6 +1,6 @@
 {
 	"name": "libpotassium",
-	"version": "0.0.5",
+	"version": "0.1.0",
 	"license": "Cyph-RSL",
 	"type": "module",
 	"main": "./dist/libpotassium.js",
