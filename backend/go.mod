@@ -17,10 +17,10 @@ require (
 	github.com/gorilla/mux v1.8.0
 	github.com/microcosm-cc/bluemonday v1.0.19
 	github.com/oschwald/geoip2-golang v1.7.0
-	github.com/stripe/stripe-go/v72 v72.117.0
-	golang.org/x/net v0.0.0-20220630215102-69896b714898 // indirect
+	github.com/stripe/stripe-go/v72 v72.118.0
+	golang.org/x/net v0.0.0-20220706163947-c90051bbdb60 // indirect
 	golang.org/x/oauth2 v0.0.0-20220630143837-2104d58473e0 // indirect
-	golang.org/x/sys v0.0.0-20220702020025-31831981b65f // indirect
+	golang.org/x/sys v0.0.0-20220704084225-05e143d24a9e // indirect
 	google.golang.org/api v0.86.0
-	google.golang.org/genproto v0.0.0-20220630174209-ad1d48641aa7
+	google.golang.org/genproto v0.0.0-20220707150051-590a5ac7bee1
 )
