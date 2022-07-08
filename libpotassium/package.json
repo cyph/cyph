@@ -3,7 +3,7 @@
 	"version": "0.1.0",
 	"license": "Cyph-RSL",
 	"type": "module",
-	"main": "./dist/libpotassium.js",
+	"main": "./dist/index.js",
 	"files": [
 		"/dist",
 		"/LICENSE",

@@ -31,7 +31,7 @@ export class ThreadedPotassiumService
 				/* eslint-disable-next-line prefer-arrow/prefer-arrow-functions */
 				function () : void {
 					importScripts(
-						'/assets/node_modules/libpotassium/dist/libpotassium.js'
+						'/assets/node_modules/libpotassium/dist/index.js'
 					);
 
 					const potassium = new (<any> self).Potassium(
