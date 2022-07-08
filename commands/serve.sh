@@ -12,6 +12,7 @@ includeSyncfusion=''
 noLockDown=''
 e2e=''
 unitTest=''
+localPotassium=''
 localSeleniumServer=''
 site='cyph.app'
 prod=''
@@ -48,6 +49,10 @@ if [ "${1}" == '--poll' ] ; then
 fi
 if [ "${1}" == '--prod-build' ] ; then
 	prodBuild=true
+	shift
+fi
+if [ "${1}" == '--local-potassium' ] ; then
+	localPotassium=true
 	shift
 fi
 if [ "${1}" == '--local-selenium-server' ] ; then
@@ -224,6 +229,7 @@ fi
 if [ "${site}" == 'backend' ] ; then sleep Infinity ; fi
 
 ./commands/buildunbundledassets.sh \
+	$(if [ "${localPotassium}" ] ; then echo -n '--libpotassium' ; fi) \
 	$(if [ ! "${CIRCLECI}" ] && [ ! "${prodBuild}" ] ; then echo -n '--test' ; fi)
 checkfail
 

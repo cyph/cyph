@@ -392,6 +392,10 @@ for f in ${typescriptAssets} ; do
 	fi
 done
 
+if [ "${libpotassium}" ] ; then
+	cp -f cyph/crypto/potassium/index.js ../node_modules/libpotassium/dist/
+fi
+
 
 cd ../css
 
