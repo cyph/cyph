@@ -105,21 +105,27 @@ export class ThreadedPotassiumService
 		keyPair: async () => this.getPotassium(async o => o.boxKeyPair()),
 		open: async (cyphertext, keyPair) =>
 			this.getPotassium(async o => o.boxOpen(cyphertext, keyPair)),
-		seal: async (plaintext, publicKey) =>
-			this.getPotassium(async o => o.boxSeal(plaintext, publicKey))
+		seal: async (plaintext, publicKey, rawOutput) =>
+			this.getPotassium(async o =>
+				o.boxSeal(plaintext, publicKey, rawOutput)
+			)
 	};
 
 	/** @inheritDoc */
 	public readonly ephemeralKeyExchange: IEphemeralKeyExchange = {
 		aliceKeyPair: async () =>
 			this.getPotassium(async o => o.ephemeralKeyExchangeAliceKeyPair()),
-		aliceSecret: async (publicKey, privateKey) =>
+		aliceSecret: async (publicKey, privateKey, rawOutput) =>
 			this.getPotassium(async o =>
-				o.ephemeralKeyExchangeAliceSecret(publicKey, privateKey)
+				o.ephemeralKeyExchangeAliceSecret(
+					publicKey,
+					privateKey,
+					rawOutput
+				)
 			),
-		bobSecret: async alicePublicKey =>
+		bobSecret: async (alicePublicKey, rawOutput) =>
 			this.getPotassium(async o =>
-				o.ephemeralKeyExchangeBobSecret(alicePublicKey)
+				o.ephemeralKeyExchangeBobSecret(alicePublicKey, rawOutput)
 			),
 		currentAlgorithm: this.staticValues.then(async o =>
 			o.ephemeralKeyExchangeCurrentAlgorithm()
@@ -171,8 +177,10 @@ export class ThreadedPotassiumService
 			this.getPotassium(async o => o.oneTimeAuthGetBytes(algorithm)),
 		getKeyBytes: async algorithm =>
 			this.getPotassium(async o => o.oneTimeAuthGetKeyBytes(algorithm)),
-		sign: async (message, key) =>
-			this.getPotassium(async o => o.oneTimeAuthSign(message, key)),
+		sign: async (message, key, rawOutput) =>
+			this.getPotassium(async o =>
+				o.oneTimeAuthSign(message, key, rawOutput)
+			),
 		verify: async (mac, message, key) =>
 			this.getPotassium(async o => o.oneTimeAuthVerify(mac, message, key))
 	};
@@ -243,9 +251,9 @@ export class ThreadedPotassiumService
 			this.getPotassium(async o =>
 				o.secretBoxOpen(cyphertext, key, additionalData)
 			),
-		seal: async (plaintext, key, additionalData) =>
+		seal: async (plaintext, key, additionalData, rawOutput) =>
 			this.getPotassium(async o =>
-				o.secretBoxSeal(plaintext, key, additionalData)
+				o.secretBoxSeal(plaintext, key, additionalData, rawOutput)
 			)
 	};
 
@@ -273,9 +281,14 @@ export class ThreadedPotassiumService
 			this.getPotassium(async o =>
 				o.signSign(message, privateKey, additionalData, compress)
 			),
-		signDetached: async (message, privateKey, additionalData) =>
+		signDetached: async (message, privateKey, additionalData, rawOutput) =>
 			this.getPotassium(async o =>
-				o.signSignDetached(message, privateKey, additionalData)
+				o.signSignDetached(
+					message,
+					privateKey,
+					additionalData,
+					rawOutput
+				)
 			),
 		verifyDetached: async (signature, message, publicKey, additionalData) =>
 			this.getPotassium(async o =>

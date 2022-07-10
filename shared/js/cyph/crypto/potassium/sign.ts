@@ -7,7 +7,7 @@ import {
 	IPrivateKeyring,
 	IPublicKeyring,
 	PotassiumData
-} from '../../proto';
+} from '../../../proto';
 import {retryUntilSuccessful} from '../../util/wait/retry-until-successful';
 import {ISign} from './isign';
 import {potassiumEncoding} from './potassium-encoding';
@@ -275,7 +275,8 @@ export class Sign implements ISign {
 	public async signDetached (
 		message: Uint8Array | string,
 		privateKey: Uint8Array | IPrivateKeyring,
-		additionalData?: Uint8Array | string
+		additionalData?: Uint8Array | string,
+		rawOutput: boolean = false
 	) : Promise<Uint8Array> {
 		privateKey = potassiumEncoding.openKeyring(
 			PotassiumData.SignAlgorithms,
@@ -304,6 +305,10 @@ export class Sign implements ISign {
 
 			default:
 				throw new Error('Invalid Sign algorithm (sign detached).');
+		}
+
+		if (rawOutput) {
+			return result;
 		}
 
 		return potassiumEncoding.serialize({

@@ -1,6 +1,6 @@
 import {sodium} from 'libsodium';
 import memoize from 'lodash-es/memoize';
-import {IPotassiumData, IPrivateKeyring, PotassiumData} from '../../proto';
+import {IPotassiumData, IPrivateKeyring, PotassiumData} from '../../../proto';
 import {IHash} from './ihash';
 import {ISecretBox} from './isecret-box';
 import * as NativeCrypto from './native-crypto';
@@ -340,7 +340,8 @@ export class SecretBox implements ISecretBox {
 	public async seal (
 		plaintext: Uint8Array,
 		key: Uint8Array | IPrivateKeyring,
-		additionalData?: Uint8Array | string
+		additionalData?: Uint8Array | string,
+		rawOutput: boolean = false
 	) : Promise<Uint8Array> {
 		const additionalDataBytes =
 			typeof additionalData === 'string' ?
@@ -360,21 +361,27 @@ export class SecretBox implements ISecretBox {
 
 		const algorithm = potassiumKey.secretBoxAlgorithm;
 
-		return potassiumEncoding.serialize({
-			cyphertext: potassiumUtil.joinBytes(
-				...(await Promise.all(
-					potassiumUtil
-						.chunkBytes(plaintext, this.chunkSize)
-						.map(async m =>
-							this.sealChunk(
-								algorithm,
-								m,
-								potassiumKey.key,
-								additionalDataBytes
-							)
+		const result = potassiumUtil.joinBytes(
+			...(await Promise.all(
+				potassiumUtil
+					.chunkBytes(plaintext, this.chunkSize)
+					.map(async m =>
+						this.sealChunk(
+							algorithm,
+							m,
+							potassiumKey.key,
+							additionalDataBytes
 						)
-				))
-			),
+					)
+			))
+		);
+
+		if (rawOutput) {
+			return result;
+		}
+
+		return potassiumEncoding.serialize({
+			cyphertext: result,
 			secretBoxAlgorithm: algorithm
 		});
 	}

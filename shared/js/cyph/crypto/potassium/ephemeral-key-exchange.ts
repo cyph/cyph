@@ -7,7 +7,7 @@ import {
 	IPrivateKeyring,
 	IPublicKeyring,
 	PotassiumData
-} from '../../proto';
+} from '../../../proto';
 import {IEphemeralKeyExchange} from './iephemeral-key-exchange';
 import {IHash} from './ihash';
 import {potassiumEncoding} from './potassium-encoding';
@@ -156,7 +156,8 @@ export class EphemeralKeyExchange implements IEphemeralKeyExchange {
 	/** @inheritDoc */
 	public async aliceSecret (
 		publicKey: Uint8Array | IPublicKeyring,
-		privateKey: Uint8Array | IPrivateKeyring
+		privateKey: Uint8Array | IPrivateKeyring,
+		rawOutput: boolean = false
 	) : Promise<Uint8Array> {
 		await sodium.ready;
 
@@ -280,6 +281,10 @@ export class EphemeralKeyExchange implements IEphemeralKeyExchange {
 				);
 		}
 
+		if (rawOutput) {
+			return result;
+		}
+
 		return potassiumEncoding.serialize({
 			ephemeralKeyExchangeAlgorithm: algorithm,
 			secret: result
@@ -288,7 +293,8 @@ export class EphemeralKeyExchange implements IEphemeralKeyExchange {
 
 	/** @inheritDoc */
 	public async bobSecret (
-		alicePublicKey: Uint8Array | IPublicKeyring
+		alicePublicKey: Uint8Array | IPublicKeyring,
+		rawOutput: boolean = false
 	) : Promise<{
 		publicKey: Uint8Array;
 		secret: Uint8Array;
@@ -318,12 +324,12 @@ export class EphemeralKeyExchange implements IEphemeralKeyExchange {
 				const secretBytes = await this.getSecretBytes(algorithm);
 
 				const aliceRlwePublicKey = potassiumUtil.toBytes(
-					alicePublicKey,
+					potassiumAlicePublicKey.publicKey,
 					0,
 					await rlwe.publicKeyBytes
 				);
 				const aliceSodiumPublicKey = potassiumUtil.toBytes(
-					alicePublicKey,
+					potassiumAlicePublicKey.publicKey,
 					await rlwe.publicKeyBytes,
 					sodium.crypto_scalarmult_BYTES
 				);
@@ -371,10 +377,12 @@ export class EphemeralKeyExchange implements IEphemeralKeyExchange {
 				ephemeralKeyExchangeAlgorithm: algorithm,
 				publicKey: result.publicKey
 			}),
-			secret: await potassiumEncoding.serialize({
-				ephemeralKeyExchangeAlgorithm: algorithm,
-				secret: result.secret
-			})
+			secret: rawOutput ?
+				result.secret :
+				await potassiumEncoding.serialize({
+					ephemeralKeyExchangeAlgorithm: algorithm,
+					secret: result.secret
+				})
 		};
 	}
 

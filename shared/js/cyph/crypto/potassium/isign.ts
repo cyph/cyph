@@ -53,7 +53,8 @@ export interface ISign {
 	signDetached (
 		message: Uint8Array | string,
 		privateKey: Uint8Array | IPrivateKeyring,
-		additionalData?: Uint8Array | string
+		additionalData?: Uint8Array | string,
+		rawOutput?: boolean
 	) : Promise<Uint8Array>;
 
 	/** Verifies signature. */

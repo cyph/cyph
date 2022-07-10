@@ -18,12 +18,14 @@ export interface IEphemeralKeyExchange {
 	/** Computes secret for Alice using Bob's key. */
 	aliceSecret (
 		publicKey: Uint8Array | IPublicKeyring,
-		privateKey: Uint8Array | IPrivateKeyring
+		privateKey: Uint8Array | IPrivateKeyring,
+		rawOutput?: boolean
 	) : Promise<Uint8Array>;
 
 	/** Computes secret and key for Bob using Alice's key. */
 	bobSecret (
-		alicePublicKey: Uint8Array | IPublicKeyring
+		alicePublicKey: Uint8Array | IPublicKeyring,
+		rawOutput?: boolean
 	) : Promise<{publicKey: Uint8Array; secret: Uint8Array}>;
 
 	/** Private key length. */

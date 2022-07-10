@@ -32,6 +32,7 @@ export interface IBox {
 	/** Encrypts plaintext. */
 	seal (
 		plaintext: Uint8Array,
-		publicKey: Uint8Array | IPublicKeyring
+		publicKey: Uint8Array | IPublicKeyring,
+		rawOutput?: boolean
 	) : Promise<Uint8Array>;
 }

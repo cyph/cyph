@@ -6,7 +6,7 @@ import {
 	IPrivateKeyring,
 	IPublicKeyring,
 	PotassiumData
-} from '../../proto';
+} from '../../../proto';
 import {deserialize, serialize} from '../../util/serialization';
 import {potassiumUtil} from './potassium-util';
 
@@ -79,7 +79,16 @@ export class PotassiumEncoding {
 			};
 		}
 
-		const data = await deserialize(PotassiumData, bytes);
+		const data = await deserialize(
+			PotassiumData,
+			this.cryptographicAgilityTag !== undefined ?
+				potassiumUtil.toBytes(
+					bytes,
+					this.cryptographicAgilityTag.length
+				) :
+				bytes
+		);
+
 		const requiredKeys = <(keyof IPotassiumData)[]> (
 			Object.keys(defaultMetadata).concat(defaultValueKey)
 		);

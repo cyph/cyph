@@ -11,7 +11,7 @@ import {
 	IPrivateKeyring,
 	IPublicKeyring,
 	PotassiumData
-} from '../../proto';
+} from '../../../proto';
 import {errorToString} from '../../util/error';
 import {debugLog} from '../../util/log';
 import {retryUntilSuccessful} from '../../util/wait/retry-until-successful';
@@ -273,7 +273,9 @@ export class Box implements IBox {
 			);
 			const symmetricCyphertext = await this.secretBox.seal(
 				plaintext,
-				symmetricKey
+				symmetricKey,
+				undefined,
+				true
 			);
 
 			const authKey = potassiumUtil.toBytes(
@@ -285,7 +287,7 @@ export class Box implements IBox {
 				asymmetricPlaintext,
 				publicKey
 			);
-			const mac = await this.oneTimeAuth.sign(encrypted, authKey);
+			const mac = await this.oneTimeAuth.sign(encrypted, authKey, true);
 			const asymmetricCyphertext = potassiumUtil.concatMemory(
 				true,
 				mac,
@@ -577,7 +579,7 @@ export class Box implements IBox {
 							algorithm,
 							await this.v1PublicKeyDecrypt(
 								algorithm,
-								cyphertext,
+								potassiumCyphertext.cyphertext,
 								privateSubKeys.sidh,
 								sidh,
 								'SIDH',
@@ -607,7 +609,8 @@ export class Box implements IBox {
 	/** @inheritDoc */
 	public async seal (
 		plaintext: Uint8Array,
-		publicKey: Uint8Array | IPublicKeyring
+		publicKey: Uint8Array | IPublicKeyring,
+		rawOutput: boolean = false
 	) : Promise<Uint8Array> {
 		publicKey = potassiumEncoding.openKeyring(
 			PotassiumData.BoxAlgorithms,
@@ -662,6 +665,10 @@ export class Box implements IBox {
 
 			default:
 				throw new Error('Invalid Box algorithm (seal).');
+		}
+
+		if (rawOutput) {
+			return result;
 		}
 
 		return potassiumEncoding.serialize({

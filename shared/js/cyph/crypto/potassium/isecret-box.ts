@@ -31,6 +31,7 @@ export interface ISecretBox {
 	seal (
 		plaintext: Uint8Array,
 		key: Uint8Array | IPrivateKeyring,
-		additionalData?: Uint8Array | string
+		additionalData?: Uint8Array | string,
+		rawOutput?: boolean
 	) : Promise<Uint8Array>;
 }

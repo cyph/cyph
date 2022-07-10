@@ -23,7 +23,8 @@ export interface IOneTimeAuth {
 	/** Signs message. */
 	sign (
 		message: Uint8Array,
-		key: Uint8Array | IPrivateKeyring
+		key: Uint8Array | IPrivateKeyring,
+		rawOutput?: boolean
 	) : Promise<Uint8Array>;
 
 	/** Verifies MAC. */

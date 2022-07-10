@@ -1,6 +1,6 @@
 import {sodium} from 'libsodium';
 import memoize from 'lodash-es/memoize';
-import {IPotassiumData, IPrivateKeyring, PotassiumData} from '../../proto';
+import {IPotassiumData, IPrivateKeyring, PotassiumData} from '../../../proto';
 import {IOneTimeAuth} from './ione-time-auth';
 import * as NativeCrypto from './native-crypto';
 import {potassiumEncoding} from './potassium-encoding';
@@ -83,7 +83,8 @@ export class OneTimeAuth implements IOneTimeAuth {
 	/** @inheritDoc */
 	public async sign (
 		message: Uint8Array,
-		key: Uint8Array | IPrivateKeyring
+		key: Uint8Array | IPrivateKeyring,
+		rawOutput: boolean = false
 	) : Promise<Uint8Array> {
 		await sodium.ready;
 
@@ -116,6 +117,10 @@ export class OneTimeAuth implements IOneTimeAuth {
 
 			default:
 				throw new Error('Invalid OneTimeAuth algorithm (sign).');
+		}
+
+		if (rawOutput) {
+			return result;
 		}
 
 		return potassiumEncoding.serialize({
