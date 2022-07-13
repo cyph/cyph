@@ -38,6 +38,10 @@ if [ -f ~/google-cloud-sdk/completion.bash.inc ] ; then
 	source ~/google-cloud-sdk/completion.bash.inc
 fi
 
+if [ -f ~/emsdk/emsdk_env.sh ] ; then
+	source ~/emsdk/emsdk_env.sh &> /dev/null
+fi
+
 
 export NEWLINE=$'\n'
 export NODE_OPTIONS='--max-old-space-size=8192'
