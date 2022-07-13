@@ -99,6 +99,7 @@ git pull
 source ~/emsdk/emsdk_env.sh &> /dev/null
 emsdk install latest-upstream
 emsdk activate latest-upstream
+sed -i "s/NODE_JS = .*/NODE_JS = '\/usr\/bin\/node'/" ~/emsdk/.emscripten
 
 cd
 rm -rf go-ipfs go-ipfs.tar.gz 2> /dev/null
