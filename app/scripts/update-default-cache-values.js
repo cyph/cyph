@@ -52,12 +52,7 @@ const defaultCacheValuesPath = path.join(
 				await webSignStorage.bulkGet(
 					await webSignStorage.toCollection().keys()
 				)
-			).filter(
-				({value}) =>
-					!/(crypto|mceliece|ntru|potassium|rlwe|rsasign|sidh|sphincs|superSphincs|xkcdPassphrase)/.test(
-						value
-					)
-			)
+			).filter(({value}) => !/(crypto|potassium)/.test(value))
 		})
 	);
 
