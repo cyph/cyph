@@ -8,7 +8,7 @@ terser /node_modules/comlink/dist/umd/comlink.min.js -o comlink.js
 terser /node_modules/dexie/dist/dexie.min.js -o dexie.js
 terser /node_modules/whatwg-fetch/dist/fetch.umd.js -o fetch.js
 terser /node_modules/localforage/dist/localforage.min.js -o localforage.js
-terser ~/oldsupersphincs/node_modules/supersphincs/dist/supersphincs.js -o supersphincs.js
+terser /node_modules/supersphincs-legacy/dist/old-api.bundle.js -o supersphincs.js
 
 cat > brotli.webpack.js <<- EOM
 	const os = require('os');

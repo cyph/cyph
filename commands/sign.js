@@ -8,11 +8,9 @@ import dgram from 'dgram';
 import fs from 'fs';
 import read from 'read';
 import sodiumUtil from 'sodiumutil';
-import superSphincs from 'supersphincs';
+import superSphincsLegacy from 'supersphincs-legacy';
+import oldSuperSphincs from 'supersphincs-legacy/dist/old-api';
 import {notify} from './notify.js';
-
-// Temporary workaround pending AGSE update to SuperSPHINCS v6
-import oldSuperSphincs from '/home/gibson/oldsupersphincs/node_modules/supersphincs/supersphincs.js';
 
 const remoteAddress = '10.0.0.42';
 const port = 31337;
@@ -135,7 +133,7 @@ export const sign = async (inputs, testSign, demoSign, skipNotify = false) =>
 				signedInputs: await Promise.all(
 					inputs.map(async ({additionalData, message}) =>
 						Buffer.from(
-							await superSphincs.sign(
+							await superSphincsLegacy.sign(
 								message,
 								testKeyPair.privateKey,
 								additionalData
@@ -178,7 +176,10 @@ export const sign = async (inputs, testSign, demoSign, skipNotify = false) =>
 							o.message instanceof Uint8Array ?
 								{
 									data: sodiumUtil.to_base64(
-										await superSphincs.hash(o.message, true)
+										await superSphincsLegacy.hash(
+											o.message,
+											true
+										)
 									),
 									isBinaryHash: true
 								} :
@@ -246,7 +247,7 @@ export const sign = async (inputs, testSign, demoSign, skipNotify = false) =>
 				);
 
 				try {
-					const keyPair = await superSphincs.importKeys({
+					const keyPair = await superSphincsLegacy.importKeys({
 						public: {
 							rsa: publicKeys.rsa[rsaIndex],
 							sphincs: publicKeys.sphincs[sphincsIndex]
@@ -255,6 +256,7 @@ export const sign = async (inputs, testSign, demoSign, skipNotify = false) =>
 
 					const openedInputs = await Promise.all(
 						signedInputs.map(async ({additionalData, signed}) =>
+							// Temporary workaround pending AGSE update to SuperSPHINCS v6
 							oldSuperSphincs.open(
 								signed,
 								keyPair.publicKey,

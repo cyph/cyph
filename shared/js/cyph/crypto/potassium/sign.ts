@@ -1,6 +1,6 @@
 import * as lz4 from 'lz4';
 import memoize from 'lodash-es/memoize';
-import {superSphincs} from 'supersphincs';
+import {superSphincs as superSphincsLegacy} from 'supersphincs-legacy';
 import {
 	IKeyPair,
 	IPotassiumData,
@@ -41,7 +41,7 @@ export class Sign implements ISign {
 			switch (algorithm) {
 				case PotassiumData.SignAlgorithms.NativeV1:
 				case PotassiumData.SignAlgorithms.V1:
-					return superSphincs.privateKeyBytes;
+					return superSphincsLegacy.privateKeyBytes;
 
 				default:
 					throw new Error(
@@ -60,7 +60,7 @@ export class Sign implements ISign {
 			switch (algorithm) {
 				case PotassiumData.SignAlgorithms.NativeV1:
 				case PotassiumData.SignAlgorithms.V1:
-					return superSphincs.bytes;
+					return superSphincsLegacy.bytes;
 
 				default:
 					throw new Error('Invalid Sign algorithm (bytes).');
@@ -77,7 +77,7 @@ export class Sign implements ISign {
 			switch (algorithm) {
 				case PotassiumData.SignAlgorithms.NativeV1:
 				case PotassiumData.SignAlgorithms.V1:
-					return superSphincs.publicKeyBytes;
+					return superSphincsLegacy.publicKeyBytes;
 
 				default:
 					throw new Error(
@@ -99,7 +99,7 @@ export class Sign implements ISign {
 			case PotassiumData.SignAlgorithms.NativeV1:
 			case PotassiumData.SignAlgorithms.V1:
 				result = (
-					await superSphincs.importKeys({
+					await superSphincsLegacy.importKeys({
 						public: {rsa: classical, sphincs: postQuantum}
 					})
 				).publicKey;
@@ -125,7 +125,7 @@ export class Sign implements ISign {
 			switch (algorithm) {
 				case PotassiumData.SignAlgorithms.NativeV1:
 				case PotassiumData.SignAlgorithms.V1:
-					result = await superSphincs.keyPair();
+					result = await superSphincsLegacy.keyPair();
 					break;
 
 				default:
@@ -248,7 +248,7 @@ export class Sign implements ISign {
 		switch (algorithm) {
 			case PotassiumData.SignAlgorithms.NativeV1:
 			case PotassiumData.SignAlgorithms.V1:
-				result = await superSphincs.signDetached(
+				result = await superSphincsLegacy.signDetached(
 					message,
 					potassiumPrivateKey.privateKey,
 					additionalData
@@ -296,7 +296,7 @@ export class Sign implements ISign {
 		switch (algorithm) {
 			case PotassiumData.SignAlgorithms.NativeV1:
 			case PotassiumData.SignAlgorithms.V1:
-				result = await superSphincs.signDetached(
+				result = await superSphincsLegacy.signDetached(
 					message,
 					potassiumPrivateKey.privateKey,
 					additionalData
@@ -350,7 +350,7 @@ export class Sign implements ISign {
 		switch (algorithm) {
 			case PotassiumData.SignAlgorithms.NativeV1:
 			case PotassiumData.SignAlgorithms.V1:
-				return superSphincs.verifyDetached(
+				return superSphincsLegacy.verifyDetached(
 					potassiumSignature.signature,
 					message,
 					potassiumPublicKey.publicKey,

@@ -5,7 +5,7 @@ const {__dirname, isCLI} = getMeta(import.meta);
 
 import fs from 'fs';
 import fetch from 'node-fetch';
-import superSphincs from '/home/gibson/oldsupersphincs/node_modules/supersphincs/supersphincs.js';
+import oldSuperSphincs from 'supersphincs-legacy/dist/old-api.js';
 
 const publicKeys = (() => {
 	const publicKeysJS = fs
@@ -38,7 +38,7 @@ export const getReleasedPackage = async (packageName = 'cyph.app') => {
 		throw new Error('No valid public key specified.');
 	}
 
-	const {publicKey} = await superSphincs.importKeys({
+	const {publicKey} = await oldSuperSphincs.importKeys({
 		public: {
 			rsa: packageData.rsaKey,
 			sphincs: packageData.sphincsKey
@@ -47,10 +47,10 @@ export const getReleasedPackage = async (packageName = 'cyph.app') => {
 
 	/* Temporary transitionary step */
 	const opened = JSON.parse(
-		await superSphincs
+		await oldSuperSphincs
 			.openString(packageData.signed, publicKey)
 			.catch(function () {
-				return superSphincs.openString(
+				return oldSuperSphincs.openString(
 					packageData.signed,
 					publicKey,
 					new Uint8Array(0)

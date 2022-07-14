@@ -2,9 +2,9 @@
 
 import {sodium} from 'libsodium';
 import memoize from 'lodash-es/memoize';
-import {mceliece} from 'mceliece';
-import {ntru} from 'ntru';
-import {sidh} from 'sidh';
+import {mceliece as mcelieceLegacy} from 'mceliece-legacy';
+import {ntru as ntruLegacy} from 'ntru-legacy';
+import {sidh as sidhLegacy} from 'sidh-legacy';
 import {
 	IKeyPair,
 	IPotassiumData,
@@ -108,9 +108,9 @@ export class Box implements IBox {
 				case PotassiumData.BoxAlgorithms.NativeV1:
 				case PotassiumData.BoxAlgorithms.V1:
 					return (
-						(await mceliece.privateKeyBytes) +
-						(await ntru.privateKeyBytes) +
-						(await sidh.privateKeyBytes) +
+						(await mcelieceLegacy.privateKeyBytes) +
+						(await ntruLegacy.privateKeyBytes) +
+						(await sidhLegacy.privateKeyBytes) +
 						(await this.v1ClassicalCypher(algorithm)
 							.privateKeyBytes)
 					);
@@ -135,9 +135,9 @@ export class Box implements IBox {
 				case PotassiumData.BoxAlgorithms.NativeV1:
 				case PotassiumData.BoxAlgorithms.V1:
 					return (
-						(await mceliece.privateKeyBytes) +
-						(await ntru.privateKeyBytes) +
-						(await sidh.privateKeyBytes) +
+						(await mcelieceLegacy.privateKeyBytes) +
+						(await ntruLegacy.privateKeyBytes) +
+						(await sidhLegacy.privateKeyBytes) +
 						(await this.v1ClassicalCypher(algorithm).publicKeyBytes)
 					);
 
@@ -334,20 +334,20 @@ export class Box implements IBox {
 			mceliece: potassiumUtil.toBytes(
 				privateKey,
 				await classicalCypher.privateKeyBytes,
-				await mceliece.privateKeyBytes
+				await mcelieceLegacy.privateKeyBytes
 			),
 			ntru: potassiumUtil.toBytes(
 				privateKey,
 				(await classicalCypher.privateKeyBytes) +
-					(await mceliece.privateKeyBytes),
-				await ntru.privateKeyBytes
+					(await mcelieceLegacy.privateKeyBytes),
+				await ntruLegacy.privateKeyBytes
 			),
 			sidh: potassiumUtil.toBytes(
 				privateKey,
 				(await classicalCypher.privateKeyBytes) +
-					(await mceliece.privateKeyBytes) +
-					(await ntru.privateKeyBytes),
-				await sidh.privateKeyBytes
+					(await mcelieceLegacy.privateKeyBytes) +
+					(await ntruLegacy.privateKeyBytes),
+				await sidhLegacy.privateKeyBytes
 			)
 		};
 	}
@@ -373,9 +373,9 @@ export class Box implements IBox {
 			sidhPublicKeyBytes
 		] = await Promise.all([
 			classicalCypher.publicKeyBytes,
-			mceliece.publicKeyBytes,
-			ntru.publicKeyBytes,
-			sidh.publicKeyBytes
+			mcelieceLegacy.publicKeyBytes,
+			ntruLegacy.publicKeyBytes,
+			sidhLegacy.publicKeyBytes
 		]);
 
 		const logProgress = async (
@@ -470,9 +470,9 @@ export class Box implements IBox {
 						sidhKeyPair
 					] = await Promise.all([
 						this.v1ClassicalCypher(algorithm).keyPair(),
-						mceliece.keyPair(),
-						ntru.keyPair(),
-						sidh.keyPair()
+						mcelieceLegacy.keyPair(),
+						ntruLegacy.keyPair(),
+						sidhLegacy.keyPair()
 					]);
 
 					result = {
@@ -581,16 +581,16 @@ export class Box implements IBox {
 								algorithm,
 								potassiumCyphertext.cyphertext,
 								privateSubKeys.sidh,
-								sidh,
+								sidhLegacy,
 								'SIDH',
 								false
 							),
 							privateSubKeys.ntru,
-							ntru,
+							ntruLegacy,
 							'NTRU'
 						),
 						privateSubKeys.mceliece,
-						mceliece,
+						mcelieceLegacy,
 						'McEliece'
 					),
 					{
@@ -650,15 +650,15 @@ export class Box implements IBox {
 								false
 							),
 							publicSubKeys.mceliece,
-							mceliece,
+							mcelieceLegacy,
 							'McEliece'
 						),
 						publicSubKeys.ntru,
-						ntru,
+						ntruLegacy,
 						'NTRU'
 					),
 					publicSubKeys.sidh,
-					sidh,
+					sidhLegacy,
 					'SIDH'
 				);
 				break;

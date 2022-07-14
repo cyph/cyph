@@ -5,7 +5,7 @@ const dgram = require('dgram');
 const level = require('level');
 const read = require('read');
 const stream = require('stream');
-const superSphincs = require('supersphincs');
+const oldSuperSphincs = require('supersphincs-legacy/dist/old-api');
 const validator = require('validator');
 
 (async () => {
@@ -122,9 +122,9 @@ const validator = require('validator');
 						rsaKeyData = {
 							privateKey: keys.private.rsa,
 							publicKeyString: (
-								await superSphincs.exportKeys({
+								await oldSuperSphincs.exportKeys({
 									publicKey: (
-										await superSphincs.importKeys(
+										await oldSuperSphincs.importKeys(
 											keys,
 											rsaPassword
 										)
@@ -141,9 +141,9 @@ const validator = require('validator');
 						sphincsKeyData = {
 							privateKey: keys.private.sphincs,
 							publicKeyString: (
-								await superSphincs.exportKeys({
+								await oldSuperSphincs.exportKeys({
 									publicKey: (
-										await superSphincs.importKeys(
+										await oldSuperSphincs.importKeys(
 											keys,
 											sphincsPassword
 										)
@@ -163,7 +163,7 @@ const validator = require('validator');
 			keyData = {
 				rsaKeyString: rsaKeyData.publicKeyString,
 				sphincsKeyString: sphincsKeyData.publicKeyString,
-				keyPair: await superSphincs.importKeys(
+				keyPair: await oldSuperSphincs.importKeys(
 					{
 						private: {
 							rsa: rsaKeyData.privateKey,
@@ -263,7 +263,7 @@ const validator = require('validator');
 
 		const signatures = await Promise.all(
 			inputs.map(async ({additionalData, message}) =>
-				superSphincs.signDetachedBase64(
+				oldSuperSphincs.signDetachedBase64(
 					message.isBinaryHash || message.isUint8Array ?
 						Buffer.from(message.data, 'base64') :
 						message,

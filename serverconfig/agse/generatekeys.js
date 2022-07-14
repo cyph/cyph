@@ -6,7 +6,7 @@
 	const sodium = require('libsodium-wrappers-sumo');
 	const fetch = await import('node-fetch');
 	const os = require('os');
-	const superSphincs = require('supersphincs');
+	const oldSuperSphincs = require('supersphincs-legacy/dist/old-api');
 
 	const args = {
 		numActiveKeys: parseInt(process.argv[2], 10),
@@ -32,7 +32,7 @@
 		!args.keyBackupPath ?
 			Array(args.numActiveKeys + args.numBackupKeys)
 				.fill(0)
-				.map(async () => superSphincs.keyPair()) :
+				.map(async () => oldSuperSphincs.keyPair()) :
 			JSON.parse(
 				sodium.crypto_secretbox_open_easy(
 					sodium.from_base64(
@@ -50,7 +50,7 @@
 					),
 					'text'
 				)
-			).map(async superSphincsKeyString => superSphincs.importKeys(
+			).map(async superSphincsKeyString => oldSuperSphincs.importKeys(
 					{
 						private: {
 							superSphincs: superSphincsKeyString
@@ -64,13 +64,13 @@
 		keyPairs
 			.slice(0, args.numActiveKeys)
 			.map(async (keyPair, i) =>
-				superSphincs.exportKeys(keyPair, args.passwords[i])
+				oldSuperSphincs.exportKeys(keyPair, args.passwords[i])
 			)
 	);
 
 	const backupKeyData = await Promise.all(
 		keyPairs.map(async keyPair =>
-			superSphincs.exportKeys(keyPair, args.backupPasswords.aes)
+			oldSuperSphincs.exportKeys(keyPair, args.backupPasswords.aes)
 		)
 	);
 
@@ -84,7 +84,7 @@
 		sphincs: backupKeyData.map(o => o.public.sphincs)
 	});
 
-	const publicKeyHash = (await superSphincs.hash(publicKeys)).hex;
+	const publicKeyHash = (await oldSuperSphincs.hash(publicKeys)).hex;
 
 	for (const keyType of ['rsa', 'sphincs']) {
 		for (let i = 0; i < args.numActiveKeys; ++i) {

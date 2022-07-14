@@ -463,13 +463,6 @@ sudo mv lib/js/node_modules /
 sudo chmod -R 777 /node_modules
 rm -rf lib
 
-# Temporary workaround pending AGSE update to SuperSPHINCS v6
-if [ ! -d oldsupersphincs ] ; then
-	mkdir -p oldsupersphincs/node_modules
-	cd oldsupersphincs
-	npm install supersphincs@old
-fi
-
 # Temporary workaround pending https://github.com/angular/angular-cli/pull/22814
 echo | ng analytics disable --global
 
