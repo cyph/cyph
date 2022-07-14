@@ -263,6 +263,7 @@ datauri
 devextreme
 devextreme-angular
 dexie
+dilithium-crystals
 dompurify
 dope-qr
 dropzone
@@ -279,6 +280,7 @@ eslint-plugin-sonarjs
 eslint-plugin-unicorn
 falcon-crypto
 fast-crc32c
+fast-sha512
 faye-websocket
 fcm-node
 fetch-blob
@@ -297,6 +299,7 @@ gulp
 hammerjs
 hark
 highlight.js
+hqc
 html-minifier
 html-to-text
 html2canvas
@@ -324,6 +327,7 @@ karma-coverage-istanbul-reporter
 karma-jasmine
 karma-jasmine-html-reporter
 konami
+kyber-crystals
 lamejs
 lazy
 leaflet
@@ -353,6 +357,7 @@ materialize-css
 math-expression-evaluator
 maxmind
 mceliece
+mceliece-legacy
 mergebounce
 microlight-string
 mini-css-extract-plugin
@@ -383,6 +388,7 @@ node-fetch
 nodemailer
 notify-cli
 ntru
+ntru-legacy
 open
 openpgp
 opentok
@@ -416,6 +422,7 @@ resize-observer-polyfill
 retire
 rlwe
 rrule
+rsasign
 rsvp
 run-node
 rxfire
@@ -424,11 +431,13 @@ sass
 sass-loader
 shelljs
 sidh
+sidh-legacy
 simple-peer
 simplebtc
 simplewebrtc
 sodiumutil
 sphincs
+sphincs-legacy
 stacktrace-js
 stream-browserify
 stream-http
@@ -436,8 +445,10 @@ stripe
 stripe-angular
 stylelint
 stylelint-scss
+superdilithium
 superfalcon
 supersphincs
+supersphincs-legacy
 tab-indent
 tailwindcss
 terser
