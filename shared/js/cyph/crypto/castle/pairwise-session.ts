@@ -181,6 +181,7 @@ export class PairwiseSession implements IPairwiseSession {
 					let secret =
 						await this.handshakeState.initialSecret.getValue();
 
+					/* eslint-disable-next-line security/detect-possible-timing-attacks */
 					if (secret === undefined) {
 						secret = this.potassium.randomBytes(
 							await this.potassium.ephemeralKeyExchange.getSecretBytes()

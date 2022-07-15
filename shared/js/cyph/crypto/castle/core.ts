@@ -111,6 +111,7 @@ export class Core {
 			this.ratchetState.asymmetric.privateKey = new Uint8Array(0);
 		}
 
+		/* eslint-disable-next-line security/detect-possible-timing-attacks */
 		if (secret !== undefined) {
 			this.ratchetState.symmetric.next = await Core.newSymmetricKeys(
 				this.potassium,

@@ -53,6 +53,7 @@ export class PairwiseSessionLite implements IPairwiseSession {
 		}
 
 		if (this.handshakeState.isAlice) {
+			/* eslint-disable-next-line security/detect-possible-timing-attacks */
 			if (secret === undefined) {
 				secret = await this.potassium.secretBox.generateKey();
 
@@ -80,6 +81,7 @@ export class PairwiseSessionLite implements IPairwiseSession {
 				);
 			}
 		}
+		/* eslint-disable-next-line security/detect-possible-timing-attacks */
 		else if (secret === undefined) {
 			const [encryptionKeyPair, publicSigningKey, cyphertext] =
 				await Promise.all([

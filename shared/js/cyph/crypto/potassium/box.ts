@@ -135,9 +135,9 @@ export class Box implements IBox {
 				case PotassiumData.BoxAlgorithms.NativeV1:
 				case PotassiumData.BoxAlgorithms.V1:
 					return (
-						(await mcelieceLegacy.privateKeyBytes) +
-						(await ntruLegacy.privateKeyBytes) +
-						(await sidhLegacy.privateKeyBytes) +
+						(await mcelieceLegacy.publicKeyBytes) +
+						(await ntruLegacy.publicKeyBytes) +
+						(await sidhLegacy.publicKeyBytes) +
 						(await this.v1ClassicalCypher(algorithm).publicKeyBytes)
 					);
 

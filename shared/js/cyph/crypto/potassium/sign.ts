@@ -1,3 +1,5 @@
+/* eslint-disable max-lines */
+
 import * as lz4 from 'lz4';
 import memoize from 'lodash-es/memoize';
 import {superSphincs as superSphincsLegacy} from 'supersphincs-legacy';
