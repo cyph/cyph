@@ -1,6 +1,7 @@
+import {kyber} from 'kyber-crystals';
 import {sodium} from 'libsodium';
 import memoize from 'lodash-es/memoize';
-import {rlwe} from 'rlwe';
+import {IRLWE, rlwe} from 'rlwe';
 import {
 	IKeyPair,
 	IPotassiumData,
@@ -17,12 +18,13 @@ import {potassiumUtil} from './potassium-util';
 export class EphemeralKeyExchange implements IEphemeralKeyExchange {
 	/** @ignore */
 	private readonly algorithmPriorityOrder = [
+		PotassiumData.EphemeralKeyExchangeAlgorithms.V2,
 		PotassiumData.EphemeralKeyExchangeAlgorithms.V1
 	];
 
 	/** @ignore */
 	private readonly currentAlgorithmInternal =
-		PotassiumData.EphemeralKeyExchangeAlgorithms.V1;
+		PotassiumData.EphemeralKeyExchangeAlgorithms.V2;
 
 	/** @see PotassiumEncoding.deserialize */
 	private readonly defaultMetadata: IPotassiumData & {
@@ -30,6 +32,30 @@ export class EphemeralKeyExchange implements IEphemeralKeyExchange {
 	} = {
 		ephemeralKeyExchangeAlgorithm:
 			PotassiumData.EphemeralKeyExchangeAlgorithms.V1
+	};
+
+	/** @ignore */
+	private readonly helpers: Record<
+		| PotassiumData.EphemeralKeyExchangeAlgorithms.V1
+		| PotassiumData.EphemeralKeyExchangeAlgorithms.V2,
+		IRLWE
+	> = {
+		[PotassiumData.EphemeralKeyExchangeAlgorithms.V1]: rlwe,
+		[PotassiumData.EphemeralKeyExchangeAlgorithms.V2]: {
+			aliceKeyPair: async () => kyber.keyPair(),
+			aliceSecret: async (bobPublicKey, alicePrivateKey) =>
+				kyber.decrypt(bobPublicKey, alicePrivateKey),
+			bobSecret: async alicePublicKey => {
+				const {cyphertext, secret} = await kyber.encrypt(
+					alicePublicKey
+				);
+				/* kyber.cyphertextBytes === kyber.publicKeyBytes */
+				return {publicKey: cyphertext, secret};
+			},
+			bytes: kyber.bytes,
+			privateKeyBytes: kyber.privateKeyBytes,
+			publicKeyBytes: kyber.publicKeyBytes
+		}
 	};
 
 	/** @inheritDoc */
@@ -47,8 +73,11 @@ export class EphemeralKeyExchange implements IEphemeralKeyExchange {
 
 			switch (algorithm) {
 				case PotassiumData.EphemeralKeyExchangeAlgorithms.V1:
+				case PotassiumData.EphemeralKeyExchangeAlgorithms.V2:
+					const kex = this.helpers[algorithm];
+
 					return (
-						(await rlwe.privateKeyBytes) +
+						(await kex.privateKeyBytes) +
 						sodium.crypto_scalarmult_SCALARBYTES
 					);
 
@@ -70,8 +99,11 @@ export class EphemeralKeyExchange implements IEphemeralKeyExchange {
 
 			switch (algorithm) {
 				case PotassiumData.EphemeralKeyExchangeAlgorithms.V1:
+				case PotassiumData.EphemeralKeyExchangeAlgorithms.V2:
+					const kex = this.helpers[algorithm];
+
 					return (
-						(await rlwe.publicKeyBytes) +
+						(await kex.publicKeyBytes) +
 						sodium.crypto_scalarmult_BYTES
 					);
 
@@ -91,6 +123,7 @@ export class EphemeralKeyExchange implements IEphemeralKeyExchange {
 		) : Promise<number> => {
 			switch (algorithm) {
 				case PotassiumData.EphemeralKeyExchangeAlgorithms.V1:
+				case PotassiumData.EphemeralKeyExchangeAlgorithms.V2:
 					return 64;
 
 				default:
@@ -112,7 +145,10 @@ export class EphemeralKeyExchange implements IEphemeralKeyExchange {
 
 		switch (algorithm) {
 			case PotassiumData.EphemeralKeyExchangeAlgorithms.V1:
-				const rlweKeyPair = await rlwe.aliceKeyPair();
+			case PotassiumData.EphemeralKeyExchangeAlgorithms.V2:
+				const kex = this.helpers[algorithm];
+
+				const kexKeyPair = await kex.aliceKeyPair();
 
 				const sodiumPrivateKey = potassiumUtil.randomBytes(
 					sodium.crypto_scalarmult_SCALARBYTES
@@ -124,12 +160,12 @@ export class EphemeralKeyExchange implements IEphemeralKeyExchange {
 				result = {
 					privateKey: potassiumUtil.concatMemory(
 						true,
-						rlweKeyPair.privateKey,
+						kexKeyPair.privateKey,
 						sodiumPrivateKey
 					),
 					publicKey: potassiumUtil.concatMemory(
 						true,
-						rlweKeyPair.publicKey,
+						kexKeyPair.publicKey,
 						sodiumPublicKey
 					)
 				};
@@ -234,33 +270,36 @@ export class EphemeralKeyExchange implements IEphemeralKeyExchange {
 
 		switch (algorithm) {
 			case PotassiumData.EphemeralKeyExchangeAlgorithms.V1:
+			case PotassiumData.EphemeralKeyExchangeAlgorithms.V2:
+				const kex = this.helpers[algorithm];
+
 				const secretBytes = await this.getSecretBytes(algorithm);
 
-				const rlwePublicKey = potassiumUtil.toBytes(
+				const kexPublicKey = potassiumUtil.toBytes(
 					potassiumPublicKey.publicKey,
 					0,
-					await rlwe.publicKeyBytes
+					await kex.publicKeyBytes
 				);
 				const sodiumPublicKey = potassiumUtil.toBytes(
 					potassiumPublicKey.publicKey,
-					await rlwe.publicKeyBytes,
+					await kex.publicKeyBytes,
 					sodium.crypto_scalarmult_BYTES
 				);
 
-				const rlwePrivateKey = potassiumUtil.toBytes(
+				const kexPrivateKey = potassiumUtil.toBytes(
 					potassiumPrivateKey.privateKey,
 					0,
-					await rlwe.privateKeyBytes
+					await kex.privateKeyBytes
 				);
 				const sodiumPrivateKey = potassiumUtil.toBytes(
 					potassiumPrivateKey.privateKey,
-					await rlwe.privateKeyBytes,
+					await kex.privateKeyBytes,
 					sodium.crypto_scalarmult_SCALARBYTES
 				);
 
-				const rlweSecret = await rlwe.aliceSecret(
-					rlwePublicKey,
-					rlwePrivateKey
+				const kexSecret = await kex.aliceSecret(
+					kexPublicKey,
+					kexPrivateKey
 				);
 
 				const sodiumSecret = sodium.crypto_scalarmult(
@@ -269,7 +308,7 @@ export class EphemeralKeyExchange implements IEphemeralKeyExchange {
 				);
 
 				result = await this.hash.deriveKey(
-					potassiumUtil.concatMemory(true, rlweSecret, sodiumSecret),
+					potassiumUtil.concatMemory(true, kexSecret, sodiumSecret),
 					secretBytes,
 					true
 				);
@@ -321,20 +360,23 @@ export class EphemeralKeyExchange implements IEphemeralKeyExchange {
 
 		switch (algorithm) {
 			case PotassiumData.EphemeralKeyExchangeAlgorithms.V1:
+			case PotassiumData.EphemeralKeyExchangeAlgorithms.V2:
+				const kex = this.helpers[algorithm];
+
 				const secretBytes = await this.getSecretBytes(algorithm);
 
 				const aliceRlwePublicKey = potassiumUtil.toBytes(
 					potassiumAlicePublicKey.publicKey,
 					0,
-					await rlwe.publicKeyBytes
+					await kex.publicKeyBytes
 				);
 				const aliceSodiumPublicKey = potassiumUtil.toBytes(
 					potassiumAlicePublicKey.publicKey,
-					await rlwe.publicKeyBytes,
+					await kex.publicKeyBytes,
 					sodium.crypto_scalarmult_BYTES
 				);
 
-				const rlweSecretData = await rlwe.bobSecret(aliceRlwePublicKey);
+				const kexSecretData = await kex.bobSecret(aliceRlwePublicKey);
 
 				const sodiumPrivateKey = potassiumUtil.randomBytes(
 					sodium.crypto_scalarmult_SCALARBYTES
@@ -351,13 +393,13 @@ export class EphemeralKeyExchange implements IEphemeralKeyExchange {
 				result = {
 					publicKey: potassiumUtil.concatMemory(
 						true,
-						rlweSecretData.publicKey,
+						kexSecretData.publicKey,
 						sodiumPublicKey
 					),
 					secret: await this.hash.deriveKey(
 						potassiumUtil.concatMemory(
 							true,
-							rlweSecretData.secret,
+							kexSecretData.secret,
 							sodiumSecret
 						),
 						secretBytes,

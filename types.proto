@@ -1619,6 +1619,7 @@ message PotassiumData {
 	enum EphemeralKeyExchangeAlgorithms {
 		None = 0;
 		V1 = 1;
+		V2 = 2;
 	}
 
 	/** Potassium.OneTimeAuth algorithms. */
