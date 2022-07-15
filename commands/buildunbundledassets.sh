@@ -347,7 +347,10 @@ for f in ${typescriptAssets} ; do
 						])
 						.reduce((o, [k, v]) => ({...o, [k]: v}), {})
 				},
-				extensions: ['.js', '.ts']
+				extensions: ['.js', '.ts'],
+				fallback: {
+					path: false
+				}
 			},
 			target: ['web', 'es5']
 		};
