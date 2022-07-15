@@ -4,10 +4,10 @@ import {getMeta} from '../../modules/base.js';
 const {isCLI} = getMeta(import.meta);
 
 import cheerio from 'cheerio';
+import fastSHA512 from 'fast-sha512';
 import fs from 'fs';
 import htmlMinifier from 'html-minifier';
 import mkdirp from 'mkdirp';
-import superSphincs from 'supersphincs';
 
 export const pack = async (
 	dir,
@@ -60,7 +60,7 @@ export const pack = async (
 						$elem,
 						content,
 						sri,
-						hash: (await superSphincs.hash(content)).hex,
+						hash: (await fastSHA512.hash(content)).hex,
 						path,
 						tagName
 					};

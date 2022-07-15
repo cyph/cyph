@@ -1,10 +1,10 @@
 #!/usr/bin/env node
 
 import datauri from 'datauri/sync.js';
+import fastSHA512 from 'fast-sha512';
 import fs from 'fs';
 import glob from 'glob';
 import mkdirp from 'mkdirp';
-import superSphincs from 'supersphincs';
 
 (async () => {
 	const args = {
@@ -44,7 +44,7 @@ import superSphincs from 'supersphincs';
 			}
 
 			const dataURI = datauri(subresource).content;
-			const hash = (await superSphincs.hash(dataURI)).hex;
+			const hash = (await fastSHA512.hash(dataURI)).hex;
 
 			content = content
 				.replace(

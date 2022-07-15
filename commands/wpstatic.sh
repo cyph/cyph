@@ -176,10 +176,10 @@ mkdir css fonts img js
 
 for f in $(find . -name '*.html') ; do node -e "(async () => {
 	const cheerio = require('cheerio');
+	const fastSHA512 = require('fast-sha512');
 	const htmlMinifier = require('html-minifier');
 	const imageType = require('image-type');
 	const fetch = (await import('node-fetch')).default;
-	const superSphincs = require('supersphincs');
 
 	const fetchAndRetry = (url, opts) =>
 		fetch(url, opts).catch(() => fetch(url, opts))
@@ -207,7 +207,7 @@ for f in $(find . -name '*.html') ; do node -e "(async () => {
 			elem = \$(elem);
 
 			const content = elem.html().trim();
-			const hash = (await superSphincs.hash(content)).hex;
+			const hash = (await fastSHA512.hash(content)).hex;
 			const isScript = elem.prop('tagName').toLowerCase() === 'script';
 
 			elem.html('');
@@ -259,7 +259,7 @@ for f in $(find . -name '*.html') ; do node -e "(async () => {
 				res.arrayBuffer()
 			));
 
-			const hash = (await superSphincs.hash(content)).hex;
+			const hash = (await fastSHA512.hash(content)).hex;
 
 			const path =
 				tagName === 'script' ? \`js/\${hash}.js\` :

@@ -1,8 +1,8 @@
 #!/usr/bin/env node
 
+import fastSHA512 from 'fast-sha512';
 import fs from 'fs';
 import glob from 'glob';
-import superSphincs from 'supersphincs';
 
 (async () => {
 	const files = [
@@ -43,7 +43,7 @@ import superSphincs from 'supersphincs';
 
 			cacheBustedFiles[subresource] = true;
 
-			const hash = (await superSphincs.hash(fs.readFileSync(subresource)))
+			const hash = (await fastSHA512.hash(fs.readFileSync(subresource)))
 				.hex;
 
 			content = content.replace(

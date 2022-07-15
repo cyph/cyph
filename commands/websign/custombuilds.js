@@ -2,9 +2,9 @@
 
 import {potassiumService as potassium, proto, util} from '@cyph/sdk';
 import cheerio from 'cheerio';
+import fastSHA512 from 'fast-sha512';
 import fs from 'fs';
 import mkdirp from 'mkdirp';
-import superSphincs from 'supersphincs';
 import {customBuild, customBuildIds} from '../custombuild.js';
 
 const {Environment} = proto;
@@ -25,7 +25,7 @@ const {serialize} = util;
 	const addSubresource = async ($, name, content) => {
 		content = content.trim();
 
-		const hash = (await superSphincs.hash(content)).hex;
+		const hash = (await fastSHA512.hash(content)).hex;
 		const path = `${subresourceDir}/${name}`;
 
 		$('head').append(

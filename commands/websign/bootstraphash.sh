@@ -3,7 +3,7 @@
 cd "$(cd "$(dirname "$0")" ; pwd)"
 
 node -e '(async () => {
-	console.log((await require("supersphincs").hash(
+	console.log((await require("fast-sha512").hash(
 		await (await import("./bootstrapstring.js")).bootstrapString()
 	)).hex);
 
