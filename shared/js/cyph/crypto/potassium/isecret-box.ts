@@ -24,7 +24,8 @@ export interface ISecretBox {
 	open (
 		cyphertext: Uint8Array,
 		key: Uint8Array | IPrivateKeyring,
-		additionalData?: Uint8Array | string
+		additionalData?: Uint8Array | string,
+		defaultAlgorithm?: PotassiumData.SecretBoxAlgorithms
 	) : Promise<Uint8Array>;
 
 	/** Encrypts plaintext. */
@@ -32,6 +33,7 @@ export interface ISecretBox {
 		plaintext: Uint8Array,
 		key: Uint8Array | IPrivateKeyring,
 		additionalData?: Uint8Array | string,
-		rawOutput?: boolean
+		rawOutput?: boolean,
+		defaultAlgorithm?: PotassiumData.SecretBoxAlgorithms
 	) : Promise<Uint8Array>;
 }

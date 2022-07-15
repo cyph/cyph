@@ -288,15 +288,22 @@ export class SecretBox implements ISecretBox {
 	public async open (
 		cyphertext: Uint8Array,
 		key: Uint8Array | IPrivateKeyring,
-		additionalData?: Uint8Array | string
+		additionalData?: Uint8Array | string,
+		defaultAlgorithm: PotassiumData.SecretBoxAlgorithms = this
+			.currentAlgorithmInternal
 	) : Promise<Uint8Array> {
+		const defaultMetadata = {
+			...this.defaultMetadata,
+			secretBoxAlgorithm: defaultAlgorithm
+		};
+
 		const additionalDataBytes =
 			typeof additionalData === 'string' ?
 				potassiumUtil.fromString(additionalData) :
 				additionalData;
 
 		const potassiumCyphertext = await potassiumEncoding.deserialize(
-			this.defaultMetadata,
+			defaultMetadata,
 			{cyphertext}
 		);
 
@@ -305,11 +312,11 @@ export class SecretBox implements ISecretBox {
 		key = potassiumEncoding.openKeyring(
 			PotassiumData.SecretBoxAlgorithms,
 			key,
-			this.currentAlgorithmInternal
+			defaultAlgorithm
 		);
 
 		const potassiumKey = await potassiumEncoding.deserialize(
-			this.defaultMetadata,
+			defaultMetadata,
 			{key}
 		);
 
@@ -341,8 +348,15 @@ export class SecretBox implements ISecretBox {
 		plaintext: Uint8Array,
 		key: Uint8Array | IPrivateKeyring,
 		additionalData?: Uint8Array | string,
-		rawOutput: boolean = false
+		rawOutput: boolean = false,
+		defaultAlgorithm: PotassiumData.SecretBoxAlgorithms = this
+			.currentAlgorithmInternal
 	) : Promise<Uint8Array> {
+		const defaultMetadata = {
+			...this.defaultMetadata,
+			secretBoxAlgorithm: defaultAlgorithm
+		};
+
 		const additionalDataBytes =
 			typeof additionalData === 'string' ?
 				potassiumUtil.fromString(additionalData) :
@@ -351,11 +365,11 @@ export class SecretBox implements ISecretBox {
 		key = potassiumEncoding.openKeyring(
 			PotassiumData.SecretBoxAlgorithms,
 			key,
-			this.currentAlgorithmInternal
+			defaultAlgorithm
 		);
 
 		const potassiumKey = await potassiumEncoding.deserialize(
-			this.defaultMetadata,
+			defaultMetadata,
 			{key}
 		);
 

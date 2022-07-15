@@ -24,13 +24,15 @@ export interface IOneTimeAuth {
 	sign (
 		message: Uint8Array,
 		key: Uint8Array | IPrivateKeyring,
-		rawOutput?: boolean
+		rawOutput?: boolean,
+		defaultAlgorithm?: PotassiumData.OneTimeAuthAlgorithms
 	) : Promise<Uint8Array>;
 
 	/** Verifies MAC. */
 	verify (
 		mac: Uint8Array,
 		message: Uint8Array,
-		key: Uint8Array | IPrivateKeyring
+		key: Uint8Array | IPrivateKeyring,
+		defaultAlgorithm?: PotassiumData.OneTimeAuthAlgorithms
 	) : Promise<boolean>;
 }

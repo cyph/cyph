@@ -1613,6 +1613,7 @@ message PotassiumData {
 		None = 0;
 		NativeV1 = 1;
 		V1 = 2;
+		V2 = 3;
 	}
 
 	/** Potassium.EphemeralKeyExchange algorithms. */

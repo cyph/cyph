@@ -84,18 +84,25 @@ export class OneTimeAuth implements IOneTimeAuth {
 	public async sign (
 		message: Uint8Array,
 		key: Uint8Array | IPrivateKeyring,
-		rawOutput: boolean = false
+		rawOutput: boolean = false,
+		defaultAlgorithm: PotassiumData.OneTimeAuthAlgorithms = this
+			.currentAlgorithmInternal
 	) : Promise<Uint8Array> {
+		const defaultMetadata = {
+			...this.defaultMetadata,
+			oneTimeAuthAlgorithm: defaultAlgorithm
+		};
+
 		await sodium.ready;
 
 		key = potassiumEncoding.openKeyring(
 			PotassiumData.OneTimeAuthAlgorithms,
 			key,
-			this.currentAlgorithmInternal
+			defaultAlgorithm
 		);
 
 		const potassiumKey = await potassiumEncoding.deserialize(
-			this.defaultMetadata,
+			defaultMetadata,
 			{key}
 		);
 
@@ -133,12 +140,19 @@ export class OneTimeAuth implements IOneTimeAuth {
 	public async verify (
 		mac: Uint8Array,
 		message: Uint8Array,
-		key: Uint8Array | IPrivateKeyring
+		key: Uint8Array | IPrivateKeyring,
+		defaultAlgorithm: PotassiumData.OneTimeAuthAlgorithms = this
+			.currentAlgorithmInternal
 	) : Promise<boolean> {
+		const defaultMetadata = {
+			...this.defaultMetadata,
+			oneTimeAuthAlgorithm: defaultAlgorithm
+		};
+
 		await sodium.ready;
 
 		const potassiumMAC = await potassiumEncoding.deserialize(
-			this.defaultMetadata,
+			defaultMetadata,
 			{mac}
 		);
 
@@ -147,11 +161,11 @@ export class OneTimeAuth implements IOneTimeAuth {
 		key = potassiumEncoding.openKeyring(
 			PotassiumData.OneTimeAuthAlgorithms,
 			key,
-			this.currentAlgorithmInternal
+			defaultAlgorithm
 		);
 
 		const potassiumKey = await potassiumEncoding.deserialize(
-			this.defaultMetadata,
+			defaultMetadata,
 			{key}
 		);
 

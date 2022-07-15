@@ -58,7 +58,12 @@ export class Potassium extends PotassiumUtil implements IPotassium {
 		this.sign = new Sign(this.isNative);
 
 		this.secretBox = new SecretBox(this.isNative, this.hash);
-		this.box = new Box(this.isNative, this.oneTimeAuth, this.secretBox);
+		this.box = new Box(
+			this.isNative,
+			this.hash,
+			this.oneTimeAuth,
+			this.secretBox
+		);
 		this.ephemeralKeyExchange = new EphemeralKeyExchange(this.hash);
 		this.passwordHash = new PasswordHash(
 			this.isNative,
