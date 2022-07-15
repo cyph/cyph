@@ -31,7 +31,7 @@ export class Box implements IBox {
 	/** @ignore */
 	private readonly currentAlgorithmInternal = !this.isNative ?
 		PotassiumData.BoxAlgorithms.V2 :
-		PotassiumData.BoxAlgorithms.NativeV1;
+		PotassiumData.BoxAlgorithms.NativeV2;
 
 	/** @see PotassiumEncoding.deserialize */
 	private readonly defaultMetadata: IPotassiumData & {
@@ -45,11 +45,13 @@ export class Box implements IBox {
 		(
 			algorithm:
 				| PotassiumData.BoxAlgorithms.NativeV1
+				| PotassiumData.BoxAlgorithms.NativeV2
 				| PotassiumData.BoxAlgorithms.V1
 				| PotassiumData.BoxAlgorithms.V2
 		) => ({
 			decrypt:
-				algorithm === PotassiumData.BoxAlgorithms.NativeV1 ?
+				algorithm === PotassiumData.BoxAlgorithms.NativeV1 ||
+				algorithm === PotassiumData.BoxAlgorithms.NativeV2 ?
 					async (cyphertext: Uint8Array, keyPair: IKeyPair) =>
 						NativeCrypto.box.open(cyphertext, keyPair) :
 					async (cyphertext: Uint8Array, keyPair: IKeyPair) =>
@@ -61,7 +63,8 @@ export class Box implements IBox {
 							)
 						),
 			encrypt:
-				algorithm === PotassiumData.BoxAlgorithms.NativeV1 ?
+				algorithm === PotassiumData.BoxAlgorithms.NativeV1 ||
+				algorithm === PotassiumData.BoxAlgorithms.NativeV2 ?
 					async (plaintext: Uint8Array, publicKey: Uint8Array) =>
 						NativeCrypto.box.seal(plaintext, publicKey) :
 					async (plaintext: Uint8Array, publicKey: Uint8Array) =>
@@ -72,24 +75,28 @@ export class Box implements IBox {
 							)
 						),
 			keyPair:
-				algorithm === PotassiumData.BoxAlgorithms.NativeV1 ?
+				algorithm === PotassiumData.BoxAlgorithms.NativeV1 ||
+				algorithm === PotassiumData.BoxAlgorithms.NativeV2 ?
 					async () => NativeCrypto.box.keyPair() :
 					async () =>
 						sodium.ready.then(() =>
 							sodium.crypto_box_curve25519xchacha20poly1305_keypair()
 						),
 			nonceBytes: sodium.ready.then(() =>
-				algorithm === PotassiumData.BoxAlgorithms.NativeV1 ?
+				algorithm === PotassiumData.BoxAlgorithms.NativeV1 ||
+				algorithm === PotassiumData.BoxAlgorithms.NativeV2 ?
 					NativeCrypto.secretBox.nonceBytes :
 					sodium.crypto_box_curve25519xchacha20poly1305_NONCEBYTES
 			),
 			privateKeyBytes: sodium.ready.then(() =>
-				algorithm === PotassiumData.BoxAlgorithms.NativeV1 ?
+				algorithm === PotassiumData.BoxAlgorithms.NativeV1 ||
+				algorithm === PotassiumData.BoxAlgorithms.NativeV2 ?
 					NativeCrypto.box.privateKeyBytes :
 					sodium.crypto_box_curve25519xchacha20poly1305_SECRETKEYBYTES
 			),
 			publicKeyBytes: sodium.ready.then(() =>
-				algorithm === PotassiumData.BoxAlgorithms.NativeV1 ?
+				algorithm === PotassiumData.BoxAlgorithms.NativeV1 ||
+				algorithm === PotassiumData.BoxAlgorithms.NativeV2 ?
 					NativeCrypto.box.publicKeyBytes :
 					sodium.crypto_box_curve25519xchacha20poly1305_PUBLICKEYBYTES
 			)
@@ -119,6 +126,7 @@ export class Box implements IBox {
 						(await this.classicalCypher(algorithm).privateKeyBytes)
 					);
 
+				case PotassiumData.BoxAlgorithms.NativeV2:
 				case PotassiumData.BoxAlgorithms.V2:
 					return (
 						(await hqc.privateKeyBytes) +
@@ -152,6 +160,7 @@ export class Box implements IBox {
 						(await this.classicalCypher(algorithm).publicKeyBytes)
 					);
 
+				case PotassiumData.BoxAlgorithms.NativeV2:
 				case PotassiumData.BoxAlgorithms.V2:
 					return (
 						(await hqc.publicKeyBytes) +
@@ -325,7 +334,9 @@ export class Box implements IBox {
 
 	/** @ignore */
 	private async kemDecrypt<SK extends IKeyPair | Uint8Array> (
-		algorithm: PotassiumData.BoxAlgorithms.V2,
+		algorithm:
+			| PotassiumData.BoxAlgorithms.NativeV2
+			| PotassiumData.BoxAlgorithms.V2,
 		cyphertext: Uint8Array,
 		privateKey: SK,
 		cypher: {
@@ -368,7 +379,9 @@ export class Box implements IBox {
 
 	/** @ignore */
 	private async kemEncrypt (
-		algorithm: PotassiumData.BoxAlgorithms.V2,
+		algorithm:
+			| PotassiumData.BoxAlgorithms.NativeV2
+			| PotassiumData.BoxAlgorithms.V2,
 		plaintext: Uint8Array,
 		publicKey: Uint8Array,
 		cypher: {
@@ -413,6 +426,7 @@ export class Box implements IBox {
 	private async publicKeyDecrypt<SK extends IKeyPair | Uint8Array> (
 		algorithm:
 			| PotassiumData.BoxAlgorithms.NativeV1
+			| PotassiumData.BoxAlgorithms.NativeV2
 			| PotassiumData.BoxAlgorithms.V1
 			| PotassiumData.BoxAlgorithms.V2,
 		cyphertext: Uint8Array,
@@ -431,11 +445,13 @@ export class Box implements IBox {
 		clearCyphertext: boolean = true
 	) : Promise<Uint8Array> {
 		const oneTimeAuthAlgorithm =
-			algorithm === PotassiumData.BoxAlgorithms.NativeV1 ?
+			algorithm === PotassiumData.BoxAlgorithms.NativeV1 ||
+			algorithm === PotassiumData.BoxAlgorithms.NativeV2 ?
 				PotassiumData.OneTimeAuthAlgorithms.NativeV1 :
 				PotassiumData.OneTimeAuthAlgorithms.V1;
 		const secretBoxAlgorithm =
-			algorithm === PotassiumData.BoxAlgorithms.NativeV1 ?
+			algorithm === PotassiumData.BoxAlgorithms.NativeV1 ||
+			algorithm === PotassiumData.BoxAlgorithms.NativeV2 ?
 				PotassiumData.SecretBoxAlgorithms.NativeV1 :
 				PotassiumData.SecretBoxAlgorithms.V1;
 
@@ -470,6 +486,7 @@ export class Box implements IBox {
 	private async publicKeyEncrypt (
 		algorithm:
 			| PotassiumData.BoxAlgorithms.NativeV1
+			| PotassiumData.BoxAlgorithms.NativeV2
 			| PotassiumData.BoxAlgorithms.V1
 			| PotassiumData.BoxAlgorithms.V2,
 		plaintext: Uint8Array,
@@ -484,11 +501,13 @@ export class Box implements IBox {
 		clearPlaintext: boolean = true
 	) : Promise<Uint8Array> {
 		const oneTimeAuthAlgorithm =
-			algorithm === PotassiumData.BoxAlgorithms.NativeV1 ?
+			algorithm === PotassiumData.BoxAlgorithms.NativeV1 ||
+			algorithm === PotassiumData.BoxAlgorithms.NativeV2 ?
 				PotassiumData.OneTimeAuthAlgorithms.NativeV1 :
 				PotassiumData.OneTimeAuthAlgorithms.V1;
 		const secretBoxAlgorithm =
-			algorithm === PotassiumData.BoxAlgorithms.NativeV1 ?
+			algorithm === PotassiumData.BoxAlgorithms.NativeV1 ||
+			algorithm === PotassiumData.BoxAlgorithms.NativeV2 ?
 				PotassiumData.SecretBoxAlgorithms.NativeV1 :
 				PotassiumData.SecretBoxAlgorithms.V1;
 
@@ -675,7 +694,9 @@ export class Box implements IBox {
 
 	/** @ignore */
 	private async v2SplitPrivateKey (
-		algorithm: PotassiumData.BoxAlgorithms.V2,
+		algorithm:
+			| PotassiumData.BoxAlgorithms.NativeV2
+			| PotassiumData.BoxAlgorithms.V2,
 		privateKey: Uint8Array
 	) : Promise<{
 		classical: Uint8Array;
@@ -706,7 +727,9 @@ export class Box implements IBox {
 
 	/** @ignore */
 	private async v2SplitPublicKey (
-		algorithm: PotassiumData.BoxAlgorithms.V2,
+		algorithm:
+			| PotassiumData.BoxAlgorithms.NativeV2
+			| PotassiumData.BoxAlgorithms.V2,
 		publicKey: Uint8Array
 	) : Promise<{
 		classical: Uint8Array;
@@ -824,6 +847,7 @@ export class Box implements IBox {
 					break;
 				}
 
+				case PotassiumData.BoxAlgorithms.NativeV2:
 				case PotassiumData.BoxAlgorithms.V2: {
 					const [classicalKeyPair, hqcKeyPair, kyberKeyPair] =
 						await Promise.all([
@@ -958,6 +982,7 @@ export class Box implements IBox {
 				);
 			}
 
+			case PotassiumData.BoxAlgorithms.NativeV2:
 			case PotassiumData.BoxAlgorithms.V2: {
 				const privateSubKeys = await this.v2SplitPrivateKey(
 					algorithm,
@@ -1055,6 +1080,7 @@ export class Box implements IBox {
 				break;
 			}
 
+			case PotassiumData.BoxAlgorithms.NativeV2:
 			case PotassiumData.BoxAlgorithms.V2: {
 				const publicSubKeys = await this.v2SplitPublicKey(
 					algorithm,
