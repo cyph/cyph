@@ -309,13 +309,20 @@ export class ThreadedPotassiumService
 					rawOutput
 				)
 			),
-		verifyDetached: async (signature, message, publicKey, additionalData) =>
+		verifyDetached: async (
+			signature,
+			message,
+			publicKey,
+			additionalData,
+			defaultAlgorithm
+		) =>
 			this.getPotassium(async o =>
 				o.signVerifyDetached(
 					signature,
 					message,
 					publicKey,
-					additionalData
+					additionalData,
+					defaultAlgorithm
 				)
 			)
 	};

@@ -62,6 +62,7 @@ export interface ISign {
 		signature: Uint8Array | string,
 		message: Uint8Array | string,
 		publicKey: Uint8Array | IPublicKeyring,
-		additionalData?: Uint8Array | string
+		additionalData?: Uint8Array | string,
+		defaultAlgorithm?: PotassiumData.SignAlgorithms
 	) : Promise<boolean>;
 }

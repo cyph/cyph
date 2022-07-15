@@ -2,6 +2,7 @@
 
 import * as lz4 from 'lz4';
 import memoize from 'lodash-es/memoize';
+import {superDilithium} from 'superdilithium';
 import {superSphincs as superSphincsLegacy} from 'supersphincs-legacy';
 import {
 	IKeyPair,
@@ -19,7 +20,7 @@ import {potassiumUtil} from './potassium-util';
 export class Sign implements ISign {
 	/** @ignore */
 	private readonly currentAlgorithmInternal = !this.isNative ?
-		PotassiumData.SignAlgorithms.V1 :
+		PotassiumData.SignAlgorithms.V2 :
 		PotassiumData.SignAlgorithms.NativeV1;
 
 	/** @see PotassiumEncoding.deserialize */
@@ -45,6 +46,9 @@ export class Sign implements ISign {
 				case PotassiumData.SignAlgorithms.V1:
 					return superSphincsLegacy.privateKeyBytes;
 
+				case PotassiumData.SignAlgorithms.V2:
+					return superDilithium.privateKeyBytes;
+
 				default:
 					throw new Error(
 						'Invalid Sign algorithm (private key bytes).'
@@ -64,6 +68,9 @@ export class Sign implements ISign {
 				case PotassiumData.SignAlgorithms.V1:
 					return superSphincsLegacy.bytes;
 
+				case PotassiumData.SignAlgorithms.V2:
+					return superDilithium.bytes;
+
 				default:
 					throw new Error('Invalid Sign algorithm (bytes).');
 			}
@@ -80,6 +87,9 @@ export class Sign implements ISign {
 				case PotassiumData.SignAlgorithms.NativeV1:
 				case PotassiumData.SignAlgorithms.V1:
 					return superSphincsLegacy.publicKeyBytes;
+
+				case PotassiumData.SignAlgorithms.V2:
+					return superDilithium.publicKeyBytes;
 
 				default:
 					throw new Error(
@@ -107,6 +117,14 @@ export class Sign implements ISign {
 				).publicKey;
 				break;
 
+			case PotassiumData.SignAlgorithms.V2:
+				result = (
+					await superDilithium.importKeys({
+						public: {ecc: classical, dilithium: postQuantum}
+					})
+				).publicKey;
+				break;
+
 			default:
 				throw new Error('Invalid Sign algorithm (public key bytes).');
 		}
@@ -128,6 +146,10 @@ export class Sign implements ISign {
 				case PotassiumData.SignAlgorithms.NativeV1:
 				case PotassiumData.SignAlgorithms.V1:
 					result = await superSphincsLegacy.keyPair();
+					break;
+
+				case PotassiumData.SignAlgorithms.V2:
+					result = await superDilithium.keyPair();
 					break;
 
 				default:
@@ -198,29 +220,23 @@ export class Sign implements ISign {
 			);
 		}
 
-		switch (algorithm) {
-			case PotassiumData.SignAlgorithms.NativeV1:
-			case PotassiumData.SignAlgorithms.V1:
-				const message = potassiumSigned.signed.compressed ?
-					lz4.decode(potassiumSigned.signed.message) :
-					potassiumSigned.signed.message;
+		const message = potassiumSigned.signed.compressed ?
+			lz4.decode(potassiumSigned.signed.message) :
+			potassiumSigned.signed.message;
 
-				if (
-					!(await this.verifyDetached(
-						potassiumSigned.signed.signature,
-						message,
-						potassiumPublicKey.publicKey,
-						additionalData
-					))
-				) {
-					throw new Error('Invalid signature.');
-				}
-
-				return message;
-
-			default:
-				throw new Error('Invalid Sign algorithm (open).');
+		if (
+			!(await this.verifyDetached(
+				potassiumSigned.signed.signature,
+				message,
+				potassiumPublicKey.publicKey,
+				additionalData,
+				algorithm
+			))
+		) {
+			throw new Error('Invalid signature.');
 		}
+
+		return message;
 	}
 
 	/** @inheritDoc */
@@ -251,6 +267,14 @@ export class Sign implements ISign {
 			case PotassiumData.SignAlgorithms.NativeV1:
 			case PotassiumData.SignAlgorithms.V1:
 				result = await superSphincsLegacy.signDetached(
+					message,
+					potassiumPrivateKey.privateKey,
+					additionalData
+				);
+				break;
+
+			case PotassiumData.SignAlgorithms.V2:
+				result = await superDilithium.signDetached(
 					message,
 					potassiumPrivateKey.privateKey,
 					additionalData
@@ -305,6 +329,14 @@ export class Sign implements ISign {
 				);
 				break;
 
+			case PotassiumData.SignAlgorithms.V2:
+				result = await superDilithium.signDetached(
+					message,
+					potassiumPrivateKey.privateKey,
+					additionalData
+				);
+				break;
+
 			default:
 				throw new Error('Invalid Sign algorithm (sign detached).');
 		}
@@ -324,20 +356,27 @@ export class Sign implements ISign {
 		signature: Uint8Array | string,
 		message: Uint8Array | string,
 		publicKey: Uint8Array | IPublicKeyring,
-		additionalData?: Uint8Array | string
+		additionalData?: Uint8Array | string,
+		defaultAlgorithm: PotassiumData.SignAlgorithms = this
+			.currentAlgorithmInternal
 	) : Promise<boolean> {
+		const defaultMetadata = {
+			...this.defaultMetadata,
+			signAlgorithm: defaultAlgorithm
+		};
+
 		publicKey = potassiumEncoding.openKeyring(
 			PotassiumData.SignAlgorithms,
 			publicKey,
-			this.currentAlgorithmInternal
+			defaultAlgorithm
 		);
 
 		const potassiumPublicKey = await potassiumEncoding.deserialize(
-			this.defaultMetadata,
+			defaultMetadata,
 			{publicKey}
 		);
 		const potassiumSignature = await potassiumEncoding.deserialize(
-			this.defaultMetadata,
+			defaultMetadata,
 			{signature: potassiumUtil.fromBase64(signature)}
 		);
 
@@ -353,6 +392,14 @@ export class Sign implements ISign {
 			case PotassiumData.SignAlgorithms.NativeV1:
 			case PotassiumData.SignAlgorithms.V1:
 				return superSphincsLegacy.verifyDetached(
+					potassiumSignature.signature,
+					message,
+					potassiumPublicKey.publicKey,
+					additionalData
+				);
+
+			case PotassiumData.SignAlgorithms.V2:
+				return superDilithium.verifyDetached(
 					potassiumSignature.signature,
 					message,
 					potassiumPublicKey.publicKey,
