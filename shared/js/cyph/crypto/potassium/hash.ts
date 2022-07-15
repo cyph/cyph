@@ -1,12 +1,12 @@
+import {fastSHA512} from 'fast-sha512';
 import {sodium} from 'libsodium';
-import {superSphincs} from 'supersphincs';
 import {IHash} from './ihash';
 import {potassiumUtil} from './potassium-util';
 
 /** @inheritDoc */
 export class Hash implements IHash {
 	/** @inheritDoc */
-	public readonly bytes: Promise<number> = superSphincs.hashBytes;
+	public readonly bytes: Promise<number> = Promise.resolve(fastSHA512.bytes);
 
 	/** @inheritDoc */
 	public async deriveKey (
@@ -49,7 +49,7 @@ export class Hash implements IHash {
 
 	/** @inheritDoc */
 	public async hash (plaintext: Uint8Array | string) : Promise<Uint8Array> {
-		return superSphincs.hash(plaintext, true);
+		return fastSHA512.hash(plaintext, true);
 	}
 
 	constructor (
