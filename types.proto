@@ -1642,9 +1642,10 @@ message PotassiumData {
 		None = 0;
 		NativeV1 = 1;
 		NativeV2 = 3;
+		NativeV2Hardened = 4;
 		V1 = 2;
-		V2 = 4;
-		V2Hardened = 5;
+		V2 = 5;
+		V2Hardened = 6;
 	}
 
 	/** Algorithm. */

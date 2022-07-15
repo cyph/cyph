@@ -6,6 +6,7 @@ import {superDilithium} from 'superdilithium';
 import {superDilithium as superDilithiumRSA} from 'superdilithium/dist/rsa-variant.js';
 import {superSphincs as superSphincsLegacy} from 'supersphincs-legacy';
 import {superSphincs} from 'supersphincs';
+import {superSphincs as superSphincsRSA} from 'supersphincs/dist/rsa-variant.js';
 import {
 	IKeyPair,
 	IPotassiumData,
@@ -54,6 +55,9 @@ export class Sign implements ISign {
 				case PotassiumData.SignAlgorithms.V2:
 					return superDilithium.privateKeyBytes;
 
+				case PotassiumData.SignAlgorithms.NativeV2Hardened:
+					return superSphincsRSA.privateKeyBytes;
+
 				case PotassiumData.SignAlgorithms.V2Hardened:
 					return superSphincs.privateKeyBytes;
 
@@ -82,6 +86,9 @@ export class Sign implements ISign {
 				case PotassiumData.SignAlgorithms.V2:
 					return superDilithium.bytes;
 
+				case PotassiumData.SignAlgorithms.NativeV2Hardened:
+					return superSphincsRSA.bytes;
+
 				case PotassiumData.SignAlgorithms.V2Hardened:
 					return superSphincs.bytes;
 
@@ -107,6 +114,9 @@ export class Sign implements ISign {
 
 				case PotassiumData.SignAlgorithms.V2:
 					return superDilithium.publicKeyBytes;
+
+				case PotassiumData.SignAlgorithms.NativeV2Hardened:
+					return superSphincsRSA.publicKeyBytes;
 
 				case PotassiumData.SignAlgorithms.V2Hardened:
 					return superSphincs.publicKeyBytes;
@@ -153,6 +163,14 @@ export class Sign implements ISign {
 				).publicKey;
 				break;
 
+			case PotassiumData.SignAlgorithms.NativeV2Hardened:
+				result = (
+					await superSphincsRSA.importKeys({
+						public: {rsa: classical, sphincs: postQuantum}
+					})
+				).publicKey;
+				break;
+
 			case PotassiumData.SignAlgorithms.V2Hardened:
 				result = (
 					await superSphincs.importKeys({
@@ -190,6 +208,10 @@ export class Sign implements ISign {
 
 				case PotassiumData.SignAlgorithms.V2:
 					result = await superDilithium.keyPair();
+					break;
+
+				case PotassiumData.SignAlgorithms.NativeV2Hardened:
+					result = await superSphincsRSA.keyPair();
 					break;
 
 				case PotassiumData.SignAlgorithms.V2Hardened:
@@ -333,6 +355,14 @@ export class Sign implements ISign {
 				);
 				break;
 
+			case PotassiumData.SignAlgorithms.NativeV2Hardened:
+				result = await superSphincsRSA.signDetached(
+					message,
+					potassiumPrivateKey.privateKey,
+					additionalData
+				);
+				break;
+
 			case PotassiumData.SignAlgorithms.V2Hardened:
 				result = await superSphincs.signDetached(
 					message,
@@ -399,6 +429,14 @@ export class Sign implements ISign {
 
 			case PotassiumData.SignAlgorithms.V2:
 				result = await superDilithium.signDetached(
+					message,
+					potassiumPrivateKey.privateKey,
+					additionalData
+				);
+				break;
+
+			case PotassiumData.SignAlgorithms.NativeV2Hardened:
+				result = await superSphincsRSA.signDetached(
 					message,
 					potassiumPrivateKey.privateKey,
 					additionalData
@@ -484,6 +522,14 @@ export class Sign implements ISign {
 
 			case PotassiumData.SignAlgorithms.V2:
 				return superDilithium.verifyDetached(
+					potassiumSignature.signature,
+					message,
+					potassiumPublicKey.publicKey,
+					additionalData
+				);
+
+			case PotassiumData.SignAlgorithms.NativeV2Hardened:
+				return superSphincsRSA.verifyDetached(
 					potassiumSignature.signature,
 					message,
 					potassiumPublicKey.publicKey,
