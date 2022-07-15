@@ -14,6 +14,8 @@ export type DatabaseReference = any;
 export const DataSnapshot: any = database.DataSnapshot;
 export type DataSnapshot = any;
 
+export const forceWebSockets: any = database.forceWebSockets;
+
 export const get: any = database.get;
 
 export const getDatabase = database.getDatabase;
