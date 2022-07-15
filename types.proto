@@ -1641,9 +1641,10 @@ message PotassiumData {
 	enum SignAlgorithms {
 		None = 0;
 		NativeV1 = 1;
+		NativeV2 = 3;
 		V1 = 2;
-		V2 = 3;
-		V2Hardened = 4;
+		V2 = 4;
+		V2Hardened = 5;
 	}
 
 	/** Algorithm. */
