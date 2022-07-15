@@ -8,7 +8,7 @@ import {
 	PlatformConfig,
 	platformDynamicServer
 } from '@angular/platform-server';
-import {environment} from '../environments/environment';
+import {environment} from '../cyph/environment';
 import {AppModule} from './app.module';
 
 if (environment.production) {

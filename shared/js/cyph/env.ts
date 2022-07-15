@@ -2,9 +2,9 @@
 
 import {BehaviorSubject} from 'rxjs';
 import {map} from 'rxjs/operators';
-import {environment} from '../environments/environment';
 import {config} from './config';
 import {EnvDeploy, envDeploy} from './env-deploy';
+import {environment} from './environment';
 import {IEnvironment} from './proto/types';
 import {WindowWatcherService} from './services/window-watcher.service';
 import {toBehaviorSubject} from './util/flatten-observable';

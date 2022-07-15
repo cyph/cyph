@@ -1,6 +1,7 @@
 import * as Comlink from 'comlink';
 import {potassiumUtil} from './crypto/potassium/potassium-util';
 import {env} from './env';
+import {environment} from './environment';
 import {IThread} from './ithread';
 import {stringify} from './util/serialization';
 import {resolvable} from './util/wait/resolvable';
@@ -21,6 +22,8 @@ export class Thread<T> implements IThread<T> {
 
 		(<any> self).burnerRoot = threadSetupVars.burnerRoot;
 		(<any> self).locationData = threadSetupVars.locationData;
+		(<any> self).mainThreadEnvironment =
+			threadSetupVars.mainThreadEnvironment;
 		(<any> self).navigatorData = threadSetupVars.navigatorData;
 		(<any> self).translations = threadSetupVars.translations;
 
@@ -173,6 +176,7 @@ export class Thread<T> implements IThread<T> {
 				protocol: locationData.protocol,
 				search: locationData.search
 			},
+			mainThreadEnvironment: environment,
 			navigatorData: {
 				language: env.fullLanguage,
 				userAgent: env.userAgent

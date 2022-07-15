@@ -1,4 +1,3 @@
-import {environment} from '../../../environments/environment';
 import {
 	ICombinedSignature,
 	IKeyPair,
@@ -7,6 +6,7 @@ import {
 	IPublicKeyring,
 	PotassiumData
 } from '../../../proto';
+import {environment} from '../../environment';
 import {deserialize, serialize} from '../../util/serialization';
 import {potassiumUtil} from './potassium-util';
 

@@ -67,6 +67,12 @@ declare let locationData: Location;
 
 /**
  * @global
+ * Environment object from the main thread.
+ */
+declare let mainThreadEnvironment: any;
+
+/**
+ * @global
  * Cross-browser container of values in self.navigator.
  */
 declare let navigatorData: Navigator;
