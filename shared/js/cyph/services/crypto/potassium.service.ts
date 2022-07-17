@@ -7,6 +7,7 @@ import {IPasswordHash} from '../../crypto/potassium/ipassword-hash';
 import {IPotassium} from '../../crypto/potassium/ipotassium';
 import {ISecretBox} from '../../crypto/potassium/isecret-box';
 import {ISign} from '../../crypto/potassium/isign';
+import {potassiumEncoding} from '../../crypto/potassium/potassium-encoding';
 import {PotassiumUtil} from '../../crypto/potassium/potassium-util';
 import {EnvService} from '../env.service';
 
@@ -29,6 +30,9 @@ export class PotassiumService extends PotassiumUtil implements IPotassium {
 		open: async () => this.errorValue,
 		seal: async () => this.errorValue
 	};
+
+	/** @inheritDoc */
+	public readonly encoding = potassiumEncoding;
 
 	/** @inheritDoc */
 	public readonly ephemeralKeyExchange: IEphemeralKeyExchange = {

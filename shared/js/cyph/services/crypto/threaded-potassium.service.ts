@@ -112,6 +112,9 @@ export class ThreadedPotassiumService
 	};
 
 	/** @inheritDoc */
+	public readonly encoding = potassiumEncoding;
+
+	/** @inheritDoc */
 	public readonly ephemeralKeyExchange: IEphemeralKeyExchange = {
 		aliceKeyPair: async () =>
 			this.getPotassium(async o => o.ephemeralKeyExchangeAliceKeyPair()),

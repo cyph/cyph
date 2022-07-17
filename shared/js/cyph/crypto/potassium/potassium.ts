@@ -5,6 +5,7 @@ import {IPotassium} from './ipotassium';
 import {isNativeCryptoSupported} from './is-native-crypto-supported';
 import {OneTimeAuth} from './one-time-auth';
 import {PasswordHash} from './password-hash';
+import {potassiumEncoding} from './potassium-encoding';
 import {PotassiumUtil} from './potassium-util';
 import {SecretBox} from './secret-box';
 import {Sign} from './sign';
@@ -15,6 +16,9 @@ import {Sign} from './sign';
 export class Potassium extends PotassiumUtil implements IPotassium {
 	/** @inheritDoc */
 	public readonly box: Box;
+
+	/** @inheritDoc */
+	public readonly encoding = potassiumEncoding;
 
 	/** @inheritDoc */
 	public readonly ephemeralKeyExchange: EphemeralKeyExchange;

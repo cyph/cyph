@@ -5,6 +5,7 @@ import {IOneTimeAuth} from './ione-time-auth';
 import {IPasswordHash} from './ipassword-hash';
 import {ISecretBox} from './isecret-box';
 import {ISign} from './isign';
+import {PotassiumEncoding} from './potassium-encoding';
 import {PotassiumUtil} from './potassium-util';
 
 /**
@@ -15,6 +16,9 @@ import {PotassiumUtil} from './potassium-util';
 export interface IPotassium extends PotassiumUtil {
 	/** @see IBox */
 	readonly box: IBox;
+
+	/** @see PotassiumEncoding */
+	readonly encoding: PotassiumEncoding;
 
 	/** @see IEphemeralKeyExchange */
 	readonly ephemeralKeyExchange: IEphemeralKeyExchange;
