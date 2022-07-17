@@ -1257,14 +1257,11 @@ message Environment {
 		/** Page title of this Cyph instance. */
 		string title = 19;
 
-		/** Sets the value of `PotassiumEncoding.useCryptographicAgilityTag`. */
-		bool useCryptographicAgilityTag = 20;
-
 		/** Indicates whether this environment should share a specific database namespace. */
-		string useNamespace = 21;
+		string useNamespace = 20;
 
 		/** If true, environment will be full white label, with no "Powered by Cyph" notices. */
-		bool whiteLabel = 22;
+		bool whiteLabel = 21;
 	}
 
 	/** Firebase configuration. */

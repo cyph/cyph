@@ -6,7 +6,6 @@ import {
 	IPublicKeyring,
 	PotassiumData
 } from '../../../proto';
-import {environment} from '../../environment';
 import {deserialize, serialize} from '../../util/serialization';
 import {potassiumUtil} from './potassium-util';
 
@@ -18,18 +17,15 @@ export class PotassiumEncoding {
 	 * Prefix used to indicate a protobuf-encoded `PotassiumData` object.
 	 * This enables backwards compatibility in environments with legacy data.
 	 */
-	private readonly cryptographicAgilityTag = this.useCryptographicAgilityTag ?
-		potassiumUtil.fromHex(
-			'30c463523ae566808f8ff4421382a651177fc0d9b57a3c21954052d2e91aecd2'
-		) :
-		undefined;
+	private readonly cryptographicAgilityTag = potassiumUtil.fromHex(
+		'30c463523ae566808f8ff4421382a651177fc0d9b57a3c21954052d2e91aecd2'
+	);
 
 	/**
 	 * Deserializes bytes to `PotassiumData` object.
 	 * @param defaultMetadata In the event that the value does not start with
-	 * `cryptographicAgilityTag` (when applicable), it will be used as the
-	 * data of a new `PotassiumData` object with the metadata from
-	 * `defaultMetadata` included.
+	 * `cryptographicAgilityTag`, it will be used as the data of a new
+	 * `PotassiumData` object with the metadata from `defaultMetadata` included.
 	 */
 	public async deserialize<
 		T extends IPotassiumData,
@@ -81,12 +77,7 @@ export class PotassiumEncoding {
 
 		const data = await deserialize(
 			PotassiumData,
-			this.cryptographicAgilityTag !== undefined ?
-				potassiumUtil.toBytes(
-					bytes,
-					this.cryptographicAgilityTag.length
-				) :
-				bytes
+			potassiumUtil.toBytes(bytes, this.cryptographicAgilityTag.length)
 		);
 
 		const requiredKeys = <(keyof IPotassiumData)[]> (
@@ -246,10 +237,6 @@ export class PotassiumEncoding {
 	) : Promise<Uint8Array> {
 		const bytes = await serialize(PotassiumData, data);
 
-		if (this.cryptographicAgilityTag === undefined) {
-			return bytes;
-		}
-
 		try {
 			return potassiumUtil.concatMemory(
 				false,
@@ -273,15 +260,8 @@ export class PotassiumEncoding {
 		}
 	}
 
-	constructor (
-		/** Indicates whether cryptographicAgilityTag should be used. */
-		private readonly useCryptographicAgilityTag: boolean = true
-	) {}
+	constructor () {}
 }
 
 /** @see PotassiumEncoding */
-export const potassiumEncoding = new PotassiumEncoding(
-	/* Use cryptographic agility tag in the main environment and where configured */
-	!environment.customBuild ||
-		environment.customBuild.config.useCryptographicAgilityTag === true
-);
+export const potassiumEncoding = new PotassiumEncoding();
