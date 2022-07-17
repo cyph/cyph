@@ -4,6 +4,7 @@ const childProcess = require('child_process');
 const dgram = require('dgram');
 const level = require('level');
 const read = require('read');
+const safeCompare = require('safe-compare');
 const stream = require('stream');
 const oldSuperSphincs = require('supersphincs-legacy/dist/old-api');
 const validator = require('validator');
@@ -68,6 +69,7 @@ const validator = require('validator');
 			(o.isUint8Array || (binaryHashSupport && o.isBinaryHash)) &&
 			typeof o.data === 'string' &&
 			validator.isBase64(o.data));
+
 	let keyData;
 	while (!keyData) {
 		try {
@@ -80,7 +82,7 @@ const validator = require('validator');
 				true
 			);
 
-			if (classicalPassword === postQuantumPassword) {
+			if (safeCompare(classicalPassword, postQuantumPassword)) {
 				throw new Error('fak u gooby');
 			}
 

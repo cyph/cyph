@@ -427,6 +427,7 @@ rsvp
 run-node
 rxfire
 rxjs@^7
+safe-compare
 sass
 sass-loader
 shelljs

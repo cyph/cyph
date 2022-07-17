@@ -167,7 +167,15 @@ chmod 777 ${agseDir}/setup.sh /home/${username}/.bashrc
 
 su ${username} -c ' \
 	cd; \
-	npm install level libsodium-wrappers-sumo node-fetch read supersphincs-legacy validator; \
+	npm install \
+		level \
+		libsodium-wrappers-sumo \
+		node-fetch \
+		read \
+		safe-compare \
+		supersphincs-legacy \
+		validator \
+	; \
 '
 
 modprobe ecryptfs
