@@ -71,13 +71,16 @@ const validator = require('validator');
 	let keyData;
 	while (!keyData) {
 		try {
-			const rsaPassword = await askQuestion('RSA Password:', true);
-			const sphincsPassword = await askQuestion(
-				'SPHINCS Password:',
+			const classicalPassword = await askQuestion(
+				'Classical Password:',
+				true
+			);
+			const postQuantumPassword = await askQuestion(
+				'Post-Quantum Password:',
 				true
 			);
 
-			if (rsaPassword === sphincsPassword) {
+			if (classicalPassword === postQuantumPassword) {
 				throw new Error('fak u gooby');
 			}
 
@@ -86,7 +89,7 @@ const validator = require('validator');
 					.fill(0)
 					.map(async (_, i) =>
 						Promise.all(
-							['rsa', 'sphincs'].map(
+							['classical', 'postQuantum'].map(
 								async keyType =>
 									new Promise((resolve, reject) =>
 										db.get(
@@ -107,74 +110,74 @@ const validator = require('validator');
 					)
 			);
 
-			let rsaKeyData;
-			let sphincsKeyData;
+			let classicalKeyData;
+			let postQuantumKeyData;
 			for (let i = 0; i < allKeys.length; ++i) {
 				const keys = {
 					private: {
-						rsa: allKeys[i][0],
-						sphincs: allKeys[i][1]
+						classical: allKeys[i][0],
+						postQuantum: allKeys[i][1]
 					}
 				};
 
 				try {
-					if (!rsaKeyData) {
-						rsaKeyData = {
-							privateKey: keys.private.rsa,
+					if (!classicalKeyData) {
+						classicalKeyData = {
+							privateKey: keys.private.classical,
 							publicKeyString: (
 								await oldSuperSphincs.exportKeys({
 									publicKey: (
 										await oldSuperSphincs.importKeys(
 											keys,
-											rsaPassword
+											classicalPassword
 										)
 									).publicKey
 								})
-							).public.rsa
+							).public.classical
 						};
 					}
 				}
 				catch (_) {}
 
 				try {
-					if (!sphincsKeyData) {
-						sphincsKeyData = {
-							privateKey: keys.private.sphincs,
+					if (!postQuantumKeyData) {
+						postQuantumKeyData = {
+							privateKey: keys.private.postQuantum,
 							publicKeyString: (
 								await oldSuperSphincs.exportKeys({
 									publicKey: (
 										await oldSuperSphincs.importKeys(
 											keys,
-											sphincsPassword
+											postQuantumPassword
 										)
 									).publicKey
 								})
-							).public.sphincs
+							).public.postQuantum
 						};
 					}
 				}
 				catch (_) {}
 			}
 
-			if (!rsaKeyData || !sphincsKeyData) {
+			if (!classicalKeyData || !postQuantumKeyData) {
 				throw new Error('Invalid password; please try again.');
 			}
 
 			keyData = {
-				rsaKeyString: rsaKeyData.publicKeyString,
-				sphincsKeyString: sphincsKeyData.publicKeyString,
+				classicalKeyString: classicalKeyData.publicKeyString,
 				keyPair: await oldSuperSphincs.importKeys(
 					{
 						private: {
-							rsa: rsaKeyData.privateKey,
-							sphincs: sphincsKeyData.privateKey
+							classical: classicalKeyData.privateKey,
+							postQuantum: postQuantumKeyData.privateKey
 						}
 					},
 					{
-						rsa: rsaPassword,
-						sphincs: sphincsPassword
+						classical: classicalPassword,
+						postQuantum: postQuantumPassword
 					}
-				)
+				),
+				postQuantumKeyString: postQuantumKeyData.publicKeyString
 			};
 		}
 		catch (err) {
@@ -295,9 +298,9 @@ const validator = require('validator');
 		const client = dgram.createSocket('udp4');
 		const signatureBytes = Buffer.from(
 			JSON.stringify({
-				signatures,
-				rsa: keyData.rsaKeyString,
-				sphincs: keyData.sphincsKeyString
+				classical: keyData.classicalKeyString,
+				postQuantum: keyData.postQuantumKeyString,
+				signatures
 			})
 		);
 

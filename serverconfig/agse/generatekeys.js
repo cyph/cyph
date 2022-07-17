@@ -50,10 +50,10 @@
 					),
 					'text'
 				)
-			).map(async superSphincsKeyString => oldSuperSphincs.importKeys(
+			).map(async combinedKeyString => oldSuperSphincs.importKeys(
 					{
 						private: {
-							superSphincs: superSphincsKeyString
+							combined: combinedKeyString
 						}
 					},
 					args.backupPasswords.aes
@@ -80,13 +80,13 @@
 	}
 
 	const publicKeys = JSON.stringify({
-		rsa: backupKeyData.map(o => o.public.rsa),
-		sphincs: backupKeyData.map(o => o.public.sphincs)
+		classical: backupKeyData.map(o => o.public.classical),
+		postQuantum: backupKeyData.map(o => o.public.postQuantum)
 	});
 
 	const publicKeyHash = (await oldSuperSphincs.hash(publicKeys)).hex;
 
-	for (const keyType of ['rsa', 'sphincs']) {
+	for (const keyType of ['classical', 'postQuantum']) {
 		for (let i = 0; i < args.numActiveKeys; ++i) {
 			await new Promise((resolve, reject) =>
 				db.put(
@@ -112,7 +112,7 @@
 	const backupKeys = sodium
 		.crypto_secretbox_easy(
 			sodium.from_string(
-				JSON.stringify(backupKeyData.map(o => o.private.superSphincs))
+				JSON.stringify(backupKeyData.map(o => o.private.combined))
 			),
 			new Uint8Array(sodium.crypto_secretbox_NONCEBYTES),
 			sodium.crypto_pwhash_scryptsalsa208sha256(

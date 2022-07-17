@@ -129,7 +129,8 @@ export const sign = async (inputs, testSign, demoSign, skipNotify = false) =>
 	new Promise(async (resolve, reject) => {
 		if (testSign) {
 			return resolve({
-				rsaIndex: 0,
+				classicalIndex: 0,
+				postQuantumIndex: 0,
 				signedInputs: await Promise.all(
 					inputs.map(async ({additionalData, message}) =>
 						Buffer.from(
@@ -140,8 +141,7 @@ export const sign = async (inputs, testSign, demoSign, skipNotify = false) =>
 							)
 						)
 					)
-				),
-				sphincsIndex: 0
+				)
 			});
 		}
 
@@ -231,9 +231,11 @@ export const sign = async (inputs, testSign, demoSign, skipNotify = false) =>
 					Buffer.from(incoming.data.buffer).toString()
 				);
 
-				const rsaIndex = publicKeys.rsa.indexOf(signatureData.rsa);
-				const sphincsIndex = publicKeys.sphincs.indexOf(
-					signatureData.sphincs
+				const classicalIndex = publicKeys.classical.indexOf(
+					signatureData.classical
+				);
+				const postQuantumIndex = publicKeys.postQuantum.indexOf(
+					signatureData.postQuantum
 				);
 
 				const signedInputs = binaryInputs.map(
@@ -249,8 +251,9 @@ export const sign = async (inputs, testSign, demoSign, skipNotify = false) =>
 				try {
 					const keyPair = await superSphincsLegacy.importKeys({
 						public: {
-							rsa: publicKeys.rsa[rsaIndex],
-							sphincs: publicKeys.sphincs[sphincsIndex]
+							classical: publicKeys.classical[classicalIndex],
+							postQuantum:
+								publicKeys.postQuantum[postQuantumIndex]
 						}
 					});
 
@@ -277,9 +280,9 @@ export const sign = async (inputs, testSign, demoSign, skipNotify = false) =>
 
 					console.log('Signing complete.');
 					resolve({
-						rsaIndex,
-						signedInputs: signedInputs.map(o => o.signed),
-						sphincsIndex
+						classicalIndex,
+						postQuantumIndex,
+						signedInputs: signedInputs.map(o => o.signed)
 					});
 				}
 				catch (err) {

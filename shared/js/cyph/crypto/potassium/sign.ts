@@ -142,7 +142,7 @@ export class Sign implements ISign {
 			case PotassiumData.SignAlgorithms.V1:
 				result = (
 					await superSphincsLegacy.importKeys({
-						public: {rsa: classical, sphincs: postQuantum}
+						public: {classical, postQuantum}
 					})
 				).publicKey;
 				break;
@@ -150,7 +150,7 @@ export class Sign implements ISign {
 			case PotassiumData.SignAlgorithms.NativeV2:
 				result = (
 					await superDilithiumRSA.importKeys({
-						public: {dilithium: postQuantum, rsa: classical}
+						public: {classical, postQuantum}
 					})
 				).publicKey;
 				break;
@@ -158,7 +158,7 @@ export class Sign implements ISign {
 			case PotassiumData.SignAlgorithms.V2:
 				result = (
 					await superDilithium.importKeys({
-						public: {ecc: classical, dilithium: postQuantum}
+						public: {classical, postQuantum}
 					})
 				).publicKey;
 				break;
@@ -166,7 +166,7 @@ export class Sign implements ISign {
 			case PotassiumData.SignAlgorithms.NativeV2Hardened:
 				result = (
 					await superSphincsRSA.importKeys({
-						public: {rsa: classical, sphincs: postQuantum}
+						public: {classical, postQuantum}
 					})
 				).publicKey;
 				break;
@@ -174,7 +174,7 @@ export class Sign implements ISign {
 			case PotassiumData.SignAlgorithms.V2Hardened:
 				result = (
 					await superSphincs.importKeys({
-						public: {ecc: classical, sphincs: postQuantum}
+						public: {classical, postQuantum}
 					})
 				).publicKey;
 				break;

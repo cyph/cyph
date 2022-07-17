@@ -29,19 +29,19 @@ export const getReleasedPackage = async (packageName = 'cyph.app') => {
 	const packageLines = packageMetadata.package.root.trim().split('\n');
 
 	const packageData = {
-		signed: packageLines[0],
-		rsaKey: publicKeys.rsa[parseInt(packageLines[1], 10)],
-		sphincsKey: publicKeys.sphincs[parseInt(packageLines[2], 10)]
+		classicalKey: publicKeys.classical[parseInt(packageLines[1], 10)],
+		postQuantumKey: publicKeys.postQuantum[parseInt(packageLines[2], 10)],
+		signed: packageLines[0]
 	};
 
-	if (!packageData.rsaKey || !packageData.sphincsKey) {
+	if (!packageData.classicalKey || !packageData.postQuantumKey) {
 		throw new Error('No valid public key specified.');
 	}
 
 	const {publicKey} = await oldSuperSphincs.importKeys({
 		public: {
-			rsa: packageData.rsaKey,
-			sphincs: packageData.sphincsKey
+			classical: packageData.classicalKey,
+			postQuantum: packageData.postQuantumKey
 		}
 	});
 
