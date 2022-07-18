@@ -63,12 +63,11 @@ nodeModulesAssets="$(
 		uniq
 )"
 
-typescriptAssets="$(
+baseTypescriptAssets="$(
 	{
 		# NATIVESCRIPT: echo cyph/crypto/native-web-crypto-polyfill;
 		echo standalone/cyph.com;
 		echo standalone/node-polyfills;
-		if [ "${libpotassium}" ] ; then echo cyph/crypto/potassium/index ; fi;
 		grep -roP "importScripts\('/assets/js/.*?\.js'\)" shared/js |
 			perl -pe "s/^.*?'\/assets\/js\/(.*?)\.js'.*/\1/g" |
 			grep -vP '^(babel|standalone/global)$' \
@@ -77,6 +76,10 @@ typescriptAssets="$(
 		sort |
 		uniq
 )"
+typescriptAssets="$({
+	if [ "${libpotassium}" ] ; then echo cyph/crypto/potassium/index ; fi;
+	echo ${baseTypescriptAssets};
+})"
 
 scssAssets="$(
 	{
@@ -356,7 +359,15 @@ for f in ${typescriptAssets} ; do
 		};
 	EOM
 done
-echo ${typescriptAssets} | tr ' ' '\n' | xargs -I% -P ${parallelProcesses} bash -c '
+
+if [ "${libpotassium}" ] ; then
+	cp -f ../../js/proto/libpotassium/* ../../js/proto/
+	webpack --config "$(echo cyph/crypto/potassium/index | sha).webpack.js"
+	checkfailretry
+	cp -f ../../js/proto/main/* ../../js/proto/
+fi
+
+echo ${baseTypescriptAssets} | tr ' ' '\n' | xargs -I% -P ${parallelProcesses} bash -c '
 	webpack --config "$(echo "%" | sha).webpack.js"
 '
 checkfailretry
