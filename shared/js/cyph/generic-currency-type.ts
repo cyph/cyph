@@ -1,4 +1,4 @@
-import {Cryptocurrencies, Currencies} from '../proto';
+import {Cryptocurrencies, Currencies} from './proto/types';
 
 /** Contaniner for either a Cryptocurrencies or Currencies value. */
 export type GenericCurrency =

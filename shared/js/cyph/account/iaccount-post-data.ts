@@ -1,7 +1,7 @@
 import {Observable} from 'rxjs';
 import {User} from '../account';
 import {ITimedValue} from '../itimed-value';
-import {IAccountPost, IAccountPostComment} from '../proto';
+import {IAccountPost, IAccountPostComment} from '../proto/types';
 
 /** A subset of a user's post data. */
 export interface IAccountPostDataPart {

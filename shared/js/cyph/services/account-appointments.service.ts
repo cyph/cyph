@@ -21,7 +21,7 @@ import {
 	IBurnerSession,
 	ICalendarInvite,
 	IForm
-} from '../../proto';
+} from '../proto';
 import {
 	serializeRecurrenceExclusions,
 	serializeRecurrenceRule

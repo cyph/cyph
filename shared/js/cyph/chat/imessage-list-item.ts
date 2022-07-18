@@ -1,6 +1,6 @@
 import {Observable} from 'rxjs';
 import {ListHoleError} from '../list-hole-error';
-import {IChatMessage} from '../proto';
+import {IChatMessage} from '../proto/types';
 import {UiStyles} from './enums';
 
 /** One item in the message list UI. */

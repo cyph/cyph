@@ -1,4 +1,4 @@
-import {CyphPlans, CyphPlanTypes} from '../proto';
+import {CyphPlans, CyphPlanTypes} from './proto';
 
 interface IPlanTypeConfig {
 	enableGroup: boolean;
