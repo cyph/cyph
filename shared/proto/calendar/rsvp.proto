@@ -1,0 +1,9 @@
+syntax = "proto3";
+
+
+/** RSVP statuses. */
+enum RSVP {
+	Maybe = 0;
+	No = 1;
+	Yes = 2;
+}

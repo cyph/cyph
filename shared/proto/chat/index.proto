@@ -1,0 +1,9 @@
+import "chat-last-confirmed-message.proto";
+import "chat-message-list.proto";
+import "chat-message-live-value-serialized.proto";
+import "chat-message-predecessor.proto";
+import "chat-message-value.proto";
+import "chat-message.proto";
+import "chat-pending-message.proto";
+import "file-transfer.proto";
+import "link-connection-email.proto";

@@ -1,6 +1,6 @@
 syntax = "proto3";
 
-import "chat-message-predecessor.proto";
+import "../chat/chat-message-predecessor.proto";
 
 
 /** Contains an actual chat text message. */

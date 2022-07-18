@@ -15,7 +15,7 @@ import {BehaviorSubject} from 'rxjs';
 import {BaseProvider} from '../../base-provider';
 import {AppointmentSharing} from '../../calendar';
 import {ITimeRange} from '../../itime-range';
-import {CalendarInvite, CallTypes, ICalendarInvite} from '../../proto';
+import {CallTypes, DaysOfWeek, ICalendarInvite, TimeFrames} from '../../proto';
 import {EnvService} from '../../services/env.service';
 import {StringsService} from '../../services/strings.service';
 import {trackBySelf} from '../../track-by/track-by-self';
@@ -76,18 +76,18 @@ export class CalendarInviteComponent
 	public readonly currentDate: BehaviorSubject<Date | undefined> =
 		new BehaviorSubject<Date | undefined>(undefined);
 
-	/** @see CalendarInvite.DaysOfWeek */
-	public readonly daysOfWeek = CalendarInvite.DaysOfWeek;
+	/** @see DaysOfWeek */
+	public readonly daysOfWeek = DaysOfWeek;
 
-	/** @see CalendarInvite.DaysOfWeek */
-	public readonly dayOfWeekValues: CalendarInvite.DaysOfWeek[] = [
-		CalendarInvite.DaysOfWeek.Sunday,
-		CalendarInvite.DaysOfWeek.Monday,
-		CalendarInvite.DaysOfWeek.Tuesday,
-		CalendarInvite.DaysOfWeek.Wednesday,
-		CalendarInvite.DaysOfWeek.Thursday,
-		CalendarInvite.DaysOfWeek.Friday,
-		CalendarInvite.DaysOfWeek.Saturday
+	/** @see DaysOfWeek */
+	public readonly dayOfWeekValues: DaysOfWeek[] = [
+		DaysOfWeek.Sunday,
+		DaysOfWeek.Monday,
+		DaysOfWeek.Tuesday,
+		DaysOfWeek.Wednesday,
+		DaysOfWeek.Thursday,
+		DaysOfWeek.Friday,
+		DaysOfWeek.Saturday
 	];
 
 	/** Duration (milliseconds). */
@@ -100,10 +100,10 @@ export class CalendarInviteComponent
 	@Input() public followUp: boolean = false;
 
 	/** Disallowed days of the week. */
-	@Input() public forbiddenDays: CalendarInvite.DaysOfWeek[] = [];
+	@Input() public forbiddenDays: DaysOfWeek[] = [];
 
 	/** Returns a human-readable day abbreviation (e.g. "SUN"). */
-	public readonly getDayString = memoize((day: CalendarInvite.DaysOfWeek) =>
+	public readonly getDayString = memoize((day: DaysOfWeek) =>
 		translate(this.daysOfWeek[day].toUpperCase().slice(0, 3))
 	);
 
@@ -114,9 +114,8 @@ export class CalendarInviteComponent
 	public readonly getStartPadding = getStartPadding;
 
 	/** Returns a human-readable time frame string (e.g. "Morning"). */
-	public readonly getTimeFrameString = memoize(
-		(timeFrame: CalendarInvite.TimeFrames) =>
-			translate(CalendarInvite.TimeFrames[timeFrame])
+	public readonly getTimeFrameString = memoize((timeFrame: TimeFrames) =>
+		translate(TimeFrames[timeFrame])
 	);
 
 	/** @see getTimes */
@@ -137,14 +136,14 @@ export class CalendarInviteComponent
 	/** @see serializeRecurrenceRule */
 	public readonly serializeRecurrenceRule = serializeRecurrenceRule;
 
-	/** @see CalendarInvite.TimeFrames */
-	public readonly timeFrames = CalendarInvite.TimeFrames;
+	/** @see TimeFrames */
+	public readonly timeFrames = TimeFrames;
 
-	/** @see CalendarInvite.DaysOfWeek */
-	public readonly timeFrameValues: CalendarInvite.TimeFrames[] = [
-		CalendarInvite.TimeFrames.Morning,
-		CalendarInvite.TimeFrames.Afternoon,
-		CalendarInvite.TimeFrames.Evening
+	/** @see DaysOfWeek */
+	public readonly timeFrameValues: TimeFrames[] = [
+		TimeFrames.Morning,
+		TimeFrames.Afternoon,
+		TimeFrames.Evening
 	];
 
 	/** Number of minutes in between times. */

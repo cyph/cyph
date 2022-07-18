@@ -1,6 +1,6 @@
 syntax = "proto3";
 
-import "key-pair.proto";
+import "../potassium/key-pair.proto";
 import "pgp-metadata.proto";
 
 

@@ -1,6 +1,6 @@
 syntax = "proto3";
 
-import "form.proto";
+import "../form/form.proto";
 
 
 /** User public profile additional data. */

@@ -1,0 +1,9 @@
+syntax = "proto3";
+
+
+/** Time periods of the day for appointments. */
+enum TimeFrames {
+	Morning = 0;
+	Afternoon = 1;
+	Evening = 2;
+}

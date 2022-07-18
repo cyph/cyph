@@ -1,0 +1,17 @@
+import "account/index.proto";
+import "agse/index.proto";
+import "calendar/index.proto";
+import "castle/index.proto";
+import "chat/index.proto";
+import "common/index.proto";
+import "cyph-plan/index.proto";
+import "ehr/index.proto";
+import "email/index.proto";
+import "environment/index.proto";
+import "form/index.proto";
+import "password/index.proto";
+import "pgp/index.proto";
+import "potassium/index.proto";
+import "session/index.proto";
+import "storage/index.proto";
+import "wallet/index.proto";

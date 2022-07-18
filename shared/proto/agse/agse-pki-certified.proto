@@ -1,6 +1,6 @@
 syntax = "proto3";
 
-import "potassium-data.proto";
+import "../potassium/potassium-data.proto";
 
 
 /** AGSE-PKI certified data container. */

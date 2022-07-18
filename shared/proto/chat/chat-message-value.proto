@@ -1,8 +1,9 @@
 syntax = "proto3";
 
-import "appointment.proto";
-import "calendar-invite.proto";
-import "form.proto";
+import "../calendar/calendar-invite.proto";
+import "../calendar/rsvp.proto";
+import "../ehr/appointment.proto";
+import "../form/form.proto";
 import "file-transfer.proto";
 
 
@@ -24,7 +25,7 @@ message ChatMessageValue {
 		FileTransfer fileTransfer = 6;
 		Form form = 2;
 		bytes quill = 3;
-		Appointment.RSVP rsvp = 4;
+		RSVP rsvp = 4;
 		string text = 5;
 	}
 }

@@ -1,8 +1,8 @@
 syntax = "proto3";
 
-import "calendar-invite.proto";
+import "../calendar/calendar-invite.proto";
+import "../form/form.proto";
 import "file-transfer.proto";
-import "form.proto";
 
 
 /** @see IChatMessageLiveValue */

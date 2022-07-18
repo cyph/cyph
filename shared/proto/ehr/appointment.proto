@@ -1,18 +1,11 @@
 syntax = "proto3";
 
-import "calendar-invite.proto";
-import "form.proto";
+import "../calendar/calendar-invite.proto";
+import "../form/form.proto";
 
 
 /** Appointment. */
 message Appointment {
-	/** RSVP statuses. */
-	enum RSVP {
-		Maybe = 0;
-		No = 1;
-		Yes = 2;
-	}
-
 	/**
 	 * EHR data for the appointment.
 	 * TODO: Reconcile with Redox types.

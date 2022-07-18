@@ -1,0 +1,3 @@
+import "cryptocurrencies.proto";
+import "currencies.proto";
+import "wallet.proto";

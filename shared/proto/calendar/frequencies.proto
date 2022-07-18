@@ -1,0 +1,13 @@
+syntax = "proto3";
+
+
+/** Recurrence frequency values. */
+enum Frequencies {
+	Yearly = 0;
+	Monthly = 1;
+	Weekly = 2;
+	Daily = 3;
+	Hourly = 4;
+	Minutely = 5;
+	Secondly = 6;
+}

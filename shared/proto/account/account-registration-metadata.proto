@@ -1,6 +1,6 @@
 syntax = "proto3";
 
-import "email-message.proto";
+import "../email/email-message.proto";
 
 
 /** Metadata captured during registration. */

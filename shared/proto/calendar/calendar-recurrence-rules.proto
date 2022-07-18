@@ -1,21 +1,11 @@
 syntax = "proto3";
 
-import "calendar-invite.proto";
+import "days-of-week.proto";
+import "frequencies.proto";
 
 
 /** Calendar invite recurrence rules. */
 message CalendarRecurrenceRules {
-	/** Recurrence frequency values. */
-	enum Frequency {
-		Yearly = 0;
-		Monthly = 1;
-		Weekly = 2;
-		Daily = 3;
-		Hourly = 4;
-		Minutely = 5;
-		Secondly = 6;
-	}
-
 	/** RFC 5545 BYMONTH. */
 	repeated uint32 byMonth = 1;
 
@@ -26,7 +16,7 @@ message CalendarRecurrenceRules {
 	repeated uint32 bySetPosition = 3;
 
 	/** RFC 5545 BYDAY. */
-	repeated CalendarInvite.DaysOfWeek byWeekDay = 4;
+	repeated DaysOfWeek byWeekDay = 4;
 
 	/** RFC 5545 COUNT. */
 	uint32 count = 5;
@@ -38,7 +28,7 @@ message CalendarRecurrenceRules {
 	string excludeDatesTimeZone = 7;
 
 	/** RFC 5545 FREQ. */
-	required Frequency frequency = 8;
+	required Frequencies frequency = 8;
 
 	/** RFC 5545 INTERVAL. */
 	uint32 interval = 9;
@@ -47,5 +37,5 @@ message CalendarRecurrenceRules {
 	double until = 10;
 
 	/** RFC 5545 WKST. */
-	CalendarInvite.DaysOfWeek weekStart = 11;
+	DaysOfWeek weekStart = 11;
 }

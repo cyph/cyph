@@ -1,29 +1,13 @@
 syntax = "proto3";
 
+import "../session/call-types.proto";
 import "calendar-recurrence-rules.proto";
-import "call-types.proto";
+import "days-of-week.proto";
+import "time-frames.proto";
 
 
 /** Calendar invite. */
 message CalendarInvite {
-	/** Days of the week for appointments. */
-	enum DaysOfWeek {
-		Sunday = 0;
-		Monday = 1;
-		Tuesday = 2;
-		Wednesday = 3;
-		Thursday = 4;
-		Friday = 5;
-		Saturday = 6;
-	}
-
-	/** Time periods of the day for appointments. */
-	enum TimeFrames {
-		Morning = 0;
-		Afternoon = 1;
-		Evening = 2;
-	}
-
 	/** Preferred days for counteroffers. */
 	map<uint32, bool> alternateDays = 1;
 

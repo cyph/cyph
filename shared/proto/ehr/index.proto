@@ -1,0 +1,7 @@
+import "appointment.proto";
+import "ehr-api-key.proto";
+import "patient-info.proto";
+import "redox-appointment.proto";
+import "redox-meta.proto";
+import "redox-patient.proto";
+import "redox-types.proto";

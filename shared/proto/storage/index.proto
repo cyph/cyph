@@ -1,0 +1,3 @@
+import "database-item.proto";
+import "local-storage-lock-metadata.proto";
+import "local-storage-value.proto";

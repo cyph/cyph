@@ -1,38 +1,34 @@
-import {Frequency, RRule} from 'rrule';
-import {
-	CalendarInvite,
-	CalendarRecurrenceRules,
-	ICalendarRecurrenceRules
-} from '../proto';
+import {Frequency as RRuleFrequencies, RRule} from 'rrule';
+import {DaysOfWeek, Frequencies, ICalendarRecurrenceRules} from '../proto';
 import {timestampToDate} from './time';
 
 const rruleWeekDayConvert = (n: number) =>
 	n === RRule.SU.weekday ?
-		CalendarInvite.DaysOfWeek.Sunday :
+		DaysOfWeek.Sunday :
 	n === RRule.MO.weekday ?
-		CalendarInvite.DaysOfWeek.Monday :
+		DaysOfWeek.Monday :
 	n === RRule.TU.weekday ?
-		CalendarInvite.DaysOfWeek.Tuesday :
+		DaysOfWeek.Tuesday :
 	n === RRule.WE.weekday ?
-		CalendarInvite.DaysOfWeek.Wednesday :
+		DaysOfWeek.Wednesday :
 	n === RRule.TH.weekday ?
-		CalendarInvite.DaysOfWeek.Thursday :
+		DaysOfWeek.Thursday :
 	n === RRule.FR.weekday ?
-		CalendarInvite.DaysOfWeek.Friday :
-		CalendarInvite.DaysOfWeek.Saturday;
+		DaysOfWeek.Friday :
+		DaysOfWeek.Saturday;
 
-const rruleWeekDayRevert = (dayOfWeek: CalendarInvite.DaysOfWeek) =>
-	dayOfWeek === CalendarInvite.DaysOfWeek.Sunday ?
+const rruleWeekDayRevert = (dayOfWeek: DaysOfWeek) =>
+	dayOfWeek === DaysOfWeek.Sunday ?
 		RRule.SU.weekday :
-	dayOfWeek === CalendarInvite.DaysOfWeek.Monday ?
+	dayOfWeek === DaysOfWeek.Monday ?
 		RRule.MO.weekday :
-	dayOfWeek === CalendarInvite.DaysOfWeek.Tuesday ?
+	dayOfWeek === DaysOfWeek.Tuesday ?
 		RRule.TU.weekday :
-	dayOfWeek === CalendarInvite.DaysOfWeek.Wednesday ?
+	dayOfWeek === DaysOfWeek.Wednesday ?
 		RRule.WE.weekday :
-	dayOfWeek === CalendarInvite.DaysOfWeek.Thursday ?
+	dayOfWeek === DaysOfWeek.Thursday ?
 		RRule.TH.weekday :
-	dayOfWeek === CalendarInvite.DaysOfWeek.Friday ?
+	dayOfWeek === DaysOfWeek.Friday ?
 		RRule.FR.weekday :
 		RRule.SA.weekday;
 
@@ -74,19 +70,19 @@ export const parseRecurrenceRule = (
 		count: rrule.count || undefined,
 		excludeDates,
 		frequency:
-			rrule.freq === Frequency.YEARLY ?
-				CalendarRecurrenceRules.Frequency.Yearly :
-			rrule.freq === Frequency.MONTHLY ?
-				CalendarRecurrenceRules.Frequency.Monthly :
-			rrule.freq === Frequency.WEEKLY ?
-				CalendarRecurrenceRules.Frequency.Weekly :
-			rrule.freq === Frequency.DAILY ?
-				CalendarRecurrenceRules.Frequency.Daily :
-			rrule.freq === Frequency.HOURLY ?
-				CalendarRecurrenceRules.Frequency.Hourly :
-			rrule.freq === Frequency.MINUTELY ?
-				CalendarRecurrenceRules.Frequency.Minutely :
-				CalendarRecurrenceRules.Frequency.Secondly,
+			rrule.freq === RRuleFrequencies.YEARLY ?
+				Frequencies.Yearly :
+			rrule.freq === RRuleFrequencies.MONTHLY ?
+				Frequencies.Monthly :
+			rrule.freq === RRuleFrequencies.WEEKLY ?
+				Frequencies.Weekly :
+			rrule.freq === RRuleFrequencies.DAILY ?
+				Frequencies.Daily :
+			rrule.freq === RRuleFrequencies.HOURLY ?
+				Frequencies.Hourly :
+			rrule.freq === RRuleFrequencies.MINUTELY ?
+				Frequencies.Minutely :
+				Frequencies.Secondly,
 		interval: rrule.interval,
 		until: rrule.until ? rrule.until.getTime() : undefined,
 		weekStart: 0
@@ -128,25 +124,19 @@ export const serializeRecurrenceRule = (
 			byweekday: (recurrenceRule.byWeekDay || []).map(rruleWeekDayRevert),
 			count: recurrenceRule.count,
 			freq:
-				recurrenceRule.frequency ===
-				CalendarRecurrenceRules.Frequency.Yearly ?
-					Frequency.YEARLY :
-				recurrenceRule.frequency ===
-				CalendarRecurrenceRules.Frequency.Monthly ?
-					Frequency.MONTHLY :
-				recurrenceRule.frequency ===
-				CalendarRecurrenceRules.Frequency.Weekly ?
-					Frequency.WEEKLY :
-				recurrenceRule.frequency ===
-				CalendarRecurrenceRules.Frequency.Daily ?
-					Frequency.DAILY :
-				recurrenceRule.frequency ===
-				CalendarRecurrenceRules.Frequency.Hourly ?
-					Frequency.HOURLY :
-				recurrenceRule.frequency ===
-					CalendarRecurrenceRules.Frequency.Minutely ?
-					Frequency.MINUTELY :
-					Frequency.SECONDLY,
+				recurrenceRule.frequency === Frequencies.Yearly ?
+					RRuleFrequencies.YEARLY :
+				recurrenceRule.frequency === Frequencies.Monthly ?
+					RRuleFrequencies.MONTHLY :
+				recurrenceRule.frequency === Frequencies.Weekly ?
+					RRuleFrequencies.WEEKLY :
+				recurrenceRule.frequency === Frequencies.Daily ?
+					RRuleFrequencies.DAILY :
+				recurrenceRule.frequency === Frequencies.Hourly ?
+					RRuleFrequencies.HOURLY :
+				recurrenceRule.frequency === Frequencies.Minutely ?
+					RRuleFrequencies.MINUTELY :
+					RRuleFrequencies.SECONDLY,
 			interval: recurrenceRule.interval,
 			until: recurrenceRule.until ?
 				new Date(recurrenceRule.until) :
