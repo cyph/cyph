@@ -93,6 +93,7 @@ export class PotassiumService extends PotassiumUtil implements IPotassium {
 		importPublicKeys: async () => this.errorValue,
 		keyPair: async () => this.errorValue,
 		open: async () => this.errorValue,
+		openRaw: async () => this.errorValue,
 		sign: async () => this.errorValue,
 		signDetached: async () => this.errorValue,
 		verifyDetached: async () => this.errorValue

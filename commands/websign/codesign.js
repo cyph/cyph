@@ -1,8 +1,11 @@
 #!/usr/bin/env node
 
+import {proto} from '@cyph/sdk';
 import fs from 'fs';
 import mkdirp from 'mkdirp';
 import {sign} from '../sign.js';
+
+const {PotassiumData} = proto;
 
 try {
 	const argv = process.argv.slice(2).filter(s => s && s !== '--test');
@@ -29,12 +32,16 @@ try {
 			outputDir: arr[1]
 		}));
 
-	const {rsaIndex, signedInputs, sphincsIndex} = await sign(
-		inputs.map(({message}) => ({message})),
+	/* TODO: Update this */
+	const algorithm = PotassiumData.SignAlgorithms.V1;
+
+	const certifiedMessages = await sign(
+		inputs.map(({message}) => ({algorithm, message})),
 		args.test
 	);
 
 	for (let i = 0; i < inputs.length; ++i) {
+		const certified = certifiedMessages[i];
 		const outputDir = inputs[i].outputDir;
 
 		await mkdirp(outputDir);
@@ -43,11 +50,11 @@ try {
 
 		fs.writeFileSync(
 			`${outputDir}/pkg`,
-			signedInputs[i].toString('base64').replace(/\s+/g, '') +
+			certified.data.toString('base64').replace(/\s+/g, '') +
 				'\n' +
-				rsaIndex +
+				certified.publicKeys.classical.toString() +
 				'\n' +
-				sphincsIndex
+				certified.publicKeys.postQuantum.toString()
 		);
 
 		console.log(`${outputDir} saved.`);

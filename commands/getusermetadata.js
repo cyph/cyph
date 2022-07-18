@@ -1,20 +1,21 @@
 #!/usr/bin/env node
 
 import {getMeta} from '../modules/base.js';
-const {__dirname, isCLI} = getMeta(import.meta);
+const {isCLI} = getMeta(import.meta);
 
 import {potassiumService as potassium, proto, util} from '@cyph/sdk';
-import fs from 'fs';
 import openpgp from 'openpgp';
+import {agsePublicSigningKeys} from '../modules/agse-public-signing-keys.js';
 import {initDatabaseService} from '../modules/database-service.js';
 
 const {
 	AccountUserProfile,
 	AccountUserProfileExtra,
 	AGSEPKICert,
-	BinaryProto,
+	AGSEPKICertified,
 	CyphPlan,
 	CyphPlans,
+	PotassiumData,
 	StringProto
 } = proto;
 const {deserialize, normalize} = util;
@@ -24,50 +25,44 @@ openpgp.config.commentstring = 'https://www.cyph.com';
 
 /* TODO: Refactor this */
 const getCertTimestamp = async (user, namespace, getUserItem) => {
-	const agsePublicSigningKeysJS = fs
-		.readFileSync(`${__dirname}/../websign/js/keys.js`)
-		.toString();
+	const cert = await getUserItem('publicKeyCertificate', AGSEPKICertified);
 
-	const agsePublicSigningKeys = JSON.parse(
-		agsePublicSigningKeysJS
-			.substring(agsePublicSigningKeysJS.indexOf('=') + 1)
-			.split(';')[0]
-			.trim()
-			.replace(/\/\*.*?\*\//g, '')
-	);
+	const publicSigningKeys = agsePublicSigningKeys.prod.get(cert.algorithm);
 
-	const certBytes = await getUserItem('certificate', BinaryProto);
-
-	const dataView = potassium.toDataView(certBytes);
-	const rsaKeyIndex = dataView.getUint32(0, true);
-	const sphincsKeyIndex = dataView.getUint32(4, true);
-	const signed = potassium.toBytes(certBytes, 8);
+	if (publicSigningKeys === undefined) {
+		throw new Error(
+			`No AGSE public keys found for algorithm ${
+				PotassiumData.SignAlgorithms[cert.algorithm]
+			}.`
+		);
+	}
 
 	if (
-		rsaKeyIndex >= agsePublicSigningKeys.rsa.length ||
-		sphincsKeyIndex >= agsePublicSigningKeys.sphincs.length
+		cert.publicKeys.classical >= publicSigningKeys.classical.length ||
+		cert.publicKeys.postQuantum >= publicSigningKeys.postQuantum.length
 	) {
 		throw new Error('Invalid AGSE-PKI certificate: bad key index.');
 	}
 
-	const cert = await deserialize(
+	const certData = await deserialize(
 		AGSEPKICert,
 		await potassium.sign.open(
-			signed,
+			cert.data,
 			await potassium.sign.importPublicKeys(
-				agsePublicSigningKeys.rsa[rsaKeyIndex],
-				agsePublicSigningKeys.sphincs[sphincsKeyIndex]
+				cert.algorithm,
+				publicSigningKeys.classical[cert.publicKeys.classical],
+				publicSigningKeys.postQuantum[cert.publicKeys.postQuantum]
 			),
 			`${namespace}:${user.username}`,
 			false
 		)
 	);
 
-	if (cert.agsePKICSR.username !== user.username) {
+	if (certData.csrData.username !== user.username) {
 		throw new Error('Invalid AGSE-PKI certificate: bad username.');
 	}
 
-	return new Date(cert.timestamp).toLocaleString();
+	return new Date(certData.timestamp).toLocaleString();
 };
 
 const processDate = date => ({

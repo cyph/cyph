@@ -349,7 +349,7 @@ for f in $(find . -type f -name '*.css') ; do
 			xargs -I% bash -c "
 				url=\"\$(echo '%' | sed 's|${fullDestinationURL}|${localURL}|g')\";
 				path=\"fonts/\$(node -e \"(async () => { \
-					console.log((await require('supersphincs').hash('%')).hex); \
+					console.log((await require('fast-sha512').hash('%')).hex); \
 				})().catch(err => {
 					console.error(err);
 					process.exit(1);

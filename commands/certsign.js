@@ -12,20 +12,36 @@ import {
 import fs from 'fs';
 import os from 'os';
 import read from 'read';
+import {agsePublicSigningKeys} from '../modules/agse-public-signing-keys.js';
 import {initDatabaseService} from '../modules/database-service.js';
 import {addInviteCode} from './addinvitecode.js';
-import {getPublicKeys, sign} from './sign.js';
+import {sign} from './sign.js';
 
 const {
 	AGSEPKICert,
+	AGSEPKICertified,
 	AGSEPKICSR,
+	AGSEPKICSRData,
 	AGSEPKIIssuanceHistory,
 	BinaryProto,
 	CyphPlan,
 	CyphPlans,
 	StringProto
 } = proto;
-const {deserialize, lockFunction, serialize, sleep} = util;
+const {
+	deserialize,
+	filterUndefined,
+	lockFunction,
+	normalize,
+	serialize,
+	sleep
+} = util;
+
+const algorithms = {
+	certificates: PotassiumData.SignAlgorithms.V2,
+	issuanceHistory: PotassiumData.SignAlgorithms.V2Hardened,
+	legacy: PotassiumData.SignAlgorithms.V1
+};
 
 const readInput = async prompt =>
 	new Promise(resolve => {
@@ -59,7 +75,12 @@ const duplicateCSR = async (issuanceHistory, csr, publicSigningKeyHash) =>
 			}
 		})));
 
-export const certSign = async (projectId, standalone, namespace) => {
+export const certSign = async (
+	projectId,
+	standalone,
+	namespace,
+	upgradeCerts
+) => {
 	try {
 		if (typeof projectId !== 'string' || !projectId) {
 			projectId = 'cyphme';
@@ -73,9 +94,9 @@ export const certSign = async (projectId, standalone, namespace) => {
 
 		const testSign = projectId !== 'cyphme';
 		const configDir = `${os.homedir()}/.cyph`;
-		const issuanceHistoryParentPath = `${configDir}/certsign-history`;
+		const issuanceHistoryParentPath = `${configDir}/certificate-issuance-history`;
 		const issuanceHistoryPath = `${issuanceHistoryParentPath}/${projectId}.${namespace}`;
-		const lastIssuanceTimestampParentPath = `${configDir}/certsign-timestamps`;
+		const lastIssuanceTimestampParentPath = `${configDir}/certificate-issuance-timestamps`;
 		const lastIssuanceTimestampPath = `${lastIssuanceTimestampParentPath}/${projectId}.${namespace}`;
 
 		/* Will remain hardcoded as true for the duration of the private beta */
@@ -84,21 +105,48 @@ export const certSign = async (projectId, standalone, namespace) => {
 		const getHash = async bytes =>
 			potassium.toBase64(await potassium.hash.hash(bytes));
 
-		const {auth, database, getItem, hasItem, removeItem, setItem, storage} =
-			initDatabaseService(projectId);
+		const {
+			auth,
+			database,
+			getAllUsers,
+			getItem,
+			hasItem,
+			removeItem,
+			setItem
+		} = initDatabaseService(projectId);
 
 		const namespacePath = namespace.replace(/\./g, '_');
 
 		const lastIssuanceTimestampRef = database.ref(
-			`${namespacePath}/certificateHistoryTimestamp`
+			`${namespacePath}/publicKeyCertificateHistoryTimestamp`
 		);
 
 		const pendingSignupsURL = `${namespacePath}/pendingSignups`;
-		const pendingSignups =
+
+		const pendingSignups = upgradeCerts ?
+			Object.fromEntries((await getAllUsers()).map(k => [k])) :
 			(await database.ref(pendingSignupsURL).once('value')).val() || {};
+
 		const usernames = [];
 
-		for (const username of Object.keys(pendingSignups)) {
+		for (const [username, pendingSignup] of Object.entries(
+			pendingSignups
+		)) {
+			if (upgradeCerts) {
+				if (
+					(await hasItem(
+						namespace,
+						`users/${username}/publicKeyCertificate`
+					)) ||
+					/* TODO: Remove this after reissuing certificates */
+					(await hasItem(namespace, `users/${username}/certificate`))
+				) {
+					usernames.push(username);
+				}
+
+				continue;
+			}
+
 			/*
 				Process cert signing for user if they:
 
@@ -108,14 +156,16 @@ export const certSign = async (projectId, standalone, namespace) => {
 
 				* Used a valid invite code (if required)
 			*/
-
-			const pendingSignup = pendingSignups[username];
-
 			if (
-				(await hasItem(
+				((await hasItem(
 					namespace,
-					`users/${username}/certificateRequest`
-				)) &&
+					`users/${username}/publicKeyCertificateRequest`
+				)) ||
+					/* TODO: Remove this after reissuing certificates */
+					(await hasItem(
+						namespace,
+						`users/${username}/certificateRequest`
+					))) &&
 				(!requireInvite ||
 					(await getItem(
 						namespace,
@@ -136,7 +186,10 @@ export const certSign = async (projectId, standalone, namespace) => {
 				}
 			}
 			/* Otherwise, if signup has been pending for at least 3 hours, delete the user */
-			else if (Date.now() - pendingSignup.timestamp > 10800000) {
+			else if (
+				pendingSignup !== undefined &&
+				Date.now() - pendingSignup.timestamp > 10800000
+			) {
 				/* For now, just log to console and handle deletion manually */
 				console.error(`INVALID PENDING USER: @${username}`);
 				continue;
@@ -154,8 +207,6 @@ export const certSign = async (projectId, standalone, namespace) => {
 			console.log('No certificate requests.');
 			process.exit(0);
 		}
-
-		const agsePublicSigningKeys = getPublicKeys();
 
 		const issuanceHistory = await (async () => {
 			if (testSign) {
@@ -194,47 +245,61 @@ export const certSign = async (projectId, standalone, namespace) => {
 					)) === 'y' ?
 					lastIssuanceTimestampRemote :
 					undefined;
+
 			if (lastIssuanceTimestamp === undefined) {
 				throw new Error(
 					'Invalid AGSE-PKI history: timestamp not accepted.'
 				);
 			}
 
-			const bytes =
+			const history = await deserialize(
+				AGSEPKICertified,
 				lastIssuanceTimestamp === lastIssuanceTimestampLocal &&
-				fs.existsSync(issuanceHistoryPath) ?
+					fs.existsSync(issuanceHistoryPath) ?
 					fs.readFileSync(issuanceHistoryPath) :
-					await getItem(namespace, 'certificateHistory', BinaryProto);
+					await getItem(
+						namespace,
+						'publicKeyCertificateHistory',
+						BinaryProto
+					)
+			);
 
-			const dataView = potassium.toDataView(bytes);
-			const rsaKeyIndex = dataView.getUint32(0, true);
-			const sphincsKeyIndex = dataView.getUint32(4, true);
-			const signed = potassium.toBytes(bytes, 8);
+			const publicSigningKeys = agsePublicSigningKeys.prod.get(
+				history.algorithm
+			);
 
 			if (
-				rsaKeyIndex >= agsePublicSigningKeys.rsa.length ||
-				sphincsKeyIndex >= agsePublicSigningKeys.sphincs.length
+				history.publicKeys.classical >=
+					publicSigningKeys.classical.length ||
+				history.publicKeys.postQuantum >=
+					publicSigningKeys.postQuantum.length
 			) {
 				throw new Error('Invalid AGSE-PKI history: bad key index.');
 			}
 
-			const o = await deserialize(
+			const historyData = await deserialize(
 				AGSEPKIIssuanceHistory,
-				await potassium.sign.open(
-					signed,
+				await potassium.sign.openRaw(
+					history.data,
 					await potassium.sign.importPublicKeys(
-						agsePublicSigningKeys.rsa[rsaKeyIndex],
-						agsePublicSigningKeys.sphincs[sphincsKeyIndex]
+						history.algorithm,
+						publicSigningKeys.classical[
+							history.publicKeys.classical
+						],
+						publicSigningKeys.postQuantum[
+							history.publicKeys.postQuantum
+						]
 					),
-					`${namespace}:AGSEPKIIssuanceHistory`
+					`${namespace}:publicKeyCertificateHistory`,
+					history.algorithm
 				)
 			);
 
-			if (o.timestamp !== lastIssuanceTimestamp) {
+			if (historyData.timestamp !== lastIssuanceTimestamp) {
 				throw new Error('Invalid AGSE-PKI history: bad timestamp.');
 			}
 
-			return o;
+			return historyData;
 		})().catch(() => ({
 			publicSigningKeyHashes: {},
 			timestamp: 0,
@@ -251,82 +316,228 @@ export const certSign = async (projectId, standalone, namespace) => {
 			throw new Error('Failed to get AGSE-PKI history.');
 		}
 
-		const csrs = (
+		const publicSigningKeysMap = testSign ?
+			agsePublicSigningKeys.test :
+			agsePublicSigningKeys.prod;
+
+		const openCertificateRequest = async username => {
+			const csrURL = `users/${username}/publicKeyCertificateRequest`;
+
+			const csr = await getItem(namespace, csrURL, AGSEPKICSR);
+
+			const csrPotassiumSigned = await potassium.deserialize(
+				{signAlgorithm: csr.algorithm},
+				{
+					signed: {
+						compressed: false,
+						message: new Uint8Array(0),
+						signature: csr.data,
+						signatureBytes: await potassium.sign.getBytes(
+							csr.algorithm
+						)
+					}
+				}
+			);
+
+			const csrData = await deserialize(
+				AGSEPKICSRData,
+				csrPotassiumSigned.signed.message
+			);
+
+			if (
+				!csrData.publicSigningKey ||
+				csrData.publicSigningKey.length < 1 ||
+				!csrData.username ||
+				csrData.username !== username
+			) {
+				throw new Error('Invalid CSR.');
+			}
+
+			/* Validate CSR signature */
+			await potassium.sign.open(
+				csr.data,
+				csrData.publicSigningKey,
+				`${namespace}:${csrURL}`
+			);
+
+			return csr;
+		};
+
+		const openCertificate = async username => {
+			const certURL = `users/${username}/publicKeyCertificate`;
+
+			const cert = await getItem(namespace, certURL, AGSEPKICertified);
+
+			const publicSigningKeys = publicSigningKeysMap.get(cert.algorithm);
+
+			if (publicSigningKeys === undefined) {
+				throw new Error(
+					`No AGSE public keys found for algorithm ${
+						PotassiumData.SignAlgorithms[cert.algorithm]
+					}.`
+				);
+			}
+
+			if (
+				cert.publicKeys.classical >=
+					publicSigningKeys.classical.length ||
+				cert.publicKeys.postQuantum >=
+					publicSigningKeys.postQuantum.length
+			) {
+				throw new Error('Invalid AGSE-PKI certificate: bad key index.');
+			}
+
+			const {csrData} = await deserialize(
+				AGSEPKICert,
+				await potassium.sign.openRaw(
+					cert.data,
+					await potassium.sign.importPublicKeys(
+						cert.algorithm,
+						publicSigningKeys.classical[cert.publicKeys.classical],
+						publicSigningKeys.postQuantum[
+							cert.publicKeys.postQuantum
+						]
+					),
+					`${namespace}:${certURL}`,
+					cert.algorithm
+				)
+			);
+
+			return csrData;
+		};
+
+		/* TODO: Remove this after reissuing certificates */
+		const openLegacyCertificateRequest = async username => {
+			const csrURL = `users/${username}/certificateRequest`;
+
+			const csrBytes = await getItem(namespace, csrURL, BinaryProto);
+
+			const csrData = await deserialize(
+				AGSEPKICSRData,
+				new Uint8Array(
+					csrBytes.buffer,
+					csrBytes.byteOffset + (await potassium.sign.bytes)
+				)
+			);
+
+			if (
+				!csrData.publicSigningKey ||
+				csrData.publicSigningKey.length < 1 ||
+				!csrData.username ||
+				csrData.username !== username
+			) {
+				throw new Error('Invalid CSR.');
+			}
+
+			/* Validate CSR signature */
+			await potassium.sign.open(
+				csrBytes,
+				csrData.publicSigningKey,
+				`${namespace}:${csrURL}`
+			);
+
+			return csrData;
+		};
+
+		/* TODO: Remove this after reissuing certificates */
+		const openLegacyCertificate = async username => {
+			const certURL = `users/${username}/certificate`;
+
+			const certBytes = await getItem(namespace, certURL, BinaryProto);
+
+			const dataView = potassium.toDataView(certBytes);
+			const rsaKeyIndex = dataView.getUint32(0, true);
+			const sphincsKeyIndex = dataView.getUint32(4, true);
+			const signed = potassium.toBytes(certBytes, 8);
+
+			const publicSigningKeys = {
+				rsa:
+					publicSigningKeysMap.get(algorithms.legacy)?.classical ??
+					[],
+				sphincs:
+					publicSigningKeysMap.get(algorithms.legacy)?.postQuantum ??
+					[]
+			};
+
+			if (
+				rsaKeyIndex >= publicSigningKeys.rsa.length ||
+				sphincsKeyIndex >= publicSigningKeys.sphincs.length
+			) {
+				throw new Error('Invalid AGSE-PKI certificate: bad key index.');
+			}
+
+			const {csrData} = await deserialize(
+				AGSEPKICert,
+				await potassium.sign.openRaw(
+					signed,
+					await potassium.sign.importPublicKeys(
+						publicSigningKeys.rsa[rsaKeyIndex],
+						publicSigningKeys.sphincs[sphincsKeyIndex]
+					),
+					`${namespace}:${username}`,
+					algorithms.legacy
+				)
+			);
+
+			return csrData;
+		};
+
+		const csrDataObjects = filterUndefined(
 			await Promise.all(
 				usernames.map(async username => {
 					try {
 						if (
 							!username ||
-							username !==
-								username
-									.toLowerCase()
-									.replace(/[^0-9a-z_]/g, '')
-									.slice(0, 50)
+							username !== normalize(username).slice(0, 50)
 						) {
-							return;
+							throw new Error('Invalid username.');
 						}
 
-						const bytes = await getItem(
-							namespace,
-							`users/${username}/certificateRequest`,
-							BinaryProto
-						);
-
-						const csr = await deserialize(
-							AGSEPKICSR,
-							new Uint8Array(
-								bytes.buffer,
-								bytes.byteOffset + (await potassium.sign.bytes)
-							)
-						);
-
-						if (
-							!csr.publicSigningKey ||
-							csr.publicSigningKey.length < 1 ||
-							!csr.username ||
-							csr.username !== username
-						) {
-							return;
-						}
+						const csrData = !upgradeCerts ?
+							(await hasItem(
+									namespace,
+									`users/${username}/publicKeyCertificateRequest`
+							  )) ?
+								await openCertificateRequest() :
+								await openLegacyCertificateRequest() :
+						(await hasItem(
+								namespace,
+								`users/${username}/publicKeyCertificate`
+							)) ?
+							await openCertificate() :
+							await openLegacyCertificate();
 
 						const publicSigningKeyHash = await getHash(
-							csr.publicSigningKey
+							csrData.publicSigningKey
 						);
 
-						/* Validate that CSR data doesn't already belong to an existing user. */
+						/* Validate that CSR data doesn't already belong to an existing user */
 						if (
 							await duplicateCSR(
 								issuanceHistory,
-								csr,
+								csrData,
 								publicSigningKeyHash
 							)
 						) {
 							console.log(
-								`Ignoring duplicate CSR for ${csr.username}.`
+								`Ignoring duplicate CSR for ${csrData.username}.`
 							);
 							return;
 						}
 
-						/* Validate CSR signature. */
-						await potassium.sign.open(
-							bytes,
-							csr.publicSigningKey,
-							`${namespace}:users/${csr.username}/certificateRequest`
-						);
-
 						issuanceHistory.publicSigningKeyHashes[
 							publicSigningKeyHash
 						] = true;
-						issuanceHistory.usernames[csr.username] = true;
+						issuanceHistory.usernames[csrData.username] = true;
 
-						return csr;
+						return csrData;
 					}
 					catch (_) {}
 				})
 			)
-		).filter(csr => csr);
+		);
 
-		if (csrs.length < 1) {
+		if (csrDataObjects.length < 1) {
 			console.log('No certificates to sign.');
 			if (standalone) {
 				process.exit(0);
@@ -338,34 +549,33 @@ export const certSign = async (projectId, standalone, namespace) => {
 
 		issuanceHistory.timestamp = Date.now();
 
-		const {rsaIndex, signedInputs, sphincsIndex} = await sign(
+		const certifiedMessages = await sign(
 			[
 				{
-					additionalData: `${namespace}:AGSEPKIIssuanceHistory`,
+					additionalData: `${namespace}:publicKeyCertificateHistory`,
+					algorithm: algorithms.issuanceHistory,
 					message: await serialize(
 						AGSEPKIIssuanceHistory,
 						issuanceHistory
 					)
-				}
-			].concat(
-				await Promise.all(
-					csrs.map(async csr => ({
-						additionalData: `${namespace}:${csr.username}`,
+				},
+				...(await Promise.all(
+					csrDataObjects.map(async csrData => ({
+						additionalData: `${namespace}:users/${csrData.username}/publicKeyCertificateRequest`,
+						algorithm: algorithms.certificates,
 						message: await serialize(AGSEPKICert, {
-							agsePKICSR: csr,
+							csrData,
 							timestamp: issuanceHistory.timestamp
 						})
 					}))
-				)
-			),
+				))
+			],
 			testSign
 		);
 
-		const signedIssuanceHistory = potassium.concatMemory(
-			false,
-			new Uint32Array([rsaIndex]),
-			new Uint32Array([sphincsIndex]),
-			signedInputs[0]
+		const signedIssuanceHistory = await serialize(
+			AGSEPKICertified,
+			certifiedMessages[0]
 		);
 
 		for (const parentPath of [
@@ -386,7 +596,7 @@ export const certSign = async (projectId, standalone, namespace) => {
 
 		await setItem(
 			namespace,
-			'certificateHistory',
+			'publicKeyCertificateHistory',
 			BinaryProto,
 			signedIssuanceHistory
 		);
@@ -394,28 +604,18 @@ export const certSign = async (projectId, standalone, namespace) => {
 		await lastIssuanceTimestampRef.set(issuanceHistory.timestamp);
 
 		const plans = await Promise.all(
-			signedInputs.slice(1).map(async (cert, i) => {
-				const csr = csrs[i];
+			certifiedMessages.slice(1).map(async (cert, i) => {
+				const csrData = csrDataObjects[i];
 
-				const fullCert = potassium.concatMemory(
-					false,
-					new Uint32Array([rsaIndex]),
-					new Uint32Array([sphincsIndex]),
-					cert
-				);
+				const url = `users/${csrData.username}/publicKeyCertificate`;
 
-				const url = `users/${csr.username}/certificate`;
-
-				await setItem(namespace, url, BinaryProto, fullCert);
-
-				potassium.clearMemory(cert);
-				potassium.clearMemory(fullCert);
+				await setItem(namespace, url, AGSEPKICertified, cert);
 
 				return [
-					csr.username,
+					csrData.username,
 					await getItem(
 						namespace,
-						`users/${csr.username}/plan`,
+						`users/${csrData.username}/plan`,
 						CyphPlan
 					)
 						.then(o => o.plan)
@@ -440,11 +640,14 @@ export const certSign = async (projectId, standalone, namespace) => {
 				),
 				namespace
 			),
-			...csrs.map(async ({username}) => {
-				const url = `users/${username}/certificateRequest`;
+			...csrDataObjects.map(async ({username}) => {
+				const url = `users/${username}/publicKeyCertificateRequest`;
 
 				await removeItem(namespace, url);
-				await database.ref(`${pendingSignupsURL}/${username}`).remove();
+				await database
+					.ref(`${pendingSignupsURL}/${username}`)
+					.remove()
+					.catch(() => {});
 			})
 		]);
 
@@ -466,5 +669,10 @@ export const certSign = async (projectId, standalone, namespace) => {
 };
 
 if (isCLI) {
-	certSign(process.argv[2], true, process.argv[3]);
+	certSign(
+		process.argv[2],
+		true,
+		process.argv[3],
+		process.argv[4] === '--upgrade-certs'
+	);
 }

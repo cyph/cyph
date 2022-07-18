@@ -299,6 +299,10 @@ export class ThreadedPotassiumService
 			this.getPotassium(async o =>
 				o.signOpen(signed, publicKey, additionalData, decompress)
 			),
+		openRaw: async (signed, publicKey, additionalData, algorithm) =>
+			this.getPotassium(async o =>
+				o.signOpenRaw(signed, publicKey, additionalData, algorithm)
+			),
 		sign: async (message, privateKey, additionalData, compress) =>
 			this.getPotassium(async o =>
 				o.signSign(message, privateKey, additionalData, compress)

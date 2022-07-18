@@ -4,7 +4,11 @@ import {Injectable} from '@angular/core';
 import memoize from 'lodash-es/memoize';
 import {BehaviorSubject, firstValueFrom, Observable, Subscription} from 'rxjs';
 import {map, skip, switchMap} from 'rxjs/operators';
-import {ICurrentUser, publicSigningKeys, SecurityModels} from '../../account';
+import {
+	agsePublicSigningKeys,
+	ICurrentUser,
+	SecurityModels
+} from '../../account';
 import {BaseProvider} from '../../base-provider';
 import {IAsyncList} from '../../iasync-list';
 import {IAsyncMap} from '../../iasync-map';
@@ -17,6 +21,7 @@ import {MaybePromise} from '../../maybe-promise-type';
 import {
 	AccountUserPublicKeys,
 	AGSEPKICert,
+	AGSEPKICertified,
 	BinaryProto,
 	IAccountUserPublicKeys,
 	IDatabaseItem,
@@ -57,8 +62,8 @@ export class AccountDatabaseService extends BaseProvider {
 	/** @ignore */
 	private readonly agsePublicSigningKeys = this.envService.environment
 		.useProdSigningKeys ?
-		publicSigningKeys.prod :
-		publicSigningKeys.test;
+		agsePublicSigningKeys.prod :
+		agsePublicSigningKeys.test;
 
 	/** @ignore */
 	private readonly cache = {
@@ -200,6 +205,18 @@ export class AccountDatabaseService extends BaseProvider {
 					publicKey,
 					`${this.databaseService.namespace}:${additionalData}`,
 					decompress
+				),
+			openRaw: async (
+				signed: Uint8Array,
+				publicKey: Uint8Array,
+				additionalData: string,
+				algorithm: PotassiumData.SignAlgorithms
+			) : Promise<Uint8Array> =>
+				this.potassiumService.sign.openRaw(
+					signed,
+					publicKey,
+					`${this.databaseService.namespace}:${additionalData}`,
+					algorithm
 				),
 			sign: async (
 				message: Uint8Array,
@@ -1202,40 +1219,107 @@ export class AccountDatabaseService extends BaseProvider {
 			`AccountDatabaseService.getUserPublicKeys/${username}`,
 			AccountUserPublicKeys,
 			async () => {
-				const certBytes = await this.databaseService.getItem(
-					`users/${username}/certificate`,
-					BinaryProto
-				);
+				const certURL = `users/${username}/publicKeyCertificate`;
 
-				const dataView = this.potassiumService.toDataView(certBytes);
-				const rsaKeyIndex = dataView.getUint32(0, true);
-				const sphincsKeyIndex = dataView.getUint32(4, true);
-				const signed = this.potassiumService.toBytes(certBytes, 8);
+				const certData = (await this.databaseService.hasItem(certURL)) ?
+					await (async () => {
+						const cert = await this.databaseService.getItem(
+								certURL,
+								AGSEPKICertified
+							);
 
-				if (
-					rsaKeyIndex >= this.agsePublicSigningKeys.rsa.length ||
-					sphincsKeyIndex >= this.agsePublicSigningKeys.sphincs.length
-				) {
-					throw new Error(
-						'Invalid AGSE-PKI certificate: bad key index.'
-					);
-				}
+						const publicSigningKeys =
+							this.agsePublicSigningKeys.get(cert.algorithm);
 
-				const cert = await deserialize(
-					AGSEPKICert,
-					await this.potassiumHelpers.sign.open(
-						signed,
-						await this.potassiumService.sign.importPublicKeys(
-							PotassiumData.SignAlgorithms.V1,
-							this.agsePublicSigningKeys.rsa[rsaKeyIndex],
-							this.agsePublicSigningKeys.sphincs[sphincsKeyIndex]
-						),
-						username,
-						false
-					)
-				);
+						if (publicSigningKeys === undefined) {
+							throw new Error(
+								`No AGSE public keys found for algorithm ${
+									PotassiumData.SignAlgorithms[cert.algorithm]
+								}.`
+							);
+						}
 
-				if (cert.agsePKICSR.username !== username) {
+						if (
+							cert.publicKeys.classical >=
+								publicSigningKeys.classical.length ||
+							cert.publicKeys.postQuantum >=
+								publicSigningKeys.postQuantum.length
+						) {
+							throw new Error(
+								'Invalid AGSE-PKI certificate: bad key index.'
+							);
+						}
+
+						return deserialize(
+							AGSEPKICert,
+							await this.potassiumHelpers.sign.openRaw(
+								cert.data,
+								await this.potassiumService.sign.importPublicKeys(
+									cert.algorithm,
+									publicSigningKeys.classical[
+										cert.publicKeys.classical
+									],
+									publicSigningKeys.postQuantum[
+										cert.publicKeys.postQuantum
+									]
+								),
+								certURL,
+								cert.algorithm
+							)
+						);
+					})() :
+					/* TODO: Remove this after reissuing certificates */
+					await (async () => {
+						const certBytes = await this.databaseService.getItem(
+								`users/${username}/certificate`,
+								BinaryProto
+							);
+
+						const dataView =
+							this.potassiumService.toDataView(certBytes);
+						const rsaKeyIndex = dataView.getUint32(0, true);
+						const sphincsKeyIndex = dataView.getUint32(4, true);
+						const signed = this.potassiumService.toBytes(
+								certBytes,
+								8
+							);
+
+						const publicSigningKeys = {
+								rsa:
+									this.agsePublicSigningKeys.get(
+										PotassiumData.SignAlgorithms.V1
+									)?.classical ?? [],
+								sphincs:
+									this.agsePublicSigningKeys.get(
+										PotassiumData.SignAlgorithms.V1
+									)?.postQuantum ?? []
+							};
+
+						if (
+							rsaKeyIndex >= publicSigningKeys.rsa.length ||
+							sphincsKeyIndex >= publicSigningKeys.sphincs.length
+						) {
+							throw new Error(
+								'Invalid AGSE-PKI certificate: bad key index.'
+							);
+						}
+
+						return deserialize(
+							AGSEPKICert,
+							await this.potassiumHelpers.sign.openRaw(
+								signed,
+								await this.potassiumService.sign.importPublicKeys(
+									PotassiumData.SignAlgorithms.V1,
+									publicSigningKeys.rsa[rsaKeyIndex],
+									publicSigningKeys.sphincs[sphincsKeyIndex]
+								),
+								username,
+								PotassiumData.SignAlgorithms.V1
+							)
+						);
+					})();
+
+				if (certData.csrData.username !== username) {
 					throw new Error(
 						'Invalid AGSE-PKI certificate: bad username.'
 					);
@@ -1252,11 +1336,11 @@ export class AccountDatabaseService extends BaseProvider {
 							encryptionURL,
 							BinaryProto
 						),
-						cert.agsePKICSR.publicSigningKey,
+						certData.csrData.publicSigningKey,
 						encryptionURL,
 						true
 					),
-					signing: cert.agsePKICSR.publicSigningKey
+					signing: certData.csrData.publicSigningKey
 				};
 			}
 		);

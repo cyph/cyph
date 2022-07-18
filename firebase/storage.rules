@@ -72,6 +72,10 @@ service firebase.storage {
 
 			// match /pseudoRelationships/{hash} {}
 
+			match /publicKeyCertificateHistory/{hash} {
+				allow read, write: if false;
+			}
+
 			// match /reservedUsernames/{hash} {}
 
 			match /users/{user} {
@@ -330,6 +334,13 @@ service firebase.storage {
 				match /publicEncryptionKey/{hash} {
 					allow read;
 				}
+
+				match /publicKeyCertificate/{hash} {
+					allow read;
+					allow write: if false;
+				}
+
+				// match /publicKeyCertificateRequest/{hash} {}
 
 				match /publicPostList/{postID}/{hash} {
 					allow read;

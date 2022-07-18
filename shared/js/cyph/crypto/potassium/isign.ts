@@ -41,6 +41,14 @@ export interface ISign {
 		decompressByDefault?: boolean
 	) : Promise<Uint8Array>;
 
+	/** Opens raw combined signature with no included cryptographic agility metadata. */
+	openRaw (
+		signed: Uint8Array | string,
+		publicKey: Uint8Array | IPublicKeyring,
+		additionalData: Uint8Array | string | undefined,
+		algorithm: PotassiumData.SignAlgorithms
+	) : Promise<Uint8Array>;
+
 	/** Signs message and returns it combined with signature. */
 	sign (
 		message: Uint8Array | string,

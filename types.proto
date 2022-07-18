@@ -479,14 +479,44 @@ enum AccountUserTypes {
 /** AGSE-PKI certificate. */
 message AGSEPKICert {
 	/** @see AccountUserPublicKeys.signing */
-	required AGSEPKICSR agsePKICSR = 1;
+	required AGSEPKICSRData csrData = 1;
 
 	/** Timestamp of certificate issuance. */
 	required double timestamp = 2;
 }
 
+/** AGSE-PKI certified data container. */
+message AGSEPKICertified {
+	/** AGSE public keys to use for signature validation. */
+	message PublicSigningKeys {
+		/** Classical signing key index. */
+		required uint32 classical = 1;
+
+		/** Post-quantum signing key index. */
+		required uint32 postQuantum = 2;
+	}
+
+	/** @see PotassiumData.SignAlgorithms */
+	required PotassiumData.SignAlgorithms algorithm = 1;
+
+	/** Signed data (raw combined signature). */
+	required bytes data = 2;
+
+	/** @see PublicSigningKeys */
+	required PublicSigningKeys publicKeys = 3;
+}
+
 /** AGSE-PKI certificate signing request. */
 message AGSEPKICSR {
+	/** @see PotassiumData.SignAlgorithms */
+	required PotassiumData.SignAlgorithms algorithm = 1;
+
+	/** Signed AGSEPKICSRData. */
+	required bytes data = 2;
+}
+
+/** AGSE-PKI certificate signing request data. */
+message AGSEPKICSRData {
 	/** @see AccountUserPublicKeys.signing */
 	required bytes publicSigningKey = 1;
 

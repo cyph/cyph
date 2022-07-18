@@ -360,6 +360,22 @@
 				}
 			},
 
+			"publicKeyCertificateHistory": {
+				"data": {
+					".validate": "newData.isString()"
+				},
+				"hash": {
+					".validate": "newData.isString()"
+				},
+				"timestamp": {
+					".validate": "newData.val() === now"
+				}
+			},
+
+			"publicKeyCertificateHistoryTimestamp": {
+				".validate": "newData.isNumber()"
+			},
+
 			"reservedUsernames": {
 				"$reservedUsername": {
 					".validate": "newData.val() === '' || newData.val() === '.'"
@@ -1576,6 +1592,33 @@
 					"publicEncryptionKey": {
 						".read": true,
 
+						"data": {
+							".validate": "newData.isString()"
+						},
+						"hash": {
+							".validate": "newData.isString()"
+						},
+						"timestamp": {
+							".validate": "newData.val() === now"
+						}
+					},
+
+					"publicKeyCertificate": {
+						".read": true,
+						".write": false,
+
+						"data": {
+							".validate": "newData.isString()"
+						},
+						"hash": {
+							".validate": "newData.isString()"
+						},
+						"timestamp": {
+							".validate": "newData.val() === now"
+						}
+					},
+
+					"publicKeyCertificateRequest": {
 						"data": {
 							".validate": "newData.isString()"
 						},

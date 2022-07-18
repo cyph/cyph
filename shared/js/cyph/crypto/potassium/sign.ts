@@ -306,6 +306,66 @@ export class Sign implements ISign {
 	}
 
 	/** @inheritDoc */
+	public async openRaw (
+		signed: Uint8Array | string,
+		publicKey: Uint8Array | IPublicKeyring,
+		additionalData: Uint8Array | string = new Uint8Array(0),
+		algorithm: PotassiumData.SignAlgorithms
+	) : Promise<Uint8Array> {
+		publicKey = potassiumEncoding.openKeyring(
+			PotassiumData.SignAlgorithms,
+			publicKey,
+			algorithm
+		);
+
+		const potassiumPublicKey = await potassiumEncoding.deserialize(
+			{signAlgorithm: algorithm},
+			{publicKey}
+		);
+
+		switch (algorithm) {
+			case PotassiumData.SignAlgorithms.NativeV1:
+			case PotassiumData.SignAlgorithms.V1:
+				return superSphincsLegacy.open(
+					signed,
+					potassiumPublicKey.publicKey,
+					additionalData
+				);
+
+			case PotassiumData.SignAlgorithms.NativeV2:
+				return superDilithiumRSA.open(
+					signed,
+					potassiumPublicKey.publicKey,
+					additionalData
+				);
+
+			case PotassiumData.SignAlgorithms.V2:
+				return superDilithium.open(
+					signed,
+					potassiumPublicKey.publicKey,
+					additionalData
+				);
+
+			case PotassiumData.SignAlgorithms.NativeV2Hardened:
+				return superSphincsRSA.open(
+					signed,
+					potassiumPublicKey.publicKey,
+					additionalData
+				);
+
+			case PotassiumData.SignAlgorithms.V2Hardened:
+				return superSphincs.open(
+					signed,
+					potassiumPublicKey.publicKey,
+					additionalData
+				);
+
+			default:
+				throw new Error('Invalid Sign algorithm (openRaw).');
+		}
+	}
+
+	/** @inheritDoc */
 	public async sign (
 		message: Uint8Array | string,
 		privateKey: Uint8Array | IPrivateKeyring,

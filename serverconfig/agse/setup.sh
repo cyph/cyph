@@ -168,12 +168,15 @@ chmod 777 ${agseDir}/setup.sh /home/${username}/.bashrc
 su ${username} -c ' \
 	cd; \
 	npm install \
+		fast-sha512 \
 		level \
 		libsodium-wrappers-sumo \
 		node-fetch \
 		read \
 		safe-compare \
+		superdilithium \
 		supersphincs-legacy \
+		supersphincs \
 		validator \
 	; \
 '

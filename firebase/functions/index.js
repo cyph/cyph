@@ -159,7 +159,7 @@ exports.userPublicProfileSet = database
 	);
 
 exports.userRegisterConfirmed = database
-	.ref('/{namespace}/users/{user}/certificate')
+	.ref('/{namespace}/users/{user}/publicKeyCertificate')
 	.onCreate(async (...args) =>
 		(await importFunction('user-register-confirmed')).userRegisterConfirmed(
 			...args

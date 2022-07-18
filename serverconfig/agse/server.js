@@ -6,7 +6,9 @@ const level = require('level');
 const read = require('read');
 const safeCompare = require('safe-compare');
 const stream = require('stream');
+const superDilithium = require('superdilithium');
 const oldSuperSphincs = require('supersphincs-legacy/dist/old-api');
+const superSphincs = require('supersphincs');
 const validator = require('validator');
 
 (async () => {
@@ -18,6 +20,18 @@ const validator = require('validator');
 	};
 
 	const db = level('keys');
+
+	const algorithms = [
+		/* PotassiumData.SignAlgorithms.V1 */ 2,
+		/* PotassiumData.SignAlgorithms.V2 */ 5,
+		/* PotassiumData.SignAlgorithms.V2Hardened */ 6
+	];
+
+	const algorithmImplementations = {
+		/* PotassiumData.SignAlgorithms.V1 */ 2: oldSuperSphincs,
+		/* PotassiumData.SignAlgorithms.V2 */ 5: superDilithium,
+		/* PotassiumData.SignAlgorithms.V2Hardened */ 6: superSphincs
+	};
 
 	const askQuestion = async (prompt, silent) =>
 		new Promise((resolve, reject) =>
@@ -91,22 +105,31 @@ const validator = require('validator');
 					.fill(0)
 					.map(async (_, i) =>
 						Promise.all(
-							['classical', 'postQuantum'].map(
-								async keyType =>
-									new Promise((resolve, reject) =>
-										db.get(
-											keyType + i.toString(),
-											(err, val) => {
-												if (err) {
-													console.log(err);
-													reject(err);
-												}
-												else {
-													resolve(val);
-												}
-											}
-										)
+							['classical', 'postQuantum'].map(async subkeyType =>
+								Object.fromEntries(
+									await Promise.all(
+										algorithms.map(async algorithm => [
+											algorithm,
+											await new Promise(
+												(resolve, reject) =>
+													db.get(
+														`${algorithm}_${subkeyType}_${i.toString()}`,
+														(err, val) => {
+															if (err) {
+																console.log(
+																	err
+																);
+																reject(err);
+															}
+															else {
+																resolve(val);
+															}
+														}
+													)
+											)
+										])
 									)
+								)()
 							)
 						)
 					)
@@ -123,64 +146,87 @@ const validator = require('validator');
 				};
 
 				try {
-					if (!classicalKeyData) {
-						classicalKeyData = {
-							privateKey: keys.private.classical,
-							publicKeyString: (
-								await oldSuperSphincs.exportKeys({
-									publicKey: (
-										await oldSuperSphincs.importKeys(
-											keys,
-											classicalPassword
-										)
-									).publicKey
-								})
-							).public.classical
-						};
+					if (classicalKeyData === undefined) {
+						classicalKeyData = Object.fromEntries(
+							algorithms.map(algorithm => ({
+								privateKey: keys.private.classical[algorithm],
+								publicKeyString: (
+									await algorithmImplementations[
+										algorithm
+									].exportKeys({
+										publicKey: (
+											await algorithmImplementations[
+												algorithm
+											].importKeys(
+												keys,
+												classicalPassword
+											)
+										).publicKey
+									})
+								).public.classical[algorithm]
+							}))
+						);
 					}
 				}
 				catch (_) {}
 
 				try {
-					if (!postQuantumKeyData) {
-						postQuantumKeyData = {
-							privateKey: keys.private.postQuantum,
-							publicKeyString: (
-								await oldSuperSphincs.exportKeys({
-									publicKey: (
-										await oldSuperSphincs.importKeys(
-											keys,
-											postQuantumPassword
-										)
-									).publicKey
-								})
-							).public.postQuantum
-						};
+					if (postQuantumKeyData === undefined) {
+						postQuantumKeyData = Object.fromEntries(
+							algorithms.map(algorithm => ({
+								privateKey: keys.private.postQuantum[algorithm],
+								publicKeyString: (
+									await algorithmImplementations[
+										algorithm
+									].exportKeys({
+										publicKey: (
+											await algorithmImplementations[
+												algorithm
+											].importKeys(
+												keys,
+												postQuantumPassword
+											)
+										).publicKey
+									})
+								).public.postQuantum[algorithm]
+							}))
+						);
 					}
 				}
 				catch (_) {}
 			}
 
-			if (!classicalKeyData || !postQuantumKeyData) {
+			if (
+				classicalKeyData === undefined ||
+				postQuantumKeyData === undefined
+			) {
 				throw new Error('Invalid password; please try again.');
 			}
 
-			keyData = {
-				classicalKeyString: classicalKeyData.publicKeyString,
-				keyPair: await oldSuperSphincs.importKeys(
-					{
-						private: {
-							classical: classicalKeyData.privateKey,
-							postQuantum: postQuantumKeyData.privateKey
+			keyData = Object.fromEntries(
+				algorithms.map(algorithm => ({
+					classicalKeyString:
+						classicalKeyData[algorithm].publicKeyString,
+					keyPair: await algorithmImplementations[
+						algorithm
+					].importKeys(
+						{
+							private: {
+								classical:
+									classicalKeyData[algorithm].privateKey,
+								postQuantum:
+									postQuantumKeyData[algorithm].privateKey
+							}
+						},
+						{
+							classical: classicalPassword,
+							postQuantum: postQuantumPassword
 						}
-					},
-					{
-						classical: classicalPassword,
-						postQuantum: postQuantumPassword
-					}
-				),
-				postQuantumKeyString: postQuantumKeyData.publicKeyString
-			};
+					),
+					postQuantumKeyString:
+						postQuantumKeyData[algorithm].publicKeyString
+				}))
+			);
 		}
 		catch (err) {
 			console.log(err);
@@ -199,7 +245,7 @@ const validator = require('validator');
 
 		const numChunks = Math.ceil(numBytes / chunkSize);
 
-		const macAddress = message.slice(16, 33).toString();
+		const macAddress = message.subarray(16, 33).toString();
 
 		if (!incomingMessages[id]) {
 			incomingMessages[id] = {
@@ -267,12 +313,12 @@ const validator = require('validator');
 		}
 
 		const signatures = await Promise.all(
-			inputs.map(async ({additionalData, message}) =>
-				oldSuperSphincs.signDetachedBase64(
+			inputs.map(async ({additionalData, algorithm, message}) =>
+				algorithmImplementations[algorithm].signDetachedBase64(
 					message.isBinaryHash || message.isUint8Array ?
 						Buffer.from(message.data, 'base64') :
 						message,
-					keyData.keyPair.privateKey,
+					keyData[algorithm].keyPair.privateKey,
 					additionalData.none ?
 						undefined :
 					additionalData.isUint8Array ?
@@ -281,7 +327,14 @@ const validator = require('validator');
 					message.isBinaryHash
 				)
 			)
-		);
+		).catch(err => {
+			console.error(err);
+		});
+
+		if (signatures === undefined) {
+			console.log('Failed to generate signatures.');
+			return;
+		}
 
 		console.log('Signatures generated.');
 
@@ -300,8 +353,20 @@ const validator = require('validator');
 		const client = dgram.createSocket('udp4');
 		const signatureBytes = Buffer.from(
 			JSON.stringify({
-				classical: keyData.classicalKeyString,
-				postQuantum: keyData.postQuantumKeyString,
+				publicKeys: {
+					classical: Object.fromEntries(
+						Object.entries(keyData).map(([algorithm, o]) => [
+							algorithm,
+							o.classicalKeyString
+						])
+					),
+					postQuantum: Object.fromEntries(
+						Object.entries(keyData).map(([algorithm, o]) => [
+							algorithm,
+							o.postQuantumKeyString
+						])
+					)
+				},
 				signatures
 			})
 		);
@@ -312,7 +377,7 @@ const validator = require('validator');
 					Buffer.from(
 						new Uint32Array([id, signatureBytes.length, i]).buffer
 					),
-					signatureBytes.slice(
+					signatureBytes.subarray(
 						i,
 						Math.min(i + chunkSize, signatureBytes.length)
 					)

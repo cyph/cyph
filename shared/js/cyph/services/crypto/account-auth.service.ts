@@ -12,6 +12,7 @@ import {
 	AccountUserProfileExtra,
 	AccountUserTypes,
 	AGSEPKICSR,
+	AGSEPKICSRData,
 	BinaryProto,
 	BooleanProto,
 	IAccountLoginData,
@@ -19,6 +20,7 @@ import {
 	IAccountUserProfile,
 	IAccountUserProfileExtra,
 	IAGSEPKICSR,
+	IAGSEPKICSRData,
 	IKeyPair,
 	KeyPair,
 	NumberProto,
@@ -1061,9 +1063,9 @@ export class AccountAuthService extends BaseProvider {
 				),
 				pseudoAccount ?
 					new Uint8Array(0) :
-					this.setItem<IAGSEPKICSR>(
-						`users/${username}/certificateRequest`,
-						AGSEPKICSR,
+					this.setItem<IAGSEPKICSRData>(
+						`users/${username}/publicKeyCertificateRequest`,
+						AGSEPKICSRData,
 						{
 							publicSigningKey: signingKeyPair.publicKey,
 							username
@@ -1072,7 +1074,11 @@ export class AccountAuthService extends BaseProvider {
 						true,
 						undefined,
 						true
-					),
+					).then(async data => serialize<IAGSEPKICSR>(AGSEPKICSR, {
+							algorithm: await this.potassiumService.sign
+									.currentAlgorithm,
+							data
+						})),
 				this.setItem(
 					`users/${username}/pin/hash`,
 					BinaryProto,

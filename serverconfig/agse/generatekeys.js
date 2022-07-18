@@ -1,12 +1,15 @@
 #!/usr/bin/env node
 
 (async () => {
+	const fastSHA512 = require('fast-sha512');
 	const fs = require('fs');
 	const level = require('level');
 	const sodium = require('libsodium-wrappers-sumo');
 	const fetch = await import('node-fetch');
 	const os = require('os');
+	const superDilithium = require('superdilithium');
 	const oldSuperSphincs = require('supersphincs-legacy/dist/old-api');
+	const superSphincs = require('supersphincs');
 
 	const args = {
 		numActiveKeys: parseInt(process.argv[2], 10),
@@ -28,11 +31,15 @@
 
 	const db = level('keys');
 
-	const keyPairs = await Promise.all(
+	const signingKeyrings = await Promise.all(
 		!args.keyBackupPath ?
 			Array(args.numActiveKeys + args.numBackupKeys)
 				.fill(0)
-				.map(async () => oldSuperSphincs.keyPair()) :
+				.map(async () => ({
+					/* PotassiumData.SignAlgorithms.V1 */ 2: await oldSuperSphincs.keyPair(),
+					/* PotassiumData.SignAlgorithms.V2 */ 5: await superDilithium.keyPair(),
+					/* PotassiumData.SignAlgorithms.V2Hardened */ 6: await superSphincs.keyPair()
+				})) :
 			JSON.parse(
 				sodium.crypto_secretbox_open_easy(
 					sodium.from_base64(
@@ -50,69 +57,127 @@
 					),
 					'text'
 				)
-			).map(async combinedKeyString => oldSuperSphincs.importKeys(
-					{
-						private: {
-							combined: combinedKeyString
-						}
-					},
-					args.backupPasswords.aes
-				))
+			)
+				.map(o =>
+					typeof o === 'string' ?
+						{/* PotassiumData.SignAlgorithms.V1 */ 2: o} :
+						o
+				)
+				.map(async o => ({
+					/* PotassiumData.SignAlgorithms.V1 */ 2:
+						o[2] !== undefined ? await oldSuperSphincs.importKeys(
+								{
+									private: {
+										combined: o[2]
+									}
+								},
+								args.backupPasswords.aes
+							) : await oldSuperSphincs.keyPair(),
+					/* PotassiumData.SignAlgorithms.V2 */ 5:
+						o[5] !== undefined ? await superDilithium.importKeys(
+								{
+									private: {
+										combined: o[5]
+									}
+								},
+								args.backupPasswords.aes
+							) : await superDilithium.keyPair(),
+					/* PotassiumData.SignAlgorithms.V2Hardened */ 6:
+						o[6] !== undefined ? await superSphincs.importKeys(
+								{
+									private: {
+										combined: o[6]
+									}
+								},
+								args.backupPasswords.aes
+							) : await superSphincs.keyPair()
+				}))
 	);
 
+	const exportKeys = async (keyring, password) => ({
+		/* PotassiumData.SignAlgorithms.V1 */ 2: await oldSuperSphincs.exportKeys(
+			keyring[2],
+			password
+		),
+		/* PotassiumData.SignAlgorithms.V2 */ 5: await superDilithium.exportKeys(
+			keyring[5],
+			password
+		),
+		/* PotassiumData.SignAlgorithms.V2Hardened */ 6: await superSphincs.exportKeys(
+			keyring[6],
+			password
+		)
+	});
+
 	const keyData = await Promise.all(
-		keyPairs
+		signingKeyrings
 			.slice(0, args.numActiveKeys)
-			.map(async (keyPair, i) =>
-				oldSuperSphincs.exportKeys(keyPair, args.passwords[i])
-			)
+			.map(async (keyring, i) => exportKeys(keyring, args.passwords[i]))
 	);
 
 	const backupKeyData = await Promise.all(
-		keyPairs.map(async keyPair =>
-			oldSuperSphincs.exportKeys(keyPair, args.backupPasswords.aes)
+		signingKeyrings.map(async keyring =>
+			exportKeys(keyring, args.backupPasswords.aes)
 		)
 	);
 
-	for (const keyPair of keyPairs) {
+	for (const keyPair of signingKeyrings.flatMap(o => Object.values(o))) {
 		Buffer.from(keyPair.privateKey.buffer).fill(0);
 		Buffer.from(keyPair.publicKey.buffer).fill(0);
 	}
 
-	const publicKeys = JSON.stringify({
-		classical: backupKeyData.map(o => o.public.classical),
-		postQuantum: backupKeyData.map(o => o.public.postQuantum)
-	});
+	const publicKeys = JSON.stringify(
+		Object.fromEntries(
+			Object.keys(signingKeyrings[0]).map(algorithm => [
+				algorithm,
+				{
+					classical: backupKeyData.map(
+						o => o[algorithm].public.classical
+					),
+					postQuantum: backupKeyData.map(
+						o => o[algorithm].public.postQuantum
+					)
+				}
+			])
+		)
+	);
 
-	const publicKeyHash = (await oldSuperSphincs.hash(publicKeys)).hex;
+	const publicKeyHash = (await fastSHA512.hash(publicKeys)).hex;
 
-	for (const keyType of ['classical', 'postQuantum']) {
-		for (let i = 0; i < args.numActiveKeys; ++i) {
-			await new Promise((resolve, reject) =>
-				db.put(
-					keyType + i.toString(),
-					keyData[i].private[keyType],
-					err => {
-						if (err) {
-							reject(err);
+	for (const [i, o] of keyData.entries()) {
+		for (const algorithm of Object.keys(keys)) {
+			for (const subkeyType of ['classical', 'postQuantum']) {
+				await new Promise((resolve, reject) =>
+					db.put(
+						`${algorithm}_${subkeyType}_${i.toString()}`,
+						o[algorithm].private[subkeyType],
+						err => {
+							if (err) {
+								reject(err);
+							}
+							else {
+								resolve();
+							}
 						}
-						else {
-							resolve();
-						}
-					}
-				)
-			);
+					)
+				);
+			}
 		}
-	}
-
-	if (args.keyBackupPath) {
-		return;
 	}
 
 	const backupKeys = sodium
 		.crypto_secretbox_easy(
 			sodium.from_string(
-				JSON.stringify(backupKeyData.map(o => o.private.combined))
+				JSON.stringify(
+					backupKeyData.map(o =>
+						Object.fromEntries(
+							Object.keys(signingKeyrings[0]).map(algorithm => [
+								algorithm,
+								o[algorithm].private.combined
+							])
+						)
+					)
+				)
 			),
 			new Uint8Array(sodium.crypto_secretbox_NONCEBYTES),
 			sodium.crypto_pwhash_scryptsalsa208sha256(

@@ -14,8 +14,15 @@ import os from 'os';
 import * as brotli from './brotli.js';
 import {sendMessageInternal} from './messaging-internal.js';
 
-const {BinaryProto, StringProto} = proto;
-const {deserialize, retryUntilSuccessful, serialize, sleep, uuid} = util;
+const {StringProto} = proto;
+const {
+	deserialize,
+	filterUndefined,
+	retryUntilSuccessful,
+	serialize,
+	sleep,
+	uuid
+} = util;
 
 /** Max number of bytes to upload to non-blob storage. */
 const nonBlobStorageLimit = 8192;
@@ -86,6 +93,27 @@ export const initDatabaseService = memoize((config, isCloudFunction) => {
 		getHash,
 		messaging,
 		processURL,
+		async getAllUsers ()  {
+			const users = [];
+
+			let pageToken;
+			do {
+				const listUsersResult = await auth.listUsers(
+					undefined,
+					pageToken
+				);
+
+				users.push(
+					...filterUndefined(
+						listUsersResult.users.map(o => o.email?.split('@')[0])
+					)
+				);
+
+				pageToken = listUsersResult.pageToken;
+			} while (pageToken);
+
+			return users;
+		},
 		async getArchive (archiveName, timestamp)  {
 			if (!archiveStorage) {
 				throw new Error('Archive storage bucket is production-only.');
