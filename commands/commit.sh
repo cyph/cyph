@@ -89,7 +89,7 @@ find shared/assets/img -type f \( -name '*.jpg' -or -name '*.png' \) -exec bash 
 ' \;
 
 cd shared/proto
-for d in $(ls | grep -vP '^(index.proto)$') ; do
+for d in $(ls | grep -vP '^(bundles|index.proto)$') ; do
 	cd "${d}"
 	echo -e 'syntax = "proto3";\n\n' > index.proto
 	ls *.proto | \

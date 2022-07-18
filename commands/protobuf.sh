@@ -6,21 +6,12 @@ cd $(cd "$(dirname "$0")" ; pwd)/..
 
 rm -rf shared/js/proto 2> /dev/null
 
-for f in $(find shared/proto -type f -name '*.proto') ; do
+for f in $(ls shared/proto/bundles/*.proto) ; do
 	outputDirectory="shared/js/proto/$(
-		echo "${f}" | perl -pe 's/shared\/proto\/(.*?).proto/\1/g'
+		echo "${f}" | perl -pe 's/shared\/proto\/bundles\/(.*?).proto/\1/g'
 	)"
 
 	mkdir -p "${outputDirectory}"
-
-	if echo "${outputDirectory}" | grep -P '/index$' &> /dev/null ; then
-		rmdir "${outputDirectory}"
-		cat "${f}" | \
-			perl -pe 's/import "(.*?)(\/index)?.proto";/export * from '"'"'.\/\1'"'"';/g' \
-		> "${outputDirectory}.ts"
-	
-		continue
-	fi
 
 	pbjs -t static-module "${f}" -o "${outputDirectory}/index.js"
 	sed -i 's|null|undefined|g' "${outputDirectory}/index.js"
@@ -46,3 +37,5 @@ for f in $(find shared/proto -type f -name '*.proto') ; do
 	>> "${outputDirectory}/index.node.js"
 	echo 'export default module.exports;' >> "${outputDirectory}/index.node.js"
 done
+
+cp -f shared/js/proto/main/* shared/js/proto/
