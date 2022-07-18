@@ -1,0 +1,10 @@
+syntax = "proto3";
+
+
+/** Account types for different Cyph-based applications. */
+enum AccountUserTypes {
+	Standard = 0;
+	Org = 1;
+	TelehealthAdmin = 2;
+	TelehealthDoctor = 3;
+}

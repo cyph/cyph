@@ -1,0 +1,11 @@
+syntax = "proto3";
+
+
+/** Reference to a social networking post. */
+message AccountPostReference {
+	/** Post author's username. */
+	required string author = 1;
+
+	/** Post ID. */
+	required string id = 2;
+}

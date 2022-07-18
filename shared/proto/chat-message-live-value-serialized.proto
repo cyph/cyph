@@ -1,0 +1,24 @@
+syntax = "proto3";
+
+import "calendar-invite.proto";
+import "file-transfer.proto";
+import "form.proto";
+
+
+/** @see IChatMessageLiveValue */
+message ChatMessageLiveValueSerialized {
+	/** @see ChatMessageValue.calendarInvite */
+	CalendarInvite calendarInvite = 1;
+
+	/** @see ChatMessageValue.fileTransfer */
+	FileTransfer fileTransfer = 2;
+
+	/** @see ChatMessageValue.form */
+	Form form = 3;
+
+	/** @see ChatMessageValue.quill */
+	bytes quill = 4;
+
+	/** @see ChatMessageValue.text */
+	string text = 5;
+}

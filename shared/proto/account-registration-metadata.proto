@@ -1,0 +1,28 @@
+syntax = "proto3";
+
+import "email-message.proto";
+
+
+/** Metadata captured during registration. */
+message AccountRegistrationMetadata {
+	/** Metadata from email compose attempt. */
+	message InitialEmailCompose {
+		/** Draft ID. */
+		string draftID = 1;
+
+		/** @see EmailMessage.from */
+		EmailMessage.Contact from = 2;
+
+		/** Indicates whether this draft is still pending. */
+		bool pending = 3;
+
+		/** Redirect URL. */
+		string redirectURL = 4;
+	}
+
+	/** @see InitialEmailCompose */
+	InitialEmailCompose initialEmailCompose = 1;
+
+	/** Route that user was redirected to /register from, if applicable. */
+	repeated string initialRoute = 2;
+}

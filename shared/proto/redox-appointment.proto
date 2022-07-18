@@ -1,0 +1,37 @@
+syntax = "proto3";
+
+import "redox-types.proto";
+
+
+/** @see https://developer.redoxengine.com/data-models/Scheduling.html#New */
+message RedoxAppointment {
+	/** Patient data. */
+	message PatientType {
+		/** @see RedoxPatient.Demographics */
+		RedoxTypes.Patient.Demographics Demographics = 1;
+
+		/** @see RedoxPatient.Identifiers */
+		repeated RedoxTypes.Identifier Identifiers = 2;
+
+		/** @see RedoxPatient.Notes */
+		repeated string Notes = 3;
+	}
+
+	/** @see RedoxTypes.AppointmentInfo */
+	repeated RedoxTypes.AppointmentInfo AppointmentInfo = 1;
+
+	/** @see PatientType */
+	PatientType Patient = 2;
+
+	/** @see RedoxTypes.Visit */
+	repeated RedoxTypes.Visit Visit = 3;
+}
+
+/**
+ * @see https://developer.redoxengine.com/data-models/ClinicalSummary.html#PatientQueryResponse
+ * TODO: Finish this.
+ */
+message RedoxClinicalSummary {
+	/** List of patient's allergies. */
+	repeated RedoxTypes.Allergy allergies = 1;
+}

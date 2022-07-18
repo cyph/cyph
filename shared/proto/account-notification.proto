@@ -1,0 +1,56 @@
+syntax = "proto3";
+
+import "account-file-record.proto";
+import "notification-types.proto";
+
+
+/** Account notification. */
+message AccountNotification {
+	/** Notification action data. */
+	message AccountNotificationAction {
+		/** Callback function name. */
+		string callback = 1;
+
+		/** Icon name. */
+		string icon = 2;
+
+		/** Whether or not the action was intended to open the app in the foreground. */
+		bool foreground = 3;
+
+		/** Human-readable action title. */
+		string title = 4;
+	}
+
+	/** List of associated actions. */
+	repeated AccountNotificationAction actions = 1;
+
+	/** Call metadata, if applicable. */
+	string callMetadata = 2;
+
+	/** ID of event associated with notification. */
+	string eventID = 3;
+
+	/** @see AccountFileRecord.RecordTypes */
+	AccountFileRecord.RecordTypes fileType = 4;
+
+	/** Indicates whether or not the notification is read. */
+	required bool isRead = 5;
+
+	/** ID of messaging session, if applicable. */
+	string messagesID = 11;
+
+	/** Notification text. */
+	required string text = 6;
+
+	/** Longer-form notification text. */
+	required string textDetail = 7;
+
+	/** Timestamp. */
+	required double timestamp = 8;
+
+	/** @see NotificationTypes */
+	required NotificationTypes type = 9;
+
+	/** Sender username, if applicable. */
+	string username = 10;
+}

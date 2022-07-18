@@ -1,0 +1,11 @@
+syntax = "proto3";
+
+
+/** ChannelService message. */
+message ChannelMessage {
+	/** Cyphertext. */
+	required bytes cyphertext = 1;
+
+	/** User who sent the message. */
+	required string author = 2;
+}

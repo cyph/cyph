@@ -1,0 +1,22 @@
+syntax = "proto3";
+
+import "chat-message-predecessor.proto";
+
+
+/** Contains an actual chat text message. */
+message SessionText {
+	/** @see ChatMessage.hash */
+	required bytes hash = 5;
+
+	/** @see ChatMessage.key */
+	required bytes key = 6;
+
+	/** @see ChatMessage.predecessors */
+	repeated ChatMessagePredecessor predecessors = 8;
+
+	/** Indicates whether entire chat should be self-destructed (only valid for first message). */
+	bool selfDestructChat = 2;
+
+	/** Self-destruction timeout. */
+	uint32 selfDestructTimeout = 3;
+}

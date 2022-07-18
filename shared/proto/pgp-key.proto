@@ -1,0 +1,17 @@
+syntax = "proto3";
+
+import "key-pair.proto";
+import "pgp-metadata.proto";
+
+
+/** A PGP key. */
+message PGPKey {
+	/** @see PGPMetadata */
+	required PGPMetadata pgpMetadata = 1;
+
+	/** Value. */
+	oneof value {
+		bytes publicKey = 2;
+		KeyPair keyPair = 3;
+	}
+}

@@ -1,0 +1,13 @@
+syntax = "proto3";
+
+
+/** Cyph plan types. */
+enum CyphPlanTypes {
+	Free = 0;
+	Business = 6;
+	FoundersAndFriends = 1;
+	Platinum = 2;
+	Premium = 3;
+	Supporter = 4;
+	Telehealth = 5;
+}

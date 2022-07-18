@@ -1,0 +1,17 @@
+syntax = "proto3";
+
+
+/** Shareable reference to a file record. */
+message AccountFileReference {
+	/** File record ID. */
+	required string id = 1;
+
+	/** Symmetric key used for encrypting file. */
+	required bytes key = 2;
+
+	/** Miscellaneous metadata about this file, specific to the current user. */
+	string metadata = 4;
+
+	/** Username of owner. */
+	required string owner = 3;
+}

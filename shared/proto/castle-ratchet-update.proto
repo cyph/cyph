@@ -1,0 +1,16 @@
+syntax = "proto3";
+
+import "castle-ratchet-state.proto";
+
+
+/** CastleRatchetState update with assocated output. */
+message CastleRatchetUpdate {
+	/** Encrypted outgoing cyphertext. */
+	bytes cyphertext = 1;
+
+	/** Decrypted incoming plaintext. */
+	bytes plaintext = 2;
+
+	/** @see CastleRatchetState */
+	required CastleRatchetState ratchetState = 3;
+}

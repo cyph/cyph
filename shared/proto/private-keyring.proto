@@ -1,0 +1,22 @@
+syntax = "proto3";
+
+import "key-pair.proto";
+
+
+/** Private keyring. */
+message PrivateKeyring {
+	/** Map of Potassium.BoxAlgorithms values to key pairs. */
+	map<uint32, KeyPair> boxPrivateKeys = 1;
+
+	/** Map of Potassium.EphemeralKeyExchangeAlgorithms values to key pairs. */
+	map<uint32, KeyPair> ephemeralKeyExchangePrivateKeys = 2;
+
+	/** Map of Potassium.OneTimeAuthAlgorithms values to secret keys. */
+	map<uint32, bytes> oneTimeAuthPrivateKeys = 3;
+
+	/** Map of Potassium.SecretBoxAlgorithms values to secret keys. */
+	map<uint32, bytes> secretBoxPrivateKeys = 4;
+
+	/** Map of Potassium.SignAlgorithms values to key pairs. */
+	map<uint32, KeyPair> signPrivateKeys = 5;
+}

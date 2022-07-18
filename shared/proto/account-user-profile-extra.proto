@@ -1,0 +1,87 @@
+syntax = "proto3";
+
+import "form.proto";
+
+
+/** User public profile additional data. */
+message AccountUserProfileExtra {
+	/** Language skill. */
+	message Language {
+		/** Language name. */
+		string language = 1;
+
+		/** @see Proficiency */
+		Proficiency proficiency = 2;
+	}
+
+	/** PGP data. */
+	message PGP {
+		/** Keybase username. */
+		string keybaseUsername = 1;
+
+		/** Public key. */
+		bytes publicKey = 2;
+
+		/** A signed PGPVerification object. */
+		bytes publicKeyVerification = 3;
+	}
+
+	/** Any sort of vocational or educational position. */
+	message Position {
+		/** Extra information (e.g. position title or degree subject). */
+		string detail = 1;
+
+		/** End date timestamp. */
+		double endDate = 2;
+
+		/* Name of location/institution (e.g. SpaceX). */
+		string locationName = 3;
+
+		/* URL of location/institution (e.g. spacex.com). */
+		string locationURL = 4;
+
+		/** Start date timestamp. */
+		double startDate = 5;
+	}
+
+	/** Level of proficiency in a skill. */
+	enum Proficiency {
+		Basic = 0;
+		Intermediate = 1;
+		Fluent = 2;
+		Native = 3;
+	}
+
+	/** Physical address. */
+	string address = 1;
+
+	/** Educational history. */
+	repeated Position education = 2;
+
+	/** Forms. */
+	repeated Form forms = 10;
+
+	/** Gender. */
+	string gender = 3;
+
+	/** Insurance. */
+	repeated string insurance = 4;
+
+	/** Languages. */
+	repeated Language languages = 5;
+
+	/** NPI numbers. */
+	repeated string npis = 6;
+
+	/** Username of parent organization. */
+	string organization = 7;
+
+	/** @see PGP */
+	PGP pgp = 11;
+
+	/** Specialties. */
+	repeated string specialties = 8;
+
+	/** Work history. */
+	repeated Position work = 9;
+}

@@ -1,0 +1,29 @@
+syntax = "proto3";
+
+
+/** Represents a transferred file. */
+message FileTransfer {
+	/** Plaintext hash. */
+	bytes hash = 1;
+
+	/** Unique ID to represent this file transfer. */
+	required string id = 2;
+
+	/** Indicates whether file is being sent from this Cyph instance. */
+	bool isOutgoing = 4;
+
+	/** Symmetric key used for encrypting file over the wire. */
+	bytes key = 5;
+
+	/** Indicates whether file should be handled as multimedia. */
+	required bool media = 3;
+
+	/** MIME type. */
+	required string mediaType = 6;
+
+	/** File name. */
+	required string name = 7;
+
+	/** File size in bytes. */
+	required uint32 size = 8;
+}

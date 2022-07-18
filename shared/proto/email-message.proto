@@ -1,0 +1,46 @@
+syntax = "proto3";
+
+import "file-container.proto";
+
+
+/** Email message data. */
+message EmailMessage {
+	/** Email contact data for a user. */
+	message Contact {
+		/** Email address. */
+		required string email = 1;
+
+		/** Name. */
+		required string name = 2;
+
+		/** Username. */
+		string username = 3;
+
+		/** Indicates whether details have been verified. */
+		bool verified = 4;
+	}
+
+	/** Attachments. */
+	repeated FileContainer attachments = 1;
+
+	/** BCC email contacts. */
+	repeated Contact bcc = 2;
+
+	/** Sfdt-formatted message content. */
+	string body = 3;
+
+	/** CC email contacts. */
+	repeated Contact cc = 4;
+
+	/** Sender email contact. */
+	required Contact from = 5;
+
+	/** Subject. */
+	string subject = 6;
+
+	/** Timestamp. */
+	required double timestamp = 7;
+
+	/** Recipient email contacts. */
+	repeated Contact to = 8;
+}

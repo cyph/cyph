@@ -1,0 +1,17 @@
+syntax = "proto3";
+
+import "burner-group-member-initiator.proto";
+import "call-types.proto";
+
+
+/** Burner session init data. */
+message BurnerSession {
+	/** @see CallTypes */
+	CallTypes callType = 1;
+
+	/** @see BurnerGroupMemberInitiator */
+	repeated BurnerGroupMemberInitiator members = 2;
+
+	/** Encoded UTC hour and minute of meeting, used in session handshake. */
+	string timeString = 3;
+}

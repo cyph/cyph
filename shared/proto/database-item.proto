@@ -1,0 +1,14 @@
+syntax = "proto3";
+
+
+/** Database item metadata. */
+message DatabaseItem {
+	/** Item base64 data. */
+	string data = 1;
+
+	/** Item hash. */
+	required string hash = 2;
+
+	/** Timestamp. */
+	required double timestamp = 3;
+}

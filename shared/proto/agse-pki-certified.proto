@@ -1,0 +1,25 @@
+syntax = "proto3";
+
+import "potassium-data.proto";
+
+
+/** AGSE-PKI certified data container. */
+message AGSEPKICertified {
+	/** AGSE public keys to use for signature validation. */
+	message PublicSigningKeys {
+		/** Classical signing key index. */
+		required uint32 classical = 1;
+
+		/** Post-quantum signing key index. */
+		required uint32 postQuantum = 2;
+	}
+
+	/** @see PotassiumData.SignAlgorithms */
+	required PotassiumData.SignAlgorithms algorithm = 1;
+
+	/** Signed data (raw combined signature). */
+	required bytes data = 2;
+
+	/** @see PublicSigningKeys */
+	required PublicSigningKeys publicKeys = 3;
+}

@@ -1,0 +1,93 @@
+syntax = "proto3";
+
+import "combined-signature.proto";
+
+
+/** A Potassium data object. */
+message PotassiumData {
+	/** Potassium.Box algorithms. */
+	enum BoxAlgorithms {
+		None = 0;
+		NativeV1 = 1;
+		NativeV2 = 3;
+		V1 = 2;
+		V2 = 4;
+	}
+
+	/** Potassium.EphemeralKeyExchange algorithms. */
+	enum EphemeralKeyExchangeAlgorithms {
+		None = 0;
+		V1 = 1;
+		V2 = 2;
+	}
+
+	/** Potassium.OneTimeAuth algorithms. */
+	enum OneTimeAuthAlgorithms {
+		None = 0;
+		NativeV1 = 1;
+		V1 = 2;
+	}
+
+	/** Potassium.SecretBox algorithms. */
+	enum SecretBoxAlgorithms {
+		None = 0;
+		NativeV1 = 1;
+		V1 = 2;
+	}
+
+	/** Potassium.Sign algorithms. */
+	enum SignAlgorithms {
+		None = 0;
+		NativeV1 = 1;
+		NativeV2 = 3;
+		NativeV2Hardened = 4;
+		V1 = 2;
+		V2 = 5;
+		V2Hardened = 6;
+	}
+
+	/** Algorithm. */
+	oneof algorithm {
+		/** @see BoxAlgorithms */
+		BoxAlgorithms boxAlgorithm = 1;
+
+		/** @see EphemeralKeyExchangeAlgorithms */
+		EphemeralKeyExchangeAlgorithms ephemeralKeyExchangeAlgorithm = 2;
+
+		/** @see OneTimeAuthAlgorithms */
+		OneTimeAuthAlgorithms oneTimeAuthAlgorithm = 3;
+
+		/** @see SecretBoxAlgorithms */
+		SecretBoxAlgorithms secretBoxAlgorithm = 4;
+
+		/** @see SignAlgorithms */
+		SignAlgorithms signAlgorithm = 5;
+	}
+
+	/** Value. */
+	oneof value {
+		/** Cyphertext. */
+		bytes cyphertext = 6;
+
+		/** Symmetric key. */
+		bytes key = 7;
+
+		/** MAC. */
+		bytes mac = 8;
+
+		/** Private key. */
+		bytes privateKey = 9;
+
+		/** Public key. */
+		bytes publicKey = 10;
+
+		/** Key exchange secret. */
+		bytes secret = 11;
+
+		/** Signature. */
+		bytes signature = 12;
+
+		/** @see CombinedSignature */
+		CombinedSignature signed = 13;
+	}
+}

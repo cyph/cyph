@@ -1,0 +1,14 @@
+syntax = "proto3";
+
+
+/** File data container. */
+message FileContainer {
+	/** File data. */
+	required bytes data = 1;
+
+	/** File MIME type. */
+	required string mediaType = 2;
+
+	/** File name. */
+	required string name = 3;
+}

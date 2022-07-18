@@ -1,0 +1,14 @@
+syntax = "proto3";
+
+
+/** Augmented PAKE login data. */
+message AccountLoginData {
+	/** Previous secondary password. */
+	string oldSecondaryPassword = 3;
+
+	/** Randomly generated password for database authentication. */
+	required string secondaryPassword = 1;
+
+	/** Symmetric key for encrypting user data. */
+	required bytes symmetricKey = 2;
+}

@@ -1,0 +1,8 @@
+syntax = "proto3";
+
+
+/** Misc information about the state of a chat. */
+message SessionChatState {
+	/** Indicates whether this party is actively typing. */
+	required bool isTyping = 1;
+}

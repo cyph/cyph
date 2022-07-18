@@ -1,0 +1,31 @@
+syntax = "proto3";
+
+import "account-post-reference.proto";
+
+
+/** Social networking post. */
+message AccountPost {
+	/** Indicates post circle (public if unspecified). */
+	string circleID = 1;
+
+	/** Markdown post content. */
+	required string content = 2;
+
+	/** Indicates whether post is deleted. */
+	bool deleted = 3;
+
+	/** Post ID. */
+	string id = 4;
+
+	/** Image. */
+	bytes image = 5;
+
+	/** Timestamp of last edit (if applicable). */
+	double lastEditTimestamp = 6;
+
+	/** Reference to reposted post. */
+	AccountPostReference repost = 8;
+
+	/** Timestamp. */
+	required double timestamp = 7;
+}

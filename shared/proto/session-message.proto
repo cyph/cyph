@@ -1,0 +1,13 @@
+syntax = "proto3";
+
+import "session-message-data.proto";
+
+
+/** Message to be sent over a session, indicating some RPC event. */
+message SessionMessage {
+	/** Event name (e.g. "text"). */
+	required string event = 1;
+
+	/** Associated data (e.g. a user-facing chat message). */
+	required SessionMessageData data = 2;
+}

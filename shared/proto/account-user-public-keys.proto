@@ -1,0 +1,11 @@
+syntax = "proto3";
+
+
+/** AGSE-PKI certificate. */
+message AccountUserPublicKeys {
+	/** Potassium.Box public key. */
+	required bytes encryption = 1;
+
+	/** Potassium.Sign public key. */
+	required bytes signing = 2;
+}

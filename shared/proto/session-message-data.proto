@@ -1,0 +1,37 @@
+syntax = "proto3";
+
+import "session-chat-state.proto";
+import "session-command.proto";
+import "session-text-confirmation.proto";
+import "session-text.proto";
+
+
+/** Message data. */
+message SessionMessageData {
+	/** @see ChatMessage.authorID */
+	string authorID = 1;
+
+	/** Arbitrary bytes. */
+	bytes bytes = 4;
+
+	/** @see SessionChatState */
+	SessionChatState chatState = 6;
+
+	/** @see SessionCommand */
+	SessionCommand command = 7;
+
+	/** Unique ID. */
+	required string id = 2;
+
+	/** If applicable, ID of an isolated exchange of messages within a session. */
+	string sessionSubID = 8;
+
+	/** @see SessionText */
+	SessionText text = 9;
+
+	/** @see SessionTextConfirmation */
+	SessionTextConfirmation textConfirmation = 10;
+
+	/** Timestamp of this message. */
+	required double timestamp = 3;
+}

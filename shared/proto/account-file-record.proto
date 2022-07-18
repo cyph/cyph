@@ -1,0 +1,51 @@
+syntax = "proto3";
+
+
+/** Metadata of one file stored in an account. */
+message AccountFileRecord {
+	/** Possible file record types. */
+	enum RecordTypes {
+		Appointment = 0;
+		Doc = 2;
+		EhrApiKey = 5;
+		Email = 11;
+		File = 1;
+		Form = 3;
+		MessagingGroup = 8;
+		Note = 4;
+		Password = 9;
+		PGPKey = 10;
+		RedoxPatient = 6;
+		Wallet = 7;
+	}
+
+	/** File ID. */
+	required string id = 1;
+
+	/** File MIME type. */
+	required string mediaType = 2;
+
+	/** File name. */
+	required string name = 3;
+
+	/** Path of parent directory. */
+	string parentPath = 10;
+
+	/** Type of file record. */
+	required RecordTypes recordType = 4;
+
+	/** Reply-to email address (typically for anonymous shares). */
+	string replyToEmail = 8;
+
+	/** Reply-to name (typically for anonymous shares). */
+	string replyToName = 9;
+
+	/** Size in bytes. */
+	required double size = 5;
+
+	/** Timestamp of upload or last save. */
+	required double timestamp = 6;
+
+	/** Indicates whether this file was originally an anonymous share. */
+	bool wasAnonymousShare = 7;
+}

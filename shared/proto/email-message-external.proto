@@ -1,0 +1,32 @@
+syntax = "proto3";
+
+import "email-message.proto";
+import "file-container.proto";
+
+
+/** Email message data for external systems. */
+message EmailMessageExternal {
+	/** @see EmailMessage.attachments */
+	repeated FileContainer attachments = 1;
+
+	/** @see EmailMessage.bcc */
+	repeated EmailMessage.Contact bcc = 2;
+
+	/** @see EmailMessage.cc */
+	repeated EmailMessage.Contact cc = 3;
+
+	/** @see EmailMessage.from */
+	EmailMessage.Contact from = 4;
+
+	/** HTML body. */
+	string html = 5;
+
+	/** @see EmailMessage.subject */
+	string subject = 6;
+
+	/** Text body. */
+	string text = 7;
+
+	/** @see EmailMessage.to */
+	repeated EmailMessage.Contact to = 8;
+}

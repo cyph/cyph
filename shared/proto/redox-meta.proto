@@ -1,0 +1,60 @@
+syntax = "proto3";
+
+
+/** Redox message metadata. */
+message RedoxMeta {
+	/**
+	 * Record in Redox that corresponds to the communication sent from the source to Redox.
+	 * Included in messages from Redox.
+	 */
+	message RedoxMessage {
+		/** ID. */
+		string ID = 1;
+	}
+
+	/** Redox source or destination. */
+	message RedoxSource {
+		/** ID. */
+		required string ID = 1;
+
+		/** Name. */
+		string Name = 2;
+	}
+
+	/**
+	 * Record in Redox that corresponds to the communication sent from Redox to your destination.
+	 * Included in messages from Redox.
+	 */
+	message RedoxTransmission {
+		/** ID. */
+		string ID = 1;
+	}
+
+	/** e.g. Scheduling, Results */
+	required string DataModel = 1;
+
+	/** e.g. New, Update, Activate, Deactivate */
+	required string EventType = 2;
+
+	/** ISO 8601 timestamp. */
+	string EventDateTime = 3;
+
+	/** Indicates whether message was from a test environment. */
+	bool Test = 4;
+
+	/** Where the message originated. Included in messages from Redox. */
+	RedoxSource Source = 5;
+
+	/**
+	 * List of destinations to send your message to. All messages must have at least one
+	 * destination. Queries accept only one destination.
+	 * Required when sending data to Redox.
+	 */
+	repeated RedoxSource Destinations = 6;
+
+	/** @see RedoxMessage */
+	RedoxMessage Message = 7;
+
+	/** @see RedoxTransmission */
+	RedoxTransmission Transmission = 8;
+}

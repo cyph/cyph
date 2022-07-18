@@ -1,0 +1,25 @@
+syntax = "proto3";
+
+
+/** Account contact relationship metadata. */
+message AccountContactState {
+	/** Possible states. */
+	enum States {
+		None = 0;
+		Confirmed = 1;
+		IncomingRequest = 2;
+		OutgoingRequest = 3;
+	}
+
+	/** Optional email. */
+	string email = 2;
+
+	/** Indicates whether this contact is (or requesting to be) in the Inner Circle. */
+	bool innerCircle = 4;
+
+	/** Optional name. */
+	string name = 3;
+
+	/** @see States */
+	required States state = 1;
+}

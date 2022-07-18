@@ -1,0 +1,14 @@
+syntax = "proto3";
+
+
+/** AGSE-PKI history of previous issuances. */
+message AGSEPKIIssuanceHistory {
+	/** Public key hashes. */
+	map<string, bool> publicSigningKeyHashes = 1;
+
+	/** Timestamp. */
+	required double timestamp = 2;
+
+	/** Usernames. */
+	map<string, bool> usernames = 3;
+}

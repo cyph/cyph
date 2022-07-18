@@ -1,0 +1,114 @@
+syntax = "proto3";
+
+import "calendar-invite.proto";
+import "form.proto";
+
+
+/** Appointment. */
+message Appointment {
+	/** RSVP statuses. */
+	enum RSVP {
+		Maybe = 0;
+		No = 1;
+		Yes = 2;
+	}
+
+	/**
+	 * EHR data for the appointment.
+	 * TODO: Reconcile with Redox types.
+	 */
+	message EHR {
+		/**
+		 * An ID that can span several visits often related to the same issue -
+		 * pregnancy, surgeries, research study, etc.
+		 */
+		string accountNumber = 1;
+
+		/** ID of the attending provider. This ID is required for Inpatient Visits. */
+		string attendingProviderID = 2;
+
+		/** ID type of the ID for the attending provider. */
+		string attendingProviderIDType = 3;
+
+		/** Full name of the attending provider. */
+		string attendingProviderName = 4;
+
+		/**
+		 * Patient balance due for this visit. This field depends on whether or not the sending
+		 * system has billing functionality, and whether they calculate this field.
+		 */
+		double balance = 5;
+
+		/** Duration of the visit in minutes. */
+		double duration = 6;
+
+		/** Location of the visit. */
+		string location = 7;
+
+		/**
+		 * Type of location.
+		 * Examples: Clinic, Department, Home, Nursing Unit, Provider's Office, Phone.
+		 */
+		string locationType = 8;
+
+		/** Facility. Example: Community Hospital. */
+		string locationFacility = 9;
+
+		/**
+		 * Patient class is used in many EHRs to determine where to put the patient.
+		 * Examples: Inpatient, Outpatient, Emergency. (Redox required for Visit).
+		 */
+		string patientClass = 10;
+
+		/** Reason for the visit. */
+		string reason = 11;
+
+		/** Datetime of visit or the arrival time of the admission. (ISO 8601) */
+		double visitDateTime = 12;
+
+		/** Unique ID of a single visit. */
+		string visitNumber = 13;
+	}
+
+	/** Indicates whether data can be shared with each recipient of a meeting invite. */
+	message Sharing {
+		/** Whether to share the current user's time zone. */
+		bool inviterTimeZone = 1;
+
+		/** Whether to share the list of recipients. */
+		bool memberContactInfo = 2;
+
+		/** Whether to share contact information for other recipients. */
+		bool memberList = 3;
+	}
+
+	/** @see CalendarInvite */
+	required CalendarInvite calendarInvite = 1;
+
+	/** EHR-specific data related to the appointment. */
+	EHR data = 2;
+
+	/** Relevant forms. */
+	repeated Form forms = 3;
+
+	/** Unregistered sender email address. */
+	string fromEmail = 8;
+
+	/** Unregistered sender email name. */
+	string fromName = 9;
+
+	/** Notes taken during the appointment. */
+	string notes = 4;
+
+	/** Confirmation that the appointment occurred. */
+	bool occurred = 5;
+
+	/** Participant usernames. */
+	repeated string participants = 6;
+
+	/** Sub-session ID where RSVP statuses are posted. */
+	required string rsvpSessionSubID = 7;
+
+	/** @see Sharing */
+	Sharing sharing = 10;
+}

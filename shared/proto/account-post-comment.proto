@@ -1,0 +1,26 @@
+syntax = "proto3";
+
+
+/** Social networking comment. */
+message AccountPostComment {
+	/** Comment author's username. */
+	string author = 1;
+
+	/** Markdown comment content. */
+	required string content = 2;
+
+	/** Indicates whether comment is deleted. */
+	bool deleted = 3;
+
+	/** Comment ID. */
+	string id = 4;
+
+	/** Timestamp of last edit (if applicable). */
+	double lastEditTimestamp = 5;
+
+	/** ID of parent post. */
+	required string postID = 6;
+
+	/** Timestamp. */
+	required double timestamp = 7;
+}

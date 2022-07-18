@@ -1,0 +1,11 @@
+syntax = "proto3";
+
+
+/** An EHR integration API key. */
+message EhrApiKey {
+	/** API key. */
+	required string apiKey = 1;
+
+	/** Indicates whether this is a master API key. */
+	required bool isMaster = 2;
+}

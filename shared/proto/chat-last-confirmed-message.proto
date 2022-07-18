@@ -1,0 +1,11 @@
+syntax = "proto3";
+
+
+/** Chat last confirmed message. */
+message ChatLastConfirmedMessage {
+	/** Message ID. */
+	required string id = 1;
+
+	/** Message index. */
+	required uint32 index = 2;
+}

@@ -101,6 +101,7 @@ hash="${serviceWorker}${test}$(
 			-path 'shared/js/environments/*' \
 		\)) \
 		$(find shared/css -type f -name '*.scss') \
+		$(find shared/proto -type f -name '*.proto') \
 	|
 		sha
 )"

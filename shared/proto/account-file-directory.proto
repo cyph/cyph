@@ -1,0 +1,8 @@
+syntax = "proto3";
+
+
+/** File directories. */
+message AccountFileDirectory {
+	/** Children of this directory. */
+	map<string, AccountFileDirectory> children = 1;
+}

@@ -1,0 +1,28 @@
+syntax = "proto3";
+
+
+/** Government-backed currencies. */
+enum Currencies {
+	USD = 0;
+	AUD = 1;
+	BRL = 2;
+	CAD = 3;
+	CHF = 4;
+	CLP = 5;
+	CNY = 6;
+	DKK = 7;
+	EUR = 8;
+	GBP = 9;
+	HKD = 10;
+	INR = 11;
+	ISK = 12;
+	JPY = 13;
+	KRW = 14;
+	NZD = 15;
+	PLN = 16;
+	RUB = 17;
+	SEK = 18;
+	SGD = 19;
+	THB = 20;
+	TWD = 21;
+}

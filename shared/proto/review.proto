@@ -1,0 +1,14 @@
+syntax = "proto3";
+
+
+/** A review of something. */
+message Review {
+	/** A rating between 0 and 100. */
+	required uint32 rating = 1;
+
+	/** Review text. */
+	string text = 2;
+
+	/** Timestamp of this review. */
+	required double timestamp = 3;
+}

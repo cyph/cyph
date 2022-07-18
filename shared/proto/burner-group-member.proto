@@ -1,0 +1,14 @@
+syntax = "proto3";
+
+
+/** Burner group member. */
+message BurnerGroupMember {
+	/** ID. */
+	required string id = 1;
+
+	/** Indicates whether this is the group host. */
+	bool isHost = 2;
+
+	/** Name. */
+	string name = 3;
+}

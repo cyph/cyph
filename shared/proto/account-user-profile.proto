@@ -1,0 +1,22 @@
+syntax = "proto3";
+
+import "account-user-types.proto";
+
+
+/** User public profile. */
+message AccountUserProfile {
+	/** Description. */
+	required string description = 1;
+
+	/** Usernames and similar identifiers for external services like social media. */
+	map<string, string> externalUsernames = 2;
+
+	/** Full name. */
+	required string name = 4;
+
+	/** Username (capitalized according to user preference). */
+	required string realUsername = 5;
+
+	/** @see AccountUserTypes */
+	required AccountUserTypes userType = 6;
+}

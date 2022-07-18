@@ -1,0 +1,30 @@
+syntax = "proto3";
+
+
+/** Symmetric key and related metadata for accessing a group of private posts. */
+message AccountPostCircle {
+	/** Special types of circles with particular significance. */
+	enum AccountPostCircleTypes {
+		Standard = 0;
+		InnerCircle = 1;
+		OnlyMe = 2;
+	}
+
+	/** Indicates whether this circle is still in use. */
+	required bool active = 1;
+
+	/** @see AccountPostCircleTypes */
+	required AccountPostCircleTypes circleType = 2;
+
+	/** ID of list to fetch posts. */
+	required string id = 3;
+
+	/** Human-readable name of circle. */
+	required string name = 4;
+
+	/** Symmetric key for encrypting posts. */
+	required bytes key = 5;
+
+	/** If applicable, ID of previous circle (changes when someone's access is revoked). */
+	string predecessorID = 6;
+}

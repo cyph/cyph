@@ -1,0 +1,11 @@
+syntax = "proto3";
+
+
+/** Local storage value. */
+message LocalStorageValue {
+	/** Timestamp. */
+	required double timestamp = 1;
+
+	/** Value. */
+	required bytes value = 2;
+}

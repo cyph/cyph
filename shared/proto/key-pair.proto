@@ -1,0 +1,11 @@
+syntax = "proto3";
+
+
+/** An asymmetric key pair. */
+message KeyPair {
+	/** Private key. */
+	required bytes privateKey = 1;
+
+	/** Public key. */
+	required bytes publicKey = 2;
+}

@@ -1,0 +1,20 @@
+syntax = "proto3";
+
+import "chat-message-live-value-serialized.proto";
+import "chat-message-value.proto";
+
+
+/** Pending message data. */
+message ChatPendingMessage {
+	/** @see ChatMessageLiveValueSerialized */
+	required ChatMessageLiveValueSerialized message = 1;
+
+	/** @see ChatMessageValue.Types */
+	required ChatMessageValue.Types messageType = 2;
+
+	/** @see SessionText.selfDestructChat */
+	required bool selfDestructChat = 3;
+
+	/** @see ChatMessage.selfDestructTimeout */
+	uint32 selfDestructTimeout = 4;
+}

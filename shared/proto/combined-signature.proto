@@ -1,0 +1,14 @@
+syntax = "proto3";
+
+
+/** A combined signature. */
+message CombinedSignature {
+	/** Indicates whether `message` is compressed. */
+	bool compressed = 1;
+
+	/** Plaintext message. */
+	required bytes message = 2;
+
+	/** Signature. */
+	required bytes signature = 3;
+}

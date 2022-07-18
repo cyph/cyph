@@ -1,0 +1,14 @@
+syntax = "proto3";
+
+
+/** Public keyring. */
+message PublicKeyring {
+	/** Map of Potassium.BoxAlgorithms values to public keys. */
+	map<uint32, bytes> boxPublicKeys = 1;
+
+	/** Map of Potassium.EphemeralKeyExchangeAlgorithms values to public keys. */
+	map<uint32, bytes> ephemeralKeyExchangePublicKeys = 2;
+
+	/** Map of Potassium.SignAlgorithms values to public keys. */
+	map<uint32, bytes> signPublicKeys = 3;
+}

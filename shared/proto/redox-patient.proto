@@ -1,0 +1,25 @@
+syntax = "proto3";
+
+import "redox-types.proto";
+
+
+/** @see https://developer.redoxengine.com/data-models/PatientSearch.html#Response */
+message RedoxPatient {
+	/** List of (emergency) contacts for the patient. */
+	repeated RedoxTypes.Contact Contacts = 1;
+
+	/** Descriptive patient information - modeled from Redox. */
+	RedoxTypes.Patient.Demographics Demographics = 2;
+
+	/** Patient identifiers. */
+	repeated RedoxTypes.Identifier Identifiers = 3;
+
+	/** List of insurance(s) for the patient. */
+	repeated RedoxTypes.Insurance Insurances = 4;
+
+	/** List of patient-level notes. */
+	repeated string Notes = 5;
+
+	/** Patient's Primary Care Provider. */
+	RedoxTypes.PCP PCP = 6;
+}

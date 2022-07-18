@@ -1,0 +1,146 @@
+syntax = "proto3";
+
+
+/** Angular CLI environment configuration. */
+message Environment {
+	/** Custom build environment data. */
+	message CustomBuild {
+		/** Voice call background image for this custom build. */
+		bytes audioImage = 1;
+
+		/** @see CustomBuildConfig */
+		required CustomBuildConfig config = 2;
+
+		/** Custom styling. */
+		string css = 3;
+
+		/** Walken image replacement for this custom build. */
+		bytes errorImage = 4;
+
+		/** Favicon for this custom build. */
+		bytes favicon = 5;
+
+		/** Identifier of this custom build. */
+		required string id = 6;
+
+		/** Horizontal logo for this custom build. */
+		bytes logoHorizontal = 7;
+
+		/** Vertical logo for this custom build. */
+		bytes logoVertical = 8;
+
+		/** Environment namespace, the base ID without branch/version information. */
+		required string namespace = 9;
+
+		/** Replacement strings for this custom build. */
+		map<string, string> strings = 10;
+	}
+
+	/** Custom build configuration. */
+	message CustomBuildConfig {
+		/** Optional custom background color. */
+		string backgroundColor = 1;
+
+		/** Indicates whether this is for a browser extension. */
+		bool browserExtension = 2;
+
+		/** Indicates whether environment should be accounts-only (no ephemeral). */
+		bool burnerOnly = 3;
+
+		/** If true, performs audio call by default. */
+		bool callTypeAudio = 4;
+
+		/** If true, performs video call by default (takes priority over callTypeAudio). */
+		bool callTypeVideo = 5;
+
+		/** If true, is dark theme. */
+		bool dark = 6;
+
+		/** If true, forces the use of Twilio TURN infrastructure for lower-latency calls. */
+		bool disableP2P = 7;
+
+		/** Indicates whether docs will be enabled. */
+		bool enableDocs = 8;
+
+		/** Indicates whether wallets will be enabled. */
+		bool enableWallets = 9;
+
+		/** Optional custom foreground color. */
+		string foregroundColor = 10;
+
+		/** If true, locked down with server-stored password. */
+		bool lockedDown = 11;
+
+		/** Indicates whether native crypto will be used. */
+		bool nativeCrypto = 12;
+
+		/** Organization username to associate with this custom build. */
+		string organization = 13;
+
+		/** Optional password to lock down environment (not a security feature). */
+		string password = 14;
+
+		/** Indicates whether this is a Cyph Pro environment. */
+		bool pro = 15;
+
+		/** Indicates whether this is the telehealth version. */
+		bool telehealth = 16;
+
+		/** Indicates whether this is the full telehealth version. */
+		bool telehealthFull = 17;
+
+		/** Enables just the telehealth theme (no change in functionality). */
+		bool telehealthTheme = 18;
+
+		/** Page title of this Cyph instance. */
+		string title = 19;
+
+		/** Indicates whether this environment should share a specific database namespace. */
+		string useNamespace = 20;
+
+		/** If true, environment will be full white label, with no "Powered by Cyph" notices. */
+		bool whiteLabel = 21;
+	}
+
+	/** Firebase configuration. */
+	message Firebase {
+		/** API key. */
+		required string apiKey = 1;
+
+		/** App ID. */
+		required string appId = 2;
+
+		/** Firebase Cloud Messaging ID. */
+		required string messagingSenderId = 3;
+
+		/** Project ID. */
+		required string project = 4;
+	}
+
+	/**
+	 * Exists if in a custom build environment.
+	 * @see CustomBuild
+	 */
+	CustomBuild customBuild = 1;
+
+	/** Debug mode. */
+	bool debug = 2;
+
+	/** Name of this environment. */
+	required string envName = 3;
+
+	/** @see Firebase */
+	required Firebase firebase = 4;
+
+	/** Indicates whether this is local development environment. */
+	required bool local = 5;
+
+	/** Indicates whether this is prod. */
+	required bool production = 6;
+
+	/** Indicates whether this is an automated test. */
+	bool test = 7;
+
+	/** Indicates whether production AGSE-PKI signing keys should be used. */
+	bool useProdSigningKeys = 8;
+}

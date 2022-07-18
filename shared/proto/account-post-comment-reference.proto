@@ -1,0 +1,11 @@
+syntax = "proto3";
+
+
+/** Reference to a social networking comment. */
+message AccountPostCommentReference {
+	/** @see AccountPostComment.author */
+	required string author = 1;
+
+	/** @see AccountPostComment.id */
+	required string id = 2;
+}

@@ -1,0 +1,22 @@
+syntax = "proto3";
+
+import "redox-patient.proto";
+
+
+/** Patient information for Telehealth. */
+message PatientInfo {
+	/** Additional data for a contact. */
+	message ContactAdditionalData {
+		/** Whether there is consent to share medical information with the contact. */
+		bool consentToShare = 1;
+
+		/** Cyph username for the contact if they have one. */
+		string cyphAccount = 2;
+	}
+
+	/** Mapping of contact email addresses to ContactAdditionalData objects. */
+	map<string, ContactAdditionalData> contactAdditionalData = 1;
+
+	/** Patient record as synced to/from EHR systems. */
+	RedoxPatient redoxPatient = 2;
+}

@@ -1,0 +1,26 @@
+syntax = "proto3";
+
+
+/** PGP key metadata. */
+message PGPMetadata {
+	/** Comment. */
+	string comment = 1;
+
+	/** Email address of key owner. */
+	string email = 2;
+
+	/** Expiration timestamp (if applicable). */
+	double expires = 3;
+
+	/** Fingerprint. */
+	string fingerprint = 4;
+
+	/** Abbreviated (64-bit) fingerprint. */
+	string keyID = 5;
+
+	/** Name of key owner. */
+	string name = 6;
+
+	/** Full user ID string (name + email + comment). */
+	string userID = 7;
+}

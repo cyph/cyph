@@ -1,0 +1,31 @@
+syntax = "proto3";
+
+import "account-file-record.proto";
+
+
+/** Contains a file reference. */
+message AccountFileReferenceContainer {
+	/** Anonymously shared file data. */
+	message AnonymousShare {
+		/** @see AccountFileRecord */
+		required AccountFileRecord accountFileRecord = 1;
+
+		/** @see AccountFileReference.key */
+		required bytes key = 2;
+	}
+
+	/** Signed file data. */
+	message SignedShare {
+		/** @see AccountFileReference */
+		required bytes accountFileReference = 1;
+
+		/** @see AccountFileReference.owner */
+		required string owner = 2;
+	}
+
+	/** Value. */
+	oneof value {
+		AnonymousShare anonymousShare = 1;
+		SignedShare signedShare = 2;
+	}
+}

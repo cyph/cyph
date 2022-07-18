@@ -1,0 +1,11 @@
+syntax = "proto3";
+
+
+/** Description of a predecessor message. */
+message ChatMessagePredecessor {
+	/** @see ChatMessage.hash */
+	required bytes hash = 1;
+
+	/** @see ChatMessage.id */
+	required string id = 2;
+}

@@ -1,0 +1,68 @@
+syntax = "proto3";
+
+
+/** Generic/primitive types */
+message Internal {
+	message BooleanArray {
+		repeated bool data = 1;
+	}
+
+	message BooleanMap {
+		map<string, bool> data = 1;
+	}
+
+	message BooleanValue {
+		required bool data = 1;
+	}
+
+	message BinaryArray {
+		repeated bytes data = 1;
+	}
+
+	message MaybeTimedValue {
+		bool empty = 1;
+		double timestamp = 2;
+		bytes value = 3;
+	}
+
+	message MaybeTimedValueArray {
+		repeated MaybeTimedValue data = 1;
+	}
+
+	message NumberArray {
+		repeated double data = 1;
+	}
+
+	message NumberValue {
+		required double data = 1;
+	}
+
+	message StringArray {
+		repeated string data = 1;
+	}
+
+	message StringMap {
+		map<string, string> data = 1;
+	}
+
+	message StringValue {
+		required string data = 1;
+	}
+
+	message TimedValue {
+		required double timestamp = 1;
+		required bytes value = 2;
+	}
+
+	message TimedValueArray {
+		repeated TimedValue data = 1;
+	}
+
+	message Uint32Array {
+		repeated uint32 data = 1;
+	}
+
+	message Uint32Value {
+		required uint32 data = 1;
+	}
+}

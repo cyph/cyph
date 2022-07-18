@@ -1,0 +1,11 @@
+syntax = "proto3";
+
+
+/** AGSE-PKI certificate signing request data. */
+message AGSEPKICSRData {
+	/** @see AccountUserPublicKeys.signing */
+	required bytes publicSigningKey = 1;
+
+	/** Username. */
+	required string username = 2;
+}

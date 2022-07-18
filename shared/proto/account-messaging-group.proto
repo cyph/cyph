@@ -1,0 +1,20 @@
+syntax = "proto3";
+
+
+/** Group chat metadata. */
+message AccountMessagingGroup {
+	/** Castle session ID. */
+	required string castleSessionID = 1;
+
+	/** Description. */
+	string description = 2;
+
+	/** Indicates whether the mail UI should be used by default. */
+	bool mailUIDefault = 3;
+
+	/** Title. */
+	string title = 4;
+
+	/** Participants. */
+	repeated string usernames = 5;
+}

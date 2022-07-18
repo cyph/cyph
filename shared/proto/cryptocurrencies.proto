@@ -1,0 +1,21 @@
+syntax = "proto3";
+
+
+/** Cryptocurrencies. */
+enum Cryptocurrencies {
+	BTC = 0;
+	BCH = 1;
+	CYPH = 2;
+	DASH = 3;
+	DOGE = 4;
+	ETH = 5;
+	FIL = 6;
+	LTC = 7;
+	NEO = 8;
+	XLM = 9;
+	XMR = 10;
+	XRB = 11;
+	XRP = 12;
+	WTC = 13;
+	ZEC = 14;
+}

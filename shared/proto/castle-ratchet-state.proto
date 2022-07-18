@@ -1,0 +1,44 @@
+syntax = "proto3";
+
+
+/** State of a Castle Core ratchet. */
+message CastleRatchetState {
+	/** Asymmetric (future-secret) ratchet state. */
+	message AsymmetricRatchetState {
+		/** Local user's Potassium.EphemeralKeyExchange private key. */
+		required bytes privateKey = 1;
+
+		/** Remote user's Potassium.EphemeralKeyExchange public key. */
+		required bytes publicKey = 2;
+	}
+
+	/** Symmetric (forward-secret) ratchet state. */
+	message SymmetricRatchetState {
+		/** Pair of Potassium.SecretBox keys for encrypting and decrypting messages. */
+		message SymmetricKeyPair {
+			/** Key for incoming messages. */
+			required bytes incoming = 1;
+
+			/** Key for outgoing messages. */
+			required bytes outgoing = 2;
+		}
+
+		/** Current active SymmetricKeyPair. */
+		required SymmetricKeyPair current = 1;
+
+		/** SymmetricKeyPair queued up to replace current. */
+		required SymmetricKeyPair next = 2;
+	}
+
+	/** @see AsymmetricRatchetState */
+	required AsymmetricRatchetState asymmetric = 1;
+
+	/** Last incoming message ID. */
+	required uint32 incomingMessageID = 2;
+
+	/** Next outgoing message ID. */
+	required uint32 outgoingMessageID = 3;
+
+	/** @see SymmetricRatchetState */
+	required SymmetricRatchetState symmetric = 4;
+}

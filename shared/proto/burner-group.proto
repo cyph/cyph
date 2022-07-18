@@ -1,0 +1,10 @@
+syntax = "proto3";
+
+import "burner-group-member.proto";
+
+
+/** Burner group initialization data. */
+message BurnerGroup {
+	/** @see BurnerGroupMember */
+	repeated BurnerGroupMember members = 1;
+}

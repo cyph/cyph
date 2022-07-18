@@ -1,0 +1,11 @@
+syntax = "proto3";
+
+
+/** Data for auto-publishing email address. */
+message EmailAutoPublish {
+	/** Email address. */
+	required string email = 1;
+
+	/** Signature. */
+	required bytes signature = 2;
+}

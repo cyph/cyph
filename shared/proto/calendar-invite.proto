@@ -1,0 +1,59 @@
+syntax = "proto3";
+
+import "calendar-recurrence-rules.proto";
+import "call-types.proto";
+
+
+/** Calendar invite. */
+message CalendarInvite {
+	/** Days of the week for appointments. */
+	enum DaysOfWeek {
+		Sunday = 0;
+		Monday = 1;
+		Tuesday = 2;
+		Wednesday = 3;
+		Thursday = 4;
+		Friday = 5;
+		Saturday = 6;
+	}
+
+	/** Time periods of the day for appointments. */
+	enum TimeFrames {
+		Morning = 0;
+		Afternoon = 1;
+		Evening = 2;
+	}
+
+	/** Preferred days for counteroffers. */
+	map<uint32, bool> alternateDays = 1;
+
+	/** Preferred time frames days for counteroffers. */
+	map<uint32, bool> alternateTimeFrames = 2;
+
+	/** Burner-specific UID. */
+	string burnerUID = 11;
+
+	/** @see CallTypes */
+	required CallTypes callType = 3;
+
+	/** Event description. */
+	required string description = 4;
+
+	/** End timestamp. */
+	required double endTime = 5;
+
+	/** @see CalendarRecurrenceRules */
+	CalendarRecurrenceRules recurrence = 10;
+
+	/** Start timestamp. */
+	required double startTime = 6;
+
+	/** Event title/subject. */
+	required string title = 7;
+
+	/** Event UID. */
+	string uid = 9;
+
+	/** Meeting URL. */
+	string url = 8;
+}

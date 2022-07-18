@@ -1,0 +1,137 @@
+syntax = "proto3";
+
+
+/** Represents a form that a user can submit responses to. */
+message Form {
+	/** Reusable building block consisting of multiple forms. */
+	message Component {
+		/** @see ElementContainer */
+		repeated ElementContainer containers = 1;
+
+		/** @see Form.id */
+		string id = 2;
+
+		/** Indicates whether this is a column or a row. */
+		bool isColumn = 4;
+	}
+
+	/** One element of a Form, and one column of an ElementRow. */
+	message Element {
+		/** Element input types. */
+		enum Types {
+			Text = 0;
+			Checkbox = 1;
+			CyphUsername = 15;
+			Datepicker = 2;
+			Email = 3;
+			File = 14;
+			Input = 4;
+			Number = 5;
+			Password = 6;
+			Radio = 7;
+			Select = 8;
+			Slider = 9;
+			SlideToggle = 10;
+			Textarea = 11;
+			Time = 12;
+			URL = 13;
+		}
+
+		/** File name. */
+		string fileName = 16;
+
+		/** @see Form.id */
+		string id = 1;
+
+		/** Title/label. */
+		string label = 2;
+
+		/** Input mask (serialized with MessagePack). */
+		bytes mask = 3;
+
+		/** Maximum numerical value. */
+		double max = 4;
+
+		/** File MIME type. */
+		string mediaType = 17;
+
+		/** Minimum numerical value. */
+		double min = 5;
+
+		/** Flex nogrow. */
+		bool noGrow = 6;
+
+		/** Options to use if type Radio or Select. */
+		repeated string options = 7;
+
+		/** Indicates whether required. */
+		bool required = 8;
+
+		/** Numerical value minimum increment. */
+		double step = 14;
+
+		/** Tooltip. */
+		string tooltip = 18;
+
+		/** @see Type */
+		required Types type = 9;
+
+		/** Value. */
+		oneof value {
+			bool valueBoolean = 10;
+			bytes valueBytes = 15;
+			double valueNumber = 11;
+			string valueString = 12;
+		}
+
+		/** Value (string array). */
+		repeated string valueStrings = 19;
+
+		/** Flexbox column width (as a percentage of the total row width). */
+		uint32 width = 13;
+	}
+
+	/** Row or column of elements. */
+	message ElementContainer {
+		/** @see ElementOrElementContainer */
+		repeated ElementOrElementContainer elements = 1;
+
+		/**
+		 * String-encoded function for collapsing element values when sending to another system.
+		 * Element values are referenced by index (e.g. '${0}') and arithmetic operations can be
+		 * performed using a CSS-like calc syntax (e.g. 'calc(4+5)' or 'calc(${0}+${1})').
+		 *
+		 * Must be two lines: the first line collapses the element values (returns string) and
+		 * the second line reverses the transformation (returns JSON array). In the latter case,
+		 * ${val} will refer to the input value.
+		 */
+		string formula = 3;
+
+		/** @see Form.id */
+		string id = 2;
+
+		/** @see Component.isColumn */
+		bool isColumn = 4;
+	}
+
+	/** Either an Element or ElementContainer. */
+	message ElementOrElementContainer {
+		/** Value. */
+		oneof value {
+			/** @see Element */
+			Element element = 1;
+
+			/** @see ElementContainer */
+			ElementContainer elementContainer = 2;
+		}
+	}
+
+	/** @see Component */
+	repeated Component components = 1;
+
+	/** Optional ID. Can be used for associating with fields in other systems. */
+	string id = 2;
+
+	/** If true, this form will be displayed in an accordion expansion panel. */
+	bool isExpansionPanel = 3;
+}

@@ -1,0 +1,48 @@
+syntax = "proto3";
+
+import "chat-message-predecessor.proto";
+import "chat-message-value.proto";
+
+
+/** Represents one message in a chat. */
+message ChatMessage {
+	/** Author types. */
+	enum AuthorTypes {
+		App = 0;
+		Local = 1;
+		Remote = 2;
+	}
+
+	/** Author user ID. */
+	string authorID = 1;
+
+	/** @see AuthorTypes */
+	required AuthorTypes authorType = 2;
+
+	/**
+	 * Hash of this entire object.
+	 * Includes value. Excludes authorType, hash, and key.
+	 */
+	bytes hash = 9;
+
+	/** @see SessionMessageData.id */
+	required string id = 4;
+
+	/** Key to decrypt an externally contained message value. */
+	bytes key = 10;
+
+	/** If specified, this message will be ignored until the described predecessors are found. */
+	repeated ChatMessagePredecessor predecessors = 12;
+
+	/** @see SessionText.selfDestructTimeout */
+	uint32 selfDestructTimeout = 5;
+
+	/** @see SessionMessageData.sessionSubID */
+	string sessionSubID = 6;
+
+	/** @see SessionMessageData.timestamp */
+	required double timestamp = 7;
+
+	/** @see ChatMessageValue */
+	ChatMessageValue value = 8;
+}

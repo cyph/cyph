@@ -1,0 +1,10 @@
+syntax = "proto3";
+
+import "session-message-data.proto";
+
+
+/** Array of session message data objects. */
+message SessionMessageDataList {
+	/** Message data objects. */
+	repeated SessionMessageData messages = 1;
+}

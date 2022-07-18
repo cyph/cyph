@@ -1,0 +1,16 @@
+syntax = "proto3";
+
+
+/** User presence. */
+message AccountUserPresence {
+	/** Possible presence statuses. */
+	enum Statuses {
+		Offline = 0;
+		Away = 1;
+		Busy = 2;
+		Online = 3;
+	}
+
+	/** Current presence status. */
+	required Statuses status = 1;
+}

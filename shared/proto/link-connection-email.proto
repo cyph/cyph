@@ -1,0 +1,11 @@
+syntax = "proto3";
+
+
+/** Link connection email value. */
+message LinkConnectionEmail {
+	/** Email subject. */
+	string subject = 1;
+
+	/** Email text. */
+	string text = 2;
+}

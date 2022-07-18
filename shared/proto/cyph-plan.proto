@@ -1,0 +1,10 @@
+syntax = "proto3";
+
+import "cyph-plans.proto";
+
+
+/** A Cyph plan. */
+message CyphPlan {
+	/** @see CyphPlans */
+	required CyphPlans plan = 1;
+}

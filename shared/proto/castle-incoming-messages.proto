@@ -1,0 +1,17 @@
+syntax = "proto3";
+
+
+/** Represents queued up incoming Castle cyphertext messages. */
+message CastleIncomingMessages {
+	/** List of received cyphertexts with a particular message ID. */
+	message CastleIncomingMessageItem {
+		/** @see CastleIncomingMessageItem */
+		repeated bytes cyphertexts = 1;
+	}
+
+	/** Max observed incoming message ID. */
+	required uint32 max = 1;
+
+	/** Mapping of message IDs to CastleIncomingMessageItems. */
+	map<uint32, CastleIncomingMessageItem> queue = 2;
+}

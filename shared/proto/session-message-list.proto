@@ -1,0 +1,10 @@
+syntax = "proto3";
+
+import "session-message.proto";
+
+
+/** Array of session messages. */
+message SessionMessageList {
+	/** Messages. */
+	repeated SessionMessage messages = 1;
+}

@@ -1,0 +1,10 @@
+syntax = "proto3";
+
+import "chat-message.proto";
+
+
+/** Array of chat messages. */
+message ChatMessageList {
+	/** Messages. */
+	repeated ChatMessage messages = 1;
+}

@@ -1,0 +1,8 @@
+syntax = "proto3";
+
+
+/** Receipt confirmation for a SessionText. */
+message SessionTextConfirmation {
+	/** SessionText ID to be confirmed. */
+	required string id = 1;
+}

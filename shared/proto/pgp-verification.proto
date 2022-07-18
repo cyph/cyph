@@ -1,0 +1,11 @@
+syntax = "proto3";
+
+
+/** A message that can be signed by a PGP key to authenticate its ownership by a Cyph user. */
+message PGPVerification {
+	/** Username. */
+	required string username = 1;
+
+	/** A string used to prove the purpose of this signed data. */
+	required string verificationString = 2;
+}
