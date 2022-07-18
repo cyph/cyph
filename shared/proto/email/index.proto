@@ -1,3 +1,6 @@
+syntax = "proto3";
+
+
 import "email-auto-publish.proto";
 import "email-message-external.proto";
 import "email-message.proto";

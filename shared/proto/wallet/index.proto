@@ -1,3 +1,6 @@
+syntax = "proto3";
+
+
 import "cryptocurrencies.proto";
 import "currencies.proto";
 import "wallet.proto";

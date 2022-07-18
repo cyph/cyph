@@ -1,3 +1,6 @@
+syntax = "proto3";
+
+
 import "appointment.proto";
 import "ehr-api-key.proto";
 import "patient-info.proto";

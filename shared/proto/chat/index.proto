@@ -1,3 +1,6 @@
+syntax = "proto3";
+
+
 import "chat-last-confirmed-message.proto";
 import "chat-message-list.proto";
 import "chat-message-live-value-serialized.proto";

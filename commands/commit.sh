@@ -88,6 +88,21 @@ find shared/assets/img -type f \( -name '*.jpg' -or -name '*.png' \) -exec bash 
 	fi
 ' \;
 
+cd shared/proto
+for d in $(ls | grep -vP '^(index.proto)$') ; do
+	cd "${d}"
+	echo -e 'syntax = "proto3";\n\n' > index.proto
+	ls *.proto | \
+		grep -vP '^index.proto$' | \
+		sort | \
+		perl -pe 's/^(.*)$/import "\1";/g' \
+	>> index.proto
+	cd ..
+done
+echo -e 'syntax = "proto3";\n\n' > index.proto
+ls */index.proto | sort | perl -pe 's/^(.*)$/import "\1";/g' >> index.proto
+cd ../..
+
 find \
 	commands \
 	serverconfig \

@@ -1,3 +1,6 @@
+syntax = "proto3";
+
+
 import "combined-signature.proto";
 import "key-pair.proto";
 import "potassium-data.proto";

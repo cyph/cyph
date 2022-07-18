@@ -1,3 +1,6 @@
+syntax = "proto3";
+
+
 import "calendar-invite.proto";
 import "calendar-recurrence-rules.proto";
 import "days-of-week.proto";

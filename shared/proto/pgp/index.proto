@@ -1,3 +1,6 @@
+syntax = "proto3";
+
+
 import "pgp-key.proto";
 import "pgp-metadata.proto";
 import "pgp-verification.proto";

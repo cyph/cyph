@@ -1,3 +1,6 @@
+syntax = "proto3";
+
+
 import "agse-pki-cert.proto";
 import "agse-pki-certified.proto";
 import "agse-pki-csr-data.proto";

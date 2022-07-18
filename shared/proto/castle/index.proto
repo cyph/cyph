@@ -1,3 +1,6 @@
+syntax = "proto3";
+
+
 import "castle-incoming-messages.proto";
 import "castle-ratchet-state.proto";
 import "castle-ratchet-update.proto";

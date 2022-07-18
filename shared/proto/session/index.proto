@@ -1,3 +1,6 @@
+syntax = "proto3";
+
+
 import "burner-group-member-initiator.proto";
 import "burner-group-member.proto";
 import "burner-group.proto";

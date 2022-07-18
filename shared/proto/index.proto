@@ -1,3 +1,6 @@
+syntax = "proto3";
+
+
 import "account/index.proto";
 import "agse/index.proto";
 import "calendar/index.proto";

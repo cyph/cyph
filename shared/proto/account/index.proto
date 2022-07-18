@@ -1,3 +1,6 @@
+syntax = "proto3";
+
+
 import "account-contact-state.proto";
 import "account-file-directory.proto";
 import "account-file-record.proto";

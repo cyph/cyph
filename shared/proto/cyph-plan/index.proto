@@ -1,3 +1,6 @@
+syntax = "proto3";
+
+
 import "cyph-plan-types.proto";
 import "cyph-plan.proto";
 import "cyph-plans.proto";
