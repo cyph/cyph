@@ -8,13 +8,19 @@ rm -rf shared/js/proto 2> /dev/null
 
 for f in $(find shared/proto -type f -name '*.proto') ; do
 	outputDirectory="shared/js/proto/$(
-		echo "${f}" | perl -pe 's/shared\/proto\/(.*?)(\/index)?.proto/\1/g'
+		echo "${f}" | perl -pe 's/shared\/proto\/(.*?).proto/\1/g'
 	)"
-	if [ "${outputDirectory}" == 'shared/js/proto/index' ] ; then
-		outputDirectory='shared/js/proto'
-	fi
 
 	mkdir -p "${outputDirectory}"
+
+	if echo "${outputDirectory}" | grep -P '/index$' &> /dev/null ; then
+		rmdir "${outputDirectory}"
+		cat "${f}" | \
+			perl -pe 's/import "(.*?)(\/index)?.proto";/export * from '"'"'.\/\1'"'"';/g' \
+		> "${outputDirectory}.ts"
+	
+		continue
+	fi
 
 	pbjs -t static-module "${f}" -o "${outputDirectory}/index.js"
 	sed -i 's|null|undefined|g' "${outputDirectory}/index.js"
