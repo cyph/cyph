@@ -94,7 +94,6 @@ find \
 	shared/css \
 	shared/js \
 	shared/proto \
-	types.proto \
 -type f -exec sed -i 's/\s*$//g' {} \;
 
 chmod -R 700 .

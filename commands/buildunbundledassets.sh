@@ -93,7 +93,6 @@ hash="${serviceWorker}${test}$(
 	cat \
 		commands/buildunbundledassets.sh \
 		shared/lib/js/package-lock.json \
-		types.proto \
 		$(echo "${nodeModulesAssets}" | perl -pe 's/([^\s]+)/\/node_modules\/\1.js/g') \
 		$(find shared/js -type f -name '*.ts' -not \( \
 			-name '*.d.ts' -or \
