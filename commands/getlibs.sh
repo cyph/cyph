@@ -394,18 +394,7 @@ done
 cp -f lz4/lib/utils-js.js lz4/lib/utils.js
 
 # Temporary workaround for https://github.com/dcodeIO/protobuf.js/issues/863
-while true ; do
-	for host in raw.githubusercontent.com cdn.rawgit.com rawgit.com ; do
-		if [ "$(shasum -a 512 protobufjs/cli/pbts.js | awk '{print $1}')" == '5e0f68e44f1a7a1f0ad64ef36fcaf04f4903e4af75cd403d40a46115d2506e16111a52359a12c93d238db034dc707e4bdd8d5945a9d5aebeaf87bf55fe8a0c59' ] ; then
-			break 2
-		fi
-
-		wget https://${host}/dcodeIO/protobuf.js/952c7d1b478cc7c6de82475a17a1387992e8651f/cli/pbts.js -O protobufjs/cli/pbts.js
-	done
-
-	echo 'fetching protobufjs failed; retrying'
-	sleep 30
-done
+wget https://raw.githubusercontent.com/dcodeIO/protobuf.js/952c7d1b478cc7c6de82475a17a1387992e8651f/cli/pbts.js -O protobufjs/cli/pbts.js
 
 ./.bin/pbjs --help &> /dev/null
 ./.bin/pbts --help &> /dev/null
