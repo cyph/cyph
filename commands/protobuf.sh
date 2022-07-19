@@ -21,10 +21,6 @@ for f in $(ls shared/proto/bundles/*.proto) ; do
 	touch "${outputDirectory}/types.js"
 	echo "export * from './types';" > "${outputDirectory}/index.d.ts"
 
-	# https://github.com/protobufjs/protobuf.js/issues/1306#issuecomment-549204730
-	sed -i "s|\[ 'object' \]\.|Record|g" "${outputDirectory}/types.d.ts"
-	sed -i "s|\[ 'Array' \]\.|Array|g" "${outputDirectory}/types.d.ts"
-
 	cp "${outputDirectory}/index.js" "${outputDirectory}/index.web.js"
 
 	echo 'const module = {exports: {}};' > "${outputDirectory}/index.node.js"
