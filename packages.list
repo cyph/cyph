@@ -403,7 +403,7 @@ primeng
 promise-semaphore
 prompt
 protobufjs
-protobufjs-cli
+protobufjs-cli@github:buu700/protobufjs-cli-tmp
 protractor
 pulltorefreshjs
 puppeteer
