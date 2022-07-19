@@ -393,9 +393,6 @@ done
 # Temporary workaround for https://github.com/pierrec/node-lz4/pull/64#issuecomment-416119077
 cp -f lz4/lib/utils-js.js lz4/lib/utils.js
 
-# Temporary workaround for https://github.com/dcodeIO/protobuf.js/issues/863
-wget https://raw.githubusercontent.com/dcodeIO/protobuf.js/952c7d1b478cc7c6de82475a17a1387992e8651f/cli/pbts.js -O protobufjs/cli/pbts.js
-
 ./.bin/pbjs --help &> /dev/null
 ./.bin/pbts --help &> /dev/null
 
