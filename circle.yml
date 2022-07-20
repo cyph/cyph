@@ -20,4 +20,6 @@ workflows:
       - build:
           filters:
             branches:
-              only: prod
+              only:
+                - prod
+                - beta
