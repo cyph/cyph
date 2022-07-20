@@ -30,6 +30,7 @@ import {AccountDatabaseService} from './crypto/account-database.service';
 import {BasicCastleService} from './crypto/basic-castle.service';
 import {CastleService} from './crypto/castle.service';
 import {PotassiumService} from './crypto/potassium.service';
+import {WebSignService} from './crypto/websign.service';
 import {DatabaseService} from './database.service';
 import {DialogService} from './dialog.service';
 import {EnvService} from './env.service';
@@ -562,7 +563,8 @@ export class EphemeralSessionService extends SessionService {
 			this.accountService,
 			this.accountDatabaseService,
 			this.configService,
-			this.notificationService
+			this.notificationService,
+			this.webSignService
 		);
 	}
 
@@ -592,7 +594,10 @@ export class EphemeralSessionService extends SessionService {
 		private readonly configService: ConfigService,
 
 		/** @ignore */
-		private readonly notificationService: NotificationService
+		private readonly notificationService: NotificationService,
+
+		/** @ignore */
+		private readonly webSignService: WebSignService
 	) {
 		super(
 			analyticsService,
@@ -610,7 +615,7 @@ export class EphemeralSessionService extends SessionService {
 
 		/* eslint-disable-next-line complexity */
 		(async () => {
-			this.accountService.autoUpdate.next(false);
+			this.webSignService.autoUpdateEnable.next(false);
 
 			if (this.sessionInitService.accountsBurnerAliceData?.remoteUser) {
 				this.remoteUser.resolve(
