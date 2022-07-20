@@ -877,20 +877,7 @@ export class Box implements IBox {
 					throw new Error('Invalid Box algorithm (key pair).');
 			}
 
-			const testInput = potassiumUtil.randomBytes(32);
-			if (
-				!potassiumUtil.compareMemory(
-					testInput,
-					await this.open(
-						await this.seal(testInput, result.publicKey),
-						result
-					)
-				)
-			) {
-				throw new Error('Corrupt Potassium.Box key.');
-			}
-
-			return {
+			const keyPair = {
 				privateKey: await potassiumEncoding.serialize({
 					boxAlgorithm: algorithm,
 					privateKey: result.privateKey
@@ -900,6 +887,21 @@ export class Box implements IBox {
 					publicKey: result.publicKey
 				})
 			};
+
+			const testInput = potassiumUtil.randomBytes(32);
+			if (
+				!potassiumUtil.compareMemory(
+					testInput,
+					await this.open(
+						await this.seal(testInput, keyPair.publicKey),
+						keyPair
+					)
+				)
+			) {
+				throw new Error('Corrupt Potassium.Box key.');
+			}
+
+			return keyPair;
 		});
 	}
 
