@@ -10,7 +10,9 @@ import {BaseProvider} from '../../base-provider';
 import {MaybePromise} from '../../maybe-promise-type';
 import {toInt} from '../../util/formatting';
 import {debugLogError} from '../../util/log';
+import {observableAll} from '../../util/observable-all';
 import {request, requestBytes, requestJSON} from '../../util/request';
+import {watchDateChange} from '../../util/time';
 import {reloadWindow} from '../../util/window';
 import {EnvService} from '../env.service';
 import {WindowWatcherService} from '../window-watcher.service';
@@ -358,32 +360,34 @@ export class WebSignService extends BaseProvider {
 		}
 
 		this.subscriptions.push(
-			this.windowWatcherService.visibility
-				.pipe(
+			/* TODO: Initiate event from server side */
+			observableAll([
+				this.windowWatcherService.visibility.pipe(
 					skip(1),
 					filter(visible => visible)
-				)
-				.subscribe(async () => {
-					if (!this.autoUpdateEnable.value) {
-						return;
-					}
+				),
+				watchDateChange()
+			]).subscribe(async () => {
+				if (!this.autoUpdateEnable.value) {
+					return;
+				}
 
-					try {
-						const {timestamp} = await this.cachePackage();
+				try {
+					const {timestamp} = await this.cachePackage();
 
-						if (
-							timestamp > packageTimestamp &&
-							(await confirmHandler())
-						) {
-							reloadWindow();
-						}
+					if (
+						timestamp > packageTimestamp &&
+						(await confirmHandler())
+					) {
+						reloadWindow();
 					}
-					catch (err) {
-						debugLogError(() => ({
-							webSignWatchPackageUpdatesError: err
-						}));
-					}
-				})
+				}
+				catch (err) {
+					debugLogError(() => ({
+						webSignWatchPackageUpdatesError: err
+					}));
+				}
+			})
 		);
 	}
 
