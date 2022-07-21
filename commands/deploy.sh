@@ -9,6 +9,7 @@ eval "$(parseArgs \
 	--opt-bool fast \
 	--opt-bool firebase-backup \
 	--opt-bool firebase-local \
+	--opt-bool mandatory-update \
 	--opt-bool pack \
 	--opt-bool prod \
 	--opt-bool public-backend-deployment \
@@ -46,6 +47,7 @@ firebaseBackup=''
 customBuild=''
 saveBuildArtifacts=''
 wpPromote=''
+mandatoryUpdate=''
 betaProd=''
 skipBeta=''
 prodAndBeta=''
@@ -130,6 +132,10 @@ fi
 
 if [ "${_arg_wp_promote}" == 'on' ] ; then
 	wpPromote=true
+fi
+
+if [ "${_arg_mandatory_update}" == 'on' ] ; then
+	mandatoryUpdate=true
 fi
 
 if [ "${_arg_site}" ] ; then
@@ -538,6 +544,7 @@ if [ "${websign}" ] ; then
 	done
 
 	./commands/websign/codesign.js \
+		$(if [ "${mandatoryUpdate}" ] ; then echo '--mandatory-update' ; fi) \
 		$(if [ "${simple}" ] ; then echo '--test' ; fi) \
 		"${websignHashWhitelist}" \
 		$(

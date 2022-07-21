@@ -34,6 +34,7 @@ import {ConfigService} from './config.service';
 import {AccountDatabaseService} from './crypto/account-database.service';
 import {CastleService} from './crypto/castle.service';
 import {PotassiumService} from './crypto/potassium.service';
+import {WebSignService} from './crypto/websign.service';
 import {DatabaseService} from './database.service';
 import {DialogService} from './dialog.service';
 import {EnvService} from './env.service';
@@ -248,7 +249,7 @@ export class AccountSessionService extends SessionService {
 				throw new Error('No session members.');
 			}
 
-			this.accountService.autoUpdate.next(false);
+			this.webSignService.autoUpdateEnable.next(false);
 
 			this.accountService.setHeader({
 				mobile: this.stringsService.burner
@@ -307,7 +308,8 @@ export class AccountSessionService extends SessionService {
 				this.accountService,
 				this.accountDatabaseService,
 				this.configService,
-				this.notificationService
+				this.notificationService,
+				this.webSignService
 			);
 
 			this.p2pWebRTCService.then(p2pWebRTCService => {
@@ -677,7 +679,8 @@ export class AccountSessionService extends SessionService {
 			this.accountUserLookupService,
 			this.configService,
 			this.localStorageService,
-			this.notificationService
+			this.notificationService,
+			this.webSignService
 		);
 	}
 
@@ -719,7 +722,10 @@ export class AccountSessionService extends SessionService {
 		private readonly localStorageService: LocalStorageService,
 
 		/** @ignore */
-		private readonly notificationService: NotificationService
+		private readonly notificationService: NotificationService,
+
+		/** @ignore */
+		private readonly webSignService: WebSignService
 	) {
 		super(
 			analyticsService,

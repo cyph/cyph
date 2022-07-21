@@ -168,7 +168,7 @@ fs.existsSync(path.join(__dirname, 'commands', `${args.command}.js`)) ?
 
 const baseImageDigestsPath = path.join(__dirname, 'base-image-digests.json');
 const backendPath = path.join(__dirname, 'backend');
-const circleciConfigPath = path.join(__dirname, 'circle.yml');
+const circleciConfigPath = path.join(__dirname, '.circleci', 'config.yml');
 const codespaceDockerfilePath = path.join(__dirname, 'Dockerfile.codespace');
 const gitconfigPath = path.join(homeDir, '.gitconfig');
 const gitconfigDockerPath = `${dockerHomeDir}/.gitconfig`;

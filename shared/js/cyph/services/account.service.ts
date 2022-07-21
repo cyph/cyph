@@ -34,7 +34,7 @@ import {request, requestJSON} from '../util/request';
 import {getTimestamp, getTimeString, watchDateChange} from '../util/time';
 import {translate} from '../util/translate';
 import {resolvable, retryUntilSuccessful, sleep} from '../util/wait';
-import {openWindow, reloadWindow} from '../util/window';
+import {openWindow} from '../util/window';
 import {AccountAppointmentsService} from './account-appointments.service';
 import {AccountContactsService} from './account-contacts.service';
 import {AccountFilesService} from './account-files.service';
@@ -43,6 +43,7 @@ import {AccountUserLookupService} from './account-user-lookup.service';
 import {ConfigService} from './config.service';
 import {AccountAuthService} from './crypto/account-auth.service';
 import {AccountDatabaseService} from './crypto/account-database.service';
+import {WebSignService} from './crypto/websign.service';
 import {DialogService} from './dialog.service';
 import {EnvService} from './env.service';
 import {LocalStorageService} from './local-storage.service';
@@ -108,12 +109,6 @@ export class AccountService extends BaseProvider {
 
 	/** @ignore */
 	private readonly uiReadyResolved = new Subject<void>();
-
-	/** Indicates whether automatic updates should be applied. */
-	public readonly autoUpdate = new BehaviorSubject<boolean>(true);
-
-	/** Timeout before automatic update is applied. */
-	public readonly autoUpdateTimeout = 300000;
 
 	/** Indicates billing status of this account. */
 	public readonly billingStatus = new BehaviorSubject<{
@@ -592,87 +587,24 @@ export class AccountService extends BaseProvider {
 	public async userInit () : Promise<void> {
 		await this.accountDatabaseService.getCurrentUser();
 
-		this.subscriptions.push(
-			this.windowWatcherService.visibility
-				.pipe(skip(1))
-				.subscribe(async visible => {
-					if (!visible) {
-						return;
+		this.webSignService.watchPackageUpdates(async () =>
+			this.dialogService.confirm({
+				bottomSheet: true,
+				cancel: this.stringsService.applyUpdateRestartCancel,
+				content: this.stringsService.setParameters(
+					this.stringsService.applyUpdateRestartContent,
+					{
+						time: getTimeString(
+							(await getTimestamp()) +
+								this.webSignService.autoUpdateTimeout
+						)
 					}
-
-					/* Check for updates to keep long-running background instances in sync */
-					try {
-						const packageTimestamp =
-							!this.envService.isLocalEnv &&
-							this.autoUpdate.value ?
-								/* eslint-disable-next-line @typescript-eslint/tslint/config */
-								localStorage.getItem(
-									'webSignPackageTimestamp'
-								) :
-								undefined;
-
-						if (!packageTimestamp) {
-							throw new Error();
-						}
-
-						const webSignPackageName =
-							/* eslint-disable-next-line @typescript-eslint/tslint/config */
-							localStorage.getItem('webSignPackageName') ||
-							/* eslint-disable-next-line @typescript-eslint/tslint/config */
-							(localStorage.getItem('webSignCdnUrl') || '')
-								.split('/')
-								.slice(-2)[0];
-
-						if (!webSignPackageName) {
-							throw new Error();
-						}
-
-						const currentPackageTimestamp = await request({
-							url: `${this.envService.baseUrl}packagetimestamp/${webSignPackageName}`
-						});
-
-						if (
-							toInt(currentPackageTimestamp) >
-								toInt(packageTimestamp) &&
-							(await this.dialogService.confirm({
-								bottomSheet: true,
-								cancel: this.stringsService
-									.applyUpdateRestartCancel,
-								content: this.stringsService.setParameters(
-									this.stringsService
-										.applyUpdateRestartContent,
-									{
-										time: getTimeString(
-											(await getTimestamp()) +
-												this.autoUpdateTimeout
-										)
-									}
-								),
-								ok: this.stringsService.applyUpdateRestartOK,
-								timeout: this.autoUpdateTimeout,
-								timeoutResponse: true,
-								title: this.stringsService
-									.applyUpdateRestartTitle
-							}))
-						) {
-							reloadWindow();
-							return;
-						}
-					}
-					catch {}
-
-					if (!(await this.fingerprintService.supported)) {
-						return;
-					}
-
-					document.body.classList.add('soft-lock');
-					if (await this.fingerprintService.authenticate()) {
-						document.body.classList.remove('soft-lock');
-						return;
-					}
-
-					await this.accountAuthService.lock();
-				})
+				),
+				ok: this.stringsService.applyUpdateRestartOK,
+				timeout: this.webSignService.autoUpdateTimeout,
+				timeoutResponse: true,
+				title: this.stringsService.applyUpdateRestartTitle
+			})
 		);
 
 		this.subscriptions.push(
@@ -706,6 +638,25 @@ export class AccountService extends BaseProvider {
 				)
 				.subscribe(this.envService.telehealthTheme)
 		);
+
+		if (await this.fingerprintService.supported) {
+			this.subscriptions.push(
+				this.windowWatcherService.visibility
+					.pipe(
+						skip(1),
+						filter(visible => visible)
+					)
+					.subscribe(async () => {
+						document.body.classList.add('soft-lock');
+						if (await this.fingerprintService.authenticate()) {
+							document.body.classList.remove('soft-lock');
+							return;
+						}
+
+						await this.accountAuthService.lock();
+					})
+			);
+		}
 
 		if (!P2PWebRTCService.isSupported) {
 			return;
@@ -885,6 +836,9 @@ export class AccountService extends BaseProvider {
 
 		/** @ignore */
 		private readonly stringsService: StringsService,
+
+		/** @ignore */
+		private readonly webSignService: WebSignService,
 
 		/** @ignore */
 		private readonly windowWatcherService: WindowWatcherService
