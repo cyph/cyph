@@ -4,7 +4,7 @@ jobs:
   build:
     docker:
       - image: cyph/circleci@sha256:6f79cf3b36620d8944a2f679790e35c4da30c8b822e1bcae918d56a8922fa549
-    resource_class: large
+    resource_class: xlarge
     working_directory: /cyph
     steps:
       - checkout
