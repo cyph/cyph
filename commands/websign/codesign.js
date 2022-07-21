@@ -5,11 +5,14 @@ import mkdirp from 'mkdirp';
 import {sign} from '../sign.js';
 
 try {
-	const argv = process.argv.slice(2).filter(s => s && s !== '--test');
+	const argv = process.argv
+		.slice(2)
+		.filter(s => s && s !== '--mandatory-update' && s !== '--test');
 
 	const args = {
 		hashWhitelist: JSON.parse(argv[0]),
 		inputs: argv.slice(1),
+		mandatoryUpdate: process.argv.indexOf('--mandatory-update') > -1,
 		test: process.argv.indexOf('--test') > -1
 	};
 
@@ -20,11 +23,12 @@ try {
 		.map(s => s.split('='))
 		.map(arr => ({
 			message: JSON.stringify({
-				timestamp,
 				expires: timestamp + signatureTTL * 2.628e9,
 				hashWhitelist: args.hashWhitelist,
+				mandatoryUpdate: args.mandatoryUpdate,
 				package: fs.readFileSync(arr[0]).toString().trim(),
-				packageName: arr[1].split('/').slice(-1)[0]
+				packageName: arr[1].split('/').slice(-1)[0],
+				timestamp
 			}),
 			outputDir: arr[1]
 		}));

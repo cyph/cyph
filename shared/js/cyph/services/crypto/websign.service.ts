@@ -131,6 +131,7 @@ export class WebSignService extends BaseProvider {
 		gateways: string[];
 		hashWhitelist: Record<string, true>;
 		html: string;
+		mandatoryUpdate: boolean;
 		subresources: Record<string, string>;
 		subresourceTimeouts: Record<string, number>;
 		timestamp: number;
@@ -221,6 +222,7 @@ export class WebSignService extends BaseProvider {
 		gateways: string[];
 		hashWhitelist: Record<string, true>;
 		html: string;
+		mandatoryUpdate: boolean;
 		subresources: Record<string, string>;
 		subresourceTimeouts: Record<string, number>;
 		timestamp: number;
@@ -287,6 +289,7 @@ export class WebSignService extends BaseProvider {
 		const opened: {
 			expires: number;
 			hashWhitelist: Record<string, true>;
+			mandatoryUpdate?: boolean;
 			package: string;
 			packageName: string;
 			timestamp: number;
@@ -314,6 +317,7 @@ export class WebSignService extends BaseProvider {
 			gateways: packageMetadata.gateways,
 			hashWhitelist: opened.hashWhitelist,
 			html: opened.package,
+			mandatoryUpdate: opened.mandatoryUpdate === true,
 			subresources: packageMetadata.package.subresources,
 			subresourceTimeouts: packageMetadata.package.subresourceTimeouts,
 			timestamp: opened.timestamp
@@ -373,12 +377,14 @@ export class WebSignService extends BaseProvider {
 				}
 
 				try {
-					const {timestamp} = await this.cachePackage();
+					const {mandatoryUpdate, timestamp} =
+						await this.cachePackage();
 
-					if (
-						timestamp > packageTimestamp &&
-						(await confirmHandler())
-					) {
+					if (packageTimestamp >= timestamp) {
+						return;
+					}
+
+					if (mandatoryUpdate || (await confirmHandler())) {
 						reloadWindow();
 					}
 				}
