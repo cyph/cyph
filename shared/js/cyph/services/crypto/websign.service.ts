@@ -4,10 +4,11 @@ import {Injectable} from '@angular/core';
 import {Dexie} from 'dexie';
 import {BehaviorSubject} from 'rxjs';
 import {filter, skip} from 'rxjs/operators';
-import {superSphincs} from 'supersphincs';
-import {publicSigningKeys} from '../../account/public-signing-keys';
+import {superSphincs as superSphincsLegacy} from 'supersphincs-legacy';
+import {agsePublicSigningKeys} from '../../account/agse-public-signing-keys';
 import {BaseProvider} from '../../base-provider';
 import {MaybePromise} from '../../maybe-promise-type';
+import {PotassiumData} from '../../proto';
 import {toInt} from '../../util/formatting';
 import {debugLogError} from '../../util/log';
 import {observableAll} from '../../util/observable-all';
@@ -43,6 +44,11 @@ export class WebSignService extends BaseProvider {
 					(await cordovaNodeJS).ipfsFetch(ipfsHash, options)
 				) :
 			undefined;
+
+	/** Public signing keys. */
+	private readonly publicSigningKeys = agsePublicSigningKeys.prod.get(
+		PotassiumData.SignAlgorithms.V1
+	) ?? {classical: [], postQuantum: []};
 
 	/** WebSign client local storage. */
 	private readonly storage = (() => {
@@ -270,20 +276,24 @@ export class WebSignService extends BaseProvider {
 		const packageLines = packageMetadata.package.root.trim().split('\n');
 
 		const packageData = {
-			signed: packageLines[0],
-			rsaKey: publicSigningKeys.prod.rsa[toInt(packageLines[1])],
-			sphincsKey: publicSigningKeys.prod.sphincs[toInt(packageLines[2])]
+			publicKeys: {
+				classical:
+					this.publicSigningKeys.classical[toInt(packageLines[1])],
+				postQuantum:
+					this.publicSigningKeys.postQuantum[toInt(packageLines[2])]
+			},
+			signed: packageLines[0]
 		};
 
-		if (!packageData.rsaKey || !packageData.sphincsKey) {
+		if (
+			!packageData.publicKeys.classical ||
+			!packageData.publicKeys.postQuantum
+		) {
 			throw new Error('No valid public key specified.');
 		}
 
-		const {publicKey} = await superSphincs.importKeys({
-			public: {
-				rsa: packageData.rsaKey,
-				sphincs: packageData.sphincsKey
-			}
+		const {publicKey} = await superSphincsLegacy.importKeys({
+			public: packageData.publicKeys
 		});
 
 		const opened: {
@@ -294,10 +304,10 @@ export class WebSignService extends BaseProvider {
 			packageName: string;
 			timestamp: number;
 		} = JSON.parse(
-			await superSphincs
+			await superSphincsLegacy
 				.openString(packageData.signed, publicKey)
 				.catch(async () =>
-					superSphincs.openString(
+					superSphincsLegacy.openString(
 						packageData.signed,
 						publicKey,
 						new Uint8Array(0)
