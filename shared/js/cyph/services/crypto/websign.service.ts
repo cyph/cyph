@@ -1,6 +1,7 @@
 /* eslint-disable max-lines */
 
 import {Injectable} from '@angular/core';
+import {Dexie} from 'dexie';
 import {BehaviorSubject} from 'rxjs';
 import {filter, skip} from 'rxjs/operators';
 import {superSphincs} from 'supersphincs';
@@ -9,16 +10,45 @@ import {BaseProvider} from '../../base-provider';
 import {MaybePromise} from '../../maybe-promise-type';
 import {toInt} from '../../util/formatting';
 import {debugLogError} from '../../util/log';
-import {request, requestJSON} from '../../util/request';
+import {request, requestBytes, requestJSON} from '../../util/request';
 import {reloadWindow} from '../../util/window';
 import {EnvService} from '../env.service';
 import {WindowWatcherService} from '../window-watcher.service';
+import {PotassiumService} from './potassium.service';
 
 /**
  * Angular service for WebSign.
  */
 @Injectable()
 export class WebSignService extends BaseProvider {
+	/** WebSign Brotli decoder instance. */
+	private readonly brotliDecode:
+		| ((compressed: Uint8Array) => Uint8Array)
+		| undefined = (<any> self).BrotliDecode;
+
+	/** Native ipfs-fetch instance (where available). */
+	private readonly nativeIPFSFetch:
+		| ((
+				ipfsHash: string,
+				options?: {timeout?: number}
+		  ) => Promise<Uint8Array>)
+		| undefined =
+		typeof cordovaRequire === 'function' ?
+			cordovaRequire('ipfs-fetch') :
+		typeof cordovaNodeJS !== 'undefined' ?
+			async (ipfsHash, options) =>
+				this.potassiumService.fromBase64(
+					(await cordovaNodeJS).ipfsFetch(ipfsHash, options)
+				) :
+			undefined;
+
+	/** WebSign client local storage. */
+	private readonly storage = (() => {
+		const dexie = new Dexie('WebSign');
+		dexie.version(1).stores({data: 'key'});
+		return dexie.table('data');
+	})();
+
 	/** Indicates whether automatic updates should be applied. */
 	public readonly autoUpdateEnable = new BehaviorSubject<boolean>(true);
 
@@ -45,8 +75,8 @@ export class WebSignService extends BaseProvider {
 	/** Currently loaded package timestamp. */
 	public readonly packageTimestamp: number | undefined = (() => {
 		try {
-			/* eslint-disable-next-line @typescript-eslint/tslint/config */
 			const timestamp = toInt(
+				/* eslint-disable-next-line @typescript-eslint/tslint/config */
 				localStorage.getItem('webSignPackageTimestamp')
 			);
 
@@ -61,13 +91,142 @@ export class WebSignService extends BaseProvider {
 		}
 	})();
 
-	/** Gets latest package data. */
-	public async getPackage (minTimestamp?: number) : Promise<{
+	/** Fetches data from IPFS. */
+	private async ipfsFetch (
+		ipfsHash: string,
+		timeout: number,
+		gateways: string[]
+	) : Promise<Uint8Array> {
+		let lastError: any;
+
+		try {
+			if (this.nativeIPFSFetch !== undefined) {
+				return await this.nativeIPFSFetch(ipfsHash, {timeout});
+			}
+		}
+		catch (err) {
+			lastError = err;
+		}
+
+		for (const gateway of gateways) {
+			try {
+				return await requestBytes({
+					timeout,
+					url: gateway.replace(':hash', ipfsHash)
+				});
+			}
+			catch (err) {
+				lastError = err;
+			}
+		}
+
+		throw lastError;
+	}
+
+	/** Caches latest package data in local storage to optimize the next startup. */
+	public async cachePackage (minTimestamp?: number) : Promise<{
+		expirationTimestamp: number;
+		gateways: string[];
+		hashWhitelist: Record<string, true>;
 		html: string;
 		subresources: Record<string, string>;
 		subresourceTimeouts: Record<string, number>;
 		timestamp: number;
 	}> {
+		const latestPackage = await this.getPackage(minTimestamp);
+
+		const {
+			expirationTimestamp,
+			gateways,
+			hashWhitelist,
+			html,
+			subresources,
+			subresourceTimeouts,
+			timestamp
+		} = latestPackage;
+
+		try {
+			/* eslint-disable-next-line @typescript-eslint/tslint/config */
+			localStorage.setItem(
+				'webSignExpires',
+				expirationTimestamp.toString()
+			);
+			/* eslint-disable-next-line @typescript-eslint/tslint/config */
+			localStorage.setItem(
+				'webSignHashWhitelist',
+				JSON.stringify(hashWhitelist)
+			);
+			/* eslint-disable-next-line @typescript-eslint/tslint/config */
+			localStorage.setItem(
+				'webSignPackageMetadata',
+				JSON.stringify({
+					gateways,
+					package: {
+						root: html,
+						subresources,
+						subresourceTimeouts
+					},
+					timestamp
+				})
+			);
+			/* eslint-disable-next-line @typescript-eslint/tslint/config */
+			localStorage.setItem(
+				'webSignPackageTimestamp',
+				timestamp.toString()
+			);
+		}
+		catch {}
+
+		const brotliDecode = this.brotliDecode;
+
+		if (brotliDecode === undefined) {
+			return latestPackage;
+		}
+
+		await this.storage.bulkPut(
+			await Promise.all(
+				Object.entries(subresources).map(
+					async ([subresource, ipfsHash]) => {
+						const content = this.potassiumService.toString(
+							brotliDecode(
+								await this.ipfsFetch(
+									ipfsHash,
+									subresourceTimeouts[subresource],
+									gateways
+								)
+							)
+						);
+
+						const hash = this.potassiumService.toBase64(
+							await this.potassiumService.hash.hash(content)
+						);
+
+						return {
+							key: `websign-sri-cache/${hash}`,
+							value: content
+						};
+					}
+				)
+			)
+		);
+
+		return latestPackage;
+	}
+
+	/** Gets latest package data. */
+	public async getPackage (minTimestamp?: number) : Promise<{
+		expirationTimestamp: number;
+		gateways: string[];
+		hashWhitelist: Record<string, true>;
+		html: string;
+		subresources: Record<string, string>;
+		subresourceTimeouts: Record<string, number>;
+		timestamp: number;
+	}> {
+		if (this.packageName === undefined) {
+			throw new Error('Invalid current package name.');
+		}
+
 		if (minTimestamp === undefined) {
 			minTimestamp = await this.getPackageTimestamp();
 		}
@@ -95,6 +254,7 @@ export class WebSignService extends BaseProvider {
 		}
 
 		const packageMetadata: {
+			gateways: string[];
 			package: {
 				root: string;
 				subresources: Record<string, string>;
@@ -140,11 +300,17 @@ export class WebSignService extends BaseProvider {
 				)
 		);
 
-		if (packageMetadata.timestamp !== opened.timestamp) {
+		if (opened.packageName !== this.packageName) {
+			throw new Error('Package name mismatch.');
+		}
+		if (opened.timestamp !== packageMetadata.timestamp) {
 			throw new Error('Package timestamp mismatch.');
 		}
 
 		return {
+			expirationTimestamp: opened.expires,
+			gateways: packageMetadata.gateways,
+			hashWhitelist: opened.hashWhitelist,
 			html: opened.package,
 			subresources: packageMetadata.package.subresources,
 			subresourceTimeouts: packageMetadata.package.subresourceTimeouts,
@@ -154,6 +320,9 @@ export class WebSignService extends BaseProvider {
 
 	/** Gets latest package timestamp. */
 	public async getPackageTimestamp () : Promise<number> {
+		if (this.packageName === undefined) {
+			throw new Error('Invalid current package name.');
+		}
 		if (this.packageTimestamp === undefined) {
 			throw new Error('Invalid current package timestamp.');
 		}
@@ -200,7 +369,7 @@ export class WebSignService extends BaseProvider {
 					}
 
 					try {
-						const {timestamp} = await this.getPackage();
+						const {timestamp} = await this.cachePackage();
 
 						if (
 							timestamp > packageTimestamp &&
@@ -221,6 +390,9 @@ export class WebSignService extends BaseProvider {
 	constructor (
 		/** @ignore */
 		private readonly envService: EnvService,
+
+		/** @ignore */
+		private readonly potassiumService: PotassiumService,
 
 		/** @ignore */
 		private readonly windowWatcherService: WindowWatcherService
