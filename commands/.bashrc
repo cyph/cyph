@@ -40,7 +40,7 @@ fi
 
 
 export NEWLINE=$'\n'
-export NODE_OPTIONS='--max-old-space-size=16384'
+export NODE_OPTIONS='--max-old-space-size=12288'
 
 bindmount () {
 	if [ "${CIRCLECI}" -o ! -d /cyph ] ; then
