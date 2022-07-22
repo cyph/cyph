@@ -9,6 +9,7 @@ import {publicSigningKeys} from '../../account/public-signing-keys';
 import {BaseProvider} from '../../base-provider';
 import {MaybePromise} from '../../maybe-promise-type';
 import {toInt} from '../../util/formatting';
+import {getOrSetDefaultAsync} from '../../util/get-or-set-default';
 import {debugLogError} from '../../util/log';
 import {observableAll} from '../../util/observable-all';
 import {request, requestBytes, requestJSON} from '../../util/request';
@@ -28,6 +29,9 @@ export class WebSignService extends BaseProvider {
 		| ((compressed: Uint8Array) => Uint8Array)
 		| undefined = (<any> self).BrotliDecode;
 
+	/** Timestamp of most recently cached package. */
+	private cachedPackageTimestamp: number | undefined;
+
 	/** Native ipfs-fetch instance (where available). */
 	private readonly nativeIPFSFetch:
 		| ((
@@ -43,6 +47,21 @@ export class WebSignService extends BaseProvider {
 					(await cordovaNodeJS).ipfsFetch(ipfsHash, options)
 				) :
 			undefined;
+
+	/** Map of timestamps to package data objects. */
+	private packageCache = new Map<
+		number,
+		{
+			expirationTimestamp: number;
+			gateways: string[];
+			hashWhitelist: Record<string, true>;
+			html: string;
+			mandatoryUpdate: boolean;
+			subresources: Record<string, string>;
+			subresourceTimeouts: Record<string, number>;
+			timestamp: number;
+		}
+	>();
 
 	/** WebSign client local storage. */
 	private readonly storage = (() => {
@@ -148,6 +167,13 @@ export class WebSignService extends BaseProvider {
 			timestamp
 		} = latestPackage;
 
+		if (
+			this.cachedPackageTimestamp !== undefined &&
+			this.cachedPackageTimestamp >= timestamp
+		) {
+			return latestPackage;
+		}
+
 		try {
 			/* eslint-disable-next-line @typescript-eslint/tslint/config */
 			localStorage.setItem(
@@ -213,6 +239,8 @@ export class WebSignService extends BaseProvider {
 			)
 		);
 
+		this.cachedPackageTimestamp = timestamp;
+
 		return latestPackage;
 	}
 
@@ -231,97 +259,110 @@ export class WebSignService extends BaseProvider {
 			throw new Error('Invalid current package name.');
 		}
 
-		if (minTimestamp === undefined) {
-			minTimestamp = await this.getPackageTimestamp();
-		}
-
-		const res = await requestJSON({
-			url: `${this.envService.baseUrl}package/${this.packageName}`
-		});
+		const packageTimestamp = await this.getPackageTimestamp();
 
 		if (
-			typeof res !== 'object' ||
-			!res ||
-			typeof res.timestamp !== 'number' ||
-			isNaN(res.timestamp) ||
-			minTimestamp > res.timestamp ||
-			typeof res.package !== 'object' ||
-			!res.package ||
-			typeof res.package.root !== 'string' ||
-			!res.package.root ||
-			typeof res.package.subresources !== 'object' ||
-			!res.package.subresources ||
-			typeof res.package.subresourceTimeouts !== 'object' ||
-			!res.package.subresourceTimeouts
+			isNaN(packageTimestamp) ||
+			(minTimestamp !== undefined && minTimestamp > packageTimestamp)
 		) {
-			throw new Error('Failed to fetch package data.');
+			throw new Error('Invalid package timestamp.');
 		}
 
-		const packageMetadata: {
-			gateways: string[];
-			package: {
-				root: string;
-				subresources: Record<string, string>;
-				subresourceTimeouts: Record<string, number>;
-			};
-			timestamp: number;
-		} = res;
+		return getOrSetDefaultAsync(
+			this.packageCache,
+			packageTimestamp,
+			async () => {
+				const res = await requestJSON({
+					url: `${this.envService.baseUrl}package/${this.packageName}`
+				});
 
-		const packageLines = packageMetadata.package.root.trim().split('\n');
+				if (
+					typeof res !== 'object' ||
+					!res ||
+					res.timestamp !== packageTimestamp ||
+					typeof res.package !== 'object' ||
+					!res.package ||
+					typeof res.package.root !== 'string' ||
+					!res.package.root ||
+					typeof res.package.subresources !== 'object' ||
+					!res.package.subresources ||
+					typeof res.package.subresourceTimeouts !== 'object' ||
+					!res.package.subresourceTimeouts
+				) {
+					throw new Error('Failed to fetch package data.');
+				}
 
-		const packageData = {
-			signed: packageLines[0],
-			rsaKey: publicSigningKeys.prod.rsa[toInt(packageLines[1])],
-			sphincsKey: publicSigningKeys.prod.sphincs[toInt(packageLines[2])]
-		};
+				const packageMetadata: {
+					gateways: string[];
+					package: {
+						root: string;
+						subresources: Record<string, string>;
+						subresourceTimeouts: Record<string, number>;
+					};
+					timestamp: number;
+				} = res;
 
-		if (!packageData.rsaKey || !packageData.sphincsKey) {
-			throw new Error('No valid public key specified.');
-		}
+				const packageLines = packageMetadata.package.root
+					.trim()
+					.split('\n');
 
-		const {publicKey} = await superSphincs.importKeys({
-			public: {
-				rsa: packageData.rsaKey,
-				sphincs: packageData.sphincsKey
+				const packageData = {
+					signed: packageLines[0],
+					rsaKey: publicSigningKeys.prod.rsa[toInt(packageLines[1])],
+					sphincsKey:
+						publicSigningKeys.prod.sphincs[toInt(packageLines[2])]
+				};
+
+				if (!packageData.rsaKey || !packageData.sphincsKey) {
+					throw new Error('No valid public key specified.');
+				}
+
+				const {publicKey} = await superSphincs.importKeys({
+					public: {
+						rsa: packageData.rsaKey,
+						sphincs: packageData.sphincsKey
+					}
+				});
+
+				const opened: {
+					expires: number;
+					hashWhitelist: Record<string, true>;
+					mandatoryUpdate?: boolean;
+					package: string;
+					packageName: string;
+					timestamp: number;
+				} = JSON.parse(
+					await superSphincs
+						.openString(packageData.signed, publicKey)
+						.catch(async () =>
+							superSphincs.openString(
+								packageData.signed,
+								publicKey,
+								new Uint8Array(0)
+							)
+						)
+				);
+
+				if (opened.packageName !== this.packageName) {
+					throw new Error('Package name mismatch.');
+				}
+				if (opened.timestamp !== packageMetadata.timestamp) {
+					throw new Error('Package timestamp mismatch.');
+				}
+
+				return {
+					expirationTimestamp: opened.expires,
+					gateways: packageMetadata.gateways,
+					hashWhitelist: opened.hashWhitelist,
+					html: opened.package,
+					mandatoryUpdate: opened.mandatoryUpdate === true,
+					subresources: packageMetadata.package.subresources,
+					subresourceTimeouts:
+						packageMetadata.package.subresourceTimeouts,
+					timestamp: opened.timestamp
+				};
 			}
-		});
-
-		const opened: {
-			expires: number;
-			hashWhitelist: Record<string, true>;
-			mandatoryUpdate?: boolean;
-			package: string;
-			packageName: string;
-			timestamp: number;
-		} = JSON.parse(
-			await superSphincs
-				.openString(packageData.signed, publicKey)
-				.catch(async () =>
-					superSphincs.openString(
-						packageData.signed,
-						publicKey,
-						new Uint8Array(0)
-					)
-				)
 		);
-
-		if (opened.packageName !== this.packageName) {
-			throw new Error('Package name mismatch.');
-		}
-		if (opened.timestamp !== packageMetadata.timestamp) {
-			throw new Error('Package timestamp mismatch.');
-		}
-
-		return {
-			expirationTimestamp: opened.expires,
-			gateways: packageMetadata.gateways,
-			hashWhitelist: opened.hashWhitelist,
-			html: opened.package,
-			mandatoryUpdate: opened.mandatoryUpdate === true,
-			subresources: packageMetadata.package.subresources,
-			subresourceTimeouts: packageMetadata.package.subresourceTimeouts,
-			timestamp: opened.timestamp
-		};
 	}
 
 	/** Gets latest package timestamp. */
@@ -408,5 +449,7 @@ export class WebSignService extends BaseProvider {
 		private readonly windowWatcherService: WindowWatcherService
 	) {
 		super();
+
+		this.cachedPackageTimestamp = this.packageTimestamp;
 	}
 }
