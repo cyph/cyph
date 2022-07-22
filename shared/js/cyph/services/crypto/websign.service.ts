@@ -3,7 +3,7 @@
 import {Injectable} from '@angular/core';
 import {Dexie} from 'dexie';
 import {BehaviorSubject} from 'rxjs';
-import {filter, skip} from 'rxjs/operators';
+import {skip} from 'rxjs/operators';
 import {superSphincs} from 'supersphincs';
 import {publicSigningKeys} from '../../account/public-signing-keys';
 import {BaseProvider} from '../../base-provider';
@@ -49,7 +49,7 @@ export class WebSignService extends BaseProvider {
 			undefined;
 
 	/** Map of timestamps to package data objects. */
-	private packageCache = new Map<
+	private readonly packageCache = new Map<
 		number,
 		{
 			expirationTimestamp: number;
@@ -407,12 +407,9 @@ export class WebSignService extends BaseProvider {
 		this.subscriptions.push(
 			/* TODO: Initiate event from server side */
 			observableAll([
-				this.windowWatcherService.visibility.pipe(
-					skip(1),
-					filter(visible => visible)
-				),
+				this.windowWatcherService.visibility.pipe(skip(1)),
 				watchDateChange()
-			]).subscribe(async () => {
+			]).subscribe(async ([visible]) => {
 				if (!this.autoUpdateEnable.value) {
 					return;
 				}
@@ -425,7 +422,10 @@ export class WebSignService extends BaseProvider {
 						return;
 					}
 
-					if (mandatoryUpdate || (await confirmHandler())) {
+					if (
+						(!visible && mandatoryUpdate) ||
+						(visible && (await confirmHandler()))
+					) {
 						reloadWindow();
 					}
 				}
