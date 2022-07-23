@@ -4,7 +4,7 @@ import {Injectable} from '@angular/core';
 import {Dexie} from 'dexie';
 import {BehaviorSubject} from 'rxjs';
 import {skip} from 'rxjs/operators';
-import {superSphincs} from 'supersphincs';
+import {ISuperSphincs} from 'supersphincs';
 import {publicSigningKeys} from '../../account/public-signing-keys';
 import {BaseProvider} from '../../base-provider';
 import {MaybePromise} from '../../maybe-promise-type';
@@ -18,6 +18,9 @@ import {reloadWindow} from '../../util/window';
 import {EnvService} from '../env.service';
 import {WindowWatcherService} from '../window-watcher.service';
 import {PotassiumService} from './potassium.service';
+
+/* Temporary workaround pending update to supersphincs-legacy */
+const superSphincs: ISuperSphincs = (<any> self).superSphincs;
 
 /**
  * Angular service for WebSign.
