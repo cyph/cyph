@@ -411,7 +411,7 @@ export class WebSignService extends BaseProvider {
 			/* TODO: Initiate event from server side */
 			observableAll([
 				this.windowWatcherService.visibility.pipe(skip(1)),
-				watchDateChange()
+				watchDateChange(true)
 			]).subscribe(async ([visible]) => {
 				if (!this.autoUpdateEnable.value) {
 					return;
