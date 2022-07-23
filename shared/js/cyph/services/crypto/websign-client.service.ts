@@ -26,7 +26,7 @@ const superSphincs: ISuperSphincs = (<any> self).superSphincs;
  * Angular service for WebSign.
  */
 @Injectable()
-export class WebSignService extends BaseProvider {
+export class WebSignClientService extends BaseProvider {
 	/** WebSign Brotli decoder instance. */
 	private readonly brotliDecode:
 		| ((compressed: Uint8Array) => Uint8Array)

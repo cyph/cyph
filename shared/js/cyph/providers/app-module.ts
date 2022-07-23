@@ -15,7 +15,7 @@ import {AccountService} from '../services/account.service';
 import {AccountAuthService} from '../services/crypto/account-auth.service';
 import {AccountDatabaseService} from '../services/crypto/account-database.service';
 import {PGPService} from '../services/crypto/pgp.service';
-import {WebSignService} from '../services/crypto/websign.service';
+import {WebSignClientService} from '../services/crypto/websign-client.service';
 import {CryptocurrencyService} from '../services/cryptocurrency.service';
 import {DatabaseService} from '../services/database.service';
 import {EHRIntegrationService} from '../services/ehr-integration.service';
@@ -50,7 +50,7 @@ export const appModuleProviders = [
 	PGPService,
 	ProductTourService,
 	QRService,
-	WebSignService,
+	WebSignClientService,
 	WorkerService,
 	{
 		provide: 'AccountContactsSearchComponent',

@@ -17,7 +17,7 @@ import {AccountFilesService} from '../../services/account-files.service';
 import {AccountSettingsService} from '../../services/account-settings.service';
 import {AccountService} from '../../services/account.service';
 import {AccountDatabaseService} from '../../services/crypto/account-database.service';
-import {WebSignService} from '../../services/crypto/websign.service';
+import {WebSignClientService} from '../../services/crypto/websign-client.service';
 import {DialogService} from '../../services/dialog.service';
 import {EnvService} from '../../services/env.service';
 import {StringsService} from '../../services/strings.service';
@@ -182,7 +182,7 @@ export class AccountNoteComponent
 	public ngOnDestroy () : void {
 		super.ngOnDestroy();
 
-		this.webSignService.autoUpdateEnable.next(true);
+		this.webSignClientService.autoUpdateEnable.next(true);
 
 		this.note.next(undefined);
 		this.updateNoteData({id: undefined});
@@ -192,7 +192,7 @@ export class AccountNoteComponent
 	public ngOnInit () : void {
 		super.ngOnInit();
 
-		this.webSignService.autoUpdateEnable.next(false);
+		this.webSignClientService.autoUpdateEnable.next(false);
 		this.accountService.transitionEnd();
 
 		this.setURL(this.router.url);
@@ -387,7 +387,7 @@ export class AccountNoteComponent
 		private readonly router: Router,
 
 		/** @ignore */
-		private readonly webSignService: WebSignService,
+		private readonly webSignClientService: WebSignClientService,
 
 		/** @see AccountService */
 		public readonly accountService: AccountService,
