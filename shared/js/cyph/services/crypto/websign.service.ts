@@ -4,7 +4,7 @@ import {Injectable} from '@angular/core';
 import {Dexie} from 'dexie';
 import {BehaviorSubject} from 'rxjs';
 import {skip} from 'rxjs/operators';
-import {superSphincs as superSphincsLegacy} from 'supersphincs-legacy';
+import {superSphincs as superSphincsLegacy} from 'supersphincs-legacy/dist/old-api.js';
 import {agsePublicSigningKeys} from '../../account/agse-public-signing-keys';
 import {BaseProvider} from '../../base-provider';
 import {MaybePromise} from '../../maybe-promise-type';
