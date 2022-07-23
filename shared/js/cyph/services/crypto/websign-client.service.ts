@@ -24,7 +24,7 @@ import {PotassiumService} from './potassium.service';
  * Angular service for WebSign.
  */
 @Injectable()
-export class WebSignService extends BaseProvider {
+export class WebSignClientService extends BaseProvider {
 	/** WebSign Brotli decoder instance. */
 	private readonly brotliDecode:
 		| ((compressed: Uint8Array) => Uint8Array)
@@ -421,7 +421,7 @@ export class WebSignService extends BaseProvider {
 			/* TODO: Initiate event from server side */
 			observableAll([
 				this.windowWatcherService.visibility.pipe(skip(1)),
-				watchDateChange()
+				watchDateChange(true)
 			]).subscribe(async ([visible]) => {
 				if (!this.autoUpdateEnable.value) {
 					return;

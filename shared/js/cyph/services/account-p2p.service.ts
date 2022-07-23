@@ -13,7 +13,7 @@ import {AccountService} from './account.service';
 import {ChatService} from './chat.service';
 import {ConfigService} from './config.service';
 import {AccountDatabaseService} from './crypto/account-database.service';
-import {WebSignService} from './crypto/websign.service';
+import {WebSignClientService} from './crypto/websign-client.service';
 import {DialogService} from './dialog.service';
 import {EnvService} from './env.service';
 import {LocalStorageService} from './local-storage.service';
@@ -86,7 +86,7 @@ export class AccountP2PService extends P2PService {
 
 	/** Initiates call. */
 	public async beginCall (callType: 'audio' | 'video') : Promise<void> {
-		this.webSignService.autoUpdateEnable.next(false);
+		this.webSignClientService.autoUpdateEnable.next(false);
 
 		const remoteUser = await this.accountSessionService.remoteUser;
 		const id = this.accountSessionService.sessionSubID;
@@ -149,12 +149,12 @@ export class AccountP2PService extends P2PService {
 			.catch(() => false);
 
 		if (!hasPermission) {
-			this.webSignService.autoUpdateEnable.next(true);
+			this.webSignClientService.autoUpdateEnable.next(true);
 			return;
 		}
 
 		firstValueFrom(this.p2pWebRTCService.disconnect).then(() => {
-			this.webSignService.autoUpdateEnable.next(true);
+			this.webSignClientService.autoUpdateEnable.next(true);
 		});
 
 		const timestamp = await getTimestamp();
@@ -242,7 +242,7 @@ export class AccountP2PService extends P2PService {
 		private readonly notificationService: NotificationService,
 
 		/** @ignore */
-		private readonly webSignService: WebSignService
+		private readonly webSignClientService: WebSignClientService
 	) {
 		super(
 			accountUserLookupService,

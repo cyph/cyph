@@ -10,7 +10,7 @@ import {AccountSettingsService} from '../../services/account-settings.service';
 import {AccountService} from '../../services/account.service';
 import {AccountDatabaseService} from '../../services/crypto/account-database.service';
 import {PotassiumService} from '../../services/crypto/potassium.service';
-import {WebSignService} from '../../services/crypto/websign.service';
+import {WebSignClientService} from '../../services/crypto/websign-client.service';
 import {EnvService} from '../../services/env.service';
 import {StringsService} from '../../services/strings.service';
 
@@ -37,7 +37,7 @@ export class AccountHomeComponent extends BaseProvider implements OnInit {
 	public async ngOnInit () : Promise<void> {
 		super.ngOnInit();
 
-		this.webSignService.autoUpdateEnable.next(true);
+		this.webSignClientService.autoUpdateEnable.next(true);
 
 		if (this.accountDatabaseService.currentUser.value?.pseudoAccount) {
 			await this.router.navigate(['messages']);
@@ -92,7 +92,7 @@ export class AccountHomeComponent extends BaseProvider implements OnInit {
 
 	constructor (
 		/** @ignore */
-		private readonly webSignService: WebSignService,
+		private readonly webSignClientService: WebSignClientService,
 
 		/** @see Router */
 		public readonly router: Router,

@@ -43,7 +43,7 @@ import {AccountUserLookupService} from './account-user-lookup.service';
 import {ConfigService} from './config.service';
 import {AccountAuthService} from './crypto/account-auth.service';
 import {AccountDatabaseService} from './crypto/account-database.service';
-import {WebSignService} from './crypto/websign.service';
+import {WebSignClientService} from './crypto/websign-client.service';
 import {DialogService} from './dialog.service';
 import {EnvService} from './env.service';
 import {LocalStorageService} from './local-storage.service';
@@ -366,17 +366,15 @@ export class AccountService extends BaseProvider {
 						of([])
 				])
 			),
-			map(
-				([data, childData, params, childParams, url, childURL]) : [
-					Data,
-					Params,
-					UrlSegment[]
-				] => [
-					{...data, ...childData},
-					{...params, ...childParams},
-					[...url, ...childURL]
-				]
-			)
+			map(([data, childData, params, childParams, url, childURL]) : [
+				Data,
+				Params,
+				UrlSegment[]
+			] => [
+				{...data, ...childData},
+				{...params, ...childParams},
+				[...url, ...childURL]
+			])
 		);
 	}
 
@@ -587,7 +585,7 @@ export class AccountService extends BaseProvider {
 	public async userInit () : Promise<void> {
 		await this.accountDatabaseService.getCurrentUser();
 
-		this.webSignService.watchPackageUpdates(async () =>
+		this.webSignClientService.watchPackageUpdates(async () =>
 			this.dialogService.confirm({
 				bottomSheet: true,
 				cancel: this.stringsService.applyUpdateRestartCancel,
@@ -596,12 +594,12 @@ export class AccountService extends BaseProvider {
 					{
 						time: getTimeString(
 							(await getTimestamp()) +
-								this.webSignService.autoUpdateTimeout
+								this.webSignClientService.autoUpdateTimeout
 						)
 					}
 				),
 				ok: this.stringsService.applyUpdateRestartOK,
-				timeout: this.webSignService.autoUpdateTimeout,
+				timeout: this.webSignClientService.autoUpdateTimeout,
 				timeoutResponse: true,
 				title: this.stringsService.applyUpdateRestartTitle
 			})
@@ -838,7 +836,7 @@ export class AccountService extends BaseProvider {
 		private readonly stringsService: StringsService,
 
 		/** @ignore */
-		private readonly webSignService: WebSignService,
+		private readonly webSignClientService: WebSignClientService,
 
 		/** @ignore */
 		private readonly windowWatcherService: WindowWatcherService
