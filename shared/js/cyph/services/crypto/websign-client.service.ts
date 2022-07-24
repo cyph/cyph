@@ -56,13 +56,18 @@ export class WebSignClientService extends BaseProvider {
 		number,
 		{
 			expirationTimestamp: number;
-			gateways: string[];
 			hashWhitelist: Record<string, true>;
 			html: string;
 			mandatoryUpdate: boolean;
-			subresources: Record<string, string>;
-			subresourceTimeouts: Record<string, number>;
-			timestamp: number;
+			packageMetadata: {
+				gateways: string[];
+				package: {
+					root: string;
+					subresources: Record<string, string>;
+					subresourceTimeouts: Record<string, number>;
+				};
+				timestamp: number;
+			};
 		}
 	>();
 
@@ -150,29 +155,27 @@ export class WebSignClientService extends BaseProvider {
 	/** Caches latest package data in local storage to optimize the next startup. */
 	public async cachePackage (minTimestamp?: number) : Promise<{
 		expirationTimestamp: number;
-		gateways: string[];
 		hashWhitelist: Record<string, true>;
 		html: string;
 		mandatoryUpdate: boolean;
-		subresources: Record<string, string>;
-		subresourceTimeouts: Record<string, number>;
-		timestamp: number;
+		packageMetadata: {
+			gateways: string[];
+			package: {
+				root: string;
+				subresources: Record<string, string>;
+				subresourceTimeouts: Record<string, number>;
+			};
+			timestamp: number;
+		};
 	}> {
 		const latestPackage = await this.getPackage(minTimestamp);
 
-		const {
-			expirationTimestamp,
-			gateways,
-			hashWhitelist,
-			html,
-			subresources,
-			subresourceTimeouts,
-			timestamp
-		} = latestPackage;
+		const {expirationTimestamp, hashWhitelist, packageMetadata} =
+			latestPackage;
 
 		if (
 			this.cachedPackageTimestamp !== undefined &&
-			this.cachedPackageTimestamp >= timestamp
+			this.cachedPackageTimestamp >= packageMetadata.timestamp
 		) {
 			return latestPackage;
 		}
@@ -191,20 +194,12 @@ export class WebSignClientService extends BaseProvider {
 			/* eslint-disable-next-line @typescript-eslint/tslint/config */
 			localStorage.setItem(
 				'webSignPackageMetadata',
-				JSON.stringify({
-					gateways,
-					package: {
-						root: html,
-						subresources,
-						subresourceTimeouts
-					},
-					timestamp
-				})
+				JSON.stringify(packageMetadata)
 			);
 			/* eslint-disable-next-line @typescript-eslint/tslint/config */
 			localStorage.setItem(
 				'webSignPackageTimestamp',
-				timestamp.toString()
+				packageMetadata.timestamp.toString()
 			);
 		}
 		catch {}
@@ -217,14 +212,16 @@ export class WebSignClientService extends BaseProvider {
 
 		await this.storage.bulkPut(
 			await Promise.all(
-				Object.entries(subresources).map(
+				Object.entries(packageMetadata.package.subresources).map(
 					async ([subresource, ipfsHash]) => {
 						const content = this.potassiumService.toString(
 							brotliDecode(
 								await this.ipfsFetch(
 									ipfsHash,
-									subresourceTimeouts[subresource],
-									gateways
+									packageMetadata.package.subresourceTimeouts[
+										subresource
+									],
+									packageMetadata.gateways
 								)
 							)
 						);
@@ -242,7 +239,7 @@ export class WebSignClientService extends BaseProvider {
 			)
 		);
 
-		this.cachedPackageTimestamp = timestamp;
+		this.cachedPackageTimestamp = packageMetadata.timestamp;
 
 		return latestPackage;
 	}
@@ -250,13 +247,18 @@ export class WebSignClientService extends BaseProvider {
 	/** Gets latest package data. */
 	public async getPackage (minTimestamp?: number) : Promise<{
 		expirationTimestamp: number;
-		gateways: string[];
 		hashWhitelist: Record<string, true>;
 		html: string;
 		mandatoryUpdate: boolean;
-		subresources: Record<string, string>;
-		subresourceTimeouts: Record<string, number>;
-		timestamp: number;
+		packageMetadata: {
+			gateways: string[];
+			package: {
+				root: string;
+				subresources: Record<string, string>;
+				subresourceTimeouts: Record<string, number>;
+			};
+			timestamp: number;
+		};
 	}> {
 		if (this.packageName === undefined) {
 			throw new Error('Invalid current package name.');
@@ -355,14 +357,10 @@ export class WebSignClientService extends BaseProvider {
 
 				return {
 					expirationTimestamp: opened.expires,
-					gateways: packageMetadata.gateways,
 					hashWhitelist: opened.hashWhitelist,
 					html: opened.package,
 					mandatoryUpdate: opened.mandatoryUpdate === true,
-					subresources: packageMetadata.package.subresources,
-					subresourceTimeouts:
-						packageMetadata.package.subresourceTimeouts,
-					timestamp: opened.timestamp
+					packageMetadata
 				};
 			}
 		);
@@ -418,8 +416,10 @@ export class WebSignClientService extends BaseProvider {
 				}
 
 				try {
-					const {mandatoryUpdate, timestamp} =
-						await this.cachePackage();
+					const {
+						mandatoryUpdate,
+						packageMetadata: {timestamp}
+					} = await this.cachePackage();
 
 					if (packageTimestamp >= timestamp) {
 						return;
