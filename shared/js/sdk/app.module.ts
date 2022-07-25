@@ -34,6 +34,7 @@ import {AnalyticsService} from '../cyph/services/analytics.service';
 import {ConfigService} from '../cyph/services/config.service';
 import {MainThreadPotassiumService} from '../cyph/services/crypto/main-thread-potassium.service';
 import {PotassiumService} from '../cyph/services/crypto/potassium.service';
+import {WebSignClientService} from '../cyph/services/crypto/websign-client.service';
 import {CryptocurrencyService} from '../cyph/services/cryptocurrency.service';
 import {DatabaseService} from '../cyph/services/database.service';
 import {DialogService} from '../cyph/services/dialog.service';
@@ -103,6 +104,7 @@ import {AppComponent} from './app.component';
 		FingerprintService,
 		PGPService,
 		QRService,
+		WebSignClientService,
 		WorkerService,
 		{
 			provide: DatabaseService,
