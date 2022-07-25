@@ -43,7 +43,12 @@ export class WebSignClientService extends BaseProvider {
 		  ) => Promise<Uint8Array>)
 		| undefined =
 		typeof cordovaRequire === 'function' ?
-			cordovaRequire('ipfs-fetch') :
+			(() => {
+				try {
+					return cordovaRequire('ipfs-fetch');
+				}
+				catch {}
+			})() :
 		typeof cordovaNodeJS !== 'undefined' ?
 			async (ipfsHash, options) =>
 				this.potassiumService.fromBase64(
