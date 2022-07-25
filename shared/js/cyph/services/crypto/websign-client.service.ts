@@ -2,6 +2,7 @@
 
 import {Injectable} from '@angular/core';
 import {Dexie} from 'dexie';
+import memoize from 'lodash-es/memoize';
 import {BehaviorSubject} from 'rxjs';
 import {skip} from 'rxjs/operators';
 import {superSphincs as superSphincsLegacy} from 'supersphincs-legacy/dist/old-api.js';
@@ -41,7 +42,12 @@ export class WebSignClientService extends BaseProvider {
 		  ) => Promise<Uint8Array>)
 		| undefined =
 		typeof cordovaRequire === 'function' ?
-			cordovaRequire('ipfs-fetch') :
+			(() => {
+				try {
+					return cordovaRequire('ipfs-fetch');
+				}
+				catch {}
+			})() :
 		typeof cordovaNodeJS !== 'undefined' ?
 			async (ipfsHash, options) =>
 				this.potassiumService.fromBase64(
@@ -54,13 +60,18 @@ export class WebSignClientService extends BaseProvider {
 		number,
 		{
 			expirationTimestamp: number;
-			gateways: string[];
 			hashWhitelist: Record<string, true>;
 			html: string;
 			mandatoryUpdate: boolean;
-			subresources: Record<string, string>;
-			subresourceTimeouts: Record<string, number>;
-			timestamp: number;
+			packageMetadata: {
+				gateways: string[];
+				package: {
+					root: string;
+					subresources: Record<string, string>;
+					subresourceTimeouts: Record<string, number>;
+				};
+				timestamp: number;
+			};
 		}
 	>();
 
@@ -118,6 +129,56 @@ export class WebSignClientService extends BaseProvider {
 		}
 	})();
 
+	/** Watches for package updates to keep long-running background instances in sync. */
+	public readonly watchPackageUpdates = memoize(
+		(confirmHandler: () => MaybePromise<boolean> = () => true) : void => {
+			const packageTimestamp = this.packageTimestamp;
+
+			if (
+				!this.packageName ||
+				packageTimestamp === undefined ||
+				this.envService.isLocalEnv
+			) {
+				return;
+			}
+
+			this.subscriptions.push(
+				/* TODO: Initiate event from server side */
+				observableAll([
+					this.windowWatcherService.visibility.pipe(skip(1)),
+					watchDateChange(true)
+				]).subscribe(async ([visible]) => {
+					if (!this.autoUpdateEnable.value) {
+						return;
+					}
+
+					try {
+						const {
+							mandatoryUpdate,
+							packageMetadata: {timestamp}
+						} = await this.cachePackage();
+
+						if (packageTimestamp >= timestamp) {
+							return;
+						}
+
+						if (
+							(!visible && mandatoryUpdate) ||
+							(visible && (await confirmHandler()))
+						) {
+							reloadWindow();
+						}
+					}
+					catch (err) {
+						debugLogError(() => ({
+							webSignWatchPackageUpdatesError: err
+						}));
+					}
+				})
+			);
+		}
+	);
+
 	/** Fetches data from IPFS. */
 	private async ipfsFetch (
 		ipfsHash: string,
@@ -153,29 +214,27 @@ export class WebSignClientService extends BaseProvider {
 	/** Caches latest package data in local storage to optimize the next startup. */
 	public async cachePackage (minTimestamp?: number) : Promise<{
 		expirationTimestamp: number;
-		gateways: string[];
 		hashWhitelist: Record<string, true>;
 		html: string;
 		mandatoryUpdate: boolean;
-		subresources: Record<string, string>;
-		subresourceTimeouts: Record<string, number>;
-		timestamp: number;
+		packageMetadata: {
+			gateways: string[];
+			package: {
+				root: string;
+				subresources: Record<string, string>;
+				subresourceTimeouts: Record<string, number>;
+			};
+			timestamp: number;
+		};
 	}> {
 		const latestPackage = await this.getPackage(minTimestamp);
 
-		const {
-			expirationTimestamp,
-			gateways,
-			hashWhitelist,
-			html,
-			subresources,
-			subresourceTimeouts,
-			timestamp
-		} = latestPackage;
+		const {expirationTimestamp, hashWhitelist, packageMetadata} =
+			latestPackage;
 
 		if (
 			this.cachedPackageTimestamp !== undefined &&
-			this.cachedPackageTimestamp >= timestamp
+			this.cachedPackageTimestamp >= packageMetadata.timestamp
 		) {
 			return latestPackage;
 		}
@@ -194,20 +253,12 @@ export class WebSignClientService extends BaseProvider {
 			/* eslint-disable-next-line @typescript-eslint/tslint/config */
 			localStorage.setItem(
 				'webSignPackageMetadata',
-				JSON.stringify({
-					gateways,
-					package: {
-						root: html,
-						subresources,
-						subresourceTimeouts
-					},
-					timestamp
-				})
+				JSON.stringify(packageMetadata)
 			);
 			/* eslint-disable-next-line @typescript-eslint/tslint/config */
 			localStorage.setItem(
 				'webSignPackageTimestamp',
-				timestamp.toString()
+				packageMetadata.timestamp.toString()
 			);
 		}
 		catch {}
@@ -220,14 +271,16 @@ export class WebSignClientService extends BaseProvider {
 
 		await this.storage.bulkPut(
 			await Promise.all(
-				Object.entries(subresources).map(
+				Object.entries(packageMetadata.package.subresources).map(
 					async ([subresource, ipfsHash]) => {
 						const content = this.potassiumService.toString(
 							brotliDecode(
 								await this.ipfsFetch(
 									ipfsHash,
-									subresourceTimeouts[subresource],
-									gateways
+									packageMetadata.package.subresourceTimeouts[
+										subresource
+									],
+									packageMetadata.gateways
 								)
 							)
 						);
@@ -245,7 +298,7 @@ export class WebSignClientService extends BaseProvider {
 			)
 		);
 
-		this.cachedPackageTimestamp = timestamp;
+		this.cachedPackageTimestamp = packageMetadata.timestamp;
 
 		return latestPackage;
 	}
@@ -253,13 +306,18 @@ export class WebSignClientService extends BaseProvider {
 	/** Gets latest package data. */
 	public async getPackage (minTimestamp?: number) : Promise<{
 		expirationTimestamp: number;
-		gateways: string[];
 		hashWhitelist: Record<string, true>;
 		html: string;
 		mandatoryUpdate: boolean;
-		subresources: Record<string, string>;
-		subresourceTimeouts: Record<string, number>;
-		timestamp: number;
+		packageMetadata: {
+			gateways: string[];
+			package: {
+				root: string;
+				subresources: Record<string, string>;
+				subresourceTimeouts: Record<string, number>;
+			};
+			timestamp: number;
+		};
 	}> {
 		if (this.packageName === undefined) {
 			throw new Error('Invalid current package name.');
@@ -365,14 +423,10 @@ export class WebSignClientService extends BaseProvider {
 
 				return {
 					expirationTimestamp: opened.expires,
-					gateways: packageMetadata.gateways,
 					hashWhitelist: opened.hashWhitelist,
 					html: opened.package,
 					mandatoryUpdate: opened.mandatoryUpdate === true,
-					subresources: packageMetadata.package.subresources,
-					subresourceTimeouts:
-						packageMetadata.package.subresourceTimeouts,
-					timestamp: opened.timestamp
+					packageMetadata
 				};
 			}
 		);
@@ -401,54 +455,6 @@ export class WebSignClientService extends BaseProvider {
 		}
 
 		return latestPackageTimestamp;
-	}
-
-	/** Watches for package updates to keep long-running background instances in sync. */
-	public watchPackageUpdates (
-		confirmHandler: () => MaybePromise<boolean> = () => true
-	) : void {
-		const packageTimestamp = this.packageTimestamp;
-
-		if (
-			!this.packageName ||
-			packageTimestamp === undefined ||
-			this.envService.isLocalEnv
-		) {
-			return;
-		}
-
-		this.subscriptions.push(
-			/* TODO: Initiate event from server side */
-			observableAll([
-				this.windowWatcherService.visibility.pipe(skip(1)),
-				watchDateChange(true)
-			]).subscribe(async ([visible]) => {
-				if (!this.autoUpdateEnable.value) {
-					return;
-				}
-
-				try {
-					const {mandatoryUpdate, timestamp} =
-						await this.cachePackage();
-
-					if (packageTimestamp >= timestamp) {
-						return;
-					}
-
-					if (
-						(!visible && mandatoryUpdate) ||
-						(visible && (await confirmHandler()))
-					) {
-						reloadWindow();
-					}
-				}
-				catch (err) {
-					debugLogError(() => ({
-						webSignWatchPackageUpdatesError: err
-					}));
-				}
-			})
-		);
 	}
 
 	constructor (
