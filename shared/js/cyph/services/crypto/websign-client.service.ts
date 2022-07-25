@@ -2,6 +2,7 @@
 
 import {Injectable} from '@angular/core';
 import {Dexie} from 'dexie';
+import memoize from 'lodash-es/memoize';
 import {BehaviorSubject} from 'rxjs';
 import {skip} from 'rxjs/operators';
 import {ISuperSphincs} from 'supersphincs';
@@ -124,6 +125,56 @@ export class WebSignClientService extends BaseProvider {
 			return undefined;
 		}
 	})();
+
+	/** Watches for package updates to keep long-running background instances in sync. */
+	public readonly watchPackageUpdates = memoize(
+		(confirmHandler: () => MaybePromise<boolean> = () => true) : void => {
+			const packageTimestamp = this.packageTimestamp;
+
+			if (
+				!this.packageName ||
+				packageTimestamp === undefined ||
+				this.envService.isLocalEnv
+			) {
+				return;
+			}
+
+			this.subscriptions.push(
+				/* TODO: Initiate event from server side */
+				observableAll([
+					this.windowWatcherService.visibility.pipe(skip(1)),
+					watchDateChange(true)
+				]).subscribe(async ([visible]) => {
+					if (!this.autoUpdateEnable.value) {
+						return;
+					}
+
+					try {
+						const {
+							mandatoryUpdate,
+							packageMetadata: {timestamp}
+						} = await this.cachePackage();
+
+						if (packageTimestamp >= timestamp) {
+							return;
+						}
+
+						if (
+							(!visible && mandatoryUpdate) ||
+							(visible && (await confirmHandler()))
+						) {
+							reloadWindow();
+						}
+					}
+					catch (err) {
+						debugLogError(() => ({
+							webSignWatchPackageUpdatesError: err
+						}));
+					}
+				})
+			);
+		}
+	);
 
 	/** Fetches data from IPFS. */
 	private async ipfsFetch (
@@ -394,56 +445,6 @@ export class WebSignClientService extends BaseProvider {
 		}
 
 		return latestPackageTimestamp;
-	}
-
-	/** Watches for package updates to keep long-running background instances in sync. */
-	public watchPackageUpdates (
-		confirmHandler: () => MaybePromise<boolean> = () => true
-	) : void {
-		const packageTimestamp = this.packageTimestamp;
-
-		if (
-			!this.packageName ||
-			packageTimestamp === undefined ||
-			this.envService.isLocalEnv
-		) {
-			return;
-		}
-
-		this.subscriptions.push(
-			/* TODO: Initiate event from server side */
-			observableAll([
-				this.windowWatcherService.visibility.pipe(skip(1)),
-				watchDateChange(true)
-			]).subscribe(async ([visible]) => {
-				if (!this.autoUpdateEnable.value) {
-					return;
-				}
-
-				try {
-					const {
-						mandatoryUpdate,
-						packageMetadata: {timestamp}
-					} = await this.cachePackage();
-
-					if (packageTimestamp >= timestamp) {
-						return;
-					}
-
-					if (
-						(!visible && mandatoryUpdate) ||
-						(visible && (await confirmHandler()))
-					) {
-						reloadWindow();
-					}
-				}
-				catch (err) {
-					debugLogError(() => ({
-						webSignWatchPackageUpdatesError: err
-					}));
-				}
-			})
-		);
 	}
 
 	constructor (
