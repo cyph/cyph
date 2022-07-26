@@ -18,10 +18,10 @@ require (
 	github.com/microcosm-cc/bluemonday v1.0.19
 	github.com/oschwald/geoip2-golang v1.7.0
 	github.com/sirupsen/logrus v1.9.0 // indirect
-	github.com/stripe/stripe-go/v72 v72.120.0
-	golang.org/x/net v0.0.0-20220708220712-1185a9018129 // indirect
-	golang.org/x/oauth2 v0.0.0-20220718184931-c8730f7fcb92 // indirect
+	github.com/stripe/stripe-go/v72 v72.121.0
+	golang.org/x/net v0.0.0-20220725212005-46097bf591d3 // indirect
+	golang.org/x/oauth2 v0.0.0-20220722155238-128564f6959c // indirect
+	golang.org/x/sync v0.0.0-20220722155255-886fb9371eb4 // indirect
 	google.golang.org/api v0.88.0
-	google.golang.org/genproto v0.0.0-20220720214146-176da50484ac
-	google.golang.org/grpc v1.48.0 // indirect
+	google.golang.org/genproto v0.0.0-20220725144611-272f38e5d71b
 )
