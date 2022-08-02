@@ -3,7 +3,7 @@ syntax = "proto3";
 
 /** AGSE-PKI certificate signing request data. */
 message AGSEPKICSRData {
-	/** @see AccountUserPublicKeys.signing */
+	/** Potassium.Sign public key. */
 	required bytes publicSigningKey = 1;
 
 	/** Username. */

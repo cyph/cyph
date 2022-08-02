@@ -19,7 +19,6 @@ import "account-setup-checklist.proto";
 import "account-user-presence.proto";
 import "account-user-profile-extra.proto";
 import "account-user-profile.proto";
-import "account-user-public-keys.proto";
 import "account-user-types.proto";
 import "notification-types.proto";
 import "review.proto";

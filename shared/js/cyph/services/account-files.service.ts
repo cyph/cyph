@@ -1386,7 +1386,7 @@ export class AccountFilesService extends BaseProvider {
 					AccountFileReferenceContainer,
 					await this.potassiumService.box.open(
 						value,
-						currentUser.keys.encryptionKeyPair
+						currentUser.keyrings.private
 					)
 				);
 
@@ -1423,11 +1423,9 @@ export class AccountFilesService extends BaseProvider {
 						AccountFileReference,
 						await this.potassiumService.sign.open(
 							referenceContainer.signedShare.accountFileReference,
-							(
-								await this.accountDatabaseService.getUserPublicKeys(
-									referenceContainer.signedShare.owner
-								)
-							).signing
+							await this.accountDatabaseService.getUserPublicKeys(
+								referenceContainer.signedShare.owner
+							)
 						)
 					);
 
@@ -2490,8 +2488,8 @@ export class AccountFilesService extends BaseProvider {
 				signedShare: {
 					accountFileReference: await this.potassiumService.sign.sign(
 						data,
-						this.accountDatabaseService.currentUser.value.keys
-							.signingKeyPair.privateKey
+						this.accountDatabaseService.currentUser.value.keyrings
+							.private
 					),
 					owner: this.accountDatabaseService.currentUser.value.user
 						.username
@@ -2511,11 +2509,7 @@ export class AccountFilesService extends BaseProvider {
 					AccountFileReferenceContainer,
 					accountFileReferenceContainer
 				),
-				(
-					await this.accountDatabaseService.getUserPublicKeys(
-						username
-					)
-				).encryption
+				await this.accountDatabaseService.getUserPublicKeys(username)
 			);
 
 			await this.databaseService.setItem(

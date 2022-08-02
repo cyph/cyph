@@ -1,4 +1,5 @@
-import {IKeyPair} from '../../proto/types';
+import memoize from 'lodash-es/memoize';
+import {IKeyPair, IPrivateKeyring} from '../../proto/types';
 import {IPotassium} from '../potassium/ipotassium';
 import {potassiumUtil} from '../potassium/potassium-util';
 import {IHandshakeState} from './ihandshake-state';
@@ -13,46 +14,41 @@ export class AnonymousLocalUser implements ILocalUser {
 		'NFsmRElh9RGWChCPUKvL9Q=='
 	);
 
-	/** @ignore */
-	private keyPair?: Promise<IKeyPair>;
-
 	/** @inheritDoc */
-	public async getEncryptionKeyPair () : Promise<IKeyPair> {
-		if (!this.keyPair) {
-			this.keyPair = (async () => {
-				const keyPair = await this.potassium.box.keyPair();
+	public readonly getPrivateKeyring = memoize(
+		async () : Promise<
+			IPrivateKeyring & {boxPrivateKeys: Record<string, IKeyPair>}
+		> => {
+			const keyPair = await this.potassium.box.keyPair();
 
-				if (this.sharedSecret !== undefined) {
-					const sharedSecret = (
-						await this.potassium.passwordHash.hash(
-							this.sharedSecret,
-							AnonymousLocalUser.handshakeSalt
-						)
-					).hash;
+			if (this.sharedSecret !== undefined) {
+				const sharedSecret = (
+					await this.potassium.passwordHash.hash(
+						this.sharedSecret,
+						AnonymousLocalUser.handshakeSalt
+					)
+				).hash;
 
-					await this.handshakeState.localPublicKey.setValue(
-						await this.potassium.secretBox.seal(
-							keyPair.publicKey,
-							sharedSecret
-						)
-					);
+				await this.handshakeState.localPublicKey.setValue(
+					await this.potassium.secretBox.seal(
+						keyPair.publicKey,
+						sharedSecret
+					)
+				);
 
-					this.potassium.clearMemory(sharedSecret);
+				this.potassium.clearMemory(sharedSecret);
 
-					this.sharedSecret = undefined;
+				this.sharedSecret = undefined;
+			}
+
+			/* Note that a signing key pair is not provided */
+			return {
+				boxPrivateKeys: {
+					[await this.potassium.box.currentAlgorithm]: keyPair
 				}
-
-				return keyPair;
-			})();
+			};
 		}
-
-		return this.keyPair;
-	}
-
-	/** @inheritDoc */
-	public async getSigningKeyPair () : Promise<undefined> {
-		return undefined;
-	}
+	);
 
 	constructor (
 		/** @ignore */

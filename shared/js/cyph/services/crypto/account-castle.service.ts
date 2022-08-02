@@ -127,8 +127,10 @@ export class AccountCastleService extends CastleService {
 				`${sessionURL}/handshakeState/initialSecret`,
 				MaybeBinaryProto
 			),
-			(await localUser.getSigningKeyPair()) === undefined ||
-				(await remoteUser.getPublicSigningKey()) === undefined ?
+			(await localUser.getPrivateKeyring()).signPrivateKeys ===
+				undefined ||
+				(await remoteUser.getPublicKeyring()).signPublicKeys ===
+					undefined ?
 				this.accountDatabaseService.currentUser.value?.pseudoAccount :
 				undefined
 		);

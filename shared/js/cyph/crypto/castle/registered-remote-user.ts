@@ -1,4 +1,6 @@
+import memoize from 'lodash-es/memoize';
 import {firstValueFrom, Observable} from 'rxjs';
+import {IPublicKeyring} from '../../proto/types';
 import {AccountDatabaseService} from '../../services/crypto/account-database.service';
 import {filterEmptyOperator} from '../../util/filter';
 import {IRemoteUser} from './iremote-user';
@@ -7,40 +9,20 @@ import {IRemoteUser} from './iremote-user';
  * A registered user with a long-lived key pair, authenticated via AGSE-PKI.
  */
 export class RegisteredRemoteUser implements IRemoteUser {
-	/** @ignore */
-	private keys?: Promise<{encryption: Uint8Array; signing?: Uint8Array}>;
+	/** @inheritDoc */
+	public readonly getPublicKeyring = memoize(
+		async () : Promise<IPublicKeyring> => {
+			const username = await firstValueFrom(
+				this.username.pipe(filterEmptyOperator())
+			);
 
-	/** @ignore */
-	private async getKeys () : Promise<{
-		encryption: Uint8Array;
-		signing?: Uint8Array;
-	}> {
-		if (!this.keys) {
-			this.keys = (async () => {
-				const username = await firstValueFrom(
-					this.username.pipe(filterEmptyOperator())
-				);
+			if (this.pseudoAccount) {
+				return {};
+			}
 
-				if (this.pseudoAccount) {
-					return {encryption: new Uint8Array(0)};
-				}
-
-				return this.accountDatabaseService.getUserPublicKeys(username);
-			})();
+			return this.accountDatabaseService.getUserPublicKeys(username);
 		}
-
-		return this.keys;
-	}
-
-	/** @inheritDoc */
-	public async getPublicEncryptionKey () : Promise<Uint8Array> {
-		return (await this.getKeys()).encryption;
-	}
-
-	/** @inheritDoc */
-	public async getPublicSigningKey () : Promise<Uint8Array | undefined> {
-		return (await this.getKeys()).signing;
-	}
+	);
 
 	constructor (
 		/** @ignore */

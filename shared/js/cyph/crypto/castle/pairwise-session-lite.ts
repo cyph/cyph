@@ -61,45 +61,45 @@ export class PairwiseSessionLite implements IPairwiseSession {
 			}
 
 			if (handshakeStep !== HandshakeSteps.Complete) {
-				const [signingKeyPair, publicEncryptionKey] = await Promise.all(
+				const [localUserKeyring, remoteUserKeyring] = await Promise.all(
 					[
-						this.localUser.getSigningKeyPair(),
-						this.remoteUser.getPublicEncryptionKey()
+						this.localUser.getPrivateKeyring(),
+						this.remoteUser.getPublicKeyring()
 					]
 				);
 
 				await this.handshakeState.initialSecretCyphertext.setValue(
 					await this.potassium.box.seal(
-						signingKeyPair !== undefined ?
+						localUserKeyring.signPrivateKeys !== undefined ?
 							await this.potassium.sign.sign(
 								secret,
-								signingKeyPair.privateKey
+								localUserKeyring
 							) :
 							secret,
-						publicEncryptionKey
+						remoteUserKeyring
 					)
 				);
 			}
 		}
 		/* eslint-disable-next-line security/detect-possible-timing-attacks */
 		else if (secret === undefined) {
-			const [encryptionKeyPair, publicSigningKey, cyphertext] =
+			const [localUserKeyring, remoteUserKeyring, cyphertext] =
 				await Promise.all([
-					this.localUser.getEncryptionKeyPair(),
-					this.remoteUser.getPublicSigningKey(),
+					this.localUser.getPrivateKeyring(),
+					this.remoteUser.getPublicKeyring(),
 					this.handshakeState.initialSecretCyphertext.getValue()
 				]);
 
 			const maybeSignedSecret = await this.potassium.box.open(
 				cyphertext,
-				encryptionKeyPair
+				localUserKeyring
 			);
 
 			secret =
-				publicSigningKey !== undefined ?
+				remoteUserKeyring.signPublicKeys !== undefined ?
 					await this.potassium.sign.open(
 						maybeSignedSecret,
-						publicSigningKey
+						remoteUserKeyring
 					) :
 					maybeSignedSecret;
 

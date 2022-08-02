@@ -22,6 +22,7 @@ import {
 	IAGSEPKICSR,
 	IAGSEPKICSRData,
 	IKeyPair,
+	IPrivateKeyring,
 	KeyPair,
 	NumberProto,
 	StringProto
@@ -75,7 +76,7 @@ export class AccountAuthService extends BaseProvider {
 	private async getItem<T> (
 		url: string,
 		proto: IProto<T>,
-		key: Uint8Array,
+		key: Uint8Array | IPrivateKeyring,
 		waitUntilExists: boolean = false
 	) : Promise<T> {
 		return deserialize(
@@ -131,7 +132,7 @@ export class AccountAuthService extends BaseProvider {
 		url: string,
 		proto: IProto<T>,
 		data: T,
-		key: Uint8Array,
+		key: Uint8Array | IPrivateKeyring,
 		isPublic: boolean = false,
 		compressed: boolean = false,
 		skipSetItem: boolean = false
@@ -309,13 +310,13 @@ export class AccountAuthService extends BaseProvider {
 				`users/${currentUser.user.username}/pin/hash`,
 				BinaryProto,
 				pinHash,
-				currentUser.keys.symmetricKey
+				currentUser.keyrings.private
 			),
 			this.setItem(
 				`users/${currentUser.user.username}/pin/isCustom`,
 				BooleanProto,
 				pin.isCustom,
-				currentUser.keys.symmetricKey
+				currentUser.keyrings.private
 			),
 			!saveCredentials ?
 				this.removeSavedCredentials() :
@@ -335,7 +336,7 @@ export class AccountAuthService extends BaseProvider {
 			return await this.getItem(
 				`users/${currentUser.user.username}/altMasterKey`,
 				StringProto,
-				currentUser.keys.symmetricKey
+				currentUser.keyrings.private
 			);
 		}
 		catch {}
@@ -347,7 +348,7 @@ export class AccountAuthService extends BaseProvider {
 				`users/${currentUser.user.username}/altMasterKey`,
 				StringProto,
 				altMasterKey,
-				currentUser.keys.symmetricKey
+				currentUser.keyrings.private
 			),
 			Promise.all([
 				this.passwordHash(currentUser.user.username, altMasterKey),
@@ -509,7 +510,8 @@ export class AccountAuthService extends BaseProvider {
 
 			const userPromise = this.accountUserLookupService.getUser(username);
 
-			const userPublicKeysPromise = this.accountDatabaseService
+			/* Cache result */
+			this.accountDatabaseService
 				.getUserPublicKeys(username)
 				.catch(() => undefined);
 
@@ -581,10 +583,8 @@ export class AccountAuthService extends BaseProvider {
 
 			const getUserData = async () =>
 				Promise.all([
-					userPublicKeysPromise.then(o => o !== undefined),
-					this.getItem<IKeyPair>(
-						`users/${username}/encryptionKeyPair`,
-						KeyPair,
+					this.accountDatabaseService.getUserKeyrings(
+						username,
 						loginData.symmetricKey
 					),
 					Promise.all([
@@ -608,40 +608,16 @@ export class AccountAuthService extends BaseProvider {
 					this.databaseService.hasItem(
 						`users/${username}/pseudoAccount`
 					),
-					(async () => {
-						const [kp, userPublicKeys] = await Promise.all([
-							this.getItem(
-								`users/${username}/signingKeyPair`,
-								KeyPair,
-								loginData.symmetricKey
-							),
-							userPublicKeysPromise
-						]);
-
-						if (
-							userPublicKeys !== undefined &&
-							!this.potassiumService.compareMemory(
-								kp.publicKey,
-								userPublicKeys.signing
-							)
-						) {
-							throw new Error('Invalid certificate.');
-						}
-
-						return kp;
-					})(),
 					userPromise,
 					logoutPromise
 				]);
 
 			/* Test to see if we can fetch user data before initiating fresh log-in */
 			const [
-				agseConfirmed,
-				encryptionKeyPair,
+				{publicKeyringConfirmed: agseConfirmed, ...keyrings},
 				masterKeyConfirmed,
 				pinHash,
 				pseudoAccount,
-				signingKeyPair,
 				user
 			] = await getUserData().catch(async () => {
 				setErrorMessageLog('database service login');
@@ -686,11 +662,7 @@ export class AccountAuthService extends BaseProvider {
 
 			this.accountDatabaseService.currentUser.next({
 				agseConfirmed,
-				keys: {
-					encryptionKeyPair,
-					signingKeyPair,
-					symmetricKey: loginData.symmetricKey
-				},
+				keyrings,
 				loginData,
 				masterKeyConfirmed,
 				pseudoAccount,
@@ -874,19 +846,30 @@ export class AccountAuthService extends BaseProvider {
 			Promise.race([unregisterPushNotificationsPromise, sleep(1000)]) :
 			unregisterPushNotificationsPromise);
 
-		this.potassiumService.clearMemory(currentUser.keys.symmetricKey);
-		this.potassiumService.clearMemory(
-			currentUser.keys.encryptionKeyPair.privateKey
-		);
-		this.potassiumService.clearMemory(
-			currentUser.keys.signingKeyPair.privateKey
-		);
-		this.potassiumService.clearMemory(
-			currentUser.keys.encryptionKeyPair.publicKey
-		);
-		this.potassiumService.clearMemory(
-			currentUser.keys.signingKeyPair.publicKey
-		);
+		for (const keyring of [
+			currentUser.keyrings.private,
+			currentUser.keyrings.public
+		]) {
+			for (const keyGroup of Object.values(keyring)) {
+				for (const o of Object.values(keyGroup)) {
+					const keys =
+						o instanceof Uint8Array ?
+							[o] :
+						typeof o === 'object' &&
+							o != null &&
+							'privateKey' in o ?
+							[
+								(<IKeyPair> o).privateKey,
+								(<IKeyPair> o).publicKey
+							] :
+							[];
+
+					for (const key of keys) {
+						this.potassiumService.clearMemory(key);
+					}
+				}
+			}
+		}
 
 		if (clearSavedCredentials) {
 			const databaseLogoutPromise = this.databaseService.logout();

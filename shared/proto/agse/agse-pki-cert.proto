@@ -5,7 +5,7 @@ import "agse-pki-csr-data.proto";
 
 /** AGSE-PKI certificate. */
 message AGSEPKICert {
-	/** @see AccountUserPublicKeys.signing */
+	/** @see AGSEPKICSRData */
 	required AGSEPKICSRData csrData = 1;
 
 	/** Timestamp of certificate issuance. */

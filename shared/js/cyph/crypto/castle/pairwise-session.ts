@@ -129,10 +129,10 @@ export class PairwiseSession implements IPairwiseSession {
 
 	/** @ignore */
 	private async ratchetBootstrapIncoming () : Promise<void> {
-		const [encryptionKeyPair, publicSigningKey, cyphertext] =
+		const [localUserKeyring, remoteUserKeyring, cyphertext] =
 			await Promise.all([
-				this.localUser.getEncryptionKeyPair(),
-				this.remoteUser.getPublicSigningKey(),
+				this.localUser.getPrivateKeyring(),
+				this.remoteUser.getPublicKeyring(),
 				this.handshakeState.initialSecretCyphertext.getValue()
 			]);
 
@@ -141,16 +141,16 @@ export class PairwiseSession implements IPairwiseSession {
 		try {
 			maybeSignedSecret = await this.potassium.box.open(
 				cyphertext,
-				encryptionKeyPair
+				localUserKeyring
 			);
 		}
 		catch (err) {
 			debugLogError(() => ({
 				ratchetBootstrapIncomingFailure: {
 					cyphertext,
-					encryptionKeyPair: () => encryptionKeyPair,
 					err,
-					publicSigningKey
+					localUserKeyring: () => localUserKeyring,
+					remoteUserKeyring
 				}
 			}));
 
@@ -158,10 +158,10 @@ export class PairwiseSession implements IPairwiseSession {
 		}
 
 		await this.handshakeState.initialSecret.setValue(
-			publicSigningKey !== undefined ?
+			remoteUserKeyring.signPublicKeys !== undefined ?
 				await this.potassium.sign.open(
 					maybeSignedSecret,
-					publicSigningKey
+					remoteUserKeyring
 				) :
 				maybeSignedSecret
 		);
@@ -173,10 +173,10 @@ export class PairwiseSession implements IPairwiseSession {
 
 	/** @ignore */
 	private async ratchetBootstrapOutgoing () : Promise<void> {
-		const [signingKeyPair, publicEncryptionKey, initialSecret] =
+		const [localUserKeyring, remoteUserKeyring, initialSecret] =
 			await Promise.all([
-				this.localUser.getSigningKeyPair(),
-				this.remoteUser.getPublicEncryptionKey(),
+				this.localUser.getPrivateKeyring(),
+				this.remoteUser.getPublicKeyring(),
 				(async () => {
 					let secret =
 						await this.handshakeState.initialSecret.getValue();
@@ -198,13 +198,13 @@ export class PairwiseSession implements IPairwiseSession {
 
 		await this.handshakeState.initialSecretCyphertext.setValue(
 			await this.potassium.box.seal(
-				signingKeyPair !== undefined ?
+				localUserKeyring.signPrivateKeys !== undefined ?
 					await this.potassium.sign.sign(
 						initialSecret,
-						signingKeyPair.privateKey
+						localUserKeyring
 					) :
 					initialSecret,
-				publicEncryptionKey
+				remoteUserKeyring
 			)
 		);
 

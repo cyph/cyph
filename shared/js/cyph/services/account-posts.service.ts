@@ -790,13 +790,11 @@ export class AccountPostsService extends BaseProvider {
 										BinaryProto,
 										SecurityModels.unprotected
 									),
-									currentUser.keys.encryptionKeyPair
+									currentUser.keyrings.private
 								),
-								(
-									await this.accountDatabaseService.getUserPublicKeys(
-										username
-									)
-								).signing,
+								await this.accountDatabaseService.getUserPublicKeys(
+									username
+								),
 								`users/${currentUser.user.username}/externalCirclesIncoming/${username}/${circleID}`
 							)
 						),
@@ -1330,14 +1328,12 @@ export class AccountPostsService extends BaseProvider {
 											name: ''
 										}
 									),
-									currentUser.keys.signingKeyPair.privateKey,
+									currentUser.keyrings.private,
 									url
 								),
-								(
-									await this.accountDatabaseService.getUserPublicKeys(
-										username
-									)
-								).encryption
+								await this.accountDatabaseService.getUserPublicKeys(
+									username
+								)
 							),
 						SecurityModels.unprotected,
 						undefined,

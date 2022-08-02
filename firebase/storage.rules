@@ -254,6 +254,13 @@ service firebase.storage {
 					allow write: if request.resource == null;
 				}
 
+				match /keyrings {
+					// match /private/{hash} {}
+					match /public/{hash} {
+						allow read;
+					}
+				}
+
 				// match /lastPresence/{hash} {}
 
 				match /loginData/{hash} {

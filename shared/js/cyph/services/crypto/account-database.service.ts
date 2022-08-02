@@ -19,15 +19,18 @@ import {ListHoleError} from '../../list-hole-error';
 import {LockFunction} from '../../lock-function-type';
 import {MaybePromise} from '../../maybe-promise-type';
 import {
-	AccountUserPublicKeys,
 	AGSEPKICert,
 	AGSEPKICertified,
 	BinaryProto,
-	IAccountUserPublicKeys,
 	IDatabaseItem,
+	IPrivateKeyring,
+	IPublicKeyring,
+	KeyPair,
 	MaybeTimedArrayProto,
 	NotificationTypes,
 	PotassiumData,
+	PrivateKeyring,
+	PublicKeyring,
 	StringProto
 } from '../../proto';
 import {filterUndefinedOperator} from '../../util/filter';
@@ -133,12 +136,12 @@ export class AccountDatabaseService extends BaseProvider {
 		secretBox: async (
 			data: Uint8Array,
 			url: string,
-			customKey: MaybePromise<Uint8Array> | undefined
+			customKey: MaybePromise<Uint8Array | IPrivateKeyring> | undefined
 		) =>
 			this.potassiumHelpers.secretBox.open(
 				data,
 				(await customKey) ||
-					(await this.getCurrentUser()).keys.symmetricKey,
+					(await this.getCurrentUser()).keyrings.private,
 				url
 			),
 		sign: async (
@@ -159,9 +162,8 @@ export class AccountDatabaseService extends BaseProvider {
 						data,
 						this.currentUser.value &&
 							username === this.currentUser.value.user.username ?
-							this.currentUser.value.keys.signingKeyPair
-								.publicKey :
-							(await this.getUserPublicKeys(username)).signing,
+							this.currentUser.value.keyrings.public :
+							await this.getUserPublicKeys(username),
 						url,
 						decompress
 					)
@@ -174,7 +176,7 @@ export class AccountDatabaseService extends BaseProvider {
 		secretBox: {
 			open: async (
 				cyphertext: Uint8Array,
-				key: Uint8Array,
+				key: Uint8Array | IPrivateKeyring,
 				additionalData: string
 			) : Promise<Uint8Array> =>
 				this.potassiumService.secretBox.open(
@@ -184,7 +186,7 @@ export class AccountDatabaseService extends BaseProvider {
 				),
 			seal: async (
 				plaintext: Uint8Array,
-				key: Uint8Array,
+				key: Uint8Array | IPrivateKeyring,
 				additionalData: string
 			) : Promise<Uint8Array> =>
 				this.potassiumService.secretBox.seal(
@@ -196,7 +198,7 @@ export class AccountDatabaseService extends BaseProvider {
 		sign: {
 			open: async (
 				signed: Uint8Array,
-				publicKey: Uint8Array,
+				publicKey: Uint8Array | IPublicKeyring,
 				additionalData: string,
 				decompress: boolean
 			) : Promise<Uint8Array> =>
@@ -208,7 +210,7 @@ export class AccountDatabaseService extends BaseProvider {
 				),
 			openRaw: async (
 				signed: Uint8Array,
-				publicKey: Uint8Array,
+				publicKey: Uint8Array | IPublicKeyring,
 				additionalData: string,
 				algorithm: PotassiumData.SignAlgorithms
 			) : Promise<Uint8Array> =>
@@ -220,7 +222,7 @@ export class AccountDatabaseService extends BaseProvider {
 				),
 			sign: async (
 				message: Uint8Array,
-				privateKey: Uint8Array,
+				privateKey: Uint8Array | IPrivateKeyring,
 				additionalData: string,
 				compress: boolean
 			) : Promise<Uint8Array> =>
@@ -238,13 +240,13 @@ export class AccountDatabaseService extends BaseProvider {
 		secretBox: async (
 			data: Uint8Array,
 			url: string,
-			customKey: MaybePromise<Uint8Array> | undefined
+			customKey: MaybePromise<Uint8Array | IPrivateKeyring> | undefined
 		) =>
 			retryUntilSuccessful(async () =>
 				this.potassiumHelpers.secretBox.seal(
 					data,
 					(await customKey) ||
-						(await this.getCurrentUser()).keys.symmetricKey,
+						(await this.getCurrentUser()).keyrings.private,
 					url
 				)
 			),
@@ -252,8 +254,7 @@ export class AccountDatabaseService extends BaseProvider {
 			retryUntilSuccessful(async () =>
 				this.potassiumHelpers.sign.sign(
 					data,
-					(await this.getCurrentUser()).keys.signingKeyPair
-						.privateKey,
+					(await this.getCurrentUser()).keyrings.private,
 					url,
 					compress
 				)
@@ -377,6 +378,27 @@ export class AccountDatabaseService extends BaseProvider {
 		await this.cache.list.setItem(url, proto, immutable, list);
 
 		return list;
+	}
+
+	/** @ignore */
+	private async getPublicKeySigningAlgorithm (
+		publicKey: Uint8Array
+	) : Promise<PotassiumData.SignAlgorithms> {
+		const {signAlgorithm} =
+			await this.potassiumService.encoding.deserialize(
+				{
+					signAlgorithm: <PotassiumData.SignAlgorithms> (
+						PotassiumData.SignAlgorithms.None
+					)
+				},
+				{publicKey}
+			);
+
+		if (signAlgorithm === PotassiumData.SignAlgorithms.None) {
+			throw new Error('Invalid public signing key algorithm.');
+		}
+
+		return signAlgorithm;
 	}
 
 	/** @ignore */
@@ -1193,11 +1215,124 @@ export class AccountDatabaseService extends BaseProvider {
 		);
 	}
 
+	/** Gets private keys belonging to the specified user. */
+	public async getUserKeyrings (
+		username: string,
+		key: Uint8Array
+	) : Promise<{
+		private: IPrivateKeyring;
+		public: IPublicKeyring;
+		publicKeyringConfirmed: boolean;
+	}> {
+		const privateKeyringURL = `users/${username}/keyrings/private`;
+
+		const privateKeyring: IPrivateKeyring = (await this.hasItem(
+			privateKeyringURL
+		)) ?
+			await deserialize(
+				PrivateKeyring,
+				await this.potassiumHelpers.secretBox.open(
+					await this.databaseService.getItem(
+						privateKeyringURL,
+						BinaryProto
+					),
+					key,
+					privateKeyringURL
+				)
+			) :
+			/* Handle legacy private key data */
+			{
+				boxPrivateKeys: {
+						[PotassiumData.BoxAlgorithms.V1]: await deserialize(
+								KeyPair,
+								await this.potassiumHelpers.secretBox.open(
+									await this.databaseService.getItem(
+										`users/${username}/encryptionKeyPair`,
+										BinaryProto
+									),
+									key,
+									`users/${username}/encryptionKeyPair`
+								)
+							)
+					},
+				secretBoxPrivateKeys: {
+						[PotassiumData.SecretBoxAlgorithms.V1]: key
+					},
+				signPrivateKeys: {
+						[PotassiumData.SignAlgorithms.V1]: await deserialize(
+								KeyPair,
+								await this.potassiumHelpers.secretBox.open(
+									await this.databaseService.getItem(
+										`users/${username}/signingKeyPair`,
+										BinaryProto
+									),
+									key,
+									`users/${username}/signingKeyPair`
+								)
+							)
+					}
+			};
+
+		const publicKeyring = await this.getUserPublicKeys(username).catch(
+			() => undefined
+		);
+
+		if (publicKeyring === undefined) {
+			return {
+				private: privateKeyring,
+				public: {
+					boxPublicKeys: Object.fromEntries(
+						Object.entries(privateKeyring.boxPrivateKeys ?? {}).map(
+							([k, v]) => [k, v.publicKey]
+						)
+					),
+					signPublicKeys: Object.fromEntries(
+						Object.entries(
+							privateKeyring.signPrivateKeys ?? {}
+						).map(([k, v]) => [k, v.publicKey])
+					)
+				},
+				publicKeyringConfirmed: false
+			};
+		}
+
+		if (
+			privateKeyring.signPrivateKeys === undefined ||
+			publicKeyring.signPublicKeys === undefined
+		) {
+			throw new Error('Missing signing keys.');
+		}
+
+		const signAlgorithms = Array.from(
+			new Set([
+				...Object.keys(privateKeyring.signPrivateKeys),
+				...Object.keys(publicKeyring.signPublicKeys)
+			])
+		);
+
+		for (const signAlgorithm of signAlgorithms) {
+			if (
+				!this.potassiumService.compareMemory(
+					privateKeyring.signPrivateKeys[signAlgorithm].publicKey,
+					publicKeyring.signPublicKeys[signAlgorithm]
+				)
+			) {
+				throw new Error('Keyring public signing key mismatch.');
+			}
+		}
+
+		return {
+			private: privateKeyring,
+			public: publicKeyring,
+			publicKeyringConfirmed: true
+		};
+	}
+
 	/** Gets public keys belonging to the specified user. */
 	public async getUserPublicKeys (
 		username: string,
 		skipValidationForCurrentUserKeys: boolean = true
-	) : Promise<IAccountUserPublicKeys> {
+	) : Promise<IPublicKeyring> {
 		if (!username) {
 			throw new Error('Invalid username.');
 		}
@@ -1208,16 +1343,12 @@ export class AccountDatabaseService extends BaseProvider {
 			skipValidationForCurrentUserKeys &&
 			username === this.currentUser.value?.user.username
 		) {
-			return {
-				encryption:
-					this.currentUser.value.keys.encryptionKeyPair.publicKey,
-				signing: this.currentUser.value.keys.signingKeyPair.publicKey
-			};
+			return this.currentUser.value.keyrings.public;
 		}
 
 		return this.localStorageService.getOrSetDefault(
 			`AccountDatabaseService.getUserPublicKeys/${username}`,
-			AccountUserPublicKeys,
+			PublicKeyring,
 			async () => {
 				const certURL = `users/${username}/publicKeyCertificate`;
 
@@ -1325,22 +1456,53 @@ export class AccountDatabaseService extends BaseProvider {
 					);
 				}
 
-				const encryptionURL = await this.normalizeURL(
-					`users/${username}/publicEncryptionKey`,
-					true
+				const publicKeyringURL = `users/${username}/keyrings/public`;
+
+				/* Handle legacy public key data */
+				if (!(await this.hasItem(publicKeyringURL))) {
+					return <IPublicKeyring> {
+						boxPublicKeys: {
+							[PotassiumData.BoxAlgorithms.V1]:
+								await this.potassiumHelpers.sign.open(
+									await this.databaseService.getItem(
+										`users/${username}/publicEncryptionKey`,
+										BinaryProto
+									),
+									certData.csrData.publicSigningKey,
+									`users/${username}/publicEncryptionKey`,
+									true
+								)
+						},
+						signPublicKeys: {
+							[PotassiumData.SignAlgorithms.V1]:
+								certData.csrData.publicSigningKey
+						}
+					};
+				}
+
+				const signAlgorithm = await this.getPublicKeySigningAlgorithm(
+					certData.csrData.publicSigningKey
 				);
 
-				return {
-					encryption: await this.potassiumHelpers.sign.open(
+				const publicKeyring = await deserialize(
+					PublicKeyring,
+					await this.potassiumHelpers.sign.open(
 						await this.databaseService.getItem(
-							encryptionURL,
+							publicKeyringURL,
 							BinaryProto
 						),
 						certData.csrData.publicSigningKey,
-						encryptionURL,
+						publicKeyringURL,
 						true
-					),
-					signing: certData.csrData.publicSigningKey
+					)
+				);
+
+				return {
+					...publicKeyring,
+					signPublicKeys: {
+						...publicKeyring.signPublicKeys,
+						[signAlgorithm]: certData.csrData.publicSigningKey
+					}
 				};
 			}
 		);
@@ -1375,7 +1537,7 @@ export class AccountDatabaseService extends BaseProvider {
 					o.reason = this.potassiumService.toString(
 						await this.potassiumHelpers.secretBox.open(
 							this.potassiumService.fromBase64(o.reason),
-							currentUser.keys.symmetricKey,
+							currentUser.keyrings.private,
 							await url
 						)
 					);
@@ -1388,7 +1550,7 @@ export class AccountDatabaseService extends BaseProvider {
 				this.potassiumService.toBase64(
 					await this.potassiumHelpers.secretBox.seal(
 						this.potassiumService.fromString(reason),
-						currentUser.keys.symmetricKey,
+						currentUser.keyrings.private,
 						url
 					)
 				),
@@ -1423,7 +1585,7 @@ export class AccountDatabaseService extends BaseProvider {
 				this.potassiumService.toString(
 					await this.potassiumHelpers.secretBox.open(
 						this.potassiumService.fromBase64(reason),
-						currentUser.keys.symmetricKey,
+						currentUser.keyrings.private,
 						url
 					)
 				)
@@ -1666,7 +1828,7 @@ export class AccountDatabaseService extends BaseProvider {
 				this.potassiumService.toString(
 					await this.potassiumHelpers.secretBox.open(
 						this.potassiumService.fromBase64(reason),
-						currentUser.keys.symmetricKey,
+						currentUser.keyrings.private,
 						url
 					)
 				),

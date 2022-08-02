@@ -21,7 +21,7 @@ export class AccountEmailService extends BaseProvider {
 
 		return this.potassiumService.sign.signDetached(
 			email,
-			currentUser.keys.signingKeyPair.privateKey,
+			currentUser.keyrings.private,
 			this.getAdditionalData(currentUser.user.username)
 		);
 	}
@@ -56,9 +56,7 @@ export class AccountEmailService extends BaseProvider {
 		const valid = await this.potassiumService.sign.verifyDetached(
 			signature,
 			email,
-			(
-				await this.accountDatabaseService.getUserPublicKeys(username)
-			).signing,
+			await this.accountDatabaseService.getUserPublicKeys(username),
 			this.getAdditionalData(username)
 		);
 

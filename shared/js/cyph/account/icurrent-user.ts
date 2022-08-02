@@ -1,4 +1,8 @@
-import {IAccountLoginData, IKeyPair} from '../proto/types';
+import {
+	IAccountLoginData,
+	IPrivateKeyring,
+	IPublicKeyring
+} from '../proto/types';
 import {User} from './user';
 
 /** Current user data. */
@@ -6,11 +10,10 @@ export interface ICurrentUser {
 	/** Indicates whether the current User's account has been certified via AGSE-PKI. */
 	agseConfirmed: boolean;
 
-	/** User secret keys. */
-	keys: {
-		encryptionKeyPair: IKeyPair;
-		signingKeyPair: IKeyPair;
-		symmetricKey: Uint8Array;
+	/** User keyrings. */
+	keyrings: {
+		private: IPrivateKeyring;
+		public: IPublicKeyring;
 	};
 
 	/** @see IAccountLoginData */

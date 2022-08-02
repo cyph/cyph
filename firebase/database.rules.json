@@ -1264,6 +1264,33 @@
 						}
 					},
 
+					"keyrings": {
+						"private": {
+							"data": {
+								".validate": "newData.isString()"
+							},
+							"hash": {
+								".validate": "newData.isString()"
+							},
+							"timestamp": {
+								".validate": "newData.val() === now"
+							}
+						},
+						"public": {
+							".read": true,
+
+							"data": {
+								".validate": "newData.isString()"
+							},
+							"hash": {
+								".validate": "newData.isString()"
+							},
+							"timestamp": {
+								".validate": "newData.val() === now"
+							}
+						}
+					},
+
 					"lastPresence": {
 						"data": {
 							".validate": "newData.isString()"
