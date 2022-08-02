@@ -856,6 +856,7 @@ export class AccountAuthService extends BaseProvider {
 						o instanceof Uint8Array ?
 							[o] :
 						typeof o === 'object' &&
+							/* eslint-disable-next-line eqeqeq, no-null/no-null */
 							o != null &&
 							'privateKey' in o ?
 							[

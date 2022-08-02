@@ -145,7 +145,7 @@
 									envService.homeUrl +
 										'pricing?current=' +
 										cyphPlans[
-											inviteCodeData.value?.plan ||
+											inviteCodeData.value.plan ||
 												cyphPlans.Free
 										] +
 										'&noInviteRedirect=true' +
@@ -1213,7 +1213,7 @@
 																	cyphPlans[
 																		inviteCodeData
 																			.value
-																			?.plan ||
+																			.plan ||
 																			cyphPlans.Free
 																	] +
 																	'&noInviteRedirect=true' +

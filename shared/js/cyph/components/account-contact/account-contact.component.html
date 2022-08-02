@@ -115,7 +115,7 @@
 			</button>
 
 			<mat-card-title class="truncate">
-				{{ anonymousUser?.name || '' }}
+				{{ anonymousUser.name || '' }}
 			</mat-card-title>
 		</mat-card-header>
 	</mat-card>
@@ -126,16 +126,16 @@
 		fxFlex
 		class="contact animated group"
 		[class.mobile]="envService.isMobileOS"
-		[class.non-clickable]="!clickable || groupData?.incoming"
+		[class.non-clickable]="!clickable || groupData.incoming"
 		[class.telehealth]="envService.isTelehealthFull"
 		[matTooltip]="groupUsernames || ''"
 		[matTooltipDisabled]="!groupUsernames"
 		[matTooltipPosition]="envService.isMobileOS ? 'below' : 'left'"
 		[routerLink]="
-			!clickable || groupData?.incoming ?
+			!clickable || groupData.incoming ?
 				[] :
-				(groupData?.group?.mailUIDefault ? '/mail/' : '/messages/') +
-				(groupData?.id || '')
+				(groupData.group.mailUIDefault ? '/mail/' : '/messages/') +
+				(groupData.id || '')
 		"
 		*ngIf="groupData !== undefined; else standardContact"
 	>
@@ -154,13 +154,13 @@
 			<mat-icon mat-card-avatar>group</mat-icon>
 			<mat-card-title
 				class="truncate"
-				[class.incoming]="clickable && groupData?.incoming"
+				[class.incoming]="clickable && groupData.incoming"
 			>
 				<span>{{ stringsService.group }}</span>
 			</mat-card-title>
 			<mat-card-subtitle
 				class="truncate"
-				[class.incoming]="clickable && groupData?.incoming"
+				[class.incoming]="clickable && groupData.incoming"
 			>
 				{{ groupUsernames }}
 			</mat-card-subtitle>
@@ -180,21 +180,21 @@
 					<mat-menu #groupMenu="matMenu">
 						<button
 							mat-menu-item
-							[routerLink]="'/messages/' + (groupData?.id || '')"
+							[routerLink]="'/messages/' + (groupData.id || '')"
 						>
 							<mat-icon>chat</mat-icon>
 							<span cyphTranslate>Chat</span>
 						</button>
 						<button
 							mat-menu-item
-							[routerLink]="'/call/' + (groupData?.id || '')"
+							[routerLink]="'/call/' + (groupData.id || '')"
 						>
 							<mat-icon>call</mat-icon>
 							<span cyphTranslate>Call</span>
 						</button>
 						<button
 							mat-menu-item
-							[routerLink]="'/video/' + (groupData?.id || '')"
+							[routerLink]="'/video/' + (groupData.id || '')"
 						>
 							<mat-icon>video_call</mat-icon>
 							<span cyphTranslate>Video Call</span>
@@ -208,7 +208,7 @@
 						matTooltip="Join Group"
 						(click)="
 							accountFilesService.acceptIncomingFile(
-								groupData?.id
+								groupData.id
 							);
 							$event.stopPropagation()
 						"
@@ -221,7 +221,7 @@
 						matTooltip="Decline Group Invite"
 						(click)="
 							accountFilesService.acceptIncomingFile(
-								groupData?.id,
+								groupData.id,
 								false
 							);
 							$event.stopPropagation()
