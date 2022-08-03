@@ -1339,8 +1339,11 @@ export class AccountDatabaseService extends BaseProvider {
 			return this.currentUser.value.keyrings.public;
 		}
 
-		return this.localStorageService.getOrSetDefault(
-			`AccountDatabaseService.getUserPublicKeys/${username}`,
+		const cacheKey = `AccountDatabaseService.getUserPublicKeys/${username}`;
+		const isCached = await this.localStorageService.hasItem(cacheKey);
+
+		const keyring = await this.localStorageService.getOrSetDefault(
+			cacheKey,
 			PublicKeyring,
 			async () => {
 				const certURL = `users/${username}/publicKeyCertificate`;
@@ -1499,6 +1502,27 @@ export class AccountDatabaseService extends BaseProvider {
 				};
 			}
 		);
+
+		/* Clear cache and fetch latest if keyring algorithms are outdated */
+
+		const currentBoxAlgorithm = await this.potassiumService.box
+			.currentAlgorithm;
+		const currentSignAlgorithm = await this.potassiumService.sign
+			.currentAlgorithm;
+
+		if (
+			isCached &&
+			(keyring.boxPublicKeys?.[currentBoxAlgorithm] === undefined ||
+				keyring.signPublicKeys?.[currentSignAlgorithm] === undefined)
+		) {
+			await this.localStorageService.removeItem(cacheKey);
+			return this.getUserPublicKeys(
+				username,
+				skipValidationForCurrentUserKeys
+			);
+		}
+
+		return keyring;
 	}
 
 	/** @see DatabaseService.hasItem */
