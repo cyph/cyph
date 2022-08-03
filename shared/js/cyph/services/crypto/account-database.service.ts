@@ -1303,14 +1303,7 @@ export class AccountDatabaseService extends BaseProvider {
 			throw new Error('Missing signing keys.');
 		}
 
-		const signAlgorithms = Array.from(
-			new Set([
-				...Object.keys(privateKeyring.signPrivateKeys),
-				...Object.keys(publicKeyring.signPublicKeys)
-			])
-		);
-
-		for (const signAlgorithm of signAlgorithms) {
+		for (const signAlgorithm of Object.keys(publicKeyring.signPublicKeys)) {
 			if (
 				!this.potassiumService.compareMemory(
 					privateKeyring.signPrivateKeys[signAlgorithm].publicKey,
