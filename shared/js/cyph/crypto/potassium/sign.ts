@@ -222,20 +222,7 @@ export class Sign implements ISign {
 					throw new Error('Invalid Sign algorithm (key pair).');
 			}
 
-			const testInput = potassiumUtil.randomBytes(32);
-			if (
-				!potassiumUtil.compareMemory(
-					testInput,
-					await this.open(
-						await this.sign(testInput, result.privateKey),
-						result.publicKey
-					)
-				)
-			) {
-				throw new Error('Corrupt Potassium.Sign key.');
-			}
-
-			return {
+			const keyPair = {
 				privateKey: await potassiumEncoding.serialize({
 					privateKey: result.privateKey,
 					signAlgorithm: algorithm
@@ -245,6 +232,21 @@ export class Sign implements ISign {
 					signAlgorithm: algorithm
 				})
 			};
+
+			const testInput = potassiumUtil.randomBytes(32);
+			if (
+				!potassiumUtil.compareMemory(
+					testInput,
+					await this.open(
+						await this.sign(testInput, keyPair.privateKey),
+						keyPair.publicKey
+					)
+				)
+			) {
+				throw new Error('Corrupt Potassium.Sign key.');
+			}
+
+			return keyPair;
 		});
 	}
 
