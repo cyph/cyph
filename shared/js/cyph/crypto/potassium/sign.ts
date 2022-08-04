@@ -442,16 +442,19 @@ export class Sign implements ISign {
 				throw new Error('Invalid Sign algorithm (sign).');
 		}
 
-		return potassiumEncoding.serialize({
-			signAlgorithm: algorithm,
-			signed: {
-				compressed: compress,
-				message: compress ?
-					lz4.encode(message, {streamChecksum: false}) :
-					message,
-				signature: result
-			}
-		});
+		return potassiumEncoding.serialize(
+			{
+				signAlgorithm: algorithm,
+				signed: {
+					compressed: compress,
+					message: compress ?
+						lz4.encode(message, {streamChecksum: false}) :
+						message,
+					signature: result
+				}
+			},
+			[message]
+		);
 	}
 
 	/** @inheritDoc */

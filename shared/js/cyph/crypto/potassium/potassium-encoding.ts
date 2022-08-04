@@ -233,7 +233,7 @@ export class PotassiumEncoding {
 	/** Serializes `PotassiumData` object to binary byte array. */
 	public async serialize (
 		data: IPotassiumData,
-		clearOriginals: boolean = true
+		dataClearBlacklist?: Uint8Array[]
 	) : Promise<Uint8Array> {
 		const bytes = await serialize(PotassiumData, data);
 
@@ -247,15 +247,24 @@ export class PotassiumEncoding {
 		finally {
 			potassiumUtil.clearMemory(bytes);
 
-			if (clearOriginals) {
-				potassiumUtil.clearMemory(data.cyphertext);
-				potassiumUtil.clearMemory(data.key);
-				potassiumUtil.clearMemory(data.privateKey);
-				potassiumUtil.clearMemory(data.publicKey);
-				potassiumUtil.clearMemory(data.secret);
-				potassiumUtil.clearMemory(data.signature);
-				potassiumUtil.clearMemory(data.signed?.message);
-				potassiumUtil.clearMemory(data.signed?.signature);
+			const dataClearBlacklistSet = new Set(dataClearBlacklist);
+
+			for (const dataToClear of [
+				data.cyphertext,
+				data.key,
+				data.privateKey,
+				data.publicKey,
+				data.secret,
+				data.signature,
+				data.signed?.message,
+				data.signed?.signature
+			]) {
+				if (
+					dataToClear !== undefined &&
+					!dataClearBlacklistSet.has(dataToClear)
+				) {
+					potassiumUtil.clearMemory(dataToClear);
+				}
 			}
 		}
 	}
