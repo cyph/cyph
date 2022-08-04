@@ -561,7 +561,7 @@ export const certSign = async (
 				},
 				...(await Promise.all(
 					csrDataObjects.map(async csrData => ({
-						additionalData: `${namespace}:users/${csrData.username}/publicKeyCertificateRequest`,
+						additionalData: `${namespace}:users/${csrData.username}/publicKeyCertificate`,
 						algorithm: algorithms.certificates,
 						message: await serialize(AGSEPKICert, {
 							csrData,
