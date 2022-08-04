@@ -157,10 +157,7 @@ export const certSign = async (
 				* Used a valid invite code (if required)
 			*/
 			if (
-				((await hasItem(
-					namespace,
-					`users/${username}/publicKeyCertificateRequest`
-				)) ||
+				((await hasItem(namespace, `users/${username}/keyrings/csr`)) ||
 					/* TODO: Remove this after reissuing certificates */
 					(await hasItem(
 						namespace,
@@ -321,9 +318,26 @@ export const certSign = async (
 			agsePublicSigningKeys.prod;
 
 		const openCertificateRequest = async username => {
-			const csrURL = `users/${username}/publicKeyCertificateRequest`;
+			const csrURL = `users/${username}/keyrings/csr`;
 
 			const csr = await getItem(namespace, csrURL, AGSEPKICSR);
+			let csrDataBytes = csr.data;
+
+			/* In the case of a reissue, an outer signature from the previous key is applied */
+			if (pendingSignups[username].reissue) {
+				const oldCert = (await hasItem(
+					namespace,
+					`users/${username}/publicKeyCertificate`
+				)) ?
+					await openCertificate() :
+					await openLegacyCertificate();
+
+				csrDataBytes = await potassium.sign.open(
+					csrDataBytes,
+					oldCert.publicSigningKey,
+					`${namespace}:${csrURL}/previous-key`
+				);
+			}
 
 			const csrPotassiumSigned = await potassium.deserialize(
 				{signAlgorithm: csr.algorithm},
@@ -331,7 +345,7 @@ export const certSign = async (
 					signed: {
 						compressed: false,
 						message: new Uint8Array(0),
-						signature: csr.data,
+						signature: csrDataBytes,
 						signatureBytes: await potassium.sign.getBytes(
 							csr.algorithm
 						)
@@ -355,7 +369,7 @@ export const certSign = async (
 
 			/* Validate CSR signature */
 			await potassium.sign.open(
-				csr.data,
+				csrDataBytes,
 				csrData.publicSigningKey,
 				`${namespace}:${csrURL}`
 			);
@@ -496,7 +510,7 @@ export const certSign = async (
 						const csrData = !upgradeCerts ?
 							(await hasItem(
 									namespace,
-									`users/${username}/publicKeyCertificateRequest`
+									`users/${username}/keyrings/csr`
 							  )) ?
 								await openCertificateRequest() :
 								await openLegacyCertificateRequest() :
@@ -641,7 +655,7 @@ export const certSign = async (
 				namespace
 			),
 			...csrDataObjects.map(async ({username}) => {
-				const url = `users/${username}/publicKeyCertificateRequest`;
+				const url = `users/${username}/keyrings/csr`;
 
 				await removeItem(namespace, url);
 				await database

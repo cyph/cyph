@@ -1048,7 +1048,7 @@ export class AccountAuthService extends BaseProvider {
 				pseudoAccount ?
 					new Uint8Array(0) :
 					this.setItem<IAGSEPKICSRData>(
-						`users/${username}/publicKeyCertificateRequest`,
+						`users/${username}/keyrings/csr`,
 						AGSEPKICSRData,
 						{
 							publicSigningKey: signingKeyPair.publicKey,

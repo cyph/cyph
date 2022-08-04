@@ -18,6 +18,7 @@ const {StringProto} = proto;
 const {
 	deserialize,
 	filterUndefined,
+	resolvable,
 	retryUntilSuccessful,
 	serialize,
 	sleep,
@@ -71,6 +72,12 @@ export const initDatabaseService = memoize((config, isCloudFunction) => {
 	const getHash = bytes =>
 		crypto.createHash('sha512').update(bytes).digest('hex');
 
+	const processItem = bytes => ({
+		data: Buffer.from(bytes).toString('base64'),
+		hash: getHash(bytes),
+		timestamp: admin.database.ServerValue.TIMESTAMP
+	});
+
 	const retry = async f =>
 		retryUntilSuccessful(async lastErr => {
 			if (lastErr) {
@@ -92,6 +99,7 @@ export const initDatabaseService = memoize((config, isCloudFunction) => {
 		database,
 		getHash,
 		messaging,
+		processItem,
 		processURL,
 		async getAllUsers ()  {
 			const users = [];
@@ -234,6 +242,52 @@ export const initDatabaseService = memoize((config, isCloudFunction) => {
 		async hasItem (namespace, url)  {
 			url = processURL(namespace, url);
 			return (await database.ref(url).once('value')).exists();
+		},
+		async lock (namespace, url, f)  {
+			const id = uuid();
+			const lockClaimed = resolvable();
+
+			const lockURL = `${namespace}/adminLocks/${getHash(url)}`;
+			const lockRef = database.ref(lockURL);
+
+			const contenderRef = lockRef.push({
+				id,
+				timestamp: admin.database.ServerValue.TIMESTAMP
+			});
+
+			await Promise.all([
+				contenderRef.onDisconnect().remove(),
+				contenderRef
+			]);
+
+			lockRef.on('value', snapshot => {
+				const contenders = Object.entries(snapshot.val() ?? [])
+					.sort(([a], [b]) => (a > b ? 1 : -1))
+					.map(([_, v]) => v);
+
+				if (contenders[0]?.id === id) {
+					lockRef.off();
+					lockClaimed.resolve();
+				}
+				else if (!contenders.some(o => o.id === id)) {
+					lockRef.off();
+					lockClaimed.reject(`Missing lock ID: ${id}.`);
+				}
+			});
+
+			try {
+				await lockClaimed;
+				return await f();
+			}
+			catch (err) {
+				console.error({lockError: err});
+			}
+			finally {
+				await contenderRef.remove();
+			}
+
+			/* Retry indefinitely */
+			return this.lock(namespace, url, f);
 		},
 		async pushItem (namespace, url, proto, value)  {
 			/* TODO: Copy the FirebaseDatabaseService implementation or use nextPushId */

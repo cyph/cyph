@@ -134,6 +134,10 @@ exports.setContact = onRequest(async (...args) =>
 	(await importFunction('set-contact')).setContact(...args)
 );
 
+exports.updateKeyrings = onRequest(async (...args) =>
+	(await importFunction('update-keyrings')).updateKeyrings(...args)
+);
+
 exports.userDisconnect = database
 	.ref('/{namespace}/users/{user}/clientConnections')
 	.onDelete(async (...args) =>

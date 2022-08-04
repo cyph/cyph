@@ -255,6 +255,8 @@ service firebase.storage {
 				}
 
 				match /keyrings {
+					// match /algorithms/{hash} {}
+					// match /csr/{hash} {}
 					// match /private/{hash} {}
 					match /public/{hash} {
 						allow read;
@@ -346,8 +348,6 @@ service firebase.storage {
 					allow read;
 					allow write: if false;
 				}
-
-				// match /publicKeyCertificateRequest/{hash} {}
 
 				match /publicPostList/{postID}/{hash} {
 					allow read;

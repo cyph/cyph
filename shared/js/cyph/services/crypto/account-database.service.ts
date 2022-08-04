@@ -21,7 +21,12 @@ import {MaybePromise} from '../../maybe-promise-type';
 import {
 	AGSEPKICert,
 	AGSEPKICertified,
+	AGSEPKICSR,
+	AGSEPKICSRData,
 	BinaryProto,
+	IAGSEPKICert,
+	IAGSEPKICSR,
+	IAGSEPKICSRData,
 	IDatabaseItem,
 	IPrivateKeyring,
 	IPublicKeyring,
@@ -39,7 +44,7 @@ import {
 	flattenObservable,
 	toBehaviorSubject
 } from '../../util/flatten-observable';
-import {normalize} from '../../util/formatting';
+import {normalize, toInt} from '../../util/formatting';
 import {
 	getOrSetDefault,
 	getOrSetDefaultAsync
@@ -382,17 +387,15 @@ export class AccountDatabaseService extends BaseProvider {
 
 	/** @ignore */
 	private async getPublicKeySigningAlgorithm (
-		publicKey: Uint8Array
+		publicKey: Uint8Array,
+		defaultMetadata: {signAlgorithm: PotassiumData.SignAlgorithms} = {
+			signAlgorithm: PotassiumData.SignAlgorithms.None
+		}
 	) : Promise<PotassiumData.SignAlgorithms> {
 		const {signAlgorithm} =
-			await this.potassiumService.encoding.deserialize(
-				{
-					signAlgorithm: <PotassiumData.SignAlgorithms> (
-						PotassiumData.SignAlgorithms.None
-					)
-				},
-				{publicKey}
-			);
+			await this.potassiumService.encoding.deserialize(defaultMetadata, {
+				publicKey
+			});
 
 		if (signAlgorithm === PotassiumData.SignAlgorithms.None) {
 			throw new Error('Invalid public signing key algorithm.');
@@ -1306,6 +1309,7 @@ export class AccountDatabaseService extends BaseProvider {
 	}
 
 	/** Gets private keys belonging to the specified user. */
+	/* eslint-disable-next-line complexity */
 	public async getUserKeyrings (
 		username: string,
 		key: Uint8Array
@@ -1315,8 +1319,9 @@ export class AccountDatabaseService extends BaseProvider {
 		publicKeyringConfirmed: boolean;
 	}> {
 		const privateKeyringURL = `users/${username}/keyrings/private`;
+		const publicKeyringURL = `users/${username}/keyrings/public`;
 
-		const privateKeyring: IPrivateKeyring = (await this.hasItem(
+		const currentPrivateKeyring: IPrivateKeyring = (await this.hasItem(
 			privateKeyringURL
 		)) ?
 			await deserialize(
@@ -1362,6 +1367,159 @@ export class AccountDatabaseService extends BaseProvider {
 							)
 					}
 			};
+
+		/* Upgrade keyrings as needed */
+
+		let privateKeyring = currentPrivateKeyring;
+
+		const currentBoxAlgorithm = await this.potassiumService.box
+			.currentAlgorithm;
+		const currentSecretBoxAlgorithm = await this.potassiumService.secretBox
+			.currentAlgorithm;
+		const currentSignAlgorithm = await this.potassiumService.sign
+			.currentAlgorithm;
+
+		if (
+			currentPrivateKeyring.boxPrivateKeys?.[currentBoxAlgorithm] ===
+				undefined ||
+			currentPrivateKeyring.secretBoxPrivateKeys?.[
+				currentSecretBoxAlgorithm
+			] === undefined ||
+			currentPrivateKeyring.signPrivateKeys?.[currentSignAlgorithm] ===
+				undefined
+		) {
+			const currentSigningKeyPair =
+				currentPrivateKeyring.signPrivateKeys?.[
+					await this.getPublicKeySigningAlgorithm(
+						(
+							await this.getUserPublicKeyCertificate(username)
+						).csrData.publicSigningKey,
+						{signAlgorithm: PotassiumData.SignAlgorithms.V1}
+					)
+				];
+			if (currentSigningKeyPair === undefined) {
+				throw new Error('Failed to locate current signing key pair.');
+			}
+
+			const newPrivateKeyring: IPrivateKeyring = {
+				...currentPrivateKeyring,
+				boxPrivateKeys: {
+					...(currentPrivateKeyring.boxPrivateKeys ?? {}),
+					[currentBoxAlgorithm]:
+						currentPrivateKeyring.boxPrivateKeys?.[
+							currentBoxAlgorithm
+						] ?? (await this.potassiumService.box.keyPair())
+				},
+				secretBoxPrivateKeys: {
+					...(currentPrivateKeyring.secretBoxPrivateKeys ?? {}),
+					[currentSecretBoxAlgorithm]:
+						currentPrivateKeyring.secretBoxPrivateKeys?.[
+							currentSecretBoxAlgorithm
+						] ??
+						(await this.potassiumService.secretBox.generateKey())
+				},
+				signPrivateKeys: {
+					...(currentPrivateKeyring.signPrivateKeys ?? {}),
+					[currentSignAlgorithm]:
+						currentPrivateKeyring.signPrivateKeys?.[
+							currentSignAlgorithm
+						] ?? (await this.potassiumService.sign.keyPair())
+				}
+			};
+
+			const newPublicKeyring: IPublicKeyring = {
+				boxPublicKeys: Object.fromEntries(
+					Object.entries(newPrivateKeyring.boxPrivateKeys ?? {}).map(
+						([k, v]) => [k, v.publicKey]
+					)
+				),
+				signPublicKeys: Object.fromEntries(
+					Object.entries(newPrivateKeyring.signPrivateKeys ?? {}).map(
+						([k, v]) => [k, v.publicKey]
+					)
+				)
+			};
+
+			const csrPublicSigningKey =
+				newPublicKeyring.signPublicKeys?.[
+					await this.potassiumService.sign.currentAlgorithm
+				];
+			if (csrPublicSigningKey === undefined) {
+				throw new Error('Failed to generate new signing key pair.');
+			}
+
+			const {privateKeyringBytes, wasUpdated} = await this.callFunction(
+				'updateKeyrings',
+				{
+					algorithms: {
+						boxAlgorithms: Object.keys(
+							newPublicKeyring.boxPublicKeys ?? {}
+						).map(toInt),
+						signAlgorithms: Object.keys(
+							newPublicKeyring.signPublicKeys ?? {}
+						).map(toInt)
+					},
+					csr: await serialize<IAGSEPKICSR>(AGSEPKICSR, {
+						algorithm: await this.potassiumService.sign
+							.currentAlgorithm,
+						data: await this.potassiumHelpers.sign.sign(
+							await this.potassiumHelpers.sign.sign(
+								await serialize<IAGSEPKICSRData>(
+									AGSEPKICSRData,
+									{
+										publicSigningKey: csrPublicSigningKey,
+										username
+									}
+								),
+								newPrivateKeyring,
+								`users/${username}/keyrings/csr`,
+								false
+							),
+							currentSigningKeyPair.privateKey,
+							`users/${username}/keyrings/csr/previous-key`,
+							false
+						)
+					}),
+					newPrivateKeyringBytes:
+						await this.potassiumHelpers.secretBox.seal(
+							await serialize(PrivateKeyring, newPrivateKeyring),
+							key,
+							privateKeyringURL
+						),
+					newPublicKeyringBytes:
+						await this.potassiumHelpers.sign.sign(
+							await serialize(PublicKeyring, newPublicKeyring),
+							newPrivateKeyring,
+							publicKeyringURL,
+							true
+						)
+				}
+			);
+
+			if (
+				!(privateKeyringBytes instanceof Uint8Array) ||
+				typeof wasUpdated !== 'boolean'
+			) {
+				throw new Error('Invalid updateKeyrings response.');
+			}
+
+			privateKeyring = await deserialize(
+				PrivateKeyring,
+				await this.potassiumHelpers.secretBox.open(
+					privateKeyringBytes,
+					key,
+					privateKeyringURL
+				)
+			);
+
+			if (wasUpdated) {
+				await this.localStorageService.removeItem(
+					`AccountDatabaseService.getUserPublicKeys/${username}`
+				);
+			}
+		}
+
+		/* Return latest keyrings */
 
 		const publicKeyring = await this.getUserPublicKeys(username).catch(
 			() => undefined

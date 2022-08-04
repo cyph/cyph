@@ -130,7 +130,7 @@ export const register = onCall(
 				['signingKeyPair', signingKeyPair],
 				pseudoAccount ?
 					['pseudoAccount', new Uint8Array(0)] :
-					['publicKeyCertificateRequest', certificateRequest]
+					['keyrings/csr', certificateRequest]
 			]),
 			inviteDataRef.remove(),
 			setItem(
