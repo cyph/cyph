@@ -414,6 +414,96 @@ export class AccountDatabaseService extends BaseProvider {
 	}
 
 	/** @ignore */
+	private async getUserPublicKeyCertificate (
+		username: string
+	) : Promise<IAGSEPKICert> {
+		const certURL = `users/${username}/publicKeyCertificate`;
+
+		/* TODO: Remove this after reissuing certificates */
+		if (!(await this.databaseService.hasItem(certURL))) {
+			const certBytes = await this.databaseService.getItem(
+				`users/${username}/certificate`,
+				BinaryProto
+			);
+
+			const dataView = this.potassiumService.toDataView(certBytes);
+			const rsaKeyIndex = dataView.getUint32(0, true);
+			const sphincsKeyIndex = dataView.getUint32(4, true);
+			const signed = this.potassiumService.toBytes(certBytes, 8);
+
+			const publicSigningKeys = {
+				rsa:
+					this.agsePublicSigningKeys.get(
+						PotassiumData.SignAlgorithms.V1
+					)?.classical ?? [],
+				sphincs:
+					this.agsePublicSigningKeys.get(
+						PotassiumData.SignAlgorithms.V1
+					)?.postQuantum ?? []
+			};
+
+			if (
+				rsaKeyIndex >= publicSigningKeys.rsa.length ||
+				sphincsKeyIndex >= publicSigningKeys.sphincs.length
+			) {
+				throw new Error('Invalid AGSE-PKI certificate: bad key index.');
+			}
+
+			return deserialize(
+				AGSEPKICert,
+				await this.potassiumHelpers.sign.openRaw(
+					signed,
+					await this.potassiumService.sign.importPublicKeys(
+						PotassiumData.SignAlgorithms.V1,
+						publicSigningKeys.rsa[rsaKeyIndex],
+						publicSigningKeys.sphincs[sphincsKeyIndex]
+					),
+					username,
+					PotassiumData.SignAlgorithms.V1
+				)
+			);
+		}
+
+		const cert = await this.databaseService.getItem(
+			certURL,
+			AGSEPKICertified
+		);
+
+		const publicSigningKeys = this.agsePublicSigningKeys.get(
+			cert.algorithm
+		);
+
+		if (publicSigningKeys === undefined) {
+			throw new Error(
+				`No AGSE public keys found for algorithm ${
+					PotassiumData.SignAlgorithms[cert.algorithm]
+				}.`
+			);
+		}
+
+		if (
+			cert.publicKeys.classical >= publicSigningKeys.classical.length ||
+			cert.publicKeys.postQuantum >= publicSigningKeys.postQuantum.length
+		) {
+			throw new Error('Invalid AGSE-PKI certificate: bad key index.');
+		}
+
+		return deserialize(
+			AGSEPKICert,
+			await this.potassiumHelpers.sign.openRaw(
+				cert.data,
+				await this.potassiumService.sign.importPublicKeys(
+					cert.algorithm,
+					publicSigningKeys.classical[cert.publicKeys.classical],
+					publicSigningKeys.postQuantum[cert.publicKeys.postQuantum]
+				),
+				certURL,
+				cert.algorithm
+			)
+		);
+	}
+
+	/** @ignore */
 	private async open<T> (
 		url: MaybePromise<string>,
 		proto: IProto<T>,
@@ -1346,111 +1436,9 @@ export class AccountDatabaseService extends BaseProvider {
 			cacheKey,
 			PublicKeyring,
 			async () => {
-				const certURL = `users/${username}/publicKeyCertificate`;
-
-				const certData = (await this.databaseService.hasItem(certURL)) ?
-					await (async () => {
-						const cert = await this.databaseService.getItem(
-								certURL,
-								AGSEPKICertified
-							);
-
-						const publicSigningKeys =
-							this.agsePublicSigningKeys.get(cert.algorithm);
-
-						if (publicSigningKeys === undefined) {
-							throw new Error(
-								`No AGSE public keys found for algorithm ${
-									PotassiumData.SignAlgorithms[cert.algorithm]
-								}.`
-							);
-						}
-
-						if (
-							cert.publicKeys.classical >=
-								publicSigningKeys.classical.length ||
-							cert.publicKeys.postQuantum >=
-								publicSigningKeys.postQuantum.length
-						) {
-							throw new Error(
-								'Invalid AGSE-PKI certificate: bad key index.'
-							);
-						}
-
-						return deserialize(
-							AGSEPKICert,
-							await this.potassiumHelpers.sign.openRaw(
-								cert.data,
-								await this.potassiumService.sign.importPublicKeys(
-									cert.algorithm,
-									publicSigningKeys.classical[
-										cert.publicKeys.classical
-									],
-									publicSigningKeys.postQuantum[
-										cert.publicKeys.postQuantum
-									]
-								),
-								certURL,
-								cert.algorithm
-							)
-						);
-					})() :
-					/* TODO: Remove this after reissuing certificates */
-					await (async () => {
-						const certBytes = await this.databaseService.getItem(
-								`users/${username}/certificate`,
-								BinaryProto
-							);
-
-						const dataView =
-							this.potassiumService.toDataView(certBytes);
-						const rsaKeyIndex = dataView.getUint32(0, true);
-						const sphincsKeyIndex = dataView.getUint32(4, true);
-						const signed = this.potassiumService.toBytes(
-								certBytes,
-								8
-							);
-
-						const publicSigningKeys = {
-								rsa:
-									this.agsePublicSigningKeys.get(
-										PotassiumData.SignAlgorithms.V1
-									)?.classical ?? [],
-								sphincs:
-									this.agsePublicSigningKeys.get(
-										PotassiumData.SignAlgorithms.V1
-									)?.postQuantum ?? []
-							};
-
-						if (
-							rsaKeyIndex >= publicSigningKeys.rsa.length ||
-							sphincsKeyIndex >= publicSigningKeys.sphincs.length
-						) {
-							throw new Error(
-								'Invalid AGSE-PKI certificate: bad key index.'
-							);
-						}
-
-						return deserialize(
-							AGSEPKICert,
-							await this.potassiumHelpers.sign.openRaw(
-								signed,
-								await this.potassiumService.sign.importPublicKeys(
-									PotassiumData.SignAlgorithms.V1,
-									publicSigningKeys.rsa[rsaKeyIndex],
-									publicSigningKeys.sphincs[sphincsKeyIndex]
-								),
-								username,
-								PotassiumData.SignAlgorithms.V1
-							)
-						);
-					})();
-
-				if (certData.csrData.username !== username) {
-					throw new Error(
-						'Invalid AGSE-PKI certificate: bad username.'
-					);
-				}
+				const certData = await this.getUserPublicKeyCertificate(
+					username
+				);
 
 				const publicKeyringURL = `users/${username}/keyrings/public`;
 
