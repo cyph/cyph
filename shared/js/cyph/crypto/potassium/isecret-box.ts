@@ -1,9 +1,20 @@
-import {IPrivateKeyring, PotassiumData} from '../../proto/types';
+import {
+	IPotassiumData,
+	IPrivateKeyring,
+	PotassiumData
+} from '../../proto/types';
 
 /** Equivalent to sodium.crypto_secretbox. */
 export interface ISecretBox {
 	/** Current algorithm to use for new data. */
 	readonly currentAlgorithm: Promise<PotassiumData.SecretBoxAlgorithms>;
+
+	/** @see PotassiumEncoding.deserialize */
+	readonly defaultMetadata: Promise<
+		IPotassiumData & {
+			secretBoxAlgorithm: PotassiumData.SecretBoxAlgorithms;
+		}
+	>;
 
 	/** Generates new secret key. */
 	generateKey (

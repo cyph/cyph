@@ -1,6 +1,6 @@
 import memoize from 'lodash-es/memoize';
 import {Observable} from 'rxjs';
-import {IPublicKeyring, PotassiumData} from '../../proto';
+import {IPublicKeyring} from '../../proto';
 import {IPotassium} from '../potassium/ipotassium';
 import {AnonymousLocalUser} from './anonymous-local-user';
 import {IHandshakeState} from './ihandshake-state';
@@ -45,12 +45,7 @@ export class AnonymousRemoteUser implements IRemoteUser {
 
 			const potassiumPublicKey =
 				await this.potassium.encoding.deserialize(
-					/* TODO: Factor out with Box.defaultMetadata */
-					{
-						boxAlgorithm: <PotassiumData.BoxAlgorithms> (
-							PotassiumData.BoxAlgorithms.V1
-						)
-					},
+					await this.potassium.box.defaultMetadata,
 					{publicKey}
 				);
 

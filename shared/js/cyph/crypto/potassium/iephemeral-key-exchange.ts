@@ -1,5 +1,6 @@
 import {
 	IKeyPair,
+	IPotassiumData,
 	IPrivateKeyring,
 	IPublicKeyring,
 	PotassiumData
@@ -9,6 +10,13 @@ import {
 export interface IEphemeralKeyExchange {
 	/** Current algorithm to use for new data. */
 	readonly currentAlgorithm: Promise<PotassiumData.EphemeralKeyExchangeAlgorithms>;
+
+	/** @see PotassiumEncoding.deserialize */
+	readonly defaultMetadata: Promise<
+		IPotassiumData & {
+			ephemeralKeyExchangeAlgorithm: PotassiumData.EphemeralKeyExchangeAlgorithms;
+		}
+	>;
 
 	/** Generates Alice's key pair. */
 	aliceKeyPair (

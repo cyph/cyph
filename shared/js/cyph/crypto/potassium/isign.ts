@@ -1,5 +1,6 @@
 import {
 	IKeyPair,
+	IPotassiumData,
 	IPrivateKeyring,
 	IPublicKeyring,
 	PotassiumData
@@ -9,6 +10,13 @@ import {
 export interface ISign {
 	/** Current algorithm to use for new data. */
 	readonly currentAlgorithm: Promise<PotassiumData.SignAlgorithms>;
+
+	/** @see PotassiumEncoding.deserialize */
+	readonly defaultMetadata: Promise<
+		IPotassiumData & {
+			signAlgorithm: PotassiumData.SignAlgorithms;
+		}
+	>;
 
 	/** Signature length. */
 	getBytes: (algorithm?: PotassiumData.SignAlgorithms) => Promise<number>;

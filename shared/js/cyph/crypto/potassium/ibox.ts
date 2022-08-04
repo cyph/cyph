@@ -1,5 +1,6 @@
 import {
 	IKeyPair,
+	IPotassiumData,
 	IPrivateKeyring,
 	IPublicKeyring,
 	PotassiumData
@@ -9,6 +10,13 @@ import {
 export interface IBox {
 	/** Current algorithm to use for new data. */
 	readonly currentAlgorithm: Promise<PotassiumData.BoxAlgorithms>;
+
+	/** @see PotassiumEncoding.deserialize */
+	readonly defaultMetadata: Promise<
+		IPotassiumData & {
+			boxAlgorithm: PotassiumData.BoxAlgorithms;
+		}
+	>;
 
 	/** Private key length. */
 	getPrivateKeyBytes: (

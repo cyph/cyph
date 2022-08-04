@@ -1,9 +1,20 @@
-import {IPrivateKeyring, PotassiumData} from '../../proto/types';
+import {
+	IPotassiumData,
+	IPrivateKeyring,
+	PotassiumData
+} from '../../proto/types';
 
 /** Equivalent to sodium.crypto_onetimeauth. */
 export interface IOneTimeAuth {
 	/** Current algorithm to use for new data. */
 	readonly currentAlgorithm: Promise<PotassiumData.OneTimeAuthAlgorithms>;
+
+	/** @see PotassiumEncoding.deserialize */
+	readonly defaultMetadata: Promise<
+		IPotassiumData & {
+			oneTimeAuthAlgorithm: PotassiumData.OneTimeAuthAlgorithms;
+		}
+	>;
 
 	/** Generates new secret key. */
 	generateKey (

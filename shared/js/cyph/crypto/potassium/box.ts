@@ -33,8 +33,8 @@ export class Box implements IBox {
 		PotassiumData.BoxAlgorithms.V2 :
 		PotassiumData.BoxAlgorithms.NativeV2;
 
-	/** @see PotassiumEncoding.deserialize */
-	private readonly defaultMetadata: IPotassiumData & {
+	/** @ignore */
+	private readonly defaultMetadataInternal: IPotassiumData & {
 		boxAlgorithm: PotassiumData.BoxAlgorithms;
 	} = {
 		boxAlgorithm: PotassiumData.BoxAlgorithms.V1
@@ -106,6 +106,11 @@ export class Box implements IBox {
 	/** @inheritDoc */
 	public readonly currentAlgorithm = Promise.resolve(
 		this.currentAlgorithmInternal
+	);
+
+	/** @inheritDoc */
+	public readonly defaultMetadata = Promise.resolve(
+		this.defaultMetadataInternal
 	);
 
 	/** @inheritDoc */
@@ -911,7 +916,7 @@ export class Box implements IBox {
 		keyPair: IKeyPair | IPrivateKeyring
 	) : Promise<Uint8Array> {
 		const potassiumCyphertext = await potassiumEncoding.deserialize(
-			this.defaultMetadata,
+			this.defaultMetadataInternal,
 			{cyphertext}
 		);
 
@@ -924,11 +929,11 @@ export class Box implements IBox {
 		);
 
 		const potassiumPrivateKey = await potassiumEncoding.deserialize(
-			this.defaultMetadata,
+			this.defaultMetadataInternal,
 			{privateKey: keyPair.privateKey}
 		);
 		const potassiumPublicKey = await potassiumEncoding.deserialize(
-			this.defaultMetadata,
+			this.defaultMetadataInternal,
 			{publicKey: keyPair.publicKey}
 		);
 
@@ -1037,7 +1042,7 @@ export class Box implements IBox {
 		);
 
 		const potassiumPublicKey = await potassiumEncoding.deserialize(
-			this.defaultMetadata,
+			this.defaultMetadataInternal,
 			{publicKey}
 		);
 

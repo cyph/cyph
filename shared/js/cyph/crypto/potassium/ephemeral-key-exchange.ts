@@ -26,8 +26,8 @@ export class EphemeralKeyExchange implements IEphemeralKeyExchange {
 	private readonly currentAlgorithmInternal =
 		PotassiumData.EphemeralKeyExchangeAlgorithms.V2;
 
-	/** @see PotassiumEncoding.deserialize */
-	private readonly defaultMetadata: IPotassiumData & {
+	/** @ignore */
+	private readonly defaultMetadataInternal: IPotassiumData & {
 		ephemeralKeyExchangeAlgorithm: PotassiumData.EphemeralKeyExchangeAlgorithms;
 	} = {
 		ephemeralKeyExchangeAlgorithm:
@@ -61,6 +61,11 @@ export class EphemeralKeyExchange implements IEphemeralKeyExchange {
 	/** @inheritDoc */
 	public readonly currentAlgorithm = Promise.resolve(
 		this.currentAlgorithmInternal
+	);
+
+	/** @inheritDoc */
+	public readonly defaultMetadata = Promise.resolve(
+		this.defaultMetadataInternal
 	);
 
 	/** @inheritDoc */
@@ -199,7 +204,7 @@ export class EphemeralKeyExchange implements IEphemeralKeyExchange {
 
 		const deserializePotassiumPrivateKey = memoize(
 			async (privateKeyBytes: Uint8Array) =>
-				potassiumEncoding.deserialize(this.defaultMetadata, {
+				potassiumEncoding.deserialize(this.defaultMetadataInternal, {
 					privateKey: privateKeyBytes
 				})
 		);
@@ -218,7 +223,7 @@ export class EphemeralKeyExchange implements IEphemeralKeyExchange {
 
 		const deserializePotassiumPublicKey = memoize(
 			async (publicKeyBytes: Uint8Array) =>
-				potassiumEncoding.deserialize(this.defaultMetadata, {
+				potassiumEncoding.deserialize(this.defaultMetadataInternal, {
 					publicKey: publicKeyBytes
 				})
 		);
@@ -347,7 +352,7 @@ export class EphemeralKeyExchange implements IEphemeralKeyExchange {
 		);
 
 		const potassiumAlicePublicKey = await potassiumEncoding.deserialize(
-			this.defaultMetadata,
+			this.defaultMetadataInternal,
 			{publicKey: alicePublicKey}
 		);
 

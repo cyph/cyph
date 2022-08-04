@@ -26,8 +26,8 @@ export class Sign implements ISign {
 		PotassiumData.SignAlgorithms.V2 :
 		PotassiumData.SignAlgorithms.NativeV2;
 
-	/** @see PotassiumEncoding.deserialize */
-	private readonly defaultMetadata: IPotassiumData & {
+	/** @ignore */
+	private readonly defaultMetadataInternal: IPotassiumData & {
 		signAlgorithm: PotassiumData.SignAlgorithms;
 	} = {
 		signAlgorithm: PotassiumData.SignAlgorithms.V1
@@ -36,6 +36,11 @@ export class Sign implements ISign {
 	/** @inheritDoc */
 	public readonly currentAlgorithm = Promise.resolve(
 		this.currentAlgorithmInternal
+	);
+
+	/** @inheritDoc */
+	public readonly defaultMetadata = Promise.resolve(
+		this.defaultMetadataInternal
 	);
 
 	/** @inheritDoc */
@@ -264,14 +269,14 @@ export class Sign implements ISign {
 		);
 
 		const potassiumPublicKey = await potassiumEncoding.deserialize(
-			this.defaultMetadata,
+			this.defaultMetadataInternal,
 			{publicKey}
 		);
 
 		const algorithm = potassiumPublicKey.signAlgorithm;
 
 		const potassiumSigned = await potassiumEncoding.deserialize(
-			this.defaultMetadata,
+			this.defaultMetadataInternal,
 			{
 				signed: {
 					compressed: decompressByDefault,
@@ -383,7 +388,7 @@ export class Sign implements ISign {
 		).privateKey;
 
 		const potassiumPrivateKey = await potassiumEncoding.deserialize(
-			this.defaultMetadata,
+			this.defaultMetadataInternal,
 			{privateKey}
 		);
 
@@ -463,7 +468,7 @@ export class Sign implements ISign {
 		).privateKey;
 
 		const potassiumPrivateKey = await potassiumEncoding.deserialize(
-			this.defaultMetadata,
+			this.defaultMetadataInternal,
 			{privateKey}
 		);
 
@@ -537,7 +542,7 @@ export class Sign implements ISign {
 			.currentAlgorithmInternal
 	) : Promise<boolean> {
 		const defaultMetadata = {
-			...this.defaultMetadata,
+			...this.defaultMetadataInternal,
 			signAlgorithm: defaultAlgorithm
 		};
 

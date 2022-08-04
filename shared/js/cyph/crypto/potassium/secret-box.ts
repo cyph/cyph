@@ -17,8 +17,8 @@ export class SecretBox implements ISecretBox {
 		PotassiumData.SecretBoxAlgorithms.V1 :
 		PotassiumData.SecretBoxAlgorithms.NativeV1;
 
-	/** @see PotassiumEncoding.deserialize */
-	private readonly defaultMetadata: IPotassiumData & {
+	/** @ignore */
+	private readonly defaultMetadataInternal: IPotassiumData & {
 		secretBoxAlgorithm: PotassiumData.SecretBoxAlgorithms;
 	} = {
 		secretBoxAlgorithm: PotassiumData.SecretBoxAlgorithms.V1
@@ -112,6 +112,11 @@ export class SecretBox implements ISecretBox {
 	/** @inheritDoc */
 	public readonly currentAlgorithm = Promise.resolve(
 		this.currentAlgorithmInternal
+	);
+
+	/** @inheritDoc */
+	public readonly defaultMetadata = Promise.resolve(
+		this.defaultMetadataInternal
 	);
 
 	/** @inheritDoc */
@@ -293,7 +298,7 @@ export class SecretBox implements ISecretBox {
 			.currentAlgorithmInternal
 	) : Promise<Uint8Array> {
 		const defaultMetadata = {
-			...this.defaultMetadata,
+			...this.defaultMetadataInternal,
 			secretBoxAlgorithm: defaultAlgorithm
 		};
 
@@ -353,7 +358,7 @@ export class SecretBox implements ISecretBox {
 			.currentAlgorithmInternal
 	) : Promise<Uint8Array> {
 		const defaultMetadata = {
-			...this.defaultMetadata,
+			...this.defaultMetadataInternal,
 			secretBoxAlgorithm: defaultAlgorithm
 		};
 

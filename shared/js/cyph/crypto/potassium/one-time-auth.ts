@@ -13,8 +13,8 @@ export class OneTimeAuth implements IOneTimeAuth {
 		PotassiumData.OneTimeAuthAlgorithms.V1 :
 		PotassiumData.OneTimeAuthAlgorithms.NativeV1;
 
-	/** @see PotassiumEncoding.deserialize */
-	private readonly defaultMetadata: IPotassiumData & {
+	/** @ignore */
+	private readonly defaultMetadataInternal: IPotassiumData & {
 		oneTimeAuthAlgorithm: PotassiumData.OneTimeAuthAlgorithms;
 	} = {
 		oneTimeAuthAlgorithm: PotassiumData.OneTimeAuthAlgorithms.V1
@@ -23,6 +23,11 @@ export class OneTimeAuth implements IOneTimeAuth {
 	/** @inheritDoc */
 	public readonly currentAlgorithm = Promise.resolve(
 		this.currentAlgorithmInternal
+	);
+
+	/** @inheritDoc */
+	public readonly defaultMetadata = Promise.resolve(
+		this.defaultMetadataInternal
 	);
 
 	/** @inheritDoc */
@@ -89,7 +94,7 @@ export class OneTimeAuth implements IOneTimeAuth {
 			.currentAlgorithmInternal
 	) : Promise<Uint8Array> {
 		const defaultMetadata = {
-			...this.defaultMetadata,
+			...this.defaultMetadataInternal,
 			oneTimeAuthAlgorithm: defaultAlgorithm
 		};
 
@@ -145,7 +150,7 @@ export class OneTimeAuth implements IOneTimeAuth {
 			.currentAlgorithmInternal
 	) : Promise<boolean> {
 		const defaultMetadata = {
-			...this.defaultMetadata,
+			...this.defaultMetadataInternal,
 			oneTimeAuthAlgorithm: defaultAlgorithm
 		};
 

@@ -98,6 +98,9 @@ export class ThreadedPotassiumService
 		currentAlgorithm: this.staticValues.then(async o =>
 			o.boxCurrentAlgorithm()
 		),
+		defaultMetadata: this.staticValues.then(async o =>
+			o.boxDefaultMetadata()
+		),
 		getPrivateKeyBytes: async algorithm =>
 			this.getPotassium(async o => o.boxGetPrivateKeyBytes(algorithm)),
 		getPublicKeyBytes: async algorithm =>
@@ -132,6 +135,9 @@ export class ThreadedPotassiumService
 			),
 		currentAlgorithm: this.staticValues.then(async o =>
 			o.ephemeralKeyExchangeCurrentAlgorithm()
+		),
+		defaultMetadata: this.staticValues.then(async o =>
+			o.ephemeralKeyExchangeDefaultMetadata()
 		),
 		getPrivateKeyBytes: async algorithm =>
 			this.getPotassium(async o =>
@@ -169,6 +175,9 @@ export class ThreadedPotassiumService
 	public readonly oneTimeAuth: IOneTimeAuth = {
 		currentAlgorithm: this.staticValues.then(async o =>
 			o.oneTimeAuthCurrentAlgorithm()
+		),
+		defaultMetadata: this.staticValues.then(async o =>
+			o.oneTimeAuthDefaultMetadata()
 		),
 		generateKey: async algorithm =>
 			potassiumEncoding.serialize({
@@ -242,6 +251,9 @@ export class ThreadedPotassiumService
 		currentAlgorithm: this.staticValues.then(async o =>
 			o.secretBoxCurrentAlgorithm()
 		),
+		defaultMetadata: this.staticValues.then(async o =>
+			o.secretBoxDefaultMetadata()
+		),
 		generateKey: async algorithm =>
 			potassiumEncoding.serialize({
 				key: this.randomBytes(await this.secretBox.getKeyBytes()),
@@ -283,6 +295,9 @@ export class ThreadedPotassiumService
 	public readonly sign: ISign = {
 		currentAlgorithm: this.staticValues.then(async o =>
 			o.signCurrentAlgorithm()
+		),
+		defaultMetadata: this.staticValues.then(async o =>
+			o.signDefaultMetadata()
 		),
 		getBytes: async algorithm =>
 			this.getPotassium(async o => o.signGetBytes(algorithm)),
