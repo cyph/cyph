@@ -1,14 +1,7 @@
 import {proto} from '@cyph/sdk';
 import difference from 'lodash-es/difference.js';
-import {
-	admin,
-	database,
-	getHash,
-	getItem,
-	lock,
-	onCall,
-	processItem
-} from '../init.js';
+import {sendEmailInternal} from '../email.js';
+import {admin, database, getItem, lock, onCall, processItem} from '../init.js';
 
 const {BinaryProto} = proto;
 
@@ -25,14 +18,22 @@ export const updateKeyrings = onCall(
 			const currentAlgorithms = JSON.parse(
 				(
 					await keyringRootRef.child('algorithms').once('value')
-				).val() || '[]'
+				).val() || '{}'
 			);
 
 			if (
 				!(csr instanceof Uint8Array) ||
 				!(newPrivateKeyringBytes instanceof Uint8Array) ||
 				!(newPublicKeyringBytes instanceof Uint8Array) ||
-				difference(algorithms ?? [], currentAlgorithms).length < 1
+				!algorithms ||
+				(difference(
+					algorithms.boxAlgorithms ?? [],
+					currentAlgorithms.boxAlgorithms ?? []
+				).length < 1 &&
+					difference(
+						algorithms.signAlgorithms ?? [],
+						currentAlgorithms.signAlgorithms ?? []
+					).length < 1)
 			) {
 				return {
 					privateKeyringBytes: await getItem(

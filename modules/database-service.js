@@ -261,7 +261,7 @@ export const initDatabaseService = memoize((config, isCloudFunction) => {
 			]);
 
 			lockRef.on('value', snapshot => {
-				const contenders = Object.entries(snapshot.val() ?? [])
+				const contenders = Object.entries(snapshot.val() ?? {})
 					.sort(([a], [b]) => (a > b ? 1 : -1))
 					.map(([_, v]) => v);
 
@@ -277,17 +277,20 @@ export const initDatabaseService = memoize((config, isCloudFunction) => {
 
 			try {
 				await lockClaimed;
-				return await f();
 			}
 			catch (err) {
 				console.error({lockError: err});
+
+				/* Retry indefinitely */
+				return databaseService.lock(namespace, url, f);
+			}
+
+			try {
+				return await f();
 			}
 			finally {
 				await contenderRef.remove();
 			}
-
-			/* Retry indefinitely */
-			return this.lock(namespace, url, f);
 		},
 		async pushItem (namespace, url, proto, value)  {
 			/* TODO: Copy the FirebaseDatabaseService implementation or use nextPushId */
