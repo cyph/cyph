@@ -17,7 +17,7 @@ import {potassiumUtil} from './potassium-util';
 /** @inheritDoc */
 export class EphemeralKeyExchange implements IEphemeralKeyExchange {
 	/** @ignore */
-	private readonly algorithmPriorityOrder = [
+	private readonly algorithmPriorityOrderInternal = [
 		PotassiumData.EphemeralKeyExchangeAlgorithms.V2,
 		PotassiumData.EphemeralKeyExchangeAlgorithms.V1
 	];
@@ -57,6 +57,11 @@ export class EphemeralKeyExchange implements IEphemeralKeyExchange {
 			publicKeyBytes: kyber.publicKeyBytes
 		}
 	};
+
+	/** @inheritDoc */
+	public readonly algorithmPriorityOrder = Promise.resolve(
+		this.algorithmPriorityOrderInternal
+	);
 
 	/** @inheritDoc */
 	public readonly currentAlgorithm = Promise.resolve(
@@ -245,7 +250,7 @@ export class EphemeralKeyExchange implements IEphemeralKeyExchange {
 			privateKey instanceof Uint8Array ?
 				(await deserializePotassiumPrivateKey(privateKey))
 					.ephemeralKeyExchangeAlgorithm :
-				this.algorithmPriorityOrder.find(
+				this.algorithmPriorityOrderInternal.find(
 					alg =>
 						privateKey.ephemeralKeyExchangePrivateKeys?.[alg] !==
 							undefined &&
@@ -348,7 +353,7 @@ export class EphemeralKeyExchange implements IEphemeralKeyExchange {
 		alicePublicKey = potassiumEncoding.openKeyring(
 			PotassiumData.EphemeralKeyExchangeAlgorithms,
 			alicePublicKey,
-			this.currentAlgorithmInternal
+			this.algorithmPriorityOrderInternal
 		);
 
 		const potassiumAlicePublicKey = await potassiumEncoding.deserialize(

@@ -344,11 +344,11 @@ export const certSign = async (
 				{
 					signed: {
 						compressed: false,
-						message: new Uint8Array(0),
-						signature: csrDataBytes,
-						signatureBytes: await potassium.sign.getBytes(
+						defaultSignatureBytes: await potassium.sign.getBytes(
 							csr.algorithm
-						)
+						),
+						message: new Uint8Array(0),
+						signature: csrDataBytes
 					}
 				}
 			);

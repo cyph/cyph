@@ -9,6 +9,12 @@ import {potassiumUtil} from './potassium-util';
 
 /** @inheritDoc */
 export class SecretBox implements ISecretBox {
+	/** @ignore */
+	private readonly algorithmPriorityOrderInternal = [
+		PotassiumData.SecretBoxAlgorithms.V1,
+		PotassiumData.SecretBoxAlgorithms.NativeV1
+	];
+
 	/** Max size of chunk to encrypt, 32 MB. */
 	private readonly chunkSize: number = 33554432;
 
@@ -108,6 +114,11 @@ export class SecretBox implements ISecretBox {
 			}
 		}
 	};
+
+	/** @inheritDoc */
+	public readonly algorithmPriorityOrder = Promise.resolve(
+		this.algorithmPriorityOrderInternal
+	);
 
 	/** @inheritDoc */
 	public readonly currentAlgorithm = Promise.resolve(
@@ -294,13 +305,14 @@ export class SecretBox implements ISecretBox {
 		cyphertext: Uint8Array,
 		key: Uint8Array | IPrivateKeyring,
 		additionalData?: Uint8Array | string,
-		defaultAlgorithm: PotassiumData.SecretBoxAlgorithms = this
-			.currentAlgorithmInternal
+		forceAlgorithm?: PotassiumData.SecretBoxAlgorithms
 	) : Promise<Uint8Array> {
-		const defaultMetadata = {
-			...this.defaultMetadataInternal,
-			secretBoxAlgorithm: defaultAlgorithm
-		};
+		const defaultMetadata = forceAlgorithm ?
+			{
+				...this.defaultMetadataInternal,
+				secretBoxAlgorithm: forceAlgorithm
+			} :
+			this.defaultMetadataInternal;
 
 		const additionalDataBytes =
 			typeof additionalData === 'string' ?
@@ -312,12 +324,13 @@ export class SecretBox implements ISecretBox {
 			{cyphertext}
 		);
 
-		const algorithm = potassiumCyphertext.secretBoxAlgorithm;
+		const algorithm =
+			forceAlgorithm ?? potassiumCyphertext.secretBoxAlgorithm;
 
 		key = potassiumEncoding.openKeyring(
 			PotassiumData.SecretBoxAlgorithms,
 			key,
-			defaultAlgorithm
+			algorithm
 		);
 
 		const potassiumKey = await potassiumEncoding.deserialize(
@@ -325,7 +338,10 @@ export class SecretBox implements ISecretBox {
 			{key}
 		);
 
-		if (potassiumCyphertext.secretBoxAlgorithm !== algorithm) {
+		if (
+			potassiumCyphertext.secretBoxAlgorithm !== algorithm ||
+			potassiumKey.secretBoxAlgorithm !== algorithm
+		) {
 			throw new Error(
 				'Key-cyphertext SecretBox algorithm mismatch (open).'
 			);
@@ -354,13 +370,14 @@ export class SecretBox implements ISecretBox {
 		key: Uint8Array | IPrivateKeyring,
 		additionalData?: Uint8Array | string,
 		rawOutput: boolean = false,
-		defaultAlgorithm: PotassiumData.SecretBoxAlgorithms = this
-			.currentAlgorithmInternal
+		forceAlgorithm?: PotassiumData.SecretBoxAlgorithms
 	) : Promise<Uint8Array> {
-		const defaultMetadata = {
-			...this.defaultMetadataInternal,
-			secretBoxAlgorithm: defaultAlgorithm
-		};
+		const defaultMetadata = forceAlgorithm ?
+			{
+				...this.defaultMetadataInternal,
+				secretBoxAlgorithm: forceAlgorithm
+			} :
+			this.defaultMetadataInternal;
 
 		const additionalDataBytes =
 			typeof additionalData === 'string' ?
@@ -370,7 +387,7 @@ export class SecretBox implements ISecretBox {
 		key = potassiumEncoding.openKeyring(
 			PotassiumData.SecretBoxAlgorithms,
 			key,
-			defaultAlgorithm
+			forceAlgorithm ?? this.algorithmPriorityOrderInternal
 		);
 
 		const potassiumKey = await potassiumEncoding.deserialize(
@@ -378,7 +395,11 @@ export class SecretBox implements ISecretBox {
 			{key}
 		);
 
-		const algorithm = potassiumKey.secretBoxAlgorithm;
+		const algorithm = forceAlgorithm ?? potassiumKey.secretBoxAlgorithm;
+
+		if (potassiumKey.secretBoxAlgorithm !== algorithm) {
+			throw new Error('SecretBox algorithm mismatch (seal).');
+		}
 
 		const result = potassiumUtil.joinBytes(
 			...(await Promise.all(

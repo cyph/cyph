@@ -22,6 +22,16 @@ import {potassiumUtil} from './potassium-util';
 /** @inheritDoc */
 export class Sign implements ISign {
 	/** @ignore */
+	private readonly algorithmPriorityOrderInternal = [
+		PotassiumData.SignAlgorithms.V2,
+		PotassiumData.SignAlgorithms.V2Hardened,
+		PotassiumData.SignAlgorithms.NativeV2,
+		PotassiumData.SignAlgorithms.NativeV2Hardened,
+		PotassiumData.SignAlgorithms.V1,
+		PotassiumData.SignAlgorithms.NativeV1
+	];
+
+	/** @ignore */
 	private readonly currentAlgorithmInternal = !this.isNative ?
 		PotassiumData.SignAlgorithms.V2 :
 		PotassiumData.SignAlgorithms.NativeV2;
@@ -32,6 +42,11 @@ export class Sign implements ISign {
 	} = {
 		signAlgorithm: PotassiumData.SignAlgorithms.V1
 	};
+
+	/** @inheritDoc */
+	public readonly algorithmPriorityOrder = Promise.resolve(
+		this.algorithmPriorityOrderInternal
+	);
 
 	/** @inheritDoc */
 	public readonly currentAlgorithm = Promise.resolve(
@@ -262,10 +277,26 @@ export class Sign implements ISign {
 		additionalData: Uint8Array | string = new Uint8Array(0),
 		decompressByDefault: boolean = false
 	) : Promise<Uint8Array> {
+		const potassiumSigned = await potassiumEncoding.deserialize(
+			this.defaultMetadataInternal,
+			{
+				signed: {
+					compressed: decompressByDefault,
+					defaultSignatureBytes: await this.getBytes(
+						this.defaultMetadataInternal.signAlgorithm
+					),
+					message: new Uint8Array(0),
+					signature: potassiumUtil.fromBase64(signed)
+				}
+			}
+		);
+
+		const algorithm = potassiumSigned.signAlgorithm;
+
 		publicKey = potassiumEncoding.openKeyring(
 			PotassiumData.SignAlgorithms,
 			publicKey,
-			this.currentAlgorithmInternal
+			algorithm
 		);
 
 		const potassiumPublicKey = await potassiumEncoding.deserialize(
@@ -273,21 +304,7 @@ export class Sign implements ISign {
 			{publicKey}
 		);
 
-		const algorithm = potassiumPublicKey.signAlgorithm;
-
-		const potassiumSigned = await potassiumEncoding.deserialize(
-			this.defaultMetadataInternal,
-			{
-				signed: {
-					compressed: decompressByDefault,
-					message: new Uint8Array(0),
-					signature: potassiumUtil.fromBase64(signed),
-					signatureBytes: await this.getBytes(algorithm)
-				}
-			}
-		);
-
-		if (potassiumSigned.signAlgorithm !== algorithm) {
+		if (potassiumPublicKey.signAlgorithm !== algorithm) {
 			throw new Error(
 				'Signature - public key Sign algorithm mismatch (open).'
 			);
@@ -384,7 +401,7 @@ export class Sign implements ISign {
 		privateKey = potassiumEncoding.openKeyring(
 			PotassiumData.SignAlgorithms,
 			privateKey instanceof Uint8Array ? {privateKey} : privateKey,
-			this.currentAlgorithmInternal
+			this.algorithmPriorityOrderInternal
 		).privateKey;
 
 		const potassiumPrivateKey = await potassiumEncoding.deserialize(
@@ -467,7 +484,7 @@ export class Sign implements ISign {
 		privateKey = potassiumEncoding.openKeyring(
 			PotassiumData.SignAlgorithms,
 			privateKey instanceof Uint8Array ? {privateKey} : privateKey,
-			this.currentAlgorithmInternal
+			this.algorithmPriorityOrderInternal
 		).privateKey;
 
 		const potassiumPrivateKey = await potassiumEncoding.deserialize(
@@ -541,18 +558,19 @@ export class Sign implements ISign {
 		message: Uint8Array | string,
 		publicKey: Uint8Array | IPublicKeyring,
 		additionalData?: Uint8Array | string,
-		defaultAlgorithm: PotassiumData.SignAlgorithms = this
-			.currentAlgorithmInternal
+		forceAlgorithm?: PotassiumData.SignAlgorithms
 	) : Promise<boolean> {
-		const defaultMetadata = {
-			...this.defaultMetadataInternal,
-			signAlgorithm: defaultAlgorithm
-		};
+		const defaultMetadata = forceAlgorithm ?
+			{
+				...this.defaultMetadataInternal,
+				signAlgorithm: forceAlgorithm
+			} :
+			this.defaultMetadataInternal;
 
 		publicKey = potassiumEncoding.openKeyring(
 			PotassiumData.SignAlgorithms,
 			publicKey,
-			defaultAlgorithm
+			forceAlgorithm ?? this.algorithmPriorityOrderInternal
 		);
 
 		const potassiumPublicKey = await potassiumEncoding.deserialize(
@@ -564,9 +582,12 @@ export class Sign implements ISign {
 			{signature: potassiumUtil.fromBase64(signature)}
 		);
 
-		const algorithm = potassiumPublicKey.signAlgorithm;
+		const algorithm = forceAlgorithm ?? potassiumPublicKey.signAlgorithm;
 
-		if (potassiumSignature.signAlgorithm !== algorithm) {
+		if (
+			potassiumPublicKey.signAlgorithm !== algorithm ||
+			potassiumSignature.signAlgorithm !== algorithm
+		) {
 			throw new Error(
 				'Signature - public key Sign algorithm mismatch (verify).'
 			);

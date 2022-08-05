@@ -9,6 +9,12 @@ import {potassiumUtil} from './potassium-util';
 /** @inheritDoc */
 export class OneTimeAuth implements IOneTimeAuth {
 	/** @ignore */
+	private readonly algorithmPriorityOrderInternal = [
+		PotassiumData.OneTimeAuthAlgorithms.V1,
+		PotassiumData.OneTimeAuthAlgorithms.NativeV1
+	];
+
+	/** @ignore */
 	private readonly currentAlgorithmInternal = !this.isNative ?
 		PotassiumData.OneTimeAuthAlgorithms.V1 :
 		PotassiumData.OneTimeAuthAlgorithms.NativeV1;
@@ -19,6 +25,11 @@ export class OneTimeAuth implements IOneTimeAuth {
 	} = {
 		oneTimeAuthAlgorithm: PotassiumData.OneTimeAuthAlgorithms.V1
 	};
+
+	/** @inheritDoc */
+	public readonly algorithmPriorityOrder = Promise.resolve(
+		this.algorithmPriorityOrderInternal
+	);
 
 	/** @inheritDoc */
 	public readonly currentAlgorithm = Promise.resolve(
@@ -90,20 +101,21 @@ export class OneTimeAuth implements IOneTimeAuth {
 		message: Uint8Array,
 		key: Uint8Array | IPrivateKeyring,
 		rawOutput: boolean = false,
-		defaultAlgorithm: PotassiumData.OneTimeAuthAlgorithms = this
-			.currentAlgorithmInternal
+		forceAlgorithm?: PotassiumData.OneTimeAuthAlgorithms
 	) : Promise<Uint8Array> {
-		const defaultMetadata = {
-			...this.defaultMetadataInternal,
-			oneTimeAuthAlgorithm: defaultAlgorithm
-		};
+		const defaultMetadata = forceAlgorithm ?
+			{
+				...this.defaultMetadataInternal,
+				oneTimeAuthAlgorithm: forceAlgorithm
+			} :
+			this.defaultMetadataInternal;
 
 		await sodium.ready;
 
 		key = potassiumEncoding.openKeyring(
 			PotassiumData.OneTimeAuthAlgorithms,
 			key,
-			defaultAlgorithm
+			forceAlgorithm ?? this.algorithmPriorityOrderInternal
 		);
 
 		const potassiumKey = await potassiumEncoding.deserialize(
@@ -111,7 +123,11 @@ export class OneTimeAuth implements IOneTimeAuth {
 			{key}
 		);
 
-		const algorithm = potassiumKey.oneTimeAuthAlgorithm;
+		const algorithm = forceAlgorithm ?? potassiumKey.oneTimeAuthAlgorithm;
+
+		if (potassiumKey.oneTimeAuthAlgorithm !== algorithm) {
+			throw new Error('OneTimeAuth algorithm mismatch (sign).');
+		}
 
 		let result: Uint8Array;
 
@@ -146,13 +162,14 @@ export class OneTimeAuth implements IOneTimeAuth {
 		mac: Uint8Array,
 		message: Uint8Array,
 		key: Uint8Array | IPrivateKeyring,
-		defaultAlgorithm: PotassiumData.OneTimeAuthAlgorithms = this
-			.currentAlgorithmInternal
+		forceAlgorithm?: PotassiumData.OneTimeAuthAlgorithms
 	) : Promise<boolean> {
-		const defaultMetadata = {
-			...this.defaultMetadataInternal,
-			oneTimeAuthAlgorithm: defaultAlgorithm
-		};
+		const defaultMetadata = forceAlgorithm ?
+			{
+				...this.defaultMetadataInternal,
+				oneTimeAuthAlgorithm: forceAlgorithm
+			} :
+			this.defaultMetadataInternal;
 
 		await sodium.ready;
 
@@ -161,12 +178,12 @@ export class OneTimeAuth implements IOneTimeAuth {
 			{mac}
 		);
 
-		const algorithm = potassiumMAC.oneTimeAuthAlgorithm;
+		const algorithm = forceAlgorithm ?? potassiumMAC.oneTimeAuthAlgorithm;
 
 		key = potassiumEncoding.openKeyring(
 			PotassiumData.OneTimeAuthAlgorithms,
 			key,
-			defaultAlgorithm
+			algorithm
 		);
 
 		const potassiumKey = await potassiumEncoding.deserialize(
@@ -174,7 +191,10 @@ export class OneTimeAuth implements IOneTimeAuth {
 			{key}
 		);
 
-		if (potassiumKey.oneTimeAuthAlgorithm !== algorithm) {
+		if (
+			potassiumKey.oneTimeAuthAlgorithm !== algorithm ||
+			potassiumMAC.oneTimeAuthAlgorithm !== algorithm
+		) {
 			throw new Error('Key-MAC OneTimeAuth algorithm mismatch (verify).');
 		}
 

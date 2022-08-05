@@ -23,6 +23,7 @@ export class PotassiumService extends PotassiumUtil implements IPotassium {
 
 	/** @inheritDoc */
 	public readonly box: IBox = {
+		algorithmPriorityOrder: this.errorValue,
 		currentAlgorithm: this.errorValue,
 		defaultMetadata: this.errorValue,
 		getPrivateKeyBytes: async () => this.errorValue,
@@ -37,6 +38,7 @@ export class PotassiumService extends PotassiumUtil implements IPotassium {
 
 	/** @inheritDoc */
 	public readonly ephemeralKeyExchange: IEphemeralKeyExchange = {
+		algorithmPriorityOrder: this.errorValue,
 		aliceKeyPair: async () => this.errorValue,
 		aliceSecret: async () => this.errorValue,
 		bobSecret: async () => this.errorValue,
@@ -56,6 +58,7 @@ export class PotassiumService extends PotassiumUtil implements IPotassium {
 
 	/** @inheritDoc */
 	public readonly oneTimeAuth: IOneTimeAuth = {
+		algorithmPriorityOrder: this.errorValue,
 		currentAlgorithm: this.errorValue,
 		defaultMetadata: this.errorValue,
 		generateKey: async () => this.errorValue,
@@ -79,6 +82,7 @@ export class PotassiumService extends PotassiumUtil implements IPotassium {
 
 	/** @inheritDoc */
 	public readonly secretBox: ISecretBox = {
+		algorithmPriorityOrder: this.errorValue,
 		currentAlgorithm: this.errorValue,
 		defaultMetadata: this.errorValue,
 		generateKey: async () => this.errorValue,
@@ -90,6 +94,7 @@ export class PotassiumService extends PotassiumUtil implements IPotassium {
 
 	/** @inheritDoc */
 	public readonly sign: ISign = {
+		algorithmPriorityOrder: this.errorValue,
 		currentAlgorithm: this.errorValue,
 		defaultMetadata: this.errorValue,
 		getBytes: async () => this.errorValue,

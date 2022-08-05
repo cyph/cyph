@@ -6,6 +6,7 @@ import {
 	IPublicKeyring,
 	PotassiumData
 } from '../../../proto';
+import {MaybeArray} from '../../maybe-array-type';
 import {deserialize, serialize} from '../../util/serialization';
 import {potassiumUtil} from './potassium-util';
 
@@ -37,12 +38,15 @@ export class PotassiumEncoding {
 			| {publicKey: Uint8Array}
 			| {secret: Uint8Array}
 			| {signature: Uint8Array}
-			| {signed: ICombinedSignature & {signatureBytes: number}}
+			| {signed: ICombinedSignature & {defaultSignatureBytes: number}}
 	> (defaultMetadata: T, valueContainer: V) : Promise<T & V> {
 		const [defaultValueKey, value] = <
 			[
 				string,
-				Uint8Array | (ICombinedSignature & {signatureBytes: number})
+				(
+					| Uint8Array
+					| (ICombinedSignature & {defaultSignatureBytes: number})
+				)
 			]
 		> Object.entries(valueContainer)[0];
 
@@ -61,16 +65,16 @@ export class PotassiumEncoding {
 						/* Handle combined signature special case */
 						{
 							compressed: value.compressed,
+							defaultSignatureBytes: value.defaultSignatureBytes,
 							message: potassiumUtil.toBytes(
 									value.signature,
-									value.signatureBytes
+									value.defaultSignatureBytes
 								),
 							signature: potassiumUtil.toBytes(
 									value.signature,
 									0,
-									value.signatureBytes
-								),
-							signatureBytes: value.signatureBytes
+									value.defaultSignatureBytes
+								)
 						}
 			};
 		}
@@ -103,42 +107,42 @@ export class PotassiumEncoding {
 	public openKeyring<TKeyPair extends IKeyPair | {privateKey: Uint8Array}> (
 		algorithmType: typeof PotassiumData.BoxAlgorithms,
 		keyring: TKeyPair | IPrivateKeyring,
-		algorithm: PotassiumData.BoxAlgorithms
+		algorithmPriorityOrder: MaybeArray<PotassiumData.BoxAlgorithms>
 	) : TKeyPair;
 	public openKeyring<TKeyPair extends IKeyPair | {privateKey: Uint8Array}> (
 		algorithmType: typeof PotassiumData.EphemeralKeyExchangeAlgorithms,
 		keyring: TKeyPair | IPrivateKeyring,
-		algorithm: PotassiumData.EphemeralKeyExchangeAlgorithms
+		algorithmPriorityOrder: MaybeArray<PotassiumData.EphemeralKeyExchangeAlgorithms>
 	) : TKeyPair;
 	public openKeyring (
 		algorithmType: typeof PotassiumData.OneTimeAuthAlgorithms,
 		keyring: Uint8Array | IPrivateKeyring,
-		algorithm: PotassiumData.OneTimeAuthAlgorithms
+		algorithmPriorityOrder: MaybeArray<PotassiumData.OneTimeAuthAlgorithms>
 	) : Uint8Array;
 	public openKeyring (
 		algorithmType: typeof PotassiumData.SecretBoxAlgorithms,
 		keyring: Uint8Array | IPrivateKeyring,
-		algorithm: PotassiumData.SecretBoxAlgorithms
+		algorithmPriorityOrder: MaybeArray<PotassiumData.SecretBoxAlgorithms>
 	) : Uint8Array;
 	public openKeyring<TKeyPair extends IKeyPair | {privateKey: Uint8Array}> (
 		algorithmType: typeof PotassiumData.SignAlgorithms,
 		keyring: TKeyPair | IPrivateKeyring,
-		algorithm: PotassiumData.SignAlgorithms
+		algorithmPriorityOrder: MaybeArray<PotassiumData.SignAlgorithms>
 	) : TKeyPair;
 	public openKeyring (
 		algorithmType: typeof PotassiumData.BoxAlgorithms,
 		keyring: Uint8Array | IPublicKeyring,
-		algorithm: PotassiumData.BoxAlgorithms
+		algorithmPriorityOrder: MaybeArray<PotassiumData.BoxAlgorithms>
 	) : Uint8Array;
 	public openKeyring (
 		algorithmType: typeof PotassiumData.EphemeralKeyExchangeAlgorithms,
 		keyring: Uint8Array | IPublicKeyring,
-		algorithm: PotassiumData.EphemeralKeyExchangeAlgorithms
+		algorithmPriorityOrder: MaybeArray<PotassiumData.EphemeralKeyExchangeAlgorithms>
 	) : Uint8Array;
 	public openKeyring (
 		algorithmType: typeof PotassiumData.SignAlgorithms,
 		keyring: Uint8Array | IPublicKeyring,
-		algorithm: PotassiumData.SignAlgorithms
+		algorithmPriorityOrder: MaybeArray<PotassiumData.SignAlgorithms>
 	) : Uint8Array;
 	public openKeyring (
 		algorithmType:
@@ -153,16 +157,22 @@ export class PotassiumEncoding {
 			| {privateKey: Uint8Array}
 			| IPrivateKeyring
 			| IPublicKeyring,
-		algorithm:
+		algorithmPriorityOrder: MaybeArray<
 			| PotassiumData.BoxAlgorithms
 			| PotassiumData.EphemeralKeyExchangeAlgorithms
 			| PotassiumData.OneTimeAuthAlgorithms
 			| PotassiumData.SecretBoxAlgorithms
 			| PotassiumData.SignAlgorithms
+		>
 	) : Uint8Array | IKeyPair | {privateKey: Uint8Array} {
 		if (keyring instanceof Uint8Array || 'privateKey' in keyring) {
 			return keyring;
 		}
+
+		const algorithms =
+			algorithmPriorityOrder instanceof Array ?
+				algorithmPriorityOrder :
+				[algorithmPriorityOrder];
 
 		let algorithmTypeName: string | undefined;
 		let result:
@@ -171,14 +181,29 @@ export class PotassiumEncoding {
 			| IKeyPair
 			| undefined;
 
+		const getKey = <TKey>(keyGroup: Record<string, TKey> | undefined) => {
+			if (keyGroup === undefined) {
+				return undefined;
+			}
+
+			for (const algorithm of algorithms) {
+				const key = keyGroup[algorithm];
+				if (key !== undefined) {
+					return key;
+				}
+			}
+
+			return undefined;
+		};
+
 		switch (algorithmType) {
 			case PotassiumData.BoxAlgorithms:
 				algorithmTypeName = 'BoxAlgorithms';
 				result =
 					'boxPrivateKeys' in keyring ?
-						keyring.boxPrivateKeys?.[algorithm] :
+						getKey(keyring.boxPrivateKeys) :
 					'boxPublicKeys' in keyring ?
-						keyring.boxPublicKeys?.[algorithm] :
+						getKey(keyring.boxPublicKeys) :
 						undefined;
 				break;
 
@@ -186,9 +211,9 @@ export class PotassiumEncoding {
 				algorithmTypeName = 'EphemeralKeyExchangeAlgorithms';
 				result =
 					'ephemeralKeyExchangePrivateKeys' in keyring ?
-						keyring.ephemeralKeyExchangePrivateKeys?.[algorithm] :
+						getKey(keyring.ephemeralKeyExchangePrivateKeys) :
 					'ephemeralKeyExchangePublicKeys' in keyring ?
-						keyring.ephemeralKeyExchangePublicKeys?.[algorithm] :
+						getKey(keyring.ephemeralKeyExchangePublicKeys) :
 						undefined;
 				break;
 
@@ -196,7 +221,7 @@ export class PotassiumEncoding {
 				algorithmTypeName = 'OneTimeAuthAlgorithms';
 				result =
 					'oneTimeAuthPrivateKeys' in keyring ?
-						keyring.oneTimeAuthPrivateKeys?.[algorithm] :
+						getKey(keyring.oneTimeAuthPrivateKeys) :
 						undefined;
 				break;
 
@@ -204,7 +229,7 @@ export class PotassiumEncoding {
 				algorithmTypeName = 'SecretBoxAlgorithms';
 				result =
 					'secretBoxPrivateKeys' in keyring ?
-						keyring.secretBoxPrivateKeys?.[algorithm] :
+						getKey(keyring.secretBoxPrivateKeys) :
 						undefined;
 				break;
 
@@ -212,9 +237,9 @@ export class PotassiumEncoding {
 				algorithmTypeName = 'SignAlgorithms';
 				result =
 					'signPrivateKeys' in keyring ?
-						keyring.signPrivateKeys?.[algorithm] :
+						getKey(keyring.signPrivateKeys) :
 					'signPublicKeys' in keyring ?
-						keyring.signPublicKeys?.[algorithm] :
+						getKey(keyring.signPublicKeys) :
 						undefined;
 				break;
 		}
@@ -223,7 +248,9 @@ export class PotassiumEncoding {
 			throw new Error(
 				`Key not found for algorithm ${
 					algorithmTypeName ?? '(unknown)'
-				}.${algorithmType[algorithm] ?? '(unknown)'} in keyring.`
+				}.${algorithms
+					.map(algorithm => algorithmType[algorithm] ?? '(unknown)')
+					.join('|')} in keyring.`
 			);
 		}
 

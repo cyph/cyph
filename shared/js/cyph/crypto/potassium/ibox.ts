@@ -8,6 +8,9 @@ import {
 
 /** Equivalent to sodium.crypto_box. */
 export interface IBox {
+	/** List of supported algorithms in descending priority. */
+	readonly algorithmPriorityOrder: Promise<PotassiumData.BoxAlgorithms[]>;
+
 	/** Current algorithm to use for new data. */
 	readonly currentAlgorithm: Promise<PotassiumData.BoxAlgorithms>;
 

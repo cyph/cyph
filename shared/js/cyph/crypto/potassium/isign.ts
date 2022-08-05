@@ -8,6 +8,9 @@ import {
 
 /** Equivalent to sodium.crypto_sign. */
 export interface ISign {
+	/** List of supported algorithms in descending priority. */
+	readonly algorithmPriorityOrder: Promise<PotassiumData.SignAlgorithms[]>;
+
 	/** Current algorithm to use for new data. */
 	readonly currentAlgorithm: Promise<PotassiumData.SignAlgorithms>;
 
@@ -79,6 +82,6 @@ export interface ISign {
 		message: Uint8Array | string,
 		publicKey: Uint8Array | IPublicKeyring,
 		additionalData?: Uint8Array | string,
-		defaultAlgorithm?: PotassiumData.SignAlgorithms
+		forceAlgorithm?: PotassiumData.SignAlgorithms
 	) : Promise<boolean>;
 }

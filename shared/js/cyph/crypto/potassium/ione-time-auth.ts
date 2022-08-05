@@ -6,6 +6,11 @@ import {
 
 /** Equivalent to sodium.crypto_onetimeauth. */
 export interface IOneTimeAuth {
+	/** List of supported algorithms in descending priority. */
+	readonly algorithmPriorityOrder: Promise<
+		PotassiumData.OneTimeAuthAlgorithms[]
+	>;
+
 	/** Current algorithm to use for new data. */
 	readonly currentAlgorithm: Promise<PotassiumData.OneTimeAuthAlgorithms>;
 
@@ -36,7 +41,7 @@ export interface IOneTimeAuth {
 		message: Uint8Array,
 		key: Uint8Array | IPrivateKeyring,
 		rawOutput?: boolean,
-		defaultAlgorithm?: PotassiumData.OneTimeAuthAlgorithms
+		forceAlgorithm?: PotassiumData.OneTimeAuthAlgorithms
 	) : Promise<Uint8Array>;
 
 	/** Verifies MAC. */
@@ -44,6 +49,6 @@ export interface IOneTimeAuth {
 		mac: Uint8Array,
 		message: Uint8Array,
 		key: Uint8Array | IPrivateKeyring,
-		defaultAlgorithm?: PotassiumData.OneTimeAuthAlgorithms
+		forceAlgorithm?: PotassiumData.OneTimeAuthAlgorithms
 	) : Promise<boolean>;
 }

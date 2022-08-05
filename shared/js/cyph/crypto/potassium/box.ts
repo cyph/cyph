@@ -29,6 +29,14 @@ import {potassiumUtil} from './potassium-util';
 /** @inheritDoc */
 export class Box implements IBox {
 	/** @ignore */
+	private readonly algorithmPriorityOrderInternal = [
+		PotassiumData.BoxAlgorithms.V2,
+		PotassiumData.BoxAlgorithms.NativeV2,
+		PotassiumData.BoxAlgorithms.V1,
+		PotassiumData.BoxAlgorithms.NativeV1
+	];
+
+	/** @ignore */
 	private readonly currentAlgorithmInternal = !this.isNative ?
 		PotassiumData.BoxAlgorithms.V2 :
 		PotassiumData.BoxAlgorithms.NativeV2;
@@ -101,6 +109,11 @@ export class Box implements IBox {
 					sodium.crypto_box_curve25519xchacha20poly1305_PUBLICKEYBYTES
 			)
 		})
+	);
+
+	/** @inheritDoc */
+	public readonly algorithmPriorityOrder = Promise.resolve(
+		this.algorithmPriorityOrderInternal
 	);
 
 	/** @inheritDoc */
@@ -1038,7 +1051,7 @@ export class Box implements IBox {
 		publicKey = potassiumEncoding.openKeyring(
 			PotassiumData.BoxAlgorithms,
 			publicKey,
-			this.currentAlgorithmInternal
+			this.algorithmPriorityOrderInternal
 		);
 
 		const potassiumPublicKey = await potassiumEncoding.deserialize(

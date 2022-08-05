@@ -95,6 +95,9 @@ export class ThreadedPotassiumService
 
 	/** @inheritDoc */
 	public readonly box: IBox = {
+		algorithmPriorityOrder: this.staticValues.then(async o =>
+			o.boxAlgorithmPriorityOrder()
+		),
 		currentAlgorithm: this.staticValues.then(async o =>
 			o.boxCurrentAlgorithm()
 		),
@@ -119,6 +122,9 @@ export class ThreadedPotassiumService
 
 	/** @inheritDoc */
 	public readonly ephemeralKeyExchange: IEphemeralKeyExchange = {
+		algorithmPriorityOrder: this.staticValues.then(async o =>
+			o.ephemeralKeyExchangeAlgorithmPriorityOrder()
+		),
 		aliceKeyPair: async () =>
 			this.getPotassium(async o => o.ephemeralKeyExchangeAliceKeyPair()),
 		aliceSecret: async (publicKey, privateKey, rawOutput) =>
@@ -173,6 +179,9 @@ export class ThreadedPotassiumService
 
 	/** @inheritDoc */
 	public readonly oneTimeAuth: IOneTimeAuth = {
+		algorithmPriorityOrder: this.staticValues.then(async o =>
+			o.oneTimeAuthAlgorithmPriorityOrder()
+		),
 		currentAlgorithm: this.staticValues.then(async o =>
 			o.oneTimeAuthCurrentAlgorithm()
 		),
@@ -189,13 +198,13 @@ export class ThreadedPotassiumService
 			this.getPotassium(async o => o.oneTimeAuthGetBytes(algorithm)),
 		getKeyBytes: async algorithm =>
 			this.getPotassium(async o => o.oneTimeAuthGetKeyBytes(algorithm)),
-		sign: async (message, key, rawOutput, defaultAlgorithm) =>
+		sign: async (message, key, rawOutput, forceAlgorithm) =>
 			this.getPotassium(async o =>
-				o.oneTimeAuthSign(message, key, rawOutput, defaultAlgorithm)
+				o.oneTimeAuthSign(message, key, rawOutput, forceAlgorithm)
 			),
-		verify: async (mac, message, key, defaultAlgorithm) =>
+		verify: async (mac, message, key, forceAlgorithm) =>
 			this.getPotassium(async o =>
-				o.oneTimeAuthVerify(mac, message, key, defaultAlgorithm)
+				o.oneTimeAuthVerify(mac, message, key, forceAlgorithm)
 			)
 	};
 
@@ -248,6 +257,9 @@ export class ThreadedPotassiumService
 
 	/** @inheritDoc */
 	public readonly secretBox: ISecretBox = {
+		algorithmPriorityOrder: this.staticValues.then(async o =>
+			o.secretBoxAlgorithmPriorityOrder()
+		),
 		currentAlgorithm: this.staticValues.then(async o =>
 			o.secretBoxCurrentAlgorithm()
 		),
@@ -264,21 +276,16 @@ export class ThreadedPotassiumService
 			this.getPotassium(async o => o.secretBoxGetAeadBytes(algorithm)),
 		getKeyBytes: async algorithm =>
 			this.getPotassium(async o => o.secretBoxGetKeyBytes(algorithm)),
-		open: async (cyphertext, key, additionalData, defaultAlgorithm) =>
+		open: async (cyphertext, key, additionalData, forceAlgorithm) =>
 			this.getPotassium(async o =>
-				o.secretBoxOpen(
-					cyphertext,
-					key,
-					additionalData,
-					defaultAlgorithm
-				)
+				o.secretBoxOpen(cyphertext, key, additionalData, forceAlgorithm)
 			),
 		seal: async (
 			plaintext,
 			key,
 			additionalData,
 			rawOutput,
-			defaultAlgorithm
+			forceAlgorithm
 		) =>
 			this.getPotassium(async o =>
 				o.secretBoxSeal(
@@ -286,13 +293,16 @@ export class ThreadedPotassiumService
 					key,
 					additionalData,
 					rawOutput,
-					defaultAlgorithm
+					forceAlgorithm
 				)
 			)
 	};
 
 	/** @inheritDoc */
 	public readonly sign: ISign = {
+		algorithmPriorityOrder: this.staticValues.then(async o =>
+			o.signAlgorithmPriorityOrder()
+		),
 		currentAlgorithm: this.staticValues.then(async o =>
 			o.signCurrentAlgorithm()
 		),
@@ -336,7 +346,7 @@ export class ThreadedPotassiumService
 			message,
 			publicKey,
 			additionalData,
-			defaultAlgorithm
+			forceAlgorithm
 		) =>
 			this.getPotassium(async o =>
 				o.signVerifyDetached(
@@ -344,7 +354,7 @@ export class ThreadedPotassiumService
 					message,
 					publicKey,
 					additionalData,
-					defaultAlgorithm
+					forceAlgorithm
 				)
 			)
 	};

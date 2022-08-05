@@ -8,6 +8,11 @@ import {
 
 /** Equivalent to sodium.crypto_scalarmult. */
 export interface IEphemeralKeyExchange {
+	/** List of supported algorithms in descending priority. */
+	readonly algorithmPriorityOrder: Promise<
+		PotassiumData.EphemeralKeyExchangeAlgorithms[]
+	>;
+
 	/** Current algorithm to use for new data. */
 	readonly currentAlgorithm: Promise<PotassiumData.EphemeralKeyExchangeAlgorithms>;
 

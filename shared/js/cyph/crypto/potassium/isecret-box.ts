@@ -6,6 +6,11 @@ import {
 
 /** Equivalent to sodium.crypto_secretbox. */
 export interface ISecretBox {
+	/** List of supported algorithms in descending priority. */
+	readonly algorithmPriorityOrder: Promise<
+		PotassiumData.SecretBoxAlgorithms[]
+	>;
+
 	/** Current algorithm to use for new data. */
 	readonly currentAlgorithm: Promise<PotassiumData.SecretBoxAlgorithms>;
 
@@ -36,7 +41,7 @@ export interface ISecretBox {
 		cyphertext: Uint8Array,
 		key: Uint8Array | IPrivateKeyring,
 		additionalData?: Uint8Array | string,
-		defaultAlgorithm?: PotassiumData.SecretBoxAlgorithms
+		forceAlgorithm?: PotassiumData.SecretBoxAlgorithms
 	) : Promise<Uint8Array>;
 
 	/** Encrypts plaintext. */
@@ -45,6 +50,6 @@ export interface ISecretBox {
 		key: Uint8Array | IPrivateKeyring,
 		additionalData?: Uint8Array | string,
 		rawOutput?: boolean,
-		defaultAlgorithm?: PotassiumData.SecretBoxAlgorithms
+		forceAlgorithm?: PotassiumData.SecretBoxAlgorithms
 	) : Promise<Uint8Array>;
 }
