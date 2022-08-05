@@ -422,6 +422,71 @@ export class AccountDatabaseService extends BaseProvider {
 	) : Promise<IAGSEPKICert> {
 		const certURL = `users/${username}/publicKeyCertificate`;
 
+		/*
+			In case where user has a CSR pending for a reissue, validate it against
+			their previous key in order to retrieve their current public key.
+		*/
+		const applyCSRUpgrade = async (
+			currentCert: IAGSEPKICert
+		) : Promise<IAGSEPKICert> => {
+			const csrURL = `users/${username}/keyrings/csr`;
+
+			if (!(await this.databaseService.hasItem(csrURL))) {
+				return currentCert;
+			}
+
+			const csr = await this.databaseService.getItem(csrURL, AGSEPKICSR);
+
+			const csrDataBytes = await this.potassiumHelpers.sign.open(
+				csr.data,
+				currentCert.csrData.publicSigningKey,
+				`${csrURL}/previous-key`,
+				false
+			);
+
+			const csrPotassiumSigned =
+				await this.potassiumService.encoding.deserialize(
+					{signAlgorithm: csr.algorithm},
+					{
+						signed: {
+							compressed: false,
+							defaultSignatureBytes:
+								await this.potassiumService.sign.getBytes(
+									csr.algorithm
+								),
+							message: new Uint8Array(0),
+							signature: csrDataBytes
+						}
+					}
+				);
+
+			const csrData = await deserialize(
+				AGSEPKICSRData,
+				csrPotassiumSigned.signed.message
+			);
+
+			if (
+				csrData.publicSigningKey === undefined ||
+				csrData.publicSigningKey.length < 1 ||
+				csrData.username !== username
+			) {
+				throw new Error('Invalid CSR.');
+			}
+
+			/* Validate CSR signature */
+			await this.potassiumHelpers.sign.open(
+				csrDataBytes,
+				csrData.publicSigningKey,
+				csrURL,
+				false
+			);
+
+			return {
+				...currentCert,
+				csrData
+			};
+		};
+
 		/* TODO: Remove this after reissuing certificates */
 		if (!(await this.databaseService.hasItem(certURL))) {
 			const certBytes = await this.databaseService.getItem(
@@ -452,17 +517,19 @@ export class AccountDatabaseService extends BaseProvider {
 				throw new Error('Invalid AGSE-PKI certificate: bad key index.');
 			}
 
-			return deserialize(
-				AGSEPKICert,
-				await this.potassiumHelpers.sign.openRaw(
-					signed,
-					await this.potassiumService.sign.importPublicKeys(
-						PotassiumData.SignAlgorithms.V1,
-						publicSigningKeys.rsa[rsaKeyIndex],
-						publicSigningKeys.sphincs[sphincsKeyIndex]
-					),
-					username,
-					PotassiumData.SignAlgorithms.V1
+			return applyCSRUpgrade(
+				await deserialize(
+					AGSEPKICert,
+					await this.potassiumHelpers.sign.openRaw(
+						signed,
+						await this.potassiumService.sign.importPublicKeys(
+							PotassiumData.SignAlgorithms.V1,
+							publicSigningKeys.rsa[rsaKeyIndex],
+							publicSigningKeys.sphincs[sphincsKeyIndex]
+						),
+						username,
+						PotassiumData.SignAlgorithms.V1
+					)
 				)
 			);
 		}
@@ -491,17 +558,21 @@ export class AccountDatabaseService extends BaseProvider {
 			throw new Error('Invalid AGSE-PKI certificate: bad key index.');
 		}
 
-		return deserialize(
-			AGSEPKICert,
-			await this.potassiumHelpers.sign.openRaw(
-				cert.data,
-				await this.potassiumService.sign.importPublicKeys(
-					cert.algorithm,
-					publicSigningKeys.classical[cert.publicKeys.classical],
-					publicSigningKeys.postQuantum[cert.publicKeys.postQuantum]
-				),
-				certURL,
-				cert.algorithm
+		return applyCSRUpgrade(
+			await deserialize(
+				AGSEPKICert,
+				await this.potassiumHelpers.sign.openRaw(
+					cert.data,
+					await this.potassiumService.sign.importPublicKeys(
+						cert.algorithm,
+						publicSigningKeys.classical[cert.publicKeys.classical],
+						publicSigningKeys.postQuantum[
+							cert.publicKeys.postQuantum
+						]
+					),
+					certURL,
+					cert.algorithm
+				)
 			)
 		);
 	}

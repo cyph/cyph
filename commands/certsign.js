@@ -339,7 +339,7 @@ export const certSign = async (
 				);
 			}
 
-			const csrPotassiumSigned = await potassium.deserialize(
+			const csrPotassiumSigned = await potassium.encoding.deserialize(
 				{signAlgorithm: csr.algorithm},
 				{
 					signed: {
@@ -359,9 +359,8 @@ export const certSign = async (
 			);
 
 			if (
-				!csrData.publicSigningKey ||
+				csrData.publicSigningKey === undefined ||
 				csrData.publicSigningKey.length < 1 ||
-				!csrData.username ||
 				csrData.username !== username
 			) {
 				throw new Error('Invalid CSR.');

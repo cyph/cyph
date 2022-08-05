@@ -1285,7 +1285,7 @@
 							".validate": "newData.isString()"
 						},
 						"csr": {
-							".read": false,
+							".read": true,
 							".write": false,
 
 							"data": {

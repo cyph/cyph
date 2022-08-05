@@ -256,7 +256,9 @@ service firebase.storage {
 
 				match /keyrings {
 					// match /algorithms/{hash} {}
-					// match /csr/{hash} {}
+					match /csr/{hash} {
+						allow read;
+					}
 					// match /private/{hash} {}
 					match /public/{hash} {
 						allow read;
