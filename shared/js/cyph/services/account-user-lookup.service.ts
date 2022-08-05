@@ -15,7 +15,7 @@ import {
 } from '../proto';
 import {normalize} from '../util/formatting';
 import {getOrSetDefaultAsync} from '../util/get-or-set-default';
-import {debugLogTime} from '../util/log';
+import {debugLogError, debugLogTime} from '../util/log';
 import {AccountContactsService} from './account-contacts.service';
 import {AccountDatabaseService} from './crypto/account-database.service';
 import {DatabaseService} from './database.service';
@@ -382,7 +382,10 @@ export class AccountUserLookupService extends BaseProvider {
 			},
 			undefined,
 			blockUntilAlreadyCached
-		).catch(() => undefined);
+		).catch(err => {
+			debugLogError(() => ({getUserError: err}));
+			return undefined;
+		});
 
 		return returnUser(user);
 	}
