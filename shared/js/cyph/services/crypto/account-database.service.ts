@@ -437,12 +437,18 @@ export class AccountDatabaseService extends BaseProvider {
 
 			const csr = await this.databaseService.getItem(csrURL, AGSEPKICSR);
 
-			const csrDataBytes = await this.potassiumHelpers.sign.open(
-				csr.data,
-				currentCert.csrData.publicSigningKey,
-				`${csrURL}/previous-key`,
-				false
-			);
+			const csrDataBytes = await this.potassiumHelpers.sign
+				.open(
+					csr.data,
+					currentCert.csrData.publicSigningKey,
+					`${csrURL}/previous-key`,
+					false
+				)
+				.catch(() => undefined);
+
+			if (csrDataBytes === undefined) {
+				return currentCert;
+			}
 
 			const csrPotassiumSigned =
 				await this.potassiumService.encoding.deserialize(
