@@ -169,7 +169,7 @@ export const certSign = async (
 						namespace,
 						`users/${username}/inviterUsernamePlaintext`,
 						StringProto
-					).catch(() => ' ')) !== ' ')
+					).catch(() => undefined)) !== undefined)
 			) {
 				if (
 					await hasItem(
