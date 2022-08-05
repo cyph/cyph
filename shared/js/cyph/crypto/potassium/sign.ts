@@ -200,7 +200,7 @@ export class Sign implements ISign {
 				break;
 
 			default:
-				throw new Error('Invalid Sign algorithm (public key bytes).');
+				throw new Error('Invalid Sign algorithm (import public keys).');
 		}
 
 		return potassiumEncoding.serialize({

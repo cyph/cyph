@@ -26,6 +26,7 @@ const {
 	BinaryProto,
 	CyphPlan,
 	CyphPlans,
+	PotassiumData,
 	StringProto
 } = proto;
 const {
@@ -329,8 +330,8 @@ export const certSign = async (
 					namespace,
 					`users/${username}/publicKeyCertificate`
 				)) ?
-					await openCertificate() :
-					await openLegacyCertificate();
+					await openCertificate(username) :
+					await openLegacyCertificate(username);
 
 				csrDataBytes = await potassium.sign.open(
 					csrDataBytes,
@@ -373,7 +374,7 @@ export const certSign = async (
 				`${namespace}:${csrURL}`
 			);
 
-			return csr;
+			return csrData;
 		};
 
 		const openCertificate = async username => {
@@ -484,6 +485,7 @@ export const certSign = async (
 				await potassium.sign.openRaw(
 					signed,
 					await potassium.sign.importPublicKeys(
+						algorithms.legacy,
 						publicSigningKeys.rsa[rsaKeyIndex],
 						publicSigningKeys.sphincs[sphincsKeyIndex]
 					),
@@ -511,14 +513,14 @@ export const certSign = async (
 									namespace,
 									`users/${username}/keyrings/csr`
 							  )) ?
-								await openCertificateRequest() :
-								await openLegacyCertificateRequest() :
+								await openCertificateRequest(username) :
+								await openLegacyCertificateRequest(username) :
 						(await hasItem(
 								namespace,
 								`users/${username}/publicKeyCertificate`
 							)) ?
-							await openCertificate() :
-							await openLegacyCertificate();
+							await openCertificate(username) :
+							await openLegacyCertificate(username);
 
 						const publicSigningKeyHash = await getHash(
 							csrData.publicSigningKey

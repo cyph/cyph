@@ -10,7 +10,7 @@ import fs from 'fs';
 import memoize from 'lodash-es/memoize.js';
 import read from 'read';
 import superDilithium from 'superdilithium';
-import oldSuperSphincs from 'supersphincs-legacy/dist/old-api';
+import oldSuperSphincs from 'supersphincs-legacy/dist/old-api.js';
 import superSphincs from 'supersphincs';
 import {agsePublicSigningKeys} from '../modules/agse-public-signing-keys.js';
 import {testAgseSigningKeys} from '../modules/test-agse-signing-keys.js';
