@@ -3,13 +3,19 @@ import {database, getName, getRealUsername, notify} from '../init.js';
 export const userRegisterConfirmed = async (data, {params}) => {
 	const username = params.user;
 
-	const [name, realUsername, registrationEmailSentRef] = await Promise.all([
+	const registrationEmailSentRef = database.ref(
+		`${params.namespace}/users/${username}/internal/registrationEmailSent`
+	);
+
+	const [name, realUsername, registrationEmailSent] = await Promise.all([
 		getName(params.namespace, username),
 		getRealUsername(params.namespace, username),
-		database.ref(
-			`${params.namespace}/users/${username}/internal/registrationEmailSent`
-		)
+		registrationEmailSentRef.once('value')
 	]);
+
+	if (registrationEmailSent) {
+		return;
+	}
 
 	await Promise.all([
 		notify(params.namespace, username, `Welcome to Cyph, ${realUsername}`, {
