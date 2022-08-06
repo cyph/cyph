@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Air Gapped Signing Environment setup script for Debian 8.5 on BeagleBone Black
+# Air Gapped Signing Environment setup script for Debian
 
 
 activeKeys='4'
