@@ -157,16 +157,26 @@ export const sign = async (inputs, testSign, demoSign, skipNotify = false) =>
 					Buffer.from(incoming.data.buffer).toString()
 				);
 
-				const classicalIndex = publicKeys
-					.get(defaultAlgorithm)
-					.classical.indexOf(
-						signatureData.publicKeys.classical[defaultAlgorithm]
-					);
-				const postQuantumIndex = publicKeys
-					.get(defaultAlgorithm)
-					.postQuantum.indexOf(
-						signatureData.publicKeys.postQuantum[defaultAlgorithm]
-					);
+				const baseGetIndex = (k, errorStringType) =>
+					memoize(algorithm => {
+						const index = publicKeys
+							.get(algorithm)
+							[k].indexOf(signatureData.publicKeys[k][algorithm]);
+
+						if (index === undefined) {
+							throw new Error(
+								`${errorStringType} public key not found for SignAlgorithms.${PotassiumData.SignAlgorithms[algorithm]}`
+							);
+						}
+
+						return index;
+					});
+
+				const classicalIndex = baseGetIndex('classical', 'Classical');
+				const postQuantumIndex = baseGetIndex(
+					'postQuantum',
+					'Post-quantum'
+				);
 
 				const signedInputs = binaryInputs.map(
 					({additionalData, algorithm, message}, i) => ({
@@ -189,11 +199,13 @@ export const sign = async (inputs, testSign, demoSign, skipNotify = false) =>
 									public: {
 										classical:
 											publicKeys.get(algorithm).classical[
-												classicalIndex
+												classicalIndex(algorithm)
 											],
 										postQuantum:
 											publicKeys.get(algorithm)
-												.postQuantum[postQuantumIndex]
+												.postQuantum[
+												postQuantumIndex(algorithm)
+											]
 									}
 								})
 							).publicKey
@@ -230,8 +242,8 @@ export const sign = async (inputs, testSign, demoSign, skipNotify = false) =>
 							algorithm,
 							data: signed,
 							publicKeys: {
-								classical: classicalIndex,
-								postQuantum: postQuantumIndex
+								classical: classicalIndex(algorithm),
+								postQuantum: postQuantumIndex(algorithm)
 							}
 						}))
 					);
