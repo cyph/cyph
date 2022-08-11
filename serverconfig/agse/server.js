@@ -20,6 +20,7 @@ const validator = require('validator');
 	};
 
 	const db = new Level('keys');
+	await db.open();
 
 	const algorithms = [
 		/* PotassiumData.SignAlgorithms.V1 */ 2,
@@ -84,6 +85,40 @@ const validator = require('validator');
 			typeof o.data === 'string' &&
 			validator.isBase64(o.data));
 
+	const allKeys = await Promise.all(
+		Array(args.numActiveKeys)
+			.fill(0)
+			.map(async (_, i) =>
+				Promise.all(
+					['classical', 'postQuantum'].map(async subkeyType =>
+						Object.fromEntries(
+							await Promise.all(
+								algorithms.map(async algorithm => [
+									algorithm,
+									await new Promise((resolve, reject) =>
+										db.get(
+											`${algorithm}_${subkeyType}_${i.toString()}`,
+											(err, val) => {
+												if (err) {
+													console.log(err);
+													reject(err);
+												}
+												else {
+													resolve(val);
+												}
+											}
+										)
+									)
+								])
+							)
+						)
+					)
+				)
+			)
+	);
+
+	await db.close();
+
 	let keyData;
 	while (!keyData) {
 		try {
@@ -100,41 +135,6 @@ const validator = require('validator');
 				throw new Error('fak u gooby');
 			}
 
-			const allKeys = await Promise.all(
-				Array(args.numActiveKeys)
-					.fill(0)
-					.map(async (_, i) =>
-						Promise.all(
-							['classical', 'postQuantum'].map(async subkeyType =>
-								Object.fromEntries(
-									await Promise.all(
-										algorithms.map(async algorithm => [
-											algorithm,
-											await new Promise(
-												(resolve, reject) =>
-													db.get(
-														`${algorithm}_${subkeyType}_${i.toString()}`,
-														(err, val) => {
-															if (err) {
-																console.log(
-																	err
-																);
-																reject(err);
-															}
-															else {
-																resolve(val);
-															}
-														}
-													)
-											)
-										])
-									)
-								)()
-							)
-						)
-					)
-			);
-
 			let classicalKeyData;
 			let postQuantumKeyData;
 			for (let i = 0; i < allKeys.length; ++i) {
@@ -148,23 +148,42 @@ const validator = require('validator');
 				try {
 					if (classicalKeyData === undefined) {
 						classicalKeyData = Object.fromEntries(
-							algorithms.map(algorithm => ({
-								privateKey: keys.private.classical[algorithm],
-								publicKeyString: (
-									await algorithmImplementations[
-										algorithm
-									].exportKeys({
-										publicKey: (
+							await Promise.all(
+								algorithms.map(async algorithm => [
+									algorithm,
+									{
+										privateKey:
+											keys.private.classical[algorithm],
+										publicKeyString: (
 											await algorithmImplementations[
 												algorithm
-											].importKeys(
-												keys,
-												classicalPassword
-											)
-										).publicKey
-									})
-								).public.classical[algorithm]
-							}))
+											].exportKeys({
+												publicKey: (
+													await algorithmImplementations[
+														algorithm
+													].importKeys(
+														{
+															private: {
+																classical:
+																	keys.private
+																		.classical[
+																		algorithm
+																	],
+																postQuantum:
+																	keys.private
+																		.postQuantum[
+																		algorithm
+																	]
+															}
+														},
+														classicalPassword
+													)
+												).publicKey
+											})
+										).public.classical[algorithm]
+									}
+								])
+							)
 						);
 					}
 				}
@@ -173,23 +192,42 @@ const validator = require('validator');
 				try {
 					if (postQuantumKeyData === undefined) {
 						postQuantumKeyData = Object.fromEntries(
-							algorithms.map(algorithm => ({
-								privateKey: keys.private.postQuantum[algorithm],
-								publicKeyString: (
-									await algorithmImplementations[
-										algorithm
-									].exportKeys({
-										publicKey: (
+							await Promise.all(
+								algorithms.map(async algorithm => [
+									algorithm,
+									{
+										privateKey:
+											keys.private.postQuantum[algorithm],
+										publicKeyString: (
 											await algorithmImplementations[
 												algorithm
-											].importKeys(
-												keys,
-												postQuantumPassword
-											)
-										).publicKey
-									})
-								).public.postQuantum[algorithm]
-							}))
+											].exportKeys({
+												publicKey: (
+													await algorithmImplementations[
+														algorithm
+													].importKeys(
+														{
+															private: {
+																classical:
+																	keys.private
+																		.classical[
+																		algorithm
+																	],
+																postQuantum:
+																	keys.private
+																		.postQuantum[
+																		algorithm
+																	]
+															}
+														},
+														postQuantumPassword
+													)
+												).publicKey
+											})
+										).public.postQuantum[algorithm]
+									}
+								])
+							)
 						);
 					}
 				}
@@ -204,28 +242,30 @@ const validator = require('validator');
 			}
 
 			keyData = Object.fromEntries(
-				algorithms.map(algorithm => ({
-					classicalKeyString:
-						classicalKeyData[algorithm].publicKeyString,
-					keyPair: await algorithmImplementations[
-						algorithm
-					].importKeys(
-						{
-							private: {
-								classical:
-									classicalKeyData[algorithm].privateKey,
-								postQuantum:
-									postQuantumKeyData[algorithm].privateKey
+				await Promise.all(
+					algorithms.map(async algorithm => ({
+						classicalKeyString:
+							classicalKeyData[algorithm].publicKeyString,
+						keyPair: await algorithmImplementations[
+							algorithm
+						].importKeys(
+							{
+								private: {
+									classical:
+										classicalKeyData[algorithm].privateKey,
+									postQuantum:
+										postQuantumKeyData[algorithm].privateKey
+								}
+							},
+							{
+								classical: classicalPassword,
+								postQuantum: postQuantumPassword
 							}
-						},
-						{
-							classical: classicalPassword,
-							postQuantum: postQuantumPassword
-						}
-					),
-					postQuantumKeyString:
-						postQuantumKeyData[algorithm].publicKeyString
-				}))
+						),
+						postQuantumKeyString:
+							postQuantumKeyData[algorithm].publicKeyString
+					}))
+				)
 			);
 		}
 		catch (err) {

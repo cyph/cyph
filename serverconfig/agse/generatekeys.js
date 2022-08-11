@@ -34,6 +34,7 @@
 	await sodium.ready;
 
 	const db = new Level('keys');
+	await db.open();
 
 	const algorithms = [
 		/* PotassiumData.SignAlgorithms.V1 */ 2,
@@ -216,6 +217,8 @@
 			}
 		}
 	}
+
+	await db.close();
 
 	if (newKeyPairsGenerated) {
 		const backupKeys = sodium

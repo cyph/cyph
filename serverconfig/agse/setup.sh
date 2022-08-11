@@ -141,8 +141,8 @@ EOM
 
 cat >> .bashrc <<- EOM
 	if [ -f /autostart ] ; then
-		if [ -d /home/${oldusername} ] ; then
-			sudo deluser --remove-home ${oldusername}
+		if [ "${oldusername}" ] && [ -d "/home/${oldusername}" ] ; then
+			sudo deluser --remove-home "${oldusername}"
 		fi
 
 		setterm -blank 0
