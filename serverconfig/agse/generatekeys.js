@@ -3,9 +3,9 @@
 (async () => {
 	const fastSHA512 = require('fast-sha512');
 	const fs = require('fs');
-	const level = require('level');
+	const {Level} = require('level');
 	const sodium = require('libsodium-wrappers-sumo');
-	const fetch = await import('node-fetch');
+	const fetch = (await import('node-fetch')).default;
 	const os = require('os');
 	const superDilithium = require('superdilithium');
 	const oldSuperSphincs = require('supersphincs-legacy/dist/old-api');
@@ -33,7 +33,7 @@
 
 	await sodium.ready;
 
-	const db = level('keys');
+	const db = new Level('keys');
 
 	const signingKeyrings = await Promise.all(
 		!args.keyBackupPath ?
@@ -148,13 +148,13 @@
 
 	const publicKeyHash = (await fastSHA512.hash(publicKeys)).hex;
 
-	for (const [i, o] of keyData.entries()) {
+	for (const [i, keys] of keyData.entries()) {
 		for (const algorithm of Object.keys(keys)) {
 			for (const subkeyType of ['classical', 'postQuantum']) {
 				await new Promise((resolve, reject) =>
 					db.put(
 						`${algorithm}_${subkeyType}_${i.toString()}`,
-						o[algorithm].private[subkeyType],
+						keys[algorithm].private[subkeyType],
 						err => {
 							if (err) {
 								reject(err);

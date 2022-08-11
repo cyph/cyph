@@ -20,7 +20,9 @@ apt-get -y --allow-downgrades upgrade
 export DEBIAN_FRONTEND=text
 
 # Optionally comment this out if using the default keyboard layout
-apt-get install console-data console-setup keyboard-configuration
+apt-get install -y --allow-downgrades console-data console-setup keyboard-configuration
+dpkg-reconfigure keyboard-configuration
+setupcon
 
 oldhostname=$(hostname)
 echo -n 'Hostname: '
@@ -36,13 +38,6 @@ adduser ${username}
 adduser ${username} admin
 echo "${username} ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers
 agseDir="/home/${username}/agse"
-
-cat >> /etc/network/interfaces << EndOfMessage
-auto eth0
-iface eth0 inet static
-	address ${localAddress}
-	netmask 255.255.0.0
-EndOfMessage
 
 export DEBIAN_FRONTEND=noninteractive
 apt-get -y --allow-downgrades update
@@ -88,7 +83,7 @@ if [ -f ${agseDir}/keybackup ] ; then
 fi
 
 passwords=()
-for i in `seq 1 ${activeKeys}` ; do
+for i in \`seq 1 ${activeKeys}\` ; do
 	echo -n "Password for key #\${i}: "
 	read passwords[\${i}]
 done
@@ -136,6 +131,13 @@ fi
 
 mv ${agseDir}/server.js ./
 
+
+sudo tee -a /etc/network/interfaces > /dev/null << EOM
+auto eth0
+iface eth0 inet static
+	address ${localAddress}
+	netmask 255.255.0.0
+EOM
 
 cat >> .bashrc <<- EOM
 	if [ -f /autostart ] ; then

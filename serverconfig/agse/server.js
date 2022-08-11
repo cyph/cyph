@@ -2,7 +2,7 @@
 
 const childProcess = require('child_process');
 const dgram = require('dgram');
-const level = require('level');
+const {Level} = require('level');
 const read = require('read');
 const safeCompare = require('safe-compare');
 const stream = require('stream');
@@ -19,7 +19,7 @@ const validator = require('validator');
 		port: parseInt(process.argv[5], 10)
 	};
 
-	const db = level('keys');
+	const db = new Level('keys');
 
 	const algorithms = [
 		/* PotassiumData.SignAlgorithms.V1 */ 2,
