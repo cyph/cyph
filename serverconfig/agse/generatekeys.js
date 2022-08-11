@@ -45,22 +45,55 @@
 					/* PotassiumData.SignAlgorithms.V2Hardened */ 6: await superSphincs.keyPair()
 				})) :
 			JSON.parse(
-				sodium.crypto_secretbox_open_easy(
-					sodium.from_base64(
-						fs.readFileSync(args.keyBackupPath).toString().trim()
-					),
-					new Uint8Array(sodium.crypto_secretbox_NONCEBYTES),
-					sodium.crypto_pwhash_scryptsalsa208sha256(
-						sodium.crypto_secretbox_KEYBYTES,
-						args.backupPasswords.sodium,
-						new Uint8Array(
-							sodium.crypto_pwhash_scryptsalsa208sha256_SALTBYTES
-						),
-						sodium.crypto_pwhash_scryptsalsa208sha256_OPSLIMIT_SENSITIVE,
-						50331648
-					),
-					'text'
-				)
+				(() => {
+					try {
+						return sodium.crypto_aead_xchacha20poly1305_ietf_decrypt(
+							undefined,
+							sodium.from_base64(
+								fs
+									.readFileSync(args.keyBackupPath)
+									.toString()
+									.trim()
+							),
+							undefined,
+							new Uint8Array(
+								sodium.crypto_aead_xchacha20poly1305_ietf_NPUBBYTES
+							),
+							sodium.crypto_pwhash(
+								sodium.crypto_secretbox_KEYBYTES,
+								args.backupPasswords.sodium,
+								new Uint8Array(sodium.crypto_pwhash_SALTBYTES),
+								6,
+								sodium.crypto_pwhash_MEMLIMIT_SENSITIVE,
+								sodium.crypto_pwhash_ALG_ARGON2ID13
+							),
+							'text'
+						);
+					}
+					catch {
+						/* Handle old backups */
+						return sodium.crypto_secretbox_open_easy(
+							sodium.from_base64(
+								fs
+									.readFileSync(args.keyBackupPath)
+									.toString()
+									.trim(),
+								sodium.base64_variants.ORIGINAL
+							),
+							new Uint8Array(sodium.crypto_secretbox_NONCEBYTES),
+							sodium.crypto_pwhash_scryptsalsa208sha256(
+								sodium.crypto_secretbox_KEYBYTES,
+								args.backupPasswords.sodium,
+								new Uint8Array(
+									sodium.crypto_pwhash_scryptsalsa208sha256_SALTBYTES
+								),
+								sodium.crypto_pwhash_scryptsalsa208sha256_OPSLIMIT_SENSITIVE,
+								50331648
+							),
+							'text'
+						);
+					}
+				})()
 			)
 				.map(o =>
 					typeof o === 'string' ?
@@ -170,7 +203,7 @@
 	}
 
 	const backupKeys = sodium
-		.crypto_secretbox_easy(
+		.crypto_aead_xchacha20poly1305_ietf_encrypt(
 			sodium.from_string(
 				JSON.stringify(
 					backupKeyData.map(o =>
@@ -183,15 +216,16 @@
 					)
 				)
 			),
-			new Uint8Array(sodium.crypto_secretbox_NONCEBYTES),
-			sodium.crypto_pwhash_scryptsalsa208sha256(
+			undefined,
+			undefined,
+			new Uint8Array(sodium.crypto_aead_xchacha20poly1305_ietf_NPUBBYTES),
+			sodium.crypto_pwhash(
 				sodium.crypto_secretbox_KEYBYTES,
 				args.newBackupPasswords.sodium,
-				new Uint8Array(
-					sodium.crypto_pwhash_scryptsalsa208sha256_SALTBYTES
-				),
-				sodium.crypto_pwhash_scryptsalsa208sha256_OPSLIMIT_SENSITIVE,
-				50331648
+				new Uint8Array(sodium.crypto_pwhash_SALTBYTES),
+				6,
+				sodium.crypto_pwhash_MEMLIMIT_SENSITIVE,
+				sodium.crypto_pwhash_ALG_ARGON2ID13
 			),
 			'base64'
 		)
