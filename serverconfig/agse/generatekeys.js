@@ -24,6 +24,10 @@
 		backupPasswords: {
 			aes: process.argv[9],
 			sodium: process.argv[10]
+		},
+		newBackupPasswords: {
+			aes: process.argv[11],
+			sodium: process.argv[12]
 		}
 	};
 
@@ -117,7 +121,7 @@
 
 	const backupKeyData = await Promise.all(
 		signingKeyrings.map(async keyring =>
-			exportKeys(keyring, args.backupPasswords.aes)
+			exportKeys(keyring, args.newBackupPasswords.aes)
 		)
 	);
 
@@ -182,7 +186,7 @@
 			new Uint8Array(sodium.crypto_secretbox_NONCEBYTES),
 			sodium.crypto_pwhash_scryptsalsa208sha256(
 				sodium.crypto_secretbox_KEYBYTES,
-				args.backupPasswords.sodium,
+				args.newBackupPasswords.sodium,
 				new Uint8Array(
 					sodium.crypto_pwhash_scryptsalsa208sha256_SALTBYTES
 				),

@@ -69,10 +69,22 @@ cd /home/${username}
 
 if [ -f ${agseDir}/keybackup ] ; then
 	eval "\$(${agseDir}/getbackuppassword.js)"
-fi
 
-if [ ! "\${backupPasswordAes}" ] || [ ! "\${backupPasswordSodium}" ] ||  ; then
-	exit 1
+	if [ ! "\${backupPasswordAes}" ] || [ ! "\${backupPasswordSodium}" ] ; then
+		exit 1
+	fi
+
+	echo -e '\nRegenerate backup password? [y/N]'
+	read regenerateBackupPassword
+
+	if \
+		[ "\${regenerateBackupPassword}" == 'y' ] || \
+		[ "\${regenerateBackupPassword}" == 'Y' ]
+	then
+		regenerateBackupPassword=true
+	else
+		regenerateBackupPassword=''
+	fi
 fi
 
 passwords=()
@@ -81,12 +93,15 @@ for i in `seq 1 ${activeKeys}` ; do
 	read passwords[\${i}]
 done
 
-if [ ! -f ${agseDir}/keybackup ] ; then
-	backupPasswordAes="\$(xkcd-passphrase 256)"
-	backupPasswordSodium="\$(xkcd-passphrase 256)"
-	echo "Password for backup keys is: \${backupPasswordAes} \${backupPasswordSodium}"
+if [ "\${regenerateBackupPassword}" ] || [ ! -f ${agseDir}/keybackup ] ; then
+	newBackupPasswordAes="\$(xkcd-passphrase 256)"
+	newBackupPasswordSodium="\$(xkcd-passphrase 256)"
+	echo "Password for backup keys is: \${newBackupPasswordAes} \${newBackupPasswordSodium}"
 	echo -e '\nMemorize this and then hit enter to continue.'
 	read
+else
+	newBackupPasswordAes="\${backupPasswordAes}"
+	newBackupPasswordSodium="\${backupPasswordSodium}"
 fi
 
 reset
@@ -100,7 +115,9 @@ ${agseDir}/generatekeys.js \
 	"\${passwords[3]}" \
 	"\${passwords[4]}" \
 	"\${backupPasswordAes}" \
-	"\${backupPasswordSodium}"
+	"\${backupPasswordSodium}" \
+	"\${newBackupPasswordAes}" \
+	"\${newBackupPasswordSodium}"
 
 if [ ! -f ${agseDir}/.generatekeys-success ] ; then
 	exit 1
