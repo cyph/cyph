@@ -192,7 +192,7 @@ const currentArch = os.arch() === 'arm64' ? 'linux/arm64' : 'linux/amd64';
 
 const needAGSE =
 	(args.command === 'sign' && process.argv[4] !== '--test') ||
-	(args.command === 'certsign' &&
+	((args.command === 'certsign' || args.command === 'certsignlegacy') &&
 		(!process.argv[3] || process.argv[3] === 'cyphme')) ||
 	(args.command === 'deploy' &&
 		!args.simple &&

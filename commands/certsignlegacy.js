@@ -12,17 +12,19 @@ import {
 import fs from 'fs';
 import os from 'os';
 import read from 'read';
+import {agsePublicSigningKeys as baseAgsePublicSigningKeys} from '../modules/agse-public-signing-keys.js';
 import {initDatabaseService} from '../modules/database-service.js';
 import {addInviteCode} from './addinvitecode.js';
-import {getPublicKeys, sign} from './sign.js';
+import {sign} from './sign.js';
 
 const {
 	AGSEPKICert,
-	AGSEPKICSR,
+	AGSEPKICSRData,
 	AGSEPKIIssuanceHistory,
 	BinaryProto,
 	CyphPlan,
 	CyphPlans,
+	PotassiumData,
 	StringProto
 } = proto;
 const {deserialize, lockFunction, serialize, sleep} = util;
@@ -155,7 +157,14 @@ export const certSign = async (projectId, standalone, namespace) => {
 			process.exit(0);
 		}
 
-		const agsePublicSigningKeys = getPublicKeys();
+		const agsePublicSigningKeys = {
+			rsa: baseAgsePublicSigningKeys.prod.get(
+				PotassiumData.SignAlgorithms.V1
+			).classical,
+			sphincs: baseAgsePublicSigningKeys.prod.get(
+				PotassiumData.SignAlgorithms.V1
+			).postQuantum
+		};
 
 		const issuanceHistory = await (async () => {
 			if (testSign) {
@@ -220,13 +229,15 @@ export const certSign = async (projectId, standalone, namespace) => {
 
 			const o = await deserialize(
 				AGSEPKIIssuanceHistory,
-				await potassium.sign.open(
+				await potassium.sign.openRaw(
 					signed,
-					await potassium.sign.importSuperSphincsPublicKeys(
+					await potassium.sign.importPublicKeys(
+						PotassiumData.SignAlgorithms.V1,
 						agsePublicSigningKeys.rsa[rsaKeyIndex],
 						agsePublicSigningKeys.sphincs[sphincsKeyIndex]
 					),
-					`${namespace}:AGSEPKIIssuanceHistory`
+					`${namespace}:AGSEPKIIssuanceHistory`,
+					PotassiumData.SignAlgorithms.V1
 				)
 			);
 
@@ -273,10 +284,13 @@ export const certSign = async (projectId, standalone, namespace) => {
 						);
 
 						const csr = await deserialize(
-							AGSEPKICSR,
+							AGSEPKICSRData,
 							new Uint8Array(
 								bytes.buffer,
-								bytes.byteOffset + (await potassium.sign.bytes)
+								bytes.byteOffset +
+									(await potassium.sign.getBytes(
+										PotassiumData.SignAlgorithms.V1
+									))
 							)
 						);
 
@@ -308,10 +322,11 @@ export const certSign = async (projectId, standalone, namespace) => {
 						}
 
 						/* Validate CSR signature. */
-						await potassium.sign.open(
+						await potassium.sign.openRaw(
 							bytes,
 							csr.publicSigningKey,
-							`${namespace}:users/${csr.username}/certificateRequest`
+							`${namespace}:users/${csr.username}/certificateRequest`,
+							PotassiumData.SignAlgorithms.V1
 						);
 
 						issuanceHistory.publicSigningKeyHashes[
@@ -338,10 +353,11 @@ export const certSign = async (projectId, standalone, namespace) => {
 
 		issuanceHistory.timestamp = Date.now();
 
-		const {rsaIndex, signedInputs, sphincsIndex} = await sign(
+		const certifiedMessages = await sign(
 			[
 				{
 					additionalData: `${namespace}:AGSEPKIIssuanceHistory`,
+					algorithm: PotassiumData.SignAlgorithms.V1,
 					message: await serialize(
 						AGSEPKIIssuanceHistory,
 						issuanceHistory
@@ -351,8 +367,9 @@ export const certSign = async (projectId, standalone, namespace) => {
 				await Promise.all(
 					csrs.map(async csr => ({
 						additionalData: `${namespace}:${csr.username}`,
+						algorithm: PotassiumData.SignAlgorithms.V1,
 						message: await serialize(AGSEPKICert, {
-							agsePKICSR: csr,
+							csrData: csr,
 							timestamp: issuanceHistory.timestamp
 						})
 					}))
@@ -360,6 +377,11 @@ export const certSign = async (projectId, standalone, namespace) => {
 			),
 			testSign
 		);
+
+		const {classical: rsaIndex, postQuantum: sphincsIndex} =
+			certifiedMessages[0].publicKeys;
+
+		const signedInputs = certifiedMessages.map(o => o.data);
 
 		const signedIssuanceHistory = potassium.concatMemory(
 			false,
