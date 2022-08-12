@@ -278,7 +278,15 @@
 		});
 	}
 
-	console.log(publicKeyHash);
+	console.log(
+		`MAC ADDRESS: ${os.networkInterfaces().eth0[0].mac}\n` +
+			`PUBLIC KEY HASH: ${publicKeyHash}\n\n` +
+			`Please verify that the JSON array of public keys that has been sent ` +
+			`to keys@cyph.com matches the above SHA-512 hash, before adding them ` +
+			`to shared/js/cyph/account/agse-public-signing-keys.ts.\n\n` +
+			`Additionally, you must update your ~/.cyph/agse.remote.mac to the ` +
+			`MAC address listed above.`
+	);
 
 	fs.writeFileSync(`${os.homedir()}/agse/.generatekeys-success`, '');
 })();
