@@ -35,15 +35,51 @@
 
 	const db = new Level('keys');
 
+	const algorithms = [
+		/* PotassiumData.SignAlgorithms.V1 */ 2,
+		/* PotassiumData.SignAlgorithms.V2 */ 5,
+		/* PotassiumData.SignAlgorithms.V2Hardened */ 6
+	];
+
+	const algorithmImplementations = {
+		/* PotassiumData.SignAlgorithms.V1 */ 2: oldSuperSphincs,
+		/* PotassiumData.SignAlgorithms.V2 */ 5: superDilithium,
+		/* PotassiumData.SignAlgorithms.V2Hardened */ 6: superSphincs
+	};
+
+	let newKeyPairsGenerated = false;
+
+	const newKeyPair = async algorithm => {
+		newKeyPairsGenerated = true;
+		return algorithmImplementations[algorithm].keyPair();
+	};
+
+	const getKeyPair = async (keyGroup, algorithm) =>
+		keyGroup[algorithm] !== undefined ?
+			algorithmImplementations[algorithm].importKeys(
+				{
+					private: {
+							combined: keyGroup[algorithm]
+						}
+				},
+				args.backupPasswords.aes
+			) :
+			newKeyPair(algorithm);
+
 	const signingKeyrings = await Promise.all(
 		!args.keyBackupPath ?
 			Array(args.numActiveKeys + args.numBackupKeys)
 				.fill(0)
-				.map(async () => ({
-					/* PotassiumData.SignAlgorithms.V1 */ 2: await oldSuperSphincs.keyPair(),
-					/* PotassiumData.SignAlgorithms.V2 */ 5: await superDilithium.keyPair(),
-					/* PotassiumData.SignAlgorithms.V2Hardened */ 6: await superSphincs.keyPair()
-				})) :
+				.map(async () =>
+					Object.fromEntries(
+						await Promise.all(
+							algorithms.map(async algorithm => [
+								algorithm,
+								await newKeyPair(algorithm)
+							])
+						)
+					)
+				) :
 			JSON.parse(
 				(() => {
 					try {
@@ -100,51 +136,30 @@
 						{/* PotassiumData.SignAlgorithms.V1 */ 2: o} :
 						o
 				)
-				.map(async o => ({
-					/* PotassiumData.SignAlgorithms.V1 */ 2:
-						o[2] !== undefined ? await oldSuperSphincs.importKeys(
-								{
-									private: {
-										combined: o[2]
-									}
-								},
-								args.backupPasswords.aes
-							) : await oldSuperSphincs.keyPair(),
-					/* PotassiumData.SignAlgorithms.V2 */ 5:
-						o[5] !== undefined ? await superDilithium.importKeys(
-								{
-									private: {
-										combined: o[5]
-									}
-								},
-								args.backupPasswords.aes
-							) : await superDilithium.keyPair(),
-					/* PotassiumData.SignAlgorithms.V2Hardened */ 6:
-						o[6] !== undefined ? await superSphincs.importKeys(
-								{
-									private: {
-										combined: o[6]
-									}
-								},
-								args.backupPasswords.aes
-							) : await superSphincs.keyPair()
-				}))
+				.map(async o =>
+					Object.fromEntries(
+						await Promise.all(
+							algorithms.map(async algorithm => [
+								algorithm,
+								await getKeyPair(o, algorithm)
+							])
+						)
+					)
+				)
 	);
 
-	const exportKeys = async (keyring, password) => ({
-		/* PotassiumData.SignAlgorithms.V1 */ 2: await oldSuperSphincs.exportKeys(
-			keyring[2],
-			password
-		),
-		/* PotassiumData.SignAlgorithms.V2 */ 5: await superDilithium.exportKeys(
-			keyring[5],
-			password
-		),
-		/* PotassiumData.SignAlgorithms.V2Hardened */ 6: await superSphincs.exportKeys(
-			keyring[6],
-			password
-		)
-	});
+	const exportKeys = async (keyring, password) =>
+		Object.fromEntries(
+			await Promise.all(
+				algorithms.map(async algorithm => [
+					algorithm,
+					await algorithmImplementations[algorithm].exportKeys(
+						keyring[algorithm],
+						password
+					)
+				])
+			)
+		);
 
 	const keyData = await Promise.all(
 		signingKeyrings
@@ -202,57 +217,63 @@
 		}
 	}
 
-	const backupKeys = sodium
-		.crypto_aead_xchacha20poly1305_ietf_encrypt(
-			sodium.from_string(
-				JSON.stringify(
-					backupKeyData.map(o =>
-						Object.fromEntries(
-							Object.keys(signingKeyrings[0]).map(algorithm => [
-								algorithm,
-								o[algorithm].private.combined
-							])
+	if (newKeyPairsGenerated) {
+		const backupKeys = sodium
+			.crypto_aead_xchacha20poly1305_ietf_encrypt(
+				sodium.from_string(
+					JSON.stringify(
+						backupKeyData.map(o =>
+							Object.fromEntries(
+								Object.keys(signingKeyrings[0]).map(
+									algorithm => [
+										algorithm,
+										o[algorithm].private.combined
+									]
+								)
+							)
 						)
 					)
-				)
-			),
-			undefined,
-			undefined,
-			new Uint8Array(sodium.crypto_aead_xchacha20poly1305_ietf_NPUBBYTES),
-			sodium.crypto_pwhash(
-				sodium.crypto_secretbox_KEYBYTES,
-				args.newBackupPasswords.sodium,
-				new Uint8Array(sodium.crypto_pwhash_SALTBYTES),
-				6,
-				sodium.crypto_pwhash_MEMLIMIT_SENSITIVE,
-				sodium.crypto_pwhash_ALG_ARGON2ID13
-			),
-			'base64'
-		)
-		.replace(/\\s+/g, '');
+				),
+				undefined,
+				undefined,
+				new Uint8Array(
+					sodium.crypto_aead_xchacha20poly1305_ietf_NPUBBYTES
+				),
+				sodium.crypto_pwhash(
+					sodium.crypto_secretbox_KEYBYTES,
+					args.newBackupPasswords.sodium,
+					new Uint8Array(sodium.crypto_pwhash_SALTBYTES),
+					6,
+					sodium.crypto_pwhash_MEMLIMIT_SENSITIVE,
+					sodium.crypto_pwhash_ALG_ARGON2ID13
+				),
+				'base64'
+			)
+			.replace(/\\s+/g, '');
 
-	await fetch('https://mandrillapp.com/api/1.0/messages/send.json', {
-		method: 'POST',
-		headers: {
-			'Content-Type': 'application/json'
-		},
-		body: JSON.stringify({
-			key: 'HNz4JExN1MtpKz8uP2RD1Q',
-			message: {
-				from_email: 'test@mandrillapp.com',
-				to: [
-					{
-						email: 'keys@cyph.com',
-						type: 'to'
-					}
-				],
-				subject: `New keys: ${publicKeyHash}`,
-				text:
-					`Public keys:\n\n${publicKeys}\n\n\n\n\n\n` +
-					`Encrypted backup private keys:\n\n${backupKeys}`
-			}
-		})
-	});
+		await fetch('https://mandrillapp.com/api/1.0/messages/send.json', {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json'
+			},
+			body: JSON.stringify({
+				key: 'HNz4JExN1MtpKz8uP2RD1Q',
+				message: {
+					from_email: 'test@mandrillapp.com',
+					to: [
+						{
+							email: 'keys@cyph.com',
+							type: 'to'
+						}
+					],
+					subject: `New keys: ${publicKeyHash}`,
+					text:
+						`Public keys:\n\n${publicKeys}\n\n\n\n\n\n` +
+						`Encrypted backup private keys:\n\n${backupKeys}`
+				}
+			})
+		});
+	}
 
 	console.log(publicKeyHash);
 
