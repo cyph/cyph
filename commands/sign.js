@@ -101,6 +101,7 @@ export const sign = async (inputs, testSign, demoSign, skipNotify = false) =>
 							o.additionalData === undefined ?
 								{none: true} :
 								o.additionalData,
+						algorithm: o.algorithm,
 						message:
 							o.message instanceof Uint8Array ?
 								{
@@ -163,7 +164,7 @@ export const sign = async (inputs, testSign, demoSign, skipNotify = false) =>
 							.get(algorithm)
 							[k].indexOf(signatureData.publicKeys[k][algorithm]);
 
-						if (index === undefined) {
+						if (index < 0) {
 							throw new Error(
 								`${errorStringType} public key not found for SignAlgorithms.${PotassiumData.SignAlgorithms[algorithm]}`
 							);
@@ -312,15 +313,20 @@ if (isCLI) {
 			throw './sign.js \'{"message": "data to sign"}\'';
 		}
 
-		const signed = await sign(JSON.parse(inputs), testSign, demoSign);
+		const certifiedMessages = await sign(
+			JSON.parse(inputs),
+			testSign,
+			demoSign
+		);
 
-		console.log({
-			...signed,
-			signedInputs: signed.signedInputs.map(({algorithm, signed}) => ({
+		console.log(
+			certifiedMessages.map(({algorithm, data, publicKeys}) => ({
 				algorithm: PotassiumData.SignAlgorithms[algorithm],
-				signed: signed.toString('base64')
+				data: data.toString('base64'),
+				publicKeys
 			}))
-		});
+		);
+
 		process.exit(0);
 	})().catch(err => {
 		console.error(err);

@@ -139,10 +139,8 @@ const validator = require('validator');
 			let postQuantumKeyData;
 			for (let i = 0; i < allKeys.length; ++i) {
 				const keys = {
-					private: {
-						classical: allKeys[i][0],
-						postQuantum: allKeys[i][1]
-					}
+					classical: allKeys[i][0],
+					postQuantum: allKeys[i][1]
 				};
 
 				try {
@@ -152,8 +150,7 @@ const validator = require('validator');
 								algorithms.map(async algorithm => [
 									algorithm,
 									{
-										privateKey:
-											keys.private.classical[algorithm],
+										privateKey: keys.classical[algorithm],
 										publicKeyString: (
 											await algorithmImplementations[
 												algorithm
@@ -165,12 +162,12 @@ const validator = require('validator');
 														{
 															private: {
 																classical:
-																	keys.private
+																	keys
 																		.classical[
 																		algorithm
 																	],
 																postQuantum:
-																	keys.private
+																	keys
 																		.postQuantum[
 																		algorithm
 																	]
@@ -180,7 +177,7 @@ const validator = require('validator');
 													)
 												).publicKey
 											})
-										).public.classical[algorithm]
+										).public.classical
 									}
 								])
 							)
@@ -196,8 +193,7 @@ const validator = require('validator');
 								algorithms.map(async algorithm => [
 									algorithm,
 									{
-										privateKey:
-											keys.private.postQuantum[algorithm],
+										privateKey: keys.postQuantum[algorithm],
 										publicKeyString: (
 											await algorithmImplementations[
 												algorithm
@@ -209,12 +205,12 @@ const validator = require('validator');
 														{
 															private: {
 																classical:
-																	keys.private
+																	keys
 																		.classical[
 																		algorithm
 																	],
 																postQuantum:
-																	keys.private
+																	keys
 																		.postQuantum[
 																		algorithm
 																	]
@@ -224,7 +220,7 @@ const validator = require('validator');
 													)
 												).publicKey
 											})
-										).public.postQuantum[algorithm]
+										).public.postQuantum
 									}
 								])
 							)
@@ -243,28 +239,33 @@ const validator = require('validator');
 
 			keyData = Object.fromEntries(
 				await Promise.all(
-					algorithms.map(async algorithm => ({
-						classicalKeyString:
-							classicalKeyData[algorithm].publicKeyString,
-						keyPair: await algorithmImplementations[
-							algorithm
-						].importKeys(
-							{
-								private: {
-									classical:
-										classicalKeyData[algorithm].privateKey,
-									postQuantum:
-										postQuantumKeyData[algorithm].privateKey
+					algorithms.map(async algorithm => [
+						algorithm,
+						{
+							classicalKeyString:
+								classicalKeyData[algorithm].publicKeyString,
+							keyPair: await algorithmImplementations[
+								algorithm
+							].importKeys(
+								{
+									private: {
+										classical:
+											classicalKeyData[algorithm]
+												.privateKey,
+										postQuantum:
+											postQuantumKeyData[algorithm]
+												.privateKey
+									}
+								},
+								{
+									classical: classicalPassword,
+									postQuantum: postQuantumPassword
 								}
-							},
-							{
-								classical: classicalPassword,
-								postQuantum: postQuantumPassword
-							}
-						),
-						postQuantumKeyString:
-							postQuantumKeyData[algorithm].publicKeyString
-					}))
+							),
+							postQuantumKeyString:
+								postQuantumKeyData[algorithm].publicKeyString
+						}
+					])
 				)
 			);
 		}
@@ -319,15 +320,15 @@ const validator = require('validator');
 
 				if (
 					parsed instanceof Array &&
-					parsed.filter(
+					parsed.every(
 						input =>
-							input &&
-							Object.keys(input) === 2 &&
-							validateData(input.message, true) &&
+							typeof input === 'object' &&
+							Object.keys(input ?? {}).length === 3 &&
 							(validateData(input.additionalData) ||
-								(input.additionalData &&
-									input.additionalData.none))
-					).length === 0
+								input.additionalData?.none) &&
+							input.algorithm in algorithmImplementations &&
+							validateData(input.message, true)
+					)
 				) {
 					return parsed;
 				}
@@ -343,9 +344,7 @@ const validator = require('validator');
 
 		buf.fill(0);
 
-		const shouldSign = await reviewText(
-			JSON.stringify(inputs, null, '\n\n\t')
-		);
+		const shouldSign = await reviewText(JSON.stringify(inputs, null, '\t'));
 
 		if (!shouldSign) {
 			console.log('Input discarded.');
@@ -381,7 +380,7 @@ const validator = require('validator');
 		childProcess.spawnSync('sudo', [
 			'ip',
 			'neigh',
-			'add',
+			'replace',
 			args.remoteAddress,
 			'lladdr',
 			macAddress,
