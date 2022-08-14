@@ -102,9 +102,9 @@ emsdk activate latest-upstream
 sed -i "s/NODE_JS = .*/NODE_JS = '\/usr\/bin\/node'/" ~/emsdk/.emscripten
 
 cd
-rm -rf go-ipfs go-ipfs.tar.gz 2> /dev/null
+rm -rf kubo kubo.tar.gz 2> /dev/null
 wget "$(
-	curl -s https://api.github.com/repos/ipfs/go-ipfs/releases/latest | jq -r "
+	curl -sL https://api.github.com/repos/ipfs/kubo/releases/latest | jq -r "
 		.assets |
 		map(
 			.browser_download_url |
@@ -113,12 +113,12 @@ wget "$(
 			).tar.gz\"))
 		)[0]
 	"
-)" -O go-ipfs.tar.gz
-tar xvzf go-ipfs.tar.gz
-cd go-ipfs
+)" -O kubo.tar.gz
+tar xvzf kubo.tar.gz
+cd kubo
 sudo bash install.sh
 cd
-rm -rf go-ipfs go-ipfs.tar.gz
+rm -rf kubo kubo.tar.gz
 if [ ! -d ~/.ipfs ] ; then
 	ipfs init
 fi
