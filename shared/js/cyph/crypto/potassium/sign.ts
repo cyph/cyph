@@ -293,7 +293,7 @@ export class Sign implements ISign {
 
 		const algorithm = potassiumSigned.signAlgorithm;
 
-		publicKey = potassiumEncoding.openKeyring(
+		publicKey = await potassiumEncoding.openKeyring(
 			PotassiumData.SignAlgorithms,
 			publicKey,
 			algorithm
@@ -336,7 +336,7 @@ export class Sign implements ISign {
 		additionalData: Uint8Array | string = new Uint8Array(0),
 		algorithm: PotassiumData.SignAlgorithms
 	) : Promise<Uint8Array> {
-		publicKey = potassiumEncoding.openKeyring(
+		publicKey = await potassiumEncoding.openKeyring(
 			PotassiumData.SignAlgorithms,
 			publicKey,
 			algorithm
@@ -398,10 +398,12 @@ export class Sign implements ISign {
 	) : Promise<Uint8Array> {
 		message = potassiumUtil.fromString(message);
 
-		privateKey = potassiumEncoding.openKeyring(
-			PotassiumData.SignAlgorithms,
-			privateKey instanceof Uint8Array ? {privateKey} : privateKey,
-			this.algorithmPriorityOrderInternal
+		privateKey = (
+			await potassiumEncoding.openKeyring(
+				PotassiumData.SignAlgorithms,
+				privateKey instanceof Uint8Array ? {privateKey} : privateKey,
+				this.algorithmPriorityOrderInternal
+			)
 		).privateKey;
 
 		const potassiumPrivateKey = await potassiumEncoding.deserialize(
@@ -481,10 +483,12 @@ export class Sign implements ISign {
 		additionalData?: Uint8Array | string,
 		rawOutput: boolean = false
 	) : Promise<Uint8Array> {
-		privateKey = potassiumEncoding.openKeyring(
-			PotassiumData.SignAlgorithms,
-			privateKey instanceof Uint8Array ? {privateKey} : privateKey,
-			this.algorithmPriorityOrderInternal
+		privateKey = (
+			await potassiumEncoding.openKeyring(
+				PotassiumData.SignAlgorithms,
+				privateKey instanceof Uint8Array ? {privateKey} : privateKey,
+				this.algorithmPriorityOrderInternal
+			)
 		).privateKey;
 
 		const potassiumPrivateKey = await potassiumEncoding.deserialize(
@@ -567,7 +571,7 @@ export class Sign implements ISign {
 			} :
 			this.defaultMetadataInternal;
 
-		publicKey = potassiumEncoding.openKeyring(
+		publicKey = await potassiumEncoding.openKeyring(
 			PotassiumData.SignAlgorithms,
 			publicKey,
 			forceAlgorithm ?? this.algorithmPriorityOrderInternal

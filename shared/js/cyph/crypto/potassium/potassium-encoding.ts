@@ -108,43 +108,43 @@ export class PotassiumEncoding {
 		algorithmType: typeof PotassiumData.BoxAlgorithms,
 		keyring: TKeyPair | IPrivateKeyring,
 		algorithmPriorityOrder: MaybeArray<PotassiumData.BoxAlgorithms>
-	) : TKeyPair;
+	) : Promise<TKeyPair>;
 	public openKeyring<TKeyPair extends IKeyPair | {privateKey: Uint8Array}> (
 		algorithmType: typeof PotassiumData.EphemeralKeyExchangeAlgorithms,
 		keyring: TKeyPair | IPrivateKeyring,
 		algorithmPriorityOrder: MaybeArray<PotassiumData.EphemeralKeyExchangeAlgorithms>
-	) : TKeyPair;
+	) : Promise<TKeyPair>;
 	public openKeyring (
 		algorithmType: typeof PotassiumData.OneTimeAuthAlgorithms,
 		keyring: Uint8Array | IPrivateKeyring,
 		algorithmPriorityOrder: MaybeArray<PotassiumData.OneTimeAuthAlgorithms>
-	) : Uint8Array;
+	) : Promise<Uint8Array>;
 	public openKeyring (
 		algorithmType: typeof PotassiumData.SecretBoxAlgorithms,
 		keyring: Uint8Array | IPrivateKeyring,
 		algorithmPriorityOrder: MaybeArray<PotassiumData.SecretBoxAlgorithms>
-	) : Uint8Array;
+	) : Promise<Uint8Array>;
 	public openKeyring<TKeyPair extends IKeyPair | {privateKey: Uint8Array}> (
 		algorithmType: typeof PotassiumData.SignAlgorithms,
 		keyring: TKeyPair | IPrivateKeyring,
 		algorithmPriorityOrder: MaybeArray<PotassiumData.SignAlgorithms>
-	) : TKeyPair;
+	) : Promise<TKeyPair>;
 	public openKeyring (
 		algorithmType: typeof PotassiumData.BoxAlgorithms,
 		keyring: Uint8Array | IPublicKeyring,
 		algorithmPriorityOrder: MaybeArray<PotassiumData.BoxAlgorithms>
-	) : Uint8Array;
+	) : Promise<Uint8Array>;
 	public openKeyring (
 		algorithmType: typeof PotassiumData.EphemeralKeyExchangeAlgorithms,
 		keyring: Uint8Array | IPublicKeyring,
 		algorithmPriorityOrder: MaybeArray<PotassiumData.EphemeralKeyExchangeAlgorithms>
-	) : Uint8Array;
+	) : Promise<Uint8Array>;
 	public openKeyring (
 		algorithmType: typeof PotassiumData.SignAlgorithms,
 		keyring: Uint8Array | IPublicKeyring,
 		algorithmPriorityOrder: MaybeArray<PotassiumData.SignAlgorithms>
-	) : Uint8Array;
-	public openKeyring (
+	) : Promise<Uint8Array>;
+	public async openKeyring (
 		algorithmType:
 			| typeof PotassiumData.BoxAlgorithms
 			| typeof PotassiumData.EphemeralKeyExchangeAlgorithms
@@ -164,7 +164,7 @@ export class PotassiumEncoding {
 			| PotassiumData.SecretBoxAlgorithms
 			| PotassiumData.SignAlgorithms
 		>
-	) : Uint8Array | IKeyPair | {privateKey: Uint8Array} {
+	) : Promise<Uint8Array | IKeyPair | {privateKey: Uint8Array}> {
 		if (keyring instanceof Uint8Array || 'privateKey' in keyring) {
 			return keyring;
 		}
@@ -181,15 +181,48 @@ export class PotassiumEncoding {
 			| IKeyPair
 			| undefined;
 
-		const getKey = <TKey>(keyGroup: Record<string, TKey> | undefined) => {
+		const getKey = async <TKey extends Uint8Array | IKeyPair>(
+			keyGroup: Record<string, TKey> | undefined,
+			algorithmKey:
+				| 'boxAlgorithm'
+				| 'ephemeralKeyExchangeAlgorithm'
+				| 'oneTimeAuthAlgorithm'
+				| 'secretBoxAlgorithm'
+				| 'signAlgorithm',
+			valueKey: 'key' | 'privateKey' | 'publicKey'
+		) => {
 			if (keyGroup === undefined) {
 				return undefined;
 			}
 
+			const getWrappedValue = async (
+				algorithm: typeof algorithms[0],
+				value: Uint8Array
+			) : Promise<Uint8Array> =>
+				potassiumUtil.startsWith(value, this.cryptographicAgilityTag) ?
+					value :
+					this.serialize({
+						[algorithmKey]: algorithm,
+						[valueKey]: value
+					});
+
 			for (const algorithm of algorithms) {
 				const key = keyGroup[algorithm];
-				if (key !== undefined) {
-					return key;
+
+				if (key instanceof Uint8Array) {
+					return getWrappedValue(algorithm, key);
+				}
+				else if (typeof key === 'object') {
+					return {
+						privateKey: await getWrappedValue(
+							algorithm,
+							key.privateKey
+						),
+						publicKey: await getWrappedValue(
+							algorithm,
+							key.publicKey
+						)
+					};
 				}
 			}
 
@@ -201,9 +234,17 @@ export class PotassiumEncoding {
 				algorithmTypeName = 'BoxAlgorithms';
 				result =
 					'boxPrivateKeys' in keyring ?
-						getKey(keyring.boxPrivateKeys) :
+						await getKey(
+							keyring.boxPrivateKeys,
+							'boxAlgorithm',
+							'privateKey'
+						) :
 					'boxPublicKeys' in keyring ?
-						getKey(keyring.boxPublicKeys) :
+						await getKey(
+							keyring.boxPublicKeys,
+							'boxAlgorithm',
+							'publicKey'
+						) :
 						undefined;
 				break;
 
@@ -211,9 +252,17 @@ export class PotassiumEncoding {
 				algorithmTypeName = 'EphemeralKeyExchangeAlgorithms';
 				result =
 					'ephemeralKeyExchangePrivateKeys' in keyring ?
-						getKey(keyring.ephemeralKeyExchangePrivateKeys) :
+						await getKey(
+							keyring.ephemeralKeyExchangePrivateKeys,
+							'ephemeralKeyExchangeAlgorithm',
+							'privateKey'
+						) :
 					'ephemeralKeyExchangePublicKeys' in keyring ?
-						getKey(keyring.ephemeralKeyExchangePublicKeys) :
+						await getKey(
+							keyring.ephemeralKeyExchangePublicKeys,
+							'ephemeralKeyExchangeAlgorithm',
+							'publicKey'
+						) :
 						undefined;
 				break;
 
@@ -221,7 +270,11 @@ export class PotassiumEncoding {
 				algorithmTypeName = 'OneTimeAuthAlgorithms';
 				result =
 					'oneTimeAuthPrivateKeys' in keyring ?
-						getKey(keyring.oneTimeAuthPrivateKeys) :
+						await getKey(
+							keyring.oneTimeAuthPrivateKeys,
+							'oneTimeAuthAlgorithm',
+							'key'
+						) :
 						undefined;
 				break;
 
@@ -229,7 +282,11 @@ export class PotassiumEncoding {
 				algorithmTypeName = 'SecretBoxAlgorithms';
 				result =
 					'secretBoxPrivateKeys' in keyring ?
-						getKey(keyring.secretBoxPrivateKeys) :
+						await getKey(
+							keyring.secretBoxPrivateKeys,
+							'secretBoxAlgorithm',
+							'key'
+						) :
 						undefined;
 				break;
 
@@ -237,9 +294,17 @@ export class PotassiumEncoding {
 				algorithmTypeName = 'SignAlgorithms';
 				result =
 					'signPrivateKeys' in keyring ?
-						getKey(keyring.signPrivateKeys) :
+						await getKey(
+							keyring.signPrivateKeys,
+							'signAlgorithm',
+							'privateKey'
+						) :
 					'signPublicKeys' in keyring ?
-						getKey(keyring.signPublicKeys) :
+						await getKey(
+							keyring.signPublicKeys,
+							'signAlgorithm',
+							'publicKey'
+						) :
 						undefined;
 				break;
 		}

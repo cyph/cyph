@@ -112,7 +112,7 @@ export class OneTimeAuth implements IOneTimeAuth {
 
 		await sodium.ready;
 
-		key = potassiumEncoding.openKeyring(
+		key = await potassiumEncoding.openKeyring(
 			PotassiumData.OneTimeAuthAlgorithms,
 			key,
 			forceAlgorithm ?? this.algorithmPriorityOrderInternal
@@ -180,7 +180,7 @@ export class OneTimeAuth implements IOneTimeAuth {
 
 		const algorithm = forceAlgorithm ?? potassiumMAC.oneTimeAuthAlgorithm;
 
-		key = potassiumEncoding.openKeyring(
+		key = await potassiumEncoding.openKeyring(
 			PotassiumData.OneTimeAuthAlgorithms,
 			key,
 			algorithm

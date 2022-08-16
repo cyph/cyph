@@ -935,7 +935,7 @@ export class Box implements IBox {
 
 		const algorithm = potassiumCyphertext.boxAlgorithm;
 
-		keyPair = potassiumEncoding.openKeyring(
+		keyPair = await potassiumEncoding.openKeyring(
 			PotassiumData.BoxAlgorithms,
 			keyPair,
 			algorithm
@@ -1048,7 +1048,7 @@ export class Box implements IBox {
 		publicKey: Uint8Array | IPublicKeyring,
 		rawOutput: boolean = false
 	) : Promise<Uint8Array> {
-		publicKey = potassiumEncoding.openKeyring(
+		publicKey = await potassiumEncoding.openKeyring(
 			PotassiumData.BoxAlgorithms,
 			publicKey,
 			this.algorithmPriorityOrderInternal

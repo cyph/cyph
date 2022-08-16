@@ -218,10 +218,12 @@ export class EphemeralKeyExchange implements IEphemeralKeyExchange {
 				deserializePotassiumPrivateKey(
 					privateKey instanceof Uint8Array ?
 						privateKey :
-						potassiumEncoding.openKeyring(
-							PotassiumData.EphemeralKeyExchangeAlgorithms,
-							privateKey,
-							algorithm
+						(
+							await potassiumEncoding.openKeyring(
+								PotassiumData.EphemeralKeyExchangeAlgorithms,
+								privateKey,
+								algorithm
+							)
 						).privateKey
 				)
 		);
@@ -235,7 +237,7 @@ export class EphemeralKeyExchange implements IEphemeralKeyExchange {
 		const getPotassiumPublicKey = memoize(
 			async (algorithm: PotassiumData.EphemeralKeyExchangeAlgorithms) =>
 				deserializePotassiumPublicKey(
-					potassiumEncoding.openKeyring(
+					await potassiumEncoding.openKeyring(
 						PotassiumData.EphemeralKeyExchangeAlgorithms,
 						publicKey,
 						algorithm
@@ -350,7 +352,7 @@ export class EphemeralKeyExchange implements IEphemeralKeyExchange {
 	}> {
 		await sodium.ready;
 
-		alicePublicKey = potassiumEncoding.openKeyring(
+		alicePublicKey = await potassiumEncoding.openKeyring(
 			PotassiumData.EphemeralKeyExchangeAlgorithms,
 			alicePublicKey,
 			this.algorithmPriorityOrderInternal

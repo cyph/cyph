@@ -327,7 +327,7 @@ export class SecretBox implements ISecretBox {
 		const algorithm =
 			forceAlgorithm ?? potassiumCyphertext.secretBoxAlgorithm;
 
-		key = potassiumEncoding.openKeyring(
+		key = await potassiumEncoding.openKeyring(
 			PotassiumData.SecretBoxAlgorithms,
 			key,
 			algorithm
@@ -384,7 +384,7 @@ export class SecretBox implements ISecretBox {
 				potassiumUtil.fromString(additionalData) :
 				additionalData;
 
-		key = potassiumEncoding.openKeyring(
+		key = await potassiumEncoding.openKeyring(
 			PotassiumData.SecretBoxAlgorithms,
 			key,
 			forceAlgorithm ?? this.algorithmPriorityOrderInternal
