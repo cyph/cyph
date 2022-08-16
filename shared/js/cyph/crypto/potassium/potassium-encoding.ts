@@ -209,21 +209,21 @@ export class PotassiumEncoding {
 			for (const algorithm of algorithms) {
 				const key = keyGroup[algorithm];
 
+				if (key === undefined) {
+					continue;
+				}
+
 				if (key instanceof Uint8Array) {
 					return getWrappedValue(algorithm, key);
 				}
-				else if (typeof key === 'object') {
-					return {
-						privateKey: await getWrappedValue(
-							algorithm,
-							key.privateKey
-						),
-						publicKey: await getWrappedValue(
-							algorithm,
-							key.publicKey
-						)
-					};
-				}
+
+				return {
+					privateKey: await getWrappedValue(
+						algorithm,
+						key.privateKey
+					),
+					publicKey: await getWrappedValue(algorithm, key.publicKey)
+				};
 			}
 
 			return undefined;
