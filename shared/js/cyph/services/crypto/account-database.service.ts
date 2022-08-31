@@ -10,6 +10,7 @@ import {
 	SecurityModels
 } from '../../account';
 import {BaseProvider} from '../../base-provider';
+import {potassiumAlgorithmDeprecation} from '../../crypto/potassium/potassium-algorithm-deprecation';
 import {IAsyncList} from '../../iasync-list';
 import {IAsyncMap} from '../../iasync-map';
 import {IAsyncValue} from '../../iasync-value';
@@ -1744,6 +1745,50 @@ export class AccountDatabaseService extends BaseProvider {
 				skipValidationForCurrentUserKeys
 			);
 		}
+
+		/* Validate that keyring complies with minimum supported algorithm versions */
+
+		const validateAlgorithmSupport = (
+			keys: Record<number, Uint8Array> | undefined,
+			algorithmPriorityOrder: number[],
+			minimumAlgorithm: number
+		) => {
+			const supportedAlgorithms = algorithmPriorityOrder.slice(
+				0,
+				algorithmPriorityOrder.indexOf(minimumAlgorithm)
+			);
+
+			for (const algorithm of supportedAlgorithms) {
+				if (keys?.[algorithm] !== undefined) {
+					return;
+				}
+			}
+
+			throw new Error(
+				`Keyring for @${username} uses unsupported algorithms.`
+			);
+		};
+
+		const [
+			{boxMinimumAlgorithm, signMinimumAlgorithm},
+			boxAlgorithmPriorityOrder,
+			signAlgorithmPriorityOrder
+		] = await Promise.all([
+			potassiumAlgorithmDeprecation,
+			this.potassiumService.box.algorithmPriorityOrder,
+			this.potassiumService.sign.algorithmPriorityOrder
+		]);
+
+		validateAlgorithmSupport(
+			keyring.boxPublicKeys,
+			boxAlgorithmPriorityOrder,
+			boxMinimumAlgorithm
+		);
+		validateAlgorithmSupport(
+			keyring.signPublicKeys,
+			signAlgorithmPriorityOrder,
+			signMinimumAlgorithm
+		);
 
 		return keyring;
 	}

@@ -12,6 +12,8 @@ export * from './isign';
 export * from './one-time-auth';
 export * from './password-hash';
 export * from './potassium';
+export * from './potassium-algorithm-deprecation';
+export * from './potassium-encoding';
 export * from './potassium-util';
 export * from './secret-box';
 export * from './sign';
