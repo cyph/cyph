@@ -15,10 +15,11 @@ export class AnonymousRemoteUser implements IRemoteUser {
 		async () : Promise<IPublicKeyring> => {
 			const sharedSecretString = this.sharedSecret;
 
-			if (!sharedSecretString) {
-				throw new Error(
-					'Cannot get remote public key without a shared secret.'
-				);
+			if (
+				sharedSecretString === undefined ||
+				sharedSecretString.length < 1
+			) {
+				return {};
 			}
 
 			const [encryptedPublicBoxKey, sharedSecret] = await Promise.all([

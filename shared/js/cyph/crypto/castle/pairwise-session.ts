@@ -196,6 +196,10 @@ export class PairwiseSession implements IPairwiseSession {
 				})()
 			]);
 
+		if (remoteUserKeyring.boxPublicKeys === undefined) {
+			throw new Error('Box public key missing from remote user keyring.');
+		}
+
 		await this.handshakeState.initialSecretCyphertext.setValue(
 			await this.potassium.box.seal(
 				localUserKeyring.signPrivateKeys !== undefined ?
