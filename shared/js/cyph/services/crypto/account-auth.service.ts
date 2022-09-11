@@ -11,16 +11,16 @@ import {
 	AccountUserProfile,
 	AccountUserProfileExtra,
 	AccountUserTypes,
-	AGSEPKICSR,
 	AGSEPKICSRData,
+	AGSEPKISigningRequest,
 	BinaryProto,
 	BooleanProto,
 	IAccountLoginData,
 	IAccountRegistrationMetadata,
 	IAccountUserProfile,
 	IAccountUserProfileExtra,
-	IAGSEPKICSR,
 	IAGSEPKICSRData,
+	IAGSEPKISigningRequest,
 	IKeyPair,
 	IPrivateKeyring,
 	KeyPair,
@@ -1058,11 +1058,16 @@ export class AccountAuthService extends BaseProvider {
 						true,
 						undefined,
 						true
-					).then(async data => serialize<IAGSEPKICSR>(AGSEPKICSR, {
-							algorithm: await this.potassiumService.sign
-									.currentAlgorithm,
-							data
-						})),
+					).then(async data =>
+						serialize<IAGSEPKISigningRequest>(
+							AGSEPKISigningRequest,
+							{
+								algorithm: await this.potassiumService.sign
+										.currentAlgorithm,
+								data
+							}
+						)
+					),
 				this.setItem(
 					`users/${username}/pin/hash`,
 					BinaryProto,

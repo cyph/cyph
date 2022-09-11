@@ -22,12 +22,12 @@ import {MaybePromise} from '../../maybe-promise-type';
 import {
 	AGSEPKICert,
 	AGSEPKICertified,
-	AGSEPKICSR,
 	AGSEPKICSRData,
+	AGSEPKISigningRequest,
 	BinaryProto,
 	IAGSEPKICert,
-	IAGSEPKICSR,
 	IAGSEPKICSRData,
+	IAGSEPKISigningRequest,
 	IDatabaseItem,
 	IPrivateKeyring,
 	IPublicKeyring,
@@ -436,7 +436,10 @@ export class AccountDatabaseService extends BaseProvider {
 				return currentCert;
 			}
 
-			const csr = await this.databaseService.getItem(csrURL, AGSEPKICSR);
+			const csr = await this.databaseService.getItem(
+				csrURL,
+				AGSEPKISigningRequest
+			);
 
 			const csrDataBytes = await this.potassiumHelpers.sign
 				.open(
@@ -1537,27 +1540,31 @@ export class AccountDatabaseService extends BaseProvider {
 							newPublicKeyring.signPublicKeys ?? {}
 						).map(toInt)
 					},
-					csr: await serialize<IAGSEPKICSR>(AGSEPKICSR, {
-						algorithm: await this.potassiumService.sign
-							.currentAlgorithm,
-						data: await this.potassiumHelpers.sign.sign(
-							await this.potassiumHelpers.sign.sign(
-								await serialize<IAGSEPKICSRData>(
-									AGSEPKICSRData,
-									{
-										publicSigningKey: csrPublicSigningKey,
-										username
-									}
+					csr: await serialize<IAGSEPKISigningRequest>(
+						AGSEPKISigningRequest,
+						{
+							algorithm: await this.potassiumService.sign
+								.currentAlgorithm,
+							data: await this.potassiumHelpers.sign.sign(
+								await this.potassiumHelpers.sign.sign(
+									await serialize<IAGSEPKICSRData>(
+										AGSEPKICSRData,
+										{
+											publicSigningKey:
+												csrPublicSigningKey,
+											username
+										}
+									),
+									newPrivateKeyring,
+									`users/${username}/keyrings/csr`,
+									false
 								),
-								newPrivateKeyring,
-								`users/${username}/keyrings/csr`,
+								currentSigningKeyPair.privateKey,
+								`users/${username}/keyrings/csr/previous-key`,
 								false
-							),
-							currentSigningKeyPair.privateKey,
-							`users/${username}/keyrings/csr/previous-key`,
-							false
-						)
-					}),
+							)
+						}
+					),
 					newPrivateKeyringBytes:
 						await this.potassiumHelpers.secretBox.seal(
 							await serialize(PrivateKeyring, newPrivateKeyring),

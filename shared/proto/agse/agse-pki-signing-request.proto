@@ -3,11 +3,11 @@ syntax = "proto3";
 import "../potassium/potassium-data.proto";
 
 
-/** AGSE-PKI certificate signing request. */
-message AGSEPKICSR {
+/** AGSE-PKI signing request. */
+message AGSEPKISigningRequest {
 	/** @see PotassiumData.SignAlgorithms */
 	required PotassiumData.SignAlgorithms algorithm = 1;
 
-	/** Signed AGSEPKICSRData. */
+	/** Signed data. */
 	required bytes data = 2;
 }

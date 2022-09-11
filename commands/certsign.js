@@ -20,9 +20,9 @@ import {sign} from './sign.js';
 const {
 	AGSEPKICert,
 	AGSEPKICertified,
-	AGSEPKICSR,
 	AGSEPKICSRData,
 	AGSEPKIIssuanceHistory,
+	AGSEPKISigningRequest,
 	BinaryProto,
 	CyphPlan,
 	CyphPlans,
@@ -321,7 +321,7 @@ export const certSign = async (
 		const openCertificateRequest = async username => {
 			const csrURL = `users/${username}/keyrings/csr`;
 
-			const csr = await getItem(namespace, csrURL, AGSEPKICSR);
+			const csr = await getItem(namespace, csrURL, AGSEPKISigningRequest);
 			let csrDataBytes = csr.data;
 
 			/* In the case of a reissue, an outer signature from the previous key is applied */
