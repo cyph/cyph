@@ -1,0 +1,32 @@
+syntax = "proto3";
+
+import "../potassium/potassium-data.proto";
+import "./websign-key-persistence.proto";
+
+
+/** WebSign package signing request data. */
+message WebSignPackageData {
+	/** @see PotassiumData.SignAlgorithms */
+	PotassiumData.SignAlgorithms algorithm = 1;
+
+	/** Package expiration timestamp. */
+	double expirationTimestamp = 2;
+
+	/** @see WebSignKeyPersistence */
+	WebSignKeyPersistence keyPersistence = 3;
+
+	/** Package name. */
+	required string packageName = 4;
+
+	/** Executable package content. */
+	required string payload = 5;
+
+	/** Usernames of additional users whose signatures are required for release. */
+	repeated string requiredUserSignatures = 6;
+
+	/** Signature. */
+	bytes signature = 7;
+
+	/** Package timestamp. */
+	required double timestamp = 8;
+}

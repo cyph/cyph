@@ -18,3 +18,4 @@ import "potassium/index.proto";
 import "session/index.proto";
 import "storage/index.proto";
 import "wallet/index.proto";
+import "websign/index.proto";

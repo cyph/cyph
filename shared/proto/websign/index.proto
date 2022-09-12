@@ -1,0 +1,6 @@
+syntax = "proto3";
+
+
+import "websign-key-persistence.proto";
+import "websign-package-data.proto";
+import "websign-pending-release.proto";

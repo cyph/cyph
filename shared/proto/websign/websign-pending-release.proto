@@ -1,0 +1,16 @@
+syntax = "proto3";
+
+import "../agse/agse-pki-signing-request.proto";
+
+
+/** WebSign pending release data. */
+message WebSignPendingRelease {
+	/** Username of user who submitted the release. */
+	required string author = 1;
+
+	/** Package name. */
+	required string packageName = 2;
+
+	/** Signing request containing signed WebSignPackageData. */
+	required AGSEPKISigningRequest signingRequest = 3;
+}

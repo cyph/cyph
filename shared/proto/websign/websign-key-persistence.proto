@@ -1,0 +1,8 @@
+syntax = "proto3";
+
+
+/** Public signing key persistence modes. */
+enum WebSignKeyPersistence {
+	Default = 0;
+	TOFU = 1;
+}

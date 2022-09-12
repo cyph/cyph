@@ -22,7 +22,7 @@ import {WindowWatcherService} from '../window-watcher.service';
 import {PotassiumService} from './potassium.service';
 
 /**
- * Angular service for WebSign.
+ * Angular service for managing the local WebSign instance.
  */
 @Injectable()
 export class WebSignClientService extends BaseProvider {

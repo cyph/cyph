@@ -33,6 +33,7 @@ import {AccountUserLookupService} from '../cyph/services/account-user-lookup.ser
 import {AnalyticsService} from '../cyph/services/analytics.service';
 import {ConfigService} from '../cyph/services/config.service';
 import {MainThreadPotassiumService} from '../cyph/services/crypto/main-thread-potassium.service';
+import {PGPService} from '../cyph/services/crypto/pgp.service';
 import {PotassiumService} from '../cyph/services/crypto/potassium.service';
 import {WebSignClientService} from '../cyph/services/crypto/websign-client.service';
 import {CryptocurrencyService} from '../cyph/services/cryptocurrency.service';
@@ -46,11 +47,11 @@ import {FingerprintService} from '../cyph/services/fingerprint.service';
 import {FirebaseDatabaseService} from '../cyph/services/firebase-database.service';
 import {LocalStorageService} from '../cyph/services/local-storage.service';
 import {NotificationService} from '../cyph/services/notification.service';
-import {PGPService} from '../cyph/services/crypto/pgp.service';
 import {QRService} from '../cyph/services/qr.service';
 import {SalesService} from '../cyph/services/sales.service';
 import {StringsService} from '../cyph/services/strings.service';
 import {WindowWatcherService} from '../cyph/services/window-watcher.service';
+import {WebSignService} from '../cyph/services/websign.service';
 import {WorkerService} from '../cyph/services/worker.service';
 import {resolveStaticServices} from '../cyph/util/static-services';
 import {resolvable} from '../cyph/util/wait/resolvable';
@@ -105,6 +106,7 @@ import {AppComponent} from './app.component';
 		PGPService,
 		QRService,
 		WebSignClientService,
+		WebSignService,
 		WorkerService,
 		{
 			provide: DatabaseService,

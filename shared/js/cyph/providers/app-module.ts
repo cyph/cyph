@@ -24,6 +24,7 @@ import {FingerprintService} from '../services/fingerprint.service';
 import {FirebaseDatabaseService} from '../services/firebase-database.service';
 import {ProductTourService} from '../services/product-tour.service';
 import {QRService} from '../services/qr.service';
+import {WebSignService} from '../services/websign.service';
 import {WorkerService} from '../services/worker.service';
 
 /** Providers for CyphAppModule. */
@@ -51,6 +52,7 @@ export const appModuleProviders = [
 	ProductTourService,
 	QRService,
 	WebSignClientService,
+	WebSignService,
 	WorkerService,
 	{
 		provide: 'AccountContactsSearchComponent',
