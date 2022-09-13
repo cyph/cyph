@@ -75,6 +75,7 @@ export class WebSignService extends BaseProvider {
 	 */
 	public async signPendingRelease ({
 		author,
+		id: releaseID,
 		packageName,
 		signingRequest
 	}: IWebSignPendingRelease) : Promise<void> {
@@ -107,6 +108,7 @@ export class WebSignService extends BaseProvider {
 			'webSignSignPendingRelease',
 			{
 				packageName,
+				releaseID,
 				signingRequest: await this.generateSigningRequest(packageData)
 			}
 		);
@@ -126,6 +128,8 @@ export class WebSignService extends BaseProvider {
 		payload,
 		requiredUserSignatures = []
 	}: IWebSignPackageData) : Promise<void> {
+		const timestamp = await getTimestamp();
+
 		await this.accountDatabaseService.callFunction('webSignSubmitRelease', {
 			packageName,
 			requiredUserSignatures,
@@ -135,8 +139,9 @@ export class WebSignService extends BaseProvider {
 				packageName,
 				payload,
 				requiredUserSignatures,
-				timestamp: await getTimestamp()
-			})
+				timestamp
+			}),
+			timestamp
 		});
 	}
 

@@ -384,6 +384,12 @@ service firebase.storage {
 				// match /unreadFiles/{hash} {}
 
 				// match /unreadMessages/{hash} {}
+
+				match /webSign {
+					match /pendingReleases/{packageName}/{hash} {
+						allow write: if false;
+					}
+				}
 			}
 		}
 	}

@@ -396,8 +396,6 @@
 			},
 
 			"tokenKey": {
-				".read": false,
-				".write": false,
 				".validate": "newData.isString()"
 			},
 
@@ -1837,8 +1835,50 @@
 						}
 					},
 
+					"webSign": {
+						"pendingReleases": {
+							".write": false,
+
+							"$pendingReleaseID": {
+								"data": {
+									".validate": "newData.isString()"
+								},
+								"hash": {
+									".validate": "newData.isString()"
+								},
+								"timestamp": {
+									".validate": "newData.val() === now"
+								}
+							}
+						}
+					},
+
 					"$other": {
 						".validate": false
+					}
+				}
+			},
+
+			"webSign": {
+				"authorizedSubmitters": {
+					"$packageName": {
+						"$username": {
+							"timestamp": {
+								".validate": "newData.val() === now"
+							}
+						}
+					}
+				},
+				"pendingReleases": {
+					"$releaseID": {
+						"signingRequests": {
+							"$username": {
+								".validate": "newData.isString()"
+							}
+						},
+						"timestamp": {
+							".validate": "newData.val() === now"
+						}
 					}
 				}
 			}

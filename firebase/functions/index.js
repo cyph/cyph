@@ -181,3 +181,15 @@ exports.verifyEmail = onRequest(async (...args) =>
 exports.verifyEmailConfirm = onRequest(async (...args) =>
 	(await importFunction('verify-email-confirm')).verifyEmailConfirm(...args)
 );
+
+exports.webSignSignPendingRelease = onRequest(async (...args) =>
+	(
+		await importFunction('websign-sign-pending-release')
+	).webSignSignPendingRelease(...args)
+);
+
+exports.webSignSubmitRelease = onRequest(async (...args) =>
+	(await importFunction('websign-submit-release')).webSignSubmitRelease(
+		...args
+	)
+);
