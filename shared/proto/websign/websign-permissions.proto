@@ -1,0 +1,23 @@
+syntax = "proto3";
+
+
+/** WebSign permissions. */
+message WebSignPermissions {
+	/** Map of usernames to metadata objects. */
+	message UserMap {
+		/** @see UserMap */
+		map<string, UserMetadata> users = 1;
+	}
+
+	/** User metadata. */
+	message UserMetadata {
+		/** Timestamp at which this user was added. */
+		required double timestamp = 1;
+	}
+
+	/** Map of package names to usernames of authorized submitters. */
+	map<string, UserMap> packages = 1;
+
+	/** Timestamp of last update. */
+	required double timestamp = 2;
+}

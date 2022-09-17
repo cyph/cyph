@@ -1,6 +1,7 @@
 import {proto, util} from '@cyph/sdk';
-import {admin, database, onCall, setItem} from '../init.js';
+import {admin, database, getItem, onCall, setItem} from '../init.js';
 import {webSignAlgorithm} from '../websign-algorithm.js';
+import {getWebSignPermissions} from '../websign-permissions.js';
 import {webSignReleaseNotify} from '../websign-release-notify.js';
 
 const {AGSEPKISigningRequest, WebSignPendingRelease} = proto;
@@ -28,16 +29,9 @@ export const webSignSubmitRelease = onCall(
 		}
 
 		const author = await getUsername();
-		const authorizedSubmitters =
-			(
-				await database
-					.ref(
-						`${namespace}/webSign/authorizedSubmitters/${packageName}`
-					)
-					.once('value')
-			).val() ?? {};
+		const webSignPermissions = await getWebSignPermissions(getItem);
 
-		if (!authorizedSubmitters[author]) {
+		if (!webSignPermissions.packages[packageName]?.users[author]) {
 			throw new Error(
 				`@${author} is not authorized to submit new release of ${packageName}.`
 			);

@@ -1860,15 +1860,6 @@
 			},
 
 			"webSign": {
-				"authorizedSubmitters": {
-					"$packageName": {
-						"$username": {
-							"timestamp": {
-								".validate": "newData.val() === now"
-							}
-						}
-					}
-				},
 				"pendingReleases": {
 					"$releaseID": {
 						"signingRequests": {
@@ -1879,6 +1870,17 @@
 						"timestamp": {
 							".validate": "newData.val() === now"
 						}
+					}
+				},
+				"permissions": {
+					"data": {
+						".validate": "newData.isString()"
+					},
+					"hash": {
+						".validate": "newData.isString()"
+					},
+					"timestamp": {
+						".validate": "newData.val() === now"
 					}
 				}
 			}

@@ -6,7 +6,7 @@ message AGSEPKIIssuanceHistory {
 	/** Public key hashes. */
 	map<string, bool> publicSigningKeyHashes = 1;
 
-	/** Timestamp. */
+	/** Timestamp of last update. */
 	required double timestamp = 2;
 
 	/** Usernames. */
