@@ -3,9 +3,9 @@
 import {getMeta} from '../modules/base.js';
 const {isCLI} = getMeta(import.meta);
 
-import {potassiumService as potassium, proto, util} from '@cyph/sdk';
+import {proto, util} from '@cyph/sdk';
 import openpgp from 'openpgp';
-import {agsePublicSigningKeys} from '../modules/agse-public-signing-keys.js';
+import {openAGSEPKICertified} from '../modules/agse-pki-certified.js';
 import {initDatabaseService} from '../modules/database-service.js';
 
 const {
@@ -15,54 +15,26 @@ const {
 	AGSEPKICertified,
 	CyphPlan,
 	CyphPlans,
-	PotassiumData,
 	StringProto
 } = proto;
-const {deserialize, normalize} = util;
+const {normalize} = util;
 
 openpgp.config.versionstring = 'Cyph';
 openpgp.config.commentstring = 'https://www.cyph.com';
 
 /* TODO: Refactor this */
 const getCertTimestamp = async (user, namespace, getUserItem) => {
-	const cert = await getUserItem('publicKeyCertificate', AGSEPKICertified);
+	const {csrData, timestamp} = await openAGSEPKICertified({
+		additionalData: `${namespace}:users/${user.username}/publicKeyCertificate`,
+		certified: await getUserItem('publicKeyCertificate', AGSEPKICertified),
+		proto: AGSEPKICert
+	});
 
-	const publicSigningKeys = agsePublicSigningKeys.prod.get(cert.algorithm);
-
-	if (publicSigningKeys === undefined) {
-		throw new Error(
-			`No AGSE public keys found for algorithm ${
-				PotassiumData.SignAlgorithms[cert.algorithm]
-			}.`
-		);
-	}
-
-	if (
-		cert.publicKeys.classical >= publicSigningKeys.classical.length ||
-		cert.publicKeys.postQuantum >= publicSigningKeys.postQuantum.length
-	) {
-		throw new Error('Invalid AGSE-PKI certificate: bad key index.');
-	}
-
-	const certData = await deserialize(
-		AGSEPKICert,
-		await potassium.sign.open(
-			cert.data,
-			await potassium.sign.importPublicKeys(
-				cert.algorithm,
-				publicSigningKeys.classical[cert.publicKeys.classical],
-				publicSigningKeys.postQuantum[cert.publicKeys.postQuantum]
-			),
-			`${namespace}:${user.username}`,
-			false
-		)
-	);
-
-	if (certData.csrData.username !== user.username) {
+	if (csrData.username !== user.username) {
 		throw new Error('Invalid AGSE-PKI certificate: bad username.');
 	}
 
-	return new Date(certData.timestamp).toLocaleString();
+	return new Date(timestamp).toLocaleString();
 };
 
 const processDate = date => ({

@@ -12,6 +12,7 @@ import {
 import fs from 'fs';
 import os from 'os';
 import read from 'read';
+import {openAGSEPKICertified} from '../modules/agse-pki-certified.js';
 import {agsePublicSigningKeys} from '../modules/agse-public-signing-keys.js';
 import {initDatabaseService} from '../modules/database-service.js';
 import {addInviteCode} from './addinvitecode.js';
@@ -250,54 +251,23 @@ export const certSign = async (
 				);
 			}
 
-			const history = await deserialize(
-				AGSEPKICertified,
-				lastIssuanceTimestamp === lastIssuanceTimestampLocal &&
-					fs.existsSync(issuanceHistoryPath) ?
-					fs.readFileSync(issuanceHistoryPath) :
-					await getItem(
-						namespace,
-						'publicKeyCertificateHistory',
-						BinaryProto
-					)
-			);
-
-			const publicSigningKeys = agsePublicSigningKeys.prod.get(
-				history.algorithm
-			);
-
-			if (
-				history.publicKeys.classical >=
-					publicSigningKeys.classical.length ||
-				history.publicKeys.postQuantum >=
-					publicSigningKeys.postQuantum.length
-			) {
-				throw new Error('Invalid AGSE-PKI history: bad key index.');
-			}
-
-			const historyData = await deserialize(
-				AGSEPKIIssuanceHistory,
-				await potassium.sign.openRaw(
-					history.data,
-					await potassium.sign.importPublicKeys(
-						history.algorithm,
-						publicSigningKeys.classical[
-							history.publicKeys.classical
-						],
-						publicSigningKeys.postQuantum[
-							history.publicKeys.postQuantum
-						]
-					),
-					`${namespace}:publicKeyCertificateHistory`,
-					history.algorithm
-				)
-			);
-
-			if (historyData.timestamp !== lastIssuanceTimestamp) {
-				throw new Error('Invalid AGSE-PKI history: bad timestamp.');
-			}
-
-			return historyData;
+			return openAGSEPKICertified({
+				additionalData: `${namespace}:publicKeyCertificateHistory`,
+				certified: await deserialize(
+					AGSEPKICertified,
+					lastIssuanceTimestamp === lastIssuanceTimestampLocal &&
+						fs.existsSync(issuanceHistoryPath) ?
+						fs.readFileSync(issuanceHistoryPath) :
+						await getItem(
+							namespace,
+							'publicKeyCertificateHistory',
+							BinaryProto
+						)
+				),
+				expectedAlgorithm: algorithms.issuanceHistory,
+				expectedTimestamp: lastIssuanceTimestamp,
+				proto: AGSEPKIIssuanceHistory
+			});
 		})().catch(() => ({
 			publicSigningKeyHashes: {},
 			timestamp: 0,
@@ -380,42 +350,15 @@ export const certSign = async (
 		const openCertificate = async username => {
 			const certURL = `users/${username}/publicKeyCertificate`;
 
-			const cert = await getItem(namespace, certURL, AGSEPKICertified);
+			const {csrData} = await openAGSEPKICertified({
+				additionalData: `${namespace}:${certURL}`,
+				certified: await getItem(namespace, certURL, AGSEPKICertified),
+				proto: AGSEPKICert
+			});
 
-			const publicSigningKeys = publicSigningKeysMap.get(cert.algorithm);
-
-			if (publicSigningKeys === undefined) {
-				throw new Error(
-					`No AGSE public keys found for algorithm ${
-						PotassiumData.SignAlgorithms[cert.algorithm]
-					}.`
-				);
+			if (csrData.username !== user.username) {
+				throw new Error('Invalid AGSE-PKI certificate: bad username.');
 			}
-
-			if (
-				cert.publicKeys.classical >=
-					publicSigningKeys.classical.length ||
-				cert.publicKeys.postQuantum >=
-					publicSigningKeys.postQuantum.length
-			) {
-				throw new Error('Invalid AGSE-PKI certificate: bad key index.');
-			}
-
-			const {csrData} = await deserialize(
-				AGSEPKICert,
-				await potassium.sign.openRaw(
-					cert.data,
-					await potassium.sign.importPublicKeys(
-						cert.algorithm,
-						publicSigningKeys.classical[cert.publicKeys.classical],
-						publicSigningKeys.postQuantum[
-							cert.publicKeys.postQuantum
-						]
-					),
-					`${namespace}:${certURL}`,
-					cert.algorithm
-				)
-			);
 
 			return csrData;
 		};
