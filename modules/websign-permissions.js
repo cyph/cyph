@@ -12,7 +12,7 @@ const namespace = 'cyph.ws';
 const additionalData = `${namespace}:webSignPermissions`;
 const url = 'webSign/permissions';
 
-export const getWebSignPermissions = async getItem => {
+export const getWebSignPermissions = async ({getItem}) => {
 	const certified = await getItem(namespace, url, AGSEPKICertified);
 
 	if (certified.algorithm !== algorithm) {
@@ -49,11 +49,11 @@ export const getWebSignPermissions = async getItem => {
 	return webSignPermissions;
 };
 
-export const setWebSignPermissions = async (
+export const setWebSignPermissions = async ({
 	setItem,
 	sign,
 	webSignPermissions
-) =>
+}) =>
 	setItem(
 		namespace,
 		url,
@@ -72,9 +72,31 @@ export const setWebSignPermissions = async (
 		)[0]
 	);
 
-export const updateWebSignPermissions = async (getItem, setItem, sign, f) =>
-	setWebSignPermissions(
+export const updateWebSignPermissions = async ({
+	getItem,
+	init = false,
+	setItem,
+	sign,
+	transform
+}) => {
+	const oldWebSignPermissions = await getWebSignPermissions({getItem}).catch(
+		err => {
+			if (init) {
+				return {};
+			}
+			throw err;
+		}
+	);
+
+	const newWebSignPermissions = await transform(
+		init ? {} : oldWebSignPermissions
+	);
+
+	await setWebSignPermissions({
 		setItem,
 		sign,
-		await f(await getWebSignPermissions(getItem))
-	);
+		webSignPermissions: newWebSignPermissions
+	});
+
+	return {newWebSignPermissions, oldWebSignPermissions};
+};

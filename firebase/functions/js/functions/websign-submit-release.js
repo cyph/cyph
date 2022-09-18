@@ -29,7 +29,7 @@ export const webSignSubmitRelease = onCall(
 		}
 
 		const author = await getUsername();
-		const webSignPermissions = await getWebSignPermissions(getItem);
+		const webSignPermissions = await getWebSignPermissions({getItem});
 
 		if (!webSignPermissions.packages[packageName]?.users[author]) {
 			throw new Error(
