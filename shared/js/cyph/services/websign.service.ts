@@ -50,7 +50,7 @@ export class WebSignService extends BaseProvider {
 		const signature = await this.potassiumService.sign.signDetached(
 			packageData.payload,
 			keyPair.privateKey,
-			packageData.packageName
+			`${this.accountDatabaseService.namespace}:webSign/signatures/${packageData.packageName}`
 		);
 
 		return {
@@ -62,7 +62,7 @@ export class WebSignService extends BaseProvider {
 					signature
 				}),
 				keyPair.privateKey,
-				packageData.packageName
+				`${this.accountDatabaseService.namespace}:webSign/signingRequests/${packageData.packageName}`
 			)
 		};
 	}
@@ -96,12 +96,15 @@ export class WebSignService extends BaseProvider {
 			await this.potassiumService.sign.open(
 				signingRequest.data,
 				authorPublicKey,
-				packageName
+				`${this.accountDatabaseService.namespace}:webSign/signingRequests/${packageName}`
 			)
 		);
 
-		if (packageData.algorithm !== this.algorithm) {
-			throw new Error('Invalid algorithm in package data.');
+		if (
+			packageData.algorithm !== this.algorithm ||
+			packageData.packageName !== packageName
+		) {
+			throw new Error('Invalid package data.');
 		}
 
 		await this.accountDatabaseService.callFunction(
@@ -121,27 +124,16 @@ export class WebSignService extends BaseProvider {
 	 * pending and queued for deployment after all signatures are received.
 	 * Otherwise, the release will be queued for immediate deployment.
 	 */
-	public async submitRelease ({
-		expirationTimestamp,
-		keyPersistence,
-		packageName,
-		payload,
-		requiredUserSignatures = []
-	}: IWebSignPackageData) : Promise<void> {
-		const timestamp = await getTimestamp();
+	public async submitRelease (
+		packageData: IWebSignPackageData
+	) : Promise<void> {
+		packageData.timestamp = await getTimestamp();
 
 		await this.accountDatabaseService.callFunction('webSignSubmitRelease', {
-			packageName,
-			requiredUserSignatures,
-			signingRequest: await this.generateSigningRequest({
-				expirationTimestamp,
-				keyPersistence,
-				packageName,
-				payload,
-				requiredUserSignatures,
-				timestamp
-			}),
-			timestamp
+			packageName: packageData.packageName,
+			requiredUserSignatures: packageData.requiredUserSignatures,
+			signingRequest: await this.generateSigningRequest(packageData),
+			timestamp: packageData.timestamp
 		});
 	}
 

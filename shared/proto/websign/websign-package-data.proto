@@ -15,18 +15,24 @@ message WebSignPackageData {
 	/** @see WebSignKeyPersistence */
 	WebSignKeyPersistence keyPersistence = 3;
 
+	/** Indicates whether this is a mandatory update. */
+	bool mandatoryUpdate = 4;
+
 	/** Package name. */
-	required string packageName = 4;
+	required string packageName = 5;
 
 	/** Executable package content. */
-	required string payload = 5;
+	required string payload = 6;
 
 	/** Usernames of additional users whose signatures are required for release. */
-	repeated string requiredUserSignatures = 6;
+	repeated string requiredUserSignatures = 7;
 
 	/** Signature. */
-	bytes signature = 7;
+	bytes signature = 8;
+
+	/** Map of subresource paths to IPFS hashes. */
+	map<string, string> subresources = 9;
 
 	/** Package timestamp. */
-	required double timestamp = 8;
+	required double timestamp = 10;
 }

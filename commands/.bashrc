@@ -31,6 +31,8 @@ eval $(gpg-agent --daemon 2> /dev/null) &> /dev/null
 
 eval $(ssh-agent 2> /dev/null) &> /dev/null
 
+export GOOGLE_APPLICATION_CREDENTIALS="${HOME}/.cyph/gcloud-credentials.json"
+
 if [ -f ~/google-cloud-sdk/path.bash.inc ] ; then
 	source ~/google-cloud-sdk/path.bash.inc
 fi

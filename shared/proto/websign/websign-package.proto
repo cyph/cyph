@@ -1,0 +1,27 @@
+syntax = "proto3";
+
+import "./websign-package-data.proto";
+
+
+/** Signed WebSign package. */
+message WebSignPackage {
+	message WebSignPackageSignature {
+		/** Signature. */
+		required bytes signature = 1;
+
+		/** Username. */
+		required string username = 2;
+	}
+
+	/** WebSign client hash whitelist. */
+	map<string, bool> hashWhitelist = 1;
+
+	/** @see WebSignPackageData */
+	required WebSignPackageData packageData = 2;
+
+	/** @see WebSignPendingRelease.releaseID */
+	required string releaseID = 3;
+
+	/** Signatures. */
+	repeated WebSignPackageSignature signatures = 4;
+}

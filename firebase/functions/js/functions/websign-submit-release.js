@@ -42,6 +42,7 @@ export const webSignSubmitRelease = onCall(
 		await database
 			.ref(`${namespace}/webSign/pendingReleases/${releaseID}`)
 			.set({
+				packageName,
 				signingRequests: Object.fromEntries([
 					[
 						author,

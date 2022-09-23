@@ -85,6 +85,7 @@
 @fortawesome/fontawesome-svg-core
 @fortawesome/free-brands-svg-icons
 @fortawesome/free-solid-svg-icons
+@google-cloud/datastore
 @google-cloud/storage
 @ignatiusmb/scramble
 @isomorphic-git/lightning-fs

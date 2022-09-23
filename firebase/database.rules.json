@@ -1862,6 +1862,9 @@
 			"webSign": {
 				"pendingReleases": {
 					"$releaseID": {
+						"packageName": {
+							".validate": "newData.isString()"
+						},
 						"signingRequests": {
 							"$username": {
 								".validate": "newData.isString()"

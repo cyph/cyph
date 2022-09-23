@@ -511,7 +511,7 @@ if [ "${websign}" ] ; then
 	if [ "${simple}" ] ; then
 		websignHashWhitelist="{\"$(./commands/websign/bootstraphash.sh)\": true}"
 	else
-		websignHashWhitelist="$(cat websign/hashwhitelist.json)"
+		websignHashWhitelist="$(cat modules/websign-hash-whitelist.json)"
 	fi
 
 	./commands/updaterepos.js

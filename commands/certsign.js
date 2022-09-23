@@ -7,6 +7,10 @@ import {
 	generateUserCertSignInput,
 	processUserCertSignOutput
 } from '../modules/user-certs.js';
+import {
+	generateReleaseSignInput,
+	processReleaseSignOutput
+} from '../modules/websign-releases.js';
 import {addInviteCode} from './addinvitecode.js';
 import {sign} from './sign.js';
 
@@ -17,21 +21,44 @@ export const certSign = async (
 	upgradeCerts
 ) => {
 	try {
+		/* Generate messages to be signed */
+
 		const userCertSignInput = await generateUserCertSignInput({
 			namespace,
 			projectId,
 			upgradeCerts
 		});
 
-		const certifiedMessages = await sign(
-			userCertSignInput.signInputs,
+		const releaseSignInput = await generateReleaseSignInput({
+			namespace,
+			projectId,
+			testSign: userCertSignInput.testSign
+		});
+
+		/* Sign messages */
+
+		const certifiedMessagesQueue = await sign(
+			[...userCertSignInput.signInputs, ...releaseSignInput.signInputs],
 			userCertSignInput.testSign
 		);
+
+		/* Process signed messages */
 
 		await processUserCertSignOutput({
 			...userCertSignInput,
 			addInviteCode,
-			certifiedMessages
+			certifiedMessages: certifiedMessagesQueue.splice(
+				0,
+				userCertSignInput.signInputs.length
+			)
+		});
+
+		await processReleaseSignOutput({
+			...releaseSignInput,
+			certifiedMessages: certifiedMessagesQueue.splice(
+				0,
+				releaseSignInput.signInputs.length
+			)
 		});
 
 		console.log('Certificate signing complete.');
