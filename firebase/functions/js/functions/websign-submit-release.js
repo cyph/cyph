@@ -65,8 +65,8 @@ export const webSignSubmitRelease = onCall(
 					WebSignPendingRelease,
 					{
 						author,
-						id: releaseID,
 						packageName,
+						releaseID,
 						signingRequest,
 						timestamp
 					}

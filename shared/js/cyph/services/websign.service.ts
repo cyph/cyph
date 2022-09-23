@@ -75,8 +75,8 @@ export class WebSignService extends BaseProvider {
 	 */
 	public async signPendingRelease ({
 		author,
-		id: releaseID,
 		packageName,
+		releaseID,
 		signingRequest
 	}: IWebSignPendingRelease) : Promise<void> {
 		if (signingRequest.algorithm !== this.algorithm) {

@@ -8,11 +8,11 @@ message WebSignPendingRelease {
 	/** Username of user who submitted the release. */
 	required string author = 1;
 
-	/** Release ID. */
-	required string id = 2;
-
 	/** Package name. */
-	required string packageName = 3;
+	required string packageName = 2;
+
+	/** Release ID. */
+	required string releaseID = 3;
 
 	/** Signing request containing signed WebSignPackageData. */
 	required AGSEPKISigningRequest signingRequest = 4;

@@ -1,4 +1,4 @@
-import {getMeta} from '../modules/base.js';
+import {getMeta} from './base.js';
 const {__dirname} = getMeta(import.meta);
 
 import childProcess from 'child_process';
