@@ -192,14 +192,14 @@ export const processReleaseSignOutput = async ({
 					},
 					(async () => ({
 						data: {
-							package: await serialize(
+							data: await serialize(
 								AGSEPKICertified,
 								certifiedMessage
 							),
 							timestamp: pendingRelease.packageData.timestamp
 						},
 						key: getDatastoreKey(
-							'WebSignPackage',
+							'WebSignPackageData',
 							pendingRelease.packageData.packageName
 						)
 					}))()

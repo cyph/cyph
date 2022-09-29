@@ -133,6 +133,17 @@ type StripeData struct {
 	SubscriptionItemID string
 }
 
+// WebSignPackageData : WebSign package data
+type WebSignPackageData struct {
+	Data      []byte
+	Timestamp int64
+}
+
+// WebSignPackageTimestamp : Timestamp of a WebSign package
+type WebSignPackageTimestamp struct {
+	Timestamp int64
+}
+
 var empty = struct{}{}
 
 var config = struct {

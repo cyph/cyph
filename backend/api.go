@@ -2,6 +2,7 @@ package main
 
 import (
 	"bytes"
+	"encoding/base64"
 	"encoding/json"
 	"fmt"
 	"io"
@@ -60,6 +61,8 @@ func main() {
 	handleFuncs("/timestamp", false, Handlers{methods.GET: getTimestampHandler})
 	handleFuncs("/waitlist/invite", true, Handlers{methods.GET: rollOutWaitlistInvites})
 	handleFuncs("/warmupcloudfunctions", true, Handlers{methods.GET: warmUpCloudFunctions})
+	handleFuncs("/websign/package/*", false, Handlers{methods.GET: getPackageV2})
+	handleFuncs("/websign/packagetimestamp/*", false, Handlers{methods.GET: getPackageTimestampV2})
 	handleFuncs("/whatismyip", false, Handlers{methods.GET: whatismyip})
 
 	handleFunc("/", false, func(h HandlerArgs) (interface{}, int) {
@@ -1024,6 +1027,25 @@ func getPackage(h HandlerArgs) (interface{}, int) {
 	}, http.StatusOK
 }
 
+func getPackageV2(h HandlerArgs) (interface{}, int) {
+	packageName := h.Request.URL.Path[17:]
+
+	packageData := &WebSignPackageData{}
+	packageDataKey := datastoreKey("WebSignPackageData", packageName)
+
+	if err := h.Datastore.Get(h.Context, packageDataKey, packageData); err != nil {
+		return "package not found", http.StatusBadRequest
+	}
+
+	_, continentCode, _, _, _, _, _, _ := geolocate(h)
+
+	return map[string]interface{}{
+		"data":      base64.StdEncoding.EncodeToString(packageData.Data),
+		"gateways":  getIPFSGateways(continentCode, isIPv6Request(h)),
+		"timestamp": packageData.Timestamp,
+	}, http.StatusOK
+}
+
 func getPackageTimestamp(h HandlerArgs) (interface{}, int) {
 	packageName := h.Request.URL.Path[18:]
 	packageData, ok := packages[packageName]
@@ -1033,6 +1055,19 @@ func getPackageTimestamp(h HandlerArgs) (interface{}, int) {
 	}
 
 	return packageData.Timestamp, http.StatusOK
+}
+
+func getPackageTimestampV2(h HandlerArgs) (interface{}, int) {
+	packageName := h.Request.URL.Path[26:]
+
+	packageTimestamp := &WebSignPackageTimestamp{}
+	packageTimestampKey := datastoreKey("WebSignPackageTimestamp", packageName)
+
+	if err := h.Datastore.Get(h.Context, packageTimestampKey, packageTimestamp); err != nil {
+		return "package not found", http.StatusBadRequest
+	}
+
+	return packageTimestamp.Timestamp, http.StatusOK
 }
 
 func getTimestampHandler(h HandlerArgs) (interface{}, int) {
