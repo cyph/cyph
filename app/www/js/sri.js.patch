@@ -19,13 +19,16 @@
 > 				Promise.reject('ipfs-fetch unavailable.')
 > 			;
 > 
-123,132c142,165
+123,135c142,168
 < 			function fetchIPFSResource () {
 < 				return fetchWithTimeout(
-< 					packageMetadata.gateways[packageGatewayIndex].replace(
-< 						':hash',
-< 						ipfsHash
-< 					),
+< 					packageGatewayIndex < 0 ?
+< 						'ipfs://' + ipfsHash :
+< 						packageMetadata.gateways[packageGatewayIndex].replace(
+< 							':hash',
+< 							ipfsHash
+< 						)
+< 					,
 < 					undefined,
 < 					'blob',
 < 					timeout
@@ -34,10 +37,13 @@
 > 			function fetchIPFSResource (fallback) {
 > 				var gatewayFetchResult	= !fallback ?
 > 					fetchWithTimeout(
-> 						packageMetadata.gateways[packageGatewayIndex].replace(
-> 							':hash',
-> 							ipfsHash
-> 						),
+> 						packageGatewayIndex < 0 ?
+> 							'ipfs://' + ipfsHash :
+> 							packageMetadata.gateways[packageGatewayIndex].replace(
+> 								':hash',
+> 								ipfsHash
+> 							)
+> 						,
 > 						undefined,
 > 						'blob',
 > 						timeout
@@ -55,7 +61,7 @@
 > 						]) :
 > 						ipfsFetchResult
 > 				).then(function (bytes) {
-166a200,202
+169a203,205
 > 						else if (ipfsFetch && !fallback) {
 > 							return fetchIPFSResource(true);
 > 						}

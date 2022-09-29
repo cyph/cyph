@@ -118,14 +118,17 @@ function webSignSRI_Process (packageMetadata) {
 				throw new Error('IPFS hash not found.');
 			}
 
-			var packageGatewayIndex	= 0;
+			var packageGatewayIndex	= -1;
 
 			function fetchIPFSResource () {
 				return fetchWithTimeout(
-					packageMetadata.gateways[packageGatewayIndex].replace(
-						':hash',
-						ipfsHash
-					),
+					packageGatewayIndex < 0 ?
+						'ipfs://' + ipfsHash :
+						packageMetadata.gateways[packageGatewayIndex].replace(
+							':hash',
+							ipfsHash
+						)
+					,
 					undefined,
 					'blob',
 					timeout

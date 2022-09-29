@@ -1,6 +1,6 @@
 default-src 'self';
 child-src 'self' blob:;
-connect-src 'self' blob: data: https://* wss://*;
+connect-src 'self' blob: data: https://* ipfs://* wss://*;
 font-src 'self' data:;
 form-action https://api.cyph.com;
 frame-src 'self';
