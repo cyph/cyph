@@ -84,7 +84,7 @@
 > 		delete storage.webSignPackageName;
 > 		delete storage.webSignPackageTimestamp;
 > 	}
-166,203c184,186
+213,250c231,233
 < /* Before finishing, perform self-administered
 < 	integrity check on WebSign bootstrap */
 < catch(function () {
@@ -126,41 +126,48 @@
 ---
 > /* Successfully execute package */
 > then(function (o) {
-> 	var headHTML	= o.package.split('<head>')[1].split('</head>')[0];
-205,209c188,189
+> 	var headHTML	= o.packageData.payload.split('<head>')[1].split('</head>')[0];
+252,259c235,236
 < 	if (!hashWhitelist[storage.webSignHash]) {
 < 		throw {
 < 			webSignPanic: true,
 < 			bootstrapText: bootstrapText
 < 		};
+< 	}
+< 	else if (o) {
+< 		return o;
 ---
 > 	if (device.platform === 'iOS') {
 > 		headHTML	= headHTML.replace('href="/"', 'href="#"');
-211,216d190
-< 	else if (o) {
-< 		return o;
-< 	}
-< 
+262,267c239
 < 	throw null;
 < }).
-218,220c192
+< 
 < /* Successfully execute package */
 < then(function (o) {
-< 	document.head.innerHTML	= o.package.split('<head>')[1].split('</head>')[0];
+< 	document.head.innerHTML	= o.packageData.payload.split('<head>')[1].split('</head>')[0];
 ---
 > 	document.head.innerHTML	= headHTML;
-230,267c202,206
+281,286c253,257
 < catch(function (err) {
 < 	var messageElement;
 < 
 < 	if (!err || !err.webSignPanic) {
 < 		messageElement					= document.getElementById('websign-load-message');
 < 		messageElement.innerText		= config.abortText;
-< 	}
+---
+> catch(function () {
+> 	try {
+> 		if (cordova && cordova.plugins && cordova.plugins.backgroundMode) {
+> 			cordova.plugins.backgroundMode.disable();
+> 		}
+288,290c259
 < 	else {
 < 		messageElement					= document.getElementById('panic-message');
 < 		messageElement.style.display	= 'block';
-< 
+---
+> 	catch (_) {}
+292,319c261,262
 < 		/* Also try to warn us, though in a serious attack this may be blocked */
 < 		fetchRetry('https://mandrillapp.com/api/1.0/messages/send.json', {
 < 			method: 'POST',
@@ -188,18 +195,11 @@
 < 				}
 < 			})
 < 		});
+< 	}
 ---
-> catch(function () {
-> 	try {
-> 		if (cordova && cordova.plugins && cordova.plugins.backgroundMode) {
-> 			cordova.plugins.backgroundMode.disable();
-> 		}
-268a208,211
-> 	catch (_) {}
-> 
 > 	var messageElement			= document.getElementById('websign-load-message');
 > 	messageElement.innerText	= config.abortText;
-282c225
+333c276
 < })();
 ---
 > }); });

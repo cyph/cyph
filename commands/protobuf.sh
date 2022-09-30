@@ -21,6 +21,14 @@ for f in $(ls shared/proto/bundles/*.proto) ; do
 	touch "${outputDirectory}/types.js"
 	echo "export * from './types';" > "${outputDirectory}/index.d.ts"
 
+	node -e "fs.writeFileSync(
+		'${outputDirectory}/index.js',
+		fs.readFileSync('${outputDirectory}/index.js').toString().replace(
+			/factory\(require\(\"protobufjs\/minimal\"\)\);/,
+			'\$1\n\n    /* Global */ else\n        factory(global.protobuf);'
+		)
+	)"
+
 	cp "${outputDirectory}/index.js" "${outputDirectory}/index.web.js"
 
 	echo 'const module = {exports: {}};' > "${outputDirectory}/index.node.js"

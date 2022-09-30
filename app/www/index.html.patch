@@ -63,12 +63,15 @@
 < 			</div>
 ---
 > 			<div class='logo-animation'></div>
-107,117c64,79
+107,120c64,82
 < 		<script src='/js/init.js'></script>
 < 		<script src='/lib/dexie.js'></script>
 < 		<script src='/lib/supersphincs.js'></script>
 < 		<script src='/lib/brotli.js'></script>
 < 		<script src='/lib/fetch.js'></script>
+< 		<script src='/lib/protobuf.js'></script>
+< 		<script src='/lib/websign-proto.js'></script>
+< 		<script src='/js/proto.js'></script>
 < 		<script src='/js/storage.js'></script>
 < 		<script src='/js/caching-fetch.js'></script>
 < 		<script src='/js/sri.js'></script>
@@ -84,6 +87,9 @@
 > 		<script src='lib/supersphincs.js'></script>
 > 		<script src='lib/brotli.js'></script>
 > 		<script src='lib/fetch.js'></script>
+> 		<script src='lib/protobuf.js'></script>
+> 		<script src='lib/websign-proto.js'></script>
+> 		<script src='js/proto.js'></script>
 > 		<script src='js/storage.js'></script>
 > 		<script src='js/caching-fetch.js'></script>
 > 		<script src='js/sri.js'></script>

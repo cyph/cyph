@@ -24,7 +24,7 @@
 < 				return fetchWithTimeout(
 < 					packageGatewayIndex < 0 ?
 < 						'ipfs://' + ipfsHash :
-< 						packageMetadata.gateways[packageGatewayIndex].replace(
+< 						options.gateways[packageGatewayIndex].replace(
 < 							':hash',
 < 							ipfsHash
 < 						)
@@ -39,7 +39,7 @@
 > 					fetchWithTimeout(
 > 						packageGatewayIndex < 0 ?
 > 							'ipfs://' + ipfsHash :
-> 							packageMetadata.gateways[packageGatewayIndex].replace(
+> 							options.gateways[packageGatewayIndex].replace(
 > 								':hash',
 > 								ipfsHash
 > 							)

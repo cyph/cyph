@@ -88,7 +88,7 @@ const getPendingRelease = async (releaseID, {packageName, signingRequests}) => {
 						throw new Error('Invalid package data.');
 					}
 
-					return {packageData, username};
+					return {packageData, publicKey, username};
 				}
 			)
 		);
@@ -105,6 +105,7 @@ const getPendingRelease = async (releaseID, {packageName, signingRequests}) => {
 		}
 
 		const signatures = packageDataObjects.map(o => ({
+			publicKey: o.publicKey,
 			signature: o.packageData.signature,
 			username: o.username
 		}));

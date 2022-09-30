@@ -24,9 +24,9 @@ function fromBlob (blob) {
 	});
 }
 
-function webSignSRI (packageMetadata) {
+function webSignSRI (options) {
 	new MutationObserver(function () {
-		webSignSRI_Process(packageMetadata);
+		webSignSRI_Process(options);
 	}).observe(document, {
 		childList: true,
 		attributes: false,
@@ -34,10 +34,10 @@ function webSignSRI (packageMetadata) {
 		subtree: true
 	});
 
-	return webSignSRI_Process(packageMetadata);
+	return webSignSRI_Process(options);
 }
 
-function webSignSRI_Process (packageMetadata) {
+function webSignSRI_Process (options) {
 	var outputIndex		= 0;
 	var outputElements	= [];
 
@@ -108,9 +108,9 @@ function webSignSRI_Process (packageMetadata) {
 			return content;
 		}).catch(function () {
 			var subresource	= path.replace(/^\//, '');
-			var ipfsHash	= packageMetadata.package.subresources[subresource];
+			var ipfsHash	= options.subresources[subresource];
 			var timeout		=
-				(packageMetadata.package.subresourceTimeouts || {})[subresource] ||
+				options.subresourceTimeouts[subresource] ||
 				60000
 			;
 
@@ -124,7 +124,7 @@ function webSignSRI_Process (packageMetadata) {
 				return fetchWithTimeout(
 					packageGatewayIndex < 0 ?
 						'ipfs://' + ipfsHash :
-						packageMetadata.gateways[packageGatewayIndex].replace(
+						options.gateways[packageGatewayIndex].replace(
 							':hash',
 							ipfsHash
 						)
@@ -164,7 +164,7 @@ function webSignSRI_Process (packageMetadata) {
 				}).catch(function (err) {
 					++packageGatewayIndex;
 
-					if (packageMetadata.gateways.length > packageGatewayIndex) {
+					if (options.gateways.length > packageGatewayIndex) {
 						return fetchIPFSResource();
 					}
 					else {

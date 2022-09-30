@@ -51,7 +51,7 @@
 > 	catch (_) {
 > 		alert('Too bad. Using master anyway.');
 > 		packageName	= 'master.cyph.app';
-65a93,108
+70a98,113
 > (alternateTestEnvironment ?
 > 
 > 
@@ -68,38 +68,46 @@
 > }) :
 > 
 > 
-182c225,228
+229c272,275
 < }).
 ---
 > })
 > 
 > 
 > ).
-186a233
-> 	var bodyHTML	= o.package.split('<body>')[1].split('</body>')[0];
-192,193c239,249
+233a280
+> 	var bodyHTML	= o.packageData.payload.split('<body>')[1].split('</body>')[0];
+239,240c286,298
 < 	document.head.innerHTML	= headHTML;
-< 	document.body.innerHTML	= o.package.split('<body>')[1].split('</body>')[0];
+< 	document.body.innerHTML	= o.packageData.payload.split('<body>')[1].split('</body>')[0];
 ---
 > 	if (!alternateTestEnvironment) {
 > 		document.head.innerHTML	= headHTML;
 > 		document.body.innerHTML	= bodyHTML;
 > 
-> 		return webSignSRI(o.packageMetadata).catch(function (err) {
+> 		return webSignSRI({
+> 			gateways: o.packageMetadata.gateways || [],
+> 			subresources: o.packageData.subresources || {},
+> 			subresourceTimeouts: o.packageData.subresourceTimeouts || {}
+> 		}).catch(function (err) {
 > 			document.head.innerHTML		= '';
 > 			document.body.textContent	= err;
 > 		});
 > 	}
-> 
-> 	var scriptRegex		= /<script[\s$>].*?<\/script>/g;
-195,198c251,325
-< 	webSignSRI(o.packageMetadata).catch(function (err) {
+242,249c300,376
+< 	webSignSRI({
+< 		gateways: o.packageMetadata.gateways || [],
+< 		subresources: o.packageData.subresources || {},
+< 		subresourceTimeouts: o.packageData.subresourceTimeouts || {}
+< 	}).catch(function (err) {
 < 		document.head.innerHTML		= '';
 < 		document.body.textContent	= err;
 < 	});
 ---
+> 	var scriptRegex		= /<script[\s$>].*?<\/script>/g;
+> 
 > 	var scriptsPromise	= Promise.all(
-> 		(o.package.match(scriptRegex) || []).map(function (s) {
+> 		(o.packageData.payload.match(scriptRegex) || []).map(function (s) {
 > 			return fetch(
 > 				alternateTestEnvironmentOrigin +
 > 				'/' +
@@ -113,7 +121,7 @@
 > 	var stylesheetRegex		= /<link rel="stylesheet".*?>/g;
 > 
 > 	var stylesheetsPromise	= Promise.all(
-> 		(o.package.match(stylesheetRegex) || []).map(function (s) {
+> 		(o.packageData.payload.match(stylesheetRegex) || []).map(function (s) {
 > 			return fetch(
 > 				alternateTestEnvironmentOrigin +
 > 				'/' +

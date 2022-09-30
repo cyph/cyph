@@ -33,6 +33,9 @@ message WebSignPackageData {
 	/** Map of subresource paths to IPFS hashes. */
 	map<string, string> subresources = 9;
 
+	/** Map of subresource paths to timeout values. */
+	map<string, uint32> subresourceTimeouts = 10;
+
 	/** Package timestamp. */
-	required double timestamp = 10;
+	required double timestamp = 11;
 }

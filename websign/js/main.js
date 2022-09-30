@@ -45,6 +45,11 @@ if (packageNameSplit.length === 2 && packageNameSplit[0] === 'cyph') {
 
 var oldPackageMetadata	= JSON.parse(storage.webSignPackageMetadata || '{}');
 
+/* Clear out legacy-formatted data */
+if (oldPackageMetadata.package) {
+	oldPackageMetadata	= {};
+}
+
 /* Get package */
 Promise.resolve().then(function () {
 	function getPackage () {
@@ -90,30 +95,32 @@ Promise.resolve().then(function () {
 
 /* Open package */
 then(function (packageMetadata) {
-	var packageLines	= packageMetadata.package.root.trim().split('\n');
+	var certifiedMessage	= proto.AGSEPKICertified.decode(
+		superSphincs._sodiumUtil.from_base64(packageMetadata.data)
+	);
 
-	var packageData		= {
-		signed: packageLines[0],
-		rsaKey: config.publicKeys.rsa[
-			parseInt(packageLines[1], 10)
+	if (certifiedMessage.algorithm !== config.algorithm) {
+		throw new Error('Invalid signing algorithm.');
+	}
+
+	var publicKeys			= {
+		classical: config.publicKeys.classical[
+			certifiedMessage.publicKeys.classical
 		],
-		sphincsKey: config.publicKeys.sphincs[
-			parseInt(packageLines[2], 10)
+		postQuantum: config.publicKeys.postQuantum[
+			certifiedMessage.publicKeys.postQuantum
 		]
 	};
 
-	if (!packageData.rsaKey || !packageData.sphincsKey) {
+	if (!publicKeys.classical || !publicKeys.postQuantum) {
 		throw new Error('No valid public key specified.');
 	}
 
 	return Promise.all([
 		packageMetadata,
-		packageData.signed,
+		certifiedMessage.data,
 		superSphincs.importKeys({
-			public: {
-				rsa: packageData.rsaKey,
-				sphincs: packageData.sphincsKey
-			}
+			public: publicKeys
 		})
 	]);
 }).then(function (results) {
@@ -123,44 +130,84 @@ then(function (packageMetadata) {
 
 	return Promise.all([
 		packageMetadata,
-		/* Temporary transitionary step */
-		superSphincs.openString(
+		superSphincs.open(
 			signed,
-			publicKey
-		).catch(function () {
-			return superSphincs.openString(
-				signed,
-				publicKey,
-				new Uint8Array(0)
-			);
-		})
+			publicKey,
+			config.additionalDataPackagePrefix + packageName
+		)
 	]);
 }).then(function (results) {
 	var packageMetadata	= results[0];
-	var opened			= JSON.parse(results[1]);
+	var opened			= proto.WebSignPackage.decode(results[1]);
 
 	/* Reject if expired or has invalid timestamp */
 	if (
-		Date.now() > opened.expires ||
-		packageMetadata.timestamp !== opened.timestamp ||
+		opened.packageData.algorithm !== config.algorithm ||
+		Date.now() > opened.packageData.expirationTimestamp ||
+		packageMetadata.timestamp !== opened.packageData.timestamp ||
 		(
-			packageName !== opened.packageName &&
-			packageName !== opened.packageName.replace(/\.(app|ws)$/, '')
+			packageName !== opened.packageData.packageName &&
+			packageName !== opened.packageData.packageName.replace(/\.(app|ws)$/, '')
 		)
 	) {
 		throw new Error('Stale or invalid data.');
 	}
 
-	storage.webSignExpires			= opened.expires;
+	storage.webSignExpires			= opened.packageData.expirationTimestamp;
 	storage.webSignHashWhitelist	= JSON.stringify(opened.hashWhitelist);
 	storage.webSignPackageMetadata	= JSON.stringify(packageMetadata);
-	storage.webSignPackageName		= opened.packageName;
-	storage.webSignPackageTimestamp	= opened.timestamp;
+	storage.webSignPackageName		= opened.packageData.packageName;
+	storage.webSignPackageTimestamp	= opened.packageData.timestamp;
 
-	return {
-		package: opened.package,
-		packageMetadata: packageMetadata
-	};
+	var webSignKeyPersistenceTOFU	=
+		opened.packageData.keyPersistence === proto.WebSignKeyPersistence.TOFU
+	;
+	if (webSignKeyPersistenceTOFU) {
+		storage.webSignKeyPersistenceTOFU	= true;
+	}
+	else {
+		webSignKeyPersistenceTOFU			= storage.webSignKeyPersistenceTOFU === 'true';
+	}
+
+	var secondarySignaturesValidPromise	= Promise.all(
+		opened.signatures.map(function (packageSignature) {
+			var publicKey	= packageSignature.publicKey;
+			
+			if (webSignKeyPersistenceTOFU) {
+				var publicKeyStorageKey	= 'webSignPublicKey_' + packageSignature.username;
+
+				publicKey	= superSphincs._sodiumUtil.from_base64(
+					storage[publicKeyStorageKey]
+				);
+
+				if (!publicKey || publicKey.length < 1) {
+					publicKey						= packageSignature.publicKey;
+					storage[publicKeyStorageKey]	= superSphincs._sodiumUtil.to_base64(
+						publicKey
+					);
+				}
+			}
+
+			return superSphincs.verifyDetached(
+				packageSignature.signature,
+				opened.packageData.payload,
+				publicKey,
+				config.additionalDataSignaturePrefix + packageName
+			).then(function (secondarySignatureIsValid) {
+				if (!secondarySignatureIsValid) {
+					throw new Error(
+						'Invalid secondary signature: @' + packageSignature.username
+					);
+				}
+			});
+		})
+	);
+
+	return Promise.all([
+		opened.packageData,
+		packageMetadata,
+		secondarySignaturesValidPromise
+	]);
 }).
 
 /* Before finishing, perform self-administered
@@ -217,10 +264,14 @@ catch(function () {
 
 /* Successfully execute package */
 then(function (o) {
-	document.head.innerHTML	= o.package.split('<head>')[1].split('</head>')[0];
-	document.body.innerHTML	= o.package.split('<body>')[1].split('</body>')[0];
+	document.head.innerHTML	= o.packageData.payload.split('<head>')[1].split('</head>')[0];
+	document.body.innerHTML	= o.packageData.payload.split('<body>')[1].split('</body>')[0];
 
-	webSignSRI(o.packageMetadata).catch(function (err) {
+	webSignSRI({
+		gateways: o.packageMetadata.gateways || [],
+		subresources: o.packageData.subresources || {},
+		subresourceTimeouts: o.packageData.subresourceTimeouts || {}
+	}).catch(function (err) {
 		document.head.innerHTML		= '';
 		document.body.textContent	= err;
 	});

@@ -1,0 +1,5 @@
+syntax = "proto3";
+
+
+import "../agse/agse-pki-certified.proto";
+import "../websign/websign-package.proto";

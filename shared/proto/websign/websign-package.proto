@@ -6,11 +6,14 @@ import "./websign-package-data.proto";
 /** Signed WebSign package. */
 message WebSignPackage {
 	message WebSignPackageSignature {
+		/** User public signing key. */
+		required bytes publicKey = 1;
+
 		/** Signature. */
-		required bytes signature = 1;
+		required bytes signature = 2;
 
 		/** Username. */
-		required string username = 2;
+		required string username = 3;
 	}
 
 	/** WebSign client hash whitelist. */
