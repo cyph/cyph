@@ -48,6 +48,8 @@
 		/* PotassiumData.SignAlgorithms.V2Hardened */ 6: superSphincs
 	};
 
+	const totalKeys = args.numActiveKeys + args.numBackupKeys;
+
 	let newKeyPairsGenerated = false;
 
 	const newKeyPair = async algorithm => {
@@ -69,7 +71,7 @@
 
 	const signingKeyrings = await Promise.all(
 		!args.keyBackupPath ?
-			Array(args.numActiveKeys + args.numBackupKeys)
+			Array(totalKeys)
 				.fill(0)
 				.map(async () =>
 					Object.fromEntries(
@@ -137,6 +139,8 @@
 						{/* PotassiumData.SignAlgorithms.V1 */ 2: o} :
 						o
 				)
+				.concat(new Array(totalKeys).fill({}))
+				.slice(0, totalKeys)
 				.map(async o =>
 					Object.fromEntries(
 						await Promise.all(
