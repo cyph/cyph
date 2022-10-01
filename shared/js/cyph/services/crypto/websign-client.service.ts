@@ -179,6 +179,113 @@ export class WebSignClientService extends BaseProvider {
 		}
 	);
 
+	/** @ignore */
+	private async getLatestPackage (
+		packageName: string,
+		packageTimestamp: number
+	) : Promise<{
+		expirationTimestamp: number;
+		hashWhitelist: Record<string, true>;
+		html: string;
+		mandatoryUpdate: boolean;
+		packageMetadata: {
+			gateways: string[];
+			package: {
+				root: string;
+				subresources: Record<string, string>;
+				subresourceTimeouts: Record<string, number>;
+			};
+			timestamp: number;
+		};
+	}> {
+		const res = await requestJSON({
+			url: `${this.envService.baseUrl}package/${packageName}`
+		});
+
+		if (
+			typeof res !== 'object' ||
+			!res ||
+			res.timestamp !== packageTimestamp ||
+			typeof res.package !== 'object' ||
+			!res.package ||
+			typeof res.package.root !== 'string' ||
+			!res.package.root ||
+			typeof res.package.subresources !== 'object' ||
+			!res.package.subresources ||
+			typeof res.package.subresourceTimeouts !== 'object' ||
+			!res.package.subresourceTimeouts
+		) {
+			throw new Error('Failed to fetch package data.');
+		}
+
+		const packageMetadata: {
+			gateways: string[];
+			package: {
+				root: string;
+				subresources: Record<string, string>;
+				subresourceTimeouts: Record<string, number>;
+			};
+			timestamp: number;
+		} = res;
+
+		const packageLines = packageMetadata.package.root.trim().split('\n');
+
+		const packageData = {
+			publicKeys: {
+				classical:
+					this.publicSigningKeys.classical[toInt(packageLines[1])],
+				postQuantum:
+					this.publicSigningKeys.postQuantum[toInt(packageLines[2])]
+			},
+			signed: packageLines[0]
+		};
+
+		if (
+			!packageData.publicKeys.classical ||
+			!packageData.publicKeys.postQuantum
+		) {
+			throw new Error('No valid public key specified.');
+		}
+
+		const {publicKey} = await superSphincsLegacy.importKeys({
+			public: packageData.publicKeys
+		});
+
+		const opened: {
+			expires: number;
+			hashWhitelist: Record<string, true>;
+			mandatoryUpdate?: boolean;
+			package: string;
+			packageName: string;
+			timestamp: number;
+		} = JSON.parse(
+			await superSphincsLegacy
+				.openString(packageData.signed, publicKey)
+				.catch(async () =>
+					superSphincsLegacy.openString(
+						packageData.signed,
+						publicKey,
+						new Uint8Array(0)
+					)
+				)
+		);
+
+		if (opened.packageName !== packageName) {
+			throw new Error('Package name mismatch.');
+		}
+		if (opened.timestamp !== packageMetadata.timestamp) {
+			throw new Error('Package timestamp mismatch.');
+		}
+
+		return {
+			expirationTimestamp: opened.expires,
+			hashWhitelist: opened.hashWhitelist,
+			html: opened.package,
+			mandatoryUpdate: opened.mandatoryUpdate === true,
+			packageMetadata
+		};
+	}
+
 	/** Fetches data from IPFS. */
 	private async ipfsFetch (
 		ipfsHash: string,
@@ -319,7 +426,9 @@ export class WebSignClientService extends BaseProvider {
 			timestamp: number;
 		};
 	}> {
-		if (this.packageName === undefined) {
+		const packageName = this.packageName;
+
+		if (packageName === undefined) {
 			throw new Error('Invalid current package name.');
 		}
 
@@ -335,100 +444,7 @@ export class WebSignClientService extends BaseProvider {
 		return getOrSetDefaultAsync(
 			this.packageCache,
 			packageTimestamp,
-			async () => {
-				const res = await requestJSON({
-					url: `${this.envService.baseUrl}package/${this.packageName}`
-				});
-
-				if (
-					typeof res !== 'object' ||
-					!res ||
-					res.timestamp !== packageTimestamp ||
-					typeof res.package !== 'object' ||
-					!res.package ||
-					typeof res.package.root !== 'string' ||
-					!res.package.root ||
-					typeof res.package.subresources !== 'object' ||
-					!res.package.subresources ||
-					typeof res.package.subresourceTimeouts !== 'object' ||
-					!res.package.subresourceTimeouts
-				) {
-					throw new Error('Failed to fetch package data.');
-				}
-
-				const packageMetadata: {
-					gateways: string[];
-					package: {
-						root: string;
-						subresources: Record<string, string>;
-						subresourceTimeouts: Record<string, number>;
-					};
-					timestamp: number;
-				} = res;
-
-				const packageLines = packageMetadata.package.root
-					.trim()
-					.split('\n');
-
-				const packageData = {
-					publicKeys: {
-						classical:
-							this.publicSigningKeys.classical[
-								toInt(packageLines[1])
-							],
-						postQuantum:
-							this.publicSigningKeys.postQuantum[
-								toInt(packageLines[2])
-							]
-					},
-					signed: packageLines[0]
-				};
-
-				if (
-					!packageData.publicKeys.classical ||
-					!packageData.publicKeys.postQuantum
-				) {
-					throw new Error('No valid public key specified.');
-				}
-
-				const {publicKey} = await superSphincsLegacy.importKeys({
-					public: packageData.publicKeys
-				});
-
-				const opened: {
-					expires: number;
-					hashWhitelist: Record<string, true>;
-					mandatoryUpdate?: boolean;
-					package: string;
-					packageName: string;
-					timestamp: number;
-				} = JSON.parse(
-					await superSphincsLegacy
-						.openString(packageData.signed, publicKey)
-						.catch(async () =>
-							superSphincsLegacy.openString(
-								packageData.signed,
-								publicKey,
-								new Uint8Array(0)
-							)
-						)
-				);
-
-				if (opened.packageName !== this.packageName) {
-					throw new Error('Package name mismatch.');
-				}
-				if (opened.timestamp !== packageMetadata.timestamp) {
-					throw new Error('Package timestamp mismatch.');
-				}
-
-				return {
-					expirationTimestamp: opened.expires,
-					hashWhitelist: opened.hashWhitelist,
-					html: opened.package,
-					mandatoryUpdate: opened.mandatoryUpdate === true,
-					packageMetadata
-				};
-			}
+			async () => this.getLatestPackage(packageName, packageTimestamp)
 		);
 	}
 
