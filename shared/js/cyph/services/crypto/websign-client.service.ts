@@ -5,16 +5,23 @@ import {Dexie} from 'dexie';
 import memoize from 'lodash-es/memoize';
 import {BehaviorSubject} from 'rxjs';
 import {skip} from 'rxjs/operators';
-import {superSphincs as superSphincsLegacy} from 'supersphincs-legacy/dist/old-api.js';
+import {superSphincs} from 'supersphincs';
 import {agsePublicSigningKeys} from '../../account/agse-public-signing-keys';
 import {BaseProvider} from '../../base-provider';
 import {MaybePromise} from '../../maybe-promise-type';
-import {PotassiumData} from '../../proto';
+import {
+	AGSEPKICertified,
+	IWebSignPackage,
+	PotassiumData,
+	WebSignKeyPersistence,
+	WebSignPackage
+} from '../../proto';
 import {toInt} from '../../util/formatting';
 import {getOrSetDefaultAsync} from '../../util/get-or-set-default';
 import {debugLogError} from '../../util/log';
 import {observableAll} from '../../util/observable-all';
 import {request, requestBytes, requestJSON} from '../../util/request';
+import {deserialize} from '../../util/serialization/proto';
 import {watchDateChange} from '../../util/time';
 import {reloadWindow} from '../../util/window';
 import {EnvService} from '../env.service';
@@ -26,6 +33,13 @@ import {PotassiumService} from './potassium.service';
  */
 @Injectable()
 export class WebSignClientService extends BaseProvider {
+	/** Copy of required WebSign config.js values. */
+	private readonly config = {
+		additionalDataPackagePrefix: 'cyph.ws:webSign/packages/',
+		additionalDataSignaturePrefix: 'cyph.ws:webSign/signatures/',
+		algorithm: PotassiumData.SignAlgorithms.V2Hardened
+	};
+
 	/** WebSign Brotli decoder instance. */
 	private readonly brotliDecode:
 		| ((compressed: Uint8Array) => Uint8Array)
@@ -59,25 +73,18 @@ export class WebSignClientService extends BaseProvider {
 	private readonly packageCache = new Map<
 		number,
 		{
-			expirationTimestamp: number;
-			hashWhitelist: Record<string, true>;
-			html: string;
-			mandatoryUpdate: boolean;
 			packageMetadata: {
+				data: string;
 				gateways: string[];
-				package: {
-					root: string;
-					subresources: Record<string, string>;
-					subresourceTimeouts: Record<string, number>;
-				};
 				timestamp: number;
 			};
+			webSignPackage: IWebSignPackage;
 		}
 	>();
 
 	/** Public signing keys. */
 	private readonly publicSigningKeys = agsePublicSigningKeys.prod.get(
-		PotassiumData.SignAlgorithms.V1
+		this.config.algorithm
 	) ?? {classical: [], postQuantum: []};
 
 	/** WebSign client local storage. */
@@ -154,8 +161,9 @@ export class WebSignClientService extends BaseProvider {
 
 					try {
 						const {
-							mandatoryUpdate,
-							packageMetadata: {timestamp}
+							webSignPackage: {
+								packageData: {mandatoryUpdate, timestamp}
+							}
 						} = await this.cachePackage();
 
 						if (packageTimestamp >= timestamp) {
@@ -184,105 +192,137 @@ export class WebSignClientService extends BaseProvider {
 		packageName: string,
 		packageTimestamp: number
 	) : Promise<{
-		expirationTimestamp: number;
-		hashWhitelist: Record<string, true>;
-		html: string;
-		mandatoryUpdate: boolean;
 		packageMetadata: {
+			data: string;
 			gateways: string[];
-			package: {
-				root: string;
-				subresources: Record<string, string>;
-				subresourceTimeouts: Record<string, number>;
-			};
 			timestamp: number;
 		};
+		webSignPackage: IWebSignPackage;
 	}> {
 		const res = await requestJSON({
-			url: `${this.envService.baseUrl}package/${packageName}`
+			url: `${this.envService.baseUrl}websign/package/${packageName}`
 		});
 
 		if (
 			typeof res !== 'object' ||
 			!res ||
-			res.timestamp !== packageTimestamp ||
-			typeof res.package !== 'object' ||
-			!res.package ||
-			typeof res.package.root !== 'string' ||
-			!res.package.root ||
-			typeof res.package.subresources !== 'object' ||
-			!res.package.subresources ||
-			typeof res.package.subresourceTimeouts !== 'object' ||
-			!res.package.subresourceTimeouts
+			typeof res.data !== 'string' ||
+			!(res.gateways instanceof Array) ||
+			res.timestamp !== packageTimestamp
 		) {
 			throw new Error('Failed to fetch package data.');
 		}
 
 		const packageMetadata: {
+			data: string;
 			gateways: string[];
-			package: {
-				root: string;
-				subresources: Record<string, string>;
-				subresourceTimeouts: Record<string, number>;
-			};
 			timestamp: number;
 		} = res;
 
-		const packageLines = packageMetadata.package.root.trim().split('\n');
+		const certifiedMessage = await deserialize(
+			AGSEPKICertified,
+			this.potassiumService.fromBase64(packageMetadata.data)
+		);
 
-		const packageData = {
-			publicKeys: {
-				classical:
-					this.publicSigningKeys.classical[toInt(packageLines[1])],
-				postQuantum:
-					this.publicSigningKeys.postQuantum[toInt(packageLines[2])]
-			},
-			signed: packageLines[0]
+		if (certifiedMessage.algorithm !== this.config.algorithm) {
+			throw new Error('Invalid signing algorithm.');
+		}
+
+		const publicKeys = {
+			classical:
+				this.publicSigningKeys.classical[
+					certifiedMessage.publicKeys.classical
+				],
+			postQuantum:
+				this.publicSigningKeys.postQuantum[
+					certifiedMessage.publicKeys.postQuantum
+				]
 		};
 
-		if (
-			!packageData.publicKeys.classical ||
-			!packageData.publicKeys.postQuantum
-		) {
+		if (!publicKeys.classical || !publicKeys.postQuantum) {
 			throw new Error('No valid public key specified.');
 		}
 
-		const {publicKey} = await superSphincsLegacy.importKeys({
-			public: packageData.publicKeys
+		const {publicKey} = await superSphincs.importKeys({
+			public: publicKeys
 		});
 
-		const opened: {
-			expires: number;
-			hashWhitelist: Record<string, true>;
-			mandatoryUpdate?: boolean;
-			package: string;
-			packageName: string;
-			timestamp: number;
-		} = JSON.parse(
-			await superSphincsLegacy
-				.openString(packageData.signed, publicKey)
-				.catch(async () =>
-					superSphincsLegacy.openString(
-						packageData.signed,
-						publicKey,
-						new Uint8Array(0)
-					)
-				)
+		const webSignPackage = await deserialize(
+			WebSignPackage,
+			await superSphincs.open(
+				certifiedMessage.data,
+				publicKey,
+				this.config.additionalDataPackagePrefix + packageName
+			)
 		);
 
-		if (opened.packageName !== packageName) {
-			throw new Error('Package name mismatch.');
-		}
-		if (opened.timestamp !== packageMetadata.timestamp) {
+		if (
+			webSignPackage.packageData.timestamp !== packageMetadata.timestamp
+		) {
 			throw new Error('Package timestamp mismatch.');
 		}
 
+		let webSignKeyPersistenceTOFU =
+			webSignPackage.packageData.keyPersistence ===
+			WebSignKeyPersistence.TOFU;
+
+		if (webSignKeyPersistenceTOFU) {
+			/* eslint-disable-next-line @typescript-eslint/tslint/config */
+			localStorage.setItem(
+				'webSignKeyPersistenceTOFU',
+				webSignKeyPersistenceTOFU.toString()
+			);
+		}
+		else {
+			/* eslint-disable-next-line @typescript-eslint/tslint/config */
+			webSignKeyPersistenceTOFU =
+				localStorage.getItem('webSignKeyPersistenceTOFU') === 'true';
+		}
+
+		await Promise.all(
+			webSignPackage.signatures.map(async packageSignature => {
+				let publicKey = packageSignature.publicKey;
+
+				if (webSignKeyPersistenceTOFU) {
+					const publicKeyStorageKey = `webSignPublicKey_${packageSignature.username}`;
+
+					const pinnedPublicKey =
+						/* eslint-disable-next-line @typescript-eslint/tslint/config */
+						this.potassiumService.fromBase64(
+							localStorage.getItem(publicKeyStorageKey) ?? ''
+						);
+
+					if (pinnedPublicKey.length > 0) {
+						publicKey = pinnedPublicKey;
+					}
+					else {
+						/* eslint-disable-next-line @typescript-eslint/tslint/config */
+						localStorage.setItem(
+							publicKeyStorageKey,
+							this.potassiumService.toBase64(publicKey)
+						);
+					}
+				}
+
+				const secondarySignatureIsValid =
+					await superSphincs.verifyDetached(
+						packageSignature.signature,
+						webSignPackage.packageData.payload,
+						publicKey,
+						this.config.additionalDataSignaturePrefix + packageName
+					);
+
+				if (!secondarySignatureIsValid) {
+					throw new Error(
+						`Invalid secondary signature: @${packageSignature.username}`
+					);
+				}
+			})
+		);
+
 		return {
-			expirationTimestamp: opened.expires,
-			hashWhitelist: opened.hashWhitelist,
-			html: opened.package,
-			mandatoryUpdate: opened.mandatoryUpdate === true,
-			packageMetadata
+			packageMetadata,
+			webSignPackage
 		};
 	}
 
@@ -303,7 +343,7 @@ export class WebSignClientService extends BaseProvider {
 			lastError = err;
 		}
 
-		for (const gateway of gateways) {
+		for (const gateway of ['ipfs://:hash', ...gateways]) {
 			try {
 				return await requestBytes({
 					timeout,
@@ -320,24 +360,26 @@ export class WebSignClientService extends BaseProvider {
 
 	/** Caches latest package data in local storage to optimize the next startup. */
 	public async cachePackage (minTimestamp?: number) : Promise<{
-		expirationTimestamp: number;
-		hashWhitelist: Record<string, true>;
-		html: string;
-		mandatoryUpdate: boolean;
 		packageMetadata: {
+			data: string;
 			gateways: string[];
-			package: {
-				root: string;
-				subresources: Record<string, string>;
-				subresourceTimeouts: Record<string, number>;
-			};
 			timestamp: number;
 		};
+		webSignPackage: IWebSignPackage;
 	}> {
 		const latestPackage = await this.getPackage(minTimestamp);
 
-		const {expirationTimestamp, hashWhitelist, packageMetadata} =
-			latestPackage;
+		const {
+			webSignPackage: {
+				hashWhitelist = {},
+				packageData: {
+					expirationTimestamp = 0,
+					subresources = {},
+					subresourceTimeouts = {}
+				}
+			},
+			packageMetadata
+		} = latestPackage;
 
 		if (
 			this.cachedPackageTimestamp !== undefined &&
@@ -378,15 +420,13 @@ export class WebSignClientService extends BaseProvider {
 
 		await this.storage.bulkPut(
 			await Promise.all(
-				Object.entries(packageMetadata.package.subresources).map(
+				Object.entries(subresources).map(
 					async ([subresource, ipfsHash]) => {
 						const content = this.potassiumService.toString(
 							brotliDecode(
 								await this.ipfsFetch(
 									ipfsHash,
-									packageMetadata.package.subresourceTimeouts[
-										subresource
-									],
+									subresourceTimeouts[subresource],
 									packageMetadata.gateways
 								)
 							)
@@ -412,19 +452,12 @@ export class WebSignClientService extends BaseProvider {
 
 	/** Gets latest package data. */
 	public async getPackage (minTimestamp?: number) : Promise<{
-		expirationTimestamp: number;
-		hashWhitelist: Record<string, true>;
-		html: string;
-		mandatoryUpdate: boolean;
 		packageMetadata: {
+			data: string;
 			gateways: string[];
-			package: {
-				root: string;
-				subresources: Record<string, string>;
-				subresourceTimeouts: Record<string, number>;
-			};
 			timestamp: number;
 		};
+		webSignPackage: IWebSignPackage;
 	}> {
 		const packageName = this.packageName;
 
