@@ -9,7 +9,7 @@ import datauri from 'datauri/sync.js';
 import fs from 'fs';
 import htmlencode from 'htmlencode';
 import os from 'os';
-import {updateRepos} from './updaterepos.js';
+import {updateRepos} from '../modules/update-repos.js';
 
 let hasUpdatedRepos = false;
 

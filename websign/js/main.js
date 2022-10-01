@@ -59,7 +59,11 @@ Promise.resolve().then(function () {
 			undefined,
 			45000
 		).then(function (s) {
-			var packageMetadata	= JSON.parse(s);
+			var packageMetadata	= proto.WebSignPackageContainer.decode(
+				proto.WebSignPackageContainer.encode(
+					JSON.parse(s)
+				)
+			);
 
 			if (
 				isNaN(packageMetadata.timestamp) ||
@@ -267,11 +271,7 @@ then(function (o) {
 	document.head.innerHTML	= o.packageData.payload.split('<head>')[1].split('</head>')[0];
 	document.body.innerHTML	= o.packageData.payload.split('<body>')[1].split('</body>')[0];
 
-	webSignSRI({
-		gateways: o.packageMetadata.gateways || [],
-		subresources: o.packageData.subresources || {},
-		subresourceTimeouts: o.packageData.subresourceTimeouts || {}
-	}).catch(function (err) {
+	webSignSRI(o.packageMetadata).catch(function (err) {
 		document.head.innerHTML		= '';
 		document.body.textContent	= err;
 	});

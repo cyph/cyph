@@ -11,8 +11,8 @@ import os from 'os';
 import Semaphore from 'promise-semaphore';
 import {URL} from 'url';
 import {promisify} from 'util';
+import {packageDatabase} from '../modules/package-database.js';
 import {fetch} from './fetch.js';
-import {packageDatabase} from './packagedatabase.js';
 
 /* Blacklist of known bad or flagged gateways */
 const blacklist = new Set(['https://astyanax.io/ipfs/:hash']);

@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
-import {getMeta} from '../modules/base.js';
-const {__dirname, isCLI} = getMeta(import.meta);
+import {getMeta} from './base.js';
+const {__dirname} = getMeta(import.meta);
 
 import childProcess from 'child_process';
 import fs from 'fs';
@@ -14,16 +14,23 @@ const getSubdirectories = dir =>
 		.filter(d => d !== '.git' && fs.lstatSync(`${dir}/${d}`).isDirectory());
 
 export const updateRepos = async () => {
+	const repoRoot = `${os.homedir()}/.cyph/repos`;
+
+	if (
+		!fs.existsSync(`${__dirname}/../commands/keycache.sh`) ||
+		!fs.existsSync(repoRoot)
+	) {
+		return;
+	}
+
 	childProcess.spawnSync('bash', ['./keycache.sh'], {
-		cwd: __dirname,
+		cwd: `${__dirname}/../commands`,
 		stdio: 'inherit'
 	});
 
 	if (fs.existsSync(`${os.homedir()}/.noupdaterepos`)) {
 		return;
 	}
-
-	const repoRoot = `${os.homedir()}/.cyph/repos`;
 
 	for (const repo of ['cdn', 'chat-widget', 'custom-builds', 'internal']) {
 		const path = `${repoRoot}/${repo}`;
@@ -115,14 +122,3 @@ export const updateRepos = async () => {
 		});
 	}
 };
-
-if (isCLI) {
-	updateRepos()
-		.then(() => {
-			process.exit(0);
-		})
-		.catch(err => {
-			console.error(err);
-			process.exit(1);
-		});
-}

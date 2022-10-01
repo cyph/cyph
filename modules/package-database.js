@@ -1,15 +1,12 @@
 #!/usr/bin/env node
 
-import {getMeta} from '../modules/base.js';
-const {isCLI} = getMeta(import.meta);
-
 import childProcess from 'child_process';
 import fs from 'fs';
 import glob from 'glob/sync.js';
 import memoize from 'lodash-es/memoize.js';
 import os from 'os';
 import path from 'path';
-import {updateRepos} from './updaterepos.js';
+import {updateRepos} from './update-repos.js';
 
 const repoPath = `${os.homedir()}/.cyph/repos/cdn`;
 
@@ -129,17 +126,3 @@ export const packageDatabase = memoize(() => {
 			{}
 		);
 });
-
-if (isCLI) {
-	const file = process.argv[2];
-	const output = JSON.stringify(packageDatabase());
-
-	if (file) {
-		fs.writeFileSync(file, output);
-	}
-	else {
-		console.log(output);
-	}
-
-	process.exit(0);
-}

@@ -1,0 +1,20 @@
+syntax = "proto3";
+
+
+/** WebSign package container. */
+message WebSignPackageContainer {
+	/** Base64-encoded AGSEPKICertified-wrapped WebSignPackage. */
+	required string data = 1;
+
+	/** IPFS gateways. */
+	repeated string gateways = 2;
+
+	/** Map of subresource paths to IPFS hashes. */
+	map<string, string> subresources = 3;
+
+	/** Map of subresource paths to timeout values. */
+	map<string, uint32> subresourceTimeouts = 4;
+
+	/** Package timestamp. */
+	required double timestamp = 5;
+}

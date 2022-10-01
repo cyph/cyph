@@ -135,8 +135,10 @@ type StripeData struct {
 
 // WebSignPackageData : WebSign package data
 type WebSignPackageData struct {
-	Data      []byte
-	Timestamp int64
+	Data                []byte
+	Subresources        map[string]string
+	SubresourceTimeouts map[string]int
+	Timestamp           int64
 }
 
 // WebSignPackageTimestamp : Timestamp of a WebSign package

@@ -9,6 +9,7 @@ import {
 import {Datastore} from '@google-cloud/datastore';
 import isEqual from 'lodash-es/isEqual.js';
 import {initDatabaseService} from './database-service.js';
+import {packageDatabase} from './package-database.js';
 import hashWhitelist from './websign-hash-whitelist.json' assert {type: 'json'};
 
 const {
@@ -181,6 +182,12 @@ export const processReleaseSignOutput = async ({
 			certifiedMessages.flatMap((certifiedMessage, i) => {
 				const pendingRelease = pendingReleases[i];
 
+				const {
+					[pendingRelease.packageData.packageName]: {
+						package: {subresources, subresourceTimeouts}
+					}
+				} = packageDatabase();
+
 				return [
 					{
 						data: {
@@ -197,6 +204,8 @@ export const processReleaseSignOutput = async ({
 								AGSEPKICertified,
 								certifiedMessage
 							),
+							subresources,
+							subresourceTimeouts,
 							timestamp: pendingRelease.packageData.timestamp
 						},
 						key: getDatastoreKey(

@@ -11,9 +11,11 @@ import {BaseProvider} from '../../base-provider';
 import {MaybePromise} from '../../maybe-promise-type';
 import {
 	AGSEPKICertified,
+	IWebSignPackageContainer,
 	IWebSignPackage,
 	PotassiumData,
 	WebSignKeyPersistence,
+	WebSignPackageContainer,
 	WebSignPackage
 } from '../../proto';
 import {toInt} from '../../util/formatting';
@@ -21,7 +23,7 @@ import {getOrSetDefaultAsync} from '../../util/get-or-set-default';
 import {debugLogError} from '../../util/log';
 import {observableAll} from '../../util/observable-all';
 import {request, requestBytes, requestJSON} from '../../util/request';
-import {deserialize} from '../../util/serialization/proto';
+import {deserialize, serialize} from '../../util/serialization/proto';
 import {watchDateChange} from '../../util/time';
 import {reloadWindow} from '../../util/window';
 import {EnvService} from '../env.service';
@@ -73,11 +75,7 @@ export class WebSignClientService extends BaseProvider {
 	private readonly packageCache = new Map<
 		number,
 		{
-			packageMetadata: {
-				data: string;
-				gateways: string[];
-				timestamp: number;
-			};
+			packageMetadata: IWebSignPackageContainer;
 			webSignPackage: IWebSignPackage;
 		}
 	>();
@@ -192,32 +190,18 @@ export class WebSignClientService extends BaseProvider {
 		packageName: string,
 		packageTimestamp?: number
 	) : Promise<{
-		packageMetadata: {
-			data: string;
-			gateways: string[];
-			timestamp: number;
-		};
+		packageMetadata: IWebSignPackageContainer;
 		webSignPackage: IWebSignPackage;
 	}> {
-		const res = await requestJSON({
-			url: `${this.envService.baseUrl}websign/package/${packageName}`
-		});
-
-		if (
-			typeof res !== 'object' ||
-			!res ||
-			typeof res.data !== 'string' ||
-			!(res.gateways instanceof Array) ||
-			isNaN(res.timestamp)
-		) {
-			throw new Error('Failed to fetch package data.');
-		}
-
-		const packageMetadata: {
-			data: string;
-			gateways: string[];
-			timestamp: number;
-		} = res;
+		const packageMetadata = await deserialize(
+			WebSignPackageContainer,
+			await serialize(
+				WebSignPackageContainer,
+				await requestJSON({
+					url: `${this.envService.baseUrl}websign/package/${packageName}`
+				})
+			)
+		);
 
 		if (
 			typeof packageTimestamp === 'number' &&
@@ -369,11 +353,7 @@ export class WebSignClientService extends BaseProvider {
 
 	/** Caches latest package data in local storage to optimize the next startup. */
 	public async cachePackage (minTimestamp?: number) : Promise<{
-		packageMetadata: {
-			data: string;
-			gateways: string[];
-			timestamp: number;
-		};
+		packageMetadata: IWebSignPackageContainer;
 		webSignPackage: IWebSignPackage;
 	}> {
 		const latestPackage = await this.getPackage({minTimestamp});
@@ -381,18 +361,19 @@ export class WebSignClientService extends BaseProvider {
 		const {
 			webSignPackage: {
 				hashWhitelist = {},
-				packageData: {
-					expirationTimestamp = 0,
-					subresources = {},
-					subresourceTimeouts = {}
-				}
+				packageData: {expirationTimestamp = 0}
 			},
 			packageMetadata
 		} = latestPackage;
 
+		const {gateways, subresources, subresourceTimeouts} = packageMetadata;
+
 		if (
-			this.cachedPackageTimestamp !== undefined &&
-			this.cachedPackageTimestamp >= packageMetadata.timestamp
+			gateways === undefined ||
+			subresources === undefined ||
+			subresourceTimeouts === undefined ||
+			(this.cachedPackageTimestamp !== undefined &&
+				this.cachedPackageTimestamp >= packageMetadata.timestamp)
 		) {
 			return latestPackage;
 		}
@@ -436,7 +417,7 @@ export class WebSignClientService extends BaseProvider {
 								await this.ipfsFetch(
 									ipfsHash,
 									subresourceTimeouts[subresource],
-									packageMetadata.gateways
+									gateways
 								)
 							)
 						);
@@ -469,11 +450,7 @@ export class WebSignClientService extends BaseProvider {
 		minTimestamp?: number;
 		packageName?: string;
 	} = {}) : Promise<{
-		packageMetadata: {
-			data: string;
-			gateways: string[];
-			timestamp: number;
-		};
+		packageMetadata: IWebSignPackageContainer;
 		webSignPackage: IWebSignPackage;
 	}> {
 		if (packageName === undefined) {

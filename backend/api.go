@@ -1040,9 +1040,11 @@ func getPackageV2(h HandlerArgs) (interface{}, int) {
 	_, continentCode, _, _, _, _, _, _ := geolocate(h)
 
 	return map[string]interface{}{
-		"data":      base64.StdEncoding.EncodeToString(packageData.Data),
-		"gateways":  getIPFSGateways(continentCode, isIPv6Request(h)),
-		"timestamp": packageData.Timestamp,
+		"data":                base64.StdEncoding.EncodeToString(packageData.Data),
+		"gateways":            getIPFSGateways(continentCode, isIPv6Request(h)),
+		"subresources":        packageData.Subresources,
+		"subresourceTimeouts": packageData.SubresourceTimeouts,
+		"timestamp":           packageData.Timestamp,
 	}, http.StatusOK
 }
 

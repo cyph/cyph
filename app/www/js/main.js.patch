@@ -84,7 +84,7 @@
 > 		delete storage.webSignPackageName;
 > 		delete storage.webSignPackageTimestamp;
 > 	}
-213,250c231,233
+217,254c235,237
 < /* Before finishing, perform self-administered
 < 	integrity check on WebSign bootstrap */
 < catch(function () {
@@ -127,7 +127,7 @@
 > /* Successfully execute package */
 > then(function (o) {
 > 	var headHTML	= o.packageData.payload.split('<head>')[1].split('</head>')[0];
-252,259c235,236
+256,263c239,240
 < 	if (!hashWhitelist[storage.webSignHash]) {
 < 		throw {
 < 			webSignPanic: true,
@@ -139,7 +139,7 @@
 ---
 > 	if (device.platform === 'iOS') {
 > 		headHTML	= headHTML.replace('href="/"', 'href="#"');
-262,267c239
+266,271c243
 < 	throw null;
 < }).
 < 

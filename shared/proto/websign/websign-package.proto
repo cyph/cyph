@@ -23,7 +23,7 @@ message WebSignPackage {
 	required WebSignPackageData packageData = 2;
 
 	/** @see WebSignPendingRelease.releaseID */
-	required string releaseID = 3;
+	string releaseID = 3;
 
 	/** Signatures. */
 	repeated WebSignPackageSignature signatures = 4;

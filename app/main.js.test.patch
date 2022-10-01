@@ -68,16 +68,16 @@
 > }) :
 > 
 > 
-229c272,275
+233c276,279
 < }).
 ---
 > })
 > 
 > 
 > ).
-233a280
+237a284
 > 	var bodyHTML	= o.packageData.payload.split('<body>')[1].split('</body>')[0];
-239,240c286,298
+243,244c290,298
 < 	document.head.innerHTML	= headHTML;
 < 	document.body.innerHTML	= o.packageData.payload.split('<body>')[1].split('</body>')[0];
 ---
@@ -85,21 +85,13 @@
 > 		document.head.innerHTML	= headHTML;
 > 		document.body.innerHTML	= bodyHTML;
 > 
-> 		return webSignSRI({
-> 			gateways: o.packageMetadata.gateways || [],
-> 			subresources: o.packageData.subresources || {},
-> 			subresourceTimeouts: o.packageData.subresourceTimeouts || {}
-> 		}).catch(function (err) {
+> 		return webSignSRI(o.packageMetadata).catch(function (err) {
 > 			document.head.innerHTML		= '';
 > 			document.body.textContent	= err;
 > 		});
 > 	}
-242,249c300,376
-< 	webSignSRI({
-< 		gateways: o.packageMetadata.gateways || [],
-< 		subresources: o.packageData.subresources || {},
-< 		subresourceTimeouts: o.packageData.subresourceTimeouts || {}
-< 	}).catch(function (err) {
+246,249c300,376
+< 	webSignSRI(o.packageMetadata).catch(function (err) {
 < 		document.head.innerHTML		= '';
 < 		document.body.textContent	= err;
 < 	});
