@@ -151,7 +151,9 @@ export class AppModule {
 		fileService: FileService,
 		pgpService: PGPService,
 		potassiumService: PotassiumService,
-		stringsService: StringsService
+		stringsService: StringsService,
+		webSignClientService: WebSignClientService,
+		webSignService: WebSignService
 	) {
 		(<any> self).Zone[
 			(<any> self).Zone.__symbol__('ignoreConsoleErrorUncaughtError')
@@ -181,7 +183,9 @@ export class AppModule {
 				potassiumService,
 				proto,
 				stringsService,
-				util
+				util,
+				webSignClientService,
+				webSignService
 			})
 		)) {
 			AppModule.sdk[k] = v;

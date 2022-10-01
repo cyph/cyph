@@ -190,7 +190,7 @@ export class WebSignClientService extends BaseProvider {
 	/** @ignore */
 	private async getLatestPackage (
 		packageName: string,
-		packageTimestamp: number
+		packageTimestamp?: number
 	) : Promise<{
 		packageMetadata: {
 			data: string;
@@ -208,7 +208,7 @@ export class WebSignClientService extends BaseProvider {
 			!res ||
 			typeof res.data !== 'string' ||
 			!(res.gateways instanceof Array) ||
-			res.timestamp !== packageTimestamp
+			isNaN(res.timestamp)
 		) {
 			throw new Error('Failed to fetch package data.');
 		}
@@ -218,6 +218,15 @@ export class WebSignClientService extends BaseProvider {
 			gateways: string[];
 			timestamp: number;
 		} = res;
+
+		if (
+			typeof packageTimestamp === 'number' &&
+			packageTimestamp > packageMetadata.timestamp
+		) {
+			throw new Error(
+				`Outdated package timestamp (${packageTimestamp.toString()} > ${packageMetadata.timestamp.toString()}).`
+			);
+		}
 
 		const certifiedMessage = await deserialize(
 			AGSEPKICertified,
@@ -367,7 +376,7 @@ export class WebSignClientService extends BaseProvider {
 		};
 		webSignPackage: IWebSignPackage;
 	}> {
-		const latestPackage = await this.getPackage(minTimestamp);
+		const latestPackage = await this.getPackage({minTimestamp});
 
 		const {
 			webSignPackage: {
@@ -451,7 +460,15 @@ export class WebSignClientService extends BaseProvider {
 	}
 
 	/** Gets latest package data. */
-	public async getPackage (minTimestamp?: number) : Promise<{
+	public async getPackage ({
+		forceLatest = false,
+		minTimestamp,
+		packageName = this.packageName
+	}: {
+		forceLatest?: boolean;
+		minTimestamp?: number;
+		packageName?: string;
+	} = {}) : Promise<{
 		packageMetadata: {
 			data: string;
 			gateways: string[];
@@ -459,10 +476,12 @@ export class WebSignClientService extends BaseProvider {
 		};
 		webSignPackage: IWebSignPackage;
 	}> {
-		const packageName = this.packageName;
-
 		if (packageName === undefined) {
 			throw new Error('Invalid current package name.');
+		}
+
+		if (forceLatest) {
+			return this.getLatestPackage(packageName);
 		}
 
 		const packageTimestamp = await this.getPackageTimestamp();

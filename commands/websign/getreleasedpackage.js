@@ -1,74 +1,18 @@
 #!/usr/bin/env node
 
 import {getMeta} from '../../modules/base.js';
-const {__dirname, isCLI} = getMeta(import.meta);
+const {isCLI} = getMeta(import.meta);
 
+import {webSignClientService} from '@cyph/sdk';
 import fs from 'fs';
-import fetch from 'node-fetch';
-import oldSuperSphincs from 'supersphincs-legacy/dist/old-api.js';
-
-const publicKeys = (() => {
-	const publicKeysJS = fs
-		.readFileSync(`${__dirname}/../../websign/js/keys.js`)
-		.toString();
-
-	return JSON.parse(
-		publicKeysJS
-			.substring(publicKeysJS.indexOf('=') + 1)
-			.split(';')[0]
-			.trim()
-			.replace(/\/\*.*?\*\//g, '')
-	);
-})();
 
 export const getReleasedPackage = async (packageName = 'cyph.app') => {
-	const packageURL = `https://api.cyph.com/package/${packageName}`;
-
-	const packageMetadata = await fetch(packageURL).then(async o => o.json());
-
-	const packageLines = packageMetadata.package.root.trim().split('\n');
-
-	const packageData = {
-		classicalKey: publicKeys.classical[parseInt(packageLines[1], 10)],
-		postQuantumKey: publicKeys.postQuantum[parseInt(packageLines[2], 10)],
-		signed: packageLines[0]
-	};
-
-	if (!packageData.classicalKey || !packageData.postQuantumKey) {
-		throw new Error('No valid public key specified.');
-	}
-
-	const {publicKey} = await oldSuperSphincs.importKeys({
-		public: {
-			classical: packageData.classicalKey,
-			postQuantum: packageData.postQuantumKey
-		}
+	const {webSignPackage} = await webSignClientService.getPackage({
+		forceLatest: true,
+		packageName
 	});
 
-	/* Temporary transitionary step */
-	const opened = JSON.parse(
-		await oldSuperSphincs
-			.openString(packageData.signed, publicKey)
-			.catch(function () {
-				return oldSuperSphincs.openString(
-					packageData.signed,
-					publicKey,
-					new Uint8Array(0)
-				);
-			})
-	);
-
-	/* Reject if expired or has invalid timestamp */
-	if (
-		Date.now() > opened.expires ||
-		packageMetadata.timestamp !== opened.timestamp ||
-		(packageName !== opened.packageName &&
-			packageName !== opened.packageName.replace(/\.(app|ws)$/, ''))
-	) {
-		throw new Error('Stale or invalid data.');
-	}
-
-	return opened.package.trim();
+	return webSignPackage.packageData.payload.trim();
 };
 
 if (isCLI) {
