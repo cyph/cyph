@@ -12,7 +12,7 @@
 56,60c53,87
 < 		delete storage.webSignExpires;
 < 		delete storage.webSignHashWhitelist;
-< 		delete storage.webSignPackageMetadata;
+< 		delete storage.webSignPackageContainer;
 < 		delete storage.webSignPackageName;
 < 		delete storage.webSignPackageTimestamp;
 ---
@@ -85,13 +85,13 @@
 > 		document.head.innerHTML	= headHTML;
 > 		document.body.innerHTML	= bodyHTML;
 > 
-> 		return webSignSRI(o.packageMetadata).catch(function (err) {
+> 		return webSignSRI(o.packageContainer).catch(function (err) {
 > 			document.head.innerHTML		= '';
 > 			document.body.textContent	= err;
 > 		});
 > 	}
 246,249c300,376
-< 	webSignSRI(o.packageMetadata).catch(function (err) {
+< 	webSignSRI(o.packageContainer).catch(function (err) {
 < 		document.head.innerHTML		= '';
 < 		document.body.textContent	= err;
 < 	});

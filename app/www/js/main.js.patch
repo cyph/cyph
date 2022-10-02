@@ -80,7 +80,7 @@
 > 
 > 		delete storage.webSignExpires;
 > 		delete storage.webSignHashWhitelist;
-> 		delete storage.webSignPackageMetadata;
+> 		delete storage.webSignPackageContainer;
 > 		delete storage.webSignPackageName;
 > 		delete storage.webSignPackageTimestamp;
 > 	}

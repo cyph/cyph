@@ -43,12 +43,7 @@ if (packageNameSplit.length === 2 && packageNameSplit[0] === 'cyph') {
 	document.getElementById('websign-load').className	= 'cyph-branded';
 }
 
-var oldPackageMetadata	= JSON.parse(storage.webSignPackageMetadata || '{}');
-
-/* Clear out legacy-formatted data */
-if (oldPackageMetadata.package) {
-	oldPackageMetadata	= {};
-}
+var oldPackageContainer	= JSON.parse(storage.webSignPackageContainer || '{}');
 
 /* Get package */
 Promise.resolve().then(function () {
@@ -59,24 +54,24 @@ Promise.resolve().then(function () {
 			undefined,
 			45000
 		).then(function (s) {
-			var packageMetadata	= proto.WebSignPackageContainer.decode(
+			var packageContainer	= proto.WebSignPackageContainer.decode(
 				proto.WebSignPackageContainer.encode(
 					JSON.parse(s)
 				)
 			);
 
 			if (
-				isNaN(packageMetadata.timestamp) ||
-				oldPackageMetadata.timestamp > packageMetadata.timestamp
+				isNaN(packageContainer.timestamp) ||
+				oldPackageContainer.timestamp > packageContainer.timestamp
 			) {
 				throw new Error('Outdated package.');
 			}
 
-			return packageMetadata;
+			return packageContainer;
 		});
 	}
 
-	if (isNaN(oldPackageMetadata.timestamp)) {
+	if (isNaN(oldPackageContainer.timestamp)) {
 		return getPackage();
 	}
 
@@ -88,19 +83,19 @@ Promise.resolve().then(function () {
 	).then(function (s) {
 		var timestamp	= parseInt(s, 10);
 
-		return timestamp > oldPackageMetadata.timestamp ?
+		return timestamp > oldPackageContainer.timestamp ?
 			getPackage() :
-			oldPackageMetadata
+			oldPackageContainer
 		;
 	});
 }).catch(function () {
-	return oldPackageMetadata;
+	return oldPackageContainer;
 }).
 
 /* Open package */
-then(function (packageMetadata) {
+then(function (packageContainer) {
 	var certifiedMessage	= proto.AGSEPKICertified.decode(
-		superSphincs._sodiumUtil.from_base64(packageMetadata.data)
+		superSphincs._sodiumUtil.from_base64(packageContainer.data)
 	);
 
 	if (certifiedMessage.algorithm !== config.algorithm) {
@@ -121,19 +116,19 @@ then(function (packageMetadata) {
 	}
 
 	return Promise.all([
-		packageMetadata,
+		packageContainer,
 		certifiedMessage.data,
 		superSphincs.importKeys({
 			public: publicKeys
 		})
 	]);
 }).then(function (results) {
-	var packageMetadata	= results[0];
-	var signed			= results[1];
-	var publicKey		= results[2].publicKey;
+	var packageContainer	= results[0];
+	var signed				= results[1];
+	var publicKey			= results[2].publicKey;
 
 	return Promise.all([
-		packageMetadata,
+		packageContainer,
 		superSphincs.open(
 			signed,
 			publicKey,
@@ -141,14 +136,14 @@ then(function (packageMetadata) {
 		)
 	]);
 }).then(function (results) {
-	var packageMetadata	= results[0];
-	var opened			= proto.WebSignPackage.decode(results[1]);
+	var packageContainer	= results[0];
+	var opened				= proto.WebSignPackage.decode(results[1]);
 
 	/* Reject if expired or has invalid timestamp */
 	if (
 		opened.packageData.algorithm !== config.algorithm ||
 		Date.now() > opened.packageData.expirationTimestamp ||
-		packageMetadata.timestamp !== opened.packageData.timestamp ||
+		packageContainer.timestamp !== opened.packageData.timestamp ||
 		(
 			packageName !== opened.packageData.packageName &&
 			packageName !== opened.packageData.packageName.replace(/\.(app|ws)$/, '')
@@ -159,7 +154,7 @@ then(function (packageMetadata) {
 
 	storage.webSignExpires			= opened.packageData.expirationTimestamp;
 	storage.webSignHashWhitelist	= JSON.stringify(opened.hashWhitelist);
-	storage.webSignPackageMetadata	= JSON.stringify(packageMetadata);
+	storage.webSignPackageContainer	= JSON.stringify(packageContainer);
 	storage.webSignPackageName		= opened.packageData.packageName;
 	storage.webSignPackageTimestamp	= opened.packageData.timestamp;
 
@@ -209,7 +204,7 @@ then(function (packageMetadata) {
 
 	return Promise.all([
 		opened.packageData,
-		packageMetadata,
+		packageContainer,
 		secondarySignaturesValidPromise
 	]);
 }).
@@ -271,7 +266,7 @@ then(function (o) {
 	document.head.innerHTML	= o.packageData.payload.split('<head>')[1].split('</head>')[0];
 	document.body.innerHTML	= o.packageData.payload.split('<body>')[1].split('</body>')[0];
 
-	webSignSRI(o.packageMetadata).catch(function (err) {
+	webSignSRI(o.packageContainer).catch(function (err) {
 		document.head.innerHTML		= '';
 		document.body.textContent	= err;
 	});
