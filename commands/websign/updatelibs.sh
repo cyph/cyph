@@ -9,7 +9,6 @@ cd websign/lib
 terser /node_modules/comlink/dist/umd/comlink.min.js -o comlink.js
 terser /node_modules/dexie/dist/dexie.min.js -o dexie.js
 terser /node_modules/whatwg-fetch/dist/fetch.umd.js -o fetch.js
-terser /node_modules/localforage/dist/localforage.min.js -o localforage.js
 terser /node_modules/protobufjs/dist/minimal/protobuf.min.js -o protobuf.js
 terser /node_modules/supersphincs/dist/index.js -o supersphincs.js
 terser ../../shared/js/proto/websign/index.web.js -o websign-proto.js
