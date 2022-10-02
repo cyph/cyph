@@ -22,7 +22,7 @@ import {toInt} from '../../util/formatting';
 import {getOrSetDefaultAsync} from '../../util/get-or-set-default';
 import {debugLogError} from '../../util/log';
 import {observableAll} from '../../util/observable-all';
-import {request, requestBytes, requestJSON} from '../../util/request';
+import {request, requestBytes, requestProto} from '../../util/request';
 import {deserialize, serialize} from '../../util/serialization/proto';
 import {watchDateChange} from '../../util/time';
 import {reloadWindow} from '../../util/window';
@@ -193,15 +193,9 @@ export class WebSignClientService extends BaseProvider {
 		packageContainer: IWebSignPackageContainer;
 		webSignPackage: IWebSignPackage;
 	}> {
-		const packageContainer = await deserialize(
-			WebSignPackageContainer,
-			await serialize(
-				WebSignPackageContainer,
-				await requestJSON({
-					url: `${this.envService.baseUrl}websign/package/${packageName}`
-				})
-			)
-		);
+		const packageContainer = await requestProto(WebSignPackageContainer, {
+			url: `${this.envService.baseUrl}websign/package/${packageName}`
+		});
 
 		if (
 			typeof packageTimestamp === 'number' &&
@@ -214,7 +208,7 @@ export class WebSignClientService extends BaseProvider {
 
 		const certifiedMessage = await deserialize(
 			AGSEPKICertified,
-			this.potassiumService.fromBase64(packageContainer.data)
+			packageContainer.data
 		);
 
 		if (certifiedMessage.algorithm !== this.config.algorithm) {
@@ -372,6 +366,7 @@ export class WebSignClientService extends BaseProvider {
 			gateways === undefined ||
 			subresources === undefined ||
 			subresourceTimeouts === undefined ||
+			packageContainer.timestamp === undefined ||
 			(this.cachedPackageTimestamp !== undefined &&
 				this.cachedPackageTimestamp >= packageContainer.timestamp)
 		) {
@@ -392,7 +387,9 @@ export class WebSignClientService extends BaseProvider {
 			/* eslint-disable-next-line @typescript-eslint/tslint/config */
 			localStorage.setItem(
 				'webSignPackageContainer',
-				JSON.stringify(packageContainer)
+				this.potassiumService.toBase64(
+					await serialize(WebSignPackageContainer, packageContainer)
+				)
 			);
 			/* eslint-disable-next-line @typescript-eslint/tslint/config */
 			localStorage.setItem(

@@ -49,6 +49,7 @@ find . -maxdepth 2 -type f -name .go.mod -exec bash -c '
 ' \;
 
 go install github.com/codegangsta/gin@latest
+go install google.golang.org/protobuf/cmd/protoc-gen-go@latest
 
 
 # NATIVESCRIPT: nativePlugins="$(cat native/plugins.list)"

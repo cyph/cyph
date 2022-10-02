@@ -2,7 +2,6 @@ package main
 
 import (
 	"bytes"
-	"encoding/base64"
 	"encoding/json"
 	"fmt"
 	"io"
@@ -28,6 +27,7 @@ import (
 	stripeWebhookAPI "github.com/stripe/stripe-go/v72/webhook"
 	"google.golang.org/api/iterator"
 	tasksProto "google.golang.org/genproto/googleapis/cloud/tasks/v2"
+	"google.golang.org/protobuf/proto"
 )
 
 func main() {
@@ -1039,13 +1039,19 @@ func getPackageV2(h HandlerArgs) (interface{}, int) {
 
 	_, continentCode, _, _, _, _, _, _ := geolocate(h)
 
-	return map[string]interface{}{
-		"data":                base64.StdEncoding.EncodeToString(packageData.Data),
-		"gateways":            getIPFSGateways(continentCode, isIPv6Request(h)),
-		"subresources":        packageData.Subresources,
-		"subresourceTimeouts": packageData.SubresourceTimeouts,
-		"timestamp":           packageData.Timestamp,
-	}, http.StatusOK
+	encoded, err := proto.Marshal(&WebSignPackageContainer{
+		Data:                packageData.Data,
+		Gateways:            getIPFSGateways(continentCode, isIPv6Request(h)),
+		Subresources:        packageData.Subresources,
+		SubresourceTimeouts: packageData.SubresourceTimeouts,
+		Timestamp:           packageData.Timestamp,
+	})
+
+	if err != nil {
+		return "proto encoding failure", http.StatusBadRequest
+	}
+
+	return encoded, http.StatusOK
 }
 
 func getPackageTimestamp(h HandlerArgs) (interface{}, int) {

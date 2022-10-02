@@ -4,6 +4,14 @@
 dir="$PWD"
 cd $(cd "$(dirname "$0")" ; pwd)/..
 
+rm backend/*.pb.go 2> /dev/null
+protoc \
+	-I=shared/proto \
+	--go_out=backend \
+	--go_opt=Mwebsign/websign-package-container.proto=. \
+	shared/proto/websign/websign-package-container.proto
+sed -i 's|package __|package main|g' backend/*.pb.go
+
 rm -rf shared/js/proto 2> /dev/null
 
 for f in $(ls shared/proto/bundles/*.proto) ; do

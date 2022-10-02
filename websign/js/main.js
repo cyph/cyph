@@ -43,7 +43,15 @@ if (packageNameSplit.length === 2 && packageNameSplit[0] === 'cyph') {
 	document.getElementById('websign-load').className	= 'cyph-branded';
 }
 
-var oldPackageContainer	= JSON.parse(storage.webSignPackageContainer || '{}');
+var oldPackageContainer	= {};
+try {
+	oldPackageContainer	= proto.WebSignPackageContainer.decode(
+		superSphincs._sodiumUtil.from_base64(
+			storage.webSignPackageContainer
+		)
+	);
+}
+catch (_) {}
 
 /* Get package */
 Promise.resolve().then(function () {
@@ -51,13 +59,11 @@ Promise.resolve().then(function () {
 		return fetchRetry(
 			config.packageURL + packageName,
 			undefined,
-			undefined,
+			'arrayBuffer',
 			45000
-		).then(function (s) {
+		).then(function (buffer) {
 			var packageContainer	= proto.WebSignPackageContainer.decode(
-				proto.WebSignPackageContainer.encode(
-					JSON.parse(s)
-				)
+				new Uint8Array(buffer)
 			);
 
 			if (
@@ -95,7 +101,7 @@ Promise.resolve().then(function () {
 /* Open package */
 then(function (packageContainer) {
 	var certifiedMessage	= proto.AGSEPKICertified.decode(
-		superSphincs._sodiumUtil.from_base64(packageContainer.data)
+		packageContainer.data
 	);
 
 	if (certifiedMessage.algorithm !== config.algorithm) {
@@ -154,7 +160,11 @@ then(function (packageContainer) {
 
 	storage.webSignExpires			= opened.packageData.expirationTimestamp;
 	storage.webSignHashWhitelist	= JSON.stringify(opened.hashWhitelist);
-	storage.webSignPackageContainer	= JSON.stringify(packageContainer);
+	storage.webSignPackageContainer	= superSphincs._sodiumUtil.to_base64(
+		proto.WebSignPackageContainer.encode(
+			packageContainer
+		)
+	);
 	storage.webSignPackageName		= opened.packageData.packageName;
 	storage.webSignPackageTimestamp	= opened.packageData.timestamp;
 

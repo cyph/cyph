@@ -47,6 +47,7 @@ sudo apt-get -y --allow-downgrades install \
 	pinentry-curses \
 	pkg-config \
 	procps \
+	protobuf-compiler \
 	python \
 	python3 \
 	python3-docutils \

@@ -7,8 +7,9 @@ import {
 } from '@angular/common/http';
 import {BehaviorSubject, Observable} from 'rxjs';
 import {potassiumUtil} from '../crypto/potassium/potassium-util';
+import {IProto} from '../iproto';
 import {MaybePromise} from '../maybe-promise-type';
-import {parse, stringify, toQueryString} from './serialization';
+import {deserialize, parse, stringify, toQueryString} from './serialization';
 import {staticHttpClient} from './static-services';
 import {sleep} from './wait/sleep';
 
@@ -258,4 +259,22 @@ export const requestJSON = async (o: {
 	url: string;
 }) : Promise<any> => {
 	return baseRequest<any, any>(o, 'json', res => res.body).result;
+};
+
+/** Performs HTTP request. */
+export const requestProto = async <T>(
+	proto: IProto<T>,
+	o: {
+		contentType?: string;
+		data?: any;
+		debug?: {tries?: number};
+		headers?: Record<string, string | string[]>;
+		method?: string;
+		rawData?: Uint8Array;
+		retries?: number;
+		timeout?: number;
+		url: string;
+	}
+) : Promise<T> => {
+	return deserialize(proto, await requestBytes(o));
 };

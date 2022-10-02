@@ -68,16 +68,16 @@
 > }) :
 > 
 > 
-233c276,279
+238c281,284
 < }).
 ---
 > })
 > 
 > 
 > ).
-237a284
+242a289
 > 	var bodyHTML	= o.packageData.payload.split('<body>')[1].split('</body>')[0];
-243,244c290,298
+248,249c295,305
 < 	document.head.innerHTML	= headHTML;
 < 	document.body.innerHTML	= o.packageData.payload.split('<body>')[1].split('</body>')[0];
 ---
@@ -90,14 +90,14 @@
 > 			document.body.textContent	= err;
 > 		});
 > 	}
-246,249c300,376
+> 
+> 	var scriptRegex		= /<script[\s$>].*?<\/script>/g;
+251,254c307,381
 < 	webSignSRI(o.packageContainer).catch(function (err) {
 < 		document.head.innerHTML		= '';
 < 		document.body.textContent	= err;
 < 	});
 ---
-> 	var scriptRegex		= /<script[\s$>].*?<\/script>/g;
-> 
 > 	var scriptsPromise	= Promise.all(
 > 		(o.packageData.payload.match(scriptRegex) || []).map(function (s) {
 > 			return fetch(
