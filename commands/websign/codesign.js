@@ -1,11 +1,14 @@
 #!/usr/bin/env node
 
-import {proto} from '@cyph/sdk';
+import {proto, util} from '@cyph/sdk';
 import fs from 'fs';
 import mkdirp from 'mkdirp';
 import {sign} from '../sign.js';
 
-const {PotassiumData} = proto;
+const {AGSEPKICertified, PotassiumData, WebSignPackage} = proto;
+const {serialize} = util;
+
+const webSignNamespace = 'cyph.ws';
 
 try {
 	const argv = process.argv
@@ -22,31 +25,64 @@ try {
 	const signatureTTL = 18; // Months
 	const timestamp = Date.now();
 
-	const inputs = args.inputs
+	const baseInputs = args.inputs
 		.map(s => s.split('='))
-		.map(arr => ({
-			message: JSON.stringify({
-				expires: timestamp + signatureTTL * 2.628e9,
+		.map(([packagePath, outputDir]) => ({
+			outputDir,
+			webSignPackage: {
 				hashWhitelist: args.hashWhitelist,
-				mandatoryUpdate: args.mandatoryUpdate,
-				package: fs.readFileSync(arr[0]).toString().trim(),
-				packageName: arr[1].split('/').slice(-1)[0],
-				timestamp
-			}),
-			outputDir: arr[1]
+				packageData: {
+					algorithm: PotassiumData.SignAlgorithms.V2Hardened,
+					expirationTimestamp: timestamp + signatureTTL * 2.628e9,
+					mandatoryUpdate: args.mandatoryUpdate,
+					packageName: outputDir.split('/').slice(-1)[0],
+					payload: fs.readFileSync(packagePath).toString().trim(),
+					timestamp
+				}
+			}
 		}));
 
-	/* TODO: Update this */
-	const algorithm = PotassiumData.SignAlgorithms.V1;
+	const inputsV1 = baseInputs.map(({webSignPackage}) => ({
+		algorithm: PotassiumData.SignAlgorithms.V1,
+		message: JSON.stringify({
+			expires: webSignPackage.packageData.expirationTimestamp,
+			hashWhitelist: webSignPackage.hashWhitelist,
+			mandatoryUpdate: webSignPackage.packageData.mandatoryUpdate,
+			package: webSignPackage.packageData.payload,
+			packageName: webSignPackage.packageData.packageName,
+			timestamp: webSignPackage.packageData.timestamp
+		})
+	}));
 
-	const certifiedMessages = await sign(
-		inputs.map(({message}) => ({algorithm, message})),
+	const inputsV2 = await Promise.all(
+		baseInputs.map(({webSignPackage}) =>
+			async({
+				additionalData: `${webSignNamespace}:webSign/packages/${webSignPackage.packageData.packageName}`,
+				algorithm: PotassiumData.SignAlgorithms.V2Hardened,
+				message: await serialize(WebSignPackage, webSignPackage)
+			})
+		)
+	);
+
+	const certifiedMessagesQueue = await sign(
+		[...inputsV1, inputsV2],
 		args.test
 	);
 
-	for (let i = 0; i < inputs.length; ++i) {
-		const certified = certifiedMessages[i];
-		const outputDir = inputs[i].outputDir;
+	const certifiedMessagesV1 = certifiedMessagesQueue.splice(
+		0,
+		baseInputs.length
+	);
+
+	const certifiedMessagesV2 = certifiedMessagesQueue.splice(
+		0,
+		baseInputs.length
+	);
+
+	for (let i = 0; i < baseInputs.length; ++i) {
+		const certifiedMessageV1 = certifiedMessagesV1[i];
+		const certifiedMessageV2 = certifiedMessagesV2[i];
+		const {outputDir} = baseInputs[i];
 
 		await mkdirp(outputDir);
 
@@ -54,11 +90,16 @@ try {
 
 		fs.writeFileSync(
 			`${outputDir}/pkg`,
-			certified.data.toString('base64').replace(/\s+/g, '') +
+			certifiedMessageV1.data.toString('base64').replace(/\s+/g, '') +
 				'\n' +
-				certified.publicKeys.classical.toString() +
+				certifiedMessageV1.publicKeys.classical.toString() +
 				'\n' +
-				certified.publicKeys.postQuantum.toString()
+				certifiedMessageV1.publicKeys.postQuantum.toString()
+		);
+
+		fs.writeFileSync(
+			`${outputDir}/pkg.v2`,
+			await serialize(AGSEPKICertified, certifiedMessageV2)
 		);
 
 		console.log(`${outputDir} saved.`);

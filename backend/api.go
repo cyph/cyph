@@ -1022,7 +1022,7 @@ func getPackage(h HandlerArgs) (interface{}, int) {
 
 	return map[string]interface{}{
 		"gateways":  getIPFSGateways(continentCode, isIPv6Request(h)),
-		"package":   packageData.Package,
+		"package":   packageData.PackageV1,
 		"timestamp": packageData.Timestamp,
 	}, http.StatusOK
 }
@@ -1030,23 +1030,32 @@ func getPackage(h HandlerArgs) (interface{}, int) {
 func getPackageV2(h HandlerArgs) (interface{}, int) {
 	packageName := h.Request.URL.Path[17:]
 
-	packageData := &WebSignPackageItem{}
-	packageDataKey := datastoreKey("WebSignPackageItem", packageName)
+	packageContainer := &WebSignPackageContainer{}
 
-	if err := h.Datastore.Get(h.Context, packageDataKey, packageData); err != nil {
-		return "package not found", http.StatusBadRequest
+	/* Static package data has priority over database */
+	if packageData := packages[packageName]; len(packageData.PackageV2) > 0 {
+		packageContainer.Data = packageData.PackageV2
+		packageContainer.Subresources = packageData.PackageV1.Subresources
+		packageContainer.SubresourceTimeouts = packageData.PackageV1.SubresourceTimeouts
+		packageContainer.Timestamp = float64(packageData.Timestamp)
+	} else {
+		packageItem := &WebSignPackageItem{}
+		packageDataKey := datastoreKey("WebSignPackageItem", packageName)
+
+		if err := h.Datastore.Get(h.Context, packageDataKey, packageItem); err != nil {
+			return "package not found", http.StatusBadRequest
+		}
+
+		packageContainer.Data = packageItem.Data
+		packageContainer.Subresources = packageItem.Subresources
+		packageContainer.SubresourceTimeouts = packageItem.SubresourceTimeouts
+		packageContainer.Timestamp = packageItem.Timestamp
 	}
 
 	_, continentCode, _, _, _, _, _, _ := geolocate(h)
+	packageContainer.Gateways = getIPFSGateways(continentCode, isIPv6Request(h))
 
-	encoded, err := proto.Marshal(&WebSignPackageContainer{
-		Data:                packageData.Data,
-		Gateways:            getIPFSGateways(continentCode, isIPv6Request(h)),
-		Subresources:        packageData.Subresources,
-		SubresourceTimeouts: packageData.SubresourceTimeouts,
-		Timestamp:           packageData.Timestamp,
-	})
-
+	encoded, err := proto.Marshal(packageContainer)
 	if err != nil {
 		return "proto encoding failure", http.StatusBadRequest
 	}
@@ -1067,6 +1076,11 @@ func getPackageTimestamp(h HandlerArgs) (interface{}, int) {
 
 func getPackageTimestampV2(h HandlerArgs) (interface{}, int) {
 	packageName := h.Request.URL.Path[26:]
+
+	/* Static package data has priority over database */
+	if packageData := packages[packageName]; len(packageData.PackageV2) > 0 {
+		return packageData.Timestamp, http.StatusOK
+	}
 
 	packageTimestamp := &WebSignPackageTimestamp{}
 	packageTimestampKey := datastoreKey("WebSignPackageTimestamp", packageName)

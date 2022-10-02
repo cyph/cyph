@@ -1,16 +1,19 @@
 #!/usr/bin/env node
 
+import {util} from '@cyph/sdk';
 import fs from 'fs';
 import {getPackageDatabase} from '../modules/package-database.js';
 
+const {dynamicSerializeBytes} = util;
+
 const file = process.argv[2];
-const output = JSON.stringify(await getPackageDatabase());
+const output = await getPackageDatabase();
 
 if (file) {
-	fs.writeFileSync(file, output);
+	fs.writeFileSync(file, dynamicSerializeBytes(output));
 }
 else {
-	console.log(output);
+	console.log(JSON.stringify(output));
 }
 
 process.exit(0);

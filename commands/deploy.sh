@@ -663,7 +663,7 @@ then
 	./commands/backendplans.js backend/assets/plans.json
 	./commands/cloudfunctions.js backend/assets/cloudfunctions.list
 	./commands/ipfsgateways.js backend/assets/ipfs-gateways.json
-	./commands/packagedatabase.js backend/assets/packages.json
+	./commands/packagedatabase.js backend/assets/packages
 
 	if [ "${allBranches}" ] ; then
 		for branchDir in ${branchDirs} ; do

@@ -79,9 +79,17 @@ type IPFSGatewayUptimeData struct {
 
 // PackageData : Data for an application package
 type PackageData struct {
-	Package   interface{}
+	PackageV1 PackageV1
+	PackageV2 []byte
 	Timestamp int64
 	Uptime    []IPFSGatewayUptimeData
+}
+
+// PackageV1 : Legacy package format
+type PackageV1 struct {
+	Root                string
+	Subresources        map[string]string
+	SubresourceTimeouts map[string]uint32
 }
 
 // Plan : Subscription plan

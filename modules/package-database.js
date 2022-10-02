@@ -1,5 +1,6 @@
 #!/usr/bin/env node
 
+import {util} from '@cyph/sdk';
 import childProcess from 'child_process';
 import fs from 'fs';
 import glob from 'glob/sync.js';
@@ -8,7 +9,9 @@ import os from 'os';
 import path from 'path';
 import {updateRepos} from './update-repos.js';
 
-const cachePath = `${os.homedir()}/.package-database.json`;
+const {dynamicDeserialize, dynamicSerializeBytes} = util;
+
+const cachePath = `${os.homedir()}/.package-database`;
 const repoPath = `${os.homedir()}/.cyph/repos/cdn`;
 
 const options = {cwd: repoPath};
@@ -48,7 +51,7 @@ const getSubresourceTimeouts = (
 
 export const getPackageDatabase = memoize(async () => {
 	if (fs.existsSync(cachePath)) {
-		return JSON.parse(fs.readFileSync(cachePath).toString());
+		return dynamicDeserialize(fs.readFileSync(cachePath));
 	}
 
 	await updateRepos();
@@ -74,7 +77,7 @@ export const getPackageDatabase = memoize(async () => {
 			(packages, [packageName, root, timestamp]) => ({
 				...packages,
 				[packageName]: {
-					package: {
+					packageV1: {
 						root,
 						subresources: getFiles(`${packageName}/**/*.ipfs`)
 							.map(ipfs => [
@@ -97,6 +100,9 @@ export const getPackageDatabase = memoize(async () => {
 							clientMinimumSupportedMbps
 						)
 					},
+					packageV2: fs.existsSync(`${packageName}/pkg.v2.br`) ?
+						fs.readFileSync(`${packageName}/pkg.v2.br`) :
+						undefined,
 					timestamp,
 					uptime: Array.from(
 						Object.entries(
@@ -131,7 +137,7 @@ export const getPackageDatabase = memoize(async () => {
 			{}
 		);
 
-	fs.writeFileSync(cachePath, JSON.stringify(packageDatabase));
+	fs.writeFileSync(cachePath, dynamicSerializeBytes(packageDatabase));
 
 	return packageDatabase;
 });

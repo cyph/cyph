@@ -37,6 +37,7 @@ import (
 	stripeProductAPI "github.com/stripe/stripe-go/v72/product"
 	stripeSubscriptionAPI "github.com/stripe/stripe-go/v72/sub"
 	stripeSubscriptionItemAPI "github.com/stripe/stripe-go/v72/subitem"
+	"github.com/vmihailenco/msgpack/v5"
 )
 
 // HandlerArgs : Arguments to Handler
@@ -245,13 +246,13 @@ var packages = func() map[string]PackageData {
 		return map[string]PackageData{}
 	}
 
-	b, err := ioutil.ReadFile("assets/packages.json")
+	b, err := ioutil.ReadFile("assets/packages")
 	if err != nil {
 		panic(err)
 	}
 
 	var o map[string]PackageData
-	err = json.Unmarshal(b, &o)
+	err = msgpack.Unmarshal(b, &o)
 	if err != nil {
 		panic(err)
 	}
