@@ -133,8 +133,8 @@ type StripeData struct {
 	SubscriptionItemID string
 }
 
-// WebSignPackageData : WebSign package data
-type WebSignPackageData struct {
+// WebSignPackageItem : WebSign package
+type WebSignPackageItem struct {
 	Data                []byte
 	Subresources        map[string]string
 	SubresourceTimeouts map[string]uint32

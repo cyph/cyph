@@ -1030,8 +1030,8 @@ func getPackage(h HandlerArgs) (interface{}, int) {
 func getPackageV2(h HandlerArgs) (interface{}, int) {
 	packageName := h.Request.URL.Path[17:]
 
-	packageData := &WebSignPackageData{}
-	packageDataKey := datastoreKey("WebSignPackageData", packageName)
+	packageData := &WebSignPackageItem{}
+	packageDataKey := datastoreKey("WebSignPackageItem", packageName)
 
 	if err := h.Datastore.Get(h.Context, packageDataKey, packageData); err != nil {
 		return "package not found", http.StatusBadRequest

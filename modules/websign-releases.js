@@ -208,7 +208,7 @@ export const processReleaseSignOutput = async ({
 								timestamp: pendingRelease.packageData.timestamp
 							},
 							key: getDatastoreKey(
-								'WebSignPackageData',
+								'WebSignPackageItem',
 								pendingRelease.packageData.packageName
 							)
 						})
