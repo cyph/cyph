@@ -3,7 +3,7 @@ syntax = "proto3";
 
 /** WebSign package container. */
 message WebSignPackageContainer {
-	/** Serialized AGSEPKICertified-wrapped WebSignPackage. */
+	/** Brotli-compressed serialized AGSEPKICertified-wrapped WebSignPackage. */
 	bytes data = 1;
 
 	/** IPFS gateways. */

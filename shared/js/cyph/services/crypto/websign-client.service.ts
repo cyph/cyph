@@ -193,6 +193,11 @@ export class WebSignClientService extends BaseProvider {
 		packageContainer: IWebSignPackageContainer;
 		webSignPackage: IWebSignPackage;
 	}> {
+		const brotliDecode = this.brotliDecode;
+		if (brotliDecode === undefined) {
+			throw new Error('Missing Brotli decoder.');
+		}
+
 		const packageContainer = await requestProto(WebSignPackageContainer, {
 			url: `${this.envService.baseUrl}websign/package/${packageName}`
 		});
@@ -208,7 +213,7 @@ export class WebSignClientService extends BaseProvider {
 
 		const certifiedMessage = await deserialize(
 			AGSEPKICertified,
-			packageContainer.data
+			brotliDecode(packageContainer.data)
 		);
 
 		if (certifiedMessage.algorithm !== this.config.algorithm) {
@@ -400,7 +405,6 @@ export class WebSignClientService extends BaseProvider {
 		catch {}
 
 		const brotliDecode = this.brotliDecode;
-
 		if (brotliDecode === undefined) {
 			return latestPackage;
 		}

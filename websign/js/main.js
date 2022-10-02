@@ -101,7 +101,7 @@ Promise.resolve().then(function () {
 /* Open package */
 then(function (packageContainer) {
 	var certifiedMessage	= proto.AGSEPKICertified.decode(
-		packageContainer.data
+		BrotliDecode(packageContainer.data)
 	);
 
 	if (certifiedMessage.algorithm !== config.algorithm) {
