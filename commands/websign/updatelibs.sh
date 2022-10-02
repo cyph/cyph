@@ -45,6 +45,7 @@ cat > brotli.webpack.js <<- EOM
 		}
 	};
 EOM
+rm ~/brotli/js/package.json # Workaround for formatting error
 webpack --config brotli.webpack.js
 rm brotli.webpack.js
 echo 'var BrotliDecode = brotli.BrotliDecode; brotli = undefined;' >> brotli.js
