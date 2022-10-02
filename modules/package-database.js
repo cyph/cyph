@@ -8,6 +8,7 @@ import os from 'os';
 import path from 'path';
 import {updateRepos} from './update-repos.js';
 
+const cachePath = `${os.homedir()}/.package-database.json`;
 const repoPath = `${os.homedir()}/.cyph/repos/cdn`;
 
 const options = {cwd: repoPath};
@@ -45,10 +46,14 @@ const getSubresourceTimeouts = (
 			{}
 		);
 
-export const packageDatabase = memoize(() => {
-	updateRepos();
+export const getPackageDatabase = memoize(async () => {
+	if (fs.existsSync(cachePath)) {
+		return JSON.parse(fs.readFileSync(cachePath).toString());
+	}
 
-	return getFiles('**/pkg.gz')
+	await updateRepos();
+
+	const packageDatabase = getFiles('**/pkg.gz')
 		.map(pkg => [
 			pkg.split('/').slice(0, -1).join('/'),
 			childProcess
@@ -125,4 +130,8 @@ export const packageDatabase = memoize(() => {
 			}),
 			{}
 		);
+
+	fs.writeFileSync(cachePath, JSON.stringify(packageDatabase));
+
+	return packageDatabase;
 });

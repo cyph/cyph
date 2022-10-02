@@ -1,10 +1,10 @@
 #!/usr/bin/env node
 
 import fs from 'fs';
-import {packageDatabase} from '../modules/package-database.js';
+import {getPackageDatabase} from '../modules/package-database.js';
 
 const file = process.argv[2];
-const output = JSON.stringify(packageDatabase());
+const output = JSON.stringify(await getPackageDatabase());
 
 if (file) {
 	fs.writeFileSync(file, output);

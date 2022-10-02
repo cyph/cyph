@@ -11,7 +11,7 @@ import os from 'os';
 import Semaphore from 'promise-semaphore';
 import {URL} from 'url';
 import {promisify} from 'util';
-import {packageDatabase} from '../modules/package-database.js';
+import {getPackageDatabase} from '../modules/package-database.js';
 import {fetch} from './fetch.js';
 
 /* Blacklist of known bad or flagged gateways */
@@ -20,7 +20,9 @@ const blacklist = new Set(['https://astyanax.io/ipfs/:hash']);
 const uptimeSemaphore = new Semaphore({rooms: 2});
 const uptimeCheck = memoize(async gateway =>
 	uptimeSemaphore.add(async () => {
-		const {uptime} = packageDatabase()['cyph.app'];
+		const {
+			'cyph.app': {uptime}
+		} = await getPackageDatabase();
 
 		for (const {expectedResponseSize, ipfsHash, timeout} of uptime) {
 			let innerResult = false;
