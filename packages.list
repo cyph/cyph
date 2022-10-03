@@ -394,6 +394,7 @@ openpgp
 opentok
 opus-recorder
 parchment
+path-browserify
 pdf-lib
 pdfjs-dist
 pdfkit

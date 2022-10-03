@@ -32,6 +32,7 @@
 			"https": ["js/externals/https"],
 			"libsodium": ["js/externals/libsodium"],
 			"lodash/*": ["../node_modules/@types/lodash-es/*"],
+			"path": ["js/externals/path"],
 			"querystring": ["js/externals/querystring"],
 			"request": ["js/externals/request"],
 			"rsvp": ["js/externals/rsvp"],
