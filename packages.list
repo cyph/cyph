@@ -248,6 +248,7 @@ cheerio@1.0.0-rc.3
 clean-css-cli
 clipboard-polyfill
 comlink
+commander
 core-js
 core-js-bundle
 core-js-pure
