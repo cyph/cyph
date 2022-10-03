@@ -468,7 +468,7 @@ tslint-immutable
 tslint-microsoft-contrib
 tsutils
 typedoc
-typescript@~4.7
+typescript@~4.8
 u2f-api-polyfill
 uglify-js
 universal-analytics
