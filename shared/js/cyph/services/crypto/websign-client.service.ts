@@ -304,11 +304,13 @@ export class WebSignClientService extends BaseProvider {
 						this.config.additionalDataSignaturePrefix + packageName
 					);
 
-				if (!secondarySignatureIsValid) {
-					throw new Error(
-						`Invalid secondary signature: @${packageSignature.username}`
-					);
+				if (secondarySignatureIsValid) {
+					return;
 				}
+
+				throw new Error(
+					`Invalid secondary signature: @${packageSignature.username}`
+				);
 			})
 		);
 
