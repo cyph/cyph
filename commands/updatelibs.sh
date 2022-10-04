@@ -57,12 +57,13 @@ cd ${dir}
 rm -rf ${firebaseFunctionsTmp}
 cyph-prettier --write firebase/functions/package-lock.json || fail
 
-rm */go.mod */go.sum 2> /dev/null
-find . -maxdepth 2 -type f -name .go.mod -exec bash -c '
-	cd $(echo "{}" | sed "s|/.go.mod||")
-	cp .go.mod go.mod
-	go mod tidy
-	go get -u ./...
-' \;
+# Pending GAE Go 1.17+ support, update these by hand for now
+# rm */go.mod */go.sum 2> /dev/null
+# find . -maxdepth 2 -type f -name .go.mod -exec bash -c '
+# 	cd $(echo "{}" | sed "s|/.go.mod||")
+# 	cp .go.mod go.mod
+# 	go mod tidy
+# 	go get -u ./...
+# ' \;
 
 ./commands/commit.sh --gc --skip-push "${@}" updatelibs
