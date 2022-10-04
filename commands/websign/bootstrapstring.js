@@ -3,8 +3,8 @@
 import {getMeta} from '../../modules/base.js';
 const {__dirname, isCLI} = getMeta(import.meta);
 
+import {pack} from '@cyph/sdk/cli/websign/pack.js';
 import fs from 'fs';
-import {pack} from './pack.js';
 
 export const bootstrapString = async () => {
 	const path = `${__dirname}/../../websign`;

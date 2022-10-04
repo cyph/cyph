@@ -368,7 +368,7 @@ if [ ! "${site}" ] || ( [ "${site}" == websign ] || [ "${site}" == "${webSignedP
 	fi
 
 	cp -rf ../shared/favicon.ico ../shared/assets/img ./
-	../commands/websign/pack.js index.html index.html
+	cyph websign internal pack index.html index.html
 
 	# special case; add general solution when needed
 	node -e "fs.writeFileSync('serviceworker.js', fs.readFileSync('lib/dexie.js').toString().trim() + '\n' + fs.readFileSync('serviceworker.js').toString())"
@@ -439,7 +439,7 @@ for d in ${compiledProjects} ; do
 
 	if [ "${websign}" ] && [ "${d}" == "${webSignedProject}" ] ; then
 		# Merge in base64'd images, fonts, video, and audio
-		../commands/websign/subresourceinline.js ../pkg/cyph.app-subresources
+		cyph websign internal subresourceinline ../pkg/cyph.app-subresources
 	fi
 
 	node -e '(async () => console.log(`
@@ -482,9 +482,9 @@ if [ "${pack}" ] ; then
 	cd "${webSignedProject}"
 
 	# Merge imported libraries into threads
-	find . -type f -name '*.js' | xargs -I% ../commands/websign/threadpack.js % || fail
+	find . -type f -name '*.js' | xargs -I% cyph websign internal threadPack % || fail
 
-	../commands/websign/pack.js --sri --minify index.html ../pkg/cyph.app
+	cyph websign internal pack --sri --minify index.html ../pkg/cyph.app
 
 	cd ..
 fi

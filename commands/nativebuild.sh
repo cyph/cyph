@@ -65,7 +65,7 @@ node -e '(async () => console.log(`
 `))().then(() => process.exit(0))' >> starter.js
 cat app/starter.js >> starter.js
 
-${dir}/commands/websign/threadpack.js starter.js || fail
+cyph websign internal threadpack starter.js || fail
 mv bundle.js starter.js app/
 
 pass

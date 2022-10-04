@@ -6,10 +6,8 @@ import fs from 'fs';
 import glob from 'glob';
 import mkdirp from 'mkdirp';
 
-(async () => {
-	const args = {
-		subresourcePath: `${process.env.PWD}/${process.argv.slice(-1)[0]}`
-	};
+export const subresourceInline = async subresourcePath => {
+	subresourcePath = fs.realpathSync(subresourcePath);
 
 	process.chdir('src');
 
@@ -32,7 +30,7 @@ import mkdirp from 'mkdirp';
 		)
 		.reduce((a, b) => a.concat(b), ['index.html']);
 
-	await mkdirp(args.subresourcePath);
+	await mkdirp(subresourcePath);
 
 	for (let file of filesToModify) {
 		const originalContent = fs.readFileSync(file).toString();
@@ -65,7 +63,7 @@ import mkdirp from 'mkdirp';
 			if (content.indexOf('☁') > -1) {
 				content = content.replace(/☁/g, subresource);
 
-				const path = `${args.subresourcePath}/${subresource}`;
+				const path = `${subresourcePath}/${subresource}`;
 				const pathParent = path.split('/').slice(0, -1).join('/');
 
 				await mkdirp(pathParent);
@@ -79,8 +77,5 @@ import mkdirp from 'mkdirp';
 		}
 	}
 
-	process.exit(0);
-})().catch(err => {
-	console.error(err);
-	process.exit(1);
-});
+	process.chdir('..');
+};

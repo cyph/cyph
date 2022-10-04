@@ -7,15 +7,11 @@ const varToSelfReplacements = new Set([
 	'assets/node_modules/openpgp/dist/openpgp.min.js'
 ]);
 
-const args = {
-	path: process.argv[2]
-};
-
-(async () => {
-	console.log(`Threadpack start: ${args.path}`);
+export const threadPack = async rootPath => {
+	console.log(`Threadpack start: ${rootPath}`);
 
 	const code = fs
-		.readFileSync(args.path)
+		.readFileSync(rootPath)
 		.toString()
 		.replace(/importScripts\(\s*["'](.*?)["']\s*\)/g, (_, value) => {
 			const scriptPath = value
@@ -37,17 +33,14 @@ const args = {
 	if (error) {
 		fs.appendFileSync(
 			'/cyph/threadpack.log',
-			`${args.path}:\n\n${code}\n\n\n\n\n\n\n\n`
+			`${rootPath}:\n\n${code}\n\n\n\n\n\n\n\n`
 		);
 		throw error;
 	}
 
-	fs.writeFileSync(args.path, code);
+	fs.writeFileSync(rootPath, code);
 
-	console.log(`Threadpack complete: ${args.path}`);
+	console.log(`Threadpack complete: ${rootPath}`);
 
 	process.exit(0);
-})().catch(err => {
-	console.error(`Threadpack fail: ${args.path}`, err);
-	process.exit(1);
-});
+};

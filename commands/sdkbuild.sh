@@ -54,6 +54,9 @@ $(
 export default cyphSDK;
 EOM
 
+rm -rf ${dir}/sdk/cli/modules 2> /dev/null
+cp -rf ${dir}/modules ${dir}/sdk/cli/
+
 if [ "${version}" != 'prod' ] ; then
 	cp sdk/dist/main.js ${dir}/sdk/dist/sdk.cjs
 	exit

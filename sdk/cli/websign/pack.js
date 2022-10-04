@@ -1,8 +1,5 @@
 #!/usr/bin/env node
 
-import {getMeta} from '../../modules/base.js';
-const {isCLI} = getMeta(import.meta);
-
 import cheerio from 'cheerio';
 import fastSHA512 from 'fast-sha512';
 import fs from 'fs';
@@ -121,27 +118,3 @@ export const pack = async (
 
 	return output;
 };
-
-if (isCLI) {
-	const args = {
-		enableMinify: process.argv.indexOf('--minify') > -1,
-		enableSRI: process.argv.indexOf('--sri') > -1,
-		inputPath: process.argv.slice(-2)[0],
-		outputPath: process.argv.slice(-1)[0]
-	};
-
-	pack(
-		process.env.PWD,
-		args.inputPath,
-		args.enableMinify,
-		args.enableSRI,
-		args.outputPath
-	)
-		.then(() => {
-			process.exit(0);
-		})
-		.catch(err => {
-			console.error(err);
-			process.exit(1);
-		});
-}

@@ -1,9 +1,12 @@
 {
 	"name": "@cyph/sdk",
-	"version": "6.0.6",
+	"version": "7.0.0-next.0",
 	"license": "Cyph-RSL",
 	"type": "module",
 	"main": "./index.js",
+	"bin": {
+		"cyph": "./cli/index.js"
+	},
 	"files": [
 		"/dist",
 		"/LICENSE",
@@ -18,11 +21,18 @@
 	"dependencies": {
 		"@babel/helpers": "*",
 		"@babel/runtime": "*",
+		"cheerio": "*",
+		"commander": "^9",
+		"fast-sha512": "*",
 		"fetch-blob": ">=3",
 		"firebase": ">=9",
 		"generate-rsa-keypair": "*",
+		"glob": "*",
+		"html-minifier": "*",
+		"mkdirp": "*",
 		"node-fetch": ">=3",
 		"regenerator-runtime": "*",
+		"terser": "*",
 		"tslib": "*",
 		"xhr2": "*"
 	},
