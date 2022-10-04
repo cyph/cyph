@@ -226,7 +226,10 @@ if [ "${includeSyncfusion}" ] ; then
 		mvn function:run -Drun.port=42004
 	" &
 fi
-if [ "${site}" == 'backend' ] ; then sleep Infinity ; fi
+if [ "${site}" == 'backend' ] ; then
+	./commands/protobuf.sh
+	sleep Infinity
+fi
 
 ./commands/buildunbundledassets.sh \
 	$(if [ "${localPotassium}" ] ; then echo -n '--libpotassium' ; fi) \
