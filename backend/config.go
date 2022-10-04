@@ -87,9 +87,9 @@ type PackageData struct {
 
 // PackageV1 : Legacy package format
 type PackageV1 struct {
-	Root                string
-	Subresources        map[string]string
-	SubresourceTimeouts map[string]uint32
+	Root                string            `json:"root"`
+	Subresources        map[string]string `json:"subresources"`
+	SubresourceTimeouts map[string]uint32 `json:"subresourceTimeouts"`
 }
 
 // Plan : Subscription plan
