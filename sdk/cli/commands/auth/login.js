@@ -2,7 +2,7 @@
 
 import {program} from 'commander';
 
-program.action(async () => {
+program.name('cyph auth login').action(async () => {
 	console.log('Not yet implemented.');
 });
 

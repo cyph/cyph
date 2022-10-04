@@ -2,8 +2,11 @@
 
 import {program} from 'commander';
 
-program.arguments('<rootDirectoryPath>').action(async rootDirectoryPath => {
-	console.log({rootDirectoryPath});
-});
+program
+	.name('cyph websign deploy')
+	.arguments('<rootDirectoryPath>')
+	.action(async rootDirectoryPath => {
+		console.log({rootDirectoryPath});
+	});
 
 await program.parseAsync();
