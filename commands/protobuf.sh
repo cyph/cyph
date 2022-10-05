@@ -32,7 +32,7 @@ for f in $(ls shared/proto/bundles/*.proto) ; do
 	node -e "fs.writeFileSync(
 		'${outputDirectory}/index.js',
 		fs.readFileSync('${outputDirectory}/index.js').toString().replace(
-			/factory\(require\(\"protobufjs\/minimal\"\)\);/,
+			/(factory\(require\(\"protobufjs\/minimal\"\)\);)/,
 			'\$1\n\n    /* Global */ else\n        factory(global.protobuf);'
 		)
 	)"
