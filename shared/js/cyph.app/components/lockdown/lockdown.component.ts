@@ -1,4 +1,11 @@
-import {ChangeDetectionStrategy, Component, OnInit} from '@angular/core';
+import {DOCUMENT} from '@angular/common';
+import {
+	ChangeDetectionStrategy,
+	Component,
+	Inject,
+	OnInit,
+	Optional
+} from '@angular/core';
 import {BehaviorSubject} from 'rxjs';
 import {BaseProvider} from '../../../cyph/base-provider';
 import {StringProto} from '../../../cyph/proto';
@@ -160,6 +167,11 @@ export class LockdownComponent extends BaseProvider implements OnInit {
 
 	constructor (
 		/** @ignore */
+		@Inject(DOCUMENT)
+		@Optional()
+		private readonly document: Document | undefined,
+
+		/** @ignore */
 		private readonly appService: AppService,
 
 		/** @ignore */
@@ -179,9 +191,6 @@ export class LockdownComponent extends BaseProvider implements OnInit {
 	) {
 		super();
 
-		/* eslint-disable-next-line @typescript-eslint/tslint/config */
-		if (typeof document === 'object' && typeof document.body === 'object') {
-			document.body.classList.remove('primary-account-theme');
-		}
+		this.document?.body.classList.remove('primary-account-theme');
 	}
 }

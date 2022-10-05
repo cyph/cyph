@@ -1,8 +1,11 @@
+import {DOCUMENT} from '@angular/common';
 import {
 	AfterViewInit,
 	ChangeDetectionStrategy,
 	Component,
+	Inject,
 	OnInit,
+	Optional,
 	ViewChild
 } from '@angular/core';
 import {ActivatedRoute, UrlSegment} from '@angular/router';
@@ -314,6 +317,11 @@ export class AccountComponent
 		private readonly activatedRoute: ActivatedRoute,
 
 		/** @ignore */
+		@Inject(DOCUMENT)
+		@Optional()
+		private readonly document: Document | undefined,
+
+		/** @ignore */
 		private readonly faviconService: FaviconService,
 
 		/** @see AccountService */
@@ -352,14 +360,11 @@ export class AccountComponent
 			(<any> self).accountDebugService = accountDebugService;
 		}
 
-		if (
-			/* eslint-disable-next-line @typescript-eslint/tslint/config */
-			!(typeof document === 'object' && typeof document.body === 'object')
-		) {
+		if (!this.document) {
 			return;
 		}
 
-		document.body.classList.toggle(
+		this.document.body.classList.toggle(
 			'primary-account-theme',
 			accountPrimaryTheme
 		);
@@ -370,9 +375,12 @@ export class AccountComponent
 					telehealthTheme ? 'telehealth' : 'default'
 				);
 
-				document.body.classList.toggle('telehealth', telehealthTheme);
+				this.document?.body.classList.toggle(
+					'telehealth',
+					telehealthTheme
+				);
 
-				document.body.classList.toggle(
+				this.document?.body.classList.toggle(
 					'primary-account-theme',
 					accountPrimaryTheme && !telehealthTheme
 				);

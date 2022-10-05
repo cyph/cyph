@@ -1,7 +1,10 @@
+import {DOCUMENT} from '@angular/common';
 import {
 	ChangeDetectionStrategy,
 	Component,
+	Inject,
 	OnInit,
+	Optional,
 	ViewChild
 } from '@angular/core';
 import {MatInput} from '@angular/material/input';
@@ -357,6 +360,11 @@ export class AccountLoginComponent extends BaseProvider implements OnInit {
 		private readonly activatedRoute: ActivatedRoute,
 
 		/** @ignore */
+		@Inject(DOCUMENT)
+		@Optional()
+		private readonly document: Document | undefined,
+
+		/** @ignore */
 		private readonly router: Router,
 
 		/** @ignore */
@@ -414,8 +422,6 @@ export class AccountLoginComponent extends BaseProvider implements OnInit {
 		}
 
 		/* eslint-disable-next-line @typescript-eslint/tslint/config */
-		if (typeof document === 'object' && typeof document.body === 'object') {
-			document.body.classList.remove('primary-account-theme');
-		}
+		this.document?.body.classList.remove('primary-account-theme');
 	}
 }

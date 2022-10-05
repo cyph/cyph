@@ -1,4 +1,11 @@
-import {AfterViewInit, ChangeDetectionStrategy, Component} from '@angular/core';
+import {DOCUMENT} from '@angular/common';
+import {
+	AfterViewInit,
+	ChangeDetectionStrategy,
+	Component,
+	Inject,
+	Optional
+} from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
 import * as $ from 'jquery';
 import * as Konami from 'konami';
@@ -90,29 +97,35 @@ export class EphemeralChatRootComponent
 
 				this.p2pWebRTCService.loading.next(false);
 
-				const stream: MediaStream =
-					'captureStream' in HTMLVideoElement.prototype ||
-					'mozCaptureStream' in HTMLVideoElement.prototype ?
-						await (async () => {
-							const video = document.createElement('video');
-							video.loop = true;
-							video.muted = true;
+				const stream: MediaStream = await (async () => {
+					if (
+						!(
+							this.document &&
+							('captureStream' in HTMLVideoElement.prototype ||
+								'mozCaptureStream' in
+									HTMLVideoElement.prototype)
+						)
+					) {
+						return new MediaStream();
+					}
 
-							video.src = URL.createObjectURL(
-									/* eslint-disable-next-line @typescript-eslint/tslint/config */
-									await fetch(
-										`${this.envService.baseUrl}test.webm`
-									).then(async o => o.blob())
-								);
+					const video = this.document.createElement('video');
+					video.loop = true;
+					video.muted = true;
 
-							await video.play();
+					video.src = URL.createObjectURL(
+						/* eslint-disable-next-line @typescript-eslint/tslint/config */
+						await fetch(`${this.envService.baseUrl}test.webm`).then(
+							async o => o.blob()
+						)
+					);
 
-							return 'captureStream' in
-								HTMLVideoElement.prototype ?
-								(<any> video).captureStream() :
-								(<any> video).mozCaptureStream();
-						})() :
-						new MediaStream();
+					await video.play();
+
+					return 'captureStream' in HTMLVideoElement.prototype ?
+						(<any> video).captureStream() :
+						(<any> video).mozCaptureStream();
+				})();
 
 				this.p2pWebRTCService.incomingStreams.next([
 					{
@@ -200,8 +213,8 @@ export class EphemeralChatRootComponent
 		}
 
 		if (this.sessionService.apiFlags.modestBranding) {
-			if (this.envService.isWeb) {
-				$(document.body).addClass('modest');
+			if (this.envService.isWeb && this.document) {
+				$(this.document.body).addClass('modest');
 			}
 			else {
 				/* TODO: HANDLE NATIVE */
@@ -301,6 +314,11 @@ export class EphemeralChatRootComponent
 		private readonly activatedRoute: ActivatedRoute,
 
 		/** @ignore */
+		@Inject(DOCUMENT)
+		@Optional()
+		private readonly document: Document | undefined,
+
+		/** @ignore */
 		private readonly router: Router,
 
 		/** @ignore */
@@ -350,9 +368,6 @@ export class EphemeralChatRootComponent
 	) {
 		super();
 
-		/* eslint-disable-next-line @typescript-eslint/tslint/config */
-		if (typeof document === 'object' && typeof document.body === 'object') {
-			document.body.classList.remove('primary-account-theme');
-		}
+		this.document?.body.classList.remove('primary-account-theme');
 	}
 }
