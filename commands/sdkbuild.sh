@@ -20,6 +20,7 @@ else
 fi
 
 
+rm -rf sdk/node_modules 2> /dev/null
 ./commands/copyworkspace.sh ~/.build
 cd ~/.build
 
