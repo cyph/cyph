@@ -55,13 +55,11 @@ try {
 	}));
 
 	const inputsV2 = await Promise.all(
-		baseInputs.map(({webSignPackage}) =>
-			async({
-				additionalData: `${webSignNamespace}:webSign/packages/${webSignPackage.packageData.packageName}`,
-				algorithm: PotassiumData.SignAlgorithms.V2Hardened,
-				message: await serialize(WebSignPackage, webSignPackage)
-			})
-		)
+		baseInputs.map(async ({webSignPackage}) => ({
+			additionalData: `${webSignNamespace}:webSign/packages/${webSignPackage.packageData.packageName}`,
+			algorithm: PotassiumData.SignAlgorithms.V2Hardened,
+			message: await serialize(WebSignPackage, webSignPackage)
+		}))
 	);
 
 	const certifiedMessagesQueue = await sign(
