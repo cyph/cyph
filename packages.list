@@ -109,6 +109,7 @@
 @opentok/client
 @prettier/plugin-xml
 @stripe/stripe-js
+@supabase/supabase-js
 @syncfusion/ej2
 @syncfusion/ej2-angular-barcode-generator
 @syncfusion/ej2-angular-base
@@ -449,6 +450,7 @@ stripe
 stripe-angular
 stylelint
 stylelint-scss
+supabase
 superdilithium
 superfalcon
 supersphincs
