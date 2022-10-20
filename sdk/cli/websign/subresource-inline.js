@@ -8,7 +8,7 @@ import mkdirp from 'mkdirp';
 import path from 'path';
 
 export const subresourceInline = async subresourceRoot => {
-	subresourceRoot = fs.realpathSync(subresourceRoot);
+	subresourceRoot = path.join(process.cwd(), subresourceRoot);
 
 	process.chdir('src');
 
