@@ -23,7 +23,7 @@
 	"dependencies": {
 		"@babel/helpers": "*",
 		"@babel/runtime": "*",
-		"cheerio": "*",
+		"cheerio": "1.0.0-rc.3",
 		"commander": "^9",
 		"fast-sha512": "*",
 		"fetch-blob": ">=3",

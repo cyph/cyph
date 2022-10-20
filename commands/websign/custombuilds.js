@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 import {potassiumService as potassium, proto, util} from '@cyph/sdk';
-import * as cheerio from 'cheerio';
+import cheerio from 'cheerio';
 import fastSHA512 from 'fast-sha512';
 import fs from 'fs';
 import mkdirp from 'mkdirp';
