@@ -5,9 +5,10 @@ import fastSHA512 from 'fast-sha512';
 import fs from 'fs';
 import glob from 'glob';
 import mkdirp from 'mkdirp';
+import path from 'path';
 
-export const subresourceInline = async subresourcePath => {
-	subresourcePath = fs.realpathSync(subresourcePath);
+export const subresourceInline = async subresourceRoot => {
+	subresourceRoot = fs.realpathSync(subresourceRoot);
 
 	process.chdir('src');
 
@@ -25,12 +26,12 @@ export const subresourceInline = async subresourcePath => {
 	]
 		.map(o =>
 			glob
-				.sync(`${o.dir}/**`, {nodir: true})
+				.sync(path.join(o.dir, '**'), {nodir: true})
 				.filter(s => s.endsWith(`.${o.ext}`))
 		)
 		.reduce((a, b) => a.concat(b), ['index.html']);
 
-	await mkdirp(subresourcePath);
+	await mkdirp(subresourceRoot);
 
 	for (let file of filesToModify) {
 		const originalContent = fs.readFileSync(file).toString();
@@ -63,12 +64,15 @@ export const subresourceInline = async subresourcePath => {
 			if (content.indexOf('☁') > -1) {
 				content = content.replace(/☁/g, subresource);
 
-				const path = `${subresourcePath}/${subresource}`;
-				const pathParent = path.split('/').slice(0, -1).join('/');
+				const subresourcePath = path.join(subresourceRoot, subresource);
+				const subresourcePathParent = subresourcePath
+					.split(path.sep)
+					.slice(0, -1)
+					.join(path.sep);
 
-				await mkdirp(pathParent);
-				fs.writeFileSync(path, dataURI);
-				fs.writeFileSync(path + '.srihash', hash);
+				await mkdirp(subresourcePathParent);
+				fs.writeFileSync(subresourcePath, dataURI);
+				fs.writeFileSync(`${subresourcePath}.srihash`, hash);
 			}
 		}
 

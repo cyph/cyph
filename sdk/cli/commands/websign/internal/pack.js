@@ -13,14 +13,7 @@ program
 			inputPath,
 			outputPath,
 			{minify: enableMinify = false, sri: enableSRI = false}
-		) =>
-			pack(
-				process.env.PWD,
-				inputPath,
-				enableMinify,
-				enableSRI,
-				outputPath
-			)
+		) => pack(process.cwd(), inputPath, enableMinify, enableSRI, outputPath)
 	);
 
 await program.parseAsync();
