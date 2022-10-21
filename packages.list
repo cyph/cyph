@@ -230,6 +230,7 @@
 @typescript-eslint/typescript-estree
 @webcomponents/custom-elements
 @yaga/leaflet-ng2
+@yellowspot/ng-truncate
 abort-controller
 angular-fittext
 angular2-draggable
@@ -373,7 +374,6 @@ ng-animate
 ng-packagr
 ng2-fittext
 ng2-pdf-viewer
-ng2-truncate
 ngx-bar-rating
 ngx-build-plus
 ngx-captcha
