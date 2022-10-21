@@ -453,27 +453,8 @@ rm -rf lib
 # Temporary workaround pending https://github.com/angular/angular-cli/pull/22814
 echo | ng analytics disable --global
 
-# https://next.angular.io/guide/migration-ngcc
-cd /
-rm -rf node_modules/@covalent node_modules/ng2-truncate # entry-point compile errors
+# Ensure that all Angular libraries are Ivy-compatible
 if [ ! "${skipNodeModules}" ] ; then
+	cd /
 	ngcc --properties es2015 browser module main --first-only --create-ivy-entry-points
 fi
-
-# Quick workaround for incomplete compilation in ngcc command
-if [ -d ${dir}/cyph.app ] ; then
-	cd ${dir}/cyph.app
-else
-	git clone --depth 1 https://github.com/cyph/cyph.git ~/cyph.tmp
-	cd ~/cyph.tmp/cyph.app
-fi
-
-if [ ! "${skipNodeModules}" ] ; then
-	../commands/protobuf.sh
-	../commands/ngprojectinit.sh
-	ng build
-	../commands/ngprojectinit.sh --deinit
-fi
-
-cd
-rm -rf ~/cyph.tmp 2> /dev/null
