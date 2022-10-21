@@ -63,7 +63,7 @@ try {
 	);
 
 	const certifiedMessagesQueue = await sign(
-		[...inputsV1, inputsV2],
+		[...inputsV1, ...inputsV2],
 		args.test
 	);
 
