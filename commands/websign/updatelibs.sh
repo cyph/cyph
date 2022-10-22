@@ -47,7 +47,17 @@ EOM
 rm ~/brotli/js/package.json # Workaround for formatting error
 webpack --config brotli.webpack.js
 rm brotli.webpack.js
-echo 'var BrotliDecode = brotli.BrotliDecode; brotli = undefined;' >> brotli.js
+
+cat >> brotli.js <<- EOM
+	var _brotliDecode = brotli.BrotliDecode;
+	brotli = undefined;
+
+	self.brotliDecode = function (enc) {
+		var dec = _brotliDecode(enc);
+		return new Uint8Array(dec.buffer, dec.byteOffset, dec.byteLength);
+	};
+EOM
+
 babel brotli.js --presets=@babel/preset-env -o brotli.js
 terser brotli.js -o brotli.js
 

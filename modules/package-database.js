@@ -49,6 +49,9 @@ const getSubresourceTimeouts = (
 			{}
 		);
 
+const readIfExists = filePath =>
+	fs.existsSync(filePath) ? fs.readFileSync(filePath) : undefined;
+
 export const getPackageDatabase = memoize(async () => {
 	if (fs.existsSync(cachePath)) {
 		return dynamicDeserialize(fs.readFileSync(cachePath));
@@ -100,9 +103,9 @@ export const getPackageDatabase = memoize(async () => {
 							clientMinimumSupportedMbps
 						)
 					},
-					packageV2: fs.existsSync(`${packageName}/pkg.v2.br`) ?
-						fs.readFileSync(`${packageName}/pkg.v2.br`) :
-						undefined,
+					packageV2: readIfExists(
+						`${repoPath}/${packageName}/pkg.v2.br`
+					),
 					timestamp,
 					uptime: Array.from(
 						Object.entries(

@@ -84,7 +84,7 @@
 > 		delete storage.webSignPackageName;
 > 		delete storage.webSignPackageTimestamp;
 > 	}
-222,259c240,242
+228,265c246,248
 < /* Before finishing, perform self-administered
 < 	integrity check on WebSign bootstrap */
 < catch(function () {
@@ -127,7 +127,7 @@
 > /* Successfully execute package */
 > then(function (o) {
 > 	var headHTML	= o.packageData.payload.split('<head>')[1].split('</head>')[0];
-261,268c244,245
+267,274c250,251
 < 	if (!hashWhitelist[storage.webSignHash]) {
 < 		throw {
 < 			webSignPanic: true,
@@ -139,7 +139,7 @@
 ---
 > 	if (device.platform === 'iOS') {
 > 		headHTML	= headHTML.replace('href="/"', 'href="#"');
-271,276c248
+277,282c254
 < 	throw null;
 < }).
 < 
@@ -148,7 +148,7 @@
 < 	document.head.innerHTML	= o.packageData.payload.split('<head>')[1].split('</head>')[0];
 ---
 > 	document.head.innerHTML	= headHTML;
-286,291c258,262
+292,297c264,268
 < catch(function (err) {
 < 	var messageElement;
 < 
@@ -161,13 +161,13 @@
 > 		if (cordova && cordova.plugins && cordova.plugins.backgroundMode) {
 > 			cordova.plugins.backgroundMode.disable();
 > 		}
-293,295c264
+299,301c270
 < 	else {
 < 		messageElement					= document.getElementById('panic-message');
 < 		messageElement.style.display	= 'block';
 ---
 > 	catch (_) {}
-297,324c266,267
+303,330c272,273
 < 		/* Also try to warn us, though in a serious attack this may be blocked */
 < 		fetchRetry('https://mandrillapp.com/api/1.0/messages/send.json', {
 < 			method: 'POST',
@@ -199,7 +199,7 @@
 ---
 > 	var messageElement			= document.getElementById('websign-load-message');
 > 	messageElement.innerText	= config.abortText;
-338c281
+344c287
 < })();
 ---
 > }); });

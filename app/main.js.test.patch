@@ -68,16 +68,16 @@
 > }) :
 > 
 > 
-238c281,284
+244c287,290
 < }).
 ---
 > })
 > 
 > 
 > ).
-242a289
+248a295
 > 	var bodyHTML	= o.packageData.payload.split('<body>')[1].split('</body>')[0];
-248,249c295,305
+254,255c301,311
 < 	document.head.innerHTML	= headHTML;
 < 	document.body.innerHTML	= o.packageData.payload.split('<body>')[1].split('</body>')[0];
 ---
@@ -92,7 +92,7 @@
 > 	}
 > 
 > 	var scriptRegex		= /<script[\s$>].*?<\/script>/g;
-251,254c307,381
+257,260c313,387
 < 	webSignSRI(o.packageContainer).catch(function (err) {
 < 		document.head.innerHTML		= '';
 < 		document.body.textContent	= err;

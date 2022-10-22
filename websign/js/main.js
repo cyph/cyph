@@ -101,7 +101,7 @@ Promise.resolve().then(function () {
 /* Open package */
 then(function (packageContainer) {
 	var certifiedMessage	= proto.AGSEPKICertified.decode(
-		BrotliDecode(packageContainer.data)
+		brotliDecode(packageContainer.data)
 	);
 
 	if (certifiedMessage.algorithm !== config.algorithm) {
@@ -161,9 +161,7 @@ then(function (packageContainer) {
 	storage.webSignExpires			= opened.packageData.expirationTimestamp;
 	storage.webSignHashWhitelist	= JSON.stringify(opened.hashWhitelist);
 	storage.webSignPackageContainer	= superSphincs._sodiumUtil.to_base64(
-		proto.WebSignPackageContainer.encode(
-			packageContainer
-		)
+		proto.WebSignPackageContainer.encode(packageContainer).finish()
 	);
 	storage.webSignPackageName		= opened.packageData.packageName;
 	storage.webSignPackageTimestamp	= opened.packageData.timestamp;
@@ -217,6 +215,14 @@ then(function (packageContainer) {
 		packageContainer,
 		secondarySignaturesValidPromise
 	]);
+}).then(function (results) {
+	var packageData			= results[0];
+	var packageContainer	= results[1];
+
+	return {
+		packageContainer: packageContainer,
+		packageData: packageData
+	};
 }).
 
 /* Before finishing, perform self-administered

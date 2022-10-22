@@ -45,7 +45,7 @@ export class WebSignClientService extends BaseProvider {
 	/** WebSign Brotli decoder instance. */
 	private readonly brotliDecode:
 		| ((compressed: Uint8Array) => Uint8Array)
-		| undefined = (<any> self).BrotliDecode;
+		| undefined = (<any> self).brotliDecode;
 
 	/** Timestamp of most recently cached package. */
 	private cachedPackageTimestamp: number | undefined;

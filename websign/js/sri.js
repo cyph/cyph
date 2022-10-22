@@ -135,7 +135,7 @@ function webSignSRI_Process (options) {
 				).then(fromBlob).then(function (bytes) {
 					var content	=
 						superSphincs._sodiumUtil.to_string(
-							BrotliDecode(bytes)
+							brotliDecode(bytes)
 						).trim()
 					;
 
