@@ -59,7 +59,8 @@ sudo apt-get -y --allow-downgrades install \
 	tightvncserver \
 	wget \
 	yarn \
-	zopfli
+	zopfli \
+|| fail
 
 sudo apt-get -y --allow-downgrades update
 sudo apt-get -y --allow-downgrades upgrade
