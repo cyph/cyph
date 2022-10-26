@@ -655,6 +655,9 @@ const dockerBuildInit = () => {
 				undefined
 		)
 			.then(() =>
+				spawnAsync('docker', ['buildx', 'rm', 'cyph_build_context'])
+			)
+			.then(() =>
 				spawnAsync('docker', [
 					'buildx',
 					'create',
