@@ -31,10 +31,15 @@ sudo apt-get -y --allow-downgrades install \
 	imagemagick \
 	inotify-tools \
 	jq \
+	libcairo2-dev \
 	libgbm-dev \
 	libgconf-2-4 \
+	libgif-dev \
 	libglew-dev \
 	libglu1-mesa-dev \
+	libjpeg-dev \
+	libpango1.0-dev \
+	librsvg2-dev \
 	libsodium-dev \
 	libtool \
 	libxi-dev \
