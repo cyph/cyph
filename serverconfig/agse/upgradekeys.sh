@@ -24,7 +24,7 @@ cd ${HOME}
 
 distro="$(sudo lsb_release -c | awk '{print $2}')"
 sudo cat /etc/apt/sources.list | grep -v nodesource.com > sources.list
-echo "deb https://deb.nodesource.com/node_16.x ${distro} main" >> sources.list
+echo "deb https://deb.nodesource.com/node_18.x ${distro} main" >> sources.list
 sudo mv sources.list /etc/apt/sources.list
 curl https://deb.nodesource.com/gpgkey/nodesource.gpg.key | sudo apt-key add -
 sudo apt-get -y --allow-downgrades update

@@ -44,7 +44,7 @@ apt-get -y --allow-downgrades update
 apt-get -y --allow-downgrades install curl lsb-release apt-transport-https
 apt-get -y --allow-downgrades purge apache* mysql* openssh-server
 distro="$(lsb_release -c | awk '{print $2}')"
-echo "deb https://deb.nodesource.com/node_16.x ${distro} main" >> /etc/apt/sources.list
+echo "deb https://deb.nodesource.com/node_18.x ${distro} main" >> /etc/apt/sources.list
 curl https://deb.nodesource.com/gpgkey/nodesource.gpg.key | apt-key add -
 apt-get -y --allow-downgrades update
 apt-get -y --allow-downgrades upgrade
