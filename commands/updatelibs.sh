@@ -14,6 +14,7 @@ npm config set fetch-retry-maxtimeout 36000000
 npm config set fetch-retry-mintimeout 36000000
 npm config set fetch-timeout 216000000
 npm config set legacy-peer-deps true
+npm config set maxsockets 1
 rm -rf ~/.npm
 
 
