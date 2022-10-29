@@ -28,8 +28,8 @@ rm -rf ~/.npm
 installPackages () {
 	rm -rf node_modules 2> /dev/null
 	mkdir node_modules
-	npm install -f --ignore-scripts \
-		$(node -e "
+	for i in {1..10} ; do
+		npm install -f --ignore-scripts $(node -e "
 			const o = JSON.parse(
 				fs.readFileSync('${dir}/shared/lib/js/package-lock.json').toString()
 			);
@@ -37,8 +37,8 @@ installPackages () {
 			for (const k of Object.keys(o.dependencies).filter(package => ${1})) {
 				console.log(\`\${k}@\${o.dependencies[k].version}\`);
 			}
-		") \
-	|| exit 1
+		") && break
+	done || exit 1
 }
 
 
@@ -92,7 +92,7 @@ cd cyph
 
 mkdir node_modules
 cp ~/lib/js/package.json ~/lib/js/package-lock.json ./
-npm ci -f || exit 1
+for i in {1..10} ; do npm ci -f && break ; done || exit 1
 
 rm -rf ~/node_modules 2> /dev/null
 mv node_modules ~/
@@ -413,12 +413,12 @@ cd ..
 cd tslint
 cat package.json | grep -v tslint-test-config-non-relative > package.json.new
 mv package.json.new package.json
-npm install
+for i in {1..10} ; do npm install && break ; done || exit 1
 cd ..
 
 # for d in @google-cloud/* firebase-admin firebase-tools nativescript ; do
 # 	cd ${d}
-# 	npm install
+# 	for i in {1..10} ; do npm install && break ; done || exit 1
 # 	cd ..
 # done
 

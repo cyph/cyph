@@ -23,7 +23,9 @@ cd ~/tmplib/js
 modules="$(cat ${dir}/packages.list | grep -vP '^#')"
 # NATIVESCRIPT: modules="${modules}$(echo ; cat ${dir}/native/plugins.list)"
 
-npm install -f --ignore-scripts $(echo "${modules}" | tr '\n' ' ') || fail
+for i in {1..10} ; do
+	npm install -f --ignore-scripts $(echo "${modules}" | tr '\n' ' ') && break
+done || fail
 
 rm -rf ../node_modules ../package.json ../package-lock.json 2> /dev/null
 
@@ -52,7 +54,7 @@ firebaseFunctionsTmp=$(mktemp -d)
 mkdir -p ${firebaseFunctionsTmp}/functions/node_modules
 cd ${firebaseFunctionsTmp}/functions
 cp ${dir}/firebase/functions/package.json ./
-npm install
+for i in {1..10} ; do npm install && break ; done || exit 1
 mv package-lock.json ${dir}/firebase/functions/
 cd ${dir}
 rm -rf ${firebaseFunctionsTmp}
