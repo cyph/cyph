@@ -1,11 +1,10 @@
 #!/usr/bin/env node
 
 import {util} from '@cyph/sdk';
+import braintree from 'braintree';
 import memoize from 'lodash-es/memoize.js';
 import initStripe from 'stripe';
 import superSphincs from 'supersphincs';
-
-const braintree = await import('braintree').catch(() => undefined);
 
 const {uuid} = util;
 
