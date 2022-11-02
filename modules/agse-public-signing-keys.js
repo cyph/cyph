@@ -12,7 +12,7 @@ childProcess.spawnSync('tsc', [
 	`${__dirname}/../shared/js/cyph/account/agse-public-signing-keys.ts`
 ]);
 
-export const {agsePublicSigningKeys} = {
+export const agsePublicSigningKeys = {
 	...(await import(
 		`${__dirname}/../shared/js/cyph/account/agse-public-signing-keys.js`
 	)),
