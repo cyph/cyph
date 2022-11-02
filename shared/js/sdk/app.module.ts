@@ -14,6 +14,7 @@ import {NgModule, NgZone} from '@angular/core';
 import {DomSanitizer} from '@angular/platform-browser';
 import {ServerModule} from '@angular/platform-server';
 import {RouterModule} from '@angular/router';
+import * as account from '../cyph/account';
 import {DOMPurifyHtmlSanitizer} from '../cyph/dompurify-html-sanitizer';
 import * as forms from '../cyph/forms';
 import {IResolvable} from '../cyph/iresolvable';
@@ -161,6 +162,7 @@ export class AppModule {
 
 		for (const [k, v] of Array.from(
 			Object.entries({
+				account,
 				accountAppointmentsService,
 				accountAuthService,
 				accountContactsService,
