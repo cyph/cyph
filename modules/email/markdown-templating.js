@@ -1,12 +1,13 @@
-import fs from 'fs';
+import {getMeta} from '../base.js';
+const {__dirname} = getMeta(import.meta);
+
+import fs from 'fs/promises';
 import memoize from 'lodash-es/memoize.js';
 import {markdownEscapes} from 'markdown-escapes';
 import MarkdownIt from 'markdown-it';
 import mustache from 'mustache';
-import {getMeta} from './base.js';
-import {dompurifyHtmlSanitizer} from './dompurify-html-sanitizer.js';
+import {dompurifyHtmlSanitizer} from '../dompurify-html-sanitizer.js';
 
-const {__dirname} = getMeta(import.meta);
 const markdownIt = new MarkdownIt();
 
 const markdownEscapeWhitelist = new Set([
@@ -29,21 +30,8 @@ const mustacheUnescape = memoize(template =>
 	template.replace(/\{?\{\{([^#\^\/].*?)\}\}\}?/g, '{{{$1}}}')
 );
 
-const getTemplate = memoize(
-	async templateName =>
-		new Promise((resolve, reject) => {
-			fs.readFile(
-				`${__dirname}/templates/${templateName}.md`,
-				(err, data) => {
-					if (err) {
-						reject(err);
-					}
-					else {
-						resolve(data.toString());
-					}
-				}
-			);
-		})
+const getTemplate = memoize(async templateName =>
+	(await fs.readFile(`${__dirname}/templates/${templateName}.md`)).toString()
 );
 
 export const renderMarkdown = markdown =>

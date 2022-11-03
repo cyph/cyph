@@ -1,7 +1,7 @@
 import {proto} from '@cyph/sdk';
 import {getInviteTemplateData} from '../get-invite-template-data.js';
 import {database, onCall} from '../init.js';
-import {renderTemplate} from '../markdown-templating.js';
+import {renderTemplate} from '../modules/email/markdown-templating.js';
 import {stripe} from '../stripe.js';
 import {validateInput} from '../validation.js';
 

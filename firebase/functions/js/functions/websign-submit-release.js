@@ -1,7 +1,7 @@
 import {proto, util} from '@cyph/sdk';
 import {admin, database, getItem, onCall, setItem} from '../init.js';
+import {getWebSignPermissions} from '../modules/websign-permissions.js';
 import {webSignAlgorithm} from '../websign-algorithm.js';
-import {getWebSignPermissions} from '../websign-permissions.js';
 import {webSignReleaseNotify} from '../websign-release-notify.js';
 
 const {AGSEPKISigningRequest, WebSignPendingRelease} = proto;

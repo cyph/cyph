@@ -334,8 +334,6 @@ then
 	cp ~/.cyph/repos/chat-widget/dist/index.js backend/chat-widget.js
 fi
 
-cp -a backend/shared/* firebase/functions/js/
-
 # Secret credentials
 cat ~/.cyph/backend.vars >> backend/app.yaml
 cat ~/.cyph/test.vars >> test/test.yaml
@@ -660,6 +658,8 @@ then
 	rm -rf backend/assets 2> /dev/null
 	mkdir backend/assets
 
+	cp modules/email/email-template.html backend/assets/
+
 	./commands/backendplans.js backend/assets/plans.json
 	./commands/cloudfunctions.js backend/assets/cloudfunctions.list
 	./commands/ipfsgateways.js backend/assets/ipfs-gateways.json
@@ -774,8 +774,13 @@ then
 
 	npm ci
 
-	cp ../../modules/*.js ~/.cyph/email-credentials.js js/
-	html-minifier --collapse-whitespace --minify-css --remove-comments js/email.html -o js/email.html
+	cp -rf ../../modules ~/.cyph/email-credentials.json js/
+	html-minifier \
+		--collapse-whitespace \
+		--minify-css \
+		--remove-comments \
+		js/modules/email/email-template.html \
+		-o js/modules/email/email-template.html
 
 	cd ../..
 

@@ -1,4 +1,4 @@
-import {emailRegex} from './email-regex.js';
+import {emailRegex} from '@cyph/sdk';
 
 export const validateInput = (input, regex, optional) => {
 	if (!input && optional) {

@@ -1,6 +1,6 @@
 import mailchimpAPI from '@mailchimp/mailchimp_marketing';
 import {mailchimpCredentials} from './cyph-admin-vars.js';
-import {initMailchimp} from './init-mailchimp.js';
+import {initMailchimp} from './modules/init-mailchimp.js';
 
 const config =
 	mailchimpCredentials?.apiKey && mailchimpCredentials.apiServer ?

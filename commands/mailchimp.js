@@ -1,11 +1,9 @@
 #!/usr/bin/env node
 
-import {getMeta} from '../modules/base.js';
-const {__dirname} = getMeta(import.meta);
-
 import mailchimp from '@mailchimp/mailchimp_marketing';
 import fs from 'fs';
 import os from 'os';
+import {initMailchimp} from '../modules/init-mailchimp.js';
 
 const getBackendVar = k =>
 	new Map(
@@ -38,9 +36,7 @@ const {
 	mailingListMemberMetadata,
 	removeFromMailingList,
 	splitName
-} = (
-	await import(`${__dirname}/../firebase/functions/js/init-mailchimp.js`)
-).initMailchimp(mailchimp, mailchimpCredentials);
+} = initMailchimp(mailchimp, mailchimpCredentials);
 
 export {
 	addToMailingList,

@@ -16,6 +16,7 @@ import {ServerModule} from '@angular/platform-server';
 import {RouterModule} from '@angular/router';
 import * as account from '../cyph/account';
 import {DOMPurifyHtmlSanitizer} from '../cyph/dompurify-html-sanitizer';
+import {emailRegex} from '../cyph/email-pattern';
 import * as forms from '../cyph/forms';
 import {IResolvable} from '../cyph/iresolvable';
 import * as proto from '../cyph/proto';
@@ -179,6 +180,7 @@ export class AppModule {
 				cryptocurrencyService,
 				databaseService,
 				DOMPurifyHtmlSanitizer,
+				emailRegex,
 				envService,
 				forms,
 				pgpService,

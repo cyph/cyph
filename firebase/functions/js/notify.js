@@ -1,7 +1,7 @@
 import {util} from '@cyph/sdk';
 import admin from 'firebase-admin';
-import {dompurifyHtmlSanitizer} from './dompurify-html-sanitizer.js';
 import {sendEmail} from './email.js';
+import {dompurifyHtmlSanitizer} from './modules/dompurify-html-sanitizer.js';
 
 const {normalize} = util;
 

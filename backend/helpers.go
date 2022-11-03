@@ -127,7 +127,7 @@ var emailBackupAuth = smtp.PlainAuth(
 )
 var emailBackupSmtpServer = os.Getenv("EMAIL_BACKUP_SERVER") + ":" + os.Getenv("EMAIL_BACKUP_PORT")
 
-var emailTemplate, _ = mustache.ParseString(getFileText("shared/email.html"))
+var emailTemplate, _ = mustache.ParseString(getFileText("assets/email-template.html"))
 
 var geodb, _ = geoip2.Open("GeoIP2-City.mmdb")
 var orgdb, _ = geoip2.Open("GeoIP2-ISP.mmdb")
