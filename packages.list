@@ -241,6 +241,7 @@ animejs
 assert-browserify
 babel-loader
 bitpay.js
+blurhash
 bourbon
 braintree
 braintree-web
