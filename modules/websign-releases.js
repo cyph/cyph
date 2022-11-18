@@ -12,6 +12,7 @@ import * as brotli from './brotli.js';
 import {initDatabaseService} from './database-service.js';
 import {getPackageDatabase} from './package-database.js';
 import hashWhitelist from './websign-hash-whitelist.json' assert {type: 'json'};
+import {getWebSignPermissions} from './websign-permissions.js';
 
 const {
 	AGSEPKICertified,
@@ -36,7 +37,7 @@ if ((await datastore.getProjectId()) !== webSignProjectId) {
 	throw new Error('Invalid GCloud Datastore project.');
 }
 
-const {database} = initDatabaseService(webSignProjectId);
+const {database, getItem} = initDatabaseService(webSignProjectId);
 
 const pendingReleasesRef = database.ref(pendingReleasesURL);
 
@@ -46,7 +47,11 @@ const getDatastoreKey = (kind, name) =>
 		path: [kind, name]
 	});
 
-const getPendingRelease = async (releaseID, {packageName, signingRequests}) => {
+const getPendingRelease = async (
+	webSignPermissions,
+	releaseID,
+	{packageName, signingRequests}
+) => {
 	try {
 		if (signingRequests.length < 1) {
 			throw new Error('No signing requests.');
@@ -112,6 +117,15 @@ const getPendingRelease = async (releaseID, {packageName, signingRequests}) => {
 			username: o.username
 		}));
 
+		if (
+			!signatures.some(
+				({username}) =>
+					webSignPermissions.packages[packageName]?.users[username]
+			)
+		) {
+			throw new Error('Missing signature from authorized submitter.');
+		}
+
 		return {
 			packageData,
 			releaseID,
@@ -138,12 +152,18 @@ export const generateReleaseSignInput = async ({
 		return {signInputs: []};
 	}
 
+	const webSignPermissions = await getWebSignPermissions({getItem});
+
 	const pendingReleases = filterUndefined(
 		await Promise.all(
 			Object.entries(
 				(await pendingReleasesRef.once('value')).val() ?? {}
 			).map(async ([releaseID, pendingReleaseMetadata]) =>
-				getPendingRelease(releaseID, pendingReleaseMetadata)
+				getPendingRelease(
+					webSignPermissions,
+					releaseID,
+					pendingReleaseMetadata
+				)
 			)
 		)
 	);
