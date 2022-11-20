@@ -4,6 +4,7 @@ import {proto, util, webSignService} from '@cyph/sdk';
 import fs from 'fs/promises';
 import glob from 'glob';
 import path from 'path';
+import {useLicenseKey} from '../auth/index.js';
 import {pack} from './pack.js';
 import {subresourceInline} from './subresource-inline.js';
 import {threadPack} from './thread-pack.js';
@@ -30,6 +31,8 @@ export const deploy = async ({
 	if (!packageName) {
 		packageName = path.parse(rootDirectoryPath).base;
 	}
+
+	await useLicenseKey();
 
 	const rootOutputPathFull = path.join(rootDirectoryPath, rootOutputPath);
 	const subresourcesOutputPathFull = path.join(

@@ -1,0 +1,11 @@
+syntax = "proto3";
+
+
+/** License key data for CLI. */
+message AccountLicenseKey {
+	/** Paper master key (encrypted with PIN). */
+	required bytes masterKey = 1;
+
+	/** Username. */
+	required string username = 2;
+}

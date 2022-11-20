@@ -6,6 +6,7 @@ import "account-file-directory.proto";
 import "account-file-record.proto";
 import "account-file-reference-container.proto";
 import "account-file-reference.proto";
+import "account-license-key.proto";
 import "account-login-data.proto";
 import "account-messaging-group.proto";
 import "account-notification.proto";

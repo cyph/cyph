@@ -1,6 +1,6 @@
 {
 	"name": "@cyph/sdk",
-	"version": "7.0.0-next.5",
+	"version": "7.0.0-next.6",
 	"license": "Cyph-RSL",
 	"type": "module",
 	"main": "./index.js",
@@ -33,6 +33,7 @@
 		"html-minifier": "*",
 		"mkdirp": "*",
 		"node-fetch": ">=3",
+		"prompt": "*",
 		"regenerator-runtime": "*",
 		"terser": "*",
 		"tslib": "*",

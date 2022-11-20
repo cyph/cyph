@@ -1,9 +1,8 @@
 #!/usr/bin/env node
 
 import {program} from 'commander';
+import {register} from '../../auth/index.js';
 
-program.name('cyph auth register').action(async () => {
-	console.log('Not yet implemented.');
-});
+program.name('cyph auth register').action(async () => register());
 
 await program.parseAsync();

@@ -47,6 +47,7 @@ import {FaviconService} from '../cyph/services/favicon.service';
 import {FileService} from '../cyph/services/file.service';
 import {FingerprintService} from '../cyph/services/fingerprint.service';
 import {FirebaseDatabaseService} from '../cyph/services/firebase-database.service';
+import {InMemoryLocalStorageService} from '../cyph/services/in-memory-local-storage.service';
 import {LocalStorageService} from '../cyph/services/local-storage.service';
 import {NotificationService} from '../cyph/services/notification.service';
 import {QRService} from '../cyph/services/qr.service';
@@ -80,7 +81,10 @@ import {AppComponent} from './app.component';
 		},
 
 		/* From webModuleProviders */
-		LocalStorageService,
+		{
+			provide: LocalStorageService,
+			useClass: InMemoryLocalStorageService
+		},
 
 		/* From sharedModuleProviders */
 		AnalyticsService,
