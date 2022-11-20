@@ -5,9 +5,11 @@ import {BaseProvider} from '../base-provider';
 import {
 	IAGSEPKISigningRequest,
 	IWebSignPackageData,
+	IWebSignPackageSubresources,
 	IWebSignPendingRelease,
 	PotassiumData,
 	WebSignPackageData,
+	WebSignPackageSubresources,
 	WebSignPendingRelease
 } from '../../proto';
 import {deserialize, serialize} from '../util/serialization/proto';
@@ -125,7 +127,8 @@ export class WebSignService extends BaseProvider {
 	 * Otherwise, the release will be queued for immediate deployment.
 	 */
 	public async submitRelease (
-		packageData: IWebSignPackageData
+		packageData: IWebSignPackageData,
+		subresources: IWebSignPackageSubresources = {}
 	) : Promise<void> {
 		packageData.timestamp = await getTimestamp();
 
@@ -133,6 +136,10 @@ export class WebSignService extends BaseProvider {
 			packageName: packageData.packageName,
 			requiredUserSignatures: packageData.requiredUserSignatures,
 			signingRequest: await this.generateSigningRequest(packageData),
+			subresources: await serialize<IWebSignPackageSubresources>(
+				WebSignPackageSubresources,
+				subresources
+			),
 			timestamp: packageData.timestamp
 		});
 	}

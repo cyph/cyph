@@ -76,10 +76,7 @@ export const pack = async (
 				subresource.subresourcePath
 			);
 			const subresourcePathFull = path.join(dir, subresourcePath);
-			const subresourcePathParent = subresourcePath
-				.split(path.sep)
-				.slice(0, -1)
-				.join(path.sep);
+			const subresourcePathParent = path.parse(subresourcePath).dir;
 
 			await mkdirp(subresourcePathParent);
 			fs.writeFileSync(subresourcePathFull, subresource.content);

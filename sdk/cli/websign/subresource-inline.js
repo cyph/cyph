@@ -7,10 +7,8 @@ import glob from 'glob';
 import mkdirp from 'mkdirp';
 import path from 'path';
 
-export const subresourceInline = async subresourceRoot => {
-	subresourceRoot = path.join(process.cwd(), subresourceRoot);
-
-	process.chdir('src');
+export const subresourceInline = async (rootDirectoryPath, subresourceRoot) => {
+	subresourceRoot = path.join(rootDirectoryPath, subresourceRoot);
 
 	const filesToMerge = glob
 		.sync('assets/**', {nodir: true})
@@ -25,9 +23,7 @@ export const subresourceInline = async subresourceRoot => {
 		{dir: 'js', ext: 'ts'}
 	]
 		.map(o =>
-			glob
-				.sync(path.join(o.dir, '**'), {nodir: true})
-				.filter(s => s.endsWith(`.${o.ext}`))
+			glob.sync(path.join(o.dir, '**', `*.${o.ext}`), {nodir: true})
 		)
 		.reduce((a, b) => a.concat(b), ['index.html']);
 
@@ -65,10 +61,7 @@ export const subresourceInline = async subresourceRoot => {
 				content = content.replace(/☁/g, subresource);
 
 				const subresourcePath = path.join(subresourceRoot, subresource);
-				const subresourcePathParent = subresourcePath
-					.split(path.sep)
-					.slice(0, -1)
-					.join(path.sep);
+				const subresourcePathParent = path.parse(subresourcePath).dir;
 
 				await mkdirp(subresourcePathParent);
 				fs.writeFileSync(subresourcePath, dataURI);
@@ -80,6 +73,4 @@ export const subresourceInline = async subresourceRoot => {
 			fs.writeFileSync(file, content);
 		}
 	}
-
-	process.chdir('..');
 };

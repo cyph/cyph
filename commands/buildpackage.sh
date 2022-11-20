@@ -439,7 +439,9 @@ for d in ${compiledProjects} ; do
 
 	if [ "${websign}" ] && [ "${d}" == "${webSignedProject}" ] ; then
 		# Merge in base64'd images, fonts, video, and audio
-		cyph websign internal subresourceInline ../pkg/cyph.app-subresources
+		cd src
+		cyph websign internal subresourceInline ../../pkg/cyph.app-subresources
+		cd ..
 	fi
 
 	node -e '(async () => console.log(`
