@@ -62,10 +62,12 @@ export const getPackageDatabase = memoize(async () => {
 	const packageDatabase = getFiles('**/pkg.gz')
 		.map(pkg => [
 			pkg.split('/').slice(0, -1).join('/'),
-			childProcess
-				.spawnSync('gunzip', ['-c', pkg], options)
-				.stdout.toString()
-				.trim(),
+			fs.existsSync(path.join(repoPath, pkg)) ?
+				childProcess
+					.spawnSync('gunzip', ['-c', pkg], options)
+					.stdout.toString()
+					.trim() :
+				'',
 			parseFloat(
 				childProcess
 					.spawnSync(

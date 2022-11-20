@@ -216,7 +216,7 @@ export const processReleaseSignOutput = async ({
 					getPackageDatabase().then(
 						async ({
 							[pendingRelease.packageData.packageName]: {
-								package: {subresources, subresourceTimeouts}
+								packageV1: {subresources, subresourceTimeouts}
 							}
 						}) => ({
 							data: {
