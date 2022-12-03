@@ -1,3 +1,4 @@
+@use '@angular/material' as mat;
 @import '../../../../css/mixins';
 
 .key-status {
@@ -7,10 +8,10 @@
 	text-align: center;
 
 	> .verified {
-		color: map-get($mat-green, 700) !important;
+		color: map-get(mat.$green-palette, 700) !important;
 	}
 
 	> .unverified {
-		color: map-get($mat-red, 700) !important;
+		color: map-get(mat.$red-palette, 700) !important;
 	}
 }

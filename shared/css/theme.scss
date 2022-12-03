@@ -1,13 +1,14 @@
+@use '@angular/material' as mat;
 @import './mixins';
 
 /* Reference: https://material.io/color/#!/?view.left=0&view.right=1&primary.color=7d4fd3&secondary.color=8b62d9&secondary.text.color=f1f1f1&primary.text.color=ffffff */
 
 $cyph-background-main: #8b62d9;
 
-$cyph-primary: mat-palette($mat-deep-purple, 800, 700, 900);
-$cyph-accent: mat-palette($mat-deep-purple, 500, 400, 600);
-$cyph-warn: mat-palette($mat-red, 700, 600, 800);
-$cyph-white: mat-palette($mat-grey, 200, 100, 300);
+$cyph-primary: mat.define-palette(mat.$deep-purple-palette, 800, 700, 900);
+$cyph-accent: mat.define-palette(mat.$deep-purple-palette, 500, 400, 600);
+$cyph-warn: mat.define-palette(mat.$red-palette, 700, 600, 800);
+$cyph-white: mat.define-palette(mat.$grey-palette, 200, 100, 300);
 $cyph-is-dark: true;
 $cyph-background: $cyph-background-main;
 $cyph-background-light: rgba(237, 231, 246, 0.95);
@@ -52,16 +53,16 @@ $cyph-message-colors: (
 	)
 );
 
-$cyph-checkout-theme: mat-light-theme(
-	mat-palette($mat-blue-grey),
-	mat-palette($mat-blue-grey),
+$cyph-checkout-theme: mat.define-light-theme(
+	mat.define-palette(mat.$blue-grey-palette),
+	mat.define-palette(mat.$blue-grey-palette),
 	$cyph-warn
 );
 
 $cyph-cyphertext-theme: cyph-theme(
-	mat-palette($mat-green),
+	mat.define-palette(mat.$green-palette),
 	map-merge(
-		mat-palette($mat-grey, 900, 800, 900),
+		mat.define-palette(mat.$grey-palette, 900, 800, 900),
 		(
 			default-contrast: $cyph-cyphertext-foreground
 		)

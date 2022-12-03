@@ -1,7 +1,8 @@
+@use '@angular/material' as mat;
 @import '../theme';
 
-$cyph-primary: mat-palette($mat-blue-grey, 800, 700, 900);
-$cyph-accent: mat-palette($mat-grey, 800, 700, 900);
+$cyph-primary: mat.define-palette(mat.$blue-grey-palette, 800, 700, 900);
+$cyph-accent: mat.define-palette(mat.$grey-palette, 800, 700, 900);
 $cyph-is-dark: true;
 $cyph-background: #7a7c8b;
 
