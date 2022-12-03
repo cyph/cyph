@@ -190,6 +190,7 @@ fi
 
 rm -rf backend/assets 2> /dev/null
 mkdir backend/assets
+cp modules/email/email-template.html backend/assets/
 ./commands/backendplans.js backend/assets/plans.json
 ./commands/cloudfunctions.js backend/assets/cloudfunctions.list
 
