@@ -414,7 +414,6 @@ fi
 cd ../css
 
 cp -rf ../../css/* ./
-grep -rl "@import '~" | xargs -I% sed -i "s|@import '~|@import '/node_modules/|g" %
 
 echo ${scssAssets} | tr ' ' '\n' | xargs -I% -P ${parallelProcesses} \
 	../../../commands/sass.sh --out '%.css' '%.scss'
