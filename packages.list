@@ -315,6 +315,7 @@ husky
 ical-generator
 image-type
 intro.js
+iroha-helpers
 isomorphic-git
 jasmine-core
 jasmine-spec-reporter
