@@ -1,5 +1,6 @@
 const cors = require('cors')({origin: true});
 const functions = require('firebase-functions');
+const memoize = require('lodash/memoize.js');
 
 const functionBuilder = () =>
 	functions.runWith({
@@ -16,8 +17,9 @@ const {https} = functionBuilder().region(
 	'us-central1'
 );
 
-const importFunction = async functionName =>
-	import(`./js/functions/${functionName}.js`);
+const importFunction = memoize(async functionName =>
+	import(`./js/functions/${functionName}.js`)
+);
 
 const onRequest = f =>
 	https.onRequest((req, res) => cors(req, res, async () => f(req, res)));
