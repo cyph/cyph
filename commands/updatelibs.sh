@@ -52,14 +52,10 @@ cyph-prettier --write shared/lib/js/package.json || fail
 cyph-prettier --write shared/lib/js/package-lock.json || fail
 
 firebaseFunctionsTmp=$(mktemp -d)
-cd ${firebaseFunctionsTmp}
-mkdir -p functions/node_modules node_modules
-npm install node@^16 npm@^8 # Use versions that correspond with Cloud Functions runtime
-cd functions
+mkdir -p ${firebaseFunctionsTmp}/functions/node_modules
+cd ${firebaseFunctionsTmp}/functions
 cp ${dir}/firebase/functions/package.json ./
-for i in {1..10} ; do
-	../node_modules/.bin/node ../node_modules/.bin/npm install && break
-done || exit 1
+for i in {1..10} ; do npm install && break ; done || exit 1
 mv package-lock.json ${dir}/firebase/functions/
 cd ${dir}
 rm -rf ${firebaseFunctionsTmp}
