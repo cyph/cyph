@@ -23,8 +23,10 @@ import {
 	IAGSEPKISigningRequest,
 	IKeyPair,
 	IPrivateKeyring,
-	KeyPair,
+	IPublicKeyring,
 	NumberProto,
+	PrivateKeyring,
+	PublicKeyring,
 	StringProto
 } from '../../proto';
 import {errorToString} from '../../util/error';
@@ -899,6 +901,13 @@ export class AccountAuthService extends BaseProvider {
 		inviteCode?: string,
 		profileExtra: IAccountUserProfileExtra = {}
 	) : Promise<boolean> {
+		const currentBoxAlgorithm = await this.potassiumService.box
+			.currentAlgorithm;
+		const currentSecretBoxAlgorithm = await this.potassiumService.secretBox
+			.currentAlgorithm;
+		const currentSignAlgorithm = await this.potassiumService.sign
+			.currentAlgorithm;
+
 		let pseudoAccount = false;
 		if (typeof realUsername !== 'string') {
 			pseudoAccount = true;
@@ -946,14 +955,13 @@ export class AccountAuthService extends BaseProvider {
 				registerLoginData,
 				registerLoginDataAlt,
 				registerAltMasterKey,
+				registerPrivateKeyring,
 				registerPublicProfile,
 				registerPublicProfileExtra,
-				registerEncryptionKeyPair,
-				registerSigningKeyPair,
 				registerCertificateRequest,
 				registerPinHash,
 				registerPinIsCustom,
-				registerPublicEncryptionKey
+				registerPublicKeyring
 			] = await Promise.all([
 				this.setItem(
 					`users/${username}/loginData`,
@@ -986,6 +994,25 @@ export class AccountAuthService extends BaseProvider {
 						true
 					) :
 					undefined,
+				this.setItem<IPrivateKeyring>(
+					`users/${username}/keyrings/private`,
+					PrivateKeyring,
+					{
+						boxPrivateKeys: {
+							[currentBoxAlgorithm]: encryptionKeyPair
+						},
+						secretBoxPrivateKeys: {
+							[currentSecretBoxAlgorithm]: loginData.symmetricKey
+						},
+						signPrivateKeys: {
+							[currentSignAlgorithm]: signingKeyPair
+						}
+					},
+					loginData.symmetricKey,
+					undefined,
+					undefined,
+					true
+				),
 				this.setItem<IAccountUserProfile>(
 					`users/${username}/publicProfile`,
 					AccountUserProfile,
@@ -1027,24 +1054,6 @@ export class AccountAuthService extends BaseProvider {
 					true
 				),
 				*/
-				this.setItem(
-					`users/${username}/encryptionKeyPair`,
-					KeyPair,
-					encryptionKeyPair,
-					loginData.symmetricKey,
-					undefined,
-					undefined,
-					true
-				),
-				this.setItem(
-					`users/${username}/signingKeyPair`,
-					KeyPair,
-					signingKeyPair,
-					loginData.symmetricKey,
-					undefined,
-					undefined,
-					true
-				),
 				pseudoAccount ?
 					new Uint8Array(0) :
 					this.setItem<IAGSEPKICSRData>(
@@ -1062,8 +1071,7 @@ export class AccountAuthService extends BaseProvider {
 						serialize<IAGSEPKISigningRequest>(
 							AGSEPKISigningRequest,
 							{
-								algorithm: await this.potassiumService.sign
-										.currentAlgorithm,
+								algorithm: currentSignAlgorithm,
 								data
 							}
 						)
@@ -1086,10 +1094,17 @@ export class AccountAuthService extends BaseProvider {
 					undefined,
 					true
 				),
-				this.setItem(
-					`users/${username}/publicEncryptionKey`,
-					BinaryProto,
-					encryptionKeyPair.publicKey,
+				this.setItem<IPublicKeyring>(
+					`users/${username}/keyrings/public`,
+					PublicKeyring,
+					{
+						boxPublicKeys: {
+							[currentBoxAlgorithm]: encryptionKeyPair.publicKey
+						},
+						signPublicKeys: {
+							[currentSignAlgorithm]: signingKeyPair.publicKey
+						}
+					},
 					signingKeyPair.privateKey,
 					true,
 					true,
@@ -1139,17 +1154,16 @@ export class AccountAuthService extends BaseProvider {
 					altMasterKey: registerAltMasterKey,
 					certificateRequest: registerCertificateRequest,
 					email,
-					encryptionKeyPair: registerEncryptionKeyPair,
 					inviteCode,
 					loginData: registerLoginData,
 					loginDataAlt: registerLoginDataAlt,
 					pinHash: registerPinHash,
 					pinIsCustom: registerPinIsCustom,
+					privateKeyring: registerPrivateKeyring,
 					pseudoAccount,
-					publicEncryptionKey: registerPublicEncryptionKey,
+					publicKeyring: registerPublicKeyring,
 					publicProfile: registerPublicProfile,
-					publicProfileExtra: registerPublicProfileExtra,
-					signingKeyPair: registerSigningKeyPair
+					publicProfileExtra: registerPublicProfileExtra
 				}
 			);
 

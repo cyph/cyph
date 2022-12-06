@@ -22,18 +22,17 @@ export const register = onCall(
 		const {
 			altMasterKey,
 			certificateRequest,
-			encryptionKeyPair,
 			inviteCode,
 			loginData,
 			loginDataAlt,
 			password,
 			pinHash,
 			pinIsCustom,
+			privateKeyring,
 			pseudoAccount,
-			publicEncryptionKey,
+			publicKeyring,
 			publicProfile,
 			publicProfileExtra,
-			signingKeyPair,
 			username
 		} = data || {};
 
@@ -119,15 +118,14 @@ export const register = onCall(
 		await Promise.all([
 			setRegisterItems([
 				['altMasterKey', altMasterKey],
-				['encryptionKeyPair', encryptionKeyPair],
 				['inviteCode', inviteCode, StringProto],
+				['keyrings/private', privateKeyring],
+				['keyrings/public', publicKeyring],
 				['pin/hash', pinHash],
 				['pin/isCustom', pinIsCustom],
 				['profileVisible', true, BooleanProto],
-				['publicEncryptionKey', publicEncryptionKey],
 				['publicProfile', publicProfile],
 				['publicProfileExtra', publicProfileExtra],
-				['signingKeyPair', signingKeyPair],
 				pseudoAccount ?
 					['pseudoAccount', new Uint8Array(0)] :
 					['keyrings/csr', certificateRequest]
