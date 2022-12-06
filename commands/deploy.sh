@@ -772,7 +772,13 @@ then
 
 	cd functions
 
-	npm ci
+	firebaseFunctionsTmp=$(mktemp -d)
+	cd ${firebaseFunctionsTmp}
+	mkdir node_modules
+	npm install node@^16 npm@^8 # Use versions that correspond with Cloud Functions runtime
+	cd -
+	${firebaseFunctionsTmp}/node_modules/.bin/node \
+		${firebaseFunctionsTmp}/node_modules/.bin/npm ci
 
 	cp -rf ../../modules ~/.cyph/email-credentials.json js/
 	html-minifier \
