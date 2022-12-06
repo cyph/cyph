@@ -773,6 +773,7 @@ then
 	cd functions
 
 	npm ci
+	rm package-lock.json # TODO: Revert after Firebase supports Node.js 18
 
 	cp -rf ../../modules ~/.cyph/email-credentials.json js/
 	html-minifier \
