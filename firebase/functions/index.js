@@ -22,7 +22,9 @@ const importFunction = memoize(async functionName =>
 );
 
 const onRequest = f =>
-	https.onRequest((req, res) => cors(req, res, async () => f(req, res)));
+	https.onRequest(async (req, res) =>
+		cors(req, res, async () => f(req, res))
+	);
 
 exports.acceptPseudoRelationship = onRequest(async (...args) =>
 	(
