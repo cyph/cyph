@@ -104,9 +104,9 @@ ipfsAdd () {
 	pinataHash=''
 	while [ "${pinataHash}" != "${hash}" ] ; do
 		export pinataResponse="$(
-			curl -s https://api.pinata.cloud/pinning/pinFileToIPFS \
-				-H "pinata_api_key: $(head -n1 ~/.cyph/pinata.key)" \
-				-H "pinata_secret_api_key: $(tail -n1 ~/.cyph/pinata.key)" \
+			curl -s -X POST https://api.pinata.cloud/pinning/pinFileToIPFS \
+				-H "Authorization: Bearer $(cat ~/.cyph/pinata.key)" \
+				-F 'pinataOptions="{\"cidVersion\": 0}"' \
 				-F "file=@${f}"
 		)"
 		pinataHash="$(node -e 'console.log(JSON.parse(process.env.pinataResponse).IpfsHash)')"
