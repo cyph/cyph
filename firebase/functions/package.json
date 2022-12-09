@@ -30,6 +30,7 @@
 		"interface-datastore": "*",
 		"ipfs-core": "*",
 		"ipfs-repo": "*",
+		"isomorphic-git": "*",
 		"jsdom": "*",
 		"lodash": "*",
 		"lodash-es": "*",
