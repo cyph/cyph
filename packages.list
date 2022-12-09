@@ -297,6 +297,7 @@ firebase-functions
 firebase-server
 firebase-tools@github:buu700/firebase-tools-tmp
 fork-ts-checker-webpack-plugin
+form-data
 glob
 gpu.js
 granim

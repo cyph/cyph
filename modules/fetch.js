@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 
 import AbortController from 'abort-controller';
+import FormDataInternal from 'form-data';
 import fetchInternal from 'node-fetch';
 
 export const fetch = async (url, options = {}, responseType = 'text') => {
@@ -39,3 +40,5 @@ export const fetch = async (url, options = {}, responseType = 'text') => {
 		})
 	]);
 };
+
+export const FormData = FormDataInternal;
