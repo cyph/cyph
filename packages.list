@@ -314,7 +314,10 @@ https-browserify
 husky
 ical-generator
 image-type
+interface-datastore
 intro.js
+ipfs-core
+ipfs-repo
 iroha-helpers
 isomorphic-git
 jasmine-core
@@ -370,6 +373,7 @@ minimist
 mkdirp
 moment
 moment-timezone
+multiformats
 mustache
 native-url
 ng-animate
