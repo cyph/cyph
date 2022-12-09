@@ -8,7 +8,7 @@ import {
 } from '@cyph/sdk';
 import {Datastore} from '@google-cloud/datastore';
 import isEqual from 'lodash-es/isEqual.js';
-import * as brotli from './brotli.js';
+import {brotli} from './compression.js';
 import {initDatabaseService} from './database-service.js';
 import {getPackageDatabase} from './package-database.js';
 import hashWhitelist from './websign-hash-whitelist.json' assert {type: 'json'};
@@ -220,7 +220,7 @@ export const processReleaseSignOutput = async ({
 							}
 						}) => ({
 							data: {
-								data: brotli.encode(
+								data: await brotli.encode(
 									await serialize(
 										AGSEPKICertified,
 										certifiedMessage

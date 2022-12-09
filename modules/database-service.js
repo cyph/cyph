@@ -11,7 +11,7 @@ import fs from 'fs';
 import memoize from 'lodash-es/memoize.js';
 import lz4 from 'lz4';
 import os from 'os';
-import * as brotli from './brotli.js';
+import {brotli} from './compression.js';
 import {sendMessageInternal} from './messaging-internal.js';
 
 const {StringProto} = proto;
@@ -332,7 +332,7 @@ export const initDatabaseService = memoize((config, isCloudFunction) => {
 			}
 
 			const timestamp = Date.now();
-			const encodedBytes = brotli.encode(bytes);
+			const encodedBytes = await brotli.encode(bytes);
 
 			await retry(async () =>
 				archiveStorage
