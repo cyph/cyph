@@ -4,6 +4,7 @@ import crypto from 'crypto';
 import fs from 'fs';
 import {add, checkout, clone, commit, fetch, pull, push} from 'isomorphic-git';
 import http from 'isomorphic-git/http/node';
+import mkdirp from 'mkdirp';
 import os from 'os';
 import path from 'path';
 
@@ -11,11 +12,14 @@ export class GitRepo {
 	async add (filePath, content, commitMessage)  {
 		await this.ready;
 
+		const fullPath = path.join(this.options.dir, filePath);
+
 		if (content !== undefined) {
-			await fs.promises.writeFile(filePath, content);
+			await mkdirp(path.dirname(fullPath));
+			await fs.promises.writeFile(fullPath, content);
 		}
 
-		await fs.promises.chmod(filePath, 0700);
+		await fs.promises.chmod(fullPath, 0700);
 		await add({...this.options, filepath: filePath});
 
 		if (commitMessage !== undefined) {

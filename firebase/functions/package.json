@@ -40,6 +40,8 @@
 		"mailchimp-api-v3": "*",
 		"markdown-escapes": "*",
 		"markdown-it": "*",
+		"maxmind": "*",
+		"mkdirp": "*",
 		"moment-timezone": "*",
 		"multiformats": "*",
 		"mustache": "*",
@@ -48,6 +50,7 @@
 		"nodemailer": "*",
 		"phone-number-timezone": "*",
 		"plivo": "*",
+		"promise-semaphore": "*",
 		"stripe": "*",
 		"twilio": "*"
 	},
