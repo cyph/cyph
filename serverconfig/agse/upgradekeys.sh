@@ -10,6 +10,8 @@ activeKeys='4'
 backupKeys='21'
 backupDir="${HOME}/$(date +%s).bak"
 
+cd "$(dirname "$0")"
+
 if [ ! -f keybackup ] ; then
 	echo 'keybackup not found'
 	exit 1
