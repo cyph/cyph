@@ -114,20 +114,26 @@ ${agseDir}/generatekeys.js \
 	"\${newBackupPasswordAes}" \
 	"\${newBackupPasswordSodium}"
 
+echo
+
 if [ ! -f ${agseDir}/.generatekeys-success ] ; then
+	echo 'ERROR: Key initialization failed.'
+	read
 	exit 1
 fi
 
-if [ ! -f ${agseDir}/keybackup ] ; then
-	echo
+if [ -f ${agseDir}/keybackup ] ; then
+	echo 'Press enter to continue.'
+else
 	echo -n "Before committing, you must validate that the SHA-512 of "
 	echo -n "the public key JSON you've been emailed matches the above."
 	echo
-	echo -n "Hit enter to continue after you've either done so or "
+	echo -n "Press enter to continue after you've either done so or "
 	echo -n "written down the hash for validation at a later time."
 	echo
-	read
 fi
+
+read
 
 mv ${agseDir}/server.js ./
 

@@ -48,12 +48,21 @@
 		/* PotassiumData.SignAlgorithms.V2Hardened */ 6: superSphincs
 	};
 
+	const algorithmNames = {
+		/* PotassiumData.SignAlgorithms.V1 */ 2: 'PotassiumData.SignAlgorithms.V1',
+		/* PotassiumData.SignAlgorithms.V2 */ 5: 'PotassiumData.SignAlgorithms.V2',
+		/* PotassiumData.SignAlgorithms.V2Hardened */ 6: 'PotassiumData.SignAlgorithms.V2Hardened'
+	};
+
 	const totalKeys = args.numActiveKeys + args.numBackupKeys;
 
 	let newKeyPairsGenerated = false;
 
 	const newKeyPair = async algorithm => {
 		newKeyPairsGenerated = true;
+		console.log(
+			`Generating new key pair with algorithm ${algorithmNames[algorithm]}.`
+		);
 		return algorithmImplementations[algorithm].keyPair();
 	};
 
@@ -285,11 +294,12 @@
 	console.log(
 		`MAC ADDRESS: ${os.networkInterfaces().eth0[0].mac}\n` +
 			`PUBLIC KEY HASH: ${publicKeyHash}\n\n` +
-			`Please verify that the JSON array of public keys that has been sent ` +
-			`to keys@cyph.com matches the above SHA-512 hash, before adding them ` +
-			`to shared/js/cyph/account/agse-public-signing-keys.ts.\n\n` +
-			`Additionally, you must update your ~/.cyph/agse.remote.mac to the ` +
-			`MAC address listed above.`
+			(newKeyPairsGenerated ?
+				`Please verify that the JSON array of public keys that has been sent ` +
+				`to keys@cyph.com matches the above SHA-512 hash, before adding them ` +
+				`to shared/js/cyph/account/agse-public-signing-keys.ts.\n\nAdditionally, you` :
+				'You') +
+			' must update your ~/.cyph/agse.remote.mac to the MAC address listed above.'
 	);
 
 	fs.writeFileSync(`${os.homedir()}/agse/.generatekeys-success`, '');
