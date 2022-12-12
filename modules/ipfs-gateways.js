@@ -3,6 +3,7 @@
 import {getMeta} from './base.js';
 const {__dirname} = getMeta(import.meta);
 
+import {util} from '@cyph/sdk';
 import dns from 'dns';
 import memoize from 'lodash-es/memoize.js';
 import maxmind from 'maxmind';
@@ -12,10 +13,15 @@ import {URL} from 'url';
 import {promisify} from 'util';
 import ipfsGatewaysJSON from './base-ipfs-gateways.json' assert {type: 'json'};
 import {fetch} from './fetch.js';
+import {ipfsCalculateHash} from './ipfs.js';
 import {getPackageDatabase} from './package-database.js';
+
+const {retryUntilSuccessful} = util;
 
 /* Blacklist of known bad or flagged gateways */
 const blacklist = new Set(['https://astyanax.io/ipfs/:hash']);
+
+const defaultGateway = 'https://gateway.ipfs.io/ipfs/:hash';
 
 const uptimeSemaphore = new Semaphore({rooms: 2});
 const uptimeCheck = memoize(async gateway =>
@@ -122,3 +128,64 @@ export const ipfsGateways = memoize(async skipUptimeCheck =>
 		)
 	).reduce((a, b) => a.concat(b), [])
 );
+
+export const ipfsWarmUpGateway = memoize(
+	async ({gateway = defaultGateway, ipfsHash, verify = false}) => {
+		if (!ipfsHash) {
+			throw new Error('IPFS hash to warm up not specified.');
+		}
+
+		const fetchContent = async () =>
+			fetch(
+				gateway.replace(':hash', ipfsHash),
+				{
+					timeout: 30000
+				},
+				'buffer'
+			);
+
+		if (!verify) {
+			await fetchContent().catch(() => {});
+			return;
+		}
+
+		await retryUntilSuccessful(
+			async () => {
+				const content = await fetchContent();
+				const contentHash = await ipfsCalculateHash(content);
+
+				if (contentHash !== ipfsHash) {
+					throw new Error(
+						`IPFS hash mismatch. Expected: ${ipfsHash}. Actual: ${contentHash}.`
+					);
+				}
+			},
+			1000,
+			5000
+		).catch(err => {
+			console.error(err);
+		});
+	}
+);
+
+export const ipfsWarmUpGateways = memoize(async ipfsHashes => {
+	await Promise.all(
+		(
+			await ipfsGateways(true)
+		).map(async gateway => {
+			for (const ipfsHash of ipfsHashes) {
+				await ipfsWarmUp({
+					gateway,
+					ipfsHash
+				});
+			}
+		})
+	);
+
+	for (const ipfsHash of ipfsHashes) {
+		await ipfsWarmUp({
+			ipfsHash,
+			verify: true
+		});
+	}
+});

@@ -3,11 +3,13 @@
 import {util} from '@cyph/sdk';
 import fastSHA512 from 'fast-sha512';
 import fs from 'fs/promises';
+import glob from 'glob/sync.js';
 import os from 'os';
 import path from 'path';
 import {brotli, gzip} from './compression.js';
 import {GitRepo} from './git.js';
 import {ipfsAdd} from './ipfs.js';
+import {ipfsWarmUpGateways} from './ipfs-gateways.js';
 
 const {lockFunction} = util;
 
@@ -26,6 +28,7 @@ export const publishSubresources = async ({
 	});
 
 	const packageParent = test ? path.join('websign', 'test') : '';
+	const packageFullPath = path.join(dir, packageParent, packageName);
 
 	await Promise.all(
 		Object.entries(subresources).map(async ([subresource, content]) => {
@@ -109,5 +112,15 @@ export const publishSubresources = async ({
 
 	await gitRepo.push();
 
-	/* TODO: ipfsWarmUpAll $(find ${p} -type f -name '*.ipfs') */
+	const ipfsFiles = glob(path.join(packageFullPath, '**', '*.ipfs'), {
+		nodir: true
+	});
+
+	await ipfsWarmUpGateways(
+		await Promise.all(
+			ipfsFiles.map(async ipfsFile =>
+				(await fs.readFile(ipfsFile)).toString().trim()
+			)
+		)
+	);
 };

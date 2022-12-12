@@ -97,3 +97,17 @@ export const ipfsAdd = async (content, credentials = defaultCredentials) => {
 
 	return hash;
 };
+
+export const ipfsCalculateHash = async content => {
+	content = typeof content === 'string' ? Buffer.from(content) : content;
+
+	if (content === undefined) {
+		throw new Error('Content to calculate to IPFS hash for not defined.');
+	}
+
+	return retryUntilSuccessful(async () =>
+		(
+			await ipfs.add(content, {cidVersion: 0, onlyHash: true})
+		).cid.toString()
+	);
+};
