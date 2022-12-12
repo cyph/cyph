@@ -7,47 +7,16 @@ import glob from 'glob/sync.js';
 import memoize from 'lodash-es/memoize.js';
 import os from 'os';
 import path from 'path';
-import {updateRepos} from './update-repos.js';
+import {getCDNRepo} from './cdn-repo.js';
 
 const {dynamicDeserialize, dynamicSerializeBytes} = util;
 
-const cachePath = `${os.homedir()}/.package-database`;
-const repoPath = `${os.homedir()}/.cyph/repos/cdn`;
-
-const options = {cwd: repoPath};
-const globOptions = {cwd: repoPath, symlinks: true};
+const cachePath = path.join(os.tmpdir(), '.package-database');
 
 const clientMaximumAllowedLatency = 5000;
 const clientMinimumSupportedMbps = 0.5;
 const serverMaximumAllowedLatency = 2500;
 const serverMinimumSupportedMbps = 1;
-
-const getFiles = memoize(pattern => glob(pattern, globOptions));
-
-const getSubresourceTimeouts = (
-	packageName,
-	maximumAllowedLatency,
-	minimumSupportedMbps
-) =>
-	getFiles(`${packageName}/**/*.ipfs`)
-		.map(ipfs => `${ipfs.slice(0, -5)}.br`)
-		.map(br => [
-			br.slice(packageName.length + 1, -3),
-			Math.round(
-				(fs.statSync(path.join(repoPath, br)).size /
-					((1024 * 1024) / 8) /
-					minimumSupportedMbps) *
-					1000 +
-					maximumAllowedLatency
-			)
-		])
-		.reduce(
-			(subresources, [subresource, timeout]) => ({
-				...subresources,
-				[subresource]: timeout
-			}),
-			{}
-		);
 
 const readIfExists = filePath =>
 	fs.existsSync(filePath) ? fs.readFileSync(filePath) : undefined;
@@ -57,7 +26,38 @@ export const getPackageDatabase = memoize(async () => {
 		return dynamicDeserialize(fs.readFileSync(cachePath));
 	}
 
-	await updateRepos();
+	const cdnRepo = await getCDNRepo();
+
+	const {repoPath} = cdnRepo;
+	const options = {cwd: repoPath};
+	const globOptions = {cwd: repoPath, symlinks: true};
+
+	const getFiles = memoize(pattern => glob(pattern, globOptions));
+
+	const getSubresourceTimeouts = (
+		packageName,
+		maximumAllowedLatency,
+		minimumSupportedMbps
+	) =>
+		getFiles(`${packageName}/**/*.ipfs`)
+			.map(ipfs => `${ipfs.slice(0, -5)}.br`)
+			.map(br => [
+				br.slice(packageName.length + 1, -3),
+				Math.round(
+					(fs.statSync(path.join(repoPath, br)).size /
+						((1024 * 1024) / 8) /
+						minimumSupportedMbps) *
+						1000 +
+						maximumAllowedLatency
+				)
+			])
+			.reduce(
+				(subresources, [subresource, timeout]) => ({
+					...subresources,
+					[subresource]: timeout
+				}),
+				{}
+			);
 
 	const packageDatabase = getFiles('**/pkg.gz')
 		.map(pkg => [

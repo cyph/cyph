@@ -1,6 +1,5 @@
 #!/usr/bin/env node
 
-import crypto from 'crypto';
 import fs from 'fs';
 import {add, checkout, clone, commit, fetch, pull, push} from 'isomorphic-git';
 import http from 'isomorphic-git/http/node';
@@ -12,7 +11,7 @@ export class GitRepo {
 	async add (filePath, content, commitMessage)  {
 		await this.ready;
 
-		const fullPath = path.join(this.options.dir, filePath);
+		const fullPath = path.join(this.repoPath, filePath);
 
 		if (content !== undefined) {
 			await mkdirp(path.dirname(fullPath));
@@ -57,14 +56,20 @@ export class GitRepo {
 		);
 	}
 
-	constructor ({author, dir, url} = {}) {
+	get repoPath ()  {
+		return this.options.dir;
+	}
+
+	constructor ({author, repoPath, url} = {}) {
 		if (!url) {
 			throw new Error('Unspecified URL for git repository.');
 		}
 
 		this.options = {
 			author,
-			dir: dir || path.join(os.tmpdir(), crypto.randomUUID()),
+			dir:
+				repoPath ||
+				path.join(os.tmpdir(), Buffer.from(url).toString('hex')),
 			fs,
 			http,
 			url
@@ -72,9 +77,9 @@ export class GitRepo {
 
 		this.ready = (async () => {
 			const isExistingRepo =
-				!!dir &&
+				!!repoPath &&
 				(await fs.promises
-					.access(path.join(dir, '.git'))
+					.access(path.join(repoPath, '.git'))
 					.then(() => true)
 					.catch(() => false));
 

@@ -4,10 +4,9 @@ import {util} from '@cyph/sdk';
 import fastSHA512 from 'fast-sha512';
 import fs from 'fs/promises';
 import glob from 'glob/sync.js';
-import os from 'os';
 import path from 'path';
+import {getCDNRepo} from './cdn-repo.js';
 import {brotli, gzip} from './compression.js';
-import {GitRepo} from './git.js';
 import {ipfsAdd} from './ipfs.js';
 import {ipfsWarmUpGateways} from './ipfs-gateways.js';
 
@@ -17,15 +16,11 @@ const gitCommitLock = lockFunction();
 
 export const publishSubresources = async ({
 	customBuilds = [],
-	dir = path.join(os.homedir(), '.cyph', 'repos', 'cdn'),
 	packageName,
 	subresources,
 	test = false
 }) => {
-	const gitRepo = new GitRepo({
-		dir,
-		url: 'git@github.com:cyph/cdn.git'
-	});
+	const cdnRepo = await getCDNRepo();
 
 	const packageParent = test ? path.join('websign', 'test') : '';
 	const packageFullPath = path.join(dir, packageParent, packageName);
@@ -48,7 +43,7 @@ export const publishSubresources = async ({
 					['gz', gzipEncoded],
 					['ipfs', ipfsHash]
 				]) {
-					await gitRepo.add(
+					await cdnRepo.add(
 						path.join(
 							packageParent,
 							packageName,
@@ -58,7 +53,7 @@ export const publishSubresources = async ({
 					);
 				}
 
-				await gitRepo.commit(sriHash);
+				await cdnRepo.commit(sriHash);
 			});
 		})
 	);
@@ -78,11 +73,11 @@ export const publishSubresources = async ({
 					path.join(dir, filePath)
 				);
 
-				await gitRepo.add(filePath);
+				await cdnRepo.add(filePath);
 			}
 		}
 
-		await gitRepo.commit(customBuild);
+		await cdnRepo.commit(customBuild);
 	}
 
 	for (const p of [packageName, ...customBuilds]) {
@@ -105,12 +100,12 @@ export const publishSubresources = async ({
 
 			await fs.symlink(path.join('..', packageName), pAliasFullPath);
 
-			await gitRepo.add(pAlias);
-			await gitRepo.commit(pAlias);
+			await cdnRepo.add(pAlias);
+			await cdnRepo.commit(pAlias);
 		}
 	}
 
-	await gitRepo.push();
+	await cdnRepo.push();
 
 	const ipfsFiles = glob(path.join(packageFullPath, '**', '*.ipfs'), {
 		nodir: true
