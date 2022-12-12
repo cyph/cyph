@@ -92,125 +92,6 @@ getBoolArg () {
 	fi
 }
 
-ipfsAdd () {
-	f="$(realpath "${1}")"
-
-	hash="$(ipfsAddNative ${f})"
-	while [ ! "${hash}" ] ; do
-		sleep 5
-		hash="$(ipfsAddNative ${f})"
-	done
-
-	pinataHash=''
-	while [ "${pinataHash}" != "${hash}" ] ; do
-		export pinataResponse="$(
-			curl -s -X POST https://api.pinata.cloud/pinning/pinFileToIPFS \
-				-H "Authorization: Bearer $(cat ~/.cyph/pinata.key)" \
-				-F 'pinataOptions="{\"cidVersion\": 0}"' \
-				-F "file=@${f}"
-		)"
-		pinataHash="$(node -e 'console.log(JSON.parse(process.env.pinataResponse).IpfsHash)')"
-	done
-
-	curl -i -s -X POST https://www.eternum.io/api/pin/ \
-		-H "Authorization: Bearer $(cat ~/.cyph/eternum.key)" \
-		-H 'Content-Type: application/json' \
-		-d "{\"hash\": \"${hash}\"}" \
-	&> /dev/null
-
-	echo "${hash}"
-}
-
-ipfsAddNative () {
-	ipfsInit
-	ipfs add -q "${@}"
-}
-
-export ipfsGatewaysCache=""
-
-ipfsGateways () {
-	if [ ! "${ipfsGatewaysCache}" ] ; then
-		ipfsGatewaysCache="$(node -e "console.log(
-			$(/cyph/commands/ipfsgateways.js --skip-uptime-check).map(o => o.url).join('\\n')
-		)")"
-	fi
-
-	echo -n "${ipfsGatewaysCache}"
-}
-
-ipfsHash () {
-	ipfs add -qn "${1}"
-}
-
-ipfsInit () {
-	newDaemonInit=''
-	while ! ps ux | grep 'ipfs daemon' | grep -v grep &> /dev/null ; do
-		newDaemonInit=true
-		rm ~/.ipfs/repo.lock &> /dev/null
-		bash -c 'ipfs daemon &' &> /dev/null
-		sleep 5
-	done
-
-	while [ "${newDaemonInit}" ] ; do
-		ipfs swarm peers &> /dev/null && break
-		sleep 1
-	done
-}
-
-export defaultGateway='https://gateway.ipfs.io/ipfs/:hash'
-
-ipfsWarmUp () {
-	verify=''
-	if [ "${1}" == '--verify' ] ; then
-		verify=true
-		shift
-	fi
-
-	hash="${1}"
-	shift
-
-	gateway="${defaultGateway}"
-	if [ "${1}" ] ; then
-		gateway="${1}"
-		shift
-	fi
-
-	url="$(echo "${gateway}" | sed "s|:hash|${hash}|")"
-
-	if [ ! "${verify}" ] ; then
-		curl -s -m 30 "${url}" &> /dev/null
-		return
-	fi
-
-	f="/tmp/$(echo "${url}" | sha).ipfswarmup"
-
-	while true ; do
-		rm "${f}" 2> /dev/null
-		echo wget "${url}" -T 30 -t 1 -O "${f}"
-		wget "${url}" -T 30 -t 1 -O "${f}"
-
-		# Switch to this if concurrency support is needed:
-		# if [ -f "${f}" ] && [ "$(stat --printf='%s' "${f}")" != '0' ] ; then
-		if [ -f "${f}" ] && [ "$(ipfsHash "${f}")" == "${hash}" ] ; then
-			break
-		fi
-	done
-
-	rm "${f}" 2> /dev/null
-}
-
-ipfsWarmUpAll () {
-	for gateway in $(ipfsGateways | grep -v "${defaultGateway}") ; do
-		for f in "${@}" ; do
-			ipfsWarmUp "$(cat "${f}")" "${gateway}"
-		done &
-	done
-
-	for f in "${@}" ; do
-		ipfsWarmUp --verify "$(cat "${f}")"
-	done
-}
-
 log () {
 	echo -e "\n\n\n${*} ($(date))\n"
 }
@@ -263,13 +144,6 @@ export -f checkfailretry
 export -f download
 export -f fail
 export -f getBoolArg
-export -f ipfsAdd
-export -f ipfsAddNative
-export -f ipfsGateways
-export -f ipfsHash
-export -f ipfsInit
-export -f ipfsWarmUp
-export -f ipfsWarmUpAll
 export -f log
 export -f notify
 export -f parseArgs

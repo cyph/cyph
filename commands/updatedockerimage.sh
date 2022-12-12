@@ -108,28 +108,6 @@ emsdk install latest-upstream
 emsdk activate latest-upstream
 sed -i "s/NODE_JS = .*/NODE_JS = '\/usr\/bin\/node'/" ~/emsdk/.emscripten
 
-cd
-rm -rf kubo kubo.tar.gz 2> /dev/null
-wget "$(
-	curl -sL https://api.github.com/repos/ipfs/kubo/releases/latest | jq -r "
-		.assets |
-		map(
-			.browser_download_url |
-			select(endswith(\"linux-$(
-				if [ "$(arch)" == aarch64 ] ; then echo arm64 ; else echo amd64 ; fi
-			).tar.gz\"))
-		)[0]
-	"
-)" -O kubo.tar.gz
-tar xvzf kubo.tar.gz
-cd kubo
-sudo bash install.sh
-cd
-rm -rf kubo kubo.tar.gz
-if [ ! -d ~/.ipfs ] ; then
-	ipfs init
-fi
-
 
 if [ ! -d ~/google-cloud-sdk ] ; then
 	wget \
