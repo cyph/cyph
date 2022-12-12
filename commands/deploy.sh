@@ -554,99 +554,11 @@ if [ "${websign}" ] ; then
 
 	log 'Compressing resources for deployment to CDN'
 
-	ipfsInit
-
-	if [ -d pkg/cyph.app-subresources ] ; then
-		find pkg/cyph.app-subresources -type f -not -name '*.srihash' -print0 | xargs -0 -P4 -I% bash -c ' \
-			gzip -k9 %; \
-			brotli -Zk %; \
-			ipfsAdd %.br > %.ipfs; \
-		'
-
-		cp -a pkg/cyph.app-subresources/* cdn/${package}/
-
-		for customBuild in ${customBuilds} ; do
-			cd cdn/${customBuild}
-			for subresource in $(ls ../../pkg/cyph.app-subresources | grep -vP '\.(css|js)$') ; do
-				ln -s ../${package}/${subresource} ${subresource}
-				chmod 700 ${subresource}
-				git add ${subresource}
-			done
-			git commit -S -m "${customBuild}" . &> /dev/null
-			cd ../..
-		done
-	fi
-
-	for branchDir in ${branchDirs} ; do
-		branchPackage="$(projectname cyph.app ${branchDir})"
-		branchSubresources=${branchDir}/pkg/cyph.app-subresources
-
-		if [ -d ${branchSubresources} ] ; then
-			mv ${branchSubresources}/* cdn/${branchPackage}/
-		fi
-	done
-
-	cd cdn
-
-	for p in ${packages} ; do
-		if [ "${simple}" ] ; then
-			mkdir -p websign/test
-			rm -rf websign/test/${p} 2> /dev/null
-			mv ${p} websign/test/
-			cd websign/test
-		fi
-
-		for ext in app ws ; do
-			plink=$(echo ${p} | sed "s/\\.${ext}\$//")
-			if (echo ${p} | grep -P "\\.${ext}\$" > /dev/null) && ! [ -L ${plink} ] ; then
-				ln -s ${p} ${plink}
-				chmod 700 ${plink}
-				git add ${plink}
-				git commit -S -m ${plink} ${plink} &> /dev/null
-			fi
-		done
-
-		cp ${p}/current ${p}/pkg.srihash
-
-		find ${p} -type f -not \( \
-			-name '*.srihash' \
-			-or -name '*.ipfs' \
-			-or -name '*.gz' \
-			-or -name '*.br' \
-		\) -exec bash -c ' \
-			if [ ! -f {}.ipfs ] ; then \
-				gzip -k9 {}; \
-				brotli -Zk {}; \
-				ipfsAdd {}.br > {}.ipfs; \
-			fi; \
-			chmod 700 {}.ipfs {}.gz {}.br; \
-			git add {}.ipfs {}.gz {}.br; \
-			git commit -S -m \
-				"$(cat {}.srihash 2> /dev/null || date +%s)" \
-				{}.ipfs {}.gz {}.br \
-			&> /dev/null; \
-		' \;
-
-		if [ "${simple}" ] ; then
-			cd ../..
-		fi
-	done
-
-	git push
-
-	for p in ${packages} ; do
-		if [ "${simple}" ] ; then
-			cd websign/test
-		fi
-
-		ipfsWarmUpAll $(find ${p} -type f -name '*.ipfs')
-
-		if [ "${simple}" ] ; then
-			cd ../..
-		fi
-	done
-
-	cd ..
+	./commands/websign/publishsubresources.js \
+		--custom-builds "${customBuilds}" \
+		--package-name "${package}" \
+		--subresources-root 'pkg/cyph.app-subresources' \
+		--test "${simple}"
 fi
 
 if \
