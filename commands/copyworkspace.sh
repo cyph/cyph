@@ -14,7 +14,7 @@ cd "${source}"
 rsync -a $(ls | grep -vP '^shared$') "${dir}/"
 cd shared
 rsync -a $(ls | grep -vP '^(lib|node_modules)$') "${dir}/shared/"
-rsync -a lib/js lib/ipfs-gateways.json "${dir}/shared/lib/"
+rsync -a lib/js "${dir}/shared/lib/"
 
 for d in cyph.app cyph.com sdk ; do
 	cd "${dir}/${d}"

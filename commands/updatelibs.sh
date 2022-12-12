@@ -43,11 +43,11 @@ rm -rf ~/tmplib
 
 wget \
 	https://github.com/ipfs/public-gateway-checker/raw/master/src/gateways.json \
-	-O shared/lib/ipfs-gateways.json
+	-O modules/base-ipfs-gateways.json
 
 ./commands/getlibs.sh --skip-node-modules
 
-cyph-prettier --write shared/lib/ipfs-gateways.json || fail
+cyph-prettier --write modules/base-ipfs-gateways.json || fail
 cyph-prettier --write shared/lib/js/package.json || fail
 cyph-prettier --write shared/lib/js/package-lock.json || fail
 
