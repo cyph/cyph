@@ -1,20 +1,17 @@
 #!/usr/bin/env node
 
 import {util} from '@cyph/sdk';
+import {MemoryDatastore} from 'datastore-core';
 import fs from 'fs/promises';
-import {MemoryDatastore} from 'interface-datastore';
 import * as IPFS from 'ipfs-core';
-import ipfsRepo from 'ipfs-repo';
+import {createRepo} from 'ipfs-repo';
+import {MemoryLock} from 'ipfs-repo/locks/memory';
 import * as rawCodec from 'multiformats/codecs/raw';
 import os from 'os';
 import path from 'path';
 import {fetch, FormData} from './fetch.js';
 
-const {
-	createRepo,
-	locks: {memory: memoryLock}
-} = ipfsRepo;
-const {retryUntilSuccessful} = util;
+const {lockFunction, retryUntilSuccessful} = util;
 
 const defaultCredentials = {
 	eternum: await fs
@@ -25,6 +22,17 @@ const defaultCredentials = {
 		.readFile(path.join(os.homedir(), '.cyph', 'pinata.key'))
 		.then(buf => buf.toString().trim())
 		.catch(() => undefined)
+};
+
+const locks = {
+	eternum: lockFunction(),
+	pinata: lockFunction()
+};
+
+const cloneBuffer = buf => {
+	const bufCopy = Buffer.alloc(buf.length);
+	buf.copy(bufCopy);
+	return bufCopy;
 };
 
 export const ipfs = await IPFS.create({
@@ -38,14 +46,14 @@ export const ipfs = await IPFS.create({
 			pins: new MemoryDatastore(),
 			root: new MemoryDatastore()
 		},
-		{autoMigrate: false, repoLock: memoryLock, repoOwner: true}
+		{autoMigrate: false, repoLock: MemoryLock, repoOwner: true}
 	)
 });
 
 export const ipfsAdd = async (content, credentials = defaultCredentials) => {
 	content = typeof content === 'string' ? Buffer.from(content) : content;
 
-	if (content === undefined) {
+	if (!(content instanceof Buffer)) {
 		throw new Error('Content to add to IPFS not defined.');
 	}
 
@@ -57,23 +65,34 @@ export const ipfsAdd = async (content, credentials = defaultCredentials) => {
 	}
 
 	const hash = await retryUntilSuccessful(async () =>
-		(await ipfs.add(content, {cidVersion: 0})).cid.toString()
+		(await ipfs.add(cloneBuffer(content), {cidVersion: 0})).cid.toString()
 	);
+
+	if (content.length < 1) {
+		return hash;
+	}
 
 	await retryUntilSuccessful(async () => {
 		const formData = new FormData();
-		formData.append('file', content);
+		formData.append(
+			'file',
+			new Blob([cloneBuffer(content)], {type: 'application/octet-stream'})
+		);
 		formData.append('pinataOptions', JSON.stringify({cidVersion: 0}));
 
-		const {IpfsHash: pinataHash} = await fetch(
-			'https://api.pinata.cloud/pinning/pinFileToIPFS',
-			{
-				headers: {
-					Authorization: `Bearer ${credentials.pinata}`
+		const {IpfsHash: pinataHash} = await locks.pinata(async () =>
+			fetch(
+				'https://api.pinata.cloud/pinning/pinFileToIPFS',
+				{
+					body: formData,
+					headers: {
+						Authorization: `Bearer ${credentials.pinata}`
+					},
+					method: 'POST'
 				},
-				method: 'POST'
-			}
-		).then(o => o.json());
+				'json'
+			)
+		);
 
 		if (pinataHash === hash) {
 			return;
@@ -85,14 +104,16 @@ export const ipfsAdd = async (content, credentials = defaultCredentials) => {
 	});
 
 	await retryUntilSuccessful(async () =>
-		fetch('https://www.eternum.io/api/pin/', {
-			body: JSON.stringify({hash}),
-			headers: {
-				'Authorization': `Bearer ${credentials.eternum}`,
-				'Content-Type': 'application/json'
-			},
-			method: 'POST'
-		})
+		locks.eternum(async () =>
+			fetch('https://www.eternum.io/api/pin', {
+				body: JSON.stringify({hash}),
+				headers: {
+					'Authorization': `Token ${credentials.eternum}`,
+					'Content-Type': 'application/json'
+				},
+				method: 'POST'
+			})
+		)
 	);
 
 	return hash;

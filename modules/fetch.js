@@ -1,20 +1,19 @@
 #!/usr/bin/env node
 
 import AbortController from 'abort-controller';
-import FormDataInternal from 'form-data';
-import fetchInternal from 'node-fetch';
+import fetchInternal, {FormData as FormDataInternal} from 'node-fetch';
 
 export const fetch = async (url, options = {}, responseType = 'text') => {
 	const fetchHandler = o => {
 		if (!o.ok) {
+			console.error(o);
 			throw new Error(`Request failure: ${url}`);
 		}
 
 		return o[responseType]();
 	};
 
-	const timeout = options.timeout;
-	options.timeout = undefined;
+	const {timeout} = options;
 
 	if (!timeout) {
 		return fetchInternal(url, options).then(fetchHandler);
@@ -22,6 +21,7 @@ export const fetch = async (url, options = {}, responseType = 'text') => {
 
 	const abortController = new AbortController();
 	options.signal = abortController.signal;
+	options.timeout = undefined;
 
 	let timeoutID;
 

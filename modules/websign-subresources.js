@@ -23,7 +23,11 @@ export const publishSubresources = async ({
 	const cdnRepo = await getCDNRepo();
 
 	const packageParent = test ? path.join('websign', 'test') : '';
-	const packageFullPath = path.join(dir, packageParent, packageName);
+	const packageFullPath = path.join(
+		cdnRepo.repoPath,
+		packageParent,
+		packageName
+	);
 
 	await Promise.all(
 		Object.entries(subresources).map(async ([subresource, content]) => {
@@ -70,7 +74,7 @@ export const publishSubresources = async ({
 
 				await fs.symlink(
 					path.join('..', packageName, fileName),
-					path.join(dir, filePath)
+					path.join(cdnRepo.repoPath, filePath)
 				);
 
 				await cdnRepo.add(filePath);
@@ -88,7 +92,11 @@ export const publishSubresources = async ({
 				continue;
 			}
 
-			const pAliasFullPath = path.join(dir, packageParent, pAlias);
+			const pAliasFullPath = path.join(
+				cdnRepo.repoPath,
+				packageParent,
+				pAlias
+			);
 			const pAliasExists = await fs
 				.access(pAliasFullPath)
 				.then(() => true)

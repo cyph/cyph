@@ -174,7 +174,7 @@ export const ipfsWarmUpGateways = memoize(async ipfsHashes => {
 			await ipfsGateways(true)
 		).map(async gateway => {
 			for (const ipfsHash of ipfsHashes) {
-				await ipfsWarmUp({
+				await ipfsWarmUpGateway({
 					gateway,
 					ipfsHash
 				});
@@ -183,7 +183,7 @@ export const ipfsWarmUpGateways = memoize(async ipfsHashes => {
 	);
 
 	for (const ipfsHash of ipfsHashes) {
-		await ipfsWarmUp({
+		await ipfsWarmUpGateway({
 			ipfsHash,
 			verify: true
 		});

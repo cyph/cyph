@@ -27,7 +27,7 @@ try {
 	const subresources = subresourcesRoot ?
 		Object.fromEntries(
 			await Promise.all(
-				glob('**', {cwd: subresourcesRoot})
+				glob('**', {cwd: subresourcesRoot, nodir: true})
 					.filter(k => !k.endsWith('.srihash'))
 					.map(async k => [
 						k,

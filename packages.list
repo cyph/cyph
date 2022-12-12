@@ -264,6 +264,7 @@ csv
 csv-parse
 csv-stringify
 d3
+datastore-core
 datauri
 devextreme
 devextreme-angular
@@ -297,7 +298,6 @@ firebase-functions
 firebase-server
 firebase-tools@github:buu700/firebase-tools-tmp
 fork-ts-checker-webpack-plugin
-form-data
 glob
 gpu.js
 granim
@@ -315,7 +315,6 @@ https-browserify
 husky
 ical-generator
 image-type
-interface-datastore
 intro.js
 ipfs-core
 ipfs-repo

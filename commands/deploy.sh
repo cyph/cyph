@@ -558,7 +558,8 @@ if [ "${websign}" ] ; then
 		--custom-builds "${customBuilds}" \
 		--package-name "${package}" \
 		--subresources-root 'pkg/cyph.app-subresources' \
-		--test "${simple}"
+		--test "${simple}" \
+	|| exit 1
 fi
 
 if \
@@ -688,6 +689,7 @@ then
 	rm package-lock.json # TODO: Revert after Firebase supports Node.js 18
 
 	cp -rf ../../modules ~/.cyph/email-credentials.json js/
+	cp ~/.cyph/*.mmdb ~/.cyph/github.token js/modules/
 	html-minifier \
 		--collapse-whitespace \
 		--minify-css \

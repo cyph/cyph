@@ -2,7 +2,7 @@
 
 import fs from 'fs';
 import {add, checkout, clone, commit, fetch, pull, push} from 'isomorphic-git';
-import http from 'isomorphic-git/http/node';
+import http from 'isomorphic-git/http/node/index.js';
 import mkdirp from 'mkdirp';
 import os from 'os';
 import path from 'path';
@@ -18,7 +18,7 @@ export class GitRepo {
 			await fs.promises.writeFile(fullPath, content);
 		}
 
-		await fs.promises.chmod(fullPath, 0700);
+		await fs.promises.chmod(fullPath, 0o700);
 		await add({...this.options, filepath: filePath});
 
 		if (commitMessage !== undefined) {
@@ -60,7 +60,14 @@ export class GitRepo {
 		return this.options.dir;
 	}
 
-	constructor ({author, repoPath, url} = {}) {
+	constructor ({
+		author = {
+			email: 'git@cyph.com',
+			name: 'Cyph'
+		},
+		repoPath,
+		url
+	} = {}) {
 		if (!url) {
 			throw new Error('Unspecified URL for git repository.');
 		}
