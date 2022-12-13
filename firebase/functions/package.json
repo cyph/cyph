@@ -44,7 +44,7 @@
 		"moment-timezone": "*",
 		"multiformats": "*",
 		"mustache": "*",
-		"node": "16",
+		"node": "18",
 		"node-fetch": "*",
 		"nodemailer": "*",
 		"phone-number-timezone": "*",
@@ -54,7 +54,7 @@
 		"twilio": "*"
 	},
 	"engines": {
-		"node": "16"
+		"node": "18"
 	},
 	"private": true
 }
