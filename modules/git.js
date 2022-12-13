@@ -1,7 +1,16 @@
 #!/usr/bin/env node
 
 import fs from 'fs';
-import {add, checkout, clone, commit, fetch, pull, push} from 'isomorphic-git';
+import {
+	add,
+	checkout,
+	clone,
+	commit,
+	fetch,
+	log,
+	pull,
+	push
+} from 'isomorphic-git';
 import http from 'isomorphic-git/http/node/index.js';
 import mkdirp from 'mkdirp';
 import os from 'os';
@@ -34,6 +43,11 @@ export class GitRepo {
 	async commit (message)  {
 		await this.ready;
 		await commit({...this.options, message});
+	}
+
+	async log (depth)  {
+		await this.ready;
+		return log({...this.options, depth});
 	}
 
 	async pull ()  {
