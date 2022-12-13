@@ -4,11 +4,12 @@ import {getMeta} from '../modules/base.js';
 const {__dirname, isCLI} = getMeta(import.meta);
 
 import fs from 'fs';
-import glob from 'glob';
+import glob from 'glob-promise';
 import path from 'path';
 
-export const translations = glob
-	.sync(path.join(__dirname, '..', 'translations', '*.json'))
+export const translations = (
+	await glob(path.join(__dirname, '..', 'translations', '*.json'))
+)
 	.map(file => ({
 		key: file.split('/').slice(-1)[0].split('.')[0].toLowerCase(),
 		value: JSON.parse(fs.readFileSync(file).toString())

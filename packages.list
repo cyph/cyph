@@ -203,6 +203,7 @@
 @types/dompurify
 @types/dropzone
 @types/file-saver
+@types/glob
 @types/hammerjs
 @types/hark
 @types/html-to-text
@@ -298,6 +299,7 @@ firebase-server
 firebase-tools@github:buu700/firebase-tools-tmp
 fork-ts-checker-webpack-plugin
 glob
+glob-promise
 gpu.js
 granim
 gulp

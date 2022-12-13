@@ -29,6 +29,7 @@
 		"firebase": ">=9",
 		"generate-rsa-keypair": "*",
 		"glob": "*",
+		"glob-promise": "*",
 		"html-minifier": "*",
 		"mkdirp": "*",
 		"prompt": "*",

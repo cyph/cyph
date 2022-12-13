@@ -3,29 +3,31 @@
 import datauri from 'datauri/sync.js';
 import fastSHA512 from 'fast-sha512';
 import fs from 'fs';
-import glob from 'glob';
+import glob from 'glob-promise';
 import mkdirp from 'mkdirp';
 import path from 'path';
 
 export const subresourceInline = async (rootDirectoryPath, subresourceRoot) => {
 	subresourceRoot = path.join(rootDirectoryPath, subresourceRoot);
 
-	const filesToMerge = glob
-		.sync('assets/**', {nodir: true})
-		.filter(s => !s.match(/^assets\/(css|js|misc|node_modules)\//));
+	const filesToMerge = (await glob('assets/**', {nodir: true})).filter(
+		s => !s.match(/^assets\/(css|js|misc|node_modules)\//)
+	);
 
-	const filesToModify = [
-		{dir: 'assets/css', ext: 'css'},
-		{dir: 'assets/js', ext: 'js'},
-		{dir: 'css', ext: 'scss'},
-		{dir: 'js', ext: 'html'},
-		{dir: 'js', ext: 'scss'},
-		{dir: 'js', ext: 'ts'}
-	]
-		.map(o =>
-			glob.sync(path.join(o.dir, '**', `*.${o.ext}`), {nodir: true})
+	const filesToModify = (
+		await Promise.all(
+			[
+				{dir: 'assets/css', ext: 'css'},
+				{dir: 'assets/js', ext: 'js'},
+				{dir: 'css', ext: 'scss'},
+				{dir: 'js', ext: 'html'},
+				{dir: 'js', ext: 'scss'},
+				{dir: 'js', ext: 'ts'}
+			].map(async o =>
+				glob(path.join(o.dir, '**', `*.${o.ext}`), {nodir: true})
+			)
 		)
-		.reduce((a, b) => a.concat(b), ['index.html']);
+	).reduce((a, b) => a.concat(b), ['index.html']);
 
 	await mkdirp(subresourceRoot);
 

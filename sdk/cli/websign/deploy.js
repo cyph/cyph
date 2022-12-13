@@ -2,7 +2,7 @@
 
 import {proto, util, webSignService} from '@cyph/sdk';
 import fs from 'fs/promises';
-import glob from 'glob';
+import glob from 'glob-promise';
 import path from 'path';
 import {useLicenseKey} from '../auth/index.js';
 import {pack} from './pack.js';
@@ -49,7 +49,7 @@ export const deploy = async ({
 
 	await subresourceInline(rootDirectoryPath, subresourcesOutputPath);
 
-	for (const scriptPath of glob.sync(
+	for (const scriptPath of await glob(
 		path.join(rootDirectoryPath, '**', '*.js'),
 		{nodir: true}
 	)) {
@@ -73,17 +73,20 @@ export const deploy = async ({
 		{
 			subresources: Object.fromEntries(
 				await Promise.all(
-					glob
-						.sync(path.join(subresourcesOutputPathFull, '**'), {
-							ignore: '**/*.srihash',
-							nodir: true
-						})
-						.map(async subresource => [
-							subresource.slice(
-								subresourcesOutputPathFull.length + 1
-							),
-							(await fs.readFile(subresource)).toString()
-						])
+					(
+						await glob(
+							path.join(subresourcesOutputPathFull, '**'),
+							{
+								ignore: '**/*.srihash',
+								nodir: true
+							}
+						)
+					).map(async subresource => [
+						subresource.slice(
+							subresourcesOutputPathFull.length + 1
+						),
+						(await fs.readFile(subresource)).toString()
+					])
 				)
 			)
 		}

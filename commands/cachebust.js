@@ -2,12 +2,12 @@
 
 import fastSHA512 from 'fast-sha512';
 import fs from 'fs';
-import glob from 'glob';
+import glob from 'glob-promise';
 
 (async () => {
 	const files = [
-		...glob.sync('*', {nodir: true}),
-		...glob.sync('!(node_modules)/**', {nodir: true})
+		...(await glob('*', {nodir: true})),
+		...(await glob('!(node_modules)/**', {nodir: true}))
 	];
 
 	const filesToCacheBust = files.filter(
