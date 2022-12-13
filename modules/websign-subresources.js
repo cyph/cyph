@@ -41,6 +41,24 @@ export const publishSubresources = async ({
 
 			const ipfsHash = await ipfsAdd(brotliEncoded);
 
+			const oldIPFSHash = (
+				await fs.readFile(
+					path.join(
+						cdnRepo.repoPath,
+						packageParent,
+						packageName,
+						`${subresource}.ipfs`
+					)
+				)
+			)
+				.toString()
+				.trim();
+
+			/* Avoid empty commits */
+			if (ipfsHash === oldIPFSHash) {
+				return;
+			}
+
 			await gitCommitLock(async () => {
 				for (const [ext, contentToAdd] of [
 					['br', brotliEncoded],
@@ -63,6 +81,8 @@ export const publishSubresources = async ({
 	);
 
 	for (const customBuild of customBuilds) {
+		let filesModified = false;
+
 		for (const subresource of Object.keys(subresources)) {
 			for (const ext of ['br', 'gz', 'ipfs']) {
 				const fileName = `${subresource}.${ext}`;
@@ -72,13 +92,31 @@ export const publishSubresources = async ({
 					fileName
 				);
 
+				const fileFullPath = path.join(cdnRepo.repoPath, filePath);
+				const fileExists = await fs
+					.access(fileFullPath)
+					.then(() => true)
+					.catch(() => false);
+
+				/* Avoid empty commits */
+				if (fileExists) {
+					continue;
+				}
+
 				await fs.symlink(
 					path.join('..', packageName, fileName),
-					path.join(cdnRepo.repoPath, filePath)
+					fileFullPath
 				);
 
 				await cdnRepo.add(filePath);
+
+				filesModified = true;
 			}
+		}
+
+		/* Avoid empty commits */
+		if (!filesModified) {
+			continue;
 		}
 
 		await cdnRepo.commit(customBuild);
@@ -102,6 +140,7 @@ export const publishSubresources = async ({
 				.then(() => true)
 				.catch(() => false);
 
+			/* Avoid empty commits */
 			if (pAliasExists) {
 				continue;
 			}
