@@ -16,7 +16,7 @@ import {fetch} from './fetch.js';
 import {ipfsCalculateHash} from './ipfs.js';
 import {getPackageDatabase} from './package-database.js';
 
-const {retryUntilSuccessful} = util;
+const {sleep} = util;
 
 /* Blacklist of known bad or flagged gateways */
 const blacklist = new Set(['https://astyanax.io/ipfs/:hash']);
@@ -40,7 +40,7 @@ const uptimeCheck = memoize(async gateway =>
 						{
 							timeout
 						},
-						'buffer'
+						'arrayBuffer'
 					);
 
 					if (body.length === expectedResponseSize) {
@@ -129,44 +129,46 @@ export const ipfsGateways = memoize(async skipUptimeCheck =>
 	).reduce((a, b) => a.concat(b), [])
 );
 
-export const ipfsWarmUpGateway = memoize(
-	async ({gateway = defaultGateway, ipfsHash, verify = false}) => {
-		if (!ipfsHash) {
-			throw new Error('IPFS hash to warm up not specified.');
-		}
+const ipfsWarmUpGateway = async ({
+	gateway = defaultGateway,
+	ipfsHash,
+	verify = false
+}) => {
+	if (!ipfsHash) {
+		throw new Error('IPFS hash to warm up not specified.');
+	}
 
-		const fetchContent = async () =>
-			fetch(
-				gateway.replace(':hash', ipfsHash),
-				{
-					timeout: 30000
-				},
-				'buffer'
-			);
+	const fetchContent = async () =>
+		fetch(
+			gateway.replace(':hash', ipfsHash),
+			{
+				timeout: 30000
+			},
+			'arrayBuffer'
+		);
 
-		if (!verify) {
-			await fetchContent().catch(() => {});
+	if (!verify) {
+		await fetchContent().catch(() => {});
+		return;
+	}
+
+	while (true) {
+		const content = await fetchContent().catch(err => {
+			console.error(err);
+		});
+
+		const contentHash =
+			content !== undefined ?
+				await ipfsCalculateHash(content) :
+				undefined;
+
+		if (contentHash === ipfsHash) {
 			return;
 		}
 
-		await retryUntilSuccessful(
-			async () => {
-				const content = await fetchContent();
-				const contentHash = await ipfsCalculateHash(content);
-
-				if (contentHash !== ipfsHash) {
-					throw new Error(
-						`IPFS hash mismatch. Expected: ${ipfsHash}. Actual: ${contentHash}.`
-					);
-				}
-			},
-			1000,
-			5000
-		).catch(err => {
-			console.error(err);
-		});
+		await sleep(5000);
 	}
-);
+};
 
 export const ipfsWarmUpGateways = memoize(async ipfsHashes => {
 	await Promise.all(
