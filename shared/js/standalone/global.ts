@@ -89,7 +89,7 @@ if (!IS_WEB) {
 	};
 }
 
-/* Import TypeScript helpers and fetch in Node environments */
+/* Import TypeScript helpers and browser API polyfills in Node environments */
 
 try {
 	/* eslint-disable-next-line no-eval */
@@ -119,27 +119,7 @@ try {
 }
 catch {}
 
-try {
-	if (typeof Blob === 'undefined') {
-		/* eslint-disable-next-line no-eval */
-		(<any> self).Blob = eval('require')('fetch-blob');
-	}
-}
-catch {}
-
-(<any> self).asyncImportsComplete = (async () => {
-	if (typeof fetch === 'undefined') {
-		/* eslint-disable-next-line no-eval */
-		(<any> self).Blob = (await eval('import("fetch-blob")')).Blob;
-
-		/* eslint-disable-next-line no-eval */
-		const nodeFetch = await eval('import("node-fetch")');
-		(<any> self).fetch = nodeFetch.default;
-		(<any> self).Headers = nodeFetch.Headers;
-		(<any> self).Request = nodeFetch.Request;
-		(<any> self).Response = nodeFetch.Response;
-	}
-})().catch(() => {});
+(<any> self).asyncImportsComplete = Promise.resolve();
 
 try {
 	if (typeof XMLHttpRequest === 'undefined') {

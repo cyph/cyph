@@ -45,7 +45,6 @@
 		"multiformats": "*",
 		"mustache": "*",
 		"node": "18",
-		"node-fetch": "*",
 		"nodemailer": "*",
 		"phone-number-timezone": "*",
 		"plivo": "*",

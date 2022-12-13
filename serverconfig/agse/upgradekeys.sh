@@ -41,7 +41,6 @@ npm install \
 	fast-sha512 \
 	level \
 	libsodium-wrappers-sumo \
-	node-fetch \
 	read \
 	safe-compare \
 	superdilithium \

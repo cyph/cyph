@@ -5,7 +5,6 @@
 	const fs = require('fs');
 	const {Level} = require('level');
 	const sodium = require('libsodium-wrappers-sumo');
-	const fetch = (await import('node-fetch')).default;
 	const os = require('os');
 	const superDilithium = require('superdilithium');
 	const oldSuperSphincs = require('supersphincs-legacy/dist/old-api');

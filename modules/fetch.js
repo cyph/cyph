@@ -1,7 +1,11 @@
 #!/usr/bin/env node
 
-import AbortController from 'abort-controller';
-import fetchInternal, {FormData as FormDataInternal} from 'node-fetch';
+const fetchInternal = global.fetch;
+const FormDataInternal = global.FormData;
+
+if (!fetchInternal || !FormDataInternal) {
+	throw new Error('Upgrade to Node.js 18+ for native fetch.');
+}
 
 export const fetch = async (url, options = {}, responseType = 'text') => {
 	const fetchHandler = o => {

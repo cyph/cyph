@@ -289,7 +289,6 @@ fast-crc32c
 fast-sha512
 faye-websocket
 fcm-node
-fetch-blob
 fg-loadcss
 file-saver
 firebase
@@ -392,7 +391,6 @@ ngx-scrollbar
 ngx-sharebuttons
 ngx-speed-dial
 ngx-teximate
-node-fetch
 nodemailer
 notify-cli
 ntru

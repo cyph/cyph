@@ -26,13 +26,11 @@
 		"cheerio": "1.0.0-rc.3",
 		"commander": "^9",
 		"fast-sha512": "*",
-		"fetch-blob": ">=3",
 		"firebase": ">=9",
 		"generate-rsa-keypair": "*",
 		"glob": "*",
 		"html-minifier": "*",
 		"mkdirp": "*",
-		"node-fetch": ">=3",
 		"prompt": "*",
 		"regenerator-runtime": "*",
 		"terser": "*",
@@ -56,5 +54,8 @@
 	},
 	"bugs": {
 		"url": "https://github.com/cyph/cyph/issues"
+	},
+	"engines": {
+		"node": "18"
 	}
 }

@@ -196,7 +196,6 @@ su ${username} -c ' \
 		fast-sha512 \
 		level \
 		libsodium-wrappers-sumo \
-		node-fetch \
 		read \
 		safe-compare \
 		superdilithium \
