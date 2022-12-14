@@ -170,24 +170,31 @@ const ipfsWarmUpGateway = async ({
 	}
 };
 
-export const ipfsWarmUpGateways = memoize(async ipfsHashes => {
-	await Promise.all(
-		(
-			await ipfsGateways(true)
-		).map(async gateway => {
-			for (const ipfsHash of ipfsHashes) {
-				await ipfsWarmUpGateway({
-					gateway,
-					ipfsHash
-				});
-			}
-		})
-	);
+export const ipfsWarmUpGateways = memoize(
+	async ipfsHashes => {
+		if (ipfsHashes.length < 1) {
+			return;
+		}
 
-	for (const ipfsHash of ipfsHashes) {
-		await ipfsWarmUpGateway({
-			ipfsHash,
-			verify: true
-		});
-	}
-});
+		await Promise.all(
+			(
+				await ipfsGateways(true)
+			).map(async gateway => {
+				for (const ipfsHash of ipfsHashes) {
+					await ipfsWarmUpGateway({
+						gateway,
+						ipfsHash
+					});
+				}
+			})
+		);
+
+		for (const ipfsHash of ipfsHashes) {
+			await ipfsWarmUpGateway({
+				ipfsHash,
+				verify: true
+			});
+		}
+	},
+	ipfsHashes => JSON.stringify(ipfsHashes.sort())
+);
