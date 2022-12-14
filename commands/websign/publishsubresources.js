@@ -40,7 +40,7 @@ try {
 		{};
 
 	await publishSubresources({
-		customBuilds: customBuilds?.trim().split(/\s+/) ?? [],
+		customBuilds: customBuilds?.trim().split(/\s+/),
 		packageName,
 		subresources,
 		test

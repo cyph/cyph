@@ -20,6 +20,8 @@ export const publishSubresources = async ({
 	subresources,
 	test = false
 }) => {
+	customBuilds = customBuilds.filter(s => !!s);
+
 	console.log({
 		publishSubresources: {
 			customBuilds,
