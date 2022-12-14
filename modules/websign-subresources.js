@@ -20,6 +20,15 @@ export const publishSubresources = async ({
 	subresources,
 	test = false
 }) => {
+	console.log({
+		publishSubresources: {
+			customBuilds,
+			packageName,
+			subresources: Object.keys(subresources),
+			test
+		}
+	});
+
 	const cdnRepo = await getCDNRepo();
 
 	const packageParent = test ? path.join('websign', 'test') : '';
