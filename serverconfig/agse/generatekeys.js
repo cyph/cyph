@@ -53,6 +53,12 @@
 		/* PotassiumData.SignAlgorithms.V2Hardened */ 6: 'PotassiumData.SignAlgorithms.V2Hardened'
 	};
 
+	const memlimitPriorityOrder = [
+		sodium.crypto_pwhash_MEMLIMIT_SENSITIVE,
+		sodium.crypto_pwhash_MEMLIMIT_MODERATE,
+		sodium.crypto_pwhash_MEMLIMIT_INTERACTIVE
+	];
+
 	const totalKeys = args.numActiveKeys + args.numBackupKeys;
 
 	let newKeyPairsGenerated = false;
@@ -93,53 +99,57 @@
 				) :
 			JSON.parse(
 				(() => {
-					try {
-						return sodium.crypto_aead_xchacha20poly1305_ietf_decrypt(
-							undefined,
-							sodium.from_base64(
-								fs
-									.readFileSync(args.keyBackupPath)
-									.toString()
-									.trim()
-							),
-							undefined,
-							new Uint8Array(
-								sodium.crypto_aead_xchacha20poly1305_ietf_NPUBBYTES
-							),
-							sodium.crypto_pwhash(
-								sodium.crypto_secretbox_KEYBYTES,
-								args.backupPasswords.sodium,
-								new Uint8Array(sodium.crypto_pwhash_SALTBYTES),
-								6,
-								sodium.crypto_pwhash_MEMLIMIT_SENSITIVE,
-								sodium.crypto_pwhash_ALG_ARGON2ID13
-							),
-							'text'
-						);
-					}
-					catch {
-						/* Handle old backups */
-						return sodium.crypto_secretbox_open_easy(
-							sodium.from_base64(
-								fs
-									.readFileSync(args.keyBackupPath)
-									.toString()
-									.trim(),
-								sodium.base64_variants.ORIGINAL
-							),
-							new Uint8Array(sodium.crypto_secretbox_NONCEBYTES),
-							sodium.crypto_pwhash_scryptsalsa208sha256(
-								sodium.crypto_secretbox_KEYBYTES,
-								args.backupPasswords.sodium,
-								new Uint8Array(
-									sodium.crypto_pwhash_scryptsalsa208sha256_SALTBYTES
+					for (const memlimit of memlimitPriorityOrder) {
+						try {
+							return sodium.crypto_aead_xchacha20poly1305_ietf_decrypt(
+								undefined,
+								sodium.from_base64(
+									fs
+										.readFileSync(args.keyBackupPath)
+										.toString()
+										.trim()
 								),
-								sodium.crypto_pwhash_scryptsalsa208sha256_OPSLIMIT_SENSITIVE,
-								50331648
-							),
-							'text'
-						);
+								undefined,
+								new Uint8Array(
+									sodium.crypto_aead_xchacha20poly1305_ietf_NPUBBYTES
+								),
+								sodium.crypto_pwhash(
+									sodium.crypto_secretbox_KEYBYTES,
+									args.backupPasswords.sodium,
+									new Uint8Array(
+										sodium.crypto_pwhash_SALTBYTES
+									),
+									6,
+									memlimit,
+									sodium.crypto_pwhash_ALG_ARGON2ID13
+								),
+								'text'
+							);
+						}
+						catch {}
 					}
+
+					/* Handle old backups */
+					return sodium.crypto_secretbox_open_easy(
+						sodium.from_base64(
+							fs
+								.readFileSync(args.keyBackupPath)
+								.toString()
+								.trim(),
+							sodium.base64_variants.ORIGINAL
+						),
+						new Uint8Array(sodium.crypto_secretbox_NONCEBYTES),
+						sodium.crypto_pwhash_scryptsalsa208sha256(
+							sodium.crypto_secretbox_KEYBYTES,
+							args.backupPasswords.sodium,
+							new Uint8Array(
+								sodium.crypto_pwhash_scryptsalsa208sha256_SALTBYTES
+							),
+							sodium.crypto_pwhash_scryptsalsa208sha256_OPSLIMIT_SENSITIVE,
+							50331648
+						),
+						'text'
+					);
 				})()
 			)
 				.map(o =>
@@ -233,6 +243,30 @@
 	await db.close();
 
 	if (newKeyPairsGenerated) {
+		let backupPasswordHash;
+		let backupPasswordHashError;
+
+		for (const memlimit of memlimitPriorityOrder) {
+			try {
+				backupPasswordHash = sodium.crypto_pwhash(
+					sodium.crypto_secretbox_KEYBYTES,
+					args.newBackupPasswords.sodium,
+					new Uint8Array(sodium.crypto_pwhash_SALTBYTES),
+					6,
+					memlimit,
+					sodium.crypto_pwhash_ALG_ARGON2ID13
+				);
+				break;
+			}
+			catch (err) {
+				backupPasswordHashError = err;
+			}
+		}
+
+		if (backupPasswordHash === undefined) {
+			throw backupPasswordHashError;
+		}
+
 		const backupKeys = sodium
 			.crypto_aead_xchacha20poly1305_ietf_encrypt(
 				sodium.from_string(
@@ -254,14 +288,7 @@
 				new Uint8Array(
 					sodium.crypto_aead_xchacha20poly1305_ietf_NPUBBYTES
 				),
-				sodium.crypto_pwhash(
-					sodium.crypto_secretbox_KEYBYTES,
-					args.newBackupPasswords.sodium,
-					new Uint8Array(sodium.crypto_pwhash_SALTBYTES),
-					6,
-					sodium.crypto_pwhash_MEMLIMIT_SENSITIVE,
-					sodium.crypto_pwhash_ALG_ARGON2ID13
-				),
+				backupPasswordHash,
 				'base64'
 			)
 			.replace(/\\s+/g, '');
