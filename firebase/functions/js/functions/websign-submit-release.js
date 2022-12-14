@@ -1,11 +1,16 @@
 import {proto, util} from '@cyph/sdk';
 import {admin, database, getItem, onCall, setItem} from '../init.js';
 import {getWebSignPermissions} from '../modules/websign-permissions.js';
+import {publishSubresources} from '../modules/websign-subresources.js';
 import {webSignAlgorithm} from '../websign-algorithm.js';
 import {webSignReleaseNotify} from '../websign-release-notify.js';
 
-const {AGSEPKISigningRequest, WebSignPendingRelease} = proto;
-const {serialize, uuid} = util;
+const {
+	AGSEPKISigningRequest,
+	WebSignPackageSubresources,
+	WebSignPendingRelease
+} = proto;
+const {deserialize, serialize, uuid} = util;
 
 export const webSignSubmitRelease = onCall(
 	async (data, namespace, getUsername) => {
@@ -13,6 +18,7 @@ export const webSignSubmitRelease = onCall(
 			packageName,
 			requiredUserSignatures = [],
 			signingRequest,
+			subresourcesData,
 			timestamp
 		} = data;
 
@@ -28,6 +34,11 @@ export const webSignSubmitRelease = onCall(
 			throw new Error('Invalid arguments.');
 		}
 
+		const {subresources} = await deserialize(
+			WebSignPackageSubresources,
+			subresourcesData
+		);
+
 		const author = await getUsername();
 		const webSignPermissions = await getWebSignPermissions({getItem});
 
@@ -36,6 +47,11 @@ export const webSignSubmitRelease = onCall(
 				`@${author} is not authorized to submit new release of ${packageName}.`
 			);
 		}
+
+		await publishSubresources({
+			packageName,
+			subresources
+		});
 
 		const releaseID = uuid(true);
 

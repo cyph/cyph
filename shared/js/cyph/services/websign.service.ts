@@ -136,7 +136,7 @@ export class WebSignService extends BaseProvider {
 			packageName: packageData.packageName,
 			requiredUserSignatures: packageData.requiredUserSignatures,
 			signingRequest: await this.generateSigningRequest(packageData),
-			subresources: await serialize<IWebSignPackageSubresources>(
+			subresourcesData: await serialize<IWebSignPackageSubresources>(
 				WebSignPackageSubresources,
 				subresources
 			),
