@@ -31,27 +31,15 @@ export const deleteUser = async (
 		throw new Error('Invalid username.');
 	}
 
-	await new Promise((resolve, reject) => {
-		read(
-			{
-				prompt:
-					`Press enter to continue deleting user @${username}.\n\n` +
-					`NOTE: Only use this when contacted by user via verified email address ` +
-					`shortly after signup. The intended use case is only to recover usernames ` +
-					`from failed signup attempts, NOT to remove established accounts with ` +
-					`any existing contacts.\n\n` +
-					`You must also manually make an AGSEPKIIssuanceHistory exception in ` +
-					`certsign.js when reissuing their cert.`
-			},
-			err => {
-				if (err) {
-					reject(err);
-				}
-				else {
-					resolve();
-				}
-			}
-		);
+	await read({
+		prompt:
+			`Press enter to continue deleting user @${username}.\n\n` +
+			`NOTE: Only use this when contacted by user via verified email address ` +
+			`shortly after signup. The intended use case is only to recover usernames ` +
+			`from failed signup attempts, NOT to remove established accounts with ` +
+			`any existing contacts.\n\n` +
+			`You must also manually make an AGSEPKIIssuanceHistory exception in ` +
+			`certsign.js when reissuing their cert.`
 	});
 
 	const namespacePath = namespace.replace(/\./g, '_');
@@ -88,21 +76,13 @@ export const deleteUser = async (
 			console.error(err);
 
 			if (
-				(await new Promise((resolve, reject) => {
-					read(
-						{
-							prompt: 'An error has occurred. Ignore it and resume the backup/deletion? [y/N]'
-						},
-						(promptError, s) => {
-							if (promptError) {
-								reject(promptError);
-							}
-							else {
-								resolve(s.trim().toLowerCase());
-							}
-						}
-					);
-				})) !== 'y'
+				(
+					await read({
+						prompt: 'An error has occurred. Ignore it and resume the backup/deletion? [y/N]'
+					})
+				)
+					.trim()
+					.toLowerCase() !== 'y'
 			) {
 				throw err;
 			}

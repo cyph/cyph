@@ -35,22 +35,11 @@ const validator = require('validator');
 	};
 
 	const askQuestion = async (prompt, silent) =>
-		new Promise((resolve, reject) =>
-			read(
-				{
-					prompt: `${prompt} `,
-					silent: silent === true
-				},
-				(err, answer) => {
-					if (err) {
-						reject(err);
-					}
-					else {
-						resolve(answer);
-					}
-				}
-			)
-		);
+		read({
+			prompt: `${prompt} `,
+			silent: silent === true
+		});
+
 	const reviewText = async text => {
 		const s = new stream.Readable();
 		s.push(text);

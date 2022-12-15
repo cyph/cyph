@@ -48,39 +48,19 @@ export const addSubscriptions = async (projectId, username, count) => {
 	}
 
 	while (!metadata.internal.email) {
-		metadata.internal.email = await new Promise((resolve, reject) => {
-			read(
-				{
-					prompt: 'Email:'
-				},
-				(err, s) => {
-					if (err || !s) {
-						reject(err);
-					}
-					else {
-						resolve(s);
-					}
-				}
-			);
-		});
+		metadata.internal.email = (
+			await read({
+				prompt: 'Email:'
+			}).catch(() => undefined)
+		)?.trim();
 	}
 
 	while (!metadata.internal.name) {
-		metadata.internal.name = await new Promise((resolve, reject) => {
-			read(
-				{
-					prompt: 'Name:'
-				},
-				(err, s) => {
-					if (err || !s) {
-						reject(err);
-					}
-					else {
-						resolve(s);
-					}
-				}
-			);
-		});
+		metadata.internal.name = (
+			await read({
+				prompt: 'Name:'
+			}).catch(() => undefined)
+		)?.trim();
 	}
 
 	const subscriptionIDs = new Array(count).fill(0).map(

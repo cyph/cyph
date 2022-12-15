@@ -13,15 +13,8 @@ const {CyphPlan, CyphPlans, CyphPlanTypes} = proto;
 const {readableByteLength, normalize, readableID, titleize} = util;
 
 const readInput = async prompt =>
-	new Promise(resolve => {
-		read(
-			{
-				prompt
-			},
-			(err, s) => {
-				resolve(err ? undefined : s);
-			}
-		);
+	read({
+		prompt
 	});
 
 export const changeUserPlan = async (

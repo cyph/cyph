@@ -66,15 +66,8 @@ const getPaths = (namespace, projectId) => {
 };
 
 const readInput = async prompt =>
-	new Promise(resolve => {
-		read(
-			{
-				prompt
-			},
-			(err, s) => {
-				resolve(err ? undefined : s);
-			}
-		);
+	read({
+		prompt
 	});
 
 const duplicateCSRLock = lockFunction();

@@ -4,23 +4,11 @@ const read = require('read');
 
 (async () => {
 	const askQuestion = async (prompt, silent) =>
-		new Promise((resolve, reject) =>
-			read(
-				{
-					output: process.stderr,
-					prompt: `${prompt} `,
-					silent: silent === true
-				},
-				(err, answer) => {
-					if (err) {
-						reject(err);
-					}
-					else {
-						resolve(answer);
-					}
-				}
-			)
-		);
+		read({
+			output: process.stderr,
+			prompt: `${prompt} `,
+			silent: silent === true
+		});
 
 	while (true) {
 		const password = await askQuestion(

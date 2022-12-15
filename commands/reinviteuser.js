@@ -30,57 +30,26 @@ export const reinviteUser = async (projectId, username) => {
 	console.log(JSON.stringify(metadata, undefined, '\t'));
 
 	while (!metadata.internal.email) {
-		metadata.internal.email = await new Promise((resolve, reject) => {
-			read(
-				{
-					prompt: 'Email:'
-				},
-				(err, s) => {
-					if (err || !s) {
-						reject(err);
-					}
-					else {
-						resolve(s);
-					}
-				}
-			);
-		});
+		metadata.internal.email = (
+			await read({
+				prompt: 'Email:'
+			}).catch(() => undefined)
+		)?.trim();
 	}
 
 	while (!metadata.internal.name) {
-		metadata.internal.name = await new Promise((resolve, reject) => {
-			read(
-				{
-					prompt: 'Name:'
-				},
-				(err, s) => {
-					if (err || !s) {
-						reject(err);
-					}
-					else {
-						resolve(s);
-					}
-				}
-			);
-		});
+		metadata.internal.name = (
+			await read({
+				prompt: 'Name:'
+			}).catch(() => undefined)
+		)?.trim();
 	}
 
-	let reservedUsername;
-	reservedUsername = await new Promise((resolve, reject) => {
-		read(
-			{
-				prompt: 'Username reservation (optional):'
-			},
-			(err, s) => {
-				if (err || !s || !s.trim()) {
-					reject(err);
-				}
-				else {
-					resolve(s.trim());
-				}
-			}
-		);
-	}).catch(() => undefined);
+	const reservedUsername = (
+		await read({
+			prompt: 'Username reservation (optional):'
+		}).catch(() => undefined)
+	)?.trim();
 
 	const [inviteCode] = await inviteUser(
 		projectId,
