@@ -2,6 +2,9 @@
 
 # HyperLedger Iroha setup script for Debian
 
+# General configuration
+domainName='iroha.test.cyph.com'
+
 # Iroha configuration
 irohaBlockStoreVolume='iroha-block-store'
 irohaContainerName='iroha'
@@ -42,6 +45,7 @@ if ! docker &> /dev/null ; then
 	apt-get -y --allow-downgrades update
 	apt-get -y --allow-downgrades upgrade
 	apt-get -y --allow-downgrades install \
+		certbot \
 		containerd.io \
 		docker-ce \
 		docker-ce-cli \
@@ -100,9 +104,31 @@ docker run -d \
 	-e KEY='node0' \
 	hyperledger/iroha:latest
 
-# Run gRPC Web Proxy
-grpcwebproxy \
-	--allow_all_origins \
-	--backend_addr="localhost:${irohaPort}" \
-	--run_tls_server=false \
-	--server_http_debug_port=80
+grpcwebproxyPID=''
+while true ; do
+	# Generate certificate
+	certbot certonly \
+		--agree-tos \
+		-d "${domainName}" \
+		-n \
+		--register-unsafely-without-email \
+		--standalone
+
+	if [ "${grpcwebproxyPID}" ] ; then
+		kill -9 "${grpcwebproxyPID}"
+	fi
+
+	# Run gRPC Web Proxy
+	grpcwebproxy \
+		--allow_all_origins \
+		--backend_addr="localhost:${irohaPort}" \
+		--run_http_server=false \
+		--server_http_tls_port=443 \
+		--server_tls_cert_file="/etc/letsencrypt/live/${domainName}/fullchain.pem" \
+		--server_tls_key_file="/etc/letsencrypt/live/${domainName}/privkey.pem" \
+	&
+
+	grpcwebproxyPID="${!}"
+
+	sleep 2592000
+done
