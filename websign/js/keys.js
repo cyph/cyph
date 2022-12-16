@@ -7,6 +7,10 @@ var PUBLIC_KEYS	= {
 		"8jd7m+yxPMoF4je2CU8yxayIfO4dOccBci7wt98spjY=",
 
 		/* Baron Joshua Cyrus Boehm */
+		"2TDBTipoeeZcXK5p19Q1HuHb1gwFfDjRo6T6XMh56xw=",
+		"fz8KwdS/EWGUAo4hFltB24qq+xksgSz0XXCVj62yv6o=",
+		"GKnWf5rCc3mgeuiR6mPqaMJGfQDhXN4/Msfo9asHN9M=",
+		"6V3sEh5zj/8EEQODmEPcqueG02mFa+kujcryJpsaqAE=",
 
 		/* Ryan Lester backup */
 		"OMDmrdgyi+zK83scqJmu6R7sADB+y1BMDyyYjBNSLeo=",
@@ -28,6 +32,27 @@ var PUBLIC_KEYS	= {
 		"G0o+uhKmnBJrUKCn2x2Uh7xBQORf2xK+yNbaeazIMck=",
 
 		/* Baron Joshua Cyrus Boehm backup */
+		"xxFneXZCNphZWIX6mBE0FiAnmbUNPq7UC0hwfJ08rKM=",
+		"hCMwd4lw5zMwO68ZdbBwwyVEMk0DwhL47clJ8ZUDeJ0=",
+		"r8m9z0PO4GgCLAg/rguNvV9qI+OYnpvZ16mvSJx/x9k=",
+		"utGU8gJ+2YyvCo74a6x23ee6GHcnZ7h4RMGMFk1d7WY=",
+		"4z7jzFyQYvUCk8O8O5S4ueNtzA9Rk7Ge9ZYLyrjf6Ns=",
+		"PBI/MxeSV2VBFuRS/uKsIh3TtSwwHCykcoA/UFMpFFw=",
+		"AuWdVlYCCq/CDWMscpzCtcpczQZIbc/qpEA1djHXPlE=",
+		"2NMTj8WnW+5QJDnRBiqpvar498kCpsW09FIlMSyRyaM=",
+		"79Ba4N5lbjvesjBPBHzJNqMu2zkOqstHZS/hsCIZTpA=",
+		"w5OSBmdxSQ4py3shQyQQZ4HC6bXBrD9i05JwuTYhMdk=",
+		"9dtSSDrpzqlrzNPM16CMpXcagiACF3rMMLEKLnmXd00=",
+		"DuIMl1xzuUfMPJXNJFMIk/jnF1sJNbFe5yEOYjfqCaQ=",
+		"6LcWfVFcZ08FrFWu+vF/Z1euMweHslu0Q1zZ7lCTyiA=",
+		"EfiZjt+x0l/aXjnlCGe2ATP1I+d4Tkc9nRranC0dGdI=",
+		"sHirpHT7tNA8TCDVgCzG2PHe0Bj5fyUWneoHiHfOhPo=",
+		"E/F4H0msDMunwNB0DDHulJEreRiw94d7SXb+UCYlbsQ=",
+		"CT1F8OdkDWWRSdCjnkW40Y9vKFI6XklAKm62aaJH7eg=",
+		"WSiYmfX5eK+ppX3VMF6kObciWsw7j/xew6fqXspeagg=",
+		"I8WG3tTc80mNKfoOn+S8HvmK6oMRKUx7ncSjCaCXRF8=",
+		"v4I4aEQpggfEh5G/Eu+ccTmybnWJuOv+DcuTSU3YazA=",
+		"okIqaXdk5zZ/el3A12k6ea7497E6xKjiTeCwXF5Ng3M="
 	],
 	"postQuantum": [
 		/* Ryan Lester */
@@ -37,6 +62,10 @@ var PUBLIC_KEYS	= {
 		"e5r7K3W5Rz3KuXZxBqPye3bjBDcd27zyrRLBoYQPwpJRykbA8tlrioCVjHuil9YoaoMIQXAToeTRZCHPRF27fA==",
 
 		/* Baron Joshua Cyrus Boehm */
+		"0lKr6YF3GKU0M2lwHT5xCeiLctIWGhWklI+pIhWuutquUMQ2+b58ZBQbq76WQMwj+ndYgr6X8TGTr1sx8BftFw==",
+		"arajKCFM+Hy5xbhzgdZCXLuDQt9y1MxdeUbwGt0FxZpprIn5iSJNuSznyu3DMr6/n4+2QYe5oIkix/9ejRb0ow==",
+		"RWjWaSN7N9TXe6jOeoNX9aEUXqUHa+EgQb8exAeD6u28lbAqXIeTKaWWM671IThv3eDR8oJEQzt8wcUH51Uuig==",
+		"txffvuay6EXRf8zd4p5bDhsIpKnfvaewyBSTMRrqWw6+A4IDPo9xFLa43q7oQPrW3iy9fkGZCp6SJgvNL/v54w==",
 
 		/* Ryan Lester backup */
 		"vpgvnqwymQzoxS9rqup0jeADchAxY0M9lWqAhG8l3av6G7PMmruTsdxh1l/yL5+mDRHQXQI5J/5988HFi77OYQ==",
@@ -55,8 +84,29 @@ var PUBLIC_KEYS	= {
 		"1EbftOe/t1bAc20BgkmQ3zrRtFZmVlctxBjQn+GIJ7XV3sV/X/sdTZrM34s2RWcdkP8kHfkCTOHxnBfFcbIoBg==",
 		"HpsRXqB2Lhy/fH4GG7/CiqTbNdf1o3ett112fAdXaB82/X9jAOnaZodfTL2091ryivpYw4cccKoNW9WzCpKvRg==",
 		"am6286oqh9L67iRST92MGnyTKjdW/gGSG+EHYyY2GyktJ1Uvh1XgkUu4Of+N732mS8lK6Cerm5d5OgTCGsZtiA==",
-		"6nZDbOmhS/2Tl07+sgpSwW5u+3U3+W8BxTNpCyhG86/v68nTzEfnoRX+siAePwUGi4UeOmcXqpEZVdfa/ROQSw=="
+		"6nZDbOmhS/2Tl07+sgpSwW5u+3U3+W8BxTNpCyhG86/v68nTzEfnoRX+siAePwUGi4UeOmcXqpEZVdfa/ROQSw==",
 
 		/* Baron Joshua Cyrus Boehm backup */
+		"XlWtbF9itdvxBYLQqkyc+f7yVFDCJ/rapNM4P800aWlvcaZ6Fof5P2oSZ7Y2EYjTW9c9ddbA2Q7AljCstU8IEg==",
+		"OLtFRSrUVdfeE11VZjcoTXQoOTPHV91bCUlfYurEkYgywpxTgIrRrbA0PqdtSTtZHoF6dzwajcOf8bTevHF97w==",
+		"xWzBz5mORZULuKq0U6bNQThphY6Ln38cpHnRaVH8v6tDL21dVAsFm4/w4QAqzVoSbIUAdI7asKWPFy/lRr08xA==",
+		"UcIaDXyBw1WtiLcBGCkI8K4j5kRN3INYa1DZoT4QTVwPGRY11bwI+20m0IiOO7BNglR9K3eLrS+QGtMaw9Am2Q==",
+		"4sd10zK+vrANquzD6zPIt8s41xo7ZnN9UC+EMwQaX6hDLgmzdc1Jq2/ZRsVhDHHOpWlNTFCXPPBqzRb9yl275g==",
+		"qfywIk1FbJJKY/C1VCp/Yu3JkYjNCdcToAOrOKyJiADbIviYu3FH4UK/+ZajEOGRUfcKyE57bn6a7suHlChSQA==",
+		"9MTkniApTlmZKIsCSm/x+wmQ1l4QNP7QfmglocafVNtnVYXgtgGZQOR34Bk5A9MraaU9/HoOzURiEH13D7m7QQ==",
+		"7t/2vT5Bn3czNJWfinY+r4HcxLXPkOVQ/FUVtwkEIYoxr87RWNwaNypL891FpL9bF2NLwRn6Nm6/ISpeG1tJJw==",
+		"rQFwgJrSna1MAz95CDapjMk3TS7KaQvxJ80SvlfkcBbIB1ZaMONJ3A/4HoV0Ds0rZnhPciwH8uIjsGZjNkIvjg==",
+		"+owqpcIVMKX2UTp9SHGndbs7EKtaZFUoK5Hhd15FuzsWmS6nNggjXL9biS9jQMoxIdwSPLbiYh6fCw78fn+Z1Q==",
+		"p5Vr5JZH3ZjRsOLNqjxXEG4HnmEjwlTa8Q6wF0bd4xOsO3gwTDaU+hzeOt/PgXqqDHF9YvYodaNzhRt/zwtOrw==",
+		"ODU+4gkoifNG4nuigrI0T5amrxX5HH5XSFri9Wjd2I0vUDToe3xSWmLJ8nvnTYJqsKhisznqoS7H8KNglxt42A==",
+		"v1lI6QLH5bhyUfiimeyl8qDvZvuxPqw5ntLcVyDL4X+qDXzu0Km1Ut1612vud0k2UPF4/irERkbjolADKXNbzA==",
+		"4LH1+tjTMQac2n2Sq2QUrtuXa52xNtuVtNVqj0zs5LZrSZIK5WBEYbAWTwud50pmh9fryVX4VQ+moW1vki4RMA==",
+		"DBgHQ+AYV4q44dnZuM2MDPb3YPYQWXx1LfeG/ao6NyvhxkRQP+127+8EH7zwSLm4OPDtwHx35Jzm//fG227r1Q==",
+		"fH/K7/dhWdykGM1By2+q5CWN+tT32l+wGTXWrbAMxriRWeqgMQQp9ql7BaTwd/6juuTZ8K4dOysGS3+5iX5rUQ==",
+		"6osAYFjoDgYxz5L6Wg9yCecOpoaLO6x6JKxXUmRGMgmD2r3nuAFJoNrPl8FNNUCt5PDQ9qGxc03FA8At1qhnug==",
+		"IMacIIUoqpCd5uMI3TKmpCslwuH2oIm7f9Jz92MOZuLfZN0WWp25VOOsolJFtT3I+r65ti7Bt8KoiyeY6SrMXQ==",
+		"6rR6q+RTQkmCr3ZxE8yZ1aZbddXSc3kg/ojPoiNLmLnJZLtcrwYDmvUv848pabaWGgXzpGMWldGXwq1tp3A/Pg==",
+		"CNbqRIBlDHFpIbzDv7O9mKXIe2vdBtR1obJQ3vWURjI+y3CurnVysLHH0M9OHYj02+bFuPy5YK/wb9IlfxMFmA==",
+		"BK7+A0FaDLtLRdwQvS9Lf89/I88+yyJVYHRIWS5DqKi0Cq5Jg06qVMvMmNCJobCiWo4QYMSepaJLxEZZPLRoAA=="
 	]
 };
