@@ -13,7 +13,7 @@ const {WebSignKeyPersistence} = proto;
 const {getTimestamp} = util;
 
 const rootOutputPath = '.websign-deployment-pkg';
-const subresourcesOutputPath = `${webSignOutputPath}-subresources`;
+const outputHTMLPath = path.join(rootOutputPath, '.index.html');
 
 export const deploy = async ({
 	mandatoryUpdate = false,
@@ -35,19 +35,14 @@ export const deploy = async ({
 	await useLicenseKey();
 
 	const rootOutputPathFull = path.join(rootDirectoryPath, rootOutputPath);
-	const subresourcesOutputPathFull = path.join(
-		rootDirectoryPath,
-		subresourcesOutputPath
-	);
+	const outputHTMLPathFull = path.join(rootDirectoryPath, outputHTMLPath);
 
-	for (const dir of [rootOutputPathFull, subresourcesOutputPathFull]) {
-		try {
-			await fs.unlink(dir);
-		}
-		catch {}
+	try {
+		await fs.unlink(rootOutputPathFull);
 	}
+	catch {}
 
-	await subresourceInline(rootDirectoryPath, subresourcesOutputPath);
+	await subresourceInline(rootDirectoryPath, rootOutputPath);
 
 	for (const scriptPath of await glob(
 		path.join(rootDirectoryPath, '**', '*.js'),
@@ -56,7 +51,7 @@ export const deploy = async ({
 		await threadPack(scriptPath);
 	}
 
-	await pack(rootDirectoryPath, 'index.html', true, true, rootOutputPath);
+	await pack(rootDirectoryPath, 'index.html', true, true, outputHTMLPath);
 
 	await webSignService.submitRelease(
 		{
@@ -66,7 +61,7 @@ export const deploy = async ({
 				WebSignKeyPersistence.Default,
 			mandatoryUpdate,
 			packageName,
-			payload: (await fs.readFile(rootOutputPathFull)).toString(),
+			payload: (await fs.readFile(outputHTMLPathFull)).toString(),
 			requiredUserSignatures,
 			timestamp
 		},
@@ -74,18 +69,13 @@ export const deploy = async ({
 			subresources: Object.fromEntries(
 				await Promise.all(
 					(
-						await glob(
-							path.join(subresourcesOutputPathFull, '**'),
-							{
-								ignore: '**/*.srihash',
-								nodir: true
-							}
-						)
+						await glob(path.join(rootOutputPathFull, '**'), {
+							ignore: ['.index.html', '**/*.srihash'],
+							nodir: true
+						})
 					).map(async subresource => [
-						subresource.slice(
-							subresourcesOutputPathFull.length + 1
-						),
-						(await fs.readFile(subresource)).toString()
+						subresource.slice(rootOutputPathFull.length + 1),
+						await fs.readFile(subresource)
 					])
 				)
 			)

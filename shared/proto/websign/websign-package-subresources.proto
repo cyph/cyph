@@ -4,5 +4,5 @@ syntax = "proto3";
 /** Subresource data associated with a release submission. */
 message WebSignPackageSubresources {
 	/** Map of subresource paths to contents. */
-	map<string, string> subresources = 1;
+	map<string, bytes> subresources = 1;
 }

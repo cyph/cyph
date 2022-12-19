@@ -513,41 +513,38 @@ if [ "${websign}" ] ; then
 	fi
 
 	./commands/updaterepos.js
-	cp -rf ~/.cyph/repos/cdn ./
 
 	customBuilds=''
 
 	if [ "${username}" == 'cyph' ] && [ "${branch}" == 'staging' ] && [ ! "${debug}" ] ; then
-		./commands/websign/custombuilds.js pkg/cyph.app pkg "${mainVersion}"
+		./commands/websign/custombuilds.js websign.build cyph.app "${mainVersion}"
 		checkfail
-		customBuilds="$(cat pkg/custombuilds.list)"
-		rm pkg/custombuilds.list
+		customBuilds="$(cat websign.build/.custombuilds.list)"
+		rm websign.build/.custombuilds.list
 	fi
 
-	packages="${package} ${customBuilds}"
+	branchPackages=""
 
 	if [ "${test}" ] || [ "${betaProd}" ] || [ "${debug}" ] || [ "${prodAndBeta}" ] ; then
-		if [ "${package}" != 'cyph.app' ] ; then mv pkg/cyph.app "pkg/${package}" ; fi
+		if [ "${package}" != 'cyph.app' ] ; then
+			mv websign.build/cyph.app "websign.build/${package}"
+		fi
 
 		for branchDir in ${branchDirs} ; do
 			branchPackage="$(projectname cyph.app ${branchDir})"
-			packages="${branchPackage} ${packages}"
+			branchPackages="${branchPackage} ${branchPackages}"
 
-			mv ${branchDir}/pkg/cyph.app pkg/${branchPackage}
+			mv ${branchDir}/websign.build/cyph.app websign.build/${branchPackage}
 		done
 	fi
-
-	for p in ${packages} ; do
-		rm -rf cdn/${p}
-	done
 
 	./commands/websign/codesign.js \
 		$(if [ "${mandatoryUpdate}" ] ; then echo '--mandatory-update' ; fi) \
 		$(if [ "${simple}" ] ; then echo '--test' ; fi) \
 		"${websignHashWhitelist}" \
 		$(
-			for p in ${packages} ; do
-				echo -n "pkg/${p}=cdn/${p} "
+			for p in ${package} ${customBuilds} ${branchPackages} ; do
+				echo -n "websign.build/${p}/.index.html=websign.build/${p} "
 			done
 		) \
 	|| fail
@@ -557,9 +554,17 @@ if [ "${websign}" ] ; then
 	./commands/websign/publishsubresources.js \
 		--custom-builds "${customBuilds}" \
 		--package-name "${package}" \
-		--subresources-root 'pkg/cyph.app-subresources' \
+		--packages-root 'websign.build' \
 		--test "${simple}" \
 	|| exit 1
+
+	for branchPackage in ${branchPackages} ; do
+		./commands/websign/publishsubresources.js \
+			--package-name "${branchPackage}" \
+			--packages-root 'websign.build' \
+			--test "${simple}" \
+		|| exit 1
+	done
 fi
 
 if \

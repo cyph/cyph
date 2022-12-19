@@ -18,17 +18,12 @@ export const pack = async (
 		throw new Error('Cannot enable SRI without an output path specified.');
 	}
 
-	const subresourceRoot = enableSRI ?
-		`${outputPath}-subresources` :
-		undefined;
-
-	if (subresourceRoot) {
-		await mkdirp(subresourceRoot);
-	}
-
 	if (!dir) {
 		dir = '.';
 	}
+
+	const subresourceRoot = path.dirname(outputPath);
+	await mkdirp(subresourceRoot);
 
 	const html = fs.readFileSync(path.join(dir, inputPath)).toString();
 	const $ = cheerio.load(html);

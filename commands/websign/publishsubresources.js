@@ -10,7 +10,7 @@ try {
 	const {
 		'custom-builds': customBuilds,
 		'package-name': packageName,
-		'subresources-root': subresourcesRoot,
+		'packages-root': packagesRoot,
 		test = false
 	} = minimist(process.argv.slice(2));
 
@@ -24,20 +24,26 @@ try {
 		);
 	}
 
-	const subresources = subresourcesRoot ?
-		Object.fromEntries(
-			await Promise.all(
-				glob('**', {cwd: subresourcesRoot, nodir: true})
-					.filter(k => !k.endsWith('.srihash'))
-					.map(async k => [
-						k,
-						(
-							await fs.readFile(path.join(subresourcesRoot, k))
-						).toString()
-					])
-			)
-		) :
-		{};
+	if (typeof packagesRoot !== 'string') {
+		throw new Error(
+			'Packages root directory (--packages-root <packagesRoot>) not specified.'
+		);
+	}
+
+	const subresourcesRoot = path.join(packagesRoot, packageName);
+
+	const subresources = Object.fromEntries(
+		await Promise.all(
+			glob('**', {
+				cwd: subresourcesRoot,
+				ignore: ['.index.html', '**/*.srihash'],
+				nodir: true
+			}).map(async k => [
+				k,
+				await fs.readFile(path.join(subresourcesRoot, k))
+			])
+		)
+	);
 
 	await publishSubresources({
 		customBuilds: customBuilds?.trim().split(/\s+/),

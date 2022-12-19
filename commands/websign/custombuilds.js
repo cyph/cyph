@@ -12,13 +12,14 @@ const {serialize} = util;
 
 (async () => {
 	const args = {
-		input: process.argv[2],
-		outputPath: process.argv[3],
+		packagesRoot: process.argv[2],
+		inputPackageName: process.argv[3],
 		version: process.argv[4]
 	};
 
 	const subresourceDir = 'custom-builds';
-	const subresourceDirParent = `${args.outputPath}/cyph.app-subresources`;
+	const subresourceDirParent = `${args.packagesRoot}/${args.inputPackageName}`;
+	const inputHTML = `${subresourceDirParent}/.index.html`;
 
 	await mkdirp(`${subresourceDirParent}/${subresourceDir}`);
 
@@ -53,7 +54,7 @@ const {serialize} = util;
 	const outputIds = [];
 
 	for (const id of customBuildIds) {
-		const $ = cheerio.load(fs.readFileSync(args.input).toString());
+		const $ = cheerio.load(fs.readFileSync(inputHTML).toString());
 		const o = customBuild(id, args.version);
 
 		if (o.favicon) {
@@ -89,12 +90,12 @@ const {serialize} = util;
 			`
 		);
 
-		fs.writeFileSync(`${args.outputPath}/${o.id}`, $.html().trim());
+		fs.writeFileSync(`${args.packagesRoot}/${o.id}`, $.html().trim());
 		outputIds.push(o.id);
 	}
 
 	fs.writeFileSync(
-		`${args.outputPath}/custombuilds.list`,
+		`${args.packagesRoot}/.custombuilds.list`,
 		outputIds.join(' ')
 	);
 

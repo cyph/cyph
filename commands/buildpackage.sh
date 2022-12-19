@@ -440,7 +440,7 @@ for d in ${compiledProjects} ; do
 	if [ "${websign}" ] && [ "${d}" == "${webSignedProject}" ] ; then
 		# Merge in base64'd images, fonts, video, and audio
 		cd src
-		cyph websign internal subresourceInline ../../pkg/cyph.app-subresources
+		cyph websign internal subresourceInline ../../websign.build/cyph.app
 		cd ..
 	fi
 
@@ -486,7 +486,7 @@ if [ "${pack}" ] ; then
 	# Merge imported libraries into threads
 	find . -type f -name '*.js' | xargs -I% cyph websign internal threadPack % || fail
 
-	cyph websign internal pack --sri --minify index.html ../pkg/cyph.app
+	cyph websign internal pack --sri --minify index.html ../websign.build/cyph.app/.index.html
 
 	cd ..
 fi

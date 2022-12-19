@@ -49,7 +49,7 @@ echo
 	--websign \
 &> /dev/null
 
-mv pkg/cyph.app local.pkg &> /dev/null
+mv websign.build/cyph.app/.index.html local.pkg &> /dev/null
 
 if [ ! -f local.pkg ] ; then
 	echo "Failed to build local package."
