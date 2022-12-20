@@ -1,6 +1,7 @@
 #!/bin/bash
 
 # Tor server setup script
+# TODO: Update/rewrite this
 
 
 rekeyscript='BASE64 hpkpsuicide.sh'
