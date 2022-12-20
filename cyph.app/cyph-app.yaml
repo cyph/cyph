@@ -9,10 +9,10 @@ handlers:
   static_files: index.html
   upload: index.html
   secure: always
-  # default_headers Strict-Transport-Security
+  # default_headers
 
 - url: /(.*)
   static_files: \1
   upload: .*
   secure: always
-  # default_headers Strict-Transport-Security
+  # default_headers

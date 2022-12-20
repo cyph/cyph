@@ -11,13 +11,13 @@ handlers:
   static_files: index.html
   upload: index.html
   secure: always
-  # default_headers Strict-Transport-Security
+  # default_headers
 
 - url: /unsupportedbrowser
   static_files: unsupportedbrowser.html
   upload: unsupportedbrowser.html
   secure: always
-  # default_headers Strict-Transport-Security
+  # default_headers
 
 
 # Subresources
@@ -26,7 +26,7 @@ handlers:
   static_files: SUBRESOURCE
   upload: SUBRESOURCE
   secure: always
-  # default_headers Strict-Transport-Security
+  # default_headers
 
 
 # Else

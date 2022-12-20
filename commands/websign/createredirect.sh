@@ -27,37 +27,37 @@ handlers:
   static_files: index.html
   upload: index.html
   secure: always
-  # default_headers Strict-Transport-Security
+  # default_headers
 
 - url: /.well-known/apple-app-site-association
   static_files: well-known/apple-app-site-association
   upload: well-known/apple-app-site-association
   secure: always
-  # default_headers Strict-Transport-Security
+  # default_headers
 
 - url: /.well-known/assetlinks.json
   static_files: well-known/assetlinks.json
   upload: well-known/assetlinks.json
   secure: always
-  # default_headers Strict-Transport-Security
+  # default_headers
 
 - url: /apple-app-site-association
   static_files: apple-app-site-association
   upload: apple-app-site-association
   secure: always
-  # default_headers Strict-Transport-Security
+  # default_headers
 
 - url: /appcache.appcache
   static_files: appcache.appcache
   upload: appcache.appcache
   secure: always
-  # default_headers Strict-Transport-Security
+  # default_headers
 
 - url: /serviceworker.js
   static_files: serviceworker.js
   upload: serviceworker.js
   secure: always
-  # default_headers Strict-Transport-Security
+  # default_headers
 
 - url: /.*
   script: redirect.app

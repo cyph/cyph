@@ -1033,6 +1033,7 @@ if [ "${site}" != 'firebase' ] ; then
 			ls */*.yaml | grep -v '\.src/'
 		fi
 		if [ ! "${test}" ] && [ ! "${betaProd}" ] && [ ! "${debug}" ] ; then
+			./commands/domain-mappings.js > dispatch.yaml
 			echo cron.yaml dispatch.yaml
 		fi
 	)

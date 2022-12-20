@@ -4,6 +4,7 @@
 /.public-backend-deployment
 /.websign.tmp
 /account-backups
+/dispatch.yaml
 /docs
 /invite-codes.json
 /qr-invite-codes
