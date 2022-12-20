@@ -161,7 +161,12 @@ export const initDatabaseService = memoize((config, isCloudFunction) => {
 				providedData ||
 				(await retry(async () =>
 					(await database.ref(url).once('value')).val()
-				));
+				)) ||
+				{};
+
+			if (data === undefined && hash === undefined) {
+				throw new Error(`Failed to get item at ${namespace}:${url}.`);
+			}
 
 			let bytes = data ?
 				Buffer.from(data, 'base64') :

@@ -33,8 +33,14 @@ export class Sign implements ISign {
 
 	/** @ignore */
 	private readonly currentAlgorithmInternal = !this.isNative ?
-		PotassiumData.SignAlgorithms.V2 :
-		PotassiumData.SignAlgorithms.NativeV2;
+		{
+			hardened: PotassiumData.SignAlgorithms.V2Hardened,
+			primary: PotassiumData.SignAlgorithms.V2
+		} :
+		{
+			hardened: PotassiumData.SignAlgorithms.NativeV2Hardened,
+			primary: PotassiumData.SignAlgorithms.NativeV2
+		};
 
 	/** @ignore */
 	private readonly defaultMetadataInternal: IPotassiumData & {
@@ -62,7 +68,7 @@ export class Sign implements ISign {
 	public readonly getPrivateKeyBytes = memoize(
 		async (
 			algorithm: PotassiumData.SignAlgorithms = this
-				.currentAlgorithmInternal
+				.currentAlgorithmInternal.primary
 		) : Promise<number> => {
 			switch (algorithm) {
 				case PotassiumData.SignAlgorithms.NativeV1:
@@ -93,7 +99,7 @@ export class Sign implements ISign {
 	public readonly getBytes = memoize(
 		async (
 			algorithm: PotassiumData.SignAlgorithms = this
-				.currentAlgorithmInternal
+				.currentAlgorithmInternal.primary
 		) : Promise<number> => {
 			switch (algorithm) {
 				case PotassiumData.SignAlgorithms.NativeV1:
@@ -122,7 +128,7 @@ export class Sign implements ISign {
 	public readonly getPublicKeyBytes = memoize(
 		async (
 			algorithm: PotassiumData.SignAlgorithms = this
-				.currentAlgorithmInternal
+				.currentAlgorithmInternal.primary
 		) : Promise<number> => {
 			switch (algorithm) {
 				case PotassiumData.SignAlgorithms.NativeV1:
@@ -212,6 +218,7 @@ export class Sign implements ISign {
 	/** @inheritDoc */
 	public async keyPair (
 		algorithm: PotassiumData.SignAlgorithms = this.currentAlgorithmInternal
+			.primary
 	) : Promise<IKeyPair> {
 		return retryUntilSuccessful(async () => {
 			let result: IKeyPair;

@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-import {proto, util, webSignService} from '@cyph/sdk';
+import {proto, util, webSignService} from '../../index.js';
 import fs from 'fs/promises';
 import glob from 'glob-promise';
 import path from 'path';

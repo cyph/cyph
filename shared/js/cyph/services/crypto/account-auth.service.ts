@@ -936,12 +936,16 @@ export class AccountAuthService extends BaseProvider {
 			const [
 				encryptionKeyPair,
 				signingKeyPair,
+				hardenedSigningKeyPair,
 				masterKeyHash,
 				altMasterKeyHash,
 				pinHash
 			] = await Promise.all([
 				this.potassiumService.box.keyPair(),
 				this.potassiumService.sign.keyPair(),
+				this.potassiumService.sign.keyPair(
+					currentSignAlgorithm.hardened
+				),
 				typeof masterKey === 'string' ?
 					this.passwordHash(username, masterKey) :
 					this.potassiumService.secretBox.generateKey(),
@@ -1005,7 +1009,9 @@ export class AccountAuthService extends BaseProvider {
 							[currentSecretBoxAlgorithm]: loginData.symmetricKey
 						},
 						signPrivateKeys: {
-							[currentSignAlgorithm]: signingKeyPair
+							[currentSignAlgorithm.hardened]:
+								hardenedSigningKeyPair,
+							[currentSignAlgorithm.primary]: signingKeyPair
 						}
 					},
 					loginData.symmetricKey,
@@ -1071,7 +1077,7 @@ export class AccountAuthService extends BaseProvider {
 						serialize<IAGSEPKISigningRequest>(
 							AGSEPKISigningRequest,
 							{
-								algorithm: currentSignAlgorithm,
+								algorithm: currentSignAlgorithm.primary,
 								data
 							}
 						)
@@ -1102,7 +1108,10 @@ export class AccountAuthService extends BaseProvider {
 							[currentBoxAlgorithm]: encryptionKeyPair.publicKey
 						},
 						signPublicKeys: {
-							[currentSignAlgorithm]: signingKeyPair.publicKey
+							[currentSignAlgorithm.hardened]:
+								hardenedSigningKeyPair.publicKey,
+							[currentSignAlgorithm.primary]:
+								signingKeyPair.publicKey
 						}
 					},
 					signingKeyPair.privateKey,

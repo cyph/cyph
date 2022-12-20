@@ -41,6 +41,4 @@ export const threadPack = async rootPath => {
 	fs.writeFileSync(rootPath, code);
 
 	console.log(`Threadpack complete: ${rootPath}`);
-
-	process.exit(0);
 };

@@ -7,7 +7,6 @@ import {
 	IWebSignPackageData,
 	IWebSignPackageSubresources,
 	IWebSignPendingRelease,
-	PotassiumData,
 	WebSignPackageData,
 	WebSignPackageSubresources,
 	WebSignPendingRelease
@@ -23,7 +22,8 @@ import {PotassiumService} from './crypto/potassium.service';
 @Injectable()
 export class WebSignService extends BaseProvider {
 	/** Signing algorithm. */
-	private readonly algorithm = PotassiumData.SignAlgorithms.NativeV2Hardened;
+	private readonly algorithm =
+		this.potassiumService.sign.currentAlgorithm.then(o => o.hardened);
 
 	/** List of pending releases to be signed by the current user. */
 	public readonly pendingReleases = memoize(() =>
@@ -42,8 +42,9 @@ export class WebSignService extends BaseProvider {
 	private async generateSigningRequest (
 		packageData: IWebSignPackageData
 	) : Promise<IAGSEPKISigningRequest> {
+		const algorithm = await this.algorithm;
 		const keyPair = (await this.accountDatabaseService.getCurrentUser())
-			.keyrings.private.signPrivateKeys?.[this.algorithm];
+			.keyrings.private.signPrivateKeys?.[algorithm];
 
 		if (keyPair === undefined) {
 			throw new Error('Missing package signing key.');
@@ -56,11 +57,11 @@ export class WebSignService extends BaseProvider {
 		);
 
 		return {
-			algorithm: this.algorithm,
+			algorithm,
 			data: await this.potassiumService.sign.sign(
 				await serialize<IWebSignPackageData>(WebSignPackageData, {
 					...packageData,
-					algorithm: this.algorithm,
+					algorithm,
 					signature
 				}),
 				keyPair.privateKey,
@@ -81,13 +82,15 @@ export class WebSignService extends BaseProvider {
 		releaseID,
 		signingRequest
 	}: IWebSignPendingRelease) : Promise<void> {
-		if (signingRequest.algorithm !== this.algorithm) {
+		const algorithm = await this.algorithm;
+
+		if (signingRequest.algorithm !== algorithm) {
 			throw new Error('Invalid algorithm in signing request.');
 		}
 
 		const authorPublicKey = (
 			await this.accountDatabaseService.getUserPublicKeys(author)
-		).signPublicKeys?.[this.algorithm];
+		).signPublicKeys?.[algorithm];
 
 		if (authorPublicKey === undefined) {
 			throw new Error(`Missing package signing key for @${author}.`);
@@ -103,7 +106,7 @@ export class WebSignService extends BaseProvider {
 		);
 
 		if (
-			packageData.algorithm !== this.algorithm ||
+			packageData.algorithm !== algorithm ||
 			packageData.packageName !== packageName
 		) {
 			throw new Error('Invalid package data.');

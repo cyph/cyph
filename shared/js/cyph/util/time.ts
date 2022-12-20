@@ -56,6 +56,11 @@ const timestampData = {
 					url: env.baseUrl + 'timestamp?' + start.toString()
 				})
 			);
+
+			if (isNaN(server)) {
+				return 0;
+			}
+
 			/* eslint-disable-next-line @typescript-eslint/tslint/config */
 			const end = Date.now();
 

@@ -1466,8 +1466,12 @@ export class AccountDatabaseService extends BaseProvider {
 			currentPrivateKeyring.secretBoxPrivateKeys?.[
 				currentSecretBoxAlgorithm
 			] === undefined ||
-			currentPrivateKeyring.signPrivateKeys?.[currentSignAlgorithm] ===
-				undefined
+			currentPrivateKeyring.signPrivateKeys?.[
+				currentSignAlgorithm.hardened
+			] === undefined ||
+			currentPrivateKeyring.signPrivateKeys?.[
+				currentSignAlgorithm.primary
+			] === undefined
 		) {
 			const currentSigningKeyPair =
 				currentPrivateKeyring.signPrivateKeys?.[
@@ -1501,9 +1505,13 @@ export class AccountDatabaseService extends BaseProvider {
 				},
 				signPrivateKeys: {
 					...(currentPrivateKeyring.signPrivateKeys ?? {}),
-					[currentSignAlgorithm]:
+					[currentSignAlgorithm.hardened]:
 						currentPrivateKeyring.signPrivateKeys?.[
-							currentSignAlgorithm
+							currentSignAlgorithm.hardened
+						] ?? (await this.potassiumService.sign.keyPair()),
+					[currentSignAlgorithm.primary]:
+						currentPrivateKeyring.signPrivateKeys?.[
+							currentSignAlgorithm.primary
 						] ?? (await this.potassiumService.sign.keyPair())
 				}
 			};
@@ -1522,9 +1530,7 @@ export class AccountDatabaseService extends BaseProvider {
 			};
 
 			const csrPublicSigningKey =
-				newPublicKeyring.signPublicKeys?.[
-					await this.potassiumService.sign.currentAlgorithm
-				];
+				newPublicKeyring.signPublicKeys?.[currentSignAlgorithm.primary];
 			if (csrPublicSigningKey === undefined) {
 				throw new Error('Failed to generate new signing key pair.');
 			}
@@ -1543,8 +1549,7 @@ export class AccountDatabaseService extends BaseProvider {
 					csr: await serialize<IAGSEPKISigningRequest>(
 						AGSEPKISigningRequest,
 						{
-							algorithm: await this.potassiumService.sign
-								.currentAlgorithm,
+							algorithm: currentSignAlgorithm.primary,
 							data: await this.potassiumHelpers.sign.sign(
 								await this.potassiumHelpers.sign.sign(
 									await serialize<IAGSEPKICSRData>(
@@ -1744,7 +1749,10 @@ export class AccountDatabaseService extends BaseProvider {
 		if (
 			isCached &&
 			(keyring.boxPublicKeys?.[currentBoxAlgorithm] === undefined ||
-				keyring.signPublicKeys?.[currentSignAlgorithm] === undefined)
+				keyring.signPublicKeys?.[currentSignAlgorithm.hardened] ===
+					undefined ||
+				keyring.signPublicKeys?.[currentSignAlgorithm.primary] ===
+					undefined)
 		) {
 			await this.localStorageService.removeItem(cacheKey);
 			return this.getUserPublicKeys(

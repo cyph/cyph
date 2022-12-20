@@ -8,7 +8,7 @@ import {
 	localStorageService,
 	proto,
 	util
-} from '@cyph/sdk';
+} from '../../index.js';
 import crypto from 'crypto';
 import fs from 'fs/promises';
 import os from 'os';
@@ -137,7 +137,7 @@ export const useLicenseKey = async () => {
 		);
 	}
 
-	if (((await fs.promises.stat(licenseKeyPath)).mode & 0o777) !== 0o600) {
+	if (((await fs.stat(licenseKeyPath)).mode & 0o777) !== 0o600) {
 		throw new Error(
 			'Please change ~/.cyphkey permissions to 600 and try again.'
 		);

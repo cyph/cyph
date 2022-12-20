@@ -10,6 +10,19 @@ const stringifyInternal = <T>(value: T, space?: string) : string => {
 				{errorObject: v, errorString: v.toString()} :
 			v instanceof Uint8Array ?
 				{data: potassiumUtil.toBase64(v), isUint8Array: true} :
+			/* Workaround for JSON.stringify handling of Node.js Buffer objects */
+				typeof v === 'object' &&
+			v !== null &&
+			'type' in v &&
+			(<any> v).type === 'Buffer' &&
+			'data' in v &&
+			(<any> v).data instanceof Array ?
+				{
+					data: potassiumUtil.toBase64(
+						new Uint8Array(<number[]> (<any> v).data)
+					),
+					isUint8Array: true
+				} :
 			v instanceof Map ?
 				{
 					data: flattenObject(Array.from(v.entries())),

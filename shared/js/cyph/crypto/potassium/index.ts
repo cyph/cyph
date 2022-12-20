@@ -2,6 +2,7 @@ export * from './box';
 export * from './ephemeral-key-exchange';
 export * from './hash';
 export * from './ibox';
+export * from './icurrent-sign-algorithm';
 export * from './iephemeral-key-exchange';
 export * from './ihash';
 export * from './ione-time-auth';

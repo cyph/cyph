@@ -5,6 +5,7 @@ import {
 	IPublicKeyring,
 	PotassiumData
 } from '../../proto/types';
+import {ICurrentSignAlgorithm} from './icurrent-sign-algorithm';
 
 /** Equivalent to sodium.crypto_sign. */
 export interface ISign {
@@ -12,7 +13,7 @@ export interface ISign {
 	readonly algorithmPriorityOrder: Promise<PotassiumData.SignAlgorithms[]>;
 
 	/** Current algorithm to use for new data. */
-	readonly currentAlgorithm: Promise<PotassiumData.SignAlgorithms>;
+	readonly currentAlgorithm: Promise<ICurrentSignAlgorithm>;
 
 	/** @see PotassiumEncoding.deserialize */
 	readonly defaultMetadata: Promise<
