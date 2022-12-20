@@ -20,6 +20,7 @@ const mappings = {
 				[`www.${hostname}`, service]
 			])
 	),
+	'*-dot-cyphme.appspot.com': 'default',
 	'*': 'websign'
 };
 
