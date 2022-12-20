@@ -1444,7 +1444,6 @@ func initHandler(w http.ResponseWriter, r *http.Request) {
 	origin := r.Header.Get("Origin")
 
 	w.Header().Set("Cache-Control", config.CacheControlHeader)
-	w.Header().Set("Public-Key-Pins", config.HPKPHeader)
 	w.Header().Set("Strict-Transport-Security", config.HSTSHeader)
 
 	if ok || strings.HasSuffix(origin, ".pki.ws") || strings.HasSuffix(origin, ".cyph.ws") || strings.HasSuffix(origin, ".cyph.app") || isLocalEnv {

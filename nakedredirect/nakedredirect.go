@@ -10,7 +10,6 @@ import (
 func main() {
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Cache-Control", "public, max-age=31536000")
-		w.Header().Set("Public-Key-Pins", config.HPKPHeader)
 		w.Header().Set("Strict-Transport-Security", config.HSTSHeader)
 
 		path := r.URL.Path
