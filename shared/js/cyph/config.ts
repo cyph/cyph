@@ -264,9 +264,7 @@ export class Config {
 		/* eslint-disable-next-line @typescript-eslint/naming-convention */
 		'cyph.me': ['profile'],
 		/* eslint-disable-next-line @typescript-eslint/naming-convention */
-		'cyph.video': ['burner', 'video'],
-		/* eslint-disable-next-line @typescript-eslint/naming-convention */
-		'cyph.ws': ['burner']
+		'cyph.video': ['burner', 'video']
 	};
 
 	constructor () {}
