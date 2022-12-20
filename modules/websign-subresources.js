@@ -4,6 +4,7 @@ import {util} from '@cyph/sdk';
 import fastSHA512 from 'fast-sha512';
 import fs from 'fs/promises';
 import glob from 'glob/sync.js';
+import mkdirp from 'mkdirp';
 import path from 'path';
 import {getCDNRepo} from './cdn-repo.js';
 import {brotli, gzip} from './compression.js';
@@ -40,6 +41,8 @@ export const publishSubresources = async ({
 		packageName
 	);
 
+	await mkdirp(path.join(cdnRepo.repoPath, packageParent, packageName));
+
 	await Promise.all(
 		Object.entries(subresources).map(async ([subresource, content]) => {
 			const buf = Buffer.from(content);
@@ -53,16 +56,18 @@ export const publishSubresources = async ({
 			const ipfsHash = await ipfsAdd(brotliEncoded);
 
 			const oldIPFSHash = (
-				await fs.readFile(
-					path.join(
-						cdnRepo.repoPath,
-						packageParent,
-						packageName,
-						`${subresource}.ipfs`
+				await fs
+					.readFile(
+						path.join(
+							cdnRepo.repoPath,
+							packageParent,
+							packageName,
+							`${subresource}.ipfs`
+						)
 					)
-				)
+					.catch(() => undefined)
 			)
-				.toString()
+				?.toString()
 				.trim();
 
 			/* Avoid empty commits */
@@ -156,7 +161,7 @@ export const publishSubresources = async ({
 				continue;
 			}
 
-			await fs.symlink(path.join('..', packageName), pAliasFullPath);
+			await fs.symlink(packageName, pAliasFullPath);
 
 			await cdnRepo.add(pAlias);
 			await cdnRepo.commit(pAlias);
