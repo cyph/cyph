@@ -23,6 +23,7 @@ eval "$(parseArgs \
 	--opt-bool skip-beta \
 	--opt-bool skip-firebase \
 	--opt-bool skip-website \
+	--opt websign-package-name-override \
 	--opt-bool wp-promote \
 )"
 
@@ -57,6 +58,7 @@ skipFirebase=''
 skipWebsite=''
 test=true
 websign=true
+webSignPackageNameOverride=''
 assetsFrozen=''
 
 if [ "${_arg_public_backend_deployment}" == 'on' ] ; then
@@ -140,6 +142,12 @@ fi
 
 if [ "${_arg_site}" ] ; then
 	site="${_arg_site}"
+fi
+
+if [ "${_arg_websign_package_name_override}" ] ; then
+	webSignPackageNameOverride="${_arg_websign_package_name_override}"
+elif [ -f "${dir}/.package-name" ] ; then
+	webSignPackageNameOverride="$(cat "${dir}/.package-name")"
 fi
 
 if [ "${_arg_skip_firebase}" == 'on' ] ; then
@@ -501,7 +509,7 @@ fi
 
 
 if [ "${websign}" ] ; then
-	package="$(projectname cyph.app)"
+	package="$(projectname "$(echo "${webSignPackageNameOverride}" | grep . || echo cyph.app)")"
 
 	log "WebSign ${package}"
 
