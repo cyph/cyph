@@ -11,6 +11,7 @@ const functionBuilder = (highMemory = false) =>
 		highMemory ?
 			'1GB' :
 			'256MB',
+		minInstances: 1,
 		timeoutSeconds: 60
 	});
 

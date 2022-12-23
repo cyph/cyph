@@ -2,7 +2,3 @@ cron:
 - description: "waitlist rollout interval"
   url: /waitlist/invite
   schedule: every fri,sat,sun,mon 09:00
-
-- description: "keep Firebase Cloud Function instances warm"
-  url: /warmupcloudfunctions
-  schedule: every 5 minutes
