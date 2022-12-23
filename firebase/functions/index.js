@@ -2,29 +2,41 @@ const cors = require('cors')({origin: true});
 const functions = require('firebase-functions');
 const memoize = require('lodash/memoize.js');
 
-const functionBuilder = () =>
+const functionBuilder = (highMemory = false) =>
 	functions.runWith({
-		memory: functions.config().prod ? '1GB' : '256MB',
+		memory: functions.config().prod ?
+			highMemory ?
+				'2GB' :
+				'1GB' :
+		highMemory ?
+			'1GB' :
+			'256MB',
 		timeoutSeconds: 60
 	});
 
-const {database} = functionBuilder();
-const {https} = functionBuilder().region(
-	'asia-northeast1',
-	'australia-southeast1',
-	'europe-west1',
-	'southamerica-east1',
-	'us-central1'
+const database = memoize(highMemory => functionBuilder(highMemory).database);
+const https = memoize(
+	highMemory =>
+		functionBuilder(highMemory).region(
+			'asia-northeast1',
+			'australia-southeast1',
+			'europe-west1',
+			'southamerica-east1',
+			'us-central1'
+		).https
 );
 
 const importFunction = memoize(async functionName =>
 	import(`./js/functions/${functionName}.js`)
 );
 
-const onRequest = f =>
-	https.onRequest(async (req, res) =>
+const baseOnRequest = getHTTPS => f =>
+	getHTTPS().onRequest(async (req, res) =>
 		cors(req, res, async () => f(req, res))
 	);
+
+const onRequest = baseOnRequest(https);
+const onRequestHighMemory = baseOnRequest(() => https(true));
 
 exports.acceptPseudoRelationship = onRequest(async (...args) =>
 	(
@@ -43,7 +55,7 @@ exports.burnerInvite = onRequest(async (...args) =>
 /*
 TODO: Re-enable after edge case false positives are fixed
 
-exports.channelDisconnect = database
+exports.channelDisconnect = database()
 	.ref('/{namespace}/channels/{channel}/disconnects/{user}')
 	.onWrite(async (...args) => (await importFunction('channel-disconnect')).channelDisconnect(...args));
 */
@@ -84,13 +96,13 @@ exports.getUserToken = onRequest(async (...args) =>
 	(await importFunction('get-user-token')).getUserToken(...args)
 );
 
-exports.itemHashChange = database
+exports.itemHashChange = database()
 	.ref('hash')
 	.onUpdate(async (...args) =>
 		(await importFunction('item-hash-change')).itemHashChange(...args)
 	);
 
-exports.itemRemoved = database
+exports.itemRemoved = database()
 	.ref('hash')
 	.onDelete(async (...args) =>
 		(await importFunction('item-removed')).itemRemoved(...args)
@@ -142,13 +154,13 @@ exports.updateKeyrings = onRequest(async (...args) =>
 	(await importFunction('update-keyrings')).updateKeyrings(...args)
 );
 
-exports.userDisconnect = database
+exports.userDisconnect = database()
 	.ref('/{namespace}/users/{user}/clientConnections')
 	.onDelete(async (...args) =>
 		(await importFunction('user-disconnect')).userDisconnect(...args)
 	);
 
-exports.userEmailSet = database
+exports.userEmailSet = database()
 	.ref('/{namespace}/users/{user}/email')
 	.onWrite(async (...args) =>
 		(await importFunction('user-email-set')).userEmailSet(...args)
@@ -158,7 +170,7 @@ exports.userNotify = onRequest(async (...args) =>
 	(await importFunction('user-notify')).userNotify(...args)
 );
 
-exports.userPublicProfileSet = database
+exports.userPublicProfileSet = database()
 	.ref('/{namespace}/users/{user}/publicProfile')
 	.onWrite(async (...args) =>
 		(await importFunction('user-public-profile-set')).userPublicProfileSet(
@@ -166,7 +178,7 @@ exports.userPublicProfileSet = database
 		)
 	);
 
-exports.userRegisterConfirmed = database
+exports.userRegisterConfirmed = database()
 	.ref('/{namespace}/users/{user}/publicKeyCertificate')
 	.onCreate(async (...args) =>
 		(await importFunction('user-register-confirmed')).userRegisterConfirmed(
@@ -192,7 +204,7 @@ exports.webSignSignPendingRelease = onRequest(async (...args) =>
 	).webSignSignPendingRelease(...args)
 );
 
-exports.webSignSubmitRelease = onRequest(async (...args) =>
+exports.webSignSubmitRelease = onRequestHighMemory(async (...args) =>
 	(await importFunction('websign-submit-release')).webSignSubmitRelease(
 		...args
 	)
