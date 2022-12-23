@@ -905,6 +905,10 @@ EOM
 		firebaseCLI functions:config:set project.id="${firebaseProject}"
 		gsutil cors set storage.cors.json "gs://${firebaseProject}.appspot.com"
 
+		if [ ! "${test}" ] ; then
+			firebaseCLI functions:config:set prod=true
+		fi
+
 		i=0
 		while true ; do
 			firebaseCLI deploy --except functions && break

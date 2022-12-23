@@ -4,7 +4,7 @@ const memoize = require('lodash/memoize.js');
 
 const functionBuilder = () =>
 	functions.runWith({
-		memory: functions.config().project.id === 'cyphme' ? '1GB' : '256MB',
+		memory: functions.config().prod ? '1GB' : '256MB',
 		timeoutSeconds: 60
 	});
 
