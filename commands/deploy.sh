@@ -720,9 +720,14 @@ then
 			cd firebase.${firebaseProject}
 		fi
 
+		firebaseIsProd=''
+		if [ "${firebaseProject}" == 'cyphme' ] ; then
+			firebaseIsProd=true
+		fi
+
 		getBackendVar () {
 			{ grep "${1}" ~/.cyph/backend.vars || grep "${1}" ~/.cyph/backend.vars.$(
-				if [ "${firebaseProject}" == 'cyphme' ] ; then
+				if [ "${firebaseIsProd}" ] ; then
 					echo prod
 				else
 					echo sandbox
@@ -733,6 +738,14 @@ then
 
 		cat > functions/js/cyph-admin-vars.js <<- EOM
 			export const cyphAdminKey = $(getBackendVar CYPH_FIREBASE_ADMIN_KEY);
+
+			export const isProd = $(
+				if [ "${firebaseIsProd}" ] ; then
+					echo true
+				else
+					echo false
+				fi
+			);
 
 			export const mailchimpCredentials = {
 				apiKey: $(getBackendVar MAILCHIMP_API_KEY).split('-')[0],

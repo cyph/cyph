@@ -1,4 +1,5 @@
 import {proto, util} from '@cyph/sdk';
+import {isProd} from '../cyph-admin-vars.js';
 import {admin, database, getItem, onCall, setItem} from '../init.js';
 import {getWebSignPermissions} from '../modules/websign-permissions.js';
 import {publishSubresources} from '../modules/websign-subresources.js';
@@ -40,7 +41,10 @@ export const webSignSubmitRelease = onCall(
 		);
 
 		const author = await getUsername();
-		const webSignPermissions = await getWebSignPermissions({getItem});
+		const webSignPermissions = await getWebSignPermissions({
+			getItem,
+			testSign: !isProd
+		});
 
 		if (!webSignPermissions.packages[packageName]?.users[author]) {
 			throw new Error(

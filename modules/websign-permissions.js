@@ -12,18 +12,20 @@ const namespace = 'cyph.ws';
 const additionalData = `${namespace}:webSignPermissions`;
 const url = 'webSign/permissions';
 
-export const getWebSignPermissions = async ({getItem}) =>
+export const getWebSignPermissions = async ({getItem, testSign = false}) =>
 	openAGSEPKICertified({
 		additionalData,
 		certified: await getItem(namespace, url, AGSEPKICertified),
 		expectedAlgorithm: algorithm,
 		expectedTimestamp: webSignPermissionsTimestamp,
-		proto: WebSignPermissions
+		proto: WebSignPermissions,
+		testSign
 	});
 
 export const setWebSignPermissions = async ({
 	setItem,
 	sign,
+	testSign = false,
 	webSignPermissions
 }) =>
 	setItem(
@@ -31,16 +33,19 @@ export const setWebSignPermissions = async ({
 		url,
 		AGSEPKICertified,
 		(
-			await sign([
-				{
-					additionalData,
-					algorithm,
-					message: await serialize(
-						WebSignPermissions,
-						webSignPermissions
-					)
-				}
-			])
+			await sign(
+				[
+					{
+						additionalData,
+						algorithm,
+						message: await serialize(
+							WebSignPermissions,
+							webSignPermissions
+						)
+					}
+				],
+				testSign
+			)
 		)[0]
 	);
 
@@ -49,16 +54,18 @@ export const updateWebSignPermissions = async ({
 	init = false,
 	setItem,
 	sign,
+	testSign,
 	transform
 }) => {
-	const oldWebSignPermissions = await getWebSignPermissions({getItem}).catch(
-		err => {
-			if (init) {
-				return {};
-			}
-			throw err;
+	const oldWebSignPermissions = await getWebSignPermissions({
+		getItem,
+		testSign
+	}).catch(err => {
+		if (init) {
+			return {};
 		}
-	);
+		throw err;
+	});
 
 	const newWebSignPermissions = await transform(
 		init ? {} : oldWebSignPermissions
@@ -67,6 +74,7 @@ export const updateWebSignPermissions = async ({
 	await setWebSignPermissions({
 		setItem,
 		sign,
+		testSign,
 		webSignPermissions: newWebSignPermissions
 	});
 

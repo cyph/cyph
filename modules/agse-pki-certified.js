@@ -10,7 +10,8 @@ export const openAGSEPKICertified = async ({
 	certified,
 	expectedAlgorithm,
 	expectedTimestamp,
-	proto
+	proto,
+	testSign = false
 }) => {
 	if (
 		expectedAlgorithm !== undefined &&
@@ -21,9 +22,11 @@ export const openAGSEPKICertified = async ({
 		);
 	}
 
-	const publicSigningKeys = agsePublicSigningKeys.prod.get(
-		certified.algorithm
-	);
+	const publicSigningKeysMap = testSign ?
+		agsePublicSigningKeys.test :
+		agsePublicSigningKeys.prod;
+
+	const publicSigningKeys = publicSigningKeysMap.get(certified.algorithm);
 
 	if (publicSigningKeys === undefined) {
 		throw new Error(
@@ -55,6 +58,7 @@ export const openAGSEPKICertified = async ({
 	);
 
 	if (
+		!testSign &&
 		expectedTimestamp !== undefined &&
 		opened.timestamp !== expectedTimestamp
 	) {
