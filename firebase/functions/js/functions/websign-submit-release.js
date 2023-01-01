@@ -8,6 +8,7 @@ import {webSignReleaseNotify} from '../websign-release-notify.js';
 
 const {
 	AGSEPKISigningRequest,
+	PotassiumData,
 	WebSignPackageSubresources,
 	WebSignPendingRelease
 } = proto;
@@ -26,13 +27,37 @@ export const webSignSubmitRelease = onCall(
 		if (
 			typeof packageName !== 'string' ||
 			!packageName.includes('.') ||
-			new URL(`https://${packageName}`).host !== packageName ||
-			!(requiredUserSignatures instanceof Array) ||
-			signingRequest?.algorithm !== webSignAlgorithm ||
-			!(signingRequest.data instanceof Uint8Array) ||
-			isNaN(timestamp)
+			new URL(`https://${packageName}`).host !== packageName
 		) {
-			throw new Error('Invalid arguments.');
+			throw new Error(`Invalid \`packageName\`: ${packageName}.`);
+		}
+		if (!(requiredUserSignatures instanceof Array)) {
+			throw new Error(`Missing \`requiredUserSignatures\`.`);
+		}
+		if (signingRequest?.algorithm !== webSignAlgorithm) {
+			throw new Error(
+				`Invalid \`signingRequest.algorithm\`: ${
+					signingRequest?.algorithm !== undefined ?
+						`PotassiumData.SignAlgorithms.${
+							PotassiumData.SignAlgorithms[
+								signingRequest.algorithm
+							] ?? '(none)'
+						} (${signingRequest.algorithm.toString()})` :
+						'undefined'
+				}. Expected: PotassiumData.SignAlgorithms.${
+					PotassiumData.SignAlgorithms[webSignAlgorithm]
+				}.`
+			);
+		}
+		if (!(signingRequest.data instanceof Uint8Array)) {
+			throw new Error(`Missing \`signingRequest.data\`.`);
+		}
+		if (isNaN(timestamp)) {
+			throw new Error(
+				`Invalid \`timestamp\`: ${
+					timestamp !== undefined ? timestamp.toString() : 'undefined'
+				}.`
+			);
 		}
 
 		const {subresources} = await deserialize(

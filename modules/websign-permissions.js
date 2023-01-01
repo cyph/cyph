@@ -12,15 +12,25 @@ const namespace = 'cyph.ws';
 const additionalData = `${namespace}:webSignPermissions`;
 const url = 'webSign/permissions';
 
-export const getWebSignPermissions = async ({getItem, testSign = false}) =>
-	openAGSEPKICertified({
-		additionalData,
-		certified: await getItem(namespace, url, AGSEPKICertified),
-		expectedAlgorithm: algorithm,
-		expectedTimestamp: webSignPermissionsTimestamp,
-		proto: WebSignPermissions,
-		testSign
-	});
+export const getWebSignPermissions = async ({getItem, testSign = false}) => {
+	try {
+		return await openAGSEPKICertified({
+			additionalData,
+			certified: await getItem(namespace, url, AGSEPKICertified),
+			expectedAlgorithm: algorithm,
+			expectedTimestamp: webSignPermissionsTimestamp,
+			proto: WebSignPermissions,
+			testSign
+		});
+	}
+	catch (err) {
+		throw new Error(
+			`Failed to open WebSign permissions (${
+				testSign ? 'test' : 'prod'
+			}): ${err}`
+		);
+	}
+};
 
 export const setWebSignPermissions = async ({
 	setItem,
