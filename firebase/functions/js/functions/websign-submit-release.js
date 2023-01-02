@@ -1,5 +1,5 @@
 import {proto, util} from '@cyph/sdk';
-import {isProd} from '../cyph-admin-vars.js';
+import {ipfsCredentials, isProd} from '../cyph-admin-vars.js';
 import {admin, database, getItem, onCall, setItem} from '../init.js';
 import {getWebSignPermissions} from '../modules/websign-permissions.js';
 import {publishSubresources} from '../modules/websign-subresources.js';
@@ -78,6 +78,7 @@ export const webSignSubmitRelease = onCall(
 		}
 
 		await publishSubresources({
+			ipfsCredentials,
 			packageName,
 			subresources
 		});

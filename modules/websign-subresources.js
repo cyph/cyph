@@ -17,6 +17,7 @@ const gitCommitLock = lockFunction();
 
 export const publishSubresources = async ({
 	customBuilds = [],
+	ipfsCredentials,
 	packageName,
 	subresources,
 	test = false
@@ -53,7 +54,7 @@ export const publishSubresources = async ({
 				fastSHA512.hash(buf).then(o => o.hex)
 			]);
 
-			const ipfsHash = await ipfsAdd(brotliEncoded);
+			const ipfsHash = await ipfsAdd(brotliEncoded, ipfsCredentials);
 
 			const oldIPFSHash = (
 				await fs
