@@ -60,17 +60,19 @@ try {
 				packages: {
 					...(o.packages ?? {}),
 					[packageName]: {
-						...(o.packages?.[packageName] ?? {}),
-						...Object.fromEntries(
-							usernames.map(username => [
-								username,
-								remove ?
-									undefined :
-									{
-										timestamp
-									}
-							])
-						)
+						users: {
+							...(o.packages?.[packageName]?.users ?? {}),
+							...Object.fromEntries(
+								usernames.map(username => [
+									username,
+									remove ?
+										undefined :
+										{
+											timestamp
+										}
+								])
+							)
+						}
 					}
 				},
 				timestamp
