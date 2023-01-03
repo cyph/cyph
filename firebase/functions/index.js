@@ -6,10 +6,10 @@ const functionBuilder = (highMemory = false) =>
 	functions.runWith({
 		memory: functions.config().prod ?
 			highMemory ?
-				'2GB' :
+				'6GB' :
 				'1GB' :
 		highMemory ?
-			'1GB' :
+			'4GB' :
 			'256MB',
 		minInstances: 1,
 		timeoutSeconds: 60
