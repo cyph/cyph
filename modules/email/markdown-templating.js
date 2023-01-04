@@ -13,7 +13,8 @@ const markdownIt = new MarkdownIt();
 const markdownEscapeWhitelist = new Set([
 	'accountsURL',
 	'accountsURLShort',
-	'email'
+	'email',
+	'packageName'
 ]);
 
 const markdownEscape = markdown =>
