@@ -8,6 +8,9 @@ program
 	.arguments('<subresourcePath>')
 	.action(async subresourcePath =>
 		subresourceInline(process.cwd(), subresourcePath)
-	);
+	)
+	.hook('postAction', () => {
+		process.exit();
+	});
 
 await program.parseAsync();

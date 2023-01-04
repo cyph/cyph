@@ -46,6 +46,9 @@ program
 				tofuKeyPersistence,
 				ttlMonths
 			})
-	);
+	)
+	.hook('postAction', () => {
+		process.exit();
+	});
 
 await program.parseAsync();

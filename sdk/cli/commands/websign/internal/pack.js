@@ -14,6 +14,9 @@ program
 			outputPath,
 			{minify: enableMinify = false, sri: enableSRI = false}
 		) => pack(process.cwd(), inputPath, enableMinify, enableSRI, outputPath)
-	);
+	)
+	.hook('postAction', () => {
+		process.exit();
+	});
 
 await program.parseAsync();
