@@ -92,6 +92,17 @@ export const publishSubresources = async ({
 					);
 				}
 
+				console.log({
+					publishSubresourcesCommit: {
+						ipfsHash,
+						oldIPFSHash,
+						packageName,
+						packageParent,
+						subresource,
+						test
+					}
+				});
+
 				await cdnRepo.commit(sriHash);
 			});
 		})
