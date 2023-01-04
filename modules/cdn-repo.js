@@ -25,7 +25,7 @@ const gitHubToken = (async () => {
 	throw new Error('GitHub token not found.');
 })();
 
-export const getCDNRepo = memoize(async () => {
+const getCDNRepoInternal = memoize(async () => {
 	const cyphPathExists = await fs
 		.access(cyphPath)
 		.then(() => true)
@@ -40,3 +40,9 @@ export const getCDNRepo = memoize(async () => {
 		url: `https://${await gitHubToken}:x-oauth-basic@github.com/cyph/cdn.git`
 	});
 });
+
+export const getCDNRepo = async () => {
+	const cdnRepo = await getCDNRepoInternal();
+	await cdnRepo.pull();
+	return cdnRepo;
+};
