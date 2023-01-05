@@ -169,6 +169,13 @@ if [ ! "${htmlOnly}" ] && [ ! "${fast}" ] ; then
 	if (( $? )) ; then
 		output="${output}${retireOutput}"
 	fi
+
+	cd shared/lib/js
+	npmAuditOutput="$(npm audit)"
+	if (( $? )) ; then
+		output="${output}${npmAuditOutput}"
+	fi
+	cd ../../..
 fi
 
 echo -e "${output}" | perl -pe 's/js\/\*\*\*\*\//js\/cyph\//g'
