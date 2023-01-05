@@ -22,8 +22,10 @@ export const pack = async (
 		dir = '.';
 	}
 
-	const subresourceRoot = path.dirname(outputPath);
-	await mkdirp(subresourceRoot);
+	const subresourceRoot = outputPath ? path.dirname(outputPath) : undefined;
+	if (subresourceRoot !== undefined) {
+		await mkdirp(subresourceRoot);
+	}
 
 	const html = fs.readFileSync(path.join(dir, inputPath)).toString();
 	const $ = cheerio.load(html);
