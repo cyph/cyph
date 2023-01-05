@@ -12,7 +12,7 @@ import {
 	Output
 } from '@angular/core';
 import memoize from 'lodash-es/memoize';
-import * as mexp from 'math-expression-evaluator';
+import Mexp from 'math-expression-evaluator';
 import {BehaviorSubject, Observable, Subscription} from 'rxjs';
 import {User} from '../../account/user';
 import {BaseProvider} from '../../base-provider';
@@ -55,6 +55,9 @@ export class DynamicFormComponent
 	/** @ignore */
 	private readonly maskDefaultKey = new Uint8Array(0);
 
+	/** @see Mexp */
+	private readonly mexp = new Mexp();
+
 	/** @ignore */
 	private readonly processCalcs = memoize((formula: string) : string => {
 		return formula.replace(/calc\([^\s]+\)/g, s => {
@@ -83,7 +86,7 @@ export class DynamicFormComponent
 
 			let result = 0;
 			try {
-				result = mexp.eval(s.slice(5, calcEnd - 1));
+				result = this.mexp.eval(s.slice(5, calcEnd - 1), [], {});
 			}
 			catch {}
 

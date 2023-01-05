@@ -253,7 +253,6 @@ for anyType in \
 	libvorbis.js \
 	markdown-it-emoji \
 	markdown-it-sup \
-	math-expression-evaluator \
 	mergebounce \
 	opus-recorder \
 	recorder.js \
