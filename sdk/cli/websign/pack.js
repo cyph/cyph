@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-import cheerio from 'cheerio';
+import * as cheerio from 'cheerio';
 import fastSHA512 from 'fast-sha512';
 import fs from 'fs';
 import htmlMinifier from 'html-minifier';

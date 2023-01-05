@@ -23,7 +23,7 @@
 	"dependencies": {
 		"@babel/helpers": "*",
 		"@babel/runtime": "*",
-		"cheerio": "1.0.0-rc.3",
+		"cheerio": "*",
 		"commander": "^9",
 		"fast-sha512": "*",
 		"firebase": ">=9",
