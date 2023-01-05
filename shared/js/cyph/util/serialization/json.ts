@@ -12,6 +12,7 @@ const stringifyInternal = <T>(value: T, space?: string) : string => {
 				{data: potassiumUtil.toBase64(v), isUint8Array: true} :
 			/* Workaround for JSON.stringify handling of Node.js Buffer objects */
 				typeof v === 'object' &&
+			/* eslint-disable-next-line no-null/no-null */
 			v !== null &&
 			'type' in v &&
 			(<any> v).type === 'Buffer' &&
