@@ -87,6 +87,10 @@
 		"justification": "Only jQuery 3.x is included in our client code"
 	},
 	{
+		"path": "jsdoc",
+		"justification": "Dev dependency"
+	},
+	{
 		"path": "ms",
 		"justification": "Not using Socket.IO for SimpleWebRTC signaling"
 	},
