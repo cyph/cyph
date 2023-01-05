@@ -5,7 +5,6 @@
 import {proto, util} from '@cyph/sdk';
 import {Storage} from '@google-cloud/storage';
 import crypto from 'crypto';
-import FCM from 'fcm-node';
 import admin from 'firebase-admin';
 import fs from 'fs';
 import memoize from 'lodash-es/memoize.js';
@@ -51,7 +50,7 @@ export const initDatabaseService = memoize((config, isCloudFunction) => {
 	const app = admin.initializeApp(config.firebase, uuid());
 	const auth = app.auth();
 	const database = app.database();
-	const messaging = new FCM(config.fcmServerKey);
+	const messaging = app.messaging();
 	const storage = new Storage(config.storage).bucket(
 		`${config.project.id}.appspot.com`
 	);

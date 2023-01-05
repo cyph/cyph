@@ -2,16 +2,20 @@ import {util} from '@cyph/sdk';
 
 const {normalize} = util;
 
+const iconURL = 'https://www.cyph.com/assets/img/favicon/favicon-256x256.png';
+const title = 'Cyph';
+
 export const sendMessageInternal = async (
 	database,
 	messaging,
 	namespace,
 	username,
 	body,
-	{actions, additionalData, badge, inboxStyle = true, ring, tag} = {}
+	{actions, additionalData, badge, inboxStyle = true, ring = false, tag} = {}
 ) => {
 	namespace = namespace.replace(/\./g, '_');
 	username = normalize(username || '');
+	body = body.trim();
 
 	if (!namespace || !username) {
 		return;
@@ -26,6 +30,49 @@ export const sendMessageInternal = async (
 		return false;
 	}
 
+	const message = {
+		android: {
+			collapseKey: !ring ? 'cyph-notifications' : undefined,
+			notification: {
+				channelId: ring ? 'cyph-rings' : 'cyph-notifications',
+				priority: ring ? 'max' : 'high',
+				sound: ring ? 'ringtone' : undefined,
+				tag,
+				visibility: 'private'
+			},
+			priority: 'high'
+		},
+		apns: {
+			aps: {
+				alert: {
+					body,
+					title
+				},
+				badge,
+				contentAvailable: true,
+				mutableContent: false,
+				threadId: tag
+			}
+		},
+		data: {
+			...(inboxStyle ? {style: 'inbox'} : {}),
+			...additionalData
+		},
+		notification: {
+			body,
+			title
+		},
+		webpush: {
+			notification: {
+				actions,
+				icon: iconURL,
+				requireInteraction: ring,
+				tag,
+				title
+			}
+		}
+	};
+
 	return (
 		await Promise.all(
 			/* For now, make special temporary exception to receive notifications in desktop app */
@@ -33,58 +80,14 @@ export const sendMessageInternal = async (
 				tokens :
 				tokens.filter(token => tokenPlatforms[token] !== 'electron')
 			).map(async token => {
-				const platform = tokenPlatforms[token];
-
-				const notification = {
-					badge,
-					body: body.trim(),
-					sound:
-						ring && platform === 'android' ? 'ringtone' : 'default',
-					tag,
-					title: 'Cyph',
-					...(platform === 'android' ?
-						{
-							android_channel_id: ring ?
-									'cyph-rings' :
-									'cyph-notifications'
-						} :
-						{}),
-					...(platform === 'unknown' || platform === 'web' ?
-						{
-							icon: 'https://www.cyph.com/assets/img/favicon/favicon-256x256.png'
-						} :
-						{})
-				};
-
-				const data = {
-					'content-available': true,
-					'priority': 2,
-					'visibility': 1,
-					...(actions ? {actions} : {}),
-					...(inboxStyle ? {style: 'inbox'} : {}),
-					...(tag && platform === 'ios' ? {'thread-id': tag} : {}),
-					...additionalData
-				};
-
-				const payload = {
-					...(platform === 'android' ?
-						{data: {...notification, ...data}} :
-						{data, notification}),
-					priority: 'high',
-					to: token
-				};
-
-				return new Promise(resolve => {
-					messaging.send(payload, async (err, _RESPONSE) => {
-						if (err) {
-							await ref.child(token).remove();
-							resolve(false);
-						}
-						else {
-							resolve(true);
-						}
-					});
-				});
+				try {
+					await messaging.send({...message, token});
+					return true;
+				}
+				catch {
+					await ref.child(token).remove();
+					return false;
+				}
 			})
 		)
 	).reduce((a, b) => a || b, false);

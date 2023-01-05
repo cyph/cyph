@@ -23,7 +23,6 @@
 		"datastore-core": "*",
 		"dompurify": "*",
 		"fast-crc32c": "*",
-		"fcm-node": "*",
 		"firebase": "*",
 		"firebase-admin": "*",
 		"firebase-functions": "*",
