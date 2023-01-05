@@ -247,7 +247,6 @@ for anyType in \
 	bitpay-rest \
 	braintree-web-drop-in \
 	cornerstone-core \
-	dwv \
 	granim \
 	konami \
 	lamejs \
