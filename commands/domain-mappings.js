@@ -20,7 +20,9 @@ const mappings = {
 				[`www.${hostname}`, service]
 			])
 	),
-	'*-dot-cyphme.appspot.com': 'default',
+	/* TODO: Must find alternative before adding new flex env services */
+	'*.r.appspot.com': 'test',
+	'*.appspot.com': 'default',
 	'*': 'websign'
 };
 
