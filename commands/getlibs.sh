@@ -110,8 +110,7 @@ mv ~/node_modules ./
 cd node_modules
 
 for arr in \
-	'localforage https://github.com/buu700/localforage-tmp' \
-	'webrtcsupport https://github.com/buu700/webrtcsupport'
+	'localforage https://github.com/buu700/localforage-tmp'
 do
 	read -ra arr <<< "${arr}"
 	mv "${arr[0]}" ".${arr[0]}.old"
@@ -257,18 +256,9 @@ for anyType in \
 	opus-recorder \
 	recorder.js \
 	recordrtc \
-	simplewebrtc \
 	tab-indent \
 	u2f-api-polyfill \
-	videojs-background \
-	videojs-brand \
-	videojs-hotkeys \
-	videojs-playlist \
-	videojs-record \
-	videojs-theater-mode \
-	videojs-wavesurfer \
 	watermarkjs \
-	wavesurfer.js \
 	wowjs
 do
 	anyTypePackage="$(echo "${anyType}" | sed 's|/|__|g')"
@@ -327,9 +317,6 @@ sed -i 's/||!e.sender.track/||!e.sender||!e.sender.track/g' simple-peer/simplepe
 sed -i \
 	's/\&\& transceiver.sender.track/\&\& transceiver.sender \&\& transceiver.sender.track/g' \
 	simple-peer/index.js
-
-rm -rf simplewebrtc/node_modules
-sed -i "s|require('./socketioconnection')|null|g" simplewebrtc/src/simplewebrtc.js
 
 cat wowjs/dist/wow.js | perl -pe 's/this\.([A-Z][a-z])/self.\1/g' > wowjs/dist/wow.js.new
 mv wowjs/dist/wow.js.new wowjs/dist/wow.js

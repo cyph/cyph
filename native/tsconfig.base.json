@@ -17,7 +17,6 @@
 			"querystring": ["app/js/externals/querystring"],
 			"request": ["app/js/externals/request"],
 			"rsvp": ["app/js/externals/rsvp"],
-			"simplewebrtc": ["app/externals/simplewebrtc"],
 			"url": ["app/js/externals/url"]
 		}
 	},
