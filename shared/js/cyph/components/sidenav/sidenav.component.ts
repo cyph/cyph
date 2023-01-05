@@ -10,7 +10,7 @@ import {
 	Output,
 	SimpleChanges
 } from '@angular/core';
-import {Sidenav} from 'materialize-css';
+import {Sidenav} from '@materializecss/materialize';
 import {BaseProvider} from '../../base-provider';
 import {StringsService} from '../../services/strings.service';
 

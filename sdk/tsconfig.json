@@ -6,6 +6,9 @@
 		"declaration": false,
 		"outDir": "./dist/out-tsc",
 		"paths": {
+			"@materializecss/materialize": [
+				"js/externals/materializecss__materialize"
+			],
 			"bitpay.js": ["js/externals/bitpay.js"],
 			"debug": ["js/externals/debug"],
 			"dropzone": ["js/externals/dropzone"],
@@ -17,7 +20,6 @@
 			"hammerjs": ["js/externals/hammerjs"],
 			"libsodium": ["js/externals/libsodium-bundle"],
 			"lodash/*": ["../node_modules/@types/lodash-es/*"],
-			"materialize-css": ["js/externals/materialize-css"],
 			"microlight-string": ["js/externals/microlight-string"],
 			"querystring": ["js/externals/querystring"],
 			"quill": ["js/externals/quill"],

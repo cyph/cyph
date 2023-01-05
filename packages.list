@@ -203,7 +203,7 @@
 @types/lodash-es
 @types/long
 @types/markdown-it
-@types/materialize-css
+@types/materializecss__materialize
 @types/node
 @types/pdfjs-dist
 @types/pdfkit
@@ -348,7 +348,7 @@ markdown-escapes
 markdown-it
 markdown-it-emoji
 markdown-it-sup
-materialize-css
+@materializecss/materialize
 math-expression-evaluator
 maxmind
 mceliece

@@ -1,6 +1,6 @@
 /* eslint-disable */
 
-/** @file materialize-css external. */
+/** @file @materializecss/materialize external. */
 
 export const Sidenav = {
 	init: (_E: any, _OPTIONS: any) => <any> undefined
