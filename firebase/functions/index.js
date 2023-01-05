@@ -12,7 +12,7 @@ const functionBuilder = (highMemory = false) =>
 			'4GB' :
 			'256MB',
 		minInstances: 1,
-		timeoutSeconds: 60
+		timeoutSeconds: highMemory ? 540 : 60
 	});
 
 const database = memoize(highMemory => functionBuilder(highMemory).database);
