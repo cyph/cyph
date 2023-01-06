@@ -1,1 +1,6 @@
-{}
+{
+	"GHSA-4943-9vgg-gr5r": {
+		"active": true,
+		"notes": "Mitigated by use of Delta object format rather than unsanitized HTML"
+	}
+}
