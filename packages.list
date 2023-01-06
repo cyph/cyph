@@ -229,6 +229,7 @@ animated-scroll-to
 animejs
 assert-browserify
 babel-loader
+better-npm-audit
 bitpay.js
 blurhash
 bourbon
