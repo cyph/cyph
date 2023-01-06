@@ -396,7 +396,7 @@ prettier-plugin-java
 primeng
 promise-semaphore
 prompt
-protobufjs
+protobufjs@github:buu700/protobufjs-tmp
 protobufjs-cli@github:buu700/protobufjs-cli-tmp
 protractor
 pulltorefreshjs
