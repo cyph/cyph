@@ -24,7 +24,13 @@ export const sendMessageInternal = async (
 	const ref = database.ref(`${namespace}/users/${username}/messagingTokens`);
 
 	const tokenPlatforms = (await ref.once('value')).val() || {};
-	const tokens = Object.keys(tokenPlatforms);
+	const tokens =
+		/* For now, make special temporary exception to receive notifications in desktop app */
+		username === 'cyph' || username === 'josh' || username === 'ryan' ?
+			Object.keys(tokenPlatforms) :
+			Object.keys(tokenPlatforms).filter(
+				token => tokenPlatforms[token] !== 'electron'
+			);
 
 	if (tokens.length < 1) {
 		return false;
@@ -73,22 +79,38 @@ export const sendMessageInternal = async (
 		}
 	};
 
-	return (
-		await Promise.all(
-			/* For now, make special temporary exception to receive notifications in desktop app */
-			(username === 'cyph' || username === 'josh' || username === 'ryan' ?
-				tokens :
-				tokens.filter(token => tokenPlatforms[token] !== 'electron')
-			).map(async token => {
-				try {
-					await messaging.send({...message, token});
-					return true;
-				}
-				catch {
-					await ref.child(token).remove();
-					return false;
-				}
-			})
-		)
-	).reduce((a, b) => a || b, false);
+	const tokenChunkSize = 500;
+	const tokenGroups = tokens.reduce(
+		(chunks, token) =>
+			chunks[chunks.length - 1].length >= tokenChunkSize ?
+				[...chunks, [token]] :
+				[...chunks.slice(0, -1), [...chunks[chunks.length - 1], token]],
+		[[]]
+	);
+
+	let success = false;
+
+	for (const tokenGroup of tokenGroups) {
+		const {responses, successCount} = await messaging.sendMulticast({
+			...message,
+			tokens: tokenGroup
+		});
+
+		if (responses.length !== tokenGroup.length) {
+			throw new Error('Invalid sendMulticast response.');
+		}
+
+		for (let i = 0; i < responses.length; ++i) {
+			const response = responses[i];
+			const token = tokenGroup[i];
+
+			if (!response.success) {
+				await ref.child(token).remove();
+			}
+		}
+
+		success = success || successCount > 0;
+	}
+
+	return success;
 };
