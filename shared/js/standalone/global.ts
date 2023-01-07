@@ -7,8 +7,15 @@
 if (typeof self === 'undefined' && typeof global !== 'undefined') {
 	(<any> global).self = global;
 }
-else {
+
+(<any> self).IS_WEB =
+	typeof IS_WEB !== 'undefined' ? IS_WEB : typeof window === 'object';
+
+if (typeof global === 'undefined') {
 	(<any> self).global = self;
+}
+else if (typeof window === 'undefined') {
+	(<any> self).window = self;
 }
 
 try {
@@ -20,9 +27,6 @@ try {
 	}
 }
 catch {}
-
-(<any> self).IS_WEB =
-	typeof IS_WEB !== 'undefined' ? IS_WEB : typeof window === 'object';
 
 for (const k of [
 	'accountPrimaryTheme',
