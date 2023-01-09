@@ -283,7 +283,7 @@ firebase
 firebase-admin
 firebase-functions
 firebase-server
-firebase-tools@github:buu700/firebase-tools-tmp
+firebase-tools
 fork-ts-checker-webpack-plugin
 glob
 glob-promise
