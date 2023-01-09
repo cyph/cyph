@@ -277,7 +277,6 @@ falcon-crypto
 fast-crc32c
 fast-sha512
 faye-websocket
-fcm-node
 fg-loadcss
 file-saver
 firebase
