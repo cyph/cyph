@@ -612,7 +612,6 @@ const dockerBase64Files = s =>
 	s.replace(
 		/BASE64_FILES/,
 		[
-			'.nsprc',
 			'commands/.bashrc',
 			'commands/getlibs.sh',
 			'commands/updatedockerimage.sh',
