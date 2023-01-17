@@ -3,8 +3,9 @@
 
 eval "$(parseArgs \
 	--opt-bool block-failing-build \
-	--opt-bool cleanup \
+	--opt-bool compress-images \
 	--opt-bool gc \
+	--opt-bool skip-cleanup \
 	--opt-bool skip-push \
 	--pos comment \
 )"
@@ -14,12 +15,13 @@ cd $(cd "$(dirname "$0")" ; pwd)/..
 
 
 blockFailingBuild="$(getBoolArg ${_arg_block_failing_build})"
+compressImages="$(getBoolArg ${_arg_compress_images})"
 gc="$(getBoolArg ${_arg_gc})"
+skipCleanup="$(getBoolArg ${_arg_skip_cleanup})"
 skipPush="$(getBoolArg ${_arg_skip_push})"
 
-noCleanup=''
-if [ "${_arg_cleanup}" == 'off' ] ; then
-	noCleanup=true
+if [ "${compressImages}" ] ; then
+	skipCleanup=''
 fi
 
 comment="${_arg_comment}"
@@ -46,7 +48,7 @@ chmod -R 700 .
 git add .
 git commit --no-verify -S -a -m "${comment}"
 
-if [ "${noCleanup}" ] ; then
+if [ "${skipCleanup}" ] ; then
 	gitPush
 	exit
 fi
@@ -74,19 +76,21 @@ done
 
 cyph-prettier --write '**/*.{css,html,java,js,json,scss,ts,tsx,xml}'
 
-find shared/assets/img -type f \( -name '*.jpg' -or -name '*.png' \) -exec bash -c '
-	curl -sf "$(node -e "console.log(JSON.parse('"'"'$(
-		curl -s --user api:$(cat ~/.cyph/tinypng.key) --data-binary "@{}" https://api.tinify.com/shrink
-	)'"'"').output.url)")" -o "{}.tinypng"
+if [ "${compressImages}" ] ; then
+	find shared/assets/img -type f \( -name '*.jpg' -or -name '*.png' \) -exec bash -c '
+		curl -sf "$(node -e "console.log(JSON.parse('"'"'$(
+			curl -s --user api:$(cat ~/.cyph/tinypng.key) --data-binary "@{}" https://api.tinify.com/shrink
+		)'"'"').output.url)")" -o "{}.tinypng"
 
-	originalSize="$(stat --printf="%s" {})"
-	newSize="$(stat --printf="%s" {}.tinypng)"
-	if [ "$(expr "${originalSize}" - "${newSize}")" -gt 256 ] ; then
-		mv {}.tinypng {}
-	else
-		rm {}.tinypng
-	fi
-' \;
+		originalSize="$(stat --printf="%s" {})"
+		newSize="$(stat --printf="%s" {}.tinypng)"
+		if [ "$(expr "${originalSize}" - "${newSize}")" -gt 256 ] ; then
+			mv {}.tinypng {}
+		else
+			rm {}.tinypng
+		fi
+	' \;
+fi
 
 cd shared/proto
 for d in $(ls | grep -vP '^(bundles|index.proto)$') ; do
