@@ -1784,25 +1784,21 @@ export class AccountDatabaseService extends BaseProvider {
 			);
 		};
 
-		const [
-			{boxMinimumAlgorithm, signMinimumAlgorithm},
-			boxAlgorithmPriorityOrder,
-			signAlgorithmPriorityOrder
-		] = await Promise.all([
-			potassiumAlgorithmDeprecation,
-			this.potassiumService.box.algorithmPriorityOrder,
-			this.potassiumService.sign.algorithmPriorityOrder
-		]);
+		const [boxAlgorithmPriorityOrder, signAlgorithmPriorityOrder] =
+			await Promise.all([
+				this.potassiumService.box.algorithmPriorityOrder,
+				this.potassiumService.sign.algorithmPriorityOrder
+			]);
 
 		validateAlgorithmSupport(
 			keyring.boxPublicKeys,
 			boxAlgorithmPriorityOrder,
-			boxMinimumAlgorithm
+			potassiumAlgorithmDeprecation.boxMinimumAlgorithm
 		);
 		validateAlgorithmSupport(
 			keyring.signPublicKeys,
 			signAlgorithmPriorityOrder,
-			signMinimumAlgorithm
+			potassiumAlgorithmDeprecation.signMinimumAlgorithm
 		);
 
 		return keyring;

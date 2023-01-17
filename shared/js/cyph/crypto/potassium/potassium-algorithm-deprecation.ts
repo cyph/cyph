@@ -1,11 +1,13 @@
 import {PotassiumData} from '../../../proto';
-import {getTimestamp} from '../../util/time';
 
 /** On 2025-01-01, support for old algorithms will be dropped. */
 const currentAlgorithmsEOL = 1735689600000;
 
+/* eslint-disable-next-line @typescript-eslint/tslint/config */
+const timestamp = Date.now();
+
 /** Indicates minimum supported version of each algorithm. */
-export const potassiumAlgorithmDeprecation = getTimestamp().then(timestamp => ({
+export const potassiumAlgorithmDeprecation = {
 	boxMinimumAlgorithm:
 		timestamp > currentAlgorithmsEOL ?
 			PotassiumData.BoxAlgorithms.NativeV2 :
@@ -20,4 +22,4 @@ export const potassiumAlgorithmDeprecation = getTimestamp().then(timestamp => ({
 		timestamp > currentAlgorithmsEOL ?
 			PotassiumData.SignAlgorithms.NativeV2Hardened :
 			PotassiumData.SignAlgorithms.NativeV1
-}));
+};
