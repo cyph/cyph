@@ -529,6 +529,14 @@ export const processUserCertSignOutput = async ({
 	projectId,
 	usernames
 }) => {
+	/* Must include updated issuance history + user certs */
+	if (
+		certifiedMessages.length < 2 ||
+		certifiedMessages.length !== usernames.length + 1
+	) {
+		return;
+	}
+
 	const {
 		issuanceHistoryParentPath,
 		issuanceHistoryPath,
