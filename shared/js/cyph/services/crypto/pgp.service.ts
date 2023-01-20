@@ -424,7 +424,6 @@ export class PGPService extends BaseProvider {
 								const detached = signature !== undefined;
 
 								const verifyBaseOptions = () => ({
-									expectSigned: true,
 									signature,
 									verificationKeys: <OpenPGP.PublicKey[]> (
 										publicKeys
