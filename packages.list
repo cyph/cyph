@@ -373,7 +373,6 @@ ngx-captcha
 ngx-contextmenu
 ngx-image-cropper
 ngx-lottie
-ngx-material-timepicker
 ngx-progressbar
 ngx-scrollbar
 ngx-sharebuttons
