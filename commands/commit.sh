@@ -5,6 +5,7 @@ eval "$(parseArgs \
 	--opt-bool block-failing-build \
 	--opt-bool compress-images \
 	--opt-bool gc \
+	--opt-bool one-commit \
 	--opt-bool skip-cleanup \
 	--opt-bool skip-push \
 	--pos comment \
@@ -17,6 +18,7 @@ cd $(cd "$(dirname "$0")" ; pwd)/..
 blockFailingBuild="$(getBoolArg ${_arg_block_failing_build})"
 compressImages="$(getBoolArg ${_arg_compress_images})"
 gc="$(getBoolArg ${_arg_gc})"
+oneCommit="$(getBoolArg ${_arg_one_commit})"
 skipCleanup="$(getBoolArg ${_arg_skip_cleanup})"
 skipPush="$(getBoolArg ${_arg_skip_push})"
 
@@ -116,7 +118,12 @@ find \
 -type f -not -name '*.sh' -exec sed -i 's/\s*$//g' {} \;
 
 chmod -R 700 .
-git commit --no-verify -S -a -m "cleanup: ${comment}"
+
+if [ "${oneCommit}" ] ; then
+	git commit --amend --no-edit --no-verify -S -a
+else
+	git commit --no-verify -S -a -m "cleanup: ${comment}"
+fi
 
 if [ "${blockFailingBuild}" ] ; then
 	./commands/build.sh || fail

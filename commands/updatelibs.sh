@@ -70,4 +70,4 @@ cyph-prettier --write firebase/functions/package-lock.json || fail
 # 	go get -u ./...
 # ' \;
 
-./commands/commit.sh --gc --skip-push "${@}" updatelibs
+./commands/commit.sh --gc --one-commit --skip-push "${@}" updatelibs
