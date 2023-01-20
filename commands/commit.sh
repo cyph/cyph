@@ -113,7 +113,7 @@ find \
 	shared/css \
 	shared/js \
 	shared/proto \
--type f -exec sed -i 's/\s*$//g' {} \;
+-type f -not -name '*.sh' -exec sed -i 's/\s*$//g' {} \;
 
 chmod -R 700 .
 git commit --no-verify -S -a -m "cleanup: ${comment}"
