@@ -21,23 +21,47 @@ export class AccountUserRatingComponent extends BaseProvider {
 	private readonly uiMaxRating = 5;
 
 	/** Array of star icons based on rating. */
-	public readonly getStars = memoize((rating: number) : [
-		'star' | 'star_border' | 'star_half',
-		'star' | 'star_border' | 'star_half',
-		'star' | 'star_border' | 'star_half',
-		'star' | 'star_border' | 'star_half',
-		'star' | 'star_border' | 'star_half'
-	] => {
-		rating *= this.ratingFactor;
+	public readonly getStars = memoize(
+		(
+			rating: number
+		) : [
+			'star' | 'star_border' | 'star_half',
+			'star' | 'star_border' | 'star_half',
+			'star' | 'star_border' | 'star_half',
+			'star' | 'star_border' | 'star_half',
+			'star' | 'star_border' | 'star_half'
+		] => {
+			rating *= this.ratingFactor;
 
-		return [
-			rating >= 1 ? 'star' : rating >= 0.5 ? 'star_half' : 'star_border',
-			rating >= 2 ? 'star' : rating >= 1.5 ? 'star_half' : 'star_border',
-			rating >= 3 ? 'star' : rating >= 2.5 ? 'star_half' : 'star_border',
-			rating >= 4 ? 'star' : rating >= 3.5 ? 'star_half' : 'star_border',
-			rating >= 5 ? 'star' : rating >= 4.5 ? 'star_half' : 'star_border'
-		];
-	});
+			return [
+				rating >= 1 ?
+					'star' :
+				rating >= 0.5 ?
+					'star_half' :
+					'star_border',
+				rating >= 2 ?
+					'star' :
+				rating >= 1.5 ?
+					'star_half' :
+					'star_border',
+				rating >= 3 ?
+					'star' :
+				rating >= 2.5 ?
+					'star_half' :
+					'star_border',
+				rating >= 4 ?
+					'star' :
+				rating >= 3.5 ?
+					'star_half' :
+					'star_border',
+				rating >= 5 ?
+					'star' :
+				rating >= 4.5 ?
+					'star_half' :
+					'star_border'
+			];
+		}
+	);
 
 	/** @see numberToString */
 	public readonly numberToString = numberToString;

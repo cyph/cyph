@@ -8,8 +8,8 @@
 	[cyphDropZone]="
 		false &&
 		(appService.chatRootState | await) === chatRootStates.chat &&
-			chat?.state === chatStates.chat &&
-			(chatService.uiReady | await) === true
+		chat?.state === chatStates.chat &&
+		(chatService.uiReady | await) === true
 	"
 	[cyphDropZoneClass]="false"
 	(fileDrop)="fileTransferService.send($event)"
