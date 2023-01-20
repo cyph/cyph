@@ -174,7 +174,7 @@ if [ ! "${htmlOnly}" ] && [ ! "${fast}" ] ; then
 	cp ../../../npmauditignore.json ./.nsprc
 	npmAuditOutput="$(better-npm-audit audit)"
 	if (( $? )) ; then
-		output="${output}${npmAuditOutput}"
+		output="${output}${npmAuditOutput}$(npm audit)"
 	fi
 	rm .nsprc
 	cd ../../..
