@@ -247,7 +247,7 @@ export class Config {
 
 	/** Syncfusion license key. */
 	public readonly syncfusionLicenseKey: string =
-		'ORg4AjUWIQA/Gnt2VVhiQlFadVlJXGFWfVJpTGpQdk5xdV9DaVZUTWY/P1ZhSXxRdkNgWX1cdHNWR2lUWEw=';
+		'ORg4AjUWIQA/Gnt2VVhkQlFacltJXGFWfVJpTGpQdk5xdV9DaVZUTWY/P1ZhSXxQdkRhWX1ecHVURGBfUkE=';
 
 	/** Mapping of WebSign redirect hostnames to routes. */
 	public readonly webSignRedirects: Record<string, string[]> = {
