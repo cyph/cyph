@@ -1,6 +1,6 @@
 import {AsyncPipe} from '@angular/common';
 import {ChangeDetectorRef, OnDestroy, Pipe, PipeTransform} from '@angular/core';
-import {Observable} from 'rxjs';
+import {Observable, Subscribable} from 'rxjs';
 import {Async} from '../async-type';
 
 /** Replaces the built-in AsyncPipe's "empty" value of null with undefined. */
@@ -21,11 +21,14 @@ export class AwaitPipe implements OnDestroy, PipeTransform {
 
 	/** @inheritDoc */
 	/* eslint-disable-next-line no-null/no-null */
-	public transform<T> (obj: Async<T | undefined | null>) : T | undefined {
+	public transform<T> (
+		obj: Async<T | undefined | null> | Subscribable<T | undefined | null>
+	) : T | undefined {
 		const retVal =
-			obj instanceof Promise ?
-				this.asyncPipe.transform(obj) :
-			obj instanceof Observable ?
+			obj instanceof Promise ||
+			obj instanceof Observable ||
+			/* eslint-disable-next-line eqeqeq, no-null/no-null */
+			(typeof obj === 'object' && obj != null && 'subscribe' in obj) ?
 				this.asyncPipe.transform(obj) :
 				obj;
 
