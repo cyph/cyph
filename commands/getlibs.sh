@@ -346,9 +346,6 @@ done
 # Workaround for https://github.com/angular/angular-cli/issues/22137
 echo 'MTY0LDE3MWMxNjQsMTcwCjwgICAgICAgICBwbHVnaW5zLnB1c2goWwo8ICAgICAgICAgICAgIHJlcXVpcmUoJ0BiYWJlbC9wbHVnaW4tdHJhbnNmb3JtLXJ1bnRpbWUnKS5kZWZhdWx0LAo8ICAgICAgICAgICAgIHsKPCAgICAgICAgICAgICAgICAgdXNlRVNNb2R1bGVzOiB0cnVlLAo8ICAgICAgICAgICAgICAgICB2ZXJzaW9uOiByZXF1aXJlKCdAYmFiZWwvcnVudGltZS9wYWNrYWdlLmpzb24nKS52ZXJzaW9uLAo8ICAgICAgICAgICAgICAgICBhYnNvbHV0ZVJ1bnRpbWU6IHBhdGguZGlybmFtZShyZXF1aXJlLnJlc29sdmUoJ0BiYWJlbC9ydW50aW1lL3BhY2thZ2UuanNvbicpKSwKPCAgICAgICAgICAgICB9LAo8ICAgICAgICAgXSk7Ci0tLQo+ICAgICAgICAgcGx1Z2lucy5wdXNoKAo+ICAgICAgICAgICAgIFsKPiAgICAgICAgICAgICAgICAgcmVxdWlyZSgnQGJhYmVsL3BsdWdpbi10cmFuc2Zvcm0tcnVudGltZScpLmRlZmF1bHQsCj4gICAgICAgICAgICAgICAgIHsgcmVnZW5lcmF0b3I6IGZhbHNlIH0sCj4gICAgICAgICAgICAgXSwKPiAgICAgICAgICAgICByZXF1aXJlKCdAYmFiZWwvcGx1Z2luLWV4dGVybmFsLWhlbHBlcnMnKS5kZWZhdWx0LAo+ICAgICAgICAgKTsK' | base64 --decode | patch @angular-devkit/build-angular/src/babel/presets/application.js
 
-# Temporary workaround for simple btc rxjs version difference
-rm -rf simplebtc/node_modules &> /dev/null
-
 # Temporary workaround for unwanted font import
 for f in $(rg -l '@import' @syncfusion | rg '\.s?css$') ; do
 	cat ${f} |
