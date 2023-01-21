@@ -148,7 +148,9 @@ export const appointmentInvite = onCall(
 					!singleRecipient ?
 						'' :
 						` with ${
-							!singleRecipient.name ?
+							singleRecipient.username ?
+								`@${singleRecipient.username}` :
+								!singleRecipient.name ?
 								singleRecipient.email ||
 								singleRecipient.phoneNumber :
 								`${singleRecipient.name} <${
