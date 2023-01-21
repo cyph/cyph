@@ -5,6 +5,7 @@ import {
 	ElementRef,
 	EventEmitter,
 	Input,
+	OnDestroy,
 	Output
 } from '@angular/core';
 import * as $ from 'jquery';
@@ -39,7 +40,7 @@ import {sleep, waitForIterable} from '../../util/wait';
 })
 export class ChatMessageBoxComponent
 	extends BaseProvider
-	implements AfterViewInit
+	implements AfterViewInit, OnDestroy
 {
 	/** @ignore */
 	private readonly $textarea: Promise<JQuery> = waitForIterable(() =>
@@ -200,6 +201,14 @@ export class ChatMessageBoxComponent
 		if (this.autofocus) {
 			$textarea.trigger('focus');
 		}
+	}
+
+	/** @inheritDoc */
+	public async ngOnDestroy () : Promise<void> {
+		super.ngOnDestroy();
+
+		const $textarea = await this.$textarea;
+		tabIndent.remove($textarea[0]);
 	}
 
 	/** Scrolls down and focuses message box. */
