@@ -241,7 +241,7 @@
 			<input
 				#numberInputElement
 				matInput
-				[ngModel]="o.valueNumber.toFixed(8)"
+				[ngModel]="o.valueNumber?.toFixed(8) || ''"
 				(keyup)="
 					o.valueNumber = toFloat(
 						numberInputElement.value || '0',
