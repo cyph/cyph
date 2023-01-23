@@ -207,9 +207,11 @@ export const generateUserCertSignInput = async ({
 			};
 		}
 
-		const lastIssuanceTimestampLocal = parseFloat(
-			fs.readFileSync(lastIssuanceTimestampPath).toString()
-		);
+		const lastIssuanceTimestampLocal = fs.existsSync(
+			lastIssuanceTimestampPath
+		) ?
+			parseFloat(fs.readFileSync(lastIssuanceTimestampPath).toString()) :
+			undefined;
 
 		const lastIssuanceTimestampRemote = (
 			await lastIssuanceTimestampRef.once('value')
@@ -223,8 +225,9 @@ export const generateUserCertSignInput = async ({
 		}
 
 		const lastIssuanceTimestamp =
-			isNaN(lastIssuanceTimestampRemote) ||
-			lastIssuanceTimestampLocal >= lastIssuanceTimestampRemote ?
+			!isNaN(lastIssuanceTimestampLocal) &&
+			(isNaN(lastIssuanceTimestampRemote) ||
+				lastIssuanceTimestampLocal >= lastIssuanceTimestampRemote) ?
 				lastIssuanceTimestampLocal :
 			(await readInput(
 					`Trust AGSE-PKI history from server with timestamp ${new Date(
