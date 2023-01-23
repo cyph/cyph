@@ -2,7 +2,6 @@
 
 import {Injectable} from '@angular/core';
 import memoize from 'lodash-es/memoize';
-import throttle from 'lodash-es/throttle';
 import {BehaviorSubject, Observable, Subject, timer} from 'rxjs';
 import {catchError, switchMap} from 'rxjs/operators';
 import {
@@ -271,11 +270,7 @@ export class CryptocurrencyService extends BaseProvider {
 			'CryptocurrencyService/exchangeRates/BTC';
 
 		return {
-			getExchangeRates: <
-				() => Promise<{
-					[currencyCode: string]: number;
-				}>
-			> throttle(async () => getExchangeRates(bitcoinCash), 600000),
+			getExchangeRates: async () => getExchangeRates(bitcoinCash),
 			getItem: async () : Promise<Record<string, number>> => {
 				try {
 					return dynamicDeserialize(
