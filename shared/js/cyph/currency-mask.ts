@@ -1,4 +1,8 @@
-import {createNumberMask} from 'text-mask-addons';
+import IMask from 'imask';
 
 /** Currency text mask. */
-export const currencyMask = {mask: createNumberMask({allowDecimal: true})};
+export const currencyMask: IMask.MaskedNumberOptions = {
+	mask: Number,
+	normalizeZeros: true,
+	scale: 2
+};

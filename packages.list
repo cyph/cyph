@@ -223,8 +223,8 @@
 @yellowspot/ng-truncate
 abort-controller
 angular-fittext
+angular-imask
 angular2-draggable
-angular2-text-mask
 animate.css
 animated-scroll-to
 animejs
@@ -303,6 +303,7 @@ https-browserify
 husky
 ical-generator
 image-type
+imask
 intro.js
 ipfs-core
 ipfs-repo
@@ -447,7 +448,6 @@ tab-indent
 tailwindcss
 terser
 terser-webpack-plugin@^5
-text-mask-addons
 textillate
 ts-loader
 ts-node

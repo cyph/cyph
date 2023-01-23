@@ -20,7 +20,7 @@ import {MatSliderModule} from '@angular/material/slider';
 import {MatTooltipModule} from '@angular/material/tooltip';
 import {BrowserModule} from '@angular/platform-browser';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
-import {TextMaskModule} from 'angular2-text-mask';
+import {IMaskModule} from 'angular-imask';
 import lottiePlayer from 'lottie-web';
 import {NgxCaptchaModule} from 'ngx-captcha';
 import {ImageCropperModule} from 'ngx-image-cropper';
@@ -99,6 +99,7 @@ export const lottiePlayerFactory = () => {
 		FormsModule,
 		HttpClientModule,
 		ImageCropperModule,
+		IMaskModule,
 		LottieModule,
 		MarkdownComponent,
 		MatAutocompleteModule,
@@ -122,7 +123,6 @@ export const lottiePlayerFactory = () => {
 		RouterLinkDirective,
 		SearchBarComponent,
 		SpinnerComponent,
-		TextMaskModule,
 		TranslateDirective
 	],
 	imports: [
@@ -133,6 +133,7 @@ export const lottiePlayerFactory = () => {
 		FormsModule,
 		HttpClientModule,
 		ImageCropperModule,
+		IMaskModule,
 		LottieModule.forRoot({player: lottiePlayerFactory}),
 		MatAutocompleteModule,
 		MatButtonModule,
@@ -150,8 +151,7 @@ export const lottiePlayerFactory = () => {
 		MatSlideToggleModule,
 		MatTooltipModule,
 		NgxCaptchaModule,
-		ReactiveFormsModule,
-		TextMaskModule
+		ReactiveFormsModule
 	],
 	providers: sharedModuleProviders
 })

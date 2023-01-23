@@ -177,6 +177,7 @@
 				matInput
 				[(ngModel)]="o.valueString"
 				(ngModelChange)="changeForm.emit()"
+				[imask]="getMask(o)"
 				[matTooltip]="o.tooltip"
 				[matTooltipDisabled]="!o.tooltip"
 				[name]="getName(o)"
@@ -184,7 +185,6 @@
 				[placeholder]="o.label"
 				[readonly]="isDisabled"
 				[required]="o.required"
-				[textMask]="getMask(o)"
 				type="email"
 			/>
 		</mat-form-field>
@@ -223,9 +223,9 @@
 			<mat-form-field>
 				<input
 					matInput
-					[textMask]="getMask(o)"
 					[(ngModel)]="o.valueString"
 					(ngModelChange)="changeForm.emit()"
+					[imask]="getMask(o)"
 					[matTooltip]="o.tooltip"
 					[matTooltipDisabled]="!o.tooltip"
 					[name]="getName(o)"
@@ -251,6 +251,7 @@
 					numberInputElement.value = o.valueNumber?.toFixed(8) || '';
 					changeForm.emit()
 				"
+				[imask]="getMask(o)"
 				[matTooltip]="o.tooltip"
 				[matTooltipDisabled]="!o.tooltip"
 				[max]="o.max"
@@ -260,7 +261,6 @@
 				[readonly]="isDisabled"
 				[required]="o.required"
 				[step]="o.step"
-				[textMask]="getMask(o)"
 				type="number"
 			/>
 		</mat-form-field>
@@ -270,13 +270,13 @@
 				matInput
 				[(ngModel)]="o.valueString"
 				(ngModelChange)="changeForm.emit()"
+				[imask]="getMask(o)"
 				[matTooltip]="o.tooltip"
 				[matTooltipDisabled]="!o.tooltip"
 				[name]="getName(o)"
 				[placeholder]="o.label"
 				[readonly]="isDisabled"
 				[required]="o.required"
-				[textMask]="getMask(o)"
 				[type]="
 					isDisabled || (hidePassword(o) | await) === false ?
 						'text' :
@@ -384,13 +384,13 @@
 				matInput
 				[(ngModel)]="o.valueString"
 				(ngModelChange)="changeForm.emit()"
+				[imask]="getMask(o)"
 				[matTooltip]="o.tooltip"
 				[matTooltipDisabled]="!o.tooltip"
 				[name]="getName(o)"
 				[placeholder]="o.label"
 				[readonly]="isDisabled"
 				[required]="o.required"
-				[textMask]="getMask(o)"
 				type="time"
 			/>
 		</mat-form-field>
@@ -400,6 +400,7 @@
 				matInput
 				[(ngModel)]="o.valueString"
 				(ngModelChange)="changeForm.emit()"
+				[imask]="getMask(o)"
 				[matTooltip]="o.tooltip"
 				[matTooltipDisabled]="!o.tooltip"
 				[name]="getName(o)"
@@ -407,7 +408,6 @@
 				[readonly]="isDisabled"
 				[required]="o.required"
 				type="url"
-				[textMask]="getMask(o)"
 			/>
 		</mat-form-field>
 	</div>

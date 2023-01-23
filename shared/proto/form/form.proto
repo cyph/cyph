@@ -47,7 +47,7 @@ message Form {
 		string label = 2;
 
 		/** Input mask (serialized with MessagePack). */
-		bytes mask = 3;
+		bytes mask = 20;
 
 		/** Maximum numerical value. */
 		double max = 4;

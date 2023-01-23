@@ -52,9 +52,6 @@ export class DynamicFormComponent
 	/** @ignore */
 	private readonly maskCache = new Map<Uint8Array, any>();
 
-	/** @ignore */
-	private readonly maskDefaultKey = new Uint8Array(0);
-
 	/** @see Mexp */
 	private readonly mexp = new Mexp();
 
@@ -348,12 +345,12 @@ export class DynamicFormComponent
 
 	/** Decode mask bytes. */
 	public getMask ({mask}: Form.IElement) : any {
-		const maskBytes = !mask || mask.length < 1 ? this.maskDefaultKey : mask;
+		if (!mask || mask.length < 1) {
+			return undefined;
+		}
 
-		return getOrSetDefault(this.maskCache, maskBytes, () =>
-			maskBytes !== this.maskDefaultKey ?
-				dynamicDeserialize(maskBytes) :
-				{mask: false}
+		return getOrSetDefault(this.maskCache, mask, () =>
+			dynamicDeserialize(mask)
 		);
 	}
 

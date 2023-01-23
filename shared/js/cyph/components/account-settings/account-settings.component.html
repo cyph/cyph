@@ -269,10 +269,10 @@
 										modified: {realUsername: $event}
 									})
 								"
+								[imask]="usernameMask"
 								[pattern]="
 									(data | await)?.usernamePattern || ''
 								"
-								[textMask]="usernameMask"
 								name="realUsername"
 								placeholder="Username Capitalization"
 								required

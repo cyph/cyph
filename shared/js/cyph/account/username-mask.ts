@@ -1,5 +1,9 @@
+import IMask from 'imask';
+
 /** Username text mask. */
-export const usernameMask: any = {
-	guide: false,
-	mask: new Array(50).fill(/[0-9A-Za-z_]/)
+export const usernameMask: IMask.MaskedPatternOptions = {
+	definitions: {
+		'#': /[0-9A-Za-z_]/
+	},
+	mask: new Array(50).fill('#').join('')
 };
