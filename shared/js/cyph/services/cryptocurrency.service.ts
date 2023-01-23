@@ -201,7 +201,7 @@ export class CryptocurrencyService extends BaseProvider {
 			return this.getSimpleBTCWallet(wallet)
 				.watchNewTransactions()
 				.pipe(
-					catchError(err => {
+					catchError((err: unknown) => {
 						debugLogError(() => ({
 							watchNewTransactions: {
 								blockchainFetchError: err
@@ -226,7 +226,7 @@ export class CryptocurrencyService extends BaseProvider {
 
 			const transactionsObservable: Observable<Transaction[]> =
 				simpleBTCWallet.watchTransactionHistory().pipe(
-					catchError(err => {
+					catchError((err: unknown) => {
 						debugLogError(() => ({
 							watchTransactionHistory: {
 								blockchainFetchError: err
