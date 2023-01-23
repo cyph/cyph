@@ -337,12 +337,6 @@ rm -rf google-auth-library/node_modules/fast-text-encoding &> /dev/null
 echo 'Y29uc3Qge2NyYzMyY30gPSByZXF1aXJlKCdAbm9kZS1ycy9jcmMzMicpOwoKbW9kdWxlLmV4cG9ydHMgPSB7CiAgY2FsY3VsYXRlOiBjcmMzMmMsCn07Cg==' | base64 --decode > fast-crc32c/impls/rs_crc32c.js
 echo 'MWEyLDMKPiAgIGNvbnN0IG9zID0gcmVxdWlyZSgnb3MnKTsKPiAgIGNvbnN0IGlzWDg2ID0gbmV3IFNldChbJ2lhMzInLCAneDMyJywgJ3g2NCddKS5oYXMob3MuYXJjaCgpKTsKM2M1LDYKPCAgICAgJy4vaW1wbHMvc3NlNF9jcmMzMmMnLAotLS0KPiAgICAgLi4uKGlzWDg2ID8gWycuL2ltcGxzL3NzZTRfY3JjMzJjJ10gOiBbXSksCj4gICAgICcuL2ltcGxzL3JzX2NyYzMyYycsCg==' | base64 --decode | patch fast-crc32c/loader.js
 
-# Temporary workaround for https://github.com/bugwheels94/math-expression-evaluator/issues/66
-for f in $(rg -lg '*.d.ts' 'export [^\s]+ = ' math-expression-evaluator) ; do
-	cat "${f}" | perl -pe 's/export ([^\s]+) = /export type \1 = /g' > "${f}.new"
-	mv "${f}.new" "${f}"
-done
-
 # Workaround for https://github.com/angular/angular-cli/issues/22137
 echo 'MTY0LDE3MWMxNjQsMTcwCjwgICAgICAgICBwbHVnaW5zLnB1c2goWwo8ICAgICAgICAgICAgIHJlcXVpcmUoJ0BiYWJlbC9wbHVnaW4tdHJhbnNmb3JtLXJ1bnRpbWUnKS5kZWZhdWx0LAo8ICAgICAgICAgICAgIHsKPCAgICAgICAgICAgICAgICAgdXNlRVNNb2R1bGVzOiB0cnVlLAo8ICAgICAgICAgICAgICAgICB2ZXJzaW9uOiByZXF1aXJlKCdAYmFiZWwvcnVudGltZS9wYWNrYWdlLmpzb24nKS52ZXJzaW9uLAo8ICAgICAgICAgICAgICAgICBhYnNvbHV0ZVJ1bnRpbWU6IHBhdGguZGlybmFtZShyZXF1aXJlLnJlc29sdmUoJ0BiYWJlbC9ydW50aW1lL3BhY2thZ2UuanNvbicpKSwKPCAgICAgICAgICAgICB9LAo8ICAgICAgICAgXSk7Ci0tLQo+ICAgICAgICAgcGx1Z2lucy5wdXNoKAo+ICAgICAgICAgICAgIFsKPiAgICAgICAgICAgICAgICAgcmVxdWlyZSgnQGJhYmVsL3BsdWdpbi10cmFuc2Zvcm0tcnVudGltZScpLmRlZmF1bHQsCj4gICAgICAgICAgICAgICAgIHsgcmVnZW5lcmF0b3I6IGZhbHNlIH0sCj4gICAgICAgICAgICAgXSwKPiAgICAgICAgICAgICByZXF1aXJlKCdAYmFiZWwvcGx1Z2luLWV4dGVybmFsLWhlbHBlcnMnKS5kZWZhdWx0LAo+ICAgICAgICAgKTsK' | base64 --decode | patch @angular-devkit/build-angular/src/babel/presets/application.js
 
