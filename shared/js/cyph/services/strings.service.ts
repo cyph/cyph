@@ -1617,6 +1617,15 @@ export class StringsService extends BaseProvider {
 	public readonly untitled = `Untitled`;
 
 	/** @see StringsService */
+	public readonly updateKeyrings = `Your keys are now being upgraded to the [most advanced quantum-resistant algorithms](${this.envService.homeUrl}blog/nist-pqc). The latest algorithms selected by NIST PQC provide greater performance and security guarantees.\n\nPlease wait while the upgrade completes. This is a one-time process, and shouldn't take longer than a minute or so.`;
+
+	/** @see StringsService */
+	public readonly updateKeyringsComplete = `Upgrade complete!`;
+
+	/** @see StringsService */
+	public readonly updateKeyringsTitle = `Cryptography Upgrade`;
+
+	/** @see StringsService */
 	public readonly upload = `Upload`;
 
 	/** @see StringsService */

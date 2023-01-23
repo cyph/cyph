@@ -1393,7 +1393,10 @@ export class AccountDatabaseService extends BaseProvider {
 	/* eslint-disable-next-line complexity */
 	public async getUserKeyrings (
 		username: string,
-		key: Uint8Array
+		key: Uint8Array,
+		updateKeyringsHandler?: (
+			updateComplete: Promise<{wasUpdated: boolean}>
+		) => void
 	) : Promise<{
 		private: IPrivateKeyring;
 		public: IPublicKeyring;
@@ -1473,6 +1476,9 @@ export class AccountDatabaseService extends BaseProvider {
 				currentSignAlgorithm.primary
 			] === undefined
 		) {
+			const updateComplete = resolvable<{wasUpdated: boolean}>();
+			updateKeyringsHandler?.(updateComplete);
+
 			const currentSigningKeyPair =
 				currentPrivateKeyring.signPrivateKeys?.[
 					await this.getPublicKeySigningAlgorithm(
@@ -1590,8 +1596,11 @@ export class AccountDatabaseService extends BaseProvider {
 				!(privateKeyringBytes instanceof Uint8Array) ||
 				typeof wasUpdated !== 'boolean'
 			) {
+				updateComplete.reject();
 				throw new Error('Invalid updateKeyrings response.');
 			}
+
+			updateComplete.resolve({wasUpdated});
 
 			privateKeyring = await deserialize(
 				PrivateKeyring,

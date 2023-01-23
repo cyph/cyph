@@ -587,7 +587,22 @@ export class AccountAuthService extends BaseProvider {
 				Promise.all([
 					this.accountDatabaseService.getUserKeyrings(
 						username,
-						loginData.symmetricKey
+						loginData.symmetricKey,
+						async updateComplete => {
+							await this.dialogService.alert({
+								content: this.stringsService.updateKeyrings,
+								markdown: true,
+								title: this.stringsService.updateKeyringsTitle
+							});
+
+							await updateComplete;
+
+							await this.dialogService.alert({
+								content:
+									this.stringsService.updateKeyringsComplete,
+								title: this.stringsService.updateKeyringsTitle
+							});
+						}
 					),
 					Promise.all([
 						midRegistration ||
