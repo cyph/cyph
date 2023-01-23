@@ -23,6 +23,7 @@ import {
 	NumberProto
 } from '../proto';
 import {asyncToObservable} from '../util/flatten-observable';
+import {debugLogError} from '../util/log';
 import {saveFile} from '../util/save-file';
 import {dynamicDeserialize, dynamicSerializeBytes} from '../util/serialization';
 import {AnalyticsService} from './analytics.service';
@@ -201,7 +202,13 @@ export class CryptocurrencyService extends BaseProvider {
 			return this.getSimpleBTCWallet(wallet)
 				.watchNewTransactions()
 				.pipe(
-					catchError(() => {
+					catchError(err => {
+						debugLogError(() => ({
+							watchNewTransactions: {
+								blockchainFetchError: err
+							}
+						}));
+
 						this.blockchainFetchError.next(true);
 						return new Subject<Transaction>();
 					})
@@ -220,7 +227,13 @@ export class CryptocurrencyService extends BaseProvider {
 
 			const transactionsObservable: Observable<Transaction[]> =
 				simpleBTCWallet.watchTransactionHistory().pipe(
-					catchError(() => {
+					catchError(err => {
+						debugLogError(() => ({
+							watchTransactionHistory: {
+								blockchainFetchError: err
+							}
+						}));
+
 						this.blockchainFetchError.next(true);
 						return asyncToObservable(
 							this.cache.transactionHistory.getItem(
@@ -349,7 +362,13 @@ export class CryptocurrencyService extends BaseProvider {
 					await exchangeRates.getExchangeRates()
 				);
 			}
-			catch {
+			catch (err) {
+				debugLogError(() => ({
+					convert: {
+						blockchainFetchError: err
+					}
+				}));
+
 				this.blockchainFetchError.next(true);
 				return exchangeRates.getItem();
 			}
@@ -475,7 +494,13 @@ export class CryptocurrencyService extends BaseProvider {
 				(await simpleBTCWallet.getBalance()).btc
 			);
 		}
-		catch {
+		catch (err) {
+			debugLogError(() => ({
+				getBalance: {
+					blockchainFetchError: err
+				}
+			}));
+
 			this.blockchainFetchError.next(true);
 			balance = await this.cache.balance.getItem(simpleBTCWallet);
 		}
@@ -504,7 +529,13 @@ export class CryptocurrencyService extends BaseProvider {
 				await simpleBTCWallet.getTransactionHistory()
 			);
 		}
-		catch {
+		catch (err) {
+			debugLogError(() => ({
+				getTransactionHistory: {
+					blockchainFetchError: err
+				}
+			}));
+
 			this.blockchainFetchError.next(true);
 			return this.cache.transactionHistory.getItem(simpleBTCWallet);
 		}
