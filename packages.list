@@ -394,6 +394,7 @@ pinch-zoom-js
 prettier
 prettier-plugin-java
 primeng
+prom-client
 promise-semaphore
 prompt
 protobufjs-cli@github:buu700/protobufjs-cli-tmp
