@@ -11,6 +11,8 @@ export JAVA_HOME="$(
 )"
 
 export PATH="$(
+	# Temporary workaround for https://github.com/nodejs/node/issues/46323
+	echo -n '/home/gibson/nodejs/bin:' ;
 	echo -n '/opt/local/bin:' ;
 	echo -n '/opt/local/sbin:' ;
 	echo -n '/usr/local/opt/go/libexec/bin:' ;
