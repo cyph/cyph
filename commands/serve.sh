@@ -18,6 +18,11 @@ site='cyph.app'
 prod=''
 prodBuild=''
 environment='local'
+reinstallNodeModules=''
+if [ "${1}" == '--reinstall-node-modules' ] ; then
+	reinstallNodeModules=true
+	shift
+fi
 if [ "${1}" == '--environment' ] ; then
 	shift
 	environment="${1}"
@@ -87,6 +92,20 @@ fi
 
 if [ "${localSeleniumServer}" ] ; then
 	log 'On the host OS, run `java -jar selenium-server-standalone-$VERSION.jar -role hub`'
+fi
+
+if [ "${reinstallNodeModules}" ] ; then
+	cd $(mktemp -d)
+	mkdir node_modules
+	cp ${dir}/shared/lib/js/package.json ./
+	npm install
+	cd node_modules
+	${dir}/commands/patchnodemodules.sh
+	cd ..
+	mv package.json package-lock.json node_modules/
+	sudo mv /node_modules /node_modules.old
+	sudo mv node_modules /
+	cd ${dir}
 fi
 
 if [ "${customBuild}" ] ; then
