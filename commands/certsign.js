@@ -82,7 +82,7 @@ if (isCLI) {
 	certSign(
 		process.argv[2],
 		true,
-		process.argv[3],
+		process.argv[3] || undefined,
 		process.argv[4] === '--upgrade-certs'
 	);
 }
