@@ -32,7 +32,6 @@ import '@webcomponents/custom-elements/custom-elements.min';
  * TYPESCRIPT HELPERS
  */
 
-import 'regenerator-runtime/runtime.js';
 import '../../assets/js/babel.js';
 
 import * as tslib from 'tslib';

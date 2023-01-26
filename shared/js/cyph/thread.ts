@@ -58,7 +58,6 @@ export class Thread<T> implements IThread<T> {
 		/* Global namespace normalization and TypeScript helpers */
 
 		importScripts('/assets/node_modules/core-js-bundle/minified.js');
-		importScripts('/assets/node_modules/regenerator-runtime/runtime.js');
 		importScripts('/assets/node_modules/tslib/tslib.js');
 		importScripts('/assets/js/babel.js');
 		importScripts('/assets/js/standalone/global.js');

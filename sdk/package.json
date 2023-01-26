@@ -33,7 +33,6 @@
 		"html-minifier": "*",
 		"mkdirp": "*",
 		"prompt": "*",
-		"regenerator-runtime": "*",
 		"terser": "*",
 		"tslib": "*",
 		"xhr2": "*"

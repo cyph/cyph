@@ -117,12 +117,6 @@ try {
 }
 catch {}
 
-try {
-	/* eslint-disable-next-line no-eval */
-	(<any> self).regeneratorRuntime = eval('require')('regenerator-runtime');
-}
-catch {}
-
 (<any> self).asyncImportsComplete = Promise.resolve();
 
 try {
