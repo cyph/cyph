@@ -289,11 +289,13 @@ EOM
 fi ; done
 cd ..
 
-cd tslint
-cat package.json | grep -v tslint-test-config-non-relative > package.json.new
-mv package.json.new package.json
-for i in {1..10} ; do npm install && break ; done || exit 1
-cd ..
+# Workarounds for tslint completed-docs bugs
+sed -i \
+	's|PropertySignature|PropertyDeclaration|g' \
+	tslint/lib/rules/completedDocsRule.js
+sed -i \
+	's| this.contentTags| this.contentTags \&\& this.contentTags|g' \
+	tslint/lib/rules/completed-docs/tagExclusion.js
 
 # for d in @google-cloud/* firebase-admin firebase-tools nativescript ; do
 # 	cd ${d}
