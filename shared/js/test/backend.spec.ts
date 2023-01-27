@@ -10,21 +10,13 @@ const getChannelID = async (cyphID: string, maxSleep: number) => {
 	}
 
 	/* eslint-disable-next-line @typescript-eslint/tslint/config */
-	return (
-		await fetch(
-			`https://master-dot-cyphme.appspot.com/channels/${cyphID}`,
-			{
-				body: Object.entries({channelID: getID()}).reduce(
-					(data, [k, v]) => {
-						data.append(k, v);
-						return data;
-					},
-					new FormData()
-				),
-				method: 'POST'
-			}
-		)
-	).text();
+	return fetch(`https://master-dot-cyphme.appspot.com/channels/${cyphID}`, {
+		body: Object.entries({channelID: getID()}).reduce((data, [k, v]) => {
+			data.append(k, v);
+			return data;
+		}, new FormData()),
+		method: 'POST'
+	}).then(async o => o.text());
 };
 
 describe('backend/channels', () => {

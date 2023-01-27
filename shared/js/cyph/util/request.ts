@@ -106,6 +106,7 @@ const baseRequest = <R, T>(
 					);
 
 					const res = await Promise.race([
+						/* eslint-disable-next-line @typescript-eslint/tslint/config */
 						new Promise<HttpResponse<T>>((resolve, reject) => {
 							/* eslint-disable-next-line rxjs/no-ignored-subscription */
 							req.subscribe({

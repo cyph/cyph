@@ -28,6 +28,7 @@ export class WindowWatcherService extends BaseProvider {
 
 	/** Indicates whether the window is currently visible. */
 	public readonly visibility = new BehaviorSubject<boolean>(
+		/* eslint-disable-next-line @typescript-eslint/tslint/config */
 		typeof document === 'undefined' || !document.hidden
 	);
 

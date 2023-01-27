@@ -605,7 +605,8 @@ export class AccountAuthService extends BaseProvider {
 						}
 					),
 					Promise.all([
-						midRegistration ||
+						midRegistration ?
+							true :
 							this.databaseService.hasItem(
 								`users/${username}/masterKeyUnconfirmed`
 							),
@@ -873,7 +874,7 @@ export class AccountAuthService extends BaseProvider {
 						o instanceof Uint8Array ?
 							[o] :
 						typeof o === 'object' &&
-							/* eslint-disable-next-line eqeqeq, no-null/no-null */
+							/* eslint-disable-next-line @typescript-eslint/tslint/config, eqeqeq, no-null/no-null */
 							o != null &&
 							'privateKey' in o ?
 							[

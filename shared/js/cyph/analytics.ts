@@ -16,6 +16,7 @@ export class Analytics {
 	 * of a Cyph URL, particularly to avoid leaking shared secret.
 	 */
 	private readonly referrer =
+		/* eslint-disable-next-line @typescript-eslint/tslint/config */
 		typeof document !== 'undefined' &&
 		document.referrer &&
 		!arrayAny(

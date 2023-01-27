@@ -109,9 +109,9 @@ export class Env extends EnvDeploy {
 	public readonly debugLog: boolean = this.debug;
 
 	/** If applicable, local storage key for log backups. */
-	/* eslint-disable-next-line @typescript-eslint/tslint/config */
 	public readonly debugLogID: string | undefined =
 		this.debugLog && !environment.production ?
+			/* eslint-disable-next-line @typescript-eslint/tslint/config */
 			`DebugLog_${Date.now().toString()}` :
 			undefined;
 

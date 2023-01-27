@@ -40,6 +40,7 @@ export class NotificationService
 
 	/** @ignore */
 	private readonly ringtone =
+		/* eslint-disable-next-line @typescript-eslint/tslint/config */
 		typeof Audio !== 'undefined' ?
 			new Audio('/assets/audio/ring.mp3') :
 			undefined;
@@ -170,6 +171,7 @@ export class NotificationService
 		if (this.envService.isMobileOS) {
 			this.config.audio = undefined;
 		}
+		/* eslint-disable-next-line @typescript-eslint/tslint/config */
 		else if (typeof Audio !== 'undefined') {
 			this.audio = new Audio(this.config.audio);
 		}

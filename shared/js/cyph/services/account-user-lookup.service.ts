@@ -360,8 +360,8 @@ export class AccountUserLookupService extends BaseProvider {
 				debugLogTime(async () => ({
 					[`${logKey}_objectInitComplete`]: {
 						initialArgs,
-						username,
-						user: userValue
+						user: userValue,
+						username
 					}
 				}));
 

@@ -476,8 +476,7 @@ export class AccountDatabaseService extends BaseProvider {
 			);
 
 			if (
-				csrData.publicSigningKey === undefined ||
-				csrData.publicSigningKey.length < 1 ||
+				this.potassiumService.isEmpty(csrData.publicSigningKey) ||
 				csrData.username !== username
 			) {
 				throw new Error('Invalid CSR.');
@@ -1472,6 +1471,7 @@ export class AccountDatabaseService extends BaseProvider {
 			currentPrivateKeyring.signPrivateKeys?.[
 				currentSignAlgorithm.hardened
 			] === undefined ||
+			/* eslint-disable-next-line @typescript-eslint/tslint/config */
 			currentPrivateKeyring.signPrivateKeys?.[
 				currentSignAlgorithm.primary
 			] === undefined
@@ -1760,6 +1760,7 @@ export class AccountDatabaseService extends BaseProvider {
 			(keyring.boxPublicKeys?.[currentBoxAlgorithm] === undefined ||
 				keyring.signPublicKeys?.[currentSignAlgorithm.hardened] ===
 					undefined ||
+				/* eslint-disable-next-line @typescript-eslint/tslint/config */
 				keyring.signPublicKeys?.[currentSignAlgorithm.primary] ===
 					undefined)
 		) {

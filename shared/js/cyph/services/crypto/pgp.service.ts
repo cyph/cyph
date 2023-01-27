@@ -45,12 +45,15 @@ export class PGPService extends BaseProvider {
 						public static async readRawKeys (
 							keys: undefined
 						) : Promise<undefined>;
+						/** @ignore */
 						public static async readRawKeys (
 							keys: (Uint8Array | string)[]
 						) : Promise<OpenPGP.Key[]>;
+						/** @ignore */
 						public static async readRawKeys (
 							keys: (Uint8Array | string)[] | undefined
 						) : Promise<OpenPGP.Key[] | undefined>;
+						/** @ignore */
 						public static async readRawKeys (
 							keys: (Uint8Array | string)[] | undefined
 						) : Promise<OpenPGP.Key[] | undefined> {
@@ -306,6 +309,7 @@ export class PGPService extends BaseProvider {
 										) ?
 											(async () => ({
 												message:
+													/* eslint-disable-next-line @typescript-eslint/tslint/config */
 													typeof signed ===
 														'object' &&
 													typeof signed.message ===
@@ -320,7 +324,8 @@ export class PGPService extends BaseProvider {
 																),
 															text: undefined
 														} :
-													typeof signed ===
+													/* eslint-disable-next-line @typescript-eslint/tslint/config */
+														typeof signed ===
 															'object' &&
 														signed.message instanceof
 															Uint8Array ?
@@ -336,6 +341,7 @@ export class PGPService extends BaseProvider {
 														} :
 														undefined,
 												signature:
+													/* eslint-disable-next-line @typescript-eslint/tslint/config */
 													typeof signed ===
 														'object' &&
 													typeof signed.signature ===
@@ -346,7 +352,8 @@ export class PGPService extends BaseProvider {
 																	signed.signature
 															}
 														) :
-													typeof signed ===
+													/* eslint-disable-next-line @typescript-eslint/tslint/config */
+														typeof signed ===
 															'object' &&
 														signed.signature instanceof
 															Uint8Array ?
@@ -360,14 +367,6 @@ export class PGPService extends BaseProvider {
 											}))() :
 										typeof signed === 'string' ?
 											(async () => {
-												if (
-													typeof signed !== 'string'
-												) {
-													throw new Error(
-														'Invalid `signed` value.'
-													);
-												}
-
 												try {
 													return {
 														message: {
@@ -486,8 +485,8 @@ export class PGPService extends BaseProvider {
 									pgpMessage instanceof
 										openpgp.CleartextMessage ?
 										await openpgp.sign({
-											format: 'armored',
 											detached,
+											format: 'armored',
 											message: pgpMessage,
 											signingKeys: <
 													OpenPGP.PrivateKey[]
@@ -495,16 +494,16 @@ export class PGPService extends BaseProvider {
 										}) :
 									armor ?
 										await openpgp.sign({
-											format: 'armored',
 											detached,
+											format: 'armored',
 											message: pgpMessage,
 											signingKeys: <
 													OpenPGP.PrivateKey[]
 												> privateKeys
 										}) :
 										await openpgp.sign({
-											format: 'binary',
 											detached,
+											format: 'binary',
 											message: pgpMessage,
 											signingKeys: <
 													OpenPGP.PrivateKey[]

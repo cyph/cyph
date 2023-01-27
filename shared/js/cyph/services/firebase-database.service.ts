@@ -1260,6 +1260,7 @@ export class FirebaseDatabaseService extends DatabaseService {
 
 		if (
 			event ||
+			/* eslint-disable-next-line @typescript-eslint/tslint/config */
 			typeof navigator === 'undefined' ||
 			!navigator.serviceWorker
 		) {

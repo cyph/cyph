@@ -89,6 +89,8 @@ export class WebLocalStorageService extends LocalStorageService {
 				};
 
 				return {
+					bulkDelete: async (keys: string[]) : Promise<void> =>
+						level.batch(keys.map(key => ({key, type: 'del'}))),
 					bulkGet: async (
 						keys: string[]
 					) : Promise<{value?: Uint8Array}[]> =>
@@ -97,8 +99,6 @@ export class WebLocalStorageService extends LocalStorageService {
 								value: await level.get(key)
 							}))
 						),
-					bulkDelete: async (keys: string[]) : Promise<void> =>
-						level.batch(keys.map(key => ({key, type: 'del'}))),
 					bulkPut: async (
 						items: {key: string; value: Uint8Array}[]
 					) : Promise<void> =>

@@ -306,7 +306,6 @@ export class PotassiumEncoding {
 							'publicKey'
 						) :
 						undefined;
-				break;
 		}
 
 		if (result === undefined) {

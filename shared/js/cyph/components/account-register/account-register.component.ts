@@ -598,8 +598,8 @@ export class AccountRegisterComponent
 			this.submitError.next(undefined);
 			this.submitMasterKey.emit({
 				masterKey,
-				xkcdPassphrase: this.xkcdPassphrase.value,
-				useXkcdPassphrase: this.useXkcdPassphrase.value
+				useXkcdPassphrase: this.useXkcdPassphrase.value,
+				xkcdPassphrase: this.xkcdPassphrase.value
 			});
 		}
 		finally {

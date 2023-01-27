@@ -1,6 +1,7 @@
 import {env} from '../env';
 
-export const deleteBlob = async (id: string) => {
+/** Deletes a server-side blob of data associated with the given ID. */
+export const deleteBlob = async (id: string) : Promise<void> => {
 	/* eslint-disable-next-line @typescript-eslint/tslint/config */
 	const res = await fetch(`${env.baseUrl}blobs/${id}`, {method: 'DELETE'});
 
@@ -11,7 +12,8 @@ export const deleteBlob = async (id: string) => {
 	throw new Error(await res.text());
 };
 
-export const downloadBlob = async (id: string) => {
+/** Downloads a server-side blob of data associated with the given ID. */
+export const downloadBlob = async (id: string) : Promise<Uint8Array> => {
 	/* eslint-disable-next-line @typescript-eslint/tslint/config */
 	const res = await fetch(`${env.baseUrl}blobs/${id}`);
 
@@ -22,7 +24,8 @@ export const downloadBlob = async (id: string) => {
 	throw new Error(await res.text());
 };
 
-export const uploadBlob = async (data: Uint8Array) => {
+/** Uploads a blob of data and returns the server-generated ID. */
+export const uploadBlob = async (data: Uint8Array) : Promise<string> => {
 	/* eslint-disable-next-line @typescript-eslint/tslint/config */
 	const res = await fetch(`${env.baseUrl}blobs`, {
 		body: data,

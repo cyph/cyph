@@ -19,6 +19,7 @@ if (
 		'pushState' in (<any> self).history &&
 		'replaceState' in (<any> self).history &&
 		'MutationObserver' in self &&
+		/* eslint-disable-next-line @typescript-eslint/tslint/config */
 		typeof document.createElement('div').style.grid === 'string'
 	)
 ) {

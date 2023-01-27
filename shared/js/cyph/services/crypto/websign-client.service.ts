@@ -266,8 +266,8 @@ export class WebSignClientService extends BaseProvider {
 			);
 		}
 		else {
-			/* eslint-disable-next-line @typescript-eslint/tslint/config */
 			webSignKeyPersistenceTOFU =
+				/* eslint-disable-next-line @typescript-eslint/tslint/config */
 				localStorage.getItem('webSignKeyPersistenceTOFU') === 'true';
 		}
 
@@ -278,11 +278,10 @@ export class WebSignClientService extends BaseProvider {
 				if (webSignKeyPersistenceTOFU) {
 					const publicKeyStorageKey = `webSignPublicKey_${packageSignature.username}`;
 
-					const pinnedPublicKey =
+					const pinnedPublicKey = this.potassiumService.fromBase64(
 						/* eslint-disable-next-line @typescript-eslint/tslint/config */
-						this.potassiumService.fromBase64(
-							localStorage.getItem(publicKeyStorageKey) ?? ''
-						);
+						localStorage.getItem(publicKeyStorageKey) ?? ''
+					);
 
 					if (pinnedPublicKey.length > 0) {
 						publicKey = pinnedPublicKey;
@@ -389,6 +388,7 @@ export class WebSignClientService extends BaseProvider {
 			/* eslint-disable-next-line @typescript-eslint/tslint/config */
 			localStorage.setItem(
 				'webSignHashWhitelist',
+				/* eslint-disable-next-line @typescript-eslint/tslint/config */
 				JSON.stringify(hashWhitelist)
 			);
 			/* eslint-disable-next-line @typescript-eslint/tslint/config */

@@ -29,7 +29,9 @@ export class Box {
 		);
 
 		if (
+			/* eslint-disable-next-line @typescript-eslint/tslint/config */
 			keyPair.publicKey === undefined ||
+			/* eslint-disable-next-line @typescript-eslint/tslint/config */
 			keyPair.privateKey === undefined
 		) {
 			throw new Error('Failed to generate key pair.');

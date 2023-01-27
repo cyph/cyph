@@ -27,7 +27,7 @@ export class AwaitPipe implements OnDestroy, PipeTransform {
 		const retVal =
 			obj instanceof Promise ||
 			obj instanceof Observable ||
-			/* eslint-disable-next-line eqeqeq, no-null/no-null */
+			/* eslint-disable-next-line @typescript-eslint/tslint/config, eqeqeq, no-null/no-null */
 			(typeof obj === 'object' && obj != null && 'subscribe' in obj) ?
 				this.asyncPipe.transform(obj) :
 				obj;

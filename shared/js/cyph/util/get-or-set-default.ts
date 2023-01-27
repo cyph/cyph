@@ -102,6 +102,7 @@ export const getOrSetDefaultAsync = async <K, V>(
 					setResolver
 				]);
 
+				/* eslint-disable-next-line @typescript-eslint/tslint/config */
 				if (v !== undefined && !m.has(k)) {
 					setValue(v);
 				}

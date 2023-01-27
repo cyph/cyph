@@ -49,6 +49,7 @@ export class P2PWebRTCService
 
 	/** Indicates whether screen sharing is supported in the current environment. */
 	public static readonly isScreenSharingSupported: boolean =
+		/* eslint-disable-next-line @typescript-eslint/tslint/config */
 		typeof navigator !== 'undefined' &&
 		typeof (<any> navigator)?.mediaDevices?.getDisplayMedia === 'function';
 

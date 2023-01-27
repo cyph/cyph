@@ -168,6 +168,7 @@ export class AppModule {
 
 		for (const [k, v] of Array.from(
 			Object.entries({
+				DOMPurifyHtmlSanitizer,
 				account,
 				accountAppointmentsService,
 				accountAuthService,
@@ -184,7 +185,6 @@ export class AppModule {
 				configService,
 				cryptocurrencyService,
 				databaseService,
-				DOMPurifyHtmlSanitizer,
 				emailRegex,
 				envService,
 				forms,

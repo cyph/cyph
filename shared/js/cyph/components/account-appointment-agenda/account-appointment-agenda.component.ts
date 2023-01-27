@@ -74,12 +74,12 @@ export class AccountAppointmentAgendaComponent
 	/** Split button menu options for hosting an unscheduled call. */
 	public readonly hostMenuItems: ItemModel[] = [
 		{
-			text: this.stringsService.videoCallTitle,
-			iconCss: 'fa fa-video'
+			iconCss: 'fa fa-video',
+			text: this.stringsService.videoCallTitle
 		},
 		{
-			text: this.stringsService.audioCallTitle,
-			iconCss: 'fa fa-phone'
+			iconCss: 'fa fa-phone',
+			text: this.stringsService.audioCallTitle
 		}
 	];
 

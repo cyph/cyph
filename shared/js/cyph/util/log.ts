@@ -118,6 +118,7 @@ const debugLogInternal = async (
 				/* eslint-disable-next-line @typescript-eslint/tslint/config */
 				localStorage.setItem(
 					debugLogLocalStorageKey,
+					/* eslint-disable-next-line @typescript-eslint/tslint/config */
 					`${(localStorage.getItem(debugLogLocalStorageKey) || '')
 						.split('\n')
 						.slice(-100)

@@ -585,15 +585,15 @@ export class PairwiseSession implements IPairwiseSession {
 									) {
 										debugLog(() => ({
 											ratchetUpdate: {
-												update,
-												dropped: true
+												dropped: true,
+												update
 											}
 										}));
 										return;
 									}
 
 									debugLog(() => ({
-										ratchetUpdate: {update, dropped: false}
+										ratchetUpdate: {dropped: false, update}
 									}));
 
 									await this.transport.process(

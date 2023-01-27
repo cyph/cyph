@@ -558,8 +558,8 @@ export class Sign implements ISign {
 		}
 
 		return potassiumEncoding.serialize({
-			signature: result,
-			signAlgorithm: algorithm
+			signAlgorithm: algorithm,
+			signature: result
 		});
 	}
 

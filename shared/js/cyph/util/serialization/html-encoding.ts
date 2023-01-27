@@ -1,4 +1,5 @@
 const textarea =
+	/* eslint-disable-next-line @typescript-eslint/tslint/config */
 	typeof document !== 'undefined' ?
 		document.createElement('textarea') :
 		undefined;

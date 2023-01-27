@@ -302,6 +302,7 @@ export class CalendarInviteComponent
 	public setRecurrence (recurrence: RecurrenceEditorChangeEventArgs) : void {
 		if (
 			!this.calendarInvite.value ||
+			/* eslint-disable-next-line @typescript-eslint/tslint/config */
 			typeof recurrence.value !== 'string'
 		) {
 			return;

@@ -1524,7 +1524,7 @@ export class AccountFilesService extends BaseProvider {
 					typeof id === 'object' ? id.id : id,
 					undefined,
 					true
-				);
+				).catch(() => undefined);
 
 		if (incomingFile === undefined) {
 			throw new Error('Incoming file not found.');

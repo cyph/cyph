@@ -673,7 +673,7 @@ export class AccountContactsService extends BaseProvider {
 		return retryUntilSuccessful(async () => {
 			const castleSessionData = await this.getCastleSessionDataInternal(
 				username
-			)();
+			)().catch(() => undefined);
 
 			if (castleSessionData === undefined) {
 				throw new Error('Failed to fetch Castle session data.');
