@@ -56,6 +56,7 @@ const {serialize} = util;
 	for (const id of customBuildIds) {
 		const $ = cheerio.load(fs.readFileSync(inputHTML).toString());
 		const o = customBuild(id, args.version);
+		const packageDir = `${args.packagesRoot}/${o.id}`;
 
 		if (o.favicon) {
 			$('head')
@@ -90,7 +91,8 @@ const {serialize} = util;
 			`
 		);
 
-		fs.writeFileSync(`${args.packagesRoot}/${o.id}`, $.html().trim());
+		await mkdirp(packageDir);
+		fs.writeFileSync(`${packageDir}/.index.html`, $.html().trim());
 		outputIds.push(o.id);
 	}
 
