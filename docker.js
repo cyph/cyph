@@ -118,6 +118,8 @@ const args = {
 		process.argv.indexOf('--no-auto-make') > -1,
 	noUpdates: process.argv.indexOf('--no-updates') > -1,
 	prod: process.argv.indexOf('--prod') > -1,
+	publicBackendDeployment:
+		process.argv.indexOf('--public-backend-deployment') > -1,
 	simple:
 		process.argv.indexOf('--simple') > -1 ||
 		process.argv.indexOf('--simple-custom-build') > -1 ||
@@ -194,10 +196,14 @@ const needAGSE =
 	((args.command === 'certsign' || args.command === 'certsignlegacy') &&
 		(!process.argv[3] || process.argv[3] === 'cyphme')) ||
 	(args.command === 'deploy' &&
+		!args.publicBackendDeployment &&
 		!args.simple &&
 		(!args.site || args.site === 'cyph.app'));
 
 const isProdAGSEDeploy = needAGSE && args.command === 'deploy' && args.prod;
+
+const usePublicImage =
+	args.command === 'deploy' && args.publicBackendDeployment;
 
 const initImage = 'cyph/init';
 const publicImage = 'cyph/public';
@@ -1145,7 +1151,9 @@ initPromise.then(() => {
 				containerName(args.command),
 				args.background,
 				false,
-				commandAdditionalArgs
+				commandAdditionalArgs,
+				undefined,
+				usePublicImage ? publicImage : undefined
 			);
 		})
 		.then(() => {
