@@ -299,6 +299,11 @@ fi
 
 # wpstatic + cache busting
 if [ "${cacheBustedProjects}" ] ; then
+	wpstaticFlags=''
+	if [ ! "${test}" ] || [ "${version}" == 'staging' ] ; then
+		wpstaticFlags='--prod'
+	fi
+
 	bash -c "
 		touch .wpstatic.output
 
@@ -318,8 +323,7 @@ if [ "${cacheBustedProjects}" ] ; then
 			mkdir wpstatic
 			cp cyph.com/cyph-com.yaml wpstatic/
 			cd wpstatic
-			../commands/wpstatic.sh $(test ${test} || echo '--prod') '${homeURL}' \
-				>> ../.wpstatic.output 2>&1
+			../commands/wpstatic.sh ${wpstaticFlags} '${homeURL}' >> ../.wpstatic.output 2>&1
 			cd ..
 			mv cyph.com cyph.com.src
 			mv wpstatic cyph.com
