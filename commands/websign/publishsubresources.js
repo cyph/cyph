@@ -45,8 +45,32 @@ try {
 		)
 	);
 
+	const customBuildData = Object.fromEntries(
+		await Promise.all(
+			customBuilds
+				?.trim()
+				.split(/\s+/)
+				.filter(s => !!s)
+				.map(async customBuild => [
+					customBuild,
+					Object.fromEntries(
+						await Promise.all(
+							['current', 'pkg', 'pkg.v2'].map(async k => [
+								k,
+								await fs.readFile(
+									path.join(
+										path.join(packagesRoot, customBuild, k)
+									)
+								)
+							])
+						)
+					)
+				]) ?? []
+		)
+	);
+
 	await publishSubresources({
-		customBuilds: customBuilds?.trim().split(/\s+/),
+		customBuilds: customBuildData,
 		packageName,
 		subresources,
 		test

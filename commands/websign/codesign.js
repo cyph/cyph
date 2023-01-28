@@ -3,6 +3,7 @@
 import {proto, util} from '@cyph/sdk';
 import fs from 'fs';
 import mkdirp from 'mkdirp';
+import path from 'path';
 import {sign} from '../sign.js';
 
 const {AGSEPKICertified, PotassiumData, WebSignPackage} = proto;
@@ -28,7 +29,7 @@ try {
 	const baseInputs = args.inputs
 		.map(s => s.split('='))
 		.map(([packagePath, outputDir]) => ({
-			outputDir,
+			outputDir: path.resolve(outputDir),
 			webSignPackage: {
 				hashWhitelist: args.hashWhitelist,
 				packageData: {

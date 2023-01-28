@@ -15,18 +15,35 @@ const {lockFunction} = util;
 
 const gitCommitLock = lockFunction();
 
+const processSubresource = async (content, ipfsCredentials) => {
+	const buf = Buffer.from(content);
+
+	const [brotliEncoded, gzipEncoded, sriHash] = await Promise.all([
+		brotli.encode(buf),
+		gzip.encode(buf),
+		fastSHA512.hash(buf).then(o => o.hex)
+	]);
+
+	const ipfsHash = await ipfsAdd(brotliEncoded, ipfsCredentials);
+
+	return {
+		brotliEncoded,
+		gzipEncoded,
+		ipfsHash,
+		sriHash
+	};
+};
+
 export const publishSubresources = async ({
-	customBuilds = [],
+	customBuilds = {},
 	ipfsCredentials,
 	packageName,
 	subresources,
 	test = false
 }) => {
-	customBuilds = customBuilds.filter(s => !!s);
-
 	console.log({
 		publishSubresources: {
-			customBuilds,
+			customBuilds: Object.keys(customBuilds),
 			packageName,
 			subresources: Object.keys(subresources),
 			test
@@ -46,15 +63,8 @@ export const publishSubresources = async ({
 
 	await Promise.all(
 		Object.entries(subresources).map(async ([subresource, content]) => {
-			const buf = Buffer.from(content);
-
-			const [brotliEncoded, gzipEncoded, sriHash] = await Promise.all([
-				brotli.encode(buf),
-				gzip.encode(buf),
-				fastSHA512.hash(buf).then(o => o.hex)
-			]);
-
-			const ipfsHash = await ipfsAdd(brotliEncoded, ipfsCredentials);
+			const {brotliEncoded, gzipEncoded, ipfsHash, sriHash} =
+				await processSubresource(content, ipfsCredentials);
 
 			const oldIPFSHash = (
 				await fs
@@ -108,10 +118,45 @@ export const publishSubresources = async ({
 		})
 	);
 
-	for (const customBuild of customBuilds) {
-		let filesModified = false;
+	for (const [customBuild, rootResources] of Object.entries(customBuilds)) {
+		const rootResourceNames = new Set(Object.keys(rootResources));
+
+		for (const [rootResource, content] of Object.entries(rootResources)) {
+			const {brotliEncoded, gzipEncoded, ipfsHash, sriHash} =
+				await processSubresource(content, ipfsCredentials);
+
+			for (const [ext, contentToAdd] of [
+				['br', brotliEncoded],
+				['gz', gzipEncoded],
+				['ipfs', ipfsHash]
+			]) {
+				await cdnRepo.add(
+					path.join(
+						packageParent,
+						customBuild,
+						`${rootResource}.${ext}`
+					),
+					contentToAdd
+				);
+			}
+
+			console.log({
+				publishSubresourcesCustomBuild: {
+					customBuild,
+					ipfsHash,
+					packageName,
+					rootResource,
+					sriHash,
+					test
+				}
+			});
+		}
 
 		for (const subresource of Object.keys(subresources)) {
+			if (rootResourceNames.has(subresource)) {
+				continue;
+			}
+
 			for (const ext of ['br', 'gz', 'ipfs']) {
 				const fileName = `${subresource}.${ext}`;
 				const filePath = path.join(
@@ -126,7 +171,6 @@ export const publishSubresources = async ({
 					.then(() => true)
 					.catch(() => false);
 
-				/* Avoid empty commits */
 				if (fileExists) {
 					continue;
 				}
@@ -135,22 +179,14 @@ export const publishSubresources = async ({
 					path.join('..', packageName, fileName),
 					fileFullPath
 				);
-
 				await cdnRepo.add(filePath);
-
-				filesModified = true;
 			}
-		}
-
-		/* Avoid empty commits */
-		if (!filesModified) {
-			continue;
 		}
 
 		await cdnRepo.commit(customBuild);
 	}
 
-	for (const p of [packageName, ...customBuilds]) {
+	for (const p of [packageName, ...Object.keys(customBuilds)]) {
 		for (const specialCaseTLD of ['app', 'ws']) {
 			const pAlias = p.replace(new RegExp(`\\.${specialCaseTLD}$`), '');
 
