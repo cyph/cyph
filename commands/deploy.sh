@@ -1115,7 +1115,7 @@ if [ -f .public-backend-deployment ] ; then
 	notificationMessage="$(cat .public-backend-deployment)"
 	rm .public-backend-deployment
 else
-	notificationMessage="deploy complete: ${version}$(test "${site}" && echo ", ${site}")"
+	notificationMessage="deploy complete: ${mainVersion}$(test "${site}" && echo ", ${site}")"
 
 	# Push out latest package data
 	if [ "${websign}" ] && ( [ "${test}" ] || [ "${debug}" ] || [ "${betaProd}" ] ) ; then
