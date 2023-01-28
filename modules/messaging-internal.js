@@ -1,6 +1,6 @@
 import {util} from '@cyph/sdk';
 
-const {normalize} = util;
+const {filterUndefined, normalize} = util;
 
 const iconURL = 'https://www.cyph.com/assets/img/favicon/favicon-256x256.png';
 const title = 'Cyph';
@@ -49,20 +49,34 @@ export const sendMessageInternal = async (
 			priority: 'high'
 		},
 		apns: {
-			aps: {
-				alert: {
-					body,
-					title
-				},
-				badge,
-				contentAvailable: true,
-				mutableContent: false,
-				threadId: tag
+			payload: {
+				aps: {
+					alert: {
+						body,
+						title
+					},
+					badge,
+					contentAvailable: true,
+					mutableContent: false,
+					threadId: tag
+				}
 			}
 		},
 		data: {
 			...(inboxStyle ? {style: 'inbox'} : {}),
-			...additionalData
+			...Object.fromEntries(
+				filterUndefined(
+					Object.entries(additionalData ?? {}).map(([k, v]) => {
+						try {
+							return [
+								k,
+								typeof v === 'string' ? v : v.toString()
+							];
+						}
+						catch {}
+					})
+				)
+			)
 		},
 		notification: {
 			body,
@@ -105,6 +119,7 @@ export const sendMessageInternal = async (
 			const token = tokenGroup[i];
 
 			if (!response.success) {
+				console.error({response, token, tokenGroup}, response.error);
 				await ref.child(token).remove();
 			}
 		}

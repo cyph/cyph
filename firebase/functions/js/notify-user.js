@@ -327,7 +327,7 @@ export const notifyUser = async (
 					activeCall,
 					callMetadata,
 					notificationID,
-					notificationType: notification.type,
+					notificationType: NotificationTypes[notification.type],
 					senderUsername,
 					tag
 				},
