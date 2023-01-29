@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 
 import {proto, util} from '@cyph/sdk';
+import read from 'read';
 import {openAGSEPKICertified} from './agse-pki-certified.js';
 import {webSignPermissionsTimestamp} from './websign-permissions-timestamp.js';
 
@@ -11,6 +12,11 @@ const algorithm = PotassiumData.SignAlgorithms.V2Hardened;
 const namespace = 'cyph.ws';
 const additionalData = `${namespace}:webSignPermissions`;
 const url = 'webSign/permissions';
+
+const readInput = async prompt =>
+	read({
+		prompt
+	});
 
 export const getWebSignPermissions = async ({getItem, testSign = false}) => {
 	try {
@@ -24,11 +30,23 @@ export const getWebSignPermissions = async ({getItem, testSign = false}) => {
 		});
 	}
 	catch (err) {
-		throw new Error(
+		err = new Error(
 			`Failed to open WebSign permissions (${
 				testSign ? 'test' : 'prod'
 			}): ${err}`
 		);
+
+		console.error(err);
+
+		if (
+			(await readInput(
+				`Init WebSign permissions from scratch? [y/N]`
+			)) === 'y'
+		) {
+			return WebSignPermissions.create();
+		}
+
+		throw err;
 	}
 };
 
