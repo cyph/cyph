@@ -345,10 +345,11 @@ export const generateUserCertSignInput = async ({
 		const {csrData} = await openAGSEPKICertified({
 			additionalData: `${namespace}:${certURL}`,
 			certified: await getItem(namespace, certURL, AGSEPKICertified),
-			proto: AGSEPKICert
+			proto: AGSEPKICert,
+			testSign
 		});
 
-		if (csrData.username !== user.username) {
+		if (csrData.username !== username) {
 			throw new Error('Invalid AGSE-PKI certificate: bad username.');
 		}
 
