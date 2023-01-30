@@ -1061,7 +1061,7 @@ if [ "${site}" != 'firebase' ] ; then
 		fi
 	)
 
-	if [ -d syncfusion ] ; then
+	if ( [ ! "${site}" ] || [ "${site}" == 'backend' ] ) && [ -d syncfusion ] ; then
 		cd syncfusion
 		gcloud functions deploy $(cat deploy.args)
 		cd ..
