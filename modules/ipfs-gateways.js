@@ -96,7 +96,8 @@ const gatewayURLs = ipfsGatewaysJSON
 	.map(url => ({
 		host: new URL(url.replace(':hash.ipfs.', '')).host,
 		url
-	}));
+	}))
+	.filter(({host}) => !host.endsWith('.onion'));
 
 export const ipfsGateways = memoize(async skipUptimeCheck =>
 	(
