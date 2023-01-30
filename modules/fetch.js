@@ -14,6 +14,14 @@ export const fetch = async (url, options = {}, responseType = 'text') => {
 			throw new Error(`Request failure: ${url}`);
 		}
 
+		if (
+			options.requireCORS &&
+			o.headers.get('Access-Control-Allow-Origin') !== '*'
+		) {
+			console.error(o);
+			throw new Error(`Missing CORS header: ${url}`);
+		}
+
 		return o[responseType]();
 	};
 

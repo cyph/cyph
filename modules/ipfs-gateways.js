@@ -48,6 +48,7 @@ const uptimeCheck = memoize(async gateway =>
 					const body = await fetch(
 						gateway.replace(':hash', ipfsHash),
 						{
+							requireCORS: true,
 							timeout
 						},
 						'arrayBuffer'
