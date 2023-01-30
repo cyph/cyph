@@ -19,7 +19,17 @@ import {getPackageDatabase} from './package-database.js';
 const {sleep} = util;
 
 /* Blacklist of known bad or flagged gateways */
-const blacklist = new Set(['https://astyanax.io/ipfs/:hash']);
+const blacklist = new Set([
+	'https://astyanax.io/ipfs/:hash',
+	'https://cdn.cwinfo.net/ipfs/:hash',
+	'https://gateway.serph.network/ipfs/:hash',
+	'https://hardbin.com/ipfs/:hash',
+	'https://ipfs.fooock.com/ipfs/:hash',
+	'https://ipfs.sloppyta.co/ipfs/:hash',
+	'https://ipns.co/ipfs/:hash',
+	'https://jorropo.net/ipfs/:hash',
+	'https://ninetailed.ninja/ipfs/:hash'
+]);
 
 const defaultGateway = 'https://gateway.ipfs.io/ipfs/:hash';
 
