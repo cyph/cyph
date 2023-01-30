@@ -11,7 +11,7 @@ import (
 	"io/ioutil"
 	"log"
 	"math"
-	nonSecureRandom "math/rand"
+	"math/big"
 	"net"
 	"net/http"
 	"net/smtp"
@@ -349,6 +349,15 @@ func generateRandomID() string {
 	return generateCustomRandomID(config.APIKeyByteLength)
 }
 
+func generateRandomNumber(max int64) int64 {
+	n, err := rand.Int(rand.Reader, big.NewInt(max))
+	if err != nil {
+		panic(err)
+	}
+
+	return n.Int64()
+}
+
 func generateAPIKey(h HandlerArgs, kind string) (string, *datastore.Key, error) {
 	apiKey := generateRandomID()
 	datastoreKey := datastoreKey(kind, apiKey)
@@ -559,7 +568,7 @@ func getIPFSGatewaysInternal(continentCode string, ipv6Only bool) []string {
 		return allGateways
 	}
 
-	index := nonSecureRandom.Intn(len(gateways))
+	index := int(generateRandomNumber(int64(len(gateways))))
 
 	return append(
 		append([]string{gateways[index]}, gateways[:index]...),
