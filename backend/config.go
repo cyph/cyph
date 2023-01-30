@@ -79,17 +79,17 @@ type IPFSGatewayUptimeData struct {
 
 // PackageData : Data for an application package
 type PackageData struct {
-	PackageV1 PackageV1               `msgpack:"packageV1"`
-	PackageV2 []byte                  `msgpack:"packageV2"`
-	Timestamp int64                   `msgpack:"timestamp"`
-	Uptime    []IPFSGatewayUptimeData `msgpack:"uptime"`
+	PackageV1 PackageV1               `json:"packageV1" msgpack:"packageV1"`
+	PackageV2 []byte                  `json:"packageV2" msgpack:"packageV2"`
+	Timestamp int64                   `json:"timestamp" msgpack:"timestamp"`
+	Uptime    []IPFSGatewayUptimeData `json:"uptime" msgpack:"uptime"`
 }
 
 // PackageV1 : Legacy package format
 type PackageV1 struct {
-	Root                string            `msgpack:"root"`
-	Subresources        map[string]string `msgpack:"subresources"`
-	SubresourceTimeouts map[string]uint32 `msgpack:"subresourceTimeouts"`
+	Root                string            `json:"root" msgpack:"root"`
+	Subresources        map[string]string `json:"subresources" msgpack:"subresources"`
+	SubresourceTimeouts map[string]uint32 `json:"subresourceTimeouts" msgpack:"subresourceTimeouts"`
 }
 
 // Plan : Subscription plan
