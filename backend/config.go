@@ -162,6 +162,7 @@ var config = struct {
 	AllowedHeaders             string
 	AllowedMethods             string
 	AllowedHosts               map[string]none
+	AllowIPV6OnlyResponses     bool
 	AnalID                     string
 	APIKeyByteLength           int
 	BitPayToken                string
@@ -242,6 +243,8 @@ var config = struct {
 		"localhost:43000":                               empty,
 		"localhost:8080":                                empty,
 	},
+
+	AllowIPV6OnlyResponses: false,
 
 	AnalID: "UA-56220601-1",
 

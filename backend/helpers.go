@@ -508,6 +508,8 @@ func getIPFSGateways(continentCode string, ipv6Only bool) []string {
 		backupContinentCode = config.DefaultContinentCodeBackup
 	}
 
+	ipv6Only = config.AllowIPV6OnlyResponses && ipv6Only
+
 	return append(
 		getIPFSGatewaysInternal(continentCode, ipv6Only),
 		getIPFSGatewaysInternal(backupContinentCode, ipv6Only)...,
