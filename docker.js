@@ -195,6 +195,7 @@ const needAGSE =
 	(args.command === 'sign' && process.argv[4] !== '--test') ||
 	((args.command === 'certsign' || args.command === 'certsignlegacy') &&
 		(!process.argv[3] || process.argv[3] === 'cyphme')) ||
+	args.command === 'updatewebsignpermissions' ||
 	(args.command === 'deploy' &&
 		!args.publicBackendDeployment &&
 		!args.simple &&
