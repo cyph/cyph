@@ -72,6 +72,8 @@ sudo apt-get -y --allow-downgrades upgrade
 sudo apt-get -y --allow-downgrades autoremove
 sudo apt-get -y --allow-downgrades clean
 
+git config --global --add safe.directory /cyph
+
 sudo pip install -U grpcio
 
 if [ ! -f /usr/bin/chromium-browser ] ; then
