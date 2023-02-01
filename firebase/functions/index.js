@@ -2,18 +2,18 @@ const cors = require('cors')({origin: true});
 const functions = require('firebase-functions');
 const memoize = require('lodash/memoize.js');
 
-const config = functions.config();
+const {cyph: config} = functions.config();
 
 const functionBuilder = (highMemory = false) =>
 	functions.runWith({
 		memory: config.prod ?
 			highMemory ?
-				'6GB' :
+				'4GB' :
 				'1GB' :
 		highMemory ?
 			'4GB' :
 			'256MB',
-		minInstances: config.keepWarm ? 1 : undefined,
+		minInstances: config.keepwarm ? 1 : undefined,
 		timeoutSeconds: highMemory ? 540 : 60
 	});
 
