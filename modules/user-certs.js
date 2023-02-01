@@ -201,11 +201,6 @@ export const generateUserCertSignInput = async ({
 		}
 	}
 
-	if (usernames.length < 1) {
-		console.log('No certificate requests.');
-		process.exit(0);
-	}
-
 	const issuanceHistory = await (async () => {
 		if (testSign) {
 			return {
@@ -283,10 +278,6 @@ export const generateUserCertSignInput = async ({
 	) {
 		throw new Error('Failed to get AGSE-PKI history.');
 	}
-
-	const publicSigningKeysMap = testSign ?
-		agsePublicSigningKeys.test :
-		agsePublicSigningKeys.prod;
 
 	const openCertificateRequest = async username => {
 		const csrURL = `users/${username}/keyrings/csr`;
