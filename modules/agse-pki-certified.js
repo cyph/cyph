@@ -9,7 +9,7 @@ export const openAGSEPKICertified = async ({
 	additionalData,
 	certified,
 	expectedAlgorithm,
-	expectedTimestamp,
+	expectedMinimumTimestamp,
 	proto,
 	testSign = false
 }) => {
@@ -59,8 +59,8 @@ export const openAGSEPKICertified = async ({
 
 	if (
 		!testSign &&
-		expectedTimestamp !== undefined &&
-		opened.timestamp !== expectedTimestamp
+		expectedMinimumTimestamp !== undefined &&
+		expectedMinimumTimestamp > opened.timestamp
 	) {
 		throw new Error('Invalid AGSE-PKI-certified data: bad timestamp.');
 	}

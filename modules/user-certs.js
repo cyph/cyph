@@ -257,7 +257,7 @@ export const generateUserCertSignInput = async ({
 					)
 			),
 			expectedAlgorithm: algorithms.issuanceHistory,
-			expectedTimestamp: lastIssuanceTimestamp,
+			expectedMinimumTimestamp: lastIssuanceTimestamp,
 			proto: AGSEPKIIssuanceHistory
 		});
 	})().catch(() => ({

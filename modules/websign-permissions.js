@@ -24,7 +24,7 @@ export const getWebSignPermissions = async ({getItem, testSign = false}) => {
 			additionalData,
 			certified: await getItem(namespace, url, AGSEPKICertified),
 			expectedAlgorithm: algorithm,
-			expectedTimestamp: webSignPermissionsTimestamp,
+			expectedMinimumTimestamp: webSignPermissionsTimestamp,
 			proto: WebSignPermissions,
 			testSign
 		});
