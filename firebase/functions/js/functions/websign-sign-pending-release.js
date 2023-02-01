@@ -1,6 +1,6 @@
 import {proto, util} from '@cyph/sdk';
 import {database, hasItem, onCall, removeItem} from '../init.js';
-import {webSignAlgorithm} from '../websign-algorithm.js';
+import {webSignAlgorithm} from '../modules/websign-algorithm.js';
 import {webSignReleaseNotify} from '../websign-release-notify.js';
 
 const {AGSEPKISigningRequest} = proto;

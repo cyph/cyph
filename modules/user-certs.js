@@ -12,6 +12,7 @@ import read from 'read';
 import {openAGSEPKICertified} from './agse-pki-certified.js';
 import {agsePublicSigningKeys} from './agse-public-signing-keys.js';
 import {initDatabaseService} from './database-service.js';
+import {webSignAlgorithm} from './websign-algorithm.js';
 
 const {
 	AGSEPKICert,
@@ -72,9 +73,16 @@ const readInput = async prompt =>
 
 const duplicateCSRLock = lockFunction();
 
-const duplicateCSR = async (issuanceHistory, csr, publicSigningKeyHash) =>
+const duplicateCSR = async (
+	issuanceHistory,
+	csr,
+	publicSigningKeyHash,
+	oldCert
+) =>
 	issuanceHistory.publicSigningKeyHashes[publicSigningKeyHash] ||
 	(issuanceHistory.usernames[csr.username] &&
+		/* Treat as non-duplicate when upgrading algorithms */
+		oldCert?.certified?.algorithm === webSignAlgorithm &&
 		(await duplicateCSRLock(async () => {
 			while (true) {
 				const response = await readInput(
@@ -297,7 +305,7 @@ export const generateUserCertSignInput = async ({
 
 			csrDataBytes = await potassium.sign.open(
 				csrDataBytes,
-				oldCert.publicSigningKey,
+				oldCert.csrData.publicSigningKey,
 				`${namespace}:${csrURL}/previous-key`
 			);
 		}
@@ -342,9 +350,10 @@ export const generateUserCertSignInput = async ({
 	const openCertificate = async username => {
 		const certURL = `users/${username}/publicKeyCertificate`;
 
+		const certified = await getItem(namespace, certURL, AGSEPKICertified);
 		const {csrData} = await openAGSEPKICertified({
 			additionalData: `${namespace}:${certURL}`,
-			certified: await getItem(namespace, certURL, AGSEPKICertified),
+			certified,
 			proto: AGSEPKICert,
 			testSign
 		});
@@ -353,7 +362,7 @@ export const generateUserCertSignInput = async ({
 			throw new Error('Invalid AGSE-PKI certificate: bad username.');
 		}
 
-		return csrData;
+		return {certified, csrData};
 	};
 
 	/* TODO: Remove this after reissuing certificates */
@@ -427,7 +436,7 @@ export const generateUserCertSignInput = async ({
 			)
 		);
 
-		return csrData;
+		return {csrData};
 	};
 
 	const csrDataObjects = filterUndefined(
@@ -441,19 +450,33 @@ export const generateUserCertSignInput = async ({
 						throw new Error('Invalid username.');
 					}
 
-					const csrData = !upgradeCerts ?
-						(await hasItem(
+					const oldCert = (async () => {
+						try {
+							return (await hasItem(
 								namespace,
-								`users/${username}/keyrings/csr`
-						  )) ?
-							await openCertificateRequest(username) :
-							await openLegacyCertificateRequest(username) :
+								`users/${username}/publicKeyCertificate`
+							)) ?
+								await openCertificate(username) :
+								await openLegacyCertificate(username);
+						}
+						catch (err) {
+							console.error(err);
+							return undefined;
+						}
+					})();
+
+					const csrData = upgradeCerts ?
+						oldCert?.csrData :
 					(await hasItem(
 							namespace,
-							`users/${username}/publicKeyCertificate`
+							`users/${username}/keyrings/csr`
 						)) ?
-						await openCertificate(username) :
-						await openLegacyCertificate(username);
+						await openCertificateRequest(username) :
+						await openLegacyCertificateRequest(username);
+
+					if (csrData === undefined) {
+						throw new Error('Missing CSR data.');
+					}
 
 					const publicSigningKeyHash = await getHash(
 						csrData.publicSigningKey
@@ -464,7 +487,8 @@ export const generateUserCertSignInput = async ({
 						await duplicateCSR(
 							issuanceHistory,
 							csrData,
-							publicSigningKeyHash
+							publicSigningKeyHash,
+							oldCert
 						)
 					) {
 						console.log(

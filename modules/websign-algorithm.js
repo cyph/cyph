@@ -1,3 +1,5 @@
+#!/usr/bin/env node
+
 import {proto} from '@cyph/sdk';
 
 const {PotassiumData} = proto;

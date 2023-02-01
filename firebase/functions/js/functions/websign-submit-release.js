@@ -1,9 +1,9 @@
 import {proto, util} from '@cyph/sdk';
 import {ipfsCredentials, isProd} from '../cyph-admin-vars.js';
 import {admin, database, getItem, onCall, setItem} from '../init.js';
+import {webSignAlgorithm} from '../modules/websign-algorithm.js';
 import {getWebSignPermissions} from '../modules/websign-permissions.js';
 import {publishSubresources} from '../modules/websign-subresources.js';
-import {webSignAlgorithm} from '../websign-algorithm.js';
 import {webSignReleaseNotify} from '../websign-release-notify.js';
 
 const {
