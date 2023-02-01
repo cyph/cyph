@@ -48,6 +48,7 @@ const getDatastoreKey = (kind, name) =>
 	});
 
 const getPendingRelease = async (
+	namespace,
 	webSignPermissions,
 	releaseID,
 	{packageName, signingRequests}
@@ -160,6 +161,7 @@ export const generateReleaseSignInput = async ({
 				(await pendingReleasesRef.once('value')).val() ?? {}
 			).map(async ([releaseID, pendingReleaseMetadata]) =>
 				getPendingRelease(
+					namespace,
 					webSignPermissions,
 					releaseID,
 					pendingReleaseMetadata
@@ -235,7 +237,7 @@ export const processReleaseSignOutput = async ({
 								pendingRelease.packageData.packageName
 							)
 						})
-					)()
+					)
 				];
 			})
 		)
