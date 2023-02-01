@@ -201,10 +201,13 @@ export class PotassiumEncoding {
 			) : Promise<Uint8Array> =>
 				potassiumUtil.startsWith(value, this.cryptographicAgilityTag) ?
 					value :
-					this.serialize({
-						[algorithmKey]: algorithm,
-						[valueKey]: value
-					});
+					this.serialize(
+						{
+							[algorithmKey]: algorithm,
+							[valueKey]: value
+						},
+						true
+					);
 
 			for (const algorithm of algorithms) {
 				const key = keyGroup[algorithm];
@@ -321,10 +324,13 @@ export class PotassiumEncoding {
 		return result;
 	}
 
-	/** Serializes `PotassiumData` object to binary byte array. */
+	/**
+	 * Serializes `PotassiumData` object to binary byte array.
+	 * @param dataClearBlacklist Set to true to disable all data clearing.
+	 */
 	public async serialize (
 		data: IPotassiumData,
-		dataClearBlacklist?: Uint8Array[]
+		dataClearBlacklist?: Uint8Array[] | true
 	) : Promise<Uint8Array> {
 		const bytes = await serialize(PotassiumData, data);
 
@@ -338,23 +344,25 @@ export class PotassiumEncoding {
 		finally {
 			potassiumUtil.clearMemory(bytes);
 
-			const dataClearBlacklistSet = new Set(dataClearBlacklist);
+			if (dataClearBlacklist !== true) {
+				const dataClearBlacklistSet = new Set(dataClearBlacklist);
 
-			for (const dataToClear of [
-				data.cyphertext,
-				data.key,
-				data.privateKey,
-				data.publicKey,
-				data.secret,
-				data.signature,
-				data.signed?.message,
-				data.signed?.signature
-			]) {
-				if (
-					dataToClear !== undefined &&
-					!dataClearBlacklistSet.has(dataToClear)
-				) {
-					potassiumUtil.clearMemory(dataToClear);
+				for (const dataToClear of [
+					data.cyphertext,
+					data.key,
+					data.privateKey,
+					data.publicKey,
+					data.secret,
+					data.signature,
+					data.signed?.message,
+					data.signed?.signature
+				]) {
+					if (
+						dataToClear !== undefined &&
+						!dataClearBlacklistSet.has(dataToClear)
+					) {
+						potassiumUtil.clearMemory(dataToClear);
+					}
 				}
 			}
 		}
