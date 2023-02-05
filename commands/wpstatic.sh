@@ -178,7 +178,7 @@ for f in $(find . -name '*.html') ; do node -e "(async () => {
 	const cheerio = require('cheerio');
 	const fastSHA512 = require('fast-sha512');
 	const htmlMinifier = require('html-minifier');
-	const imageType = require('image-type');
+	const {default: imageType} = await import('image-type');
 
 	const fetchAndRetry = (url, opts) =>
 		fetch(url, opts).catch(() => fetch(url, opts))
