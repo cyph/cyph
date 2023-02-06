@@ -10,7 +10,7 @@ import {Datastore} from '@google-cloud/datastore';
 import isEqual from 'lodash-es/isEqual.js';
 import {brotli} from './compression.js';
 import {initDatabaseService} from './database-service.js';
-import {getPackageDatabase} from './package-database.js';
+import {getSubresourcesData} from './package-database.js';
 import hashWhitelist from './websign-hash-whitelist.json' assert {type: 'json'};
 import {getWebSignPermissions} from './websign-permissions.js';
 
@@ -215,29 +215,25 @@ export const processReleaseSignOutput = async ({
 							pendingRelease.packageData.packageName
 						)
 					},
-					getPackageDatabase().then(
-						async ({
-							[pendingRelease.packageData.packageName]: {
-								packageV1: {subresources, subresourceTimeouts}
-							}
-						}) => ({
-							data: {
-								data: await brotli.encode(
-									await serialize(
-										AGSEPKICertified,
-										certifiedMessage
-									)
-								),
-								subresources,
-								subresourceTimeouts,
-								timestamp: pendingRelease.packageData.timestamp
-							},
-							key: getDatastoreKey(
-								'WebSignPackageItem',
-								pendingRelease.packageData.packageName
-							)
-						})
-					)
+					getSubresourcesData(
+						pendingRelease.packageData.packageName
+					).then(async ({subresources, subresourceTimeouts}) => ({
+						data: {
+							data: await brotli.encode(
+								await serialize(
+									AGSEPKICertified,
+									certifiedMessage
+								)
+							),
+							subresources,
+							subresourceTimeouts,
+							timestamp: pendingRelease.packageData.timestamp
+						},
+						key: getDatastoreKey(
+							'WebSignPackageItem',
+							pendingRelease.packageData.packageName
+						)
+					}))
 				];
 			})
 		)

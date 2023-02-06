@@ -7,7 +7,7 @@ import glob from 'glob/sync.js';
 import memoize from 'lodash-es/memoize.js';
 import os from 'os';
 import path from 'path';
-import {getCDNRepo} from './cdn-repo.js';
+import {getCDNRepo as getCDNRepoInternal} from './cdn-repo.js';
 
 const {dynamicDeserialize, dynamicSerializeBytes} = util;
 
@@ -21,6 +21,62 @@ const serverMinimumSupportedMbps = 1;
 const readIfExists = filePath =>
 	fs.existsSync(filePath) ? fs.readFileSync(filePath) : undefined;
 
+const getCDNRepo = memoize(getCDNRepoInternal);
+
+const getFiles = memoize((pattern, cdnRepo) =>
+	glob(pattern, {cwd: cdnRepo.repoPath, symlinks: true})
+);
+
+const getSubresourceTimeouts = (
+	packageName,
+	maximumAllowedLatency,
+	minimumSupportedMbps,
+	cdnRepo
+) =>
+	getFiles(`${packageName}/**/*.ipfs`, cdnRepo)
+		.map(ipfs => `${ipfs.slice(0, -5)}.br`)
+		.map(br => [
+			br.slice(packageName.length + 1, -3),
+			Math.round(
+				(fs.statSync(path.join(cdnRepo.repoPath, br)).size /
+					((1024 * 1024) / 8) /
+					minimumSupportedMbps) *
+					1000 +
+					maximumAllowedLatency
+			)
+		])
+		.reduce(
+			(subresources, [subresource, timeout]) => ({
+				...subresources,
+				[subresource]: timeout
+			}),
+			{}
+		);
+
+const getSubresourcesDataInternal = (packageName, cdnRepo) => ({
+	subresources: getFiles(`${packageName}/**/*.ipfs`, cdnRepo)
+		.map(ipfs => [
+			ipfs.slice(packageName.length + 1, -5),
+			fs.readFileSync(path.join(cdnRepo.repoPath, ipfs)).toString().trim()
+		])
+		.reduce(
+			(subresources, [subresource, hash]) => ({
+				...subresources,
+				[subresource]: hash
+			}),
+			{}
+		),
+	subresourceTimeouts: getSubresourceTimeouts(
+		packageName,
+		clientMaximumAllowedLatency,
+		clientMinimumSupportedMbps,
+		cdnRepo
+	)
+});
+
+export const getSubresourcesData = async packageName =>
+	getSubresourcesDataInternal(packageName, await getCDNRepo());
+
 export const getPackageDatabase = memoize(async () => {
 	if (fs.existsSync(cachePath)) {
 		return dynamicDeserialize(fs.readFileSync(cachePath));
@@ -30,36 +86,8 @@ export const getPackageDatabase = memoize(async () => {
 
 	const {repoPath} = cdnRepo;
 	const options = {cwd: repoPath};
-	const globOptions = {cwd: repoPath, symlinks: true};
 
-	const getFiles = memoize(pattern => glob(pattern, globOptions));
-
-	const getSubresourceTimeouts = (
-		packageName,
-		maximumAllowedLatency,
-		minimumSupportedMbps
-	) =>
-		getFiles(`${packageName}/**/*.ipfs`)
-			.map(ipfs => `${ipfs.slice(0, -5)}.br`)
-			.map(br => [
-				br.slice(packageName.length + 1, -3),
-				Math.round(
-					(fs.statSync(path.join(repoPath, br)).size /
-						((1024 * 1024) / 8) /
-						minimumSupportedMbps) *
-						1000 +
-						maximumAllowedLatency
-				)
-			])
-			.reduce(
-				(subresources, [subresource, timeout]) => ({
-					...subresources,
-					[subresource]: timeout
-				}),
-				{}
-			);
-
-	const packageDatabase = getFiles('**/pkg.gz')
+	const packageDatabase = getFiles('**/pkg.gz', cdnRepo)
 		.map(pkg => [
 			pkg.split('/').slice(0, -1).join('/'),
 			fs.existsSync(path.join(repoPath, pkg)) ?
@@ -83,27 +111,8 @@ export const getPackageDatabase = memoize(async () => {
 				...packages,
 				[packageName]: {
 					packageV1: {
-						root,
-						subresources: getFiles(`${packageName}/**/*.ipfs`)
-							.map(ipfs => [
-								ipfs.slice(packageName.length + 1, -5),
-								fs
-									.readFileSync(path.join(repoPath, ipfs))
-									.toString()
-									.trim()
-							])
-							.reduce(
-								(subresources, [subresource, hash]) => ({
-									...subresources,
-									[subresource]: hash
-								}),
-								{}
-							),
-						subresourceTimeouts: getSubresourceTimeouts(
-							packageName,
-							clientMaximumAllowedLatency,
-							clientMinimumSupportedMbps
-						)
+						...getSubresourcesDataInternal(packageName, cdnRepo),
+						root
 					},
 					packageV2: readIfExists(
 						`${repoPath}/${packageName}/pkg.v2.br`
@@ -114,7 +123,8 @@ export const getPackageDatabase = memoize(async () => {
 							getSubresourceTimeouts(
 								packageName,
 								serverMaximumAllowedLatency,
-								serverMinimumSupportedMbps
+								serverMinimumSupportedMbps,
+								cdnRepo
 							)
 						)
 					).map(([subresource, timeout]) => ({
