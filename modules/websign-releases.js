@@ -229,6 +229,7 @@ export const processReleaseSignOutput = async ({
 							subresourceTimeouts,
 							timestamp: pendingRelease.packageData.timestamp
 						},
+						excludeFromIndexes: ['data'],
 						key: getDatastoreKey(
 							'WebSignPackageItem',
 							pendingRelease.packageData.packageName
