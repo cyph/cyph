@@ -59,7 +59,7 @@ export const publishSubresources = async ({
 		packageName
 	);
 
-	await mkdirp(path.join(cdnRepo.repoPath, packageParent, packageName));
+	await mkdirp(packageFullPath);
 
 	await Promise.all(
 		Object.entries(subresources).map(async ([subresource, content]) => {
@@ -68,14 +68,7 @@ export const publishSubresources = async ({
 
 			const oldIPFSHash = (
 				await fs
-					.readFile(
-						path.join(
-							cdnRepo.repoPath,
-							packageParent,
-							packageName,
-							`${subresource}.ipfs`
-						)
-					)
+					.readFile(path.join(packageFullPath, `${subresource}.ipfs`))
 					.catch(() => undefined)
 			)
 				?.toString()
