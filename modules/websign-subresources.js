@@ -24,7 +24,19 @@ const processSubresource = async (content, ipfsCredentials) => {
 		fastSHA512.hash(buf).then(o => o.hex)
 	]);
 
+	console.log({
+		processSubresource: {
+			sriHash
+		}
+	});
+
 	const ipfsHash = await ipfsAdd(brotliEncoded, ipfsCredentials);
+
+	console.log({
+		processSubresource: {
+			ipfsHash
+		}
+	});
 
 	return {
 		brotliEncoded,
@@ -59,7 +71,21 @@ export const publishSubresources = async ({
 		packageName
 	);
 
+	console.log({
+		publishSubresources: {
+			packageFullPath,
+			packageParent,
+			repoPath: cdnRepo.repoPath
+		}
+	});
+
 	await mkdirp(packageFullPath);
+
+	console.log({
+		publishSubresources: {
+			packageFullPathCreated: true
+		}
+	});
 
 	await Promise.all(
 		Object.entries(subresources).map(async ([subresource, content]) => {
