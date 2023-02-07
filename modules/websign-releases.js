@@ -200,24 +200,46 @@ export const processReleaseSignOutput = async ({
 		return;
 	}
 
+	/* Merge with certifiedMessages and limit to the most recent submission of any given package */
+	const releasesToDeploy = Object.values(
+		pendingReleases
+			.map((pendingRelease, i) => ({
+				...pendingRelease,
+				certifiedMessage: certifiedMessages[i]
+			}))
+			.reduce(
+				(releasesMap, pendingRelease) => ({
+					...releasesMap,
+					[pendingRelease.packageData.packageName]: [
+						...(releasesMap[
+							pendingRelease.packageData.packageName
+						] ?? []),
+						pendingRelease
+					]
+				}),
+				{}
+			)
+	).map(
+		releases =>
+			releases.sort(
+				(a, b) => b.packageData.timestamp - a.packageData.timestamp
+			)[0]
+	);
+
 	await datastore.save(
 		await Promise.all(
-			certifiedMessages.flatMap((certifiedMessage, i) => {
-				const pendingRelease = pendingReleases[i];
-
-				return [
-					{
-						data: {
-							timestamp: pendingRelease.packageData.timestamp
-						},
-						key: getDatastoreKey(
-							'WebSignPackageTimestamp',
-							pendingRelease.packageData.packageName
-						)
+			releasesToDeploy.flatMap(({certifiedMessage, packageData}) => [
+				{
+					data: {
+						timestamp: packageData.timestamp
 					},
-					getSubresourcesData(
-						pendingRelease.packageData.packageName
-					).then(async ({subresources, subresourceTimeouts}) => ({
+					key: getDatastoreKey(
+						'WebSignPackageTimestamp',
+						packageData.packageName
+					)
+				},
+				getSubresourcesData(packageData.packageName).then(
+					async ({subresources, subresourceTimeouts}) => ({
 						data: {
 							data: await brotli.encode(
 								await serialize(
@@ -231,7 +253,7 @@ export const processReleaseSignOutput = async ({
 							subresourceTimeouts: Buffer.from(
 								dynamicSerializeBytes(subresourceTimeouts)
 							),
-							timestamp: pendingRelease.packageData.timestamp
+							timestamp: packageData.timestamp
 						},
 						excludeFromIndexes: [
 							'data',
@@ -240,11 +262,20 @@ export const processReleaseSignOutput = async ({
 						],
 						key: getDatastoreKey(
 							'WebSignPackageItem',
-							pendingRelease.packageData.packageName
+							packageData.packageName
 						)
-					}))
-				];
-			})
+					})
+				)
+			])
+		)
+	);
+
+	await Promise.all(
+		pendingReleases.map(async pendingRelease =>
+			database
+				.ref(`${pendingReleasesURL}/${pendingRelease.releaseID}`)
+				.remove()
+				.catch(() => {})
 		)
 	);
 };
