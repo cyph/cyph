@@ -21,7 +21,7 @@ const {
 	WebSignPackage,
 	WebSignPackageData
 } = proto;
-const {deserialize, filterUndefined, serialize} = util;
+const {deserialize, dynamicSerializeBytes, filterUndefined, serialize} = util;
 
 const algorithm = PotassiumData.SignAlgorithms.V2Hardened;
 
@@ -225,11 +225,19 @@ export const processReleaseSignOutput = async ({
 									certifiedMessage
 								)
 							),
-							subresources,
-							subresourceTimeouts,
+							subresources: Buffer.from(
+								dynamicSerializeBytes(subresources)
+							),
+							subresourceTimeouts: Buffer.from(
+								dynamicSerializeBytes(subresourceTimeouts)
+							),
 							timestamp: pendingRelease.packageData.timestamp
 						},
-						excludeFromIndexes: ['data'],
+						excludeFromIndexes: [
+							'data',
+							'subresources',
+							'subresourceTimeouts'
+						],
 						key: getDatastoreKey(
 							'WebSignPackageItem',
 							pendingRelease.packageData.packageName

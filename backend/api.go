@@ -25,6 +25,7 @@ import (
 	stripeSubscriptionAPI "github.com/stripe/stripe-go/v72/sub"
 	stripeSubscriptionItemAPI "github.com/stripe/stripe-go/v72/subitem"
 	stripeWebhookAPI "github.com/stripe/stripe-go/v72/webhook"
+	"github.com/vmihailenco/msgpack/v5"
 	"google.golang.org/api/iterator"
 	tasksProto "google.golang.org/genproto/googleapis/cloud/tasks/v2"
 	"google.golang.org/protobuf/proto"
@@ -1047,9 +1048,31 @@ func getPackageV2(h HandlerArgs) (interface{}, int) {
 		}
 
 		packageContainer.Data = packageItem.Data
-		packageContainer.Subresources = packageItem.Subresources
-		packageContainer.SubresourceTimeouts = packageItem.SubresourceTimeouts
 		packageContainer.Timestamp = packageItem.Timestamp
+
+		if err := msgpack.Unmarshal(
+			packageItem.Subresources,
+			&packageContainer.Subresources,
+		); err != nil {
+			log.Printf(
+				"Error decoding packageItem.Subresources for %s in getPackageV2: %v",
+				packageName,
+				err,
+			)
+			return "package not found", http.StatusBadRequest
+		}
+
+		if err := msgpack.Unmarshal(
+			packageItem.SubresourceTimeouts,
+			&packageContainer.SubresourceTimeouts,
+		); err != nil {
+			log.Printf(
+				"Error decoding packageItem.SubresourceTimeouts for %s in getPackageV2: %v",
+				packageName,
+				err,
+			)
+			return "package not found", http.StatusBadRequest
+		}
 	}
 
 	_, continentCode, _, _, _, _, _, _ := geolocate(h)
