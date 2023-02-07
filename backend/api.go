@@ -1042,6 +1042,7 @@ func getPackageV2(h HandlerArgs) (interface{}, int) {
 		packageDataKey := datastoreKey("WebSignPackageItem", packageName)
 
 		if err := h.Datastore.Get(h.Context, packageDataKey, packageItem); err != nil {
+			log.Printf("Error fetching package %s in getPackageV2: %v", packageName, err)
 			return "package not found", http.StatusBadRequest
 		}
 
