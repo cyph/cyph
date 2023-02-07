@@ -146,7 +146,7 @@ type WebSignPackageItem struct {
 	Data                []byte
 	Subresources        []byte
 	SubresourceTimeouts []byte
-	Timestamp           float64
+	Timestamp           int64
 }
 
 // WebSignPackageTimestamp : Timestamp of a WebSign package

@@ -1048,7 +1048,7 @@ func getPackageV2(h HandlerArgs) (interface{}, int) {
 		}
 
 		packageContainer.Data = packageItem.Data
-		packageContainer.Timestamp = packageItem.Timestamp
+		packageContainer.Timestamp = float64(packageItem.Timestamp)
 
 		if err := msgpack.Unmarshal(
 			packageItem.Subresources,
