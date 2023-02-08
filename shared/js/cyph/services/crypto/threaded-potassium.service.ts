@@ -108,7 +108,8 @@ export class ThreadedPotassiumService
 			this.getPotassium(async o => o.boxGetPrivateKeyBytes(algorithm)),
 		getPublicKeyBytes: async algorithm =>
 			this.getPotassium(async o => o.boxGetPublicKeyBytes(algorithm)),
-		keyPair: async () => this.getPotassium(async o => o.boxKeyPair()),
+		keyPair: async algorithm =>
+			this.getPotassium(async o => o.boxKeyPair(algorithm)),
 		open: async (cyphertext, keyPair) =>
 			this.getPotassium(async o => o.boxOpen(cyphertext, keyPair)),
 		seal: async (plaintext, publicKey, rawOutput) =>
@@ -319,7 +320,8 @@ export class ThreadedPotassiumService
 			this.getPotassium(async o =>
 				o.signImportPublicKeys(algorithm, classical, postQuantum)
 			),
-		keyPair: async () => this.getPotassium(async o => o.signKeyPair()),
+		keyPair: async algorithm =>
+			this.getPotassium(async o => o.signKeyPair(algorithm)),
 		open: async (signed, publicKey, additionalData, decompress) =>
 			this.getPotassium(async o =>
 				o.signOpen(signed, publicKey, additionalData, decompress)

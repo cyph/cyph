@@ -1514,7 +1514,10 @@ export class AccountDatabaseService extends BaseProvider {
 					[currentSignAlgorithm.hardened]:
 						currentPrivateKeyring.signPrivateKeys?.[
 							currentSignAlgorithm.hardened
-						] ?? (await this.potassiumService.sign.keyPair()),
+						] ??
+						(await this.potassiumService.sign.keyPair(
+							currentSignAlgorithm.hardened
+						)),
 					[currentSignAlgorithm.primary]:
 						currentPrivateKeyring.signPrivateKeys?.[
 							currentSignAlgorithm.primary
