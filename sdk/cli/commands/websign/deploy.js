@@ -22,12 +22,12 @@ program
 		'require signatures from additional users before publishing'
 	)
 	.option(
-		'--ttl-months',
-		'number of months before this release expires (defaults to 18)'
-	)
-	.option(
 		'--tofu-key-persistence',
 		'activate TOFU public key pinning (potentially risky, so talk to us before using!)'
+	)
+	.option(
+		'--ttl-months',
+		'number of months before this release expires (defaults to 18)'
 	)
 	.action(
 		async ({
