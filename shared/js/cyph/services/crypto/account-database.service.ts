@@ -1462,6 +1462,39 @@ export class AccountDatabaseService extends BaseProvider {
 		const currentSignAlgorithm = await this.potassiumService.sign
 			.currentAlgorithm;
 
+		/* Temporary fix for bad data caused by ThreadedPotassiumService keyPair issue */
+		if (
+			currentPrivateKeyring.signPrivateKeys?.[
+				currentSignAlgorithm.hardened
+			] !== undefined
+		) {
+			const algorithm = currentSignAlgorithm.hardened;
+
+			const publicKey = await this.potassiumService.encoding.openKeyring(
+				PotassiumData.SignAlgorithms,
+				currentPrivateKeyring.signPrivateKeys[
+					currentSignAlgorithm.hardened
+				].publicKey,
+				algorithm
+			);
+
+			const potassiumPublicKey =
+				await this.potassiumService.encoding.deserialize(
+					await this.potassiumService.sign.defaultMetadata,
+					{publicKey}
+				);
+
+			if (potassiumPublicKey.signAlgorithm !== algorithm) {
+				/* Delete current key pair so that it can be correctly regenerated */
+				(<any> currentPrivateKeyring.signPrivateKeys)[
+					currentSignAlgorithm.hardened
+				] = undefined;
+
+				/* Skip redundant notification */
+				updateKeyringsHandler = undefined;
+			}
+		}
+
 		if (
 			currentPrivateKeyring.boxPrivateKeys?.[currentBoxAlgorithm] ===
 				undefined ||
