@@ -80,6 +80,12 @@ const getPendingRelease = async (
 						);
 					}
 
+					const potassiumPublicKey =
+						await potassium.encoding.deserialize(
+							await potassium.sign.defaultMetadata,
+							{publicKey}
+						);
+
 					const packageData = await deserialize(
 						WebSignPackageData,
 						await potassium.sign.open(
@@ -96,7 +102,11 @@ const getPendingRelease = async (
 						throw new Error('Invalid package data.');
 					}
 
-					return {packageData, publicKey, username};
+					return {
+						packageData,
+						publicKey: potassiumPublicKey.publicKey,
+						username
+					};
 				}
 			)
 		);

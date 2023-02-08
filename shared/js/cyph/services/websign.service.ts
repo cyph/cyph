@@ -53,7 +53,8 @@ export class WebSignService extends BaseProvider {
 		const signature = await this.potassiumService.sign.signDetached(
 			packageData.payload,
 			keyPair.privateKey,
-			`${this.accountDatabaseService.namespace}:webSign/signatures/${packageData.packageName}`
+			`${this.accountDatabaseService.namespace}:webSign/signatures/${packageData.packageName}`,
+			true
 		);
 
 		return {
