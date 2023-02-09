@@ -66,7 +66,7 @@ find shared/css shared/js \
 	-type f \
 	-name '*.scss' \
 	-exec bash -c '
-		cat {} | perl -pe "s/([^\d]0)px/\1/g" | sed 's|word-wrap:|overflow-wrap:|g' > {}.new
+		cat {} | perl -pe "s/([^\d]0)px/\1/g" | sed "s|word-wrap:|overflow-wrap:|g" > {}.new
 		mv {}.new {}
 	' \
 \;
