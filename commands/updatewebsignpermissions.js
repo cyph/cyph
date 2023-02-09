@@ -18,20 +18,27 @@ const webSignPermissionsTimestampPath = `${__dirname}/../modules/websign-permiss
 try {
 	const {
 		init = false,
-		'package-name': packageName,
+		'package-name': packageNameArgument,
 		'project-id': projectId = 'cyphme',
 		remove = false,
 		'user': usernameArg
 	} = minimist(process.argv.slice(2));
 
-	if (
-		typeof packageName !== 'string' ||
-		!packageName.includes('.') ||
-		new URL(`https://${packageName}`).host !== packageName
-	) {
-		throw new Error(
-			'Package name (--package-name <packageName>) not specified.'
-		);
+	const packageNames =
+		packageNameArgument instanceof Array ?
+			packageNameArgument :
+			[packageNameArgument];
+
+	for (const packageName of packageNames) {
+		if (
+			typeof packageName !== 'string' ||
+			!packageName.includes('.') ||
+			new URL(`https://${packageName}`).host !== packageName
+		) {
+			throw new Error(
+				'Package name (--package-name <packageName>) not specified.'
+			);
+		}
 	}
 
 	const testSign = projectId !== 'cyphme';
@@ -59,21 +66,26 @@ try {
 			transform: o => ({
 				packages: {
 					...(o.packages ?? {}),
-					[packageName]: {
-						users: {
-							...(o.packages?.[packageName]?.users ?? {}),
-							...Object.fromEntries(
-								usernames.map(username => [
-									username,
-									remove ?
-										undefined :
-										{
-											timestamp
-										}
-								])
-							)
-						}
-					}
+					...Object.fromEntries(
+						packageNames.map(packageName => [
+							packageName,
+							{
+								users: {
+									...(o.packages?.[packageName]?.users ?? {}),
+									...Object.fromEntries(
+										usernames.map(username => [
+											username,
+											remove ?
+												undefined :
+												{
+													timestamp
+												}
+										])
+									)
+								}
+							}
+						])
+					)
 				},
 				timestamp
 			})
