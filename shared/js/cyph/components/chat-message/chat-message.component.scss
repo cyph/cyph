@@ -105,8 +105,8 @@ div.author-remote .hide-content-button.mobile {
 	}
 
 	.clipboard-copy-menu {
-		margin-top: 0px;
-		margin-left: 0px;
+		margin-top: 0;
+		margin-left: 0;
 		margin-bottom: 8px;
 	}
 
@@ -329,7 +329,7 @@ div.author-remote .hide-content-button.mobile {
 			.media-message {
 				width: calc(80vw - 32px);
 				height: auto;
-				margin: 16px 0px 0px 0px;
+				margin: 16px 0 0 0;
 				border-radius: $mobileMessageBorderRadius;
 				clip-path: inset(0 0 -100% 0);
 			}
