@@ -259,13 +259,17 @@ var config = struct {
 	CacheControlHeader: "no-cache",
 
 	ContinentFirebaseRegions: map[string]string{
-		"af": "europe-west1",
-		/* "an": "us-central1", */
-		"as": "asia-northeast1",
-		"eu": "europe-west1",
+		/*
+			"af": "europe-west1",
+			// "an": "us-central1",
+			"as": "asia-northeast1",
+			"eu": "europe-west1",
+		*/
 		"na": "us-central1",
-		"oc": "australia-southeast1",
-		"sa": "southamerica-east1",
+		/*
+			"oc": "australia-southeast1",
+			"sa": "southamerica-east1",
+		*/
 	},
 
 	Continents: map[string]none{

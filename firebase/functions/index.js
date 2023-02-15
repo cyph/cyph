@@ -21,10 +21,12 @@ const database = memoize(highMemory => functionBuilder(highMemory).database);
 const https = memoize(
 	highMemory =>
 		functionBuilder(highMemory).region(
+			/*
 			'asia-northeast1',
 			'australia-southeast1',
 			'europe-west1',
 			'southamerica-east1',
+			*/
 			'us-central1'
 		).https
 );
