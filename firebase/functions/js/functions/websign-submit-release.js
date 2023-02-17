@@ -1,5 +1,6 @@
 import {proto, util} from '@cyph/sdk';
-import {ipfsCredentials, isProd} from '../cyph-admin-vars.js';
+import {functionsConfig} from '../../functions-config.js';
+import {ipfsCredentials} from '../cyph-admin-vars.js';
 import {admin, database, getItem, onCall, setItem} from '../init.js';
 import {webSignAlgorithm} from '../modules/websign-algorithm.js';
 import {getWebSignPermissions} from '../modules/websign-permissions.js';
@@ -68,7 +69,7 @@ export const webSignSubmitRelease = onCall(
 		const author = await getUsername();
 		const webSignPermissions = await getWebSignPermissions({
 			getItem,
-			testSign: !isProd
+			testSign: !functionsConfig.prod
 		});
 
 		if (!webSignPermissions.packages[packageName]?.users[author]) {

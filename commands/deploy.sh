@@ -736,6 +736,28 @@ then
 				sed "s|${1}: ||"
 		}
 
+		cat > functions/functions-config.js <<- EOM
+			exports.functionsConfig = {
+				keepWarm: $(
+					if [ "${firebaseIsProd}" ] ; then
+						echo true
+					else
+						echo false
+					fi
+				),
+				prod: $(
+					if [ "${firebaseIsProd}" ] ; then
+						echo true
+					else
+						echo false
+					fi
+				),
+				project: {
+					id: '${firebaseProject}'
+				}
+			};
+EOM
+
 		cat > functions/js/cyph-admin-vars.js <<- EOM
 			export const cyphAdminKey = $(getBackendVar CYPH_FIREBASE_ADMIN_KEY);
 
@@ -743,14 +765,6 @@ then
 				eternum: '$(cat ~/.cyph/eternum.key)',
 				pinata: '$(cat ~/.cyph/pinata.key)'
 			};
-
-			export const isProd = $(
-				if [ "${firebaseIsProd}" ] ; then
-					echo true
-				else
-					echo false
-				fi
-			);
 
 			export const mailchimpCredentials = {
 				apiKey: $(getBackendVar MAILCHIMP_API_KEY).split('-')[0],
@@ -920,13 +934,7 @@ EOM
 		)"
 
 		cp -f ~/.cyph/firebase-credentials/${firebaseProject}.fcm functions/js/fcm-server-key
-		firebaseCLI functions:config:set project.id="${firebaseProject}"
 		gsutil cors set storage.cors.json "gs://${firebaseProject}.appspot.com"
-
-		if [ ! "${test}" ] ; then
-			firebaseCLI functions:config:set cyph.prod=true
-			firebaseCLI functions:config:set cyph.keepwarm=true
-		fi
 
 		i=0
 		while true ; do
