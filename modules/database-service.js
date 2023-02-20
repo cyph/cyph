@@ -341,7 +341,7 @@ export const initDatabaseService = memoize((config, isCloudFunction) => {
 			await retry(async () =>
 				archiveStorage
 					.file(`${archiveName}/${timestamp.toString()}`)
-					.save(encodedBytes)
+					.save(encodedBytes, {resumable: false})
 			);
 
 			return timestamp;
@@ -365,7 +365,9 @@ export const initDatabaseService = memoize((config, isCloudFunction) => {
 
 			if (!noBlobStorage) {
 				await retry(async () =>
-					storage.file(`${url}/${hash}`).save(bytes)
+					storage
+						.file(`${url}/${hash}`)
+						.save(bytes, {resumable: false})
 				);
 			}
 			else if (dataAlreadySet) {
