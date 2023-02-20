@@ -169,6 +169,7 @@ var config = struct {
 	BlobStorageBucket          string
 	BurnerChannelExpiration    int64
 	CacheControlHeader         string
+	CloudFunctionRoutes        []string
 	ContinentFirebaseRegions   map[string]string
 	Continents                 map[string]none
 	DefaultContinent           string
@@ -257,6 +258,35 @@ var config = struct {
 	BurnerChannelExpiration: 172800000,
 
 	CacheControlHeader: "no-cache",
+
+	CloudFunctionRoutes: []string{
+		"acceptPseudoRelationship",
+		"appointmentInvite",
+		"burnerInvite",
+		"checkInviteCode",
+		"confirmMasterKey",
+		"downgradeAccount",
+		"generateInvite",
+		"getCastleSessionID",
+		"getEmailData",
+		"getReactions",
+		"getSubscriptionData",
+		"getUserToken",
+		"openUserToken",
+		"publishEmail",
+		"register",
+		"rejectPseudoRelationship",
+		"requestPseudoRelationship",
+		"resetCastleSessionID",
+		"sendAppLink",
+		"sendInvite",
+		"setContact",
+		"updateKeyrings",
+		"userNotify",
+		"usernameBlacklisted",
+		"verifyEmail",
+		"verifyEmailConfirm",
+	},
 
 	ContinentFirebaseRegions: map[string]string{
 		/*

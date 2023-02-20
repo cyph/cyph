@@ -12,7 +12,7 @@ const functionBuilder = (highMemory = false) =>
 		highMemory ?
 			'4GB' :
 			'256MB',
-		minInstances: functionsConfig.keepWarm && !highMemory ? 1 : undefined,
+		// minInstances: functionsConfig.keepWarm && !highMemory ? 1 : undefined,
 		timeoutSeconds: highMemory ? 540 : 60
 	});
 

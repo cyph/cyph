@@ -61,6 +61,7 @@ func main() {
 	handleFuncs("/syncfusion/convert", false, Handlers{methods.POST: syncfusionConvert})
 	handleFuncs("/timestamp", false, Handlers{methods.GET: getTimestampHandler})
 	handleFuncs("/waitlist/invite", true, Handlers{methods.GET: rollOutWaitlistInvites})
+	handleFuncs("/warmupcloudfunctions", true, Handlers{methods.GET: warmUpCloudFunctions})
 	handleFuncs("/websign/package/*", false, Handlers{methods.GET: getPackageV2})
 	handleFuncs("/websign/packagetimestamp/*", false, Handlers{methods.GET: getPackageTimestampV2})
 	handleFuncs("/whatismyip", false, Handlers{methods.GET: whatismyip})
@@ -2132,6 +2133,46 @@ func syncfusionConvert(h HandlerArgs) (interface{}, int) {
 	}
 
 	return string(result), resp.StatusCode
+}
+
+func warmUpCloudFunctions(h HandlerArgs) (interface{}, int) {
+	resultCount := len(config.FirebaseRegions) * len(config.FirebaseProjects)
+
+	results := make(chan int, resultCount)
+
+	for i := range config.FirebaseRegions {
+		region := config.FirebaseRegions[i]
+
+		for j := range config.FirebaseProjects {
+			project := config.FirebaseProjects[j]
+
+			go func() {
+				for k := range cloudFunctionRoutes {
+					route := cloudFunctionRoutes[k]
+
+					client := &http.Client{}
+
+					req, _ := http.NewRequest(
+						methods.POST,
+						"https://"+region+"-"+project+".cloudfunctions.net/"+route,
+						bytes.NewBuffer([]byte("")),
+					)
+
+					req.Header.Add("X-Warmup-Ping", "true")
+
+					client.Do(req)
+				}
+
+				results <- 0
+			}()
+		}
+	}
+
+	for i := 0; i < resultCount; i++ {
+		<-results
+	}
+
+	return "", http.StatusOK
 }
 
 func whatismyip(h HandlerArgs) (interface{}, int) {

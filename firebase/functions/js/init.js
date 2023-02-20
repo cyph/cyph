@@ -135,6 +135,11 @@ export const onCall = f => async (req, res) => {
 	let data;
 
 	try {
+		if (req.get('X-Warmup-Ping')) {
+			res.status(200).send('');
+			return;
+		}
+
 		const idToken = req.get('Authorization');
 		data = dynamicDeserialize(req.body);
 
