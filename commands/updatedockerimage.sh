@@ -111,20 +111,6 @@ emsdk activate latest-upstream
 sed -i "s/NODE_JS = .*/NODE_JS = '\/usr\/bin\/node'/" ~/emsdk/.emscripten
 
 
-# Temporary workaround for https://github.com/nodejs/node/issues/46323
-if [ ! -d ~/nodejs ] ; then
-	nodeVersion="v18.12.1"
-	nodePackageName="node-${nodeVersion}-linux-$( \
-		if [ "$(arch)" == aarch64 ] ; then echo arm64 ; else echo x64 ; fi \
-	)"
-
-	cd
-	wget https://nodejs.org/dist/${nodeVersion}/${nodePackageName}.tar.xz
-	tar -xvf ${nodePackageName}.tar.xz
-	mv ${nodePackageName} nodejs
-fi
-
-
 if [ ! -d ~/google-cloud-sdk ] ; then
 	wget \
 		"https://dl.google.com/dl/cloudsdk/channels/rapid/downloads/google-cloud-sdk-392.0.0-linux-$( \
