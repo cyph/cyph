@@ -353,6 +353,10 @@ export class AccountLoginComponent extends BaseProvider implements OnInit {
 		}
 
 		await this.postLogin();
+
+		await this.localStorageService
+			.removeItem('unconfirmedMasterKey')
+			.catch(() => {});
 	}
 
 	constructor (
