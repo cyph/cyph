@@ -1874,7 +1874,7 @@ export class AccountFilesService extends BaseProvider {
 					deltas.map(delta => this.encodeQuill(delta))
 				),
 			subscribeAndPop: f =>
-				asyncList.subscribeAndPop(bytes =>
+				asyncList.subscribeAndPop(async bytes =>
 					!(bytes instanceof ListHoleError) ?
 						f(this.decodeQuill(bytes)) :
 						undefined

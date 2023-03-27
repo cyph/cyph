@@ -225,7 +225,7 @@ export class FirebaseDatabaseService extends DatabaseService {
 
 					(<any> self).firebaseMessaging.onBackgroundMessage(
 						(<any> self).messaging,
-						(payload: any) => {
+						async (payload: any) => {
 							const notification = !payload ?
 								undefined :
 							payload.notification?.title ?
