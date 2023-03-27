@@ -1,6 +1,6 @@
 {
 	"name": "@cyph/sdk",
-	"version": "7.0.4",
+	"version": "7.1.0",
 	"license": "Cyph-RSL",
 	"type": "module",
 	"main": "./index.js",
@@ -27,7 +27,6 @@
 		"commander": "^9",
 		"fast-sha512": "*",
 		"firebase": ">=9",
-		"generate-rsa-keypair": "*",
 		"glob": "*",
 		"glob-promise": "*",
 		"html-minifier": "*",
