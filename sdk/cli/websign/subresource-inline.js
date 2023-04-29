@@ -10,9 +10,9 @@ import path from 'path';
 export const subresourceInline = async (rootDirectoryPath, subresourceRoot) => {
 	subresourceRoot = path.join(rootDirectoryPath, subresourceRoot);
 
-	const filesToMerge = (await glob('assets/**', {nodir: true})).filter(
-		s => !s.match(/^assets\/(css|js|misc|node_modules)\//)
-	);
+	const filesToMerge = (
+		await glob(path.join(rootDirectoryPath, 'assets', '**'), {nodir: true})
+	).filter(s => !s.match(/^assets\/(css|js|misc|node_modules)\//));
 
 	const filesToModify = (
 		await Promise.all(
@@ -24,10 +24,15 @@ export const subresourceInline = async (rootDirectoryPath, subresourceRoot) => {
 				{dir: 'js', ext: 'scss'},
 				{dir: 'js', ext: 'ts'}
 			].map(async o =>
-				glob(path.join(o.dir, '**', `*.${o.ext}`), {nodir: true})
+				glob(path.join(rootDirectoryPath, o.dir, '**', `*.${o.ext}`), {
+					nodir: true
+				})
 			)
 		)
-	).reduce((a, b) => a.concat(b), ['index.html']);
+	).reduce(
+		(a, b) => a.concat(b),
+		[path.join(rootDirectoryPath, 'index.html')]
+	);
 
 	await mkdirp(subresourceRoot);
 

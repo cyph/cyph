@@ -57,6 +57,6 @@
 		"url": "https://github.com/cyph/cyph/issues"
 	},
 	"engines": {
-		"node": "18"
+		"node": ">=18"
 	}
 }

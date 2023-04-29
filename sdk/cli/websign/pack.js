@@ -14,6 +14,9 @@ export const pack = async (
 	enableSRI,
 	outputPath
 ) => {
+	if (!inputPath) {
+		throw new Error('Missing input path.');
+	}
 	if (enableSRI && !outputPath) {
 		throw new Error('Cannot enable SRI without an output path specified.');
 	}
@@ -22,12 +25,15 @@ export const pack = async (
 		dir = '.';
 	}
 
+	inputPath = path.join(dir, inputPath);
+	outputPath = outputPath ? path.join(dir, outputPath) : undefined;
+
 	const subresourceRoot = outputPath ? path.dirname(outputPath) : undefined;
 	if (subresourceRoot !== undefined) {
 		await mkdirp(subresourceRoot);
 	}
 
-	const html = fs.readFileSync(path.join(dir, inputPath)).toString();
+	const html = fs.readFileSync(inputPath).toString();
 	const $ = cheerio.load(html);
 
 	const subresources = await Promise.all(
@@ -72,15 +78,11 @@ export const pack = async (
 				subresourceRoot,
 				subresource.subresourcePath
 			);
-			const subresourcePathFull = path.join(dir, subresourcePath);
 			const subresourcePathParent = path.parse(subresourcePath).dir;
 
 			await mkdirp(subresourcePathParent);
-			fs.writeFileSync(subresourcePathFull, subresource.content);
-			fs.writeFileSync(
-				`${subresourcePathFull}.srihash`,
-				subresource.hash
-			);
+			fs.writeFileSync(subresourcePath, subresource.content);
+			fs.writeFileSync(`${subresourcePath}.srihash`, subresource.hash);
 		}
 
 		subresource.$elem.replaceWith(
@@ -120,7 +122,7 @@ export const pack = async (
 			html)($.html().trim());
 
 	if (outputPath) {
-		fs.writeFileSync(path.join(dir, outputPath), output);
+		fs.writeFileSync(outputPath, output);
 	}
 
 	return output;

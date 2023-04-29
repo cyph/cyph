@@ -16,6 +16,7 @@ const rootOutputPath = '.websign-deployment-pkg';
 const outputHTMLPath = path.join(rootOutputPath, '.index.html');
 
 export const deploy = async ({
+	keepBuildArtifacts = false,
 	mandatoryUpdate = false,
 	masterKey,
 	packageName,
@@ -39,10 +40,7 @@ export const deploy = async ({
 	const rootOutputPathFull = path.join(rootDirectoryPath, rootOutputPath);
 	const outputHTMLPathFull = path.join(rootDirectoryPath, outputHTMLPath);
 
-	try {
-		await fs.unlink(rootOutputPathFull);
-	}
-	catch {}
+	await fs.rm(rootOutputPathFull, {force: true, recursive: true});
 
 	await subresourceInline(rootDirectoryPath, rootOutputPath);
 
@@ -83,4 +81,10 @@ export const deploy = async ({
 			)
 		}
 	);
+
+	if (keepBuildArtifacts) {
+		return;
+	}
+
+	await fs.rm(rootOutputPathFull, {recursive: true});
 };

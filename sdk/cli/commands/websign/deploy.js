@@ -10,6 +10,10 @@ program
 		'domain name to deploy to (defaults to the name of the application path)'
 	)
 	.option(
+		'--keep-build-artifacts',
+		'keeps build artifact directory at .websign-deployment-pkg for debugging purposes'
+	)
+	.option(
 		'--mandatory-update',
 		'mark this as a mandatory update (e.g. includes breaking changes)'
 	)
@@ -37,6 +41,7 @@ program
 	.action(
 		async ({
 			domain: packageName,
+			keepBuildArtifacts,
 			mandatoryUpdate,
 			path: rootDirectoryPath = process.cwd(),
 			requiredUserSignatures,
@@ -46,6 +51,7 @@ program
 			username
 		}) =>
 			deploy({
+				keepBuildArtifacts,
 				mandatoryUpdate,
 				masterKey,
 				packageName,
