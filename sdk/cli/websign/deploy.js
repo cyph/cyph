@@ -4,7 +4,7 @@ import {proto, util, webSignService} from '../../index.js';
 import fs from 'fs/promises';
 import glob from 'glob-promise';
 import path from 'path';
-import {useLicenseKey} from '../auth/index.js';
+import {login} from '../auth/index.js';
 import {pack} from './pack.js';
 import {subresourceInline} from './subresource-inline.js';
 import {threadPack} from './thread-pack.js';
@@ -17,11 +17,13 @@ const outputHTMLPath = path.join(rootOutputPath, '.index.html');
 
 export const deploy = async ({
 	mandatoryUpdate = false,
+	masterKey,
 	packageName,
 	requiredUserSignatures = [],
 	rootDirectoryPath,
 	tofuKeyPersistence = false,
-	ttlMonths = 18
+	ttlMonths = 18,
+	username
 }) => {
 	const timestamp = await getTimestamp();
 
@@ -32,7 +34,7 @@ export const deploy = async ({
 		packageName = path.parse(rootDirectoryPath).base;
 	}
 
-	await useLicenseKey();
+	await login(username, masterKey);
 
 	const rootOutputPathFull = path.join(rootDirectoryPath, rootOutputPath);
 	const outputHTMLPathFull = path.join(rootDirectoryPath, outputHTMLPath);

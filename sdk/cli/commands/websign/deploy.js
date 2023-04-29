@@ -29,6 +29,11 @@ program
 		'--ttl-months',
 		'number of months before this release expires (defaults to 18)'
 	)
+	.option(
+		'--unsafe-master-key <master key>',
+		'Cyph master key (NOT RECOMMENDED)'
+	)
+	.option('--username <username>', 'Cyph username')
 	.action(
 		async ({
 			domain: packageName,
@@ -36,15 +41,19 @@ program
 			path: rootDirectoryPath = process.cwd(),
 			requiredUserSignatures,
 			tofuKeyPersistence,
-			ttlMonths
+			ttlMonths,
+			unsafeMasterKey: masterKey,
+			username
 		}) =>
 			deploy({
 				mandatoryUpdate,
+				masterKey,
 				packageName,
 				requiredUserSignatures,
 				rootDirectoryPath,
 				tofuKeyPersistence,
-				ttlMonths
+				ttlMonths,
+				username
 			})
 	)
 	.hook('postAction', () => {

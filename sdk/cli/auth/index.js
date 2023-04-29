@@ -20,6 +20,54 @@ const {deserialize, request, safeStringCompare, serialize, uuid} = util;
 
 const licenseKeyPath = path.join(os.homedir(), '.cyphkey');
 
+const prompts = {
+	email: {
+		description: 'Email Address',
+		name: 'email',
+		pattern: emailRegex,
+		required: true
+	},
+	masterKey: {
+		description: 'Paper Master Key',
+		hidden: true,
+		name: 'masterKey',
+		replace: '*',
+		required: true
+	},
+	name: {
+		description: 'Name',
+		name: 'name',
+		required: true
+	},
+	pinGet: {
+		description: 'Unlock Password',
+		hidden: true,
+		name: 'pin',
+		replace: '*',
+		required: true
+	},
+	pinSet: {
+		conform: value => value.length >= 4,
+		description: 'Unlock Password (4+ characters)',
+		hidden: true,
+		name: 'pin',
+		replace: '*',
+		required: true
+	},
+	pinSetConfirm: {
+		description: 'Retype Unlock Password',
+		hidden: true,
+		name: 'pinConfirm',
+		replace: '*',
+		required: true
+	},
+	username: {
+		description: 'Username',
+		name: 'username',
+		required: true
+	}
+};
+
 const generateLicenseKey = async () => {
 	const licenseKeyData = {
 		masterKey: await localStorageService.getItem(
@@ -45,20 +93,46 @@ const generateLicenseKey = async () => {
 	console.log(`\n\nYour license key is saved at ${licenseKeyPath}.`);
 };
 
-export const login = async () => {
-	const {masterKey, username} = await prompt.get([
-		{
-			description: 'Username',
-			name: 'username',
-			required: true
+export const login = async (username, masterKey) => {
+	const loginMethods = [
+		async () => {
+			if (typeof username !== 'string') {
+				return false;
+			}
+			if (typeof masterKey !== 'string') {
+				masterKey = (await prompt.get([prompts.masterKey])).masterKey;
+			}
+			return accountAuthService.login(username, masterKey);
 		},
-		{
-			description: 'Paper Master Key',
-			hidden: true,
-			name: 'masterKey',
-			replace: '*',
-			required: true
+		async () =>
+			useLicenseKey()
+				.then(() => true)
+				.catch(() => false),
+		async () => {
+			if (typeof username !== 'string') {
+				username = (await prompt.get([prompts.username])).username;
+			}
+			if (typeof masterKey !== 'string') {
+				masterKey = (await prompt.get([prompts.masterKey])).masterKey;
+			}
+			return accountAuthService.login(username, masterKey);
 		}
+	];
+
+	for (const loginMethod of loginMethods) {
+		const success = await loginMethod();
+		if (success) {
+			return;
+		}
+	}
+
+	throw new Error('Login failed.');
+};
+
+export const persistentLogin = async () => {
+	const {masterKey, username} = await prompt.get([
+		prompts.username,
+		prompts.masterKey
 	]);
 
 	const success = await accountAuthService.login(username, masterKey);
@@ -72,32 +146,10 @@ export const login = async () => {
 
 export const register = async () => {
 	const {email, name, pin, pinConfirm} = await prompt.get([
-		{
-			description: 'Name',
-			name: 'name',
-			required: true
-		},
-		{
-			description: 'Email Address',
-			name: 'email',
-			pattern: emailRegex,
-			required: true
-		},
-		{
-			conform: value => value.length >= 4,
-			description: 'Unlock Password (4+ characters)',
-			hidden: true,
-			name: 'pin',
-			replace: '*',
-			required: true
-		},
-		{
-			description: 'Retype Unlock Password',
-			hidden: true,
-			name: 'pinConfirm',
-			replace: '*',
-			required: true
-		}
+		prompts.name,
+		prompts.email,
+		prompts.pinSet,
+		prompts.pinSetConfirm
 	]);
 
 	if (!safeStringCompare(pin, pinConfirm)) {
@@ -148,15 +200,7 @@ export const useLicenseKey = async () => {
 		Buffer.from(licenseKey, 'hex')
 	);
 
-	const {pin} = await prompt.get([
-		{
-			description: 'Unlock Password',
-			hidden: true,
-			name: 'pin',
-			replace: '*',
-			required: true
-		}
-	]);
+	const {pin} = await prompt.get([prompts.pinGet]);
 
 	const success = await accountAuthService.login(username, masterKey, pin);
 
