@@ -2,7 +2,7 @@
 
 import fastSHA512 from 'fast-sha512';
 import fs from 'fs';
-import glob from 'glob-promise';
+import {glob} from 'glob';
 
 (async () => {
 	const files = [

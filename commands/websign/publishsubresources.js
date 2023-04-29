@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 import fs from 'fs/promises';
-import glob from 'glob/sync.js';
+import {globSync as glob} from 'glob';
 import minimist from 'minimist';
 import path from 'path';
 import {publishSubresources} from '../../modules/websign-subresources.js';

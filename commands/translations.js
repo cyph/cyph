@@ -4,7 +4,7 @@ import {getMeta} from '../modules/base.js';
 const {__dirname, isCLI} = getMeta(import.meta);
 
 import fs from 'fs';
-import glob from 'glob-promise';
+import {glob} from 'glob';
 import path from 'path';
 
 export const translations = (

@@ -286,7 +286,6 @@ firebase-server
 firebase-tools
 fork-ts-checker-webpack-plugin
 glob
-glob-promise
 gpu.js
 granim
 hammerjs

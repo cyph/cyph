@@ -3,7 +3,7 @@
 import {util} from '@cyph/sdk';
 import childProcess from 'child_process';
 import fs from 'fs';
-import glob from 'glob/sync.js';
+import {globSync as glob} from 'glob';
 import memoize from 'lodash-es/memoize.js';
 import os from 'os';
 import path from 'path';
