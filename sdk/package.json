@@ -5,7 +5,8 @@
 	"type": "module",
 	"main": "./index.js",
 	"bin": {
-		"cyph": "./cli/index.js"
+		"cyph": "./cli/index.js",
+		"websign": "./cli/commands/websign/index.js"
 	},
 	"files": [
 		"/cli",

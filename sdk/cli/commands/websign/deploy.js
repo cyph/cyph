@@ -4,7 +4,7 @@ import {program} from 'commander';
 import {deploy} from '../../websign/deploy.js';
 
 program
-	.name('cyph websign deploy')
+	.name('websign deploy')
 	.option(
 		'--mandatory-update',
 		'mark this as a mandatory update (e.g. includes breaking changes)'

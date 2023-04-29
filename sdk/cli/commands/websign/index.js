@@ -7,7 +7,7 @@ import {program} from 'commander';
 import path from 'path';
 
 program
-	.name('cyph websign')
+	.name('websign')
 	.description('Use WebSign service.')
 	.command('deploy', 'deploy new release', {
 		executableFile: path.join(__dirname, 'deploy.js')

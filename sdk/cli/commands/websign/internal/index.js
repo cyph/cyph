@@ -7,7 +7,7 @@ import {program} from 'commander';
 import path from 'path';
 
 program
-	.name('cyph websign internal')
+	.name('websign internal')
 	.description('Extra/internal commands (long-term support not guaranteed).')
 	.command('pack', 'Compile web assets into WebSign-compatible package.', {
 		executableFile: path.join(__dirname, 'pack.js')
