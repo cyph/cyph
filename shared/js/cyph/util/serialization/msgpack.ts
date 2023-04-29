@@ -48,8 +48,8 @@ for (let i = 0; i < msgpackHandlers.length; ++i) {
 	extensionCodec.register({type: i, ...msgpackHandlers[i]});
 }
 
-const decoder = new Decoder(extensionCodec);
-const encoder = new Encoder(extensionCodec);
+const decoder = new Decoder({extensionCodec});
+const encoder = new Encoder({extensionCodec});
 
 /** Deserializes arbitrary data from a base64 string or bytes. */
 export const dynamicDeserialize = (bytes: Uint8Array | string) : any => {
