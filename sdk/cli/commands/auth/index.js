@@ -12,7 +12,7 @@ program
 	.command('login', 'log in', {
 		executableFile: path.join(__dirname, 'login.js')
 	})
-	.command('register', 'log in', {
+	.command('register', 'register', {
 		executableFile: path.join(__dirname, 'register.js')
 	});
 

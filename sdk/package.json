@@ -1,6 +1,6 @@
 {
 	"name": "@cyph/sdk",
-	"version": "7.1.0",
+	"version": "7.1.3",
 	"license": "Cyph-RSL",
 	"type": "module",
 	"main": "./index.js",
@@ -25,6 +25,7 @@
 		"@babel/runtime": "*",
 		"cheerio": "*",
 		"commander": "^9",
+		"datauri": "^4",
 		"fast-sha512": "*",
 		"firebase": ">=9",
 		"glob": "*",
