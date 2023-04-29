@@ -6,12 +6,12 @@ import {deploy} from '../../websign/deploy.js';
 program
 	.name('websign deploy')
 	.option(
-		'--mandatory-update',
-		'mark this as a mandatory update (e.g. includes breaking changes)'
+		'--domain <name>',
+		'domain name to deploy to (defaults to the name of the application path)'
 	)
 	.option(
-		'--package-name <name>',
-		'package name/domain (defaults to the name of the application path)'
+		'--mandatory-update',
+		'mark this as a mandatory update (e.g. includes breaking changes)'
 	)
 	.option(
 		'--path <application directory path>',
@@ -31,8 +31,8 @@ program
 	)
 	.action(
 		async ({
+			domain: packageName,
 			mandatoryUpdate,
-			packageName,
 			path: rootDirectoryPath = process.cwd(),
 			requiredUserSignatures,
 			tofuKeyPersistence,
