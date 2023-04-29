@@ -4,7 +4,7 @@ import {util} from '@cyph/sdk';
 import fastSHA512 from 'fast-sha512';
 import fs from 'fs/promises';
 import {globSync as glob} from 'glob';
-import mkdirp from 'mkdirp';
+import {mkdirp} from 'mkdirp';
 import path from 'path';
 import {getCDNRepo} from './cdn-repo.js';
 import {brotli, gzip} from './compression.js';

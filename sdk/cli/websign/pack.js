@@ -4,7 +4,7 @@ import * as cheerio from 'cheerio';
 import fastSHA512 from 'fast-sha512';
 import fs from 'fs';
 import htmlMinifier from 'html-minifier';
-import mkdirp from 'mkdirp';
+import {mkdirp} from 'mkdirp';
 import path from 'path';
 
 export const pack = async (

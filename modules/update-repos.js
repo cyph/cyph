@@ -5,7 +5,7 @@ const {__dirname} = getMeta(import.meta);
 
 import childProcess from 'child_process';
 import fs from 'fs';
-import mkdirp from 'mkdirp';
+import {mkdirp} from 'mkdirp';
 import os from 'os';
 
 const getSubdirectories = dir =>

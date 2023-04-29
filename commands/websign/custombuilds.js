@@ -4,7 +4,7 @@ import {potassiumService as potassium, proto, util} from '@cyph/sdk';
 import * as cheerio from 'cheerio';
 import fastSHA512 from 'fast-sha512';
 import fs from 'fs';
-import mkdirp from 'mkdirp';
+import {mkdirp} from 'mkdirp';
 import {customBuild, customBuildIds} from '../custombuild.js';
 
 const {Environment} = proto;

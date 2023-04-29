@@ -2,7 +2,7 @@
 
 import {proto, util} from '@cyph/sdk';
 import fs from 'fs';
-import mkdirp from 'mkdirp';
+import {mkdirp} from 'mkdirp';
 import path from 'path';
 import {sign} from '../sign.js';
 

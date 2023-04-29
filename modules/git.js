@@ -12,7 +12,7 @@ import {
 	push
 } from 'isomorphic-git';
 import http from 'isomorphic-git/http/node/index.js';
-import mkdirp from 'mkdirp';
+import {mkdirp} from 'mkdirp';
 import os from 'os';
 import path from 'path';
 

@@ -5,7 +5,7 @@ const {__dirname, isCLI} = getMeta(import.meta);
 
 import childProcess from 'child_process';
 import fs from 'fs';
-import mkdirp from 'mkdirp';
+import {mkdirp} from 'mkdirp';
 import {addInviteCode} from './addinvitecode.js';
 import {getQR} from './qr.js';
 
