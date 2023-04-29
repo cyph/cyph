@@ -36,9 +36,7 @@ export const updateRepos = async () => {
 		const path = `${repoRoot}/${repo}`;
 		const gitIndexLockPath = `${path}/.git/index.lock`;
 
-		if (fs.existsSync(gitIndexLockPath)) {
-			fs.unlinkSync(gitIndexLockPath);
-		}
+		fs.rmSync(gitIndexLockPath, {force: true});
 
 		if (fs.existsSync(path)) {
 			for (const args of [

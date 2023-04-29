@@ -66,7 +66,7 @@ const defaultCacheValuesPath = path.join(
 			.replace(' =', '\t=')
 	);
 
-	fs.unlinkSync(cordovaJSPath);
+	fs.rmSync(cordovaJSPath);
 
 	await browser.close();
 

@@ -80,7 +80,7 @@ export const qrInviteCode = async (countByUser, plan) => {
 			businessCardPath
 		]);
 
-		fs.unlinkSync(qrTmpPath);
+		fs.rmSync(qrTmpPath);
 	}
 };
 
