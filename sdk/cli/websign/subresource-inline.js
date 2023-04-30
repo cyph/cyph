@@ -11,8 +11,15 @@ export const subresourceInline = async (rootDirectoryPath, subresourceRoot) => {
 	subresourceRoot = path.join(rootDirectoryPath, subresourceRoot);
 
 	const filesToMerge = (
-		await glob(path.join(rootDirectoryPath, 'assets', '**'), {nodir: true})
-	).filter(s => !s.match(/^assets\/(css|js|misc|node_modules)\//));
+		await glob(path.join(rootDirectoryPath, 'assets', '**'), {
+			ignore: ['css', 'js', 'misc', 'node_modules'].map(dir =>
+				path.join(rootDirectoryPath, 'assets', dir, '**')
+			),
+			nodir: true
+		})
+	).map(file =>
+		rootDirectoryPath ? file.slice(rootDirectoryPath.length + 1) : file
+	);
 
 	const filesToModify = (
 		await Promise.all(
@@ -45,7 +52,12 @@ export const subresourceInline = async (rootDirectoryPath, subresourceRoot) => {
 				continue;
 			}
 
-			const dataURI = datauri(subresource).content;
+			const subresourceInputPath = path.join(
+				rootDirectoryPath,
+				subresource
+			);
+
+			const dataURI = datauri(subresourceInputPath).content;
 			const hash = (await fastSHA512.hash(dataURI)).hex;
 
 			content = content

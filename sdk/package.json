@@ -1,6 +1,6 @@
 {
 	"name": "@cyph/sdk",
-	"version": "8.0.3",
+	"version": "8.0.6",
 	"license": "Cyph-RSL",
 	"type": "module",
 	"main": "./index.js",
