@@ -1,1 +1,1 @@
-export const webSignPermissionsTimestamp = 1682788484915;
+export const webSignPermissionsTimestamp = 1683921730641;
