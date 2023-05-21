@@ -6,7 +6,7 @@ import fs from 'fs';
 import htmlMinifier from 'html-minifier';
 import {mkdirp} from 'mkdirp';
 import path from 'path';
-import {readSubresource} from './read-subresource.js';
+import {processSubresourcePath, readSubresource} from './read-subresource.js';
 
 export const pack = async ({
 	allowRemoteSubresources = false,
@@ -51,10 +51,9 @@ export const pack = async ({
 						enableSRI &&
 						$elem.attr('websign-sri-disable') === undefined;
 
-					const subresourcePath = $elem
-						.attr(tagName === 'script' ? 'src' : 'href')
-						.split('?')[0]
-						.replace(/^\//, '');
+					const subresourcePath = processSubresourcePath(
+						$elem.attr(tagName === 'script' ? 'src' : 'href')
+					);
 
 					const content = (
 						await readSubresource({

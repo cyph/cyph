@@ -5,6 +5,23 @@ import fs from 'fs/promises';
 import path from 'path';
 import {fetch} from '../modules/fetch.js';
 
+export const getSubresourceURL = subresourcePath =>
+	new URL(
+		subresourcePath.startsWith('//') ?
+			`https:${subresourcePath}` :
+			subresourcePath
+	);
+
+export const processSubresourcePath = subresourcePath => {
+	try {
+		getSubresourceURL(subresourcePath);
+		return subresourcePath;
+	}
+	catch {
+		return subresourcePath.split('?')[0].replace(/^\//, '');
+	}
+};
+
 export const readSubresource = async ({
 	allowRemoteSubresources = false,
 	parentDirectory,
@@ -32,12 +49,7 @@ export const readSubresource = async ({
 				`For production usage, you must move the file directly into this project.`
 		);
 
-		const url = new URL(
-			subresourcePath.startsWith('//') ?
-				`https:${subresourcePath}` :
-				subresourcePath
-		);
-
+		const url = getSubresourceURL(subresourcePath);
 		const buf = Buffer.from(await fetch(url).then(o => o.arrayBuffer()));
 
 		const sriHash = `sha512-${Buffer.from(
