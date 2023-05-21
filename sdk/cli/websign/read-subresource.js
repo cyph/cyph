@@ -50,7 +50,7 @@ export const readSubresource = async ({
 		);
 
 		const url = getSubresourceURL(subresourcePath);
-		const buf = Buffer.from(await fetch(url).then(o => o.arrayBuffer()));
+		const buf = Buffer.from(await fetch(url, undefined, 'arrayBuffer'));
 
 		const sriHash = `sha512-${Buffer.from(
 			await fastSHA512.hash(buf, true)
