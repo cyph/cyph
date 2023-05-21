@@ -8,8 +8,6 @@ const varToSelfReplacements = new Set([
 ]);
 
 export const threadPack = async rootPath => {
-	console.log(`Threadpack start: ${rootPath}`);
-
 	const originalCode = fs.readFileSync(rootPath).toString();
 
 	const modifiedCode = originalCode.replace(
@@ -43,6 +41,4 @@ export const threadPack = async rootPath => {
 
 		fs.writeFileSync(rootPath, modifiedCode);
 	}
-
-	console.log(`Threadpack complete: ${rootPath}`);
 };
