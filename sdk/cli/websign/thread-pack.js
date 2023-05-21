@@ -10,10 +10,11 @@ const varToSelfReplacements = new Set([
 export const threadPack = async rootPath => {
 	console.log(`Threadpack start: ${rootPath}`);
 
-	const code = fs
-		.readFileSync(rootPath)
-		.toString()
-		.replace(/importScripts\(\s*["'](.*?)["']\s*\)/g, (_, value) => {
+	const originalCode = fs.readFileSync(rootPath).toString();
+
+	const modifiedCode = originalCode.replace(
+		/importScripts\(\s*["'](.*?)["']\s*\)/g,
+		(_, value) => {
 			const scriptPath = value
 				.slice(value[0] === '/' ? 1 : 0)
 				.split('?')[0];
@@ -26,19 +27,22 @@ export const threadPack = async rootPath => {
 			}
 
 			return content;
-		});
+		}
+	);
 
-	const {error} = minify(code);
+	if (originalCode !== modifiedCode) {
+		const {error} = minify(modifiedCode);
 
-	if (error) {
-		fs.appendFileSync(
-			'/cyph/threadpack.log',
-			`${rootPath}:\n\n${code}\n\n\n\n\n\n\n\n`
-		);
-		throw error;
+		if (error) {
+			fs.appendFileSync(
+				'/cyph/threadpack.log',
+				`${rootPath}:\n\n${modifiedCode}\n\n\n\n\n\n\n\n`
+			);
+			throw error;
+		}
+
+		fs.writeFileSync(rootPath, modifiedCode);
 	}
-
-	fs.writeFileSync(rootPath, code);
 
 	console.log(`Threadpack complete: ${rootPath}`);
 };
