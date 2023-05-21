@@ -6,8 +6,10 @@ import fs from 'fs';
 import htmlMinifier from 'html-minifier';
 import {mkdirp} from 'mkdirp';
 import path from 'path';
+import {readSubresource} from './read-subresource.js';
 
 export const pack = async ({
+	allowRemoteSubresources = false,
 	enableMinify,
 	enableSRI,
 	inputPath,
@@ -54,10 +56,13 @@ export const pack = async ({
 						.split('?')[0]
 						.replace(/^\//, '');
 
-					const content = fs
-						.readFileSync(
-							path.join(rootDirectoryPath, subresourcePath)
-						)
+					const content = (
+						await readSubresource({
+							allowRemoteSubresources,
+							parentDirectory: rootDirectoryPath,
+							subresourcePath
+						})
+					)
 						.toString()
 						.replace(/\n\/\/# sourceMappingURL=.*?\.map/g, '')
 						.replace(/\n\/*# sourceMappingURL=.*?\.map *\//g, '')

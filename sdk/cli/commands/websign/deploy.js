@@ -34,6 +34,10 @@ program
 		'number of months before this release expires (defaults to 18)'
 	)
 	.option(
+		'--unsafe-allow-remote-subresources',
+		'Fetches remote subresources as needed (FOR TESTING PURPOSES ONLY)'
+	)
+	.option(
 		'--unsafe-master-key <master key>',
 		'Cyph master key (NOT RECOMMENDED)'
 	)
@@ -47,10 +51,12 @@ program
 			requiredUserSignatures,
 			tofuKeyPersistence,
 			ttlMonths,
+			unsafeAllowRemoteSubresources: allowRemoteSubresources,
 			unsafeMasterKey: masterKey,
 			username
 		}) =>
 			deploy({
+				allowRemoteSubresources,
 				keepBuildArtifacts,
 				mandatoryUpdate,
 				masterKey,

@@ -16,6 +16,7 @@ const rootOutputPath = '.websign-deployment-pkg';
 const outputHTMLPath = path.join(rootOutputPath, '.index.html');
 
 export const deploy = async ({
+	allowRemoteSubresources = false,
 	keepBuildArtifacts = false,
 	mandatoryUpdate = false,
 	masterKey,
@@ -52,6 +53,7 @@ export const deploy = async ({
 	}
 
 	await pack({
+		allowRemoteSubresources,
 		enableMinify: true,
 		enableSRI: true,
 		inputPath: 'index.html',
