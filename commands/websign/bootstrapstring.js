@@ -9,7 +9,10 @@ import fs from 'fs';
 export const bootstrapString = async () => {
 	const path = `${__dirname}/../../websign`;
 
-	const index = await pack(path, 'index.html');
+	const index = await pack({
+		inputPath: 'index.html',
+		rootDirectoryPath: path
+	});
 
 	/* special case; add general solution when needed */
 	const serviceWorker =

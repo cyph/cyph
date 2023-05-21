@@ -7,13 +7,13 @@ import htmlMinifier from 'html-minifier';
 import {mkdirp} from 'mkdirp';
 import path from 'path';
 
-export const pack = async (
-	dir,
-	inputPath,
+export const pack = async ({
 	enableMinify,
 	enableSRI,
-	outputPath
-) => {
+	inputPath,
+	outputPath,
+	rootDirectoryPath
+}) => {
 	if (!inputPath) {
 		throw new Error('Missing input path.');
 	}
@@ -21,12 +21,14 @@ export const pack = async (
 		throw new Error('Cannot enable SRI without an output path specified.');
 	}
 
-	if (!dir) {
-		dir = '.';
+	if (!rootDirectoryPath) {
+		rootDirectoryPath = '.';
 	}
 
-	inputPath = path.join(dir, inputPath);
-	outputPath = outputPath ? path.join(dir, outputPath) : undefined;
+	inputPath = path.join(rootDirectoryPath, inputPath);
+	outputPath = outputPath ?
+		path.join(rootDirectoryPath, outputPath) :
+		undefined;
 
 	const subresourceRoot = outputPath ? path.dirname(outputPath) : undefined;
 	if (subresourceRoot !== undefined) {
@@ -53,7 +55,9 @@ export const pack = async (
 						.replace(/^\//, '');
 
 					const content = fs
-						.readFileSync(path.join(dir, subresourcePath))
+						.readFileSync(
+							path.join(rootDirectoryPath, subresourcePath)
+						)
 						.toString()
 						.replace(/\n\/\/# sourceMappingURL=.*?\.map/g, '')
 						.replace(/\n\/*# sourceMappingURL=.*?\.map *\//g, '')
@@ -89,14 +93,14 @@ export const pack = async (
 			subresource.tagName === 'script' ?
 				subresource.sri ?
 					`
-					<script
-						websign-sri-path='${subresource.subresourcePath}'
-						websign-sri-hash='${subresource.hash}'
-					></script>
-				` :
+						<script
+							websign-sri-path='${subresource.subresourcePath}'
+							websign-sri-hash='${subresource.hash}'
+						></script>
+					` :
 					`
-					<script>${subresource.content.replace(/<\/script>/g, '<\\/script>')}</script>
-				` :
+						<script>${subresource.content.replace(/<\/script>/g, '<\\/script>')}</script>
+					` :
 			subresource.sri ?
 				`
 					<link

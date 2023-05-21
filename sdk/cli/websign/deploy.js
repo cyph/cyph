@@ -51,7 +51,13 @@ export const deploy = async ({
 		await threadPack(scriptPath);
 	}
 
-	await pack(rootDirectoryPath, 'index.html', true, true, outputHTMLPath);
+	await pack({
+		enableMinify: true,
+		enableSRI: true,
+		inputPath: 'index.html',
+		outputPath: outputHTMLPath,
+		rootDirectoryPath
+	});
 
 	await webSignService.submitRelease(
 		{

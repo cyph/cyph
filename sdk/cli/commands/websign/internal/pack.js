@@ -13,7 +13,14 @@ program
 			inputPath,
 			outputPath,
 			{minify: enableMinify = false, sri: enableSRI = false}
-		) => pack(process.cwd(), inputPath, enableMinify, enableSRI, outputPath)
+		) =>
+			pack({
+				enableMinify,
+				enableSRI,
+				inputPath,
+				outputPath,
+				rootDirectoryPath: process.cwd()
+			})
 	)
 	.hook('postAction', () => {
 		process.exit();
