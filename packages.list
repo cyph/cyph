@@ -58,7 +58,7 @@
 @covalent/highlight
 @covalent/http
 @covalent/markdown
-@ctrl/ngx-emoji-mart
+@ctrl/ngx-emoji-mart@^7
 @cyph/burner-sdk
 @cyph/prettier
 @cyph/pretty-quick
