@@ -20,6 +20,7 @@
 		"@touch4it/ical-timezones": "*",
 		"abort-controller": "*",
 		"cors": "*",
+		"crisp-api": "*",
 		"datastore-core": "*",
 		"dompurify": "*",
 		"fast-crc32c": "*",

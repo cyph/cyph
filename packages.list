@@ -247,6 +247,7 @@ core-js-pure
 cornerstone-core
 cors
 country-list
+crisp-api
 crypto-browserify
 css-loader
 csv
