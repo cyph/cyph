@@ -373,7 +373,7 @@ ngx-image-cropper
 ngx-lottie
 ngx-progressbar
 ngx-scrollbar
-ngx-sharebuttons
+ngx-sharebuttons@^12
 ngx-speed-dial
 ngx-teximate
 nodemailer
