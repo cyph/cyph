@@ -1,4 +1,4 @@
-FROM cyph/base@sha256:1b96418a8df81def342caa56a4e141c6dc6081638760346fdc3ffb8cf6c67242
+FROM cyph/base@sha256:3d73980a6507fd5b34788dadcc38961c8b1e5fa27f8513892a186d62d0ec107e
 
 RUN sudo ln -s /workspaces/cyph /cyph
 
