@@ -76,10 +76,6 @@ git config --global --add safe.directory /cyph
 
 sudo pip install -U grpcio
 
-if [ ! -f /usr/bin/chromium-browser ] ; then
-	sudo ln -s /usr/bin/chromium /usr/bin/chromium-browser
-fi
-
 sudo npm -g install npm
 sudo npm -g install @mapbox/node-pre-gyp
 

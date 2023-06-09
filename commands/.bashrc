@@ -9,6 +9,8 @@ export ANDROID_HOME='/home/gibson/androidsdk'
 export JAVA_HOME="$(
 	update-alternatives --query javac | sed -n -e "s/Best: *\(.*\)\/bin\/javac/\1/p"
 )"
+export PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true
+export PUPPETEER_EXECUTABLE_PATH=$(which chromium)
 
 export PATH="$(
 	echo -n '/opt/local/bin:' ;
