@@ -1,5 +1,5 @@
 import {proto} from '@cyph/sdk';
-import {mailchimpCredentials} from '../cyph-admin-vars.js';
+import {emailMarketingCredentials} from '../cyph-admin-vars.js';
 import {
 	database,
 	getItem,
@@ -9,7 +9,7 @@ import {
 	removeItem,
 	setItem
 } from '../init.js';
-import {removeFromMailingList} from '../mailchimp.js';
+import {removeFromMailingList} from '../email-marketing.js';
 import * as tokens from '../tokens.js';
 import {updatePublishedEmail} from '../update-published-email.js';
 
@@ -59,7 +59,7 @@ export const verifyEmailConfirm = onCall(
 				removeItem(namespace, `users/${username}/email`),
 				removeItem(namespace, `users/${username}/emailVerified`),
 				removeFromMailingList(
-					mailchimpCredentials?.listIDs?.users,
+					emailMarketingCredentials?.listIDs?.users,
 					email
 				).catch(() => {})
 			]);

@@ -3,10 +3,10 @@
 import {getMeta} from '../modules/base.js';
 const {isCLI} = getMeta(import.meta);
 
-import {batchUpdateMailingList, mailingListIDs} from './mailchimp.js';
+import {batchUpdateMailingList, mailingListIDs} from './emailmarketing.js';
 import {userDataExport} from './userdataexport.js';
 
-export const updateMailchimp = async (projectId, namespace) => {
+export const updateEmailMarketing = async (projectId, namespace) => {
 	const {inviteCodes, users} = await userDataExport(projectId, namespace);
 
 	const pendingInvitesUpdateResponse = await batchUpdateMailingList(
@@ -47,7 +47,7 @@ if (isCLI) {
 		const projectId = process.argv[2];
 		const namespace = process.argv[3];
 
-		console.dir(await updateMailchimp(projectId, namespace), {
+		console.dir(await updateEmailMarketing(projectId, namespace), {
 			depth: undefined
 		});
 

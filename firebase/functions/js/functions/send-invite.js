@@ -1,5 +1,5 @@
 import {configService as config, proto, util} from '@cyph/sdk';
-import {mailchimpCredentials} from '../cyph-admin-vars.js';
+import {emailMarketingCredentials} from '../cyph-admin-vars.js';
 import {sendEmailInternal} from '../email.js';
 import {getInviteTemplateData} from '../get-invite-template-data.js';
 import {
@@ -10,7 +10,7 @@ import {
 	onCall,
 	setItem
 } from '../init.js';
-import {addToMailingList} from '../mailchimp.js';
+import {addToMailingList} from '../email-marketing.js';
 import {namespaces} from '../namespaces.js';
 import {validateEmail, validateInput} from '../validation.js';
 
@@ -115,13 +115,17 @@ export const sendInvite = onCall(async (data, namespace, getUsername) => {
 					templateName: 'new-cyph-invite'
 				}
 			),
-		addToMailingList(mailchimpCredentials?.listIDs?.pendingInvites, email, {
-			inviteCode,
-			inviterUsername,
-			name,
-			plan,
-			trial: !!inviteData.planTrialEnd
-		})
+		addToMailingList(
+			emailMarketingCredentials?.listIDs?.pendingInvites,
+			email,
+			{
+				inviteCode,
+				inviterUsername,
+				name,
+				plan,
+				trial: !!inviteData.planTrialEnd
+			}
+		)
 			.then(async () =>
 				database
 					.ref(`${namespace}/pendingInvites/${inviteCode}`)

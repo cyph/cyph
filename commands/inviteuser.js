@@ -7,7 +7,7 @@ import {configService as config, proto, util} from '@cyph/sdk';
 import {initDatabaseService} from '../modules/database-service.js';
 import {addInviteCode} from './addinvitecode.js';
 import {sendEmail} from './email.js';
-import {addToMailingList, mailingListIDs} from './mailchimp.js';
+import {addToMailingList, mailingListIDs} from './emailmarketing.js';
 
 const {CyphPlans, CyphPlanTypes} = proto;
 const {readableByteLength, titleize} = util;

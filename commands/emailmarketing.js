@@ -3,7 +3,7 @@
 import mailchimp from '@mailchimp/mailchimp_marketing';
 import fs from 'fs';
 import os from 'os';
-import {initMailchimp} from '../modules/init-mailchimp.js';
+import {initEmailMarketing} from '../modules/init-email-marketing.js';
 
 const getBackendVar = k =>
 	new Map(
@@ -14,7 +14,7 @@ const getBackendVar = k =>
 			.map(s => [s.trim().split(':')[0], s.split("'")[1]])
 	).get(k);
 
-const mailchimpCredentials = {
+const emailMarketingCredentials = {
 	apiKey: getBackendVar('MAILCHIMP_API_KEY').split('-')[0],
 	apiServer: getBackendVar('MAILCHIMP_API_KEY').split('-')[1],
 	listIDs: {
@@ -24,8 +24,8 @@ const mailchimpCredentials = {
 };
 
 mailchimp.setConfig({
-	apiKey: mailchimpCredentials.apiKey,
-	server: mailchimpCredentials.apiServer
+	apiKey: emailMarketingCredentials.apiKey,
+	server: emailMarketingCredentials.apiServer
 });
 
 const {
@@ -36,7 +36,7 @@ const {
 	mailingListMemberMetadata,
 	removeFromMailingList,
 	splitName
-} = initMailchimp(mailchimp, mailchimpCredentials);
+} = initEmailMarketing(mailchimp, emailMarketingCredentials);
 
 export {
 	addToMailingList,

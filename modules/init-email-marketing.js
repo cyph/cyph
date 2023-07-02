@@ -3,7 +3,7 @@ import {proto, util} from '@cyph/sdk';
 const {CyphPlans} = proto;
 const {retryUntilSuccessful} = util;
 
-export const initMailchimp = (mailchimp, mailchimpCredentials) => {
+export const initEmailMarketing = (mailchimp, emailMarketingCredentials) => {
 	const addToMailingList = async (listID, email, mergeFields) =>
 		batchUpdateMailingList(listID, [
 			{
@@ -184,7 +184,7 @@ export const initMailchimp = (mailchimp, mailchimpCredentials) => {
 		addToMailingList,
 		batchUpdateMailingList,
 		getMailingList,
-		mailingListIDs: mailchimpCredentials?.listIDs || {},
+		mailingListIDs: emailMarketingCredentials?.listIDs || {},
 		mailingListMemberMetadata,
 		removeFromMailingList,
 		splitName

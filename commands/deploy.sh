@@ -766,7 +766,7 @@ EOM
 				pinata: '$(cat ~/.cyph/pinata.key)'
 			};
 
-			export const mailchimpCredentials = {
+			export const emailMarketingCredentials = {
 				apiKey: $(getBackendVar MAILCHIMP_API_KEY).split('-')[0],
 				apiServer: $(getBackendVar MAILCHIMP_API_KEY).split('-')[1],
 				listIDs: {

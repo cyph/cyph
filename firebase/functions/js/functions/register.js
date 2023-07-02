@@ -1,5 +1,5 @@
 import {configService as config, proto, util} from '@cyph/sdk';
-import {mailchimpCredentials} from '../cyph-admin-vars.js';
+import {emailMarketingCredentials} from '../cyph-admin-vars.js';
 import {sendEmailInternal} from '../email.js';
 import {
 	admin,
@@ -10,7 +10,7 @@ import {
 	removeItem,
 	setItem
 } from '../init.js';
-import {removeFromMailingList} from '../mailchimp.js';
+import {removeFromMailingList} from '../email-marketing.js';
 import {stripe} from '../stripe.js';
 import {validateEmail} from '../validation.js';
 
@@ -214,7 +214,7 @@ export const register = onCall(
 				.once('value')
 				.then(async o =>
 					removeFromMailingList(
-						mailchimpCredentials?.listIDs?.pendingInvites,
+						emailMarketingCredentials?.listIDs?.pendingInvites,
 						o.val()
 					)
 				)

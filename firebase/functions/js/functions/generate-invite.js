@@ -1,9 +1,9 @@
 import {configService as config, proto, util} from '@cyph/sdk';
-import {mailchimpCredentials} from '../cyph-admin-vars.js';
+import {emailMarketingCredentials} from '../cyph-admin-vars.js';
 import {getInviteTemplateData} from '../get-invite-template-data.js';
 import {sendEmailInternal} from '../email.js';
 import {database, getItem, getTokenKey, onRequest, setItem} from '../init.js';
-import {addToMailingList} from '../mailchimp.js';
+import {addToMailingList} from '../email-marketing.js';
 import {namespaces} from '../namespaces.js';
 import {stripe} from '../stripe.js';
 import * as tokens from '../tokens.js';
@@ -301,7 +301,7 @@ export const generateInvite = onRequest(true, async (req, res, namespace) => {
 									undefined,
 								i === 0 &&
 									addToMailingList(
-										mailchimpCredentials?.listIDs
+										emailMarketingCredentials?.listIDs
 											?.pendingInvites,
 										email,
 										{

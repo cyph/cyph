@@ -1,5 +1,5 @@
 import {proto} from '@cyph/sdk';
-import {mailchimpCredentials} from '../cyph-admin-vars.js';
+import {emailMarketingCredentials} from '../cyph-admin-vars.js';
 import {
 	database,
 	getItem,
@@ -8,7 +8,7 @@ import {
 	removeItem,
 	setItem
 } from '../init.js';
-import {addToMailingList, mailchimp} from '../mailchimp.js';
+import {addToMailingList, emailMarketingEnabled} from '../email-marketing.js';
 import {sendVerificationEmail} from '../send-verification-email.js';
 import {updatePublishedEmail} from '../update-published-email.js';
 import {validateEmail} from '../validation.js';
@@ -75,7 +75,10 @@ export const userEmailSet = async ({after: data}, {params}) => {
 				) :
 				undefined,
 			(async () => {
-				if (!mailchimp || !mailchimpCredentials?.listIDs?.users) {
+				if (
+					!emailMarketingEnabled ||
+					!emailMarketingCredentials?.listIDs?.users
+				) {
 					return;
 				}
 
@@ -102,7 +105,7 @@ export const userEmailSet = async ({after: data}, {params}) => {
 					]);
 
 				await addToMailingList(
-					mailchimpCredentials.listIDs.users,
+					emailMarketingCredentials.listIDs.users,
 					email,
 					{
 						inviteCode,
