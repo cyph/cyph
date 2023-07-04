@@ -1,22 +1,21 @@
-import mailchimpAPI from '@mailchimp/mailchimp_marketing';
+import {Crisp} from 'crisp-api';
 import {emailMarketingCredentials} from './cyph-admin-vars.js';
 import {initEmailMarketing} from './modules/init-email-marketing.js';
 
-const config =
-	emailMarketingCredentials?.apiKey && emailMarketingCredentials.apiServer ?
-		{
-			apiKey: emailMarketingCredentials.apiKey,
-			server: emailMarketingCredentials.apiServer
-		} :
+const crisp =
+	emailMarketingCredentials?.apiKey &&
+	emailMarketingCredentials.id &&
+	emailMarketingCredentials.websiteID ?
+		new Crisp() :
 		undefined;
 
-if (config) {
-	mailchimpAPI.setConfig(config);
-}
+crisp?.authenticateTier(
+	'plugin',
+	emailMarketingCredentials.id,
+	emailMarketingCredentials.apiKey
+);
 
-const mailchimp = config ? mailchimpAPI : undefined;
-
-export const emailMarketingEnabled = mailchimp !== undefined;
+export const emailMarketingEnabled = crisp !== undefined;
 
 export const {
 	addToMailingList,
@@ -26,4 +25,4 @@ export const {
 	mailingListMemberMetadata,
 	removeFromMailingList,
 	splitName
-} = initEmailMarketing(mailchimp, emailMarketingCredentials);
+} = initEmailMarketing(crisp, emailMarketingCredentials);

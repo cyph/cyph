@@ -767,12 +767,13 @@ EOM
 			};
 
 			export const emailMarketingCredentials = {
-				apiKey: $(getBackendVar MAILCHIMP_API_KEY).split('-')[0],
-				apiServer: $(getBackendVar MAILCHIMP_API_KEY).split('-')[1],
+				apiKey: $(getBackendVar CRISP_API_KEY),
+				id: $(getBackendVar CRISP_ID),
 				listIDs: {
-					pendingInvites: $(getBackendVar MAILCHIMP_LIST_ID_PENDING_INVITES),
-					users: $(getBackendVar MAILCHIMP_LIST_ID_USERS)
-				}
+					pendingInvites: $(getBackendVar CRISP_LIST_ID_PENDING_INVITES),
+					users: $(getBackendVar CRISP_LIST_ID_USERS)
+				},
+				websiteID: $(getBackendVar CRISP_WEBSITE_ID)
 			};
 
 			export const stripeSecretKey = $(getBackendVar STRIPE_SECRET_KEY);

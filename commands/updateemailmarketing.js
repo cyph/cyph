@@ -9,7 +9,7 @@ import {userDataExport} from './userdataexport.js';
 export const updateEmailMarketing = async (projectId, namespace) => {
 	const {inviteCodes, users} = await userDataExport(projectId, namespace);
 
-	const pendingInvitesUpdateResponse = await batchUpdateMailingList(
+	await batchUpdateMailingList(
 		mailingListIDs.pendingInvites,
 		inviteCodes
 			.filter(inviteCode => inviteCode.email)
@@ -21,12 +21,11 @@ export const updateEmailMarketing = async (projectId, namespace) => {
 					keybaseUsername: inviteCode.keybaseUsername,
 					plan: inviteCode.plan,
 					trial: !!inviteCode.planTrialEnd
-				},
-				statusIfNew: 'subscribed'
+				}
 			}))
 	);
 
-	const usersUpdateResponse = await batchUpdateMailingList(
+	await batchUpdateMailingList(
 		mailingListIDs.users,
 		users
 			.filter(user => user.internal?.email)
@@ -34,12 +33,9 @@ export const updateEmailMarketing = async (projectId, namespace) => {
 				email: user.internal.email,
 				mergeFields: {
 					user
-				},
-				statusIfNew: 'subscribed'
+				}
 			}))
 	);
-
-	return {pendingInvitesUpdateResponse, usersUpdateResponse};
 };
 
 if (isCLI) {
@@ -47,9 +43,7 @@ if (isCLI) {
 		const projectId = process.argv[2];
 		const namespace = process.argv[3];
 
-		console.dir(await updateEmailMarketing(projectId, namespace), {
-			depth: undefined
-		});
+		await updateEmailMarketing(projectId, namespace);
 
 		process.exit(0);
 	})().catch(err => {

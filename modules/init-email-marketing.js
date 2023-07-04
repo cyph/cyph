@@ -1,102 +1,150 @@
-import {proto, util} from '@cyph/sdk';
+import {proto} from '@cyph/sdk';
 
 const {CyphPlans} = proto;
-const {retryUntilSuccessful} = util;
 
-export const initEmailMarketing = (mailchimp, emailMarketingCredentials) => {
-	const addToMailingList = async (listID, email, mergeFields) =>
-		batchUpdateMailingList(listID, [
-			{
-				email,
-				mergeFields,
-				statusIfNew: 'subscribed'
-			}
-		]);
-
-	const batchUpdateMailingList = async (listID, members) => {
-		if (!mailchimp || !listID) {
+export const initEmailMarketing = (crisp, emailMarketingCredentials) => {
+	const addToMailingListInternal = async (
+		listID,
+		email,
+		mergeFields,
+		skipAddIfPreviouslyRemoved = false
+	) => {
+		if (
+			!crisp ||
+			!emailMarketingCredentials?.websiteID ||
+			!listID ||
+			!email
+		) {
 			return;
 		}
 
-		const memberGroups = Array.from(
-			new Map(
-				members
-					.filter(o => !!o.email)
-					.map(o => [
-						o.email,
+		const profile = await crisp.website
+			.getPeopleProfile(emailMarketingCredentials.websiteID, email)
+			.catch(() => undefined);
+
+		const dataToUpdate = new Map();
+
+		if (profile) {
+			const {data} = await crisp.website
+				.getPeopleData(emailMarketingCredentials.websiteID, email)
+				.catch(() => ({}));
+
+			const removedSegments = new Set(
+				data?.removedSegments ? JSON.parse(data.removedSegments) : []
+			);
+			const segments = new Set(profile?.segments ?? []);
+
+			if (skipAddIfPreviouslyRemoved) {
+				if (!removedSegments.has(listID)) {
+					segments.add(listID);
+				}
+			}
+			else {
+				segments.add(listID);
+
+				if (removedSegments.has(listID)) {
+					removedSegments.delete(listID);
+					dataToUpdate.set(
+						'removedSegments',
+						JSON.stringify(Array.from(removedSegments))
+					);
+				}
+			}
+
+			await crisp.website.updatePeopleProfile(
+				emailMarketingCredentials.websiteID,
+				email,
+				{
+					...(mergeFields?.name &&
+					mergeFields.name !== profile.person.nickname ?
 						{
-							...(o.mergeFields ?
-								{
-									merge_fields: mailingListMemberMetadata(
-											o.mergeFields
-										)
-								} :
-								{}),
-							...(o.status ? {status: o.status} : {}),
-							...(o.statusIfNew ?
-								{status_if_new: o.statusIfNew} :
-								{}),
-							email_address: o.email
-						}
-					])
-			).values()
-		).reduce(
-			(arr, member) => {
-				if (arr[arr.length - 1].length >= 500) {
-					arr.push([member]);
+							person: {nickname: mergeFields.name}
+						} :
+						{}),
+					segments: Array.from(segments)
 				}
-				else {
-					arr[arr.length - 1].push(member);
+			);
+		}
+		else {
+			await crisp.website.addNewPeopleProfile(
+				emailMarketingCredentials.websiteID,
+				{
+					email,
+					person: {
+						nickname: mergeFields?.name || email
+					},
+					segments: [listID]
 				}
-
-				return arr;
-			},
-			[[]]
-		);
-
-		const responses = [];
-
-		for (const group of memberGroups) {
-			try {
-				responses.push(
-					await retryUntilSuccessful(
-						async () =>
-							mailchimp.lists.batchListMembers(listID, {
-								members: group,
-								update_existing: true
-							}),
-						undefined,
-						undefined,
-						600000
-					)
-				);
-			}
-			catch (err) {
-				console.error({
-					batchUpdateMailingListFailure: {
-						err,
-						group,
-						listID,
-						members
-					}
-				});
-
-				throw err;
-			}
+			);
 		}
 
-		return responses;
+		if (!mergeFields && dataToUpdate.size < 1) {
+			return;
+		}
+
+		await crisp.website.updatePeopleData(
+			emailMarketingCredentials.websiteID,
+			email,
+			{
+				data: {
+					...(mergeFields ?
+						mailingListMemberMetadata(mergeFields) :
+						{}),
+					...(dataToUpdate.size > 0 ?
+						Object.fromEntries(dataToUpdate) :
+						{})
+				}
+			}
+		);
 	};
 
-	const getMailingList = async listID =>
-		mailchimp && listID ?
-			retryUntilSuccessful(
-				async () => mailchimp.lists.getList(listID),
+	const addToMailingList = async (listID, email, mergeFields) =>
+		addToMailingListInternal(listID, email, mergeFields);
+
+	const batchUpdateMailingList = async (listID, members) => {
+		if (!crisp || !emailMarketingCredentials?.websiteID || !listID) {
+			return;
+		}
+
+		for (const {email, mergeFields} of members) {
+			await addToMailingListInternal(listID, email, mergeFields, true);
+		}
+	};
+
+	const getMailingList = async listID => {
+		const list = [];
+
+		if (!(crisp && listID && emailMarketingCredentials?.websiteID)) {
+			return list;
+		}
+
+		for (let i = 1; true; ++i) {
+			const nextPage = await crisp.website.listPeopleProfiles(
+				emailMarketingCredentials.websiteID,
+				i,
 				undefined,
 				undefined,
-				60000
-			) :
-			[];
+				undefined,
+				JSON.stringify([
+					{
+						criterion: 'segments',
+						model: 'people',
+						operator: 'eq',
+						query: [listID]
+					}
+				]),
+				undefined
+			);
+
+			if (nextPage.length < 1) {
+				break;
+			}
+
+			list.push(...nextPage);
+		}
+
+		return list;
+	};
 
 	const mailingListMemberMetadata = ({
 		inviteCode = '',
@@ -135,41 +183,85 @@ export const initEmailMarketing = (mailchimp, emailMarketingCredentials) => {
 			/* TODO: Keep these continually in sync server-side */
 			...(user ?
 				{
-					CONTACTS: user.contactCount,
-					MESSAGES: user.messageCount,
-					MKCONFIRM: user.masterKeyConfirmed ? 'true' : ''
+					contactCount: user.contactCount,
+					messageCount: user.messageCount,
+					masterKeyConfirmed: user.masterKeyConfirmed ? 'true' : ''
 				} :
 				{}),
 			...(user?.dates?.certIssuance?.date ?
-				{CERTDATE: user.dates.certIssuance.date} :
+				{certIssuanceDate: user.dates.certIssuance.date} :
 				{}),
 			...(user?.dates?.lastLogin?.date ?
-				{LOGINDATE: user.dates.lastLogin.date} :
+				{lastLoginDate: user.dates.lastLogin.date} :
 				{}),
 			...(user?.plan?.lastChange?.date ?
-				{PLANDATE: user.plan.lastChange.date} :
+				{lastplanChangeDate: user.plan.lastChange.date} :
 				{}),
 			...(user?.dates?.signup?.date ?
-				{SIGNUPDATE: user.dates.signup.date} :
+				{signupDate: user.dates.signup.date} :
 				{}),
-
-			...(name ? {FNAME: firstName, LNAME: lastName} : {}),
-			...(username ? {USERNAME: username} : {}),
-			ICODE: inviteCode,
-			INVITER: inviterUsername,
-			KEYBASE: keybaseUsername,
-			PLAN: plan,
-			TRIAL: trial ? 'true' : ''
+			...(name ? {firstName, lastName} : {}),
+			...(username ? {username} : {}),
+			inviteCode,
+			inviterUsername,
+			keybaseUsername,
+			plan,
+			trial
 		};
 	};
 
-	const removeFromMailingList = async (listID, email) =>
-		batchUpdateMailingList(listID, [
+	const removeFromMailingList = async (listID, email) => {
+		if (
+			!crisp ||
+			!emailMarketingCredentials?.websiteID ||
+			!listID ||
+			!email
+		) {
+			return;
+		}
+
+		const profile = await crisp.website
+			.getPeopleProfile(emailMarketingCredentials.websiteID, email)
+			.catch(() => undefined);
+
+		const segments = new Set(profile?.segments ?? []);
+
+		if (!segments.has(listID)) {
+			return;
+		}
+
+		segments.delete(listID);
+
+		await crisp.website.updatePeopleProfile(
+			emailMarketingCredentials.websiteID,
+			email,
 			{
-				email,
-				status: 'unsubscribed'
+				segments: Array.from(segments)
 			}
-		]);
+		);
+
+		const {data} = await crisp.website
+			.getPeopleData(emailMarketingCredentials.websiteID, email)
+			.catch(() => ({}));
+
+		const removedSegments = new Set(
+			data?.removedSegments ? JSON.parse(data.removedSegments) : []
+		);
+		if (removedSegments.has(listID)) {
+			return;
+		}
+		removedSegments.add(listID);
+
+		await crisp.website.updatePeopleData(
+			emailMarketingCredentials.websiteID,
+			email,
+			{
+				data: {
+					removedSegments: JSON.stringify(Array.from(removedSegments))
+				}
+			}
+		);
+	};
 
 	const splitName = name => {
 		const nameSplit = (name || '').split(' ');

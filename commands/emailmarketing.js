@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-import mailchimp from '@mailchimp/mailchimp_marketing';
+import {Crisp} from 'crisp-api';
 import fs from 'fs';
 import os from 'os';
 import {initEmailMarketing} from '../modules/init-email-marketing.js';
@@ -15,18 +15,32 @@ const getBackendVar = k =>
 	).get(k);
 
 const emailMarketingCredentials = {
-	apiKey: getBackendVar('MAILCHIMP_API_KEY').split('-')[0],
-	apiServer: getBackendVar('MAILCHIMP_API_KEY').split('-')[1],
+	apiKey: getBackendVar('CRISP_API_KEY'),
+	id: getBackendVar('CRISP_ID'),
 	listIDs: {
-		pendingInvites: getBackendVar('MAILCHIMP_LIST_ID_PENDING_INVITES'),
-		users: getBackendVar('MAILCHIMP_LIST_ID_USERS')
-	}
+		pendingInvites: getBackendVar('CRISP_LIST_ID_PENDING_INVITES'),
+		users: getBackendVar('CRISP_LIST_ID_USERS')
+	},
+	websiteID: getBackendVar('CRISP_WEBSITE_ID')
 };
 
-mailchimp.setConfig({
-	apiKey: emailMarketingCredentials.apiKey,
-	server: emailMarketingCredentials.apiServer
-});
+if (
+	!(
+		emailMarketingCredentials.apiKey &&
+		emailMarketingCredentials.id &&
+		emailMarketingCredentials.websiteID
+	)
+) {
+	throw new Error('Missing Crisp credentials.');
+}
+
+const crisp = new Crisp();
+
+crisp.authenticateTier(
+	'plugin',
+	emailMarketingCredentials.id,
+	emailMarketingCredentials.apiKey
+);
 
 const {
 	addToMailingList,
@@ -36,7 +50,7 @@ const {
 	mailingListMemberMetadata,
 	removeFromMailingList,
 	splitName
-} = initEmailMarketing(mailchimp, emailMarketingCredentials);
+} = initEmailMarketing(crisp, emailMarketingCredentials);
 
 export {
 	addToMailingList,
