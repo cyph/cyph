@@ -1,8 +1,37 @@
-import {proto} from '@cyph/sdk';
+import {proto, util} from '@cyph/sdk';
 
 const {CyphPlans} = proto;
+const {retryUntilSuccessful} = util;
 
 export const initEmailMarketing = (crisp, emailMarketingCredentials) => {
+	const crispRetryConfig = {
+		delay: 25,
+		maxAttempts: 10
+	};
+
+	const crispRetry = {
+		website: {
+			...Object.fromEntries(
+				[
+					'addNewPeopleProfile',
+					'getPeopleData',
+					'getPeopleProfile',
+					'listPeopleProfiles',
+					'updatePeopleData',
+					'updatePeopleProfile'
+				].map(methodName => [
+					methodName,
+					async (...args) =>
+						retryUntilSuccessful(
+							async () => crisp.website[methodName](...args),
+							crispRetryConfig.maxAttempts,
+							crispRetryConfig.delay
+						)
+				])
+			)
+		}
+	};
+
 	const addToMailingListInternal = async (
 		listID,
 		email,
@@ -18,14 +47,14 @@ export const initEmailMarketing = (crisp, emailMarketingCredentials) => {
 			return;
 		}
 
-		const profile = await crisp.website
+		const profile = await crispRetry.website
 			.getPeopleProfile(emailMarketingCredentials.websiteID, email)
 			.catch(() => undefined);
 
 		const dataToUpdate = new Map();
 
 		if (profile) {
-			const {data} = await crisp.website
+			const {data} = await crispRetry.website
 				.getPeopleData(emailMarketingCredentials.websiteID, email)
 				.catch(() => ({}));
 
@@ -51,7 +80,7 @@ export const initEmailMarketing = (crisp, emailMarketingCredentials) => {
 				}
 			}
 
-			await crisp.website.updatePeopleProfile(
+			await crispRetry.website.updatePeopleProfile(
 				emailMarketingCredentials.websiteID,
 				email,
 				{
@@ -66,7 +95,7 @@ export const initEmailMarketing = (crisp, emailMarketingCredentials) => {
 			);
 		}
 		else {
-			await crisp.website.addNewPeopleProfile(
+			await crispRetry.website.addNewPeopleProfile(
 				emailMarketingCredentials.websiteID,
 				{
 					email,
@@ -82,7 +111,7 @@ export const initEmailMarketing = (crisp, emailMarketingCredentials) => {
 			return;
 		}
 
-		await crisp.website.updatePeopleData(
+		await crispRetry.website.updatePeopleData(
 			emailMarketingCredentials.websiteID,
 			email,
 			{
@@ -119,7 +148,7 @@ export const initEmailMarketing = (crisp, emailMarketingCredentials) => {
 		}
 
 		for (let i = 1; true; ++i) {
-			const nextPage = await crisp.website.listPeopleProfiles(
+			const nextPage = await crispRetry.website.listPeopleProfiles(
 				emailMarketingCredentials.websiteID,
 				i,
 				undefined,
@@ -220,7 +249,7 @@ export const initEmailMarketing = (crisp, emailMarketingCredentials) => {
 			return;
 		}
 
-		const profile = await crisp.website
+		const profile = await crispRetry.website
 			.getPeopleProfile(emailMarketingCredentials.websiteID, email)
 			.catch(() => undefined);
 
@@ -232,7 +261,7 @@ export const initEmailMarketing = (crisp, emailMarketingCredentials) => {
 
 		segments.delete(listID);
 
-		await crisp.website.updatePeopleProfile(
+		await crispRetry.website.updatePeopleProfile(
 			emailMarketingCredentials.websiteID,
 			email,
 			{
@@ -240,7 +269,7 @@ export const initEmailMarketing = (crisp, emailMarketingCredentials) => {
 			}
 		);
 
-		const {data} = await crisp.website
+		const {data} = await crispRetry.website
 			.getPeopleData(emailMarketingCredentials.websiteID, email)
 			.catch(() => ({}));
 
@@ -252,7 +281,7 @@ export const initEmailMarketing = (crisp, emailMarketingCredentials) => {
 		}
 		removedSegments.add(listID);
 
-		await crisp.website.updatePeopleData(
+		await crispRetry.website.updatePeopleData(
 			emailMarketingCredentials.websiteID,
 			email,
 			{
