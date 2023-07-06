@@ -32,10 +32,7 @@
 	<plugin name="cordova-plugin-dialogs" spec="*" />
 	<plugin name="cordova-plugin-file" spec="*" />
 	<plugin name="cordova-plugin-file-opener2" spec="*" />
-	<plugin
-		name="cordova-plugin-fingerprint-aio"
-		spec="https://github.com/buu700/cordova-plugin-fingerprint-aio"
-	/>
+	<plugin name="cordova-plugin-fingerprint-aio" spec="*" />
 	<!-- <plugin name="cordova-plugin-geolocation" spec="*" /> -->
 	<plugin name="cordova-plugin-globalization" spec="*" />
 	<plugin name="cordova-plugin-headercolor" spec="*" />
