@@ -48,14 +48,20 @@ export const initEmailMarketing = (crisp, emailMarketingCredentials) => {
 		}
 
 		const profile = await crispRetry.website
-			.getPeopleProfile(emailMarketingCredentials.websiteID, email)
+			.getPeopleProfile(
+				emailMarketingCredentials.websiteID,
+				encodeURIComponent(email)
+			)
 			.catch(() => undefined);
 
 		const dataToUpdate = new Map();
 
 		if (profile) {
 			const {data} = await crispRetry.website
-				.getPeopleData(emailMarketingCredentials.websiteID, email)
+				.getPeopleData(
+					emailMarketingCredentials.websiteID,
+					encodeURIComponent(email)
+				)
 				.catch(() => ({}));
 
 			const removedSegments = new Set(
@@ -82,7 +88,7 @@ export const initEmailMarketing = (crisp, emailMarketingCredentials) => {
 
 			await crispRetry.website.updatePeopleProfile(
 				emailMarketingCredentials.websiteID,
-				email,
+				encodeURIComponent(email),
 				{
 					...(mergeFields?.name &&
 					mergeFields.name !== profile.person.nickname ?
@@ -113,7 +119,7 @@ export const initEmailMarketing = (crisp, emailMarketingCredentials) => {
 
 		await crispRetry.website.updatePeopleData(
 			emailMarketingCredentials.websiteID,
-			email,
+			encodeURIComponent(email),
 			{
 				data: {
 					...(mergeFields ?
@@ -250,7 +256,10 @@ export const initEmailMarketing = (crisp, emailMarketingCredentials) => {
 		}
 
 		const profile = await crispRetry.website
-			.getPeopleProfile(emailMarketingCredentials.websiteID, email)
+			.getPeopleProfile(
+				emailMarketingCredentials.websiteID,
+				encodeURIComponent(email)
+			)
 			.catch(() => undefined);
 
 		const segments = new Set(profile?.segments ?? []);
@@ -263,14 +272,17 @@ export const initEmailMarketing = (crisp, emailMarketingCredentials) => {
 
 		await crispRetry.website.updatePeopleProfile(
 			emailMarketingCredentials.websiteID,
-			email,
+			encodeURIComponent(email),
 			{
 				segments: Array.from(segments)
 			}
 		);
 
 		const {data} = await crispRetry.website
-			.getPeopleData(emailMarketingCredentials.websiteID, email)
+			.getPeopleData(
+				emailMarketingCredentials.websiteID,
+				encodeURIComponent(email)
+			)
 			.catch(() => ({}));
 
 		const removedSegments = new Set(
@@ -283,7 +295,7 @@ export const initEmailMarketing = (crisp, emailMarketingCredentials) => {
 
 		await crispRetry.website.updatePeopleData(
 			emailMarketingCredentials.websiteID,
-			email,
+			encodeURIComponent(email),
 			{
 				data: {
 					removedSegments: JSON.stringify(Array.from(removedSegments))
