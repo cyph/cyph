@@ -23,6 +23,7 @@
 	<!-- <plugin name="cordova-call" spec="*" /> -->
 	<plugin name="cordova-clipboard" spec="*" />
 	<plugin name="cordova-plugin-ace" spec="https://github.com/buu700/ace" />
+	<plugin name="cordova-plugin-android-permissions" spec="*" />
 	<plugin name="cordova-plugin-appminimize" spec="*" />
 	<plugin name="cordova-plugin-background-mode" spec="*" />
 	<plugin name="cordova-plugin-battery-status" spec="*" />
@@ -37,7 +38,6 @@
 	<plugin name="cordova-plugin-headercolor" spec="*" />
 	<plugin name="cordova-plugin-media-capture" spec="*" />
 	<plugin name="cordova-plugin-network-information" spec="*" />
-	<plugin name="cordova-plugin-permission" spec="*" />
 	<plugin name="cordova-plugin-privacyscreen" spec="*" />
 	<plugin name="cordova-plugin-statusbar" spec="*" />
 	<plugin name="cordova-plugin-vibration" spec="*" />

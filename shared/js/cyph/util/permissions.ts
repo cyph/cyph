@@ -11,44 +11,30 @@ export const requestPermissions = async (
 		return true;
 	}
 
-	permissions = permissions.map(s => `android.permission.${s}`);
+	permissions = permissions.map(s => `permission.${s}`);
 
 	try {
-		await new Promise<void>((resolve, reject) => {
-			(<any> self).plugins.Permission.has(
-				permissions,
-				(had: Record<string, boolean>) => {
-					const newPermissions = permissions.filter(
-						permission => !had[permission]
-					);
+		const oldStatus = await new Promise<{hasPermission: boolean}>(
+			(resolve, reject) => {
+				(<any> self).cordova.plugins.permissions.checkPermission(
+					permissions,
+					resolve,
+					reject
+				);
+			}
+		);
 
-					if (newPermissions.length < 1) {
-						resolve();
-						return;
-					}
+		const newStatus = oldStatus.hasPermission ?
+			oldStatus :
+			await new Promise<{hasPermission: boolean}>((resolve, reject) => {
+				(<any> self).cordova.plugins.permissions.requestPermission(
+					permissions,
+					resolve,
+					reject
+				);
+			});
 
-					(<any> self).plugins.Permission.request(
-						newPermissions,
-						(granted: Record<string, boolean>) => {
-							if (
-								newPermissions.find(
-									permission => !granted[permission]
-								)
-							) {
-								reject();
-							}
-							else {
-								resolve();
-							}
-						},
-						reject
-					);
-				},
-				reject
-			);
-		});
-
-		return true;
+		return newStatus.hasPermission;
 	}
 	catch {
 		return false;
