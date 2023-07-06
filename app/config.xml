@@ -611,7 +611,7 @@
 		/>
 	</platform>
 
-	<engine name="android" spec="~10.0" />
+	<engine name="android" spec="~12.0" />
 	<engine
 		name="electron"
 		spec="git+https://github.com/buu700/cordova-electron-tmp"
