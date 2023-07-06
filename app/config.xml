@@ -42,7 +42,6 @@
 	<plugin name="cordova-plugin-privacyscreen" spec="*" />
 	<plugin name="cordova-plugin-statusbar" spec="*" />
 	<plugin name="cordova-plugin-vibration" spec="*" />
-	<plugin name="cordova-plugin-whitelist" spec="*" />
 	<plugin name="cordova-plugin-x-socialsharing" spec="*" />
 	<plugin name="ionic-plugin-deeplinks" spec="*" />
 
