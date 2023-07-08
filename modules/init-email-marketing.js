@@ -5,7 +5,7 @@ const {retryUntilSuccessful} = util;
 
 export const initEmailMarketing = (crisp, emailMarketingCredentials) => {
 	const crispRetryConfig = {
-		delay: 25,
+		delay: 100,
 		maxAttempts: 10
 	};
 
