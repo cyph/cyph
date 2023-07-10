@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 import {util} from '@cyph/sdk';
-import {MemoryDatastore} from 'datastore-core';
+import {MemoryDatastore as MemoryDatastoreInternal} from 'datastore-core';
 import fs from 'fs/promises';
 import * as IPFS from 'ipfs-core';
 import {createRepo} from 'ipfs-repo';
@@ -10,6 +10,14 @@ import * as rawCodec from 'multiformats/codecs/raw';
 import os from 'os';
 import path from 'path';
 import {fetch, FormData} from './fetch.js';
+
+/*
+	Workaround for ipfs-repo incompatibility with datastore-core breaking change:
+	https://github.com/ipfs/js-datastore-core/pull/149
+*/
+class MemoryDatastore extends MemoryDatastoreInternal {
+	async open ()  {}
+}
 
 const {lockFunction, retryUntilSuccessful} = util;
 
