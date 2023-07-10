@@ -65,7 +65,6 @@
 
 	<platform name="android">
 		<plugin name="@lucario/cordova-plugin-browsertab" spec="*" />
-		<plugin name="cordova-plugin-androidx-adapter" spec="*" />
 		<plugin
 			name="cordova-plugin-contacts"
 			spec="https://github.com/expcapitaldev/cordova-plugin-contacts"
@@ -84,6 +83,7 @@
 		<preference name="Scheme" value="https" />
 
 		<preference name="AndroidInsecureFileModeEnabled" value="true" />
+		<preference name="AndroidXEnabled" value="true" />
 
 		<preference
 			name="OverrideUserAgent"
