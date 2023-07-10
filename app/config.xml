@@ -31,7 +31,6 @@
 	<plugin name="cordova-plugin-device" spec="*" />
 	<plugin name="cordova-plugin-dialogs" spec="*" />
 	<plugin name="cordova-plugin-file" spec="*" />
-	<plugin name="cordova-plugin-file-opener2" spec="*" />
 	<plugin name="cordova-plugin-fingerprint-aio" spec="*" />
 	<!-- <plugin name="cordova-plugin-geolocation" spec="*" /> -->
 	<plugin name="cordova-plugin-globalization" spec="*" />
@@ -358,6 +357,7 @@
 			name="cordova-plugin-contacts"
 			spec="https://github.com/expcapitaldev/cordova-plugin-contacts"
 		/>
+		<plugin name="cordova-plugin-file-opener2" spec="*" />
 		<plugin name="cordova-plugin-ionic-keyboard" spec="*" />
 		<plugin name="cordova-plugin-ionic-webview" spec="*" />
 		<plugin name="cordova-plugin-iosrtc" spec="*" />
