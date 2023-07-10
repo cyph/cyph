@@ -52,6 +52,8 @@
 	<preference name="android-targetSdkVersion" value="33" />
 	<preference name="BackgroundColor" value="#8b62d9" />
 	<preference name="deployment-target" value="11.0" />
+	<preference name="GradlePluginKotlinEnabled" value="true" />
+	<preference name="GradlePluginKotlinVersion" value="1.7.10" />
 	<preference name="HeaderColor" value="#8b62d9" />
 	<preference name="KeyboardDisplayRequiresUserAction" value="false" />
 	<preference name="ShowSplashScreenSpinner" value="false" />
