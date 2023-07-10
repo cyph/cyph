@@ -64,7 +64,10 @@
 	<preference name="StatusBarStyle" value="lightcontent" />
 
 	<platform name="android">
-		<plugin name="@lucario/cordova-plugin-browsertab" spec="*" />
+		<plugin
+			name="@lucario/cordova-plugin-browsertab"
+			spec="https://github.com/buu700/cordova-plugin-browsertab-tmp"
+		/>
 		<plugin name="@moodlehq/cordova-plugin-local-notification" spec="*" />
 		<plugin
 			name="cordova-plugin-contacts"
@@ -285,7 +288,10 @@
 	</platform>
 
 	<platform name="ios">
-		<plugin name="@lucario/cordova-plugin-browsertab" spec="*" />
+		<plugin
+			name="@lucario/cordova-plugin-browsertab"
+			spec="https://github.com/buu700/cordova-plugin-browsertab-tmp"
+		/>
 		<plugin name="@moodlehq/cordova-plugin-local-notification" spec="*" />
 		<plugin name="cordova-plugin-add-swift-support" spec="*" />
 		<plugin

@@ -3,6 +3,7 @@
 	"author": "Cyph, Inc. <cordova-app@cyph.com> (https://github.com/cyph)",
 	"dependencies": {
 		"@electron/remote": "*",
+		"@lucario/cordova-plugin-browsertab": "https://github.com/buu700/cordova-plugin-browsertab-tmp",
 		"electron-push-receiver": "*",
 		"ipfs-fetch": "*",
 		"levelup": "*",
