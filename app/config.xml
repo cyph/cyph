@@ -65,8 +65,8 @@
 	<preference name="StatusBarStyle" value="lightcontent" />
 
 	<platform name="android">
+		<plugin name="@lucario/cordova-plugin-browsertab" spec="*" />
 		<plugin name="cordova-plugin-androidx-adapter" spec="*" />
-		<plugin name="cordova-plugin-browsertab" spec="*" />
 		<plugin
 			name="cordova-plugin-contacts"
 			spec="https://github.com/expcapitaldev/cordova-plugin-contacts"
@@ -282,8 +282,8 @@
 	</platform>
 
 	<platform name="ios">
+		<plugin name="@lucario/cordova-plugin-browsertab" spec="*" />
 		<plugin name="cordova-plugin-add-swift-support" spec="*" />
-		<plugin name="cordova-plugin-browsertab" spec="*" />
 		<plugin
 			name="cordova-plugin-contacts"
 			spec="https://github.com/expcapitaldev/cordova-plugin-contacts"

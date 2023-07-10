@@ -19,7 +19,7 @@
 	},
 	"cordova": {
 		"plugins": {
-			"cordova-plugin-browsertab": {
+			"@lucario/cordova-plugin-browsertab": {
 				"CUSTOM_TAB_COLOR_RGB": "#8b62d9"
 			},
 			"cordova-plugin-contacts": {
