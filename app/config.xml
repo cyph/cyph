@@ -65,6 +65,7 @@
 
 	<platform name="android">
 		<plugin name="@lucario/cordova-plugin-browsertab" spec="*" />
+		<plugin name="@moodlehq/cordova-plugin-local-notification" spec="*" />
 		<plugin
 			name="cordova-plugin-contacts"
 			spec="https://github.com/expcapitaldev/cordova-plugin-contacts"
@@ -76,7 +77,6 @@
 			name="nodejs-mobile-cordova"
 			spec="https://github.com/buu700/nodejs-mobile-cordova-tmp"
 		/>
-		<plugin name="phonegap-plugin-local-notification" spec="*" />
 
 		<!-- Ionic webview preferences -->
 		<preference name="MixedContentMode" value="1" />
@@ -153,7 +153,7 @@
 		<config-file target="AndroidManifest.xml" parent="/manifest">
 			<meta-data
 				android:name="com.google.firebase.messaging.default_notification_icon"
-				android:resource="@drawable/notification_icon"
+				android:resource="@drawable/icon"
 			/>
 		</config-file>
 		<config-file target="AndroidManifest.xml" parent="/manifest">
@@ -254,20 +254,20 @@
 		/>
 
 		<resource-file
-			src="res/icon/android/drawable-mdpi/notification_icon.png"
-			target="app/src/main/res/drawable-mdpi/notification_icon.png"
+			src="res/icon/android/drawable-mdpi/icon.png"
+			target="app/src/main/res/drawable-mdpi/icon.png"
 		/>
 		<resource-file
-			src="res/icon/android/drawable-hdpi/notification_icon.png"
-			target="app/src/main/res/drawable-hdpi/notification_icon.png"
+			src="res/icon/android/drawable-hdpi/icon.png"
+			target="app/src/main/res/drawable-hdpi/icon.png"
 		/>
 		<resource-file
-			src="res/icon/android/drawable-xhdpi/notification_icon.png"
-			target="app/src/main/res/drawable-xhdpi/notification_icon.png"
+			src="res/icon/android/drawable-xhdpi/icon.png"
+			target="app/src/main/res/drawable-xhdpi/icon.png"
 		/>
 		<resource-file
-			src="res/icon/android/drawable-xxhdpi/notification_icon.png"
-			target="app/src/main/res/drawable-xxhdpi/notification_icon.png"
+			src="res/icon/android/drawable-xxhdpi/icon.png"
+			target="app/src/main/res/drawable-xxhdpi/icon.png"
 		/>
 
 		<preference
@@ -282,6 +282,7 @@
 
 	<platform name="ios">
 		<plugin name="@lucario/cordova-plugin-browsertab" spec="*" />
+		<plugin name="@moodlehq/cordova-plugin-local-notification" spec="*" />
 		<plugin name="cordova-plugin-add-swift-support" spec="*" />
 		<plugin
 			name="cordova-plugin-contacts"
@@ -299,7 +300,6 @@
 			name="nodejs-mobile-cordova"
 			spec="https://github.com/buu700/nodejs-mobile-cordova-tmp"
 		/>
-		<plugin name="phonegap-plugin-local-notification" spec="*" />
 
 		<allow-intent href="itms:*" />
 		<allow-intent href="itms-apps:*" />

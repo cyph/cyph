@@ -63,7 +63,7 @@
 < 			</div>
 ---
 > 			<div class='logo-animation'></div>
-107,120c64,82
+107,120c64,83
 < 		<script src='/js/init.js'></script>
 < 		<script src='/lib/dexie.js'></script>
 < 		<script src='/lib/supersphincs.js'></script>
@@ -80,6 +80,7 @@
 < 		<script src='/js/main.js'></script>
 ---
 > 		<script src='cordova.js'></script>
+> 		<script src='js/polyfills.js'></script>
 > 		<script src='js/init.js'></script>
 > 		<script src='lib/comlink.js'></script>
 > 		<script src='js/node.js'></script>
