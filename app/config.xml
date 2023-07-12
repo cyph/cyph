@@ -22,7 +22,10 @@
 	<plugin name="cordova-plugin-ace" spec="https://github.com/buu700/ace" />
 	<plugin name="cordova-plugin-android-permissions" spec="*" />
 	<plugin name="cordova-plugin-appminimize" spec="*" />
-	<plugin name="cordova-plugin-background-mode" spec="*" />
+	<plugin
+		name="cordova-plugin-background-mode"
+		spec="https://bitbucket.org/TheBosZ/cordova-plugin-run-in-background"
+	/>
 	<plugin name="cordova-plugin-battery-status" spec="*" />
 	<plugin name="cordova-plugin-camera" spec="*" />
 	<plugin name="cordova-plugin-chooser" spec="*" />
