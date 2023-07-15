@@ -9,26 +9,7 @@ export const copyToClipboard = async (
 	toastDuration: number = 750
 ) : Promise<void> => {
 	try {
-		try {
-			await clipboard.writeText(text);
-		}
-		catch (err) {
-			if (
-				!(<any> self).cordova ||
-				!(<any> self).cordova.plugins ||
-				!(<any> self).cordova.plugins.clipboard
-			) {
-				throw err;
-			}
-
-			await new Promise<any>((resolve, reject) => {
-				(<any> self).cordova.plugins.clipboard.copy(
-					text,
-					resolve,
-					reject
-				);
-			});
-		}
+		await clipboard.writeText(text);
 
 		if (successToast) {
 			await (
