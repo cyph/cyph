@@ -172,7 +172,7 @@
 		<config-file target="AndroidManifest.xml" parent="/manifest">
 			<meta-data
 				android:name="com.google.firebase.messaging.default_notification_color"
-				android:resource="@color/ic_launcher_background"
+				android:resource="@color/background"
 			/>
 		</config-file>
 
@@ -231,37 +231,37 @@
 		</edit-config>
 
 		<resource-file
-			src="res/icon/android/values/ic_launcher_background.xml"
+			src="res/icon/android/values/colors.xml"
 			target="app/src/main/res/values/colors.xml"
 		/>
 
 		<icon
-			background="@color/ic_launcher_background"
+			background="@color/background"
 			density="ldpi"
 			foreground="res/icon/android/mipmap-mdpi/ic_launcher_foreground.png"
 		/>
 		<icon
-			background="@color/ic_launcher_background"
+			background="@color/background"
 			density="mdpi"
 			foreground="res/icon/android/mipmap-mdpi/ic_launcher_foreground.png"
 		/>
 		<icon
-			background="@color/ic_launcher_background"
+			background="@color/background"
 			density="hdpi"
 			foreground="res/icon/android/mipmap-hdpi/ic_launcher_foreground.png"
 		/>
 		<icon
-			background="@color/ic_launcher_background"
+			background="@color/background"
 			density="xhdpi"
 			foreground="res/icon/android/mipmap-xhdpi/ic_launcher_foreground.png"
 		/>
 		<icon
-			background="@color/ic_launcher_background"
+			background="@color/background"
 			density="xxhdpi"
 			foreground="res/icon/android/mipmap-xxhdpi/ic_launcher_foreground.png"
 		/>
 		<icon
-			background="@color/ic_launcher_background"
+			background="@color/background"
 			density="xxxhdpi"
 			foreground="res/icon/android/mipmap-xxxhdpi/ic_launcher_foreground.png"
 		/>
