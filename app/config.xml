@@ -239,31 +239,37 @@
 			background="@color/background"
 			density="ldpi"
 			foreground="res/icon/android/mipmap-mdpi/ic_launcher_foreground.png"
+			monochrome="res/icon/android/mipmap-mdpi/ic_launcher_foreground.png"
 		/>
 		<icon
 			background="@color/background"
 			density="mdpi"
 			foreground="res/icon/android/mipmap-mdpi/ic_launcher_foreground.png"
+			monochrome="res/icon/android/mipmap-mdpi/ic_launcher_foreground.png"
 		/>
 		<icon
 			background="@color/background"
 			density="hdpi"
 			foreground="res/icon/android/mipmap-hdpi/ic_launcher_foreground.png"
+			monochrome="res/icon/android/mipmap-hdpi/ic_launcher_foreground.png"
 		/>
 		<icon
 			background="@color/background"
 			density="xhdpi"
 			foreground="res/icon/android/mipmap-xhdpi/ic_launcher_foreground.png"
+			monochrome="res/icon/android/mipmap-xhdpi/ic_launcher_foreground.png"
 		/>
 		<icon
 			background="@color/background"
 			density="xxhdpi"
 			foreground="res/icon/android/mipmap-xxhdpi/ic_launcher_foreground.png"
+			monochrome="res/icon/android/mipmap-xxhdpi/ic_launcher_foreground.png"
 		/>
 		<icon
 			background="@color/background"
 			density="xxxhdpi"
 			foreground="res/icon/android/mipmap-xxxhdpi/ic_launcher_foreground.png"
+			monochrome="res/icon/android/mipmap-xxxhdpi/ic_launcher_foreground.png"
 		/>
 
 		<resource-file
