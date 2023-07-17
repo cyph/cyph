@@ -1,6 +1,6 @@
 /* eslint-disable max-lines */
 
-import IMask from 'imask';
+import {MaskedPatternOptions} from 'imask';
 import {Form, IForm} from '../proto';
 import {dynamicSerializeBytes} from '../util/serialization';
 
@@ -388,7 +388,7 @@ export const phone = (
 	return input({
 		id,
 		label,
-		mask: <IMask.MaskedPatternOptions> {
+		mask: <MaskedPatternOptions> {
 			lazy: false,
 			mask: '(000) 000-0000',
 			placeholderChar: '_'
@@ -477,7 +477,7 @@ export const ssn = (id: string = 'SSN') : Form.IElement => {
 	return input({
 		id,
 		label: 'Social Security Number',
-		mask: <IMask.MaskedPatternOptions> {
+		mask: <MaskedPatternOptions> {
 			lazy: false,
 			mask: '000-00-0000',
 			placeholderChar: '#'

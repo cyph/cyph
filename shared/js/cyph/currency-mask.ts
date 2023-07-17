@@ -1,7 +1,7 @@
-import IMask from 'imask';
+import {MaskedNumberOptions} from 'imask';
 
 /** Currency text mask. */
-export const currencyMask: IMask.MaskedNumberOptions = {
+export const currencyMask: MaskedNumberOptions = {
 	mask: Number,
 	normalizeZeros: true,
 	scale: 2

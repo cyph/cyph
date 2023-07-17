@@ -1,7 +1,7 @@
-import IMask from 'imask';
+import {MaskedPatternOptions} from 'imask';
 
 /** Username text mask. */
-export const usernameMask: IMask.MaskedPatternOptions = {
+export const usernameMask: MaskedPatternOptions = {
 	definitions: {
 		/* eslint-disable-next-line @typescript-eslint/naming-convention */
 		'#': /[0-9A-Za-z_]/
