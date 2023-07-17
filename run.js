@@ -28,7 +28,9 @@ const exec = command =>
 	childProcess.execSync(command, {cwd: __dirname}).toString().trim();
 
 const open = url =>
-	require(path.join(__dirname, 'shared', 'node_modules', 'open'))(url);
+	import(
+		path.join(__dirname, 'shared', 'node_modules', 'open', 'index.js')
+	).then(o => o.default(url));
 
 const spawn = (command, args, cwd, env) =>
 	(
