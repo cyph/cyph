@@ -4,11 +4,15 @@
 	"license": "Cyph-RSL",
 	"prettier": {
 		"arrowParens": "avoid",
+		"bracketSameLine": false,
 		"bracketSpacing": false,
 		"endOfLine": "lf",
 		"htmlWhitespaceSensitivity": "css",
-		"jsxBracketSameLine": false,
 		"jsxSingleQuote": false,
+		"plugins": [
+			"@prettier/plugin-xml",
+			"prettier-plugin-java"
+		],
 		"printWidth": 80,
 		"proseWrap": "always",
 		"quoteProps": "consistent",
