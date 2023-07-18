@@ -76,6 +76,10 @@ checkfailretry () {
 	fi
 }
 
+cyph-prettier () {
+	/node_modules/.bin/cyph-prettier --cache-location /tmp/prettier-cache "${@}"
+}
+
 download () {
 	log "Downloading: ${*}"
 	curl -s --compressed --retry 50 ${1} > ${2}
@@ -145,6 +149,7 @@ unbindmountInternal () {
 export -f bindmount
 export -f checkfail
 export -f checkfailretry
+export -f cyph-prettier
 export -f download
 export -f fail
 export -f getBoolArg
