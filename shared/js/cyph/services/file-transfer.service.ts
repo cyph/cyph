@@ -133,9 +133,7 @@ export class FileTransferService extends BaseProvider {
 
 			const plaintext = await (async () =>
 				this.potassiumService.secretBox.open(
-					(
-						await downloadTask.result
-					).value,
+					(await downloadTask.result).value,
 					key,
 					url
 				))().catch(() => undefined);

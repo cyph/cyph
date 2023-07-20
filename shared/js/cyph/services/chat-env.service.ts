@@ -62,7 +62,7 @@ export class ChatEnvService extends EnvService {
 	}
 
 	/** @ignore */
-	public set cyphImUrl (_: string)  {}
+	public set cyphImUrl (_: string) {}
 
 	/** EnvService.newCyphBaseUrl adjusted for session API flags and initial call type. */
 	public get newCyphBaseUrl () : string {
@@ -70,7 +70,7 @@ export class ChatEnvService extends EnvService {
 	}
 
 	/** @ignore */
-	public set newCyphBaseUrl (_: string)  {}
+	public set newCyphBaseUrl (_: string) {}
 
 	constructor (
 		/** @ignore */

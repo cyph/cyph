@@ -483,9 +483,8 @@ export class AccountBaseFileListComponent
 			`${this.envService.cyphDownloadUrl}${
 				this.envService.cyphDownloadUrl.indexOf('#') > -1 ? '' : '#'
 			}${
-				(
-					await this.accountDatabaseService.getCurrentUser()
-				).user.username
+				(await this.accountDatabaseService.getCurrentUser()).user
+					.username
 			}/${await this.accountDownloadService.share(o.record.id)}`,
 			this.stringsService.downloadShareSuccess
 		);

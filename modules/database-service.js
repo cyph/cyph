@@ -100,7 +100,7 @@ export const initDatabaseService = memoize((config, isCloudFunction) => {
 		messaging,
 		processItem,
 		processURL,
-		async getAllUsers ()  {
+		async getAllUsers () {
 			const users = [];
 
 			let pageToken;
@@ -121,7 +121,7 @@ export const initDatabaseService = memoize((config, isCloudFunction) => {
 
 			return users;
 		},
-		async getArchive (archiveName, timestamp)  {
+		async getArchive (archiveName, timestamp) {
 			if (!archiveStorage) {
 				throw new Error('Archive storage bucket is production-only.');
 			}
@@ -150,7 +150,7 @@ export const initDatabaseService = memoize((config, isCloudFunction) => {
 			skipSignature,
 			decompress,
 			inlineDataOnly = false
-		)  {
+		) {
 			const providedData =
 				url && typeof url === 'object' ? url : undefined;
 
@@ -193,7 +193,7 @@ export const initDatabaseService = memoize((config, isCloudFunction) => {
 			defaultValue,
 			skipSignature,
 			decompress
-		)  {
+		) {
 			if (!url) {
 				return defaultValue();
 			}
@@ -213,7 +213,7 @@ export const initDatabaseService = memoize((config, isCloudFunction) => {
 				return value;
 			}
 		},
-		async getOrSetDefaultSimple (namespace, url, defaultValue)  {
+		async getOrSetDefaultSimple (namespace, url, defaultValue) {
 			if (!url) {
 				return defaultValue();
 			}
@@ -243,11 +243,11 @@ export const initDatabaseService = memoize((config, isCloudFunction) => {
 			await retry(async () => database.ref(fullURL).set(value));
 			return value;
 		},
-		async hasItem (namespace, url)  {
+		async hasItem (namespace, url) {
 			url = processURL(namespace, url);
 			return (await database.ref(url).once('value')).exists();
 		},
-		async lock (namespace, url, f)  {
+		async lock (namespace, url, f) {
 			const id = uuid();
 			const lockClaimed = resolvable();
 
@@ -296,7 +296,7 @@ export const initDatabaseService = memoize((config, isCloudFunction) => {
 				await contenderRef.remove();
 			}
 		},
-		async pushItem (namespace, url, proto, value)  {
+		async pushItem (namespace, url, proto, value) {
 			/* TODO: Copy the FirebaseDatabaseService implementation or use nextPushId */
 			return databaseService.setItem(
 				namespace,
@@ -305,7 +305,7 @@ export const initDatabaseService = memoize((config, isCloudFunction) => {
 				value
 			);
 		},
-		async removeItem (namespace, url, deleteStorage = isCloudFunction)  {
+		async removeItem (namespace, url, deleteStorage = isCloudFunction) {
 			url = processURL(namespace, url);
 
 			if (deleteStorage) {
@@ -320,7 +320,7 @@ export const initDatabaseService = memoize((config, isCloudFunction) => {
 				await retry(async () => database.ref(url).remove());
 			}
 		},
-		async sendMessage (namespace, username, body, options)  {
+		async sendMessage (namespace, username, body, options) {
 			return sendMessageInternal(
 				database,
 				messaging,
@@ -330,7 +330,7 @@ export const initDatabaseService = memoize((config, isCloudFunction) => {
 				options
 			);
 		},
-		async setArchive (archiveName, bytes)  {
+		async setArchive (archiveName, bytes) {
 			if (!archiveStorage) {
 				throw new Error('Archive storage bucket is production-only.');
 			}
@@ -346,13 +346,13 @@ export const initDatabaseService = memoize((config, isCloudFunction) => {
 
 			return timestamp;
 		},
-		async setItem (namespace, url, proto, value)  {
+		async setItem (namespace, url, proto, value) {
 			return databaseService.setItemInternal(
 				processURL(namespace, url),
 				await serialize(proto, value)
 			);
 		},
-		async setItemInternal (url, value, hash, dataAlreadySet)  {
+		async setItemInternal (url, value, hash, dataAlreadySet) {
 			const [bytes, bytesBase64] =
 				typeof value === 'string' ?
 					[Buffer.from(value, 'base64'), value] :

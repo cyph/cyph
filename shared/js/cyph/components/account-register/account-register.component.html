@@ -342,10 +342,7 @@
 											#mainInviteCodeWelcomeMessage
 										>
 											<div
-												class="
-													cyph-light-theme
-													welcome-letter
-												"
+												class="cyph-light-theme welcome-letter"
 												*ngIf="
 													(inviteCodeData | await)
 														?.isValid ?
@@ -493,9 +490,7 @@
 													>
 														<span
 															cyphTranslate
-															class="
-																form-field-pending
-															"
+															class="form-field-pending"
 															matTooltip="Checking availability..."
 															*ngIf="
 																!!currentUsername?.pending
@@ -770,9 +765,7 @@
 													<div matSuffix>
 														<span
 															cyphTranslate
-															class="
-																form-field-pending
-															"
+															class="form-field-pending"
 															matTooltip="Checking invite code..."
 															*ngIf="
 																!!currentInviteCode?.pending
@@ -1652,11 +1645,7 @@
 						>
 							<div fxLayoutAlign="center center">
 								<div
-									class="
-										slider-label
-										master-key-strength
-										mobile
-									"
+									class="slider-label master-key-strength mobile"
 								>
 									{{ stringsService.masterKeyStrength }}
 								</div>

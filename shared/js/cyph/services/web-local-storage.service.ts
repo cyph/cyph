@@ -341,9 +341,9 @@ export class WebLocalStorageService extends LocalStorageService {
 						try {
 							const results = await this.ngZone.runOutsideAngular(
 								async () =>
-									(
-										await this.db
-									).bulkGet(queue.map(o => o.key))
+									(await this.db).bulkGet(
+										queue.map(o => o.key)
+									)
 							);
 
 							for (let i = 0; i < queue.length; ++i) {
@@ -436,9 +436,9 @@ export class WebLocalStorageService extends LocalStorageService {
 
 						try {
 							await this.ngZone.runOutsideAngular(async () =>
-								(
-									await this.db
-								).bulkDelete(queue.map(o => o.key))
+								(await this.db).bulkDelete(
+									queue.map(o => o.key)
+								)
 							);
 
 							for (const {result} of queue) {
@@ -492,9 +492,7 @@ export class WebLocalStorageService extends LocalStorageService {
 
 						try {
 							await this.ngZone.runOutsideAngular(async () =>
-								(
-									await this.db
-								).bulkPut(
+								(await this.db).bulkPut(
 									queue.map(o => ({
 										key: o.key,
 										value: o.value

@@ -1,7 +1,7 @@
 <h1 matDialogTitle>
 	{{
 		getTitle(
-			(user?.name | await) || '' | slice: 0:accountService.maxNameLength
+			(user?.name | await) || '' | slice: 0 : accountService.maxNameLength
 		)
 	}}
 </h1>

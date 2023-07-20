@@ -100,19 +100,18 @@ export const appointmentInvite = onCall(
 							);
 
 						const [userName, userRealUsername] = await Promise.all([
-								userRef && userRef
-										.child('name')
-										.once('value')
-										.then(o => (o.val() || '').trim()),
-								userRef && userRef
-										.child('realUsername')
-										.once('value')
-										.then(
-											o =>
-												(o.val() || '').trim() ||
-												o.username
-										)
-							]);
+							userRef && userRef
+									.child('name')
+									.once('value')
+									.then(o => (o.val() || '').trim()),
+							userRef && userRef
+									.child('realUsername')
+									.once('value')
+									.then(
+										o =>
+											(o.val() || '').trim() || o.username
+									)
+						]);
 
 						return userName ?
 							`${userName} <@${userRealUsername}>` :

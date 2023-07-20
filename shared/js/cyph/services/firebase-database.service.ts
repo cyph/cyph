@@ -677,9 +677,7 @@ export class FirebaseDatabaseService extends DatabaseService {
 
 			try {
 				return await Promise.all(
-					(
-						await this.getListKeys(url)
-					).map(async k =>
+					(await this.getListKeys(url)).map(async k =>
 						this.getItem(`${url}/${k}`, proto).catch(
 							() => new ListHoleError()
 						)

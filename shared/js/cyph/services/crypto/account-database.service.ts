@@ -655,9 +655,10 @@ export class AccountDatabaseService extends BaseProvider {
 			`users/${currentUser.user.username}/locks/` +
 			this.potassiumService.toHex(
 				await this.potassiumService.hash.hash(
-					(
-						await this.normalizeURL(url, true)
-					).replace(`users/${currentUser.user.username}/`, '')
+					(await this.normalizeURL(url, true)).replace(
+						`users/${currentUser.user.username}/`,
+						''
+					)
 				)
 			)
 		);
@@ -1515,9 +1516,8 @@ export class AccountDatabaseService extends BaseProvider {
 			const currentSigningKeyPair =
 				currentPrivateKeyring.signPrivateKeys?.[
 					await this.getPublicKeySigningAlgorithm(
-						(
-							await this.getUserPublicKeyCertificate(username)
-						).csrData.publicSigningKey,
+						(await this.getUserPublicKeyCertificate(username))
+							.csrData.publicSigningKey,
 						{signAlgorithm: PotassiumData.SignAlgorithms.V1}
 					)
 				];

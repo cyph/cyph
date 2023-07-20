@@ -3,9 +3,8 @@
 	[class.revoke-download-link-disabled]="
 		(currentSelection | await)?.length !== 1 ||
 		(currentSelection | await)?.[0]?.isDirectory === true ||
-		(checkIfLinkShared(
-			(currentSelection | await)?.[0]?.dataItem?.id || ''
-		) | await) !== true
+		(checkIfLinkShared((currentSelection | await)?.[0]?.dataItem?.id || '')
+			| await) !== true
 	"
 	[class.share-download-link-disabled]="
 		(currentSelection | await)?.length !== 1 ||

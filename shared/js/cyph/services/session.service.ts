@@ -663,12 +663,8 @@ export abstract class SessionService
 
 				const messages =
 					(await (async () =>
-						(
-							await deserialize(
-								SessionMessageList,
-								data.plaintext
-							)
-						).messages)().catch(() => undefined)) || [];
+						(await deserialize(SessionMessageList, data.plaintext))
+							.messages)().catch(() => undefined)) || [];
 
 				debugLog(() => ({
 					sessionCastleReceiveMessages: {data, messages}

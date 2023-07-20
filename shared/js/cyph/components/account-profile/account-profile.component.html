@@ -230,7 +230,7 @@
 			>
 				{{
 					(user?.description | await) || ''
-						| slice: 0:accountService.maxDescriptionLength
+						| slice: 0 : accountService.maxDescriptionLength
 				}}
 			</div>
 			<div *ngIf="divider"></div>
@@ -321,7 +321,7 @@
 				{{ prefix || '' }}
 				{{
 					(user?.name | await) || ''
-						| slice: 0:accountService.maxNameLength
+						| slice: 0 : accountService.maxNameLength
 				}}
 			</div>
 			<div fxLayoutAlign="center" *ngIf="editMode | await">

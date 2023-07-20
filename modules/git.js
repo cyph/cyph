@@ -17,7 +17,7 @@ import os from 'os';
 import path from 'path';
 
 export class GitRepo {
-	async add (filePath, content, commitMessage)  {
+	async add (filePath, content, commitMessage) {
 		await this.ready;
 
 		const fullPath = path.join(this.repoPath, filePath);
@@ -35,28 +35,28 @@ export class GitRepo {
 		}
 	}
 
-	async checkout (branch)  {
+	async checkout (branch) {
 		await this.ready;
 		await checkout({...this.options, ref: branch});
 	}
 
-	async commit (message)  {
+	async commit (message) {
 		await this.ready;
 		await commit({...this.options, message});
 	}
 
-	async log (depth)  {
+	async log (depth) {
 		await this.ready;
 		return log({...this.options, depth});
 	}
 
-	async pull ()  {
+	async pull () {
 		await this.ready;
 		await fetch(this.options);
 		await pull(this.options);
 	}
 
-	async push ()  {
+	async push () {
 		await this.ready;
 
 		const result = await push(this.options);
@@ -70,7 +70,7 @@ export class GitRepo {
 		);
 	}
 
-	get repoPath ()  {
+	get repoPath () {
 		return this.options.dir;
 	}
 

@@ -300,9 +300,7 @@ export class ChannelService extends BaseProvider implements IChannelService {
 	public async send (cyphertext: Uint8Array) : Promise<void> {
 		await this.sendLock(async () =>
 			this.databaseService.pushItem<IChannelMessage>(
-				(
-					await this.state
-				).messagesURL,
+				(await this.state).messagesURL,
 				ChannelMessage,
 				{author: await this.userID, cyphertext}
 			)

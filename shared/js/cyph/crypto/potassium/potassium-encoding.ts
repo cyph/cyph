@@ -196,7 +196,7 @@ export class PotassiumEncoding {
 			}
 
 			const getWrappedValue = async (
-				algorithm: typeof algorithms[0],
+				algorithm: (typeof algorithms)[0],
 				value: Uint8Array
 			) : Promise<Uint8Array> =>
 				potassiumUtil.startsWith(value, this.cryptographicAgilityTag) ?

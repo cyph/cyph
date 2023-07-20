@@ -189,9 +189,7 @@ export const ipfsWarmUpGateways = memoize(
 		}
 
 		await Promise.all(
-			(
-				await ipfsGateways(true)
-			).map(async gateway => {
+			(await ipfsGateways(true)).map(async gateway => {
 				for (const ipfsHash of ipfsHashes) {
 					await ipfsWarmUpGateway({
 						gateway,

@@ -14,7 +14,7 @@ import {render, renderMarkdown, renderTemplate} from './markdown-templating.js';
 const {CalendarInvite, CalendarRecurrenceRules} = proto;
 
 export class Emailer {
-	createEvent (o)  {
+	createEvent (o) {
 		const cal = ical(o.calendarData);
 		o.calendarData = undefined;
 		cal.createEvent(o);
@@ -22,17 +22,17 @@ export class Emailer {
 	}
 
 	/** Workaround for odd behavior of @touch4it/ical-timezones. */
-	getDate (timestamp, timeZone)  {
+	getDate (timestamp, timeZone) {
 		return new Date(
 			timestamp + (timeZone ? moment.tz(timeZone).utcOffset() * 60000 : 0)
 		);
 	}
 
-	recurrenceDayToString (dayOfWeek)  {
+	recurrenceDayToString (dayOfWeek) {
 		return CalendarInvite.DaysOfWeek[dayOfWeek].toUpperCase().slice(0, 2);
 	}
 
-	recurrenceFrequencyToString (frequency)  {
+	recurrenceFrequencyToString (frequency) {
 		return CalendarRecurrenceRules.Frequency[frequency].toUpperCase();
 	}
 
@@ -45,7 +45,7 @@ export class Emailer {
 		accountsURL,
 		noUnsubscribe,
 		attachments = []
-	)  {
+	) {
 		const markdown =
 			(typeof text === 'object' ? text.markdown : text) || '';
 

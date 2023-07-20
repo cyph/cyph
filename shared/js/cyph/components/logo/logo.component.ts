@@ -134,7 +134,7 @@ export class LogoComponent extends BaseProvider {
 	public get alt () : any {
 		return this.altInternal;
 	}
-	public set alt (value: any)  {
+	public set alt (value: any) {
 		this.altInternal = value === '' ? true : !!value;
 	}
 
@@ -144,7 +144,7 @@ export class LogoComponent extends BaseProvider {
 	public get cardHeader () : any {
 		return this.cardHeaderInternal;
 	}
-	public set cardHeader (value: any)  {
+	public set cardHeader (value: any) {
 		this.cardHeaderInternal = value === '' ? true : !!value;
 	}
 
@@ -153,7 +153,7 @@ export class LogoComponent extends BaseProvider {
 	public get homeLink () : any {
 		return this.homeLinkInternal;
 	}
-	public set homeLink (value: any)  {
+	public set homeLink (value: any) {
 		this.homeLinkInternal = value === '' ? true : !!value;
 	}
 
@@ -162,7 +162,7 @@ export class LogoComponent extends BaseProvider {
 	public get icon () : any {
 		return this.iconInternal;
 	}
-	public set icon (value: any)  {
+	public set icon (value: any) {
 		this.iconInternal = value === '' ? true : !!value;
 	}
 
@@ -188,7 +188,7 @@ export class LogoComponent extends BaseProvider {
 	public get vertical () : any {
 		return this.verticalInternal;
 	}
-	public set vertical (value: any)  {
+	public set vertical (value: any) {
 		this.verticalInternal = value === '' ? true : !!value;
 	}
 
@@ -197,7 +197,7 @@ export class LogoComponent extends BaseProvider {
 	public get video () : any {
 		return this.videoInternal;
 	}
-	public set video (value: any)  {
+	public set video (value: any) {
 		this.videoInternal = value === '' ? true : !!value;
 	}
 
@@ -206,7 +206,7 @@ export class LogoComponent extends BaseProvider {
 	public get white () : any {
 		return this.whiteInternal;
 	}
-	public set white (value: any)  {
+	public set white (value: any) {
 		this.whiteInternal = value === '' ? true : !!value;
 	}
 

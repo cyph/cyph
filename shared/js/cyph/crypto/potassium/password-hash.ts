@@ -67,8 +67,8 @@ export class PasswordHash implements IPasswordHash {
 	);
 
 	/** @inheritDoc */
-	public readonly opsLimitSensitive: Promise<number> = sodium.ready.then(() =>
-		this.isNative ? NativeCrypto.passwordHash.opsLimitSensitive : 6
+	public readonly opsLimitSensitive: Promise<number> = sodium.ready.then(
+		() => (this.isNative ? NativeCrypto.passwordHash.opsLimitSensitive : 6)
 	);
 
 	/** @inheritDoc */

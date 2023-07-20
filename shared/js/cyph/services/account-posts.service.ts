@@ -496,9 +496,9 @@ export class AccountPostsService extends BaseProvider {
 						getComments: async id =>
 							(
 								await Promise.all(
-									(
-										await getCommentReferences(id)
-									).map(currentCircleWrapper.getComment)
+									(await getCommentReferences(id)).map(
+										currentCircleWrapper.getComment
+									)
 								)
 							).filter(o => o.comment.postID === id),
 						getIDs: async () =>

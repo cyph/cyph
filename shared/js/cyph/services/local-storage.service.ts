@@ -243,9 +243,7 @@ export class LocalStorageService extends DataManagerService {
 	) : Promise<[string, T, number][]> {
 		const values = filterUndefined(
 			await Promise.all(
-				(
-					await this.getKeys(root, waitForReady)
-				).map(async url =>
+				(await this.getKeys(root, waitForReady)).map(async url =>
 					this.getValue(
 						url,
 						proto,

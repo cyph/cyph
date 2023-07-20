@@ -21,10 +21,10 @@ self.Notification = function (title, options) {
 
 self.Notification.requestPermission = function () {
 	return new Promise(function (resolve) {
-		cordova.plugins.notification.local.requestPermission(function (
-			granted
-		) {
-			resolve(granted ? 'granted' : 'denied');
-		});
+		cordova.plugins.notification.local.requestPermission(
+			function (granted) {
+				resolve(granted ? 'granted' : 'denied');
+			}
+		);
 	});
 };
