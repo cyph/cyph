@@ -2,7 +2,7 @@
 
 import {util} from '@cyph/sdk';
 import {unixfs as heliaUnixfs} from '@helia/unixfs';
-import {MemoryBlockstore} from 'blockstore-core';
+import {BlackHoleBlockstore} from 'blockstore-core/black-hole';
 import fs from 'fs/promises';
 import {createHelia} from 'helia';
 import os from 'os';
@@ -36,7 +36,7 @@ const cloneBuffer = buf => {
 const [ipfsInternal, ipfsHashOnly] = await Promise.all([
 	createHelia().then(helia => heliaUnixfs(helia)),
 	createHelia({
-		blockstore: new MemoryBlockstore()
+		blockstore: new BlackHoleBlockstore()
 	}).then(helia => heliaUnixfs(helia))
 ]);
 
