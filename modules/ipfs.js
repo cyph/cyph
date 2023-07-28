@@ -1,13 +1,24 @@
 #!/usr/bin/env node
 
+/**
+ * @file Temporarily reverted to old implementation pending resolution of
+ * https://github.com/ipfs/helia/issues/187.
+ */
+
 import {util} from '@cyph/sdk';
-import {unixfs as heliaUnixfs} from '@helia/unixfs';
-import {BlackHoleBlockstore} from 'blockstore-core/black-hole';
+import {MemoryDatastore as MemoryDatastoreInternal} from 'datastore-core';
 import fs from 'fs/promises';
-import {createHelia} from 'helia';
+import * as IPFS from 'ipfs-core';
+import {createRepo} from 'ipfs-repo';
+import {MemoryLock} from 'ipfs-repo/locks/memory';
+import * as rawCodec from 'multiformats/codecs/raw';
 import os from 'os';
 import path from 'path';
 import {fetch, FormData} from './fetch.js';
+
+class MemoryDatastore extends MemoryDatastoreInternal {
+	async open () {}
+}
 
 const {lockFunction, retryUntilSuccessful} = util;
 
@@ -33,14 +44,20 @@ const cloneBuffer = buf => {
 	return bufCopy;
 };
 
-const [ipfsInternal, ipfsHashOnly] = await Promise.all([
-	createHelia().then(helia => heliaUnixfs(helia)),
-	createHelia({
-		blockstore: new BlackHoleBlockstore()
-	}).then(helia => heliaUnixfs(helia))
-]);
-
-export const ipfs = ipfsInternal;
+export const ipfs = await IPFS.create({
+	repo: createRepo(
+		'/dev/null',
+		() => rawCodec,
+		{
+			blocks: new MemoryDatastore(),
+			datastore: new MemoryDatastore(),
+			keys: new MemoryDatastore(),
+			pins: new MemoryDatastore(),
+			root: new MemoryDatastore()
+		},
+		{autoMigrate: false, repoLock: MemoryLock, repoOwner: true}
+	)
+});
 
 export const ipfsAdd = async (content, credentials = defaultCredentials) => {
 	content = typeof content === 'string' ? Buffer.from(content) : content;
@@ -57,9 +74,7 @@ export const ipfsAdd = async (content, credentials = defaultCredentials) => {
 	}
 
 	const hash = await retryUntilSuccessful(async () =>
-		(await ipfs.addBytes(cloneBuffer(content), {cidVersion: 0}))
-			.toV0()
-			.toString()
+		(await ipfs.add(cloneBuffer(content), {cidVersion: 0})).cid.toString()
 	);
 
 	if (content.length < 1) {
@@ -121,8 +136,8 @@ export const ipfsCalculateHash = async content => {
 	}
 
 	return retryUntilSuccessful(async () =>
-		(await ipfsHashOnly.addBytes(content, {cidVersion: 0}))
-			.toV0()
-			.toString()
+		(
+			await ipfs.add(content, {cidVersion: 0, onlyHash: true})
+		).cid.toString()
 	);
 };
