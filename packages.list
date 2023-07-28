@@ -399,7 +399,7 @@ primeng
 prom-client
 promise-semaphore
 prompt
-protobufjs-cli@github:buu700/protobufjs-cli-tmp
+protobufjs-cli
 protobufjs
 protractor
 pulltorefreshjs
