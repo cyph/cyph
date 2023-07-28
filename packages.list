@@ -400,7 +400,7 @@ prom-client
 promise-semaphore
 prompt
 protobufjs-cli@github:buu700/protobufjs-cli-tmp
-protobufjs@github:buu700/protobufjs-tmp
+protobufjs
 protractor
 pulltorefreshjs
 puppeteer
