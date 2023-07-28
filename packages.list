@@ -89,8 +89,6 @@
 @helia/unixfs
 @ignatiusmb/scramble
 @isomorphic-git/lightning-fs
-@mailchimp/mailchimp_marketing
-@mailchimp/mailchimp_transactional
 @materializecss/materialize
 @msgpack/msgpack
 @ngrx/core
@@ -347,7 +345,6 @@ lottie-interactive
 lottie-web
 lunr
 lz4
-mailchimp-api-v3
 markdown-escapes
 markdown-it
 markdown-it-emoji
