@@ -1,46 +1,67 @@
-const cors = require('cors')({origin: true});
-const functions = require('firebase-functions');
+const functionsDatabase = require('firebase-functions/v2/database');
+const functionsHTTPS = require('firebase-functions/v2/https');
 const memoize = require('lodash/memoize.js');
 const {functionsConfig} = require('./functions-config');
 
-const functionBuilder = (highMemory = false) =>
-	functions.runWith({
-		memory: functionsConfig.prod ?
-			highMemory ?
-				'4GB' :
-				'1GB' :
-		highMemory ?
-			'4GB' :
-			'256MB',
-		// minInstances: functionsConfig.keepWarm && !highMemory ? 1 : undefined,
-		timeoutSeconds: highMemory ? 540 : 60
-	});
+const defaultRegion = 'us-central-1';
+const regions = [
+	/*
+	'asia-northeast1',
+	'australia-southeast1',
+	'europe-west1',
+	'southamerica-east1',
+	*/
+	'us-central1'
+];
 
-const database = memoize(highMemory => functionBuilder(highMemory).database);
-const https = memoize(
-	highMemory =>
-		functionBuilder(highMemory).region(
-			/*
-			'asia-northeast1',
-			'australia-southeast1',
-			'europe-west1',
-			'southamerica-east1',
-			*/
-			'us-central1'
-		).https
+const getFunctionRuntimeOptions = (highMemory, region) => ({
+	memory: functionsConfig.prod ?
+		highMemory ?
+			'4GiB' :
+			'1GiB' :
+	highMemory ?
+		'4GiB' :
+		'256MiB',
+	// minInstances: functionsConfig.keepWarm && !highMemory ? 1 : undefined,
+	region,
+	timeoutSeconds: highMemory ? 540 : 60
+});
+
+const database = memoize(
+	(ref, highMemory = false) => {
+		const options = {
+			...getFunctionRuntimeOptions(highMemory, defaultRegion),
+			ref
+		};
+
+		return {
+			onValueCreated: handler =>
+				functionsDatabase.onValueCreated(options, handler),
+			onValueDeleted: handler =>
+				functionsDatabase.onValueDeleted(options, handler),
+			onValueUpdated: handler =>
+				functionsDatabase.onValueUpdated(options, handler),
+			onValueWritten: handler =>
+				functionsDatabase.onValueWritten(options, handler)
+		};
+	},
+	(ref, highMemory) => (highMemory ? `HIGH_MEMORY: ${ref}` : ref)
 );
+
+const baseOnRequest =
+	(highMemory = false) =>
+	f =>
+		functionsHTTPS.onRequest(
+			{...getFunctionRuntimeOptions(highMemory, regions), cors: true},
+			async (req, res) => f(req, res)
+		);
+
+const onRequest = baseOnRequest();
+const onRequestHighMemory = baseOnRequest(true);
 
 const importFunction = memoize(async functionName =>
 	import(`./js/functions/${functionName}.js`)
 );
-
-const baseOnRequest = getHTTPS => f =>
-	getHTTPS().onRequest(async (req, res) =>
-		cors(req, res, async () => f(req, res))
-	);
-
-const onRequest = baseOnRequest(https);
-const onRequestHighMemory = baseOnRequest(() => https(true));
 
 exports.acceptPseudoRelationship = onRequest(async (...args) =>
 	(
@@ -59,9 +80,11 @@ exports.burnerInvite = onRequest(async (...args) =>
 /*
 TODO: Re-enable after edge case false positives are fixed
 
-exports.channelDisconnect = database()
-	.ref('/{namespace}/channels/{channel}/disconnects/{user}')
-	.onWrite(async (...args) => (await importFunction('channel-disconnect')).channelDisconnect(...args));
+exports.channelDisconnect = database(
+	'/{namespace}/channels/{channel}/disconnects/{user}'
+).onValueWritten(async (...args) =>
+	(await importFunction('channel-disconnect')).channelDisconnect(...args)
+);
 */
 
 exports.checkInviteCode = onRequest(async (...args) =>
@@ -100,17 +123,13 @@ exports.getUserToken = onRequest(async (...args) =>
 	(await importFunction('get-user-token')).getUserToken(...args)
 );
 
-exports.itemHashChange = database()
-	.ref('hash')
-	.onUpdate(async (...args) =>
-		(await importFunction('item-hash-change')).itemHashChange(...args)
-	);
+exports.itemHashChange = database('hash').onValueUpdated(async (...args) =>
+	(await importFunction('item-hash-change')).itemHashChange(...args)
+);
 
-exports.itemRemoved = database()
-	.ref('hash')
-	.onDelete(async (...args) =>
-		(await importFunction('item-removed')).itemRemoved(...args)
-	);
+exports.itemRemoved = database('hash').onValueDeleted(async (...args) =>
+	(await importFunction('item-removed')).itemRemoved(...args)
+);
 
 exports.openUserToken = onRequest(async (...args) =>
 	(await importFunction('open-user-token')).openUserToken(...args)
@@ -158,37 +177,37 @@ exports.updateKeyrings = onRequest(async (...args) =>
 	(await importFunction('update-keyrings')).updateKeyrings(...args)
 );
 
-exports.userDisconnect = database()
-	.ref('/{namespace}/users/{user}/clientConnections')
-	.onDelete(async (...args) =>
-		(await importFunction('user-disconnect')).userDisconnect(...args)
-	);
+exports.userDisconnect = database(
+	'/{namespace}/users/{user}/clientConnections'
+).onValueDeleted(async (...args) =>
+	(await importFunction('user-disconnect')).userDisconnect(...args)
+);
 
-exports.userEmailSet = database()
-	.ref('/{namespace}/users/{user}/email')
-	.onWrite(async (...args) =>
-		(await importFunction('user-email-set')).userEmailSet(...args)
-	);
+exports.userEmailSet = database(
+	'/{namespace}/users/{user}/email'
+).onValueWritten(async (...args) =>
+	(await importFunction('user-email-set')).userEmailSet(...args)
+);
 
 exports.userNotify = onRequest(async (...args) =>
 	(await importFunction('user-notify')).userNotify(...args)
 );
 
-exports.userPublicProfileSet = database()
-	.ref('/{namespace}/users/{user}/publicProfile')
-	.onWrite(async (...args) =>
-		(await importFunction('user-public-profile-set')).userPublicProfileSet(
-			...args
-		)
-	);
+exports.userPublicProfileSet = database(
+	'/{namespace}/users/{user}/publicProfile'
+).onValueWritten(async (...args) =>
+	(await importFunction('user-public-profile-set')).userPublicProfileSet(
+		...args
+	)
+);
 
-exports.userRegisterConfirmed = database()
-	.ref('/{namespace}/users/{user}/publicKeyCertificate')
-	.onCreate(async (...args) =>
-		(await importFunction('user-register-confirmed')).userRegisterConfirmed(
-			...args
-		)
-	);
+exports.userRegisterConfirmed = database(
+	'/{namespace}/users/{user}/publicKeyCertificate'
+).onValueCreated(async (...args) =>
+	(await importFunction('user-register-confirmed')).userRegisterConfirmed(
+		...args
+	)
+);
 
 exports.usernameBlacklisted = onRequest(async (...args) =>
 	(await importFunction('username-blacklisted')).usernameBlacklisted(...args)

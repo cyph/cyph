@@ -15,7 +15,7 @@ import {validateEmail} from '../validation.js';
 
 const {AccountUserProfileExtra, CyphPlan, CyphPlans, StringProto} = proto;
 
-export const userEmailSet = async ({after: data}, {params}) => {
+export const userEmailSet = async ({data: {after: data}, params}) => {
 	const username = params.user;
 	const userURL = `${params.namespace}/users/${username}`;
 	const internalURL = `${userURL}/internal`;

@@ -1,6 +1,6 @@
 import {database, getName, getRealUsername, notify} from '../init.js';
 
-export const userRegisterConfirmed = async (data, {params}) => {
+export const userRegisterConfirmed = async ({data, params}) => {
 	const username = params.user;
 
 	const registrationEmailSentRef = database.ref(

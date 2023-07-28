@@ -3,7 +3,7 @@ import {getURL, storage} from '../init.js';
 
 const {retryUntilSuccessful} = util;
 
-export const itemHashChange = async ({after: data}, {params}) => {
+export const itemHashChange = async ({data: {after: data}, params}) => {
 	if (!data.exists()) {
 		return;
 	}

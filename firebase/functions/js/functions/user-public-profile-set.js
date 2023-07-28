@@ -4,7 +4,7 @@ import {database, getItem} from '../init.js';
 const {AccountUserProfile} = proto;
 const {normalize} = util;
 
-export const userPublicProfileSet = async ({after: data}, {params}) => {
+export const userPublicProfileSet = async ({data: {after: data}, params}) => {
 	const username = params.user;
 	const internalURL = `${params.namespace}/users/${username}/internal`;
 	const nameRef = database.ref(`${internalURL}/name`);

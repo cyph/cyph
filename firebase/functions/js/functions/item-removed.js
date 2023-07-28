@@ -1,6 +1,6 @@
 import {getURL, removeItem} from '../init.js';
 
-export const itemRemoved = async (data, {params}) => {
+export const itemRemoved = async ({data, params}) => {
 	if (data.exists()) {
 		return;
 	}

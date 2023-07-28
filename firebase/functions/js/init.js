@@ -2,8 +2,8 @@ import {getMeta} from './modules/base.js';
 const {__dirname} = getMeta(import.meta);
 
 import {util} from '@cyph/sdk';
-import functions from 'firebase-functions';
 import fs from 'fs/promises';
+import {functionsConfig} from '../functions-config.js';
 import {cyphAdminKey} from './cyph-admin-vars.js';
 import {initDatabaseService} from './modules/database-service.js';
 import {initNotify} from './notify.js';
@@ -32,7 +32,7 @@ export const {
 	storage
 } = initDatabaseService(
 	{
-		...functions.config(),
+		...functionsConfig,
 		fcmServerKey: (await fs.readFile(__dirname + '/fcm-server-key'))
 			.toString()
 			.trim()
