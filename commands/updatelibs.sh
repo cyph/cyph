@@ -50,9 +50,12 @@ curl -s https://raw.githubusercontent.com/ipfs/public-gateway-checker/master/src
 	jq -R -s -c 'split("\n") | map(select(length > 0))' \
 > modules/base-ipfs-gateways.json
 
+./commands/updatesyncfusionlicensekey.js || notify 'WARNING: Manual Syncfusion license key update required'
+
 ./commands/getlibs.sh --skip-node-modules
 
 cyph-prettier --write modules/base-ipfs-gateways.json || fail
+cyph-prettier --write shared/js/cyph/syncfusion-license-key.ts || fail
 cyph-prettier --write shared/lib/js/package.json || fail
 cyph-prettier --write shared/lib/js/package-lock.json || fail
 

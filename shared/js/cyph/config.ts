@@ -2,6 +2,7 @@
 
 import pricingConfig from './pricing-config.json';
 import {ISessionService} from './service-interfaces/isession.service';
+import {syncfusionLicenseKey} from './syncfusion-license-key';
 
 /**
  * Static/constant configuration values.
@@ -245,9 +246,8 @@ export class Config {
 		}
 	};
 
-	/** Syncfusion license key. */
-	public readonly syncfusionLicenseKey: string =
-		'ORg4AjUWIQA/Gnt2VVhkQlFacltJXGFWfVJpTGpQdk5xdV9DaVZUTWY/P1ZhSXxQdkRhWX1ecHVURGBfUkE=';
+	/** @see syncfusionLicenseKey */
+	public readonly syncfusionLicenseKey: string = syncfusionLicenseKey;
 
 	/** Mapping of WebSign redirect hostnames to routes. */
 	public readonly webSignRedirects: Record<string, string[]> = {
