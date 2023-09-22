@@ -9,6 +9,7 @@ import {
 	AccountUserProfileExtra,
 	BooleanMapProto,
 	CyphPlan,
+	CyphPlans,
 	DataURIProto,
 	NeverProto,
 	Review
@@ -17,6 +18,7 @@ import {normalize} from '../util/formatting';
 import {getOrSetDefaultAsync} from '../util/get-or-set-default';
 import {debugLogError, debugLogTime} from '../util/log';
 import {AccountContactsService} from './account-contacts.service';
+import {ConfigService} from './config.service';
 import {AccountDatabaseService} from './crypto/account-database.service';
 import {DatabaseService} from './database.service';
 
@@ -390,12 +392,36 @@ export class AccountUserLookupService extends BaseProvider {
 		return returnUser(user);
 	}
 
+	/** Indicates whether username is available for registration. */
+	public async isUsernameAvailable (
+		username: string,
+		options: {
+			plan: CyphPlans;
+			reservedUsername?: string;
+		} = {plan: CyphPlans.Free}
+	) : Promise<{available: boolean; unavailableReason?: 'length' | 'taken'}> {
+		const {plan, reservedUsername} = options;
+
+		return username &&
+			username.length <
+				this.configService.planConfig[plan].usernameMinLength &&
+			!(reservedUsername && username === normalize(reservedUsername)) ?
+			{available: false, unavailableReason: 'length'} :
+		(await this.usernameBlacklisted(username, reservedUsername)) ||
+			(await this.exists(username, false)) ?
+			{available: false, unavailableReason: 'taken'} :
+			{available: true};
+	}
+
 	constructor (
 		/** @ignore */
 		private readonly accountContactsService: AccountContactsService,
 
 		/** @ignore */
 		private readonly accountDatabaseService: AccountDatabaseService,
+
+		/** @ignore */
+		private readonly configService: ConfigService,
 
 		/** @ignore */
 		private readonly databaseService: DatabaseService

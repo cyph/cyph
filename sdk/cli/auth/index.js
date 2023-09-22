@@ -4,6 +4,8 @@ import {
 	account,
 	accountAuthService,
 	accountDatabaseService,
+	accountUserLookupService,
+	configService,
 	emailRegex,
 	envService,
 	localStorageService,
@@ -46,8 +48,10 @@ const prompts = {
 		required: true
 	},
 	masterKeyStrength: {
-		default: 128,
-		description: 'Paper Master Key Strength (bits of entropy)',
+		default:
+			configService.masterKey.sizes[configService.masterKey.defaultSize],
+		description:
+			'Paper Master Key Strength (bits of entropy; enter 0 for custom)',
 		name: 'masterKeyStrength',
 		type: 'number'
 	},
@@ -238,27 +242,70 @@ export const persistentLogin = async () => {
 };
 
 export const register = async () => {
-	const {email, masterKeyStrength, name, username} = await prompt.get([
-		prompts.name,
-		prompts.email,
-		prompts.username,
-		prompts.masterKeyStrength
-	]);
+	const {email, name} = await prompt.get([prompts.name, prompts.email]);
 
-	if (isNaN(masterKeyStrength) || masterKeyStrength < 8) {
-		throw new Error('Invalid master key strength.');
+	let username;
+	while (true) {
+		username = (await prompt.get([prompts.username])).username;
+		if (
+			(await accountUserLookupService.isUsernameAvailable(username))
+				.available
+		) {
+			break;
+		}
+		console.error(`Username @${username} is not available.`);
 	}
 
-	const masterKey = await xkcdPassphrase.generate(masterKeyStrength);
-
-	let masterKeyConfirm;
-
-	while (!safeStringCompare(masterKey, masterKeyConfirm)) {
-		await showMasterKey(masterKey, typeof masterKeyConfirm === 'string');
-
-		masterKeyConfirm = (await prompt.get([prompts.masterKeyConfirm]))
-			.masterKeyConfirm;
+	let masterKeyStrength;
+	while (
+		isNaN(masterKeyStrength) ||
+		(masterKeyStrength < 8 && masterKeyStrength !== 0)
+	) {
+		masterKeyStrength = (await prompt.get([prompts.masterKeyStrength]))
+			.masterKeyStrength;
 	}
+
+	const masterKey =
+		masterKeyStrength === 0 ?
+			/* Custom master key */
+			await (async () => {
+				while (true) {
+					console.log('');
+
+					const {masterKey: mk} = await prompt.get([
+							prompts.masterKey
+						]);
+					if (mk.length < configService.masterKey.customMinLength) {
+						console.error(
+							`Master key must be at least ${configService.masterKey.customMinLength.toString()} characters long.`
+						);
+						continue;
+					}
+
+					const {masterKeyConfirm: mkConfirm} = await prompt.get([
+							prompts.masterKeyConfirm
+						]);
+					if (!safeStringCompare(mk, mkConfirm)) {
+						console.error('Master key mismatch, please try again.');
+						continue;
+					}
+
+					return mk;
+				}
+			})() :
+			/* Generated master key */
+			await (async () => {
+				const mk = await xkcdPassphrase.generate(masterKeyStrength);
+
+				let mkConfirm;
+				while (!safeStringCompare(mk, mkConfirm)) {
+					await showMasterKey(mk, typeof mkConfirm === 'string');
+					mkConfirm = (await prompt.get([prompts.masterKeyConfirm]))
+							.masterKeyConfirm;
+				}
+
+				return mk;
+			})();
 
 	const success = await accountAuthService.register(
 		username,
@@ -278,6 +325,10 @@ export const register = async () => {
 	if (!success) {
 		throw new Error('Registration failed.');
 	}
+
+	await accountDatabaseService.callFunction('confirmMasterKey');
+
+	console.log(`\n\n\nCyph user @${username} is now registered!`);
 };
 
 export const useLicenseKey = async () => {
