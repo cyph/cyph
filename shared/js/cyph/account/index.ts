@@ -9,4 +9,4 @@ export * from './icurrent-user';
 export * from './review-max';
 export * from './user';
 export * from './user-like-type';
-export * from './username-mask';
+export * from './username-pattern';

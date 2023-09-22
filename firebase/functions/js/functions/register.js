@@ -1,4 +1,4 @@
-import {configService as config, proto, util} from '@cyph/sdk';
+import {account, configService as config, proto, util} from '@cyph/sdk';
 import {emailMarketingCredentials} from '../cyph-admin-vars.js';
 import {sendEmailInternal} from '../email.js';
 import {
@@ -14,6 +14,7 @@ import {removeFromMailingList} from '../email-marketing.js';
 import {stripe} from '../stripe.js';
 import {validateEmail} from '../validation.js';
 
+const {usernameRegex} = account;
 const {BinaryProto, BooleanProto, CyphPlan, CyphPlans, StringProto} = proto;
 const {normalize} = util;
 
@@ -44,7 +45,7 @@ export const register = onCall(
 			typeof password !== 'string' ||
 			password.length < 1 ||
 			typeof username !== 'string' ||
-			username.length < 1
+			!usernameRegex.test(username)
 		) {
 			throw new Error('Invalid credentials for new account.');
 		}
