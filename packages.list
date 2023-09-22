@@ -230,6 +230,7 @@ assert-browserify
 babel-loader
 better-npm-audit
 bitpay.js
+blessed
 blockstore-core
 blurhash
 braintree

@@ -1,6 +1,6 @@
 {
 	"name": "@cyph/sdk",
-	"version": "8.0.15",
+	"version": "8.1.1",
 	"license": "Cyph-RSL",
 	"type": "module",
 	"main": "./index.js",
@@ -23,6 +23,7 @@
 	"dependencies": {
 		"@babel/helpers": "*",
 		"@babel/runtime": "*",
+		"blessed": "^0",
 		"cheerio": "*",
 		"commander": "^9",
 		"datauri": "^4",

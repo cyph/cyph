@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 
 import {
+	account,
 	accountAuthService,
 	accountDatabaseService,
 	emailRegex,
@@ -9,14 +10,17 @@ import {
 	proto,
 	util
 } from '../../index.js';
-import crypto from 'crypto';
+import blessed from 'blessed';
 import fs from 'fs/promises';
 import os from 'os';
 import path from 'path';
+import xkcdPassphrase from 'xkcd-passphrase';
 import prompt from '../modules/prompt.js';
 
+const {usernameRegex} = account;
 const {AccountLicenseKey, BinaryProto, StringProto} = proto;
-const {deserialize, request, safeStringCompare, serialize, uuid} = util;
+const {deserialize, request, resolvable, safeStringCompare, serialize, uuid} =
+	util;
 
 const licenseKeyPath = path.join(os.homedir(), '.cyphkey');
 
@@ -33,6 +37,19 @@ const prompts = {
 		name: 'masterKey',
 		replace: '*',
 		required: true
+	},
+	masterKeyConfirm: {
+		description: 'Confirm Paper Master Key',
+		hidden: true,
+		name: 'masterKeyConfirm',
+		replace: '*',
+		required: true
+	},
+	masterKeyStrength: {
+		default: 128,
+		description: 'Paper Master Key Strength (bits of entropy)',
+		name: 'masterKeyStrength',
+		type: 'number'
 	},
 	name: {
 		description: 'Name',
@@ -64,6 +81,7 @@ const prompts = {
 	username: {
 		description: 'Username',
 		name: 'username',
+		pattern: usernameRegex,
 		required: true
 	}
 };
@@ -91,6 +109,81 @@ const generateLicenseKey = async () => {
 	await fs.writeFile(licenseKeyPath, licenseKey, {mode: 0o600});
 
 	console.log(`\n\nYour license key is saved at ${licenseKeyPath}.`);
+};
+
+const showMasterKey = async (masterKey, retry = false) => {
+	const resolver = resolvable();
+
+	const baseOptions = {
+		align: 'center',
+		height: '50%',
+		left: 'center',
+		style: {
+			bg: 'black',
+			fg: '#00f900'
+		},
+		top: 'center',
+		width: '50%'
+	};
+
+	const screen = blessed.screen({
+		smartCSR: true,
+		title: 'Cyph Master Key'
+	});
+
+	const box = blessed.box({
+		...baseOptions,
+		border: {
+			type: 'line'
+		},
+		content:
+			(retry ? 'Confirmation failure, please try again. ' : '') +
+			'Your paper master key is:',
+		style: {
+			...baseOptions.style,
+			border: {
+				fg: '#f0f0f0'
+			}
+		}
+	});
+
+	box.append(
+		blessed.box({
+			...baseOptions,
+			content: masterKey,
+			style: {
+				...baseOptions.style,
+				bold: true,
+				fg: 'white'
+			},
+			valign: 'middle'
+		})
+	);
+
+	box.append(
+		blessed.box({
+			...baseOptions,
+			bottom: 0,
+			content:
+				'Write this down and/or save it somewhere secure, then press enter.',
+			height: '25%',
+			left: 0,
+			top: undefined,
+			valign: 'bottom',
+			width: '100%-2'
+		})
+	);
+
+	screen.append(box);
+
+	screen.key(['enter'], () => {
+		screen.destroy();
+		resolver.resolve();
+	});
+
+	screen.render();
+
+	await resolver;
 };
 
 export const login = async (username, masterKey) => {
@@ -145,24 +238,35 @@ export const persistentLogin = async () => {
 };
 
 export const register = async () => {
-	const {email, name, pin, pinConfirm} = await prompt.get([
+	const {email, masterKeyStrength, name, username} = await prompt.get([
 		prompts.name,
 		prompts.email,
-		prompts.pinSet,
-		prompts.pinSetConfirm
+		prompts.username,
+		prompts.masterKeyStrength
 	]);
 
-	if (!safeStringCompare(pin, pinConfirm)) {
-		throw new Error('Unlock passwords do not match. Please try again.');
+	if (isNaN(masterKeyStrength) || masterKeyStrength < 8) {
+		throw new Error('Invalid master key strength.');
+	}
+
+	const masterKey = await xkcdPassphrase.generate(masterKeyStrength);
+
+	let masterKeyConfirm;
+
+	while (!safeStringCompare(masterKey, masterKeyConfirm)) {
+		await showMasterKey(masterKey, typeof masterKeyConfirm === 'string');
+
+		masterKeyConfirm = (await prompt.get([prompts.masterKeyConfirm]))
+			.masterKeyConfirm;
 	}
 
 	const success = await accountAuthService.register(
-		crypto.randomBytes(32).toString('hex'),
-		uuid(true, false),
-		uuid(true, false),
+		username,
+		masterKey,
+		masterKey,
 		{
 			isCustom: true,
-			value: pin
+			value: masterKey
 		},
 		name.trim(),
 		email.trim().toLowerCase(),
@@ -174,8 +278,6 @@ export const register = async () => {
 	if (!success) {
 		throw new Error('Registration failed.');
 	}
-
-	await generateLicenseKey();
 };
 
 export const useLicenseKey = async () => {
