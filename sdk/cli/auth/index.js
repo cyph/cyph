@@ -13,11 +13,15 @@ import {
 	util
 } from '../../index.js';
 import blessed from 'blessed';
+import childProcess from 'child_process';
 import fs from 'fs/promises';
 import os from 'os';
 import path from 'path';
 import xkcdPassphrase from 'xkcd-passphrase';
+import {getMeta} from '../modules/base.js';
 import prompt from '../modules/prompt.js';
+
+const {__dirname} = getMeta(import.meta);
 
 const {usernameRegex} = account;
 const {AccountLicenseKey, BinaryProto, StringProto} = proto;
@@ -115,7 +119,7 @@ const generateLicenseKey = async () => {
 	console.log(`\n\nYour license key is saved at ${licenseKeyPath}.`);
 };
 
-const showMasterKey = async (masterKey, retry = false) => {
+export const _showMasterKey = async (masterKey, retry = false) => {
 	const resolver = resolvable();
 
 	const baseOptions = {
@@ -188,6 +192,17 @@ const showMasterKey = async (masterKey, retry = false) => {
 	screen.render();
 
 	await resolver;
+};
+
+const showMasterKey = async (masterKey, retry = false) => {
+	childProcess.spawnSync(
+		'node',
+		['show-master-key.js', masterKey, retry ? '--retry' : ''],
+		{
+			cwd: __dirname,
+			stdio: 'inherit'
+		}
+	);
 };
 
 export const login = async (username, masterKey) => {
