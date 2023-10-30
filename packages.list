@@ -305,6 +305,7 @@ image-type
 imask@^6
 intro.js
 ipfs-fetch
+ipfs-unixfs-importer
 iroha-helpers
 isomorphic-git
 jasmine-core

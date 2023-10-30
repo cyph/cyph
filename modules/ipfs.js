@@ -5,6 +5,8 @@ import {unixfs as heliaUnixfs} from '@helia/unixfs';
 import {BlackHoleBlockstore} from 'blockstore-core/black-hole';
 import fs from 'fs/promises';
 import {createHelia} from 'helia';
+import {fixedSize} from 'ipfs-unixfs-importer/chunker';
+import {balanced} from 'ipfs-unixfs-importer/layout';
 import os from 'os';
 import path from 'path';
 import {fetch, FormData} from './fetch.js';
@@ -33,6 +35,19 @@ const cloneBuffer = buf => {
 	return bufCopy;
 };
 
+/* https://github.com/ipfs/helia/issues/187#issuecomment-1667779190 */
+const cidVersion = 0;
+const ipfsOptions = {
+	chunker: fixedSize({
+		chunkSize: 262144
+	}),
+	cidVersion,
+	layout: balanced({
+		maxChildrenPerNode: 174
+	}),
+	rawLeaves: false
+};
+
 const [ipfsInternal, ipfsHashOnly] = await Promise.all([
 	createHelia().then(helia => heliaUnixfs(helia)),
 	createHelia({
@@ -57,7 +72,7 @@ export const ipfsAdd = async (content, credentials = defaultCredentials) => {
 	}
 
 	const hash = await retryUntilSuccessful(async () =>
-		(await ipfs.addBytes(cloneBuffer(content), {cidVersion: 0}))
+		(await ipfs.addBytes(cloneBuffer(content), ipfsOptions))
 			.toV0()
 			.toString()
 	);
@@ -72,7 +87,7 @@ export const ipfsAdd = async (content, credentials = defaultCredentials) => {
 			'file',
 			new Blob([cloneBuffer(content)], {type: 'application/octet-stream'})
 		);
-		formData.append('pinataOptions', JSON.stringify({cidVersion: 0}));
+		formData.append('pinataOptions', JSON.stringify({cidVersion}));
 
 		const {IpfsHash: pinataHash} = await locks.pinata(async () =>
 			fetch(
@@ -121,8 +136,6 @@ export const ipfsCalculateHash = async content => {
 	}
 
 	return retryUntilSuccessful(async () =>
-		(await ipfsHashOnly.addBytes(content, {cidVersion: 0}))
-			.toV0()
-			.toString()
+		(await ipfsHashOnly.addBytes(content, ipfsOptions)).toV0().toString()
 	);
 };
