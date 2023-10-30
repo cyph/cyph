@@ -255,7 +255,6 @@ csv
 csv-parse
 csv-stringify
 d3
-datastore-core
 datauri
 devextreme
 devextreme-angular
@@ -305,9 +304,7 @@ ical-generator
 image-type
 imask@^6
 intro.js
-ipfs-core
 ipfs-fetch
-ipfs-repo
 iroha-helpers
 isomorphic-git
 jasmine-core
@@ -361,7 +358,6 @@ minimist
 mkdirp
 moment
 moment-timezone
-multiformats
 mustache
 native-url
 ng-animate
