@@ -89,7 +89,7 @@
 @helia/unixfs
 @ignatiusmb/scramble
 @isomorphic-git/lightning-fs
-@materializecss/materialize@^1
+@materializecss/materialize
 @msgpack/msgpack
 @ngrx/core
 @ngrx/effects
