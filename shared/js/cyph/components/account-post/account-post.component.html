@@ -35,7 +35,7 @@
 				</mat-card-title>
 				<mat-card-subtitle>
 					<a [routerLink]="'/profile/' + (user?.username || '')"
-						>@{{ (user?.realUsername | await) || '' }}</a
+						>&#64;{{ (user?.realUsername | await) || '' }}</a
 					>
 					&ngsp; · &ngsp;
 					<a
@@ -108,7 +108,7 @@
 								"
 								><span cyphTranslate>Reposted post by</span
 								>&ngsp;<span
-									>@{{ post?.repost?.author || '' }}</span
+									>&#64;{{ post?.repost?.author || '' }}</span
 								></a
 							>
 						</small>
@@ -289,7 +289,7 @@
 														: accountService.maxNameLength
 											}}</span
 											>&ngsp;<small>
-												<@{{
+												<&#64;{{
 													(comment?.author
 														?.realUsername
 														| await) ||
