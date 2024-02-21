@@ -28,10 +28,6 @@
 		"justification": "Dev dependency"
 	},
 	{
-		"path": "firebase-server",
-		"justification": "Dev dependency"
-	},
-	{
 		"path": "google-closure-compiler/contrib/externs",
 		"justification": "These are just type definitions"
 	},

@@ -282,7 +282,6 @@ file-saver
 firebase
 firebase-admin
 firebase-functions
-firebase-server
 firebase-tools
 fork-ts-checker-webpack-plugin
 glob

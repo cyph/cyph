@@ -191,8 +191,6 @@ node -e "http.createServer((req, res) => {
 cd ~/.build
 
 
-# node /node_modules/.bin/firebase-server -p 44000 &
-
 cp -f backend/app.yaml backend/.build.yaml
 
 # External services (e.g. Twilio) unsupported in CircleCI for now, until needed
