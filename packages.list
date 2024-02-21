@@ -465,7 +465,7 @@ watermarkjs
 web-animations-js
 web-social-share
 webix
-webpack-cli@^4
+webpack-cli@^5
 webrtc-adapter
 webrtc-troubleshoot
 whatwg-fetch
