@@ -42,11 +42,8 @@ rm -rf shared/lib
 mv ~/lib shared/
 rm -rf ~/tmplib
 
-curl -s https://raw.githubusercontent.com/ipfs/public-gateway-checker/master/src/gateways.ts |
-	tail -n+2 |
-	head -n-1 |
-	tr "'" ' ' |
-	awk '{print $1}' |
+curl -s https://raw.githubusercontent.com/ipfs/public-gateway-checker/master/gateways.txt |
+	perl -pe 's/\n/\/ipfs\/:hash\n/g' |
 	jq -R -s -c 'split("\n") | map(select(length > 0))' \
 > modules/base-ipfs-gateways.json
 
