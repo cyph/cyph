@@ -115,7 +115,7 @@
 		(click)="clearFilter()"
 		*ngIf="
 			(spinner | await) === false &&
-			(control.value || (values?.size || {size: 0}) > 0)
+			(control.value || (values?.size || 0) > 0)
 		"
 	>
 		close
