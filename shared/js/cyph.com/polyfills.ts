@@ -22,7 +22,7 @@
  */
 
 import 'core-js';
-import 'zone.js/dist/zone';
+import 'zone.js';
 
 import '@webcomponents/custom-elements/src/native-shim';
 

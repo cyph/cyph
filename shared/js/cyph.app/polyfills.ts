@@ -22,7 +22,7 @@
  */
 
 import 'core-js';
-import 'zone.js/dist/zone';
+import 'zone.js';
 
 /***************************************************************************************************
  * TYPESCRIPT HELPERS
