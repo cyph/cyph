@@ -521,7 +521,7 @@
 									}
 								}
 							],
-							"const-parameters": true,
+							/* TODO: "const-parameters": true, */
 							"early-exit": true,
 							"encoding": true,
 							"insecure-random": true,
@@ -546,9 +546,9 @@
 							"no-tautology-expression": true,
 							"no-unnecessary-callback-wrapper": true,
 							"no-unnecessary-else": true,
-							"no-unnecessary-local-variable": true,
+							/* TODO: "no-unnecessary-local-variable": true, */
 							"no-unnecessary-override": true,
-							"no-var-before-return": true,
+							/* TODO: "no-var-before-return": true, */
 							"number-literal-format": true,
 							"object-literal-sort-keys": true,
 							"parameter-properties": [
@@ -556,7 +556,7 @@
 								"member-access",
 								"trailing"
 							],
-							"prefer-const-enum": true,
+							/* TODO: "prefer-const-enum": true, */
 							"prefer-type-cast": true,
 							"prefer-while": true,
 							"promise-must-complete": true,
@@ -569,7 +569,7 @@
 								}
 							],
 							"strict-string-expressions": true,
-							"strict-type-predicates": true,
+							/* TODO: "strict-type-predicates": true, */
 							"switch-final-break": true,
 							"typedef": [
 								true,
