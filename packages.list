@@ -221,7 +221,7 @@
 @yellowspot/ng-truncate
 abort-controller
 angular-fittext
-angular-imask@^6
+angular-imask
 angular2-draggable@^2
 animate.css
 animated-scroll-to
@@ -302,7 +302,7 @@ https-browserify
 husky
 ical-generator
 image-type
-imask@^6
+imask
 intro.js
 ipfs-fetch
 ipfs-unixfs-importer
