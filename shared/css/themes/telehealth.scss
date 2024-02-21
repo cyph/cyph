@@ -1,6 +1,7 @@
+@use '@angular/material' as mat;
 @import '../theme';
 
-$cyph-accent: mat-palette($mat-deep-purple, 400, 300, 500);
+$cyph-accent: mat.define-palette(mat.$deep-purple-palette, 400, 300, 500);
 $cyph-is-dark: false;
 $cyph-background: #eeecf1;
 $cyph-foreground: #4d5062;
@@ -28,12 +29,12 @@ $cyph-message-colors: map-merge(
 		),
 		me: (
 			desktop: transparent,
-			mobile: map-get($mat-amber, 400),
+			mobile: map-get(mat.$amber-palette, 400),
 			text: $cyph-foreground
 		),
 		other: (
 			desktop: transparent,
-			mobile: map-get($mat-yellow, 600),
+			mobile: map-get(mat.$yellow-palette, 600),
 			text: $cyph-foreground
 		)
 	)

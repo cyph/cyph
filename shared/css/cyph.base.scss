@@ -1,6 +1,7 @@
+@use '@angular/material' as mat;
 @import './theme';
 
-@include mat-core;
+@include mat.core;
 
 @include cyph-apply-theme(true);
 
@@ -567,15 +568,15 @@ code {
 	&.password {
 		&.high,
 		&.very-high {
-			color: map-get($mat-green, 700) !important;
+			color: map-get(mat.$green-palette, 700) !important;
 		}
 
 		&.medium {
-			color: map-get($mat-amber, 900) !important;
+			color: map-get(mat.$amber-palette, 900) !important;
 		}
 
 		&.low {
-			color: map-get($mat-red, 700) !important;
+			color: map-get(mat.$red-palette, 700) !important;
 		}
 	}
 

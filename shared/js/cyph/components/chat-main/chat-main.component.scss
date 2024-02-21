@@ -1,3 +1,4 @@
+@use '@angular/material' as mat;
 @import '../../../../css/mixins';
 
 :host ::ng-deep {
@@ -542,7 +543,7 @@
 }
 
 mat-icon.button-on {
-	color: map-get($mat-green, 700) !important;
+	color: map-get(mat.$green-palette, 700) !important;
 }
 
 .gallery-view-toggle {

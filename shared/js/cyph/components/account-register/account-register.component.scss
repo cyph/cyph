@@ -1,3 +1,4 @@
+@use '@angular/material' as mat;
 @import '../../../../css/mixins';
 
 mat-tab-group.simple ::ng-deep {
@@ -170,7 +171,7 @@ mat-card-content {
 	}
 
 	::ng-deep a {
-		color: map-get($mat-blue, 700);
+		color: map-get(mat.$blue-palette, 700);
 
 		&.team-valediction {
 			color: rgb(96, 51, 163);
