@@ -38,7 +38,7 @@
 @angular/flex-layout
 @angular/forms
 @angular/language-service
-@angular/material
+@angular/material@^16
 @angular/platform-browser
 @angular/platform-browser-dynamic
 @angular/platform-server
