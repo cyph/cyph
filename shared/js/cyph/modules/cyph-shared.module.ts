@@ -24,7 +24,7 @@ import {IMaskModule} from 'angular-imask';
 import lottiePlayer from 'lottie-web';
 import {NgxCaptchaModule} from 'ngx-captcha';
 import {ImageCropperModule} from 'ngx-image-cropper';
-import {LottieModule} from 'ngx-lottie';
+import {LottieComponent, provideLottieOptions} from 'ngx-lottie';
 import {AccountContactsSearchOptionalComponent} from '../components/account-contacts-search-optional';
 import {CheckoutComponent} from '../components/checkout';
 import {DialogAlertComponent} from '../components/dialog-alert';
@@ -47,11 +47,6 @@ import {AwaitPipe} from '../pipes/await.pipe';
 import {FilterPipe} from '../pipes/filter.pipe';
 import {sharedModuleProviders} from '../providers/shared-module';
 import {DialogService} from '../services/dialog.service';
-
-/** @see LottiePlayerFactoryOrLoader */
-export const lottiePlayerFactory = () => {
-	return lottiePlayer;
-};
 
 /**
  * Common module shared by cyph.com and CyphWebModule.
@@ -100,7 +95,7 @@ export const lottiePlayerFactory = () => {
 		HttpClientModule,
 		ImageCropperModule,
 		IMaskModule,
-		LottieModule,
+		LottieComponent,
 		MarkdownComponent,
 		MatAutocompleteModule,
 		MatButtonModule,
@@ -134,7 +129,7 @@ export const lottiePlayerFactory = () => {
 		HttpClientModule,
 		ImageCropperModule,
 		IMaskModule,
-		LottieModule.forRoot({player: lottiePlayerFactory}),
+		LottieComponent,
 		MatAutocompleteModule,
 		MatButtonModule,
 		MatCheckboxModule,
@@ -153,7 +148,12 @@ export const lottiePlayerFactory = () => {
 		NgxCaptchaModule,
 		ReactiveFormsModule
 	],
-	providers: sharedModuleProviders
+	providers: [
+		...sharedModuleProviders,
+		provideLottieOptions({
+			player: () => lottiePlayer
+		})
+	]
 })
 export class CyphSharedModule {
 	constructor (dialogService: DialogService) {
