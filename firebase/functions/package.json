@@ -41,7 +41,7 @@
 		"moment-timezone": "*",
 		"multiformats": "*",
 		"mustache": "*",
-		"node": "18",
+		"node": "20",
 		"nodemailer": "*",
 		"phone-number-timezone": "*",
 		"plivo": "*",
@@ -50,7 +50,7 @@
 		"twilio": "*"
 	},
 	"engines": {
-		"node": "18"
+		"node": "20"
 	},
 	"private": true
 }
