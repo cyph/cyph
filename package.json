@@ -24,6 +24,7 @@
 		"xmlWhitespaceSensitivity": "ignore"
 	},
 	"scripts": {
+		"prepare": "husky",
 		"prettyQuick": "node scripts/pretty-quick.js",
 		"serve": "node docker.js serve",
 		"verify": "node docker.js verify"

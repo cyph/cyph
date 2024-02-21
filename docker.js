@@ -549,14 +549,9 @@ const killEverything = () => killContainer('cyph');
 const huskySetup = () => {
 	backup();
 
-	return spawnAsync(
-		'node',
-		['node_modules/husky/lib/bin.js', 'install'],
-		undefined,
-		{
-			INIT_CWD: __dirname
-		}
-	);
+	return spawnAsync('npm', ['run', 'prepare'], undefined, {
+		INIT_CWD: __dirname
+	});
 };
 
 const pullUpdates = (forceUpdate = false) => {
