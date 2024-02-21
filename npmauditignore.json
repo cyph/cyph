@@ -2,5 +2,9 @@
 	"GHSA-4943-9vgg-gr5r": {
 		"active": true,
 		"notes": "Mitigated by use of Delta object format rather than unsanitized HTML"
+	},
+	"GHSA-776f-qx25-q3cc": {
+		"active": true,
+		"notes": "Only applicable to Protractor E2E testing (TODO: migrate to alternative)"
 	}
 }
