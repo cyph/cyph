@@ -222,7 +222,7 @@
 abort-controller
 angular-fittext
 angular-imask
-angular2-draggable@^2
+angular2-draggable
 animate.css
 animated-scroll-to
 animejs
