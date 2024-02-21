@@ -115,6 +115,10 @@
 						"format": ["camelCase", "PascalCase"]
 					},
 					{
+						"selector": "import",
+						"format": null
+					},
+					{
 						"selector": "interface",
 						"format": ["PascalCase"],
 						"prefix": ["I"]
