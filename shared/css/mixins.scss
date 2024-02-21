@@ -1,17 +1,24 @@
 /* Tempoprary workaround pending migration from legacy components to MDC */
-@use '/node_modules/@angular/material/expansion/expansion-theme' as mat-expansion-panel;
-@use '/node_modules/@angular/material/legacy-autocomplete/autocomplete-theme' as mat-autocomplete;
+@use '/node_modules/@angular/material/expansion/expansion-theme' as
+	mat-expansion-panel;
+@use '/node_modules/@angular/material/legacy-autocomplete/autocomplete-theme' as
+	mat-autocomplete;
 @use '/node_modules/@angular/material/legacy-button/button-theme' as mat-button;
 @use '/node_modules/@angular/material/legacy-card/card-theme' as mat-card;
-@use '/node_modules/@angular/material/legacy-checkbox/checkbox-theme' as mat-checkbox;
+@use '/node_modules/@angular/material/legacy-checkbox/checkbox-theme' as
+	mat-checkbox;
 @use '/node_modules/@angular/material/legacy-chips/chips-theme' as mat-chips;
-@use '/node_modules/@angular/material/legacy-core/option/option-theme' as mat-option;
+@use '/node_modules/@angular/material/legacy-core/option/option-theme' as
+	mat-option;
 @use '/node_modules/@angular/material/legacy-dialog/dialog-theme' as mat-dialog;
-@use '/node_modules/@angular/material/legacy-form-field/form-field-theme' as mat-form-field;
+@use '/node_modules/@angular/material/legacy-form-field/form-field-theme' as
+	mat-form-field;
 @use '/node_modules/@angular/material/legacy-input/input-theme' as mat-input;
 @use '/node_modules/@angular/material/legacy-list/list-theme' as mat-list;
-@use '/node_modules/@angular/material/legacy-progress-bar/progress-bar-theme' as mat-progress-bar;
-@use '/node_modules/@angular/material/legacy-progress-spinner/progress-spinner-theme' as mat-progress-spinner;
+@use '/node_modules/@angular/material/legacy-progress-bar/progress-bar-theme' as
+	mat-progress-bar;
+@use '/node_modules/@angular/material/legacy-progress-spinner/progress-spinner-theme'
+	as mat-progress-spinner;
 @use '/node_modules/@angular/material/legacy-select/select-theme' as mat-select;
 @use '/node_modules/@angular/material/legacy-tabs/tabs-theme' as mat-tabs;
 
