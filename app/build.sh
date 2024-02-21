@@ -373,7 +373,7 @@ if [ "${electron}" ] ; then
 						'cd /build ; ' +
 							'apt-get update ; ' +
 							'apt-get install -y curl apt-transport-https lsb-release software-properties-common ; ' +
-							'echo \"deb https://deb.nodesource.com/node_18.x \$(' +
+							'echo \"deb https://deb.nodesource.com/node_20.x \$(' +
 								'grep DISTRIB_CODENAME /etc/lsb-release | ' +
 								'tr \\'=\\' \\' \\' | ' +
 								'awk \\'{print \$2}\\'' +

@@ -37,7 +37,7 @@ if ! docker &> /dev/null ; then
 
 	distro="$(lsb_release -cs)"
 
-	echo "deb https://deb.nodesource.com/node_18.x ${distro} main" >> /etc/apt/sources.list
+	echo "deb https://deb.nodesource.com/node_20.x ${distro} main" >> /etc/apt/sources.list
 	curl https://deb.nodesource.com/gpgkey/nodesource.gpg.key | apt-key add -
 	echo "deb https://download.docker.com/linux/debian ${distro} stable" >> /etc/apt/sources.list
 	curl https://download.docker.com/linux/debian/gpg | apt-key add -
