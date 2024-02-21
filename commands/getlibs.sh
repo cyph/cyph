@@ -135,9 +135,3 @@ rm -rf lib
 
 # Temporary workaround pending https://github.com/angular/angular-cli/pull/22814
 echo | ng analytics disable --global
-
-# Ensure that all Angular libraries are Ivy-compatible
-if [ ! "${skipNodeModules}" ] ; then
-	cd /
-	ngcc --properties es2015 browser module main --first-only --create-ivy-entry-points
-fi
