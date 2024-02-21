@@ -405,7 +405,7 @@ quill-delta
 quill-delta-to-html
 quill-markdown
 read
-readable-stream@^4
+readable-stream
 recorder.js
 recordrtc
 reflect-metadata
