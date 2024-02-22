@@ -1,4 +1,4 @@
-import {Observable} from 'rxjs';
+import type {Observable} from 'rxjs';
 
 /**
  * Represents an asynchronous set value.

@@ -1,4 +1,4 @@
-import {IResolvable} from '../../iresolvable';
+import type {IResolvable} from '../../iresolvable';
 
 /**
  * Represents a pairwise (one-to-one) Castle session.

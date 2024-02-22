@@ -1,4 +1,4 @@
-import {IDataSourceFile} from './idata-source-file';
+import type {IDataSourceFile} from './idata-source-file';
 
 /** Directory data from DevExtreme. */
 export interface IFileManagerDirectory {

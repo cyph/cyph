@@ -1,8 +1,8 @@
-import {BehaviorSubject, Observable} from 'rxjs';
-import {Instance} from 'simple-peer';
-import {IResolvable} from '../iresolvable';
-import {IP2PHandlers} from '../p2p/ip2p-handlers';
-import {Timer} from '../timer';
+import type {BehaviorSubject, Observable} from 'rxjs';
+import type {Instance} from 'simple-peer';
+import type {IResolvable} from '../iresolvable';
+import type {IP2PHandlers} from '../p2p/ip2p-handlers';
+import type {Timer} from '../timer';
 
 /**
  * Manages P2P WebRTC logic.

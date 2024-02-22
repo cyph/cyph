@@ -1,17 +1,17 @@
-import {BehaviorSubject} from 'rxjs';
-import {IAsyncList} from '../iasync-list';
-import {IAsyncMap} from '../iasync-map';
-import {IAsyncValue} from '../iasync-value';
-import {ListHoleError} from '../list-hole-error';
-import {LocalAsyncList} from '../local-async-list';
-import {LockFunction} from '../lock-function-type';
-import {
+import type {BehaviorSubject} from 'rxjs';
+import type {IAsyncList} from '../iasync-list';
+import type {IAsyncMap} from '../iasync-map';
+import type {IAsyncValue} from '../iasync-value';
+import type {ListHoleError} from '../list-hole-error';
+import type {LocalAsyncList} from '../local-async-list';
+import type {LockFunction} from '../lock-function-type';
+import type {
 	IChatLastConfirmedMessage,
 	IChatMessage,
 	ISessionMessageDataList
 } from '../proto/types';
-import {States} from './enums';
-import {IChatMessageLiveValue} from './ichat-message-live-value';
+import type {States} from './enums';
+import type {IChatMessageLiveValue} from './ichat-message-live-value';
 
 /**
  * Represents data in a chat.

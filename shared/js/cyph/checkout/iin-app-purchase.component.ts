@@ -1,7 +1,7 @@
-import {FormControl} from '@angular/forms';
-import {BehaviorSubject} from 'rxjs';
-import {CheckoutComponent} from '../components/checkout';
-import {MaybePromise} from '../maybe-promise-type';
+import type {FormControl} from '@angular/forms';
+import type {BehaviorSubject} from 'rxjs';
+import type {CheckoutComponent} from '../components/checkout';
+import type {MaybePromise} from '../maybe-promise-type';
 
 /** Interface of InAppPurchaseComponent consumed by SalesService. */
 export interface IInAppPurchaseComponent {

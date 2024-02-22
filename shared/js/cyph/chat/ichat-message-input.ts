@@ -1,5 +1,5 @@
-import {Observable} from 'rxjs';
-import {IChatMessagePredecessor, IChatMessageValue} from '../proto/types';
+import type {Observable} from 'rxjs';
+import type {IChatMessagePredecessor, IChatMessageValue} from '../proto/types';
 
 /**
  * Data needed to add a new chat message.

@@ -1,5 +1,5 @@
-import {Observable} from 'rxjs';
-import {ISessionMessageData as ISessionMessageDataInternal} from '../proto/types';
+import type {Observable} from 'rxjs';
+import type {ISessionMessageData as ISessionMessageDataInternal} from '../proto/types';
 
 /** @inheritDoc */
 export interface ISessionMessageData extends ISessionMessageDataInternal {

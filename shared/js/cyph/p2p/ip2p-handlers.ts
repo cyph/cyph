@@ -1,4 +1,4 @@
-import {MaybePromise} from '../maybe-promise-type';
+import type {MaybePromise} from '../maybe-promise-type';
 
 /**
  * P2P handlers.

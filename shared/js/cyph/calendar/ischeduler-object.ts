@@ -1,5 +1,5 @@
-import {IAppointment, IAccountFileRecord} from '../proto/types';
-import {ISchedulerObjectBase} from './ischeduler-object-base';
+import type {IAppointment, IAccountFileRecord} from '../proto/types';
+import type {ISchedulerObjectBase} from './ischeduler-object-base';
 
 /** Data for Syncfusion scheduler component. */
 export interface ISchedulerObject extends ISchedulerObjectBase {

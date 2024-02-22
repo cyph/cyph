@@ -1,6 +1,6 @@
-import {BehaviorSubject, Observable, Subscription} from 'rxjs';
-import {ITimedValue} from './itimed-value';
-import {MaybePromise} from './maybe-promise-type';
+import type {BehaviorSubject, Observable, Subscription} from 'rxjs';
+import type {ITimedValue} from './itimed-value';
+import type {MaybePromise} from './maybe-promise-type';
 
 /**
  * Represents an asynchronous list/array value.

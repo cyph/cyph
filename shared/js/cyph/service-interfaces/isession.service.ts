@@ -1,21 +1,21 @@
-import {BehaviorSubject, Observable, Subject} from 'rxjs';
-import {UserLike} from '../account';
-import {IHandshakeState} from '../crypto/castle/ihandshake-state';
-import {IResolvable} from '../iresolvable';
-import {MaybePromise} from '../maybe-promise-type';
-import {
+import type {BehaviorSubject, Observable, Subject} from 'rxjs';
+import type {UserLike} from '../account';
+import type {IHandshakeState} from '../crypto/castle/ihandshake-state';
+import type {IResolvable} from '../iresolvable';
+import type {MaybePromise} from '../maybe-promise-type';
+import type {
 	ISessionMessage,
 	ISessionMessageData as ISessionMessageDataInternal
 } from '../proto/types';
-import {CastleService} from '../services/crypto/castle.service';
-import {SessionInitService} from '../services/session-init.service';
-import {
+import type {CastleService} from '../services/crypto/castle.service';
+import type {SessionInitService} from '../services/session-init.service';
+import type {
 	CastleEvents,
 	ISessionMessageAdditionalData,
 	ISessionMessageData,
 	RpcEvents
 } from '../session';
-import {IP2PWebRTCService} from './ip2p-webrtc.service';
+import type {IP2PWebRTCService} from './ip2p-webrtc.service';
 
 /**
  * Encapsulates an end-to-end encrypted communication session.

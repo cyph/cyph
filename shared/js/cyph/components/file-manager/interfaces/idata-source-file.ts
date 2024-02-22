@@ -1,4 +1,4 @@
-import {IAccountFileRecord} from '../../../proto/types';
+import type {IAccountFileRecord} from '../../../proto/types';
 
 /** Filesystem data for DevExtreme. */
 export interface IDataSourceFile {

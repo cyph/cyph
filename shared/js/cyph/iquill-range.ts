@@ -1,4 +1,4 @@
-import {RangeStatic} from 'quill';
+import type {RangeStatic} from 'quill';
 
 /** Quill range. */
 export interface IQuillRange extends RangeStatic {

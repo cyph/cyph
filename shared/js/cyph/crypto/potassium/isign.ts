@@ -1,11 +1,11 @@
-import {
+import type {
 	IKeyPair,
 	IPotassiumData,
 	IPrivateKeyring,
 	IPublicKeyring,
 	PotassiumData
 } from '../../proto/types';
-import {ICurrentSignAlgorithm} from './icurrent-sign-algorithm';
+import type {ICurrentSignAlgorithm} from './icurrent-sign-algorithm';
 
 /** Equivalent to sodium.crypto_sign. */
 export interface ISign {

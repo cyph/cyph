@@ -1,9 +1,9 @@
-import {
+import type {
 	IAccountLoginData,
 	IPrivateKeyring,
 	IPublicKeyring
 } from '../proto/types';
-import {User} from './user';
+import type {User} from './user';
 
 /** Current user data. */
 export interface ICurrentUser {

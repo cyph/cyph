@@ -1,5 +1,5 @@
-import {SafeUrl} from '@angular/platform-browser';
-import {Async} from './async-type';
+import type {SafeUrl} from '@angular/platform-browser';
+import type {Async} from './async-type';
 
 /** Options for a search bar. */
 export interface ISearchOptions {

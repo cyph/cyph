@@ -1,12 +1,12 @@
-import {IBox} from './ibox';
-import {IEphemeralKeyExchange} from './iephemeral-key-exchange';
-import {IHash} from './ihash';
-import {IOneTimeAuth} from './ione-time-auth';
-import {IPasswordHash} from './ipassword-hash';
-import {ISecretBox} from './isecret-box';
-import {ISign} from './isign';
-import {PotassiumEncoding} from './potassium-encoding';
-import {PotassiumUtil} from './potassium-util';
+import type {IBox} from './ibox';
+import type {IEphemeralKeyExchange} from './iephemeral-key-exchange';
+import type {IHash} from './ihash';
+import type {IOneTimeAuth} from './ione-time-auth';
+import type {IPasswordHash} from './ipassword-hash';
+import type {ISecretBox} from './isecret-box';
+import type {ISign} from './isign';
+import type {PotassiumEncoding} from './potassium-encoding';
+import type {PotassiumUtil} from './potassium-util';
 
 /**
  * libsodium-inspired wrapper for the post-quantum primitives used by Cyph.

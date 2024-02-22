@@ -1,5 +1,5 @@
-import {Writer} from 'protobufjs';
-import {MaybePromise} from './maybe-promise-type';
+import type {Writer} from 'protobufjs';
+import type {MaybePromise} from './maybe-promise-type';
 
 /** A Protocol Buffers class that can decode and encode the specified type. */
 export interface IProto<T> {

@@ -1,5 +1,5 @@
-import {DeltaOperation} from 'quill';
-import {Op} from 'quill-delta';
+import type {DeltaOperation} from 'quill';
+import type {Op} from 'quill-delta';
 
 /** Quill delta. */
 export interface IQuillDelta {

@@ -1,7 +1,7 @@
-import {BehaviorSubject} from 'rxjs';
-import {IAsyncValue} from '../iasync-value';
-import {IProto} from '../iproto';
-import {IChannelHandlers} from '../session';
+import type {BehaviorSubject} from 'rxjs';
+import type {IAsyncValue} from '../iasync-value';
+import type {IProto} from '../iproto';
+import type {IChannelHandlers} from '../session';
 
 /**
  * Bidirectional network connection that sends and receives data.

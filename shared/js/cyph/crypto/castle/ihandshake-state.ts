@@ -1,5 +1,5 @@
-import {IAsyncValue} from '../../iasync-value';
-import {HandshakeSteps} from './enums';
+import type {IAsyncValue} from '../../iasync-value';
+import type {HandshakeSteps} from './enums';
 
 /** Pairwise session handshake state. */
 export interface IHandshakeState {

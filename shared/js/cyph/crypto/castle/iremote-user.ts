@@ -1,5 +1,5 @@
-import {Observable} from 'rxjs';
-import {IPublicKeyring} from '../../proto/types';
+import type {Observable} from 'rxjs';
+import type {IPublicKeyring} from '../../proto/types';
 
 /**
  * Represents a remote user in a Castle session.

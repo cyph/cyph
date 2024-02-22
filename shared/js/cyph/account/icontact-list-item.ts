@@ -1,7 +1,7 @@
-import {Observable} from 'rxjs';
-import {AccountContactState, IAccountMessagingGroup} from '../proto/types';
-import {IResolvable} from '../iresolvable';
-import {User} from './user';
+import type {Observable} from 'rxjs';
+import type {AccountContactState, IAccountMessagingGroup} from '../proto/types';
+import type {IResolvable} from '../iresolvable';
+import type {User} from './user';
 
 /** A contact list item. */
 export interface IContactListItem {

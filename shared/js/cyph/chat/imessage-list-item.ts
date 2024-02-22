@@ -1,7 +1,7 @@
-import {Observable} from 'rxjs';
-import {ListHoleError} from '../list-hole-error';
-import {IChatMessage} from '../proto/types';
-import {UiStyles} from './enums';
+import type {Observable} from 'rxjs';
+import type {ListHoleError} from '../list-hole-error';
+import type {IChatMessage} from '../proto/types';
+import type {UiStyles} from './enums';
 
 /** One item in the message list UI. */
 export interface IMessageListItem {

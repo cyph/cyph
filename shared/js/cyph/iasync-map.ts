@@ -1,4 +1,4 @@
-import {BehaviorSubject, Observable} from 'rxjs';
+import type {BehaviorSubject, Observable} from 'rxjs';
 
 /**
  * Represents an asynchronous map.

@@ -1,4 +1,4 @@
-import {PotassiumData} from '../../proto/types';
+import type {PotassiumData} from '../../proto/types';
 
 /** Current signing algorithm set. */
 export interface ICurrentSignAlgorithm {

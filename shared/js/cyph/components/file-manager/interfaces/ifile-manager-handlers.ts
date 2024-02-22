@@ -1,7 +1,7 @@
-import FileSystemItem from 'devextreme/file_management/file_system_item';
-import {Observable} from 'rxjs';
-import {MaybePromise} from '../../../maybe-promise-type';
-import {IDataSourceFile} from './idata-source-file';
+import type FileSystemItem from 'devextreme/file_management/file_system_item';
+import type {Observable} from 'rxjs';
+import type {MaybePromise} from '../../../maybe-promise-type';
+import type {IDataSourceFile} from './idata-source-file';
 
 /** File manager event handlers. */
 export interface IFileManagerHandlers {
