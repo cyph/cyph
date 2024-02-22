@@ -1,27 +1,3 @@
-/* Tempoprary workaround pending migration from legacy components to MDC */
-@use '/node_modules/@angular/material/expansion/expansion-theme' as
-	mat-expansion-panel;
-@use '/node_modules/@angular/material/legacy-autocomplete/autocomplete-theme' as
-	mat-autocomplete;
-@use '/node_modules/@angular/material/legacy-button/button-theme' as mat-button;
-@use '/node_modules/@angular/material/legacy-card/card-theme' as mat-card;
-@use '/node_modules/@angular/material/legacy-checkbox/checkbox-theme' as
-	mat-checkbox;
-@use '/node_modules/@angular/material/legacy-chips/chips-theme' as mat-chips;
-@use '/node_modules/@angular/material/legacy-core/option/option-theme' as
-	mat-option;
-@use '/node_modules/@angular/material/legacy-dialog/dialog-theme' as mat-dialog;
-@use '/node_modules/@angular/material/legacy-form-field/form-field-theme' as
-	mat-form-field;
-@use '/node_modules/@angular/material/legacy-input/input-theme' as mat-input;
-@use '/node_modules/@angular/material/legacy-list/list-theme' as mat-list;
-@use '/node_modules/@angular/material/legacy-progress-bar/progress-bar-theme' as
-	mat-progress-bar;
-@use '/node_modules/@angular/material/legacy-progress-spinner/progress-spinner-theme'
-	as mat-progress-spinner;
-@use '/node_modules/@angular/material/legacy-select/select-theme' as mat-select;
-@use '/node_modules/@angular/material/legacy-tabs/tabs-theme' as mat-tabs;
-
 @use '@angular/material' as mat;
 
 $accountPaddingLarge: 7.5vw;
@@ -137,8 +113,8 @@ $default-white: map-get(mat.$grey-palette, 100);
 	@if $cyph-is-dark {
 		mat-card,
 		mat-dialog-container {
-			@include mat-form-field.theme($cyph-theme-white);
-			@include mat-input.theme($cyph-theme-white);
+			@include mat.legacy-form-field-theme($cyph-theme-white);
+			@include mat.legacy-input-theme($cyph-theme-white);
 		}
 	}
 
@@ -193,18 +169,20 @@ $default-white: map-get(mat.$grey-palette, 100);
 			color: $dark-foreground;
 			background-color: $dark-background;
 
-			@include mat-progress-spinner.theme(
-				map-merge(
+			@include mat.legacy-progress-spinner-theme(
+				map-deep-merge(
 					$cyph-theme,
 					(
-						primary:
-							map-merge(
-								map-get($cyph-theme, primary),
-								(
-									lighter: rgba(0, 0, 0, 0.15),
-									default: $dark-foreground
+						color: (
+							primary:
+								map-merge(
+									map-get($cyph-theme, color, primary),
+									(
+										lighter: rgba(0, 0, 0, 0.15),
+										default: $dark-foreground
+									)
 								)
-							)
+						)
 					)
 				)
 			);
@@ -237,11 +215,11 @@ $default-white: map-get(mat.$grey-palette, 100);
 		}
 
 		cyph-account-register {
-			@include mat-checkbox.theme($cyph-theme);
-			@include mat-expansion-panel.theme($cyph-theme);
+			@include mat.legacy-checkbox-theme($cyph-theme);
+			@include mat.expansion-theme($cyph-theme);
 
 			mat-expansion-panel {
-				@include mat-form-field.theme($cyph-theme);
+				@include mat.legacy-form-field-theme($cyph-theme);
 			}
 
 			.password-option.deselected {
@@ -337,24 +315,26 @@ $default-white: map-get(mat.$grey-palette, 100);
 					mobileSpinner
 				)
 				{
-					@include mat-progress-spinner.theme(
-						map-merge(
+					@include mat.legacy-progress-spinner-theme(
+						map-deep-merge(
 							$cyph-theme,
 							(
-								primary:
-									map-merge(
-										$cyph-primary,
-										(
-											default:
-												map-get(
+								color: (
+									primary:
+										map-merge(
+											$cyph-primary,
+											(
+												default:
 													map-get(
-														$cyph-message-colors,
-														app
-													),
-													mobileSpinner
-												)
+														map-get(
+															$cyph-message-colors,
+															app
+														),
+														mobileSpinner
+													)
+											)
 										)
-									)
+								)
 							)
 						)
 					);
@@ -379,24 +359,26 @@ $default-white: map-get(mat.$grey-palette, 100);
 					mobileSpinner
 				)
 				{
-					@include mat-progress-spinner.theme(
-						map-merge(
+					@include mat.legacy-progress-spinner-theme(
+						map-deep-merge(
 							$cyph-theme,
 							(
-								primary:
-									map-merge(
-										$cyph-primary,
-										(
-											default:
-												map-get(
+								color: (
+									primary:
+										map-merge(
+											$cyph-primary,
+											(
+												default:
 													map-get(
-														$cyph-message-colors,
-														me
-													),
-													mobileSpinner
-												)
+														map-get(
+															$cyph-message-colors,
+															me
+														),
+														mobileSpinner
+													)
+											)
 										)
-									)
+								)
 							)
 						)
 					);
@@ -430,24 +412,26 @@ $default-white: map-get(mat.$grey-palette, 100);
 					mobileSpinner
 				)
 				{
-					@include mat-progress-spinner.theme(
-						map-merge(
+					@include mat.legacy-progress-spinner-theme(
+						map-deep-merge(
 							$cyph-theme,
 							(
-								primary:
-									map-merge(
-										$cyph-primary,
-										(
-											default:
-												map-get(
+								color: (
+									primary:
+										map-merge(
+											$cyph-primary,
+											(
+												default:
 													map-get(
-														$cyph-message-colors,
-														other
-													),
-													mobileSpinner
-												)
+														map-get(
+															$cyph-message-colors,
+															other
+														),
+														mobileSpinner
+													)
+											)
 										)
-									)
+								)
 							)
 						)
 					);
@@ -476,24 +460,26 @@ $default-white: map-get(mat.$grey-palette, 100);
 				);
 				color: map-get(map-get($cyph-message-colors, app), text);
 
-				@include mat-progress-spinner.theme(
-					map-merge(
+				@include mat.legacy-progress-spinner-theme(
+					map-deep-merge(
 						$cyph-theme,
 						(
-							primary:
-								map-merge(
-									$cyph-primary,
-									(
-										default:
-											map-get(
+							color: (
+								primary:
+									map-merge(
+										$cyph-primary,
+										(
+											default:
 												map-get(
-													$cyph-message-colors,
-													app
-												),
-												spinner
-											)
+													map-get(
+														$cyph-message-colors,
+														app
+													),
+													spinner
+												)
+										)
 									)
-								)
+							)
 						)
 					)
 				);
@@ -506,24 +492,26 @@ $default-white: map-get(mat.$grey-palette, 100);
 				);
 				color: map-get(map-get($cyph-message-colors, me), text);
 
-				@include mat-progress-spinner.theme(
-					map-merge(
+				@include mat.legacy-progress-spinner-theme(
+					map-deep-merge(
 						$cyph-theme,
 						(
-							primary:
-								map-merge(
-									$cyph-primary,
-									(
-										default:
-											map-get(
+							color: (
+								primary:
+									map-merge(
+										$cyph-primary,
+										(
+											default:
 												map-get(
-													$cyph-message-colors,
-													me
-												),
-												spinner
-											)
+													map-get(
+														$cyph-message-colors,
+														me
+													),
+													spinner
+												)
+										)
 									)
-								)
+							)
 						)
 					)
 				);
@@ -536,24 +524,26 @@ $default-white: map-get(mat.$grey-palette, 100);
 				);
 				color: map-get(map-get($cyph-message-colors, other), text);
 
-				@include mat-progress-spinner.theme(
-					map-merge(
+				@include mat.legacy-progress-spinner-theme(
+					map-deep-merge(
 						$cyph-theme,
 						(
-							primary:
-								map-merge(
-									$cyph-primary,
-									(
-										default:
-											map-get(
+							color: (
+								primary:
+									map-merge(
+										$cyph-primary,
+										(
+											default:
 												map-get(
-													$cyph-message-colors,
-													other
-												),
-												spinner
-											)
+													map-get(
+														$cyph-message-colors,
+														other
+													),
+													spinner
+												)
+										)
 									)
-								)
+							)
 						)
 					)
 				);
@@ -615,18 +605,21 @@ $default-white: map-get(mat.$grey-palette, 100);
 
 	cyph-checkout {
 		.checkout-ui {
-			color: map-get(map-get($cyph-checkout-theme, foreground), text);
+			color: map-get(
+				map-get($cyph-checkout-theme, color, foreground),
+				text
+			);
 
-			@include mat-form-field.theme($cyph-checkout-theme);
+			@include mat.legacy-form-field-theme($cyph-checkout-theme);
 		}
 	}
 
 	ngx-speed-dial-actions {
-		@include mat-button.theme($cyph-speed-dial-action-theme);
+		@include mat.legacy-button-theme($cyph-speed-dial-action-theme);
 	}
 
 	div.green-button {
-		@include mat-button.theme(
+		@include mat.legacy-button-theme(
 			cyph-theme(
 				$cyph-white,
 				mat.define-palette(mat.$green-palette),
@@ -643,7 +636,7 @@ $default-white: map-get(mat.$grey-palette, 100);
 	}
 
 	div.red-button {
-		@include mat-button.theme(
+		@include mat.legacy-button-theme(
 			cyph-theme(
 				$cyph-white,
 				mat.define-palette(mat.$red-palette),
@@ -685,10 +678,13 @@ $default-white: map-get(mat.$grey-palette, 100);
 		}
 	}
 
-	$cyph-theme-accent-default: map-get(map-get($cyph-theme, accent), default);
+	$cyph-theme-accent-default: map-get(
+		map-get($cyph-theme, color, accent),
+		default
+	);
 
 	$cyph-theme-primary-default: map-get(
-		map-get($cyph-theme, primary),
+		map-get($cyph-theme, color, primary),
 		default
 	);
 
@@ -790,24 +786,26 @@ $default-white: map-get(mat.$grey-palette, 100);
 
 @mixin cyph-progress-theme(
 	$theme,
-	$color: map-get(map-get($theme, foreground), base)
+	$color: map-get(map-get($theme, color, foreground), base)
 ) {
-	$cyph-progress-theme: map-merge(
+	$cyph-progress-theme: map-deep-merge(
 		$theme,
 		(
-			primary:
-				map-merge(
-					map-get($theme, primary),
-					(
-						lighter: rgba(0, 0, 0, 0.15),
-						default: $color
+			color: (
+				primary:
+					map-merge(
+						map-get($theme, color, primary),
+						(
+							lighter: rgba(0, 0, 0, 0.15),
+							default: $color
+						)
 					)
-				)
+			)
 		)
 	);
 
-	@include mat-progress-bar.theme($cyph-progress-theme);
-	@include mat-progress-spinner.theme($cyph-progress-theme);
+	@include mat.legacy-progress-bar-theme($cyph-progress-theme);
+	@include mat.legacy-progress-spinner-theme($cyph-progress-theme);
 }
 
 @mixin cyph-inverted-theme {
@@ -823,19 +821,19 @@ $default-white: map-get(mat.$grey-palette, 100);
 }
 
 @mixin theme-alt($theme, $theme-partial-inverted) {
-	@include mat-autocomplete.theme($theme);
-	@include mat-card.theme($theme);
-	@include mat-dialog.theme($theme);
-	@include mat-expansion-panel.theme($theme);
-	@include mat-option.theme($theme);
-	@include mat-select.theme($theme);
-	@include mat-tabs.theme($theme);
+	@include mat.legacy-autocomplete-theme($theme);
+	@include mat.legacy-card-theme($theme);
+	@include mat.legacy-dialog-theme($theme);
+	@include mat.expansion-theme($theme);
+	@include mat.legacy-option-theme($theme);
+	@include mat.legacy-select-theme($theme);
+	@include mat.legacy-tabs-theme($theme);
 
 	.mat-select-content,
 	.mat-select-panel-done-animating,
 	.sidenav {
 		background-color: mat.get-color-from-palette(
-			map-get($theme, background),
+			map-get($theme, color, background),
 			card
 		);
 	}
@@ -844,18 +842,18 @@ $default-white: map-get(mat.$grey-palette, 100);
 	mat-card,
 	mat-dialog-container,
 	mat-expansion-panel {
-		@include mat-button.theme($theme);
-		@include mat-checkbox.theme($theme);
-		@include mat-chips.theme($theme);
-		@include mat-expansion-panel.theme($theme);
-		@include mat-form-field.theme($theme);
-		@include mat-input.theme($theme);
-		@include mat-list.theme($theme);
+		@include mat.legacy-button-theme($theme);
+		@include mat.legacy-checkbox-theme($theme);
+		@include mat.legacy-chips-theme($theme);
+		@include mat.expansion-theme($theme);
+		@include mat.legacy-form-field-theme($theme);
+		@include mat.legacy-input-theme($theme);
+		@include mat.legacy-list-theme($theme);
 		@include cyph-progress-theme($theme-partial-inverted);
-		@include mat-tabs.theme($theme-partial-inverted);
+		@include mat.legacy-tabs-theme($theme-partial-inverted);
 
 		$theme-foreground: map-get(
-			map-get($theme-partial-inverted, foreground),
+			map-get($theme-partial-inverted, color, foreground),
 			base
 		);
 
@@ -868,7 +866,7 @@ $default-white: map-get(mat.$grey-palette, 100);
 		}
 	}
 
-	$theme-accent: map-get(map-get($theme, accent), default);
+	$theme-accent: map-get(map-get($theme, color, accent), default);
 
 	.mat-tab-label-content {
 		color: $theme-accent;
@@ -888,46 +886,49 @@ $default-white: map-get(mat.$grey-palette, 100);
 	$isDark
 ) {
 	@return (
-		primary: $primary,
-		accent: $accent,
-		warn: $warn,
-		is-dark: $isDark,
-		foreground:
-			map-merge(
-				if(
-					$isDark,
-					mat.$dark-theme-foreground-palette,
-					mat.$light-theme-foreground-palette
-				),
-				(
-					base: $foreground,
-					icon: $foreground,
-					icons: $foreground,
-					text: $foreground
-				)
-			),
-		background:
-			map-merge(
-				if(
-					$isDark,
-					map-merge(
-						mat.$dark-theme-background-palette,
-						(
-							app-bar: map-get($primary, default),
-							card: map-get($accent, default),
-							dialog: map-get($accent, lighter),
-							raised-button: map-get($primary, default),
-							selected-button: map-get($accent, darker),
-							status-bar:
-								mat.get-color-from-palette($primary, 600)
-						)
+		color: (
+			primary: $primary,
+			accent: $accent,
+			warn: $warn,
+			is-dark: $isDark,
+			foreground:
+				map-merge(
+					if(
+						$isDark,
+						mat.$dark-theme-foreground-palette,
+						mat.$light-theme-foreground-palette
 					),
-					mat.$light-theme-background-palette
+					(
+						base: $foreground,
+						icon: $foreground,
+						icons: $foreground,
+						text: $foreground
+					)
 				),
-				(
-					background: $background
+			background:
+				map-merge(
+					if(
+						$isDark,
+						map-merge(
+							mat.$dark-theme-background-palette,
+							(
+								app-bar: map-get($primary, default),
+								card: map-get($accent, default),
+								dialog: map-get($accent, lighter),
+								raised-button: map-get($primary, default),
+								selected-button: map-get($accent, darker),
+								status-bar:
+									mat.get-color-from-palette($primary, 600)
+							)
+						),
+						mat.$light-theme-background-palette
+					),
+					(
+						background: $background
+					)
 				)
-			)
+		),
+		typography: mat.define-legacy-typography-config()
 	);
 }
 
