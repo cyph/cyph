@@ -1,7 +1,6 @@
 import {CommonModule} from '@angular/common';
 import {HttpClientModule} from '@angular/common/http';
 import {NgModule} from '@angular/core';
-import {FlexLayoutModule} from '@angular/flex-layout';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {MatLegacyAutocompleteModule as MatAutocompleteModule} from '@angular/material/legacy-autocomplete';
 import {MatLegacyButtonModule as MatButtonModule} from '@angular/material/legacy-button';
@@ -20,6 +19,7 @@ import {MatLegacySliderModule as MatSliderModule} from '@angular/material/legacy
 import {MatLegacyTooltipModule as MatTooltipModule} from '@angular/material/legacy-tooltip';
 import {BrowserModule} from '@angular/platform-browser';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
+import {FlexLayoutModule} from '@ngbracket/ngx-layout';
 import {IMaskModule} from 'angular-imask';
 import lottiePlayer from 'lottie-web';
 import {NgxCaptchaModule} from 'ngx-captcha';

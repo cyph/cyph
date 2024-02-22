@@ -207,7 +207,7 @@ export class Config {
 		'Z'
 	];
 
-	/** @see {@link https://github.com/angular/flex-layout/wiki/Responsive-API} */
+	/** @see {@link https://github.com/ngbracket/ngx-layout/wiki/Responsive-API} */
 	public readonly responsiveMaxWidths = {
 		lg: 1919,
 		md: 1279,
