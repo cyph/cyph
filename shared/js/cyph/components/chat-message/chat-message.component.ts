@@ -14,7 +14,7 @@ import {
 	SimpleChanges,
 	ViewChild
 } from '@angular/core';
-import {MatMenuTrigger} from '@angular/material/menu';
+import {MatLegacyMenuTrigger as MatMenuTrigger} from '@angular/material/legacy-menu';
 import Hammer from 'hammerjs';
 import $ from 'jquery';
 import {BehaviorSubject, firstValueFrom} from 'rxjs';

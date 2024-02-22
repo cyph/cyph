@@ -5,8 +5,8 @@ import {
 	OnChanges,
 	OnInit
 } from '@angular/core';
-import {ThemePalette} from '@angular/material/core';
-import {ProgressSpinnerMode} from '@angular/material/progress-spinner';
+import {LegacyThemePalette as ThemePalette} from '@angular/material/legacy-core';
+import {LegacyProgressSpinnerMode as ProgressSpinnerMode} from '@angular/material/legacy-progress-spinner';
 import {AnimationOptions} from 'ngx-lottie';
 import {BehaviorSubject} from 'rxjs';
 import {BaseProvider} from '../../base-provider';

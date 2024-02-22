@@ -5,7 +5,7 @@ import {
 	ElementRef,
 	OnInit
 } from '@angular/core';
-import {MatDialogRef} from '@angular/material/dialog';
+import {MatLegacyDialogRef as MatDialogRef} from '@angular/material/legacy-dialog';
 import {DomSanitizer, SafeUrl} from '@angular/platform-browser';
 import memoize from 'lodash-es/memoize';
 import PinchZoom from 'pinch-zoom-js';

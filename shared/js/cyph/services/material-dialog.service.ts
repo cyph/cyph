@@ -3,8 +3,11 @@
 import {ComponentType} from '@angular/cdk/portal';
 import {ChangeDetectorRef, Injectable, Optional} from '@angular/core';
 import {MatBottomSheet} from '@angular/material/bottom-sheet';
-import {MatDialog, MatDialogRef} from '@angular/material/dialog';
-import {MatSnackBar} from '@angular/material/snack-bar';
+import {
+	MatLegacyDialog as MatDialog,
+	MatLegacyDialogRef as MatDialogRef
+} from '@angular/material/legacy-dialog';
+import {MatLegacySnackBar as MatSnackBar} from '@angular/material/legacy-snack-bar';
 import {SafeUrl} from '@angular/platform-browser';
 import {firstValueFrom, lastValueFrom} from 'rxjs';
 import {map} from 'rxjs/operators';

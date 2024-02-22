@@ -7,7 +7,7 @@ import {
 	Optional,
 	ViewChild
 } from '@angular/core';
-import {MatInput} from '@angular/material/input';
+import {MatLegacyInput as MatInput} from '@angular/material/legacy-input';
 import {ActivatedRoute, Router} from '@angular/router';
 import memoize from 'lodash-es/memoize';
 import {BehaviorSubject, Observable} from 'rxjs';

@@ -8,7 +8,7 @@ import {
 	ViewChild
 } from '@angular/core';
 import {DocumentEditorContainerComponent} from '@syncfusion/ej2-angular-documenteditor';
-import {MatSelect} from '@angular/material/select';
+import {MatLegacySelect as MatSelect} from '@angular/material/legacy-select';
 import {BehaviorSubject} from 'rxjs';
 import {BaseProvider} from '../../base-provider';
 import {IFile} from '../../ifile';

@@ -5,7 +5,7 @@ import {
 	OnDestroy,
 	OnInit
 } from '@angular/core';
-import {MatDialogRef} from '@angular/material/dialog';
+import {MatLegacyDialogRef as MatDialogRef} from '@angular/material/legacy-dialog';
 import {DomSanitizer, SafeUrl} from '@angular/platform-browser';
 import {BehaviorSubject} from 'rxjs';
 import {BaseProvider} from '../../base-provider';

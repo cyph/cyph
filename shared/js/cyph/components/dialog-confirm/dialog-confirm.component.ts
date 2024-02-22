@@ -8,7 +8,7 @@ import {
 	ViewChild
 } from '@angular/core';
 import {MatBottomSheetRef} from '@angular/material/bottom-sheet';
-import {MatDialogRef} from '@angular/material/dialog';
+import {MatLegacyDialogRef as MatDialogRef} from '@angular/material/legacy-dialog';
 import {SafeUrl} from '@angular/platform-browser';
 import {BehaviorSubject, Observable} from 'rxjs';
 import {BaseProvider} from '../../base-provider';
