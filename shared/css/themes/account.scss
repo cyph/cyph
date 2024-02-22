@@ -1,3 +1,4 @@
+@use 'sass:map';
 @import '../theme';
 
 $cyph-is-dark: false;
@@ -8,7 +9,7 @@ $cyph-progress-foreground: #e7c447;
 $cyph-speed-dial-action-alt-background: $cyph-foreground;
 $cyph-speed-dial-action-alt-foreground: $cyph-inverted;
 
-$cyph-message-box-colors: map-merge(
+$cyph-message-box-colors: map.merge(
 	$cyph-message-box-colors,
 	(
 		desktopBackground: white,
@@ -17,7 +18,7 @@ $cyph-message-box-colors: map-merge(
 	)
 );
 
-$cyph-message-colors: map-merge(
+$cyph-message-colors: map.merge(
 	$cyph-message-colors,
 	(
 		app: (
@@ -30,16 +31,14 @@ $cyph-message-colors: map-merge(
 		),
 		me: (
 			desktop: transparent,
-			mobile:
-				rgba(map-get(map-get($cyph-message-colors, me), mobile), 0.9),
+			mobile: rgba(map.get($cyph-message-colors, me, mobile), 0.9),
 			mobileSpinner: $cyph-foreground,
 			spinner: $cyph-foreground,
 			text: $cyph-foreground
 		),
 		other: (
 			desktop: transparent,
-			mobile:
-				rgba(map-get(map-get($cyph-message-colors, other), mobile), 0.7),
+			mobile: rgba(map.get($cyph-message-colors, other, mobile), 0.7),
 			mobileSpinner: $cyph-foreground,
 			spinner: $cyph-foreground,
 			text: $cyph-foreground

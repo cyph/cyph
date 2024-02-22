@@ -1,4 +1,5 @@
 @use '@angular/material' as mat;
+@use 'sass:map';
 @import './mixins';
 
 /* Reference: https://material.io/color/#!/?view.left=0&view.right=1&primary.color=7d4fd3&secondary.color=8b62d9&secondary.text.color=f1f1f1&primary.text.color=ffffff */
@@ -61,7 +62,7 @@ $cyph-checkout-theme: mat.define-light-theme(
 
 $cyph-cyphertext-theme: cyph-theme(
 	mat.define-palette(mat.$green-palette),
-	map-merge(
+	map.merge(
 		mat.define-palette(mat.$grey-palette, 900, 800, 900),
 		(
 			default-contrast: $cyph-cyphertext-foreground

@@ -1,4 +1,5 @@
 @use '@angular/material' as mat;
+@use 'sass:map';
 @import '../../../../css/mixins';
 
 $header-size: 135px;
@@ -93,11 +94,11 @@ button ::ng-deep .mat-button-wrapper {
 }
 
 .incoming {
-	color: map-get(mat.$green-palette, 700);
+	color: map.get(mat.$green-palette, 700);
 }
 
 .outgoing {
-	color: map-get(mat.$red-palette, 700);
+	color: map.get(mat.$red-palette, 700);
 }
 
 .title {

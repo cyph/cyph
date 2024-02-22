@@ -1,11 +1,12 @@
 @use '@angular/material' as mat;
+@use 'sass:map';
 
 $accountPaddingLarge: 7.5vw;
 $accountPaddingMedium: 5vw;
 $accountPaddingSmall: 2.5vw;
 $mobileMessageBorderRadius: 16px;
 
-$default-white: map-get(mat.$grey-palette, 100);
+$default-white: map.get(mat.$grey-palette, 100);
 
 @mixin breathe {
 	animation-name: breathe !important;
@@ -76,10 +77,10 @@ $default-white: map-get(mat.$grey-palette, 100);
 
 	$cyph-speed-dial-action-theme: cyph-theme(
 		$cyph-speed-dial-action-palette,
-		map-merge(
+		map.merge(
 			$cyph-speed-dial-action-palette,
 			(
-				default-contrast: map-get($cyph-message-box-colors, buttons)
+				default-contrast: map.get($cyph-message-box-colors, buttons)
 			)
 		),
 		$cyph-warn,
@@ -170,13 +171,13 @@ $default-white: map-get(mat.$grey-palette, 100);
 			background-color: $dark-background;
 
 			@include mat.legacy-progress-spinner-theme(
-				map-deep-merge(
+				map.deep-merge(
 					$cyph-theme,
 					(
 						color: (
 							primary:
-								map-merge(
-									map-get($cyph-theme, color, primary),
+								map.merge(
+									map.get($cyph-theme, color, primary),
 									(
 										lighter: rgba(0, 0, 0, 0.15),
 										default: $dark-foreground
@@ -190,17 +191,17 @@ $default-white: map-get(mat.$grey-palette, 100);
 
 		&.warn,
 		.warn {
-			color: map-get($cyph-warn, default);
+			color: map.get($cyph-warn, default);
 		}
 	}
 
 	cyph-account {
 		.header {
 			color: if($cyph-is-dark, $cyph-foreground, $cyph-background);
-			background-color: map-get($cyph-accent, default);
+			background-color: map.get($cyph-accent, default);
 
 			&:after {
-				background-color: map-get($cyph-accent, 300);
+				background-color: map.get($cyph-accent, 300);
 			}
 		}
 
@@ -232,14 +233,14 @@ $default-white: map-get(mat.$grey-palette, 100);
 		}
 
 		.interstitial {
-			background-color: rgba(map-get($cyph-accent, 400), 0.69) !important;
+			background-color: rgba(map.get($cyph-accent, 400), 0.69) !important;
 		}
 	}
 
 	cyph-account-call-waiting {
 		.avatar.call {
-			border-color: map-get($cyph-primary, default);
-			background-color: map-get($cyph-primary, default);
+			border-color: map.get($cyph-primary, default);
+			background-color: map.get($cyph-primary, default);
 		}
 	}
 
@@ -250,7 +251,7 @@ $default-white: map-get(mat.$grey-palette, 100);
 					($cyph-is-dark and not $partialInversion) or
 						(not $cyph-is-dark and $partialInversion)
 				),
-				map-get($cyph-accent, darker),
+				map.get($cyph-accent, darker),
 				$cyph-background
 			);
 
@@ -262,20 +263,20 @@ $default-white: map-get(mat.$grey-palette, 100);
 
 	cyph-account-post {
 		.reaction-count {
-			color: map-get($cyph-accent, default);
+			color: map.get($cyph-accent, default);
 		}
 	}
 
 	cyph-account-profile {
 		.profile .buttons button {
-			background-color: map-get($cyph-primary, default);
+			background-color: map.get($cyph-primary, default);
 		}
 	}
 
 	cyph-chat-main {
 		.avatar.call {
-			border-color: map-get($cyph-primary, default);
-			background-color: map-get($cyph-primary, default);
+			border-color: map.get($cyph-primary, default);
+			background-color: map.get($cyph-primary, default);
 		}
 
 		.chat-main.video .friend-is-typing .ellipsis-spinner > div {
@@ -297,39 +298,31 @@ $default-white: map-get(mat.$grey-palette, 100);
 		.chat-main.mobile,
 		.chat-main.video .video-call ~ cyph-chat-message-list {
 			.message-item.ui-style-default.author-app {
-				background-color: map-get(
-					map-get($cyph-message-colors, app),
-					mobile
-				);
+				background-color: map.get($cyph-message-colors, app, mobile);
 
-				@if map-has-key(map-get($cyph-message-colors, app), mobileText)
+				@if map.has-key(map.get($cyph-message-colors, app), mobileText)
 				{
-					color: map-get(
-						map-get($cyph-message-colors, app),
-						mobileText
-					);
+					color: map.get($cyph-message-colors, app, mobileText);
 				}
 
-				@if map-has-key(
-					map-get($cyph-message-colors, app),
+				@if map.has-key(
+					map.get($cyph-message-colors, app),
 					mobileSpinner
 				)
 				{
 					@include mat.legacy-progress-spinner-theme(
-						map-deep-merge(
+						map.deep-merge(
 							$cyph-theme,
 							(
 								color: (
 									primary:
-										map-merge(
+										map.merge(
 											$cyph-primary,
 											(
 												default:
-													map-get(
-														map-get(
-															$cyph-message-colors,
-															app
-														),
+													map.get(
+														$cyph-message-colors,
+														app,
 														mobileSpinner
 													)
 											)
@@ -342,38 +335,30 @@ $default-white: map-get(mat.$grey-palette, 100);
 			}
 
 			.message-item.ui-style-default.author-local {
-				background-color: map-get(
-					map-get($cyph-message-colors, me),
-					mobile
-				);
+				background-color: map.get($cyph-message-colors, me, mobile);
 
-				@if map-has-key(map-get($cyph-message-colors, me), mobileText) {
-					color: map-get(
-						map-get($cyph-message-colors, me),
-						mobileText
-					);
+				@if map.has-key(map.get($cyph-message-colors, me), mobileText) {
+					color: map.get($cyph-message-colors, me, mobileText);
 				}
 
-				@if map-has-key(
-					map-get($cyph-message-colors, me),
+				@if map.has-key(
+					map.get($cyph-message-colors, me),
 					mobileSpinner
 				)
 				{
 					@include mat.legacy-progress-spinner-theme(
-						map-deep-merge(
+						map.deep-merge(
 							$cyph-theme,
 							(
 								color: (
 									primary:
-										map-merge(
+										map.merge(
 											$cyph-primary,
 											(
 												default:
-													map-get(
-														map-get(
-															$cyph-message-colors,
-															me
-														),
+													map.get(
+														$cyph-message-colors,
+														me,
 														mobileSpinner
 													)
 											)
@@ -386,47 +371,39 @@ $default-white: map-get(mat.$grey-palette, 100);
 
 				&:after {
 					border-color: transparent
-						map-get(map-get($cyph-message-colors, me), mobile);
+						map.get($cyph-message-colors, me, mobile);
 				}
 			}
 
 			.message-item.ui-style-default.author-remote {
-				background-color: map-get(
-					map-get($cyph-message-colors, other),
-					mobile
-				);
+				background-color: map.get($cyph-message-colors, other, mobile);
 
-				@if map-has-key(
-					map-get($cyph-message-colors, other),
+				@if map.has-key(
+					map.get($cyph-message-colors, other),
 					mobileText
 				)
 				{
-					color: map-get(
-						map-get($cyph-message-colors, other),
-						mobileText
-					);
+					color: map.get($cyph-message-colors, other, mobileText);
 				}
 
-				@if map-has-key(
-					map-get($cyph-message-colors, other),
+				@if map.has-key(
+					map.get($cyph-message-colors, other),
 					mobileSpinner
 				)
 				{
 					@include mat.legacy-progress-spinner-theme(
-						map-deep-merge(
+						map.deep-merge(
 							$cyph-theme,
 							(
 								color: (
 									primary:
-										map-merge(
+										map.merge(
 											$cyph-primary,
 											(
 												default:
-													map-get(
-														map-get(
-															$cyph-message-colors,
-															other
-														),
+													map.get(
+														$cyph-message-colors,
+														other,
 														mobileSpinner
 													)
 											)
@@ -439,7 +416,7 @@ $default-white: map-get(mat.$grey-palette, 100);
 
 				&:after {
 					border-color: transparent
-						map-get(map-get($cyph-message-colors, other), mobile);
+						map.get($cyph-message-colors, other, mobile);
 				}
 			}
 		}
@@ -454,27 +431,22 @@ $default-white: map-get(mat.$grey-palette, 100);
 	cyph-chat-message {
 		.message-item.ui-style-default {
 			&.author-app {
-				background-color: map-get(
-					map-get($cyph-message-colors, app),
-					desktop
-				);
-				color: map-get(map-get($cyph-message-colors, app), text);
+				background-color: map.get($cyph-message-colors, app, desktop);
+				color: map.get($cyph-message-colors, app, text);
 
 				@include mat.legacy-progress-spinner-theme(
-					map-deep-merge(
+					map.deep-merge(
 						$cyph-theme,
 						(
 							color: (
 								primary:
-									map-merge(
+									map.merge(
 										$cyph-primary,
 										(
 											default:
-												map-get(
-													map-get(
-														$cyph-message-colors,
-														app
-													),
+												map.get(
+													$cyph-message-colors,
+													app,
 													spinner
 												)
 										)
@@ -486,27 +458,22 @@ $default-white: map-get(mat.$grey-palette, 100);
 			}
 
 			&.author-local {
-				background-color: map-get(
-					map-get($cyph-message-colors, me),
-					desktop
-				);
-				color: map-get(map-get($cyph-message-colors, me), text);
+				background-color: map.get($cyph-message-colors, me, desktop);
+				color: map.get($cyph-message-colors, me, text);
 
 				@include mat.legacy-progress-spinner-theme(
-					map-deep-merge(
+					map.deep-merge(
 						$cyph-theme,
 						(
 							color: (
 								primary:
-									map-merge(
+									map.merge(
 										$cyph-primary,
 										(
 											default:
-												map-get(
-													map-get(
-														$cyph-message-colors,
-														me
-													),
+												map.get(
+													$cyph-message-colors,
+													me,
 													spinner
 												)
 										)
@@ -518,27 +485,22 @@ $default-white: map-get(mat.$grey-palette, 100);
 			}
 
 			&.author-remote {
-				background-color: map-get(
-					map-get($cyph-message-colors, other),
-					desktop
-				);
-				color: map-get(map-get($cyph-message-colors, other), text);
+				background-color: map.get($cyph-message-colors, other, desktop);
+				color: map.get($cyph-message-colors, other, text);
 
 				@include mat.legacy-progress-spinner-theme(
-					map-deep-merge(
+					map.deep-merge(
 						$cyph-theme,
 						(
 							color: (
 								primary:
-									map-merge(
+									map.merge(
 										$cyph-primary,
 										(
 											default:
-												map-get(
-													map-get(
-														$cyph-message-colors,
-														other
-													),
+												map.get(
+													$cyph-message-colors,
+													other,
 													spinner
 												)
 										)
@@ -555,10 +517,10 @@ $default-white: map-get(mat.$grey-palette, 100);
 	cyph-chat-message-box-inherit-ng-form {
 		.text-message-box {
 			.message-box {
-				color: map-get($cyph-message-box-colors, text);
+				color: map.get($cyph-message-box-colors, text);
 
-				@if map-has-key($cyph-message-box-colors, background) {
-					background-color: map-get(
+				@if map.has-key($cyph-message-box-colors, background) {
+					background-color: map.get(
 						$cyph-message-box-colors,
 						background
 					);
@@ -566,12 +528,12 @@ $default-white: map-get(mat.$grey-palette, 100);
 			}
 
 			.message-box-button-group button mat-icon {
-				color: map-get($cyph-message-box-colors, buttons);
+				color: map.get($cyph-message-box-colors, buttons);
 			}
 
 			&:not(.mobile) .message-box {
-				@if map-has-key($cyph-message-box-colors, desktopBackground) {
-					background-color: map-get(
+				@if map.has-key($cyph-message-box-colors, desktopBackground) {
+					background-color: map.get(
 						$cyph-message-box-colors,
 						desktopBackground
 					);
@@ -579,15 +541,15 @@ $default-white: map-get(mat.$grey-palette, 100);
 
 				&:focus {
 					box-shadow: 0 0 10px
-						map-get($cyph-message-box-colors, desktopGlow);
+						map.get($cyph-message-box-colors, desktopGlow);
 					border: 1px solid
-						map-get($cyph-message-box-colors, desktopGlow);
+						map.get($cyph-message-box-colors, desktopGlow);
 				}
 			}
 
 			&.mobile .message-box {
-				@if map-has-key($cyph-message-box-colors, mobileBackground) {
-					background-color: map-get(
+				@if map.has-key($cyph-message-box-colors, mobileBackground) {
+					background-color: map.get(
 						$cyph-message-box-colors,
 						mobileBackground
 					);
@@ -595,9 +557,9 @@ $default-white: map-get(mat.$grey-palette, 100);
 
 				&:focus {
 					box-shadow: 0 0 10px
-						map-get($cyph-message-box-colors, mobileGlow);
+						map.get($cyph-message-box-colors, mobileGlow);
 					border: 1px solid
-						map-get($cyph-message-box-colors, mobileGlow);
+						map.get($cyph-message-box-colors, mobileGlow);
 				}
 			}
 		}
@@ -605,10 +567,7 @@ $default-white: map-get(mat.$grey-palette, 100);
 
 	cyph-checkout {
 		.checkout-ui {
-			color: map-get(
-				map-get($cyph-checkout-theme, color, foreground),
-				text
-			);
+			color: map.get($cyph-checkout-theme, color, foreground, text);
 
 			@include mat.legacy-form-field-theme($cyph-checkout-theme);
 		}
@@ -678,15 +637,9 @@ $default-white: map-get(mat.$grey-palette, 100);
 		}
 	}
 
-	$cyph-theme-accent-default: map-get(
-		map-get($cyph-theme, color, accent),
-		default
-	);
+	$cyph-theme-accent-default: map.get($cyph-theme, color, accent, default);
 
-	$cyph-theme-primary-default: map-get(
-		map-get($cyph-theme, color, primary),
-		default
-	);
+	$cyph-theme-primary-default: map.get($cyph-theme, color, primary, default);
 
 	/* DevExtreme theme */
 
@@ -764,8 +717,8 @@ $default-white: map-get(mat.$grey-palette, 100);
 	}
 
 	.e-dropdown-btn:not(.e-tbar-btn) {
-		background-color: map-get($cyph-accent, default);
-		color: map-get($cyph-white, default);
+		background-color: map.get($cyph-accent, default);
+		color: map.get($cyph-white, default);
 	}
 	ejs-splitbutton.e-split-btn-wrapper button:not(.e-dropdown-btn) {
 		padding-left: 16px;
@@ -786,15 +739,15 @@ $default-white: map-get(mat.$grey-palette, 100);
 
 @mixin cyph-progress-theme(
 	$theme,
-	$color: map-get(map-get($theme, color, foreground), base)
+	$color: map.get($theme, color, foreground, base)
 ) {
-	$cyph-progress-theme: map-deep-merge(
+	$cyph-progress-theme: map.deep-merge(
 		$theme,
 		(
 			color: (
 				primary:
-					map-merge(
-						map-get($theme, color, primary),
+					map.merge(
+						map.get($theme, color, primary),
 						(
 							lighter: rgba(0, 0, 0, 0.15),
 							default: $color
@@ -833,7 +786,7 @@ $default-white: map-get(mat.$grey-palette, 100);
 	.mat-select-panel-done-animating,
 	.sidenav {
 		background-color: mat.get-color-from-palette(
-			map-get($theme, color, background),
+			map.get($theme, color, background),
 			card
 		);
 	}
@@ -852,8 +805,10 @@ $default-white: map-get(mat.$grey-palette, 100);
 		@include cyph-progress-theme($theme-partial-inverted);
 		@include mat.legacy-tabs-theme($theme-partial-inverted);
 
-		$theme-foreground: map-get(
-			map-get($theme-partial-inverted, color, foreground),
+		$theme-foreground: map.get(
+			$theme-partial-inverted,
+			color,
+			foreground,
 			base
 		);
 
@@ -866,7 +821,7 @@ $default-white: map-get(mat.$grey-palette, 100);
 		}
 	}
 
-	$theme-accent: map-get(map-get($theme, color, accent), default);
+	$theme-accent: map.get($theme, color, accent, default);
 
 	.mat-tab-label-content {
 		color: $theme-accent;
@@ -892,7 +847,7 @@ $default-white: map-get(mat.$grey-palette, 100);
 			warn: $warn,
 			is-dark: $isDark,
 			foreground:
-				map-merge(
+				map.merge(
 					if(
 						$isDark,
 						mat.$dark-theme-foreground-palette,
@@ -906,17 +861,17 @@ $default-white: map-get(mat.$grey-palette, 100);
 					)
 				),
 			background:
-				map-merge(
+				map.merge(
 					if(
 						$isDark,
-						map-merge(
+						map.merge(
 							mat.$dark-theme-background-palette,
 							(
-								app-bar: map-get($primary, default),
-								card: map-get($accent, default),
-								dialog: map-get($accent, lighter),
-								raised-button: map-get($primary, default),
-								selected-button: map-get($accent, darker),
+								app-bar: map.get($primary, default),
+								card: map.get($accent, default),
+								dialog: map.get($accent, lighter),
+								raised-button: map.get($primary, default),
+								selected-button: map.get($accent, darker),
 								status-bar:
 									mat.get-color-from-palette($primary, 600)
 							)
@@ -966,38 +921,38 @@ $default-white: map-get(mat.$grey-palette, 100);
 }
 
 @function invert-palette($base-palette) {
-	@return map-merge(
+	@return map.merge(
 		$base-palette,
 		(
-			50: map-get($base-palette, 900),
-			100: map-get($base-palette, 800),
-			200: map-get($base-palette, 700),
-			300: map-get($base-palette, 600),
-			400: map-get($base-palette, 500),
-			500: map-get($base-palette, 400),
-			600: map-get($base-palette, 300),
-			700: map-get($base-palette, 200),
-			800: map-get($base-palette, 100),
-			900: map-get($base-palette, 50),
-			A100: map-get($base-palette, A700),
-			A200: map-get($base-palette, A400),
-			A400: map-get($base-palette, A200),
-			A700: map-get($base-palette, A100),
+			50: map.get($base-palette, 900),
+			100: map.get($base-palette, 800),
+			200: map.get($base-palette, 700),
+			300: map.get($base-palette, 600),
+			400: map.get($base-palette, 500),
+			500: map.get($base-palette, 400),
+			600: map.get($base-palette, 300),
+			700: map.get($base-palette, 200),
+			800: map.get($base-palette, 100),
+			900: map.get($base-palette, 50),
+			A100: map.get($base-palette, A700),
+			A200: map.get($base-palette, A400),
+			A400: map.get($base-palette, A200),
+			A700: map.get($base-palette, A100),
 			contrast: (
-				50: map-get(map-get($base-palette, contrast), 900),
-				100: map-get(map-get($base-palette, contrast), 800),
-				200: map-get(map-get($base-palette, contrast), 700),
-				300: map-get(map-get($base-palette, contrast), 600),
-				400: map-get(map-get($base-palette, contrast), 500),
-				500: map-get(map-get($base-palette, contrast), 400),
-				600: map-get(map-get($base-palette, contrast), 300),
-				700: map-get(map-get($base-palette, contrast), 200),
-				800: map-get(map-get($base-palette, contrast), 100),
-				900: map-get(map-get($base-palette, contrast), 50),
-				A100: map-get(map-get($base-palette, contrast), A700),
-				A200: map-get(map-get($base-palette, contrast), A400),
-				A400: map-get(map-get($base-palette, contrast), A200),
-				A700: map-get(map-get($base-palette, contrast), A100)
+				50: map.get($base-palette, contrast, 900),
+				100: map.get($base-palette, contrast, 800),
+				200: map.get($base-palette, contrast, 700),
+				300: map.get($base-palette, contrast, 600),
+				400: map.get($base-palette, contrast, 500),
+				500: map.get($base-palette, contrast, 400),
+				600: map.get($base-palette, contrast, 300),
+				700: map.get($base-palette, contrast, 200),
+				800: map.get($base-palette, contrast, 100),
+				900: map.get($base-palette, contrast, 50),
+				A100: map.get($base-palette, contrast, A700),
+				A200: map.get($base-palette, contrast, A400),
+				A400: map.get($base-palette, contrast, A200),
+				A700: map.get($base-palette, contrast, A100)
 			)
 		)
 	);

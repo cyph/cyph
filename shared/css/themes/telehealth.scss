@@ -1,4 +1,5 @@
 @use '@angular/material' as mat;
+@use 'sass:map';
 @import '../theme';
 
 $cyph-accent: mat.define-palette(mat.$deep-purple-palette, 400, 300, 500);
@@ -10,7 +11,7 @@ $cyph-progress-foreground: #e7c447;
 $cyph-speed-dial-action-alt-background: $cyph-background;
 $cyph-speed-dial-action-alt-foreground: $cyph-foreground;
 
-$cyph-message-box-colors: map-merge(
+$cyph-message-box-colors: map.merge(
 	$cyph-message-box-colors,
 	(
 		desktopBackground: rgba(146, 149, 163, 0.5),
@@ -19,7 +20,7 @@ $cyph-message-box-colors: map-merge(
 	)
 );
 
-$cyph-message-colors: map-merge(
+$cyph-message-colors: map.merge(
 	$cyph-message-colors,
 	(
 		app: (
@@ -29,12 +30,12 @@ $cyph-message-colors: map-merge(
 		),
 		me: (
 			desktop: transparent,
-			mobile: map-get(mat.$amber-palette, 400),
+			mobile: map.get(mat.$amber-palette, 400),
 			text: $cyph-foreground
 		),
 		other: (
 			desktop: transparent,
-			mobile: map-get(mat.$yellow-palette, 600),
+			mobile: map.get(mat.$yellow-palette, 600),
 			text: $cyph-foreground
 		)
 	)

@@ -1,4 +1,5 @@
 @use '@angular/material' as mat;
+@use 'sass:map';
 @import '../../../../css/mixins';
 
 :host:empty {
@@ -129,7 +130,7 @@
 	position: absolute;
 	top: -8px;
 	right: -16px;
-	color: map-get(mat.$yellow-palette, 600);
+	color: map.get(mat.$yellow-palette, 600);
 }
 
 .contact.mobile .inner-circle-indicator {

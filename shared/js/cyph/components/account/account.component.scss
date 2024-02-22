@@ -1,4 +1,5 @@
 @use '@angular/material' as mat;
+@use 'sass:map';
 @import '../../../../css/theme';
 
 $mobileAppBarHeight: 56px;
@@ -131,23 +132,23 @@ $mobileAppBarHeight: 56px;
 
 		/*
 		&.Online {
-			border-color: map-get(mat.$green-palette, 700) !important;
-			background-color: map-get(mat.$green-palette, 700) !important;
+			border-color: map.get(mat.$green-palette, 700) !important;
+			background-color: map.get(mat.$green-palette, 700) !important;
 		}
 
 		&.Away {
-			border-color: map-get(mat.$amber-palette, 500) !important;
-			background-color: map-get(mat.$amber-palette, 500) !important;
+			border-color: map.get(mat.$amber-palette, 500) !important;
+			background-color: map.get(mat.$amber-palette, 500) !important;
 		}
 
 		&.Busy {
-			border-color: map-get(mat.$red-palette, 700) !important;
-			background-color: map-get(mat.$red-palette, 700) !important;
+			border-color: map.get(mat.$red-palette, 700) !important;
+			background-color: map.get(mat.$red-palette, 700) !important;
 		}
 
 		&.Offline {
-			border-color: map-get(mat.$grey-palette, 900) !important;
-			background-color: map-get(mat.$grey-palette, 900) !important;
+			border-color: map.get(mat.$grey-palette, 900) !important;
+			background-color: map.get(mat.$grey-palette, 900) !important;
 		}
 		*/
 	}

@@ -1,4 +1,5 @@
 @use '@angular/material' as mat;
+@use 'sass:map';
 @import '../theme';
 
 $cyph-primary: mat.define-palette(mat.$blue-grey-palette, 800, 700, 900);
@@ -6,14 +7,14 @@ $cyph-accent: mat.define-palette(mat.$grey-palette, 800, 700, 900);
 $cyph-is-dark: true;
 $cyph-background: #7a7c8b;
 
-$cyph-message-box-colors: map-merge(
+$cyph-message-box-colors: map.merge(
 	$cyph-message-box-colors,
 	(
-		desktopGlow: map-get($cyph-message-box-colors, mobileGlow)
+		desktopGlow: map.get($cyph-message-box-colors, mobileGlow)
 	)
 );
 
-$cyph-message-colors: map-merge(
+$cyph-message-colors: map.merge(
 	$cyph-message-colors,
 	(
 		app: (
