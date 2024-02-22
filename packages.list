@@ -35,7 +35,6 @@
 @angular/core
 @angular/elements
 @angular/fire
-@angular/flex-layout
 @angular/forms
 @angular/language-service
 @angular/material@^16
@@ -91,6 +90,7 @@
 @isomorphic-git/lightning-fs
 @materializecss/materialize
 @msgpack/msgpack
+@ngbracket/ngx-layout
 @ngrx/core
 @ngrx/effects
 @ngrx/router-store
@@ -361,6 +361,7 @@ moment-timezone
 mustache
 native-url
 ng-animate
+ng-flex-layout
 ng-packagr
 ng2-fittext
 ng2-pdf-viewer
