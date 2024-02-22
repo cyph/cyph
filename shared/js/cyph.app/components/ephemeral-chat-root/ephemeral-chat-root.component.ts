@@ -7,8 +7,8 @@ import {
 	Optional
 } from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
-import * as $ from 'jquery';
-import * as Konami from 'konami';
+import $ from 'jquery';
+import Konami from 'konami';
 import {firstValueFrom} from 'rxjs';
 import {filter} from 'rxjs/operators';
 import {fadeIn} from '../../../cyph/animations';

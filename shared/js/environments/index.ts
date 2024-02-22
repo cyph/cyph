@@ -2,7 +2,7 @@
  * @file Handle custom builds.
  */
 
-import * as $ from 'jquery';
+import $ from 'jquery';
 import {potassiumUtil} from '../cyph/crypto/potassium/potassium-util';
 import {Environment} from '../proto';
 import {environment} from './environment';

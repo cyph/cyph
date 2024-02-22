@@ -1,5 +1,5 @@
 import {Injectable} from '@angular/core';
-import * as $ from 'jquery';
+import $ from 'jquery';
 import {BehaviorSubject} from 'rxjs';
 import {BaseProvider} from '../base-provider';
 import {EnvService} from './env.service';

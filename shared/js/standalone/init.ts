@@ -3,7 +3,7 @@
  * routine of all Web projects.
  */
 
-import * as $ from 'jquery';
+import $ from 'jquery';
 
 /* TODO: Handle this properly instead of relying on side effects */
 /* eslint-disable-next-line import/no-unassigned-import */

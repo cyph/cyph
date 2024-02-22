@@ -1,5 +1,5 @@
 import {AfterViewInit, ChangeDetectionStrategy, Component} from '@angular/core';
-import * as $ from 'jquery';
+import $ from 'jquery';
 import {BaseProvider} from '../../../cyph/base-provider';
 import {EnvService} from '../../../cyph/services/env.service';
 import {sleep, waitForIterable} from '../../../cyph/util/wait';

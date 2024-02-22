@@ -1,5 +1,5 @@
 import {ChangeDetectionStrategy, Component, OnInit} from '@angular/core';
-import * as $ from 'jquery';
+import $ from 'jquery';
 import {BaseProvider} from '../../base-provider';
 import {CyphertextService} from '../../services/cyphertext.service';
 import {EnvService} from '../../services/env.service';

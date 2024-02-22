@@ -6,7 +6,7 @@ import {
 	Router,
 	RouterStateSnapshot
 } from '@angular/router';
-import * as $ from 'jquery';
+import $ from 'jquery';
 import {BehaviorSubject, firstValueFrom} from 'rxjs';
 import {filter} from 'rxjs/operators';
 import {BaseProvider} from '../cyph/base-provider';

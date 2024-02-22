@@ -4,7 +4,7 @@ import {
 	ElementRef,
 	Input
 } from '@angular/core';
-import * as $ from 'jquery';
+import $ from 'jquery';
 import {BaseProvider} from '../../base-provider';
 import {emailPattern} from '../../email-pattern';
 import {EnvService} from '../../services/env.service';

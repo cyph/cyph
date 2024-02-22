@@ -16,7 +16,7 @@ import {
 } from '@angular/core';
 import {MatMenuTrigger} from '@angular/material/menu';
 import Hammer from 'hammerjs';
-import * as $ from 'jquery';
+import $ from 'jquery';
 import {BehaviorSubject, firstValueFrom} from 'rxjs';
 import {filter} from 'rxjs/operators';
 import {BaseProvider} from '../../base-provider';

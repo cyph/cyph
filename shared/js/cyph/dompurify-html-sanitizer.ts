@@ -1,4 +1,4 @@
-import * as DOMPurify from 'dompurify';
+import DOMPurify from 'dompurify';
 
 /**
  * HtmlSanitizerService implementation built on DOMPurify.

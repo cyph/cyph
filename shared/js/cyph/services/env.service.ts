@@ -1,5 +1,5 @@
 import {Injectable} from '@angular/core';
-import * as countryList from 'country-list';
+import countryList from 'country-list';
 import {Env, env} from '../env';
 import {geolocation} from '../geolocation';
 import {DataURIProto} from '../proto';

@@ -1,4 +1,4 @@
-import * as fileSaver from 'file-saver';
+import fileSaver from 'file-saver';
 import {firstValueFrom, Subject} from 'rxjs';
 import {env} from '../env';
 import {shareFile} from './cordova/share-file';

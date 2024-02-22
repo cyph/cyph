@@ -1,6 +1,6 @@
 /* eslint-disable max-lines */
 
-import * as lz4 from 'lz4';
+import lz4 from 'lz4';
 import memoize from 'lodash-es/memoize';
 import {superDilithium} from 'superdilithium';
 import {superDilithium as superDilithiumRSA} from 'superdilithium/dist/rsa-variant.js';

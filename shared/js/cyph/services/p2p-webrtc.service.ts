@@ -1,7 +1,7 @@
 /* eslint-disable max-lines */
 
 import {Injectable} from '@angular/core';
-import * as hark from 'hark';
+import hark from 'hark';
 import * as RecordRTC from 'recordrtc';
 import {BehaviorSubject, firstValueFrom, Observable, Subject} from 'rxjs';
 import {map} from 'rxjs/operators';

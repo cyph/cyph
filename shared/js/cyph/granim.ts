@@ -1,4 +1,4 @@
-import * as Granim from 'granim';
+import Granim from 'granim';
 import {env} from './env';
 import {waitForIterable} from './util/wait';
 

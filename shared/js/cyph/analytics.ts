@@ -1,4 +1,4 @@
-import * as ua from 'universal-analytics';
+import ua from 'universal-analytics';
 import {config} from './config';
 import {potassiumUtil} from './crypto/potassium/potassium-util';
 import {EnvDeploy, envDeploy} from './env-deploy';

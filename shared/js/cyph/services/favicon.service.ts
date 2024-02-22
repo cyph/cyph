@@ -1,5 +1,5 @@
 import {Injectable} from '@angular/core';
-import * as $ from 'jquery';
+import $ from 'jquery';
 import {BaseProvider} from '../base-provider';
 import {IFaviconSet} from '../favicon/ifavicon-set';
 import {EnvService} from './env.service';

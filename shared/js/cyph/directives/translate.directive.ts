@@ -1,5 +1,5 @@
 import {Directive, ElementRef, OnInit, Renderer2} from '@angular/core';
-import * as $ from 'jquery';
+import $ from 'jquery';
 import {BaseProvider} from '../base-provider';
 import {ConfigService} from '../services/config.service';
 import {EnvService} from '../services/env.service';

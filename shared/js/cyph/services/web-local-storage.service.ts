@@ -2,7 +2,7 @@
 
 import {Injectable, NgZone} from '@angular/core';
 import {Dexie} from 'dexie';
-import * as localforage from 'localforage';
+import localforage from 'localforage';
 import {extendPrototype as localforageGetItemsInit} from 'localforage-getitems';
 import {potassiumUtil} from '../crypto/potassium/potassium-util';
 import {env} from '../env';

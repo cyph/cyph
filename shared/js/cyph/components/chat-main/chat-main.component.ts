@@ -5,7 +5,7 @@ import {
 	ElementRef,
 	Input
 } from '@angular/core';
-import * as $ from 'jquery';
+import $ from 'jquery';
 import {fadeIn} from '../../animations';
 import {BaseProvider} from '../../base-provider';
 import {States, UiStyles} from '../../chat/enums';

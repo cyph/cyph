@@ -10,10 +10,10 @@ import {
 } from '@angular/core';
 import {DomSanitizer, SafeHtml} from '@angular/platform-browser';
 import {Router} from '@angular/router';
-import * as $ from 'jquery';
-import * as MarkdownIt from 'markdown-it';
+import $ from 'jquery';
+import MarkdownIt from 'markdown-it';
 import * as markdownItEmoji from 'markdown-it-emoji';
-import * as markdownItSup from 'markdown-it-sup';
+import markdownItSup from 'markdown-it-sup';
 import {microlight} from 'microlight-string';
 import {BehaviorSubject} from 'rxjs';
 import {BaseProvider} from '../../base-provider';

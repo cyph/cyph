@@ -14,7 +14,7 @@ import {
 } from '@angular/core';
 import {loadStripe} from '@stripe/stripe-js/pure';
 import * as bitPay from 'bitpay.js';
-import * as braintreeDropIn from 'braintree-web-drop-in';
+import braintreeDropIn from 'braintree-web-drop-in';
 import memoize from 'lodash-es/memoize';
 import {BehaviorSubject, of} from 'rxjs';
 import {map} from 'rxjs/operators';

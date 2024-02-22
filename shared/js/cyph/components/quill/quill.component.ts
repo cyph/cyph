@@ -10,7 +10,7 @@ import {
 	SimpleChanges
 } from '@angular/core';
 import {ControlValueAccessor, NG_VALUE_ACCESSOR} from '@angular/forms';
-import * as $ from 'jquery';
+import $ from 'jquery';
 import * as Quill from 'quill';
 import Delta from 'quill-delta';
 import {BehaviorSubject, Observable, Subscription} from 'rxjs';

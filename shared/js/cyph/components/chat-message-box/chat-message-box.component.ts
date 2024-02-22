@@ -8,9 +8,9 @@ import {
 	OnDestroy,
 	Output
 } from '@angular/core';
-import * as $ from 'jquery';
+import $ from 'jquery';
 import {BehaviorSubject} from 'rxjs';
-import * as tabIndent from 'tab-indent';
+import tabIndent from 'tab-indent';
 import {slideInOutBottom} from '../../animations';
 import {BaseProvider} from '../../base-provider';
 import {AppointmentSharing} from '../../calendar';

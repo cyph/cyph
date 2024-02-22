@@ -6,7 +6,7 @@ import {
 	ElementRef
 } from '@angular/core';
 import {DomSanitizer, SafeUrl} from '@angular/platform-browser';
-import * as $ from 'jquery';
+import $ from 'jquery';
 import {BehaviorSubject, firstValueFrom} from 'rxjs';
 import {filter} from 'rxjs/operators';
 import {BaseProvider} from '../../base-provider';

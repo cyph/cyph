@@ -1,5 +1,5 @@
 import {Injectable} from '@angular/core';
-import * as DOMPurify from 'dompurify';
+import DOMPurify from 'dompurify';
 import {BaseProvider} from '../base-provider';
 import {DOMPurifyHtmlSanitizer} from '../dompurify-html-sanitizer';
 import {HtmlSanitizerService} from './html-sanitizer.service';
