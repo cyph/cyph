@@ -26,8 +26,8 @@
 @angular-eslint/template-parser
 @angular/animations
 @angular/bazel
-@angular/cdk
-@angular/cdk-experimental
+@angular/cdk@^16
+@angular/cdk-experimental@^16
 @angular/cli
 @angular/common
 @angular/compiler
