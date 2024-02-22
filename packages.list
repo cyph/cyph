@@ -86,7 +86,6 @@
 @google-cloud/datastore
 @google-cloud/storage
 @helia/unixfs
-@ignatiusmb/scramble
 @isomorphic-git/lightning-fs
 @materializecss/materialize
 @msgpack/msgpack
@@ -187,11 +186,13 @@
 @touch4it/ical-timezones
 @types/animejs
 @types/braintree-web
+@types/braintree-web-drop-in
 @types/country-list
 @types/dompurify
 @types/dropzone
 @types/file-saver
 @types/glob
+@types/granim
 @types/hammerjs
 @types/hark
 @types/html-to-text
@@ -202,6 +203,7 @@
 @types/lodash-es
 @types/long
 @types/markdown-it
+@types/markdown-it-emoji
 @types/materializecss__materialize
 @types/node
 @types/pdfjs-dist
@@ -277,7 +279,6 @@ falcon-crypto
 fast-crc32c
 fast-sha512
 faye-websocket
-fg-loadcss
 file-saver
 firebase
 firebase-admin
@@ -331,7 +332,6 @@ libsodium
 libsodium-sumo
 libsodium-wrappers
 libsodium-wrappers-sumo
-libvorbis.js
 localforage
 localforage-getitems
 localforage-setitems
@@ -351,7 +351,6 @@ math-expression-evaluator
 maxmind
 mceliece
 mceliece-legacy
-mergebounce
 microlight-string
 mini-css-extract-plugin
 minimist
@@ -406,7 +405,6 @@ quill-delta-to-html
 quill-markdown
 read
 readable-stream
-recorder.js
 recordrtc
 reflect-metadata
 resize-observer-polyfill
@@ -457,7 +455,6 @@ tslint-microsoft-contrib
 tsutils
 typedoc
 typescript@~5.3
-u2f-api-polyfill
 uglify-js
 universal-analytics
 unsemantic
@@ -470,7 +467,6 @@ webrtc-adapter
 webrtc-troubleshoot
 whatwg-fetch
 winbox
-wowjs
 xhr2
 xkcd-passphrase
 zone.js

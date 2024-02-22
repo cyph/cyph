@@ -136,25 +136,14 @@ declare module 'lz4' {
 EOM
 
 for anyType in \
-	@ignatiusmb/scramble \
-	bitauth \
-	bitpay-rest \
-	braintree-web-drop-in \
 	cornerstone-core \
-	granim \
 	konami \
 	lamejs \
-	libvorbis.js \
-	markdown-it-emoji \
 	markdown-it-sup \
-	mergebounce \
 	opus-recorder \
-	recorder.js \
 	recordrtc \
 	tab-indent \
-	u2f-api-polyfill \
-	watermarkjs \
-	wowjs
+	watermarkjs
 do
 	anyTypePackage="$(echo "${anyType}" | sed 's|/|__|g')"
 	mkdir -p "@types/${anyTypePackage}"
@@ -192,17 +181,9 @@ do
 		xargs sed -i 's|module.exports = |export default |g'
 done
 
-mkdir -p @types/fg-loadcss
-echo "
-	declare module 'fg-loadcss' {
-		const loadCSS: (stylesheet: string) => void;
-	}
-" > @types/fg-loadcss/index.d.ts
-
 for arr in \
 	'konami/konami.js Konami' \
-	'tab-indent/js/tabIndent.js tabIndent' \
-	'wowjs/dist/wow.js this.WOW'
+	'tab-indent/js/tabIndent.js tabIndent'
 do
 	read -ra arr <<< "${arr}"
 	echo "module.exports = ${arr[1]};" >> "${arr[0]}"
@@ -212,9 +193,6 @@ sed -i 's/||!e.sender.track/||!e.sender||!e.sender.track/g' simple-peer/simplepe
 sed -i \
 	's/\&\& transceiver.sender.track/\&\& transceiver.sender \&\& transceiver.sender.track/g' \
 	simple-peer/index.js
-
-cat wowjs/dist/wow.js | perl -pe 's/this\.([A-Z][a-z])/self.\1/g' > wowjs/dist/wow.js.new
-mv wowjs/dist/wow.js.new wowjs/dist/wow.js
 
 # Temporary workaround pending https://github.com/indutny/brorand/pull/11
 sed -i "s|require|eval('require')|g" brorand/index.js
