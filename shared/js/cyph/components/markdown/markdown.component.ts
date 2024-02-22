@@ -12,7 +12,7 @@ import {DomSanitizer, SafeHtml} from '@angular/platform-browser';
 import {Router} from '@angular/router';
 import $ from 'jquery';
 import MarkdownIt from 'markdown-it';
-import * as markdownItEmoji from 'markdown-it-emoji';
+import {full as markdownItEmoji} from 'markdown-it-emoji';
 import markdownItSup from 'markdown-it-sup';
 import {microlight} from 'microlight-string';
 import {BehaviorSubject} from 'rxjs';
