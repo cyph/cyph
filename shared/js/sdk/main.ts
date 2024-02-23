@@ -4,9 +4,9 @@
 
 import {enableProdMode} from '@angular/core';
 import {
-	INITIAL_CONFIG,
+	INITIAL_CONFIG as initialConfigToken,
 	PlatformConfig,
-	platformDynamicServer
+	platformServer
 } from '@angular/platform-server';
 import {environment} from '../cyph/environment';
 import {AppModule} from './app.module';
@@ -16,9 +16,9 @@ if (environment.production) {
 }
 
 asyncImportsComplete.then(async () =>
-	platformDynamicServer([
+	platformServer([
 		{
-			provide: INITIAL_CONFIG,
+			provide: initialConfigToken,
 			useValue: <PlatformConfig> {
 				document: '<html><body><cyph-sdk></cyph-sdk></body></html>'
 			}
