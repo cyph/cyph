@@ -47,7 +47,7 @@ export const initGranim = async (
 		elem.addEventListener(event, handler);
 	});
 
-	const granim = new Granim(opts);
+	const granim = new Granim(<any> opts);
 
 	await started;
 
