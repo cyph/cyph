@@ -240,6 +240,7 @@ braintree-web
 braintree-web-drop-in
 chalk
 cheerio
+chevrotain
 clean-css-cli
 clipboard-polyfill
 comlink
