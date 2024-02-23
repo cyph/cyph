@@ -135,6 +135,14 @@ declare module 'lz4' {
 }
 EOM
 
+# Temporary workaround for outdated definition in @types/markdown-it-emoji
+mkdir -p @types/markdown-it-emoji
+cat > @types/markdown-it-emoji/index.d.ts << EOM
+export const bare: any;
+export const full: any;
+export const light: any;
+EOM
+
 for anyType in \
 	cornerstone-core \
 	konami \
