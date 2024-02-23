@@ -3,7 +3,7 @@ const functionsHTTPS = require('firebase-functions/v2/https');
 const memoize = require('lodash/memoize.js');
 const {functionsConfig} = require('./functions-config');
 
-const defaultRegion = 'us-central-1';
+const defaultRegion = 'us-central1';
 const regions = [
 	/*
 	'asia-northeast1',

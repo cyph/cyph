@@ -2,6 +2,12 @@
 	"database": {
 		"rules": "database.rules.json"
 	},
+	"functions": [
+		{
+			"codebase": "default",
+			"source": "functions"
+		}
+	],
 	"storage": {
 		"rules": "storage.rules"
 	}
