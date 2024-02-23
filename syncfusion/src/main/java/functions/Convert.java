@@ -31,11 +31,10 @@ public class Convert implements HttpFunction {
 					.outputSettings()
 					.syntax(Document.OutputSettings.Syntax.xml);
 
-				result =
-					WordProcessorHelper.loadString(
-						document.html(),
-						FormatType.Html
-					);
+				result = WordProcessorHelper.loadString(
+					document.html(),
+					FormatType.Html
+				);
 
 				status = 200;
 			} catch (Exception err) {

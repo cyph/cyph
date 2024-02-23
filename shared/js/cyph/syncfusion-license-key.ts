@@ -1,3 +1,3 @@
 /** Syncfusion license key. */
 export const syncfusionLicenseKey =
-	'Ngo9BigBOggjHTQxAR8/V1NAaF1cXmhLYVFxWmFZfVpgfV9HZlZVTWY/P1ZhSXxXdkdhWX1fcXJRT2NbVkU=';
+	'ORg4AjUWIQA/Gnt2UVhiQlZPd11dXmJWd1p/THNYflR1fV9DaUwxOX1dQl9nSXxRdUViWHZadHxdRWI=';
