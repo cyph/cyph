@@ -345,7 +345,8 @@ export class CheckoutComponent
 		}
 
 		const instance = await Promise.resolve<any>(
-			braintreeDropIn.create({
+			/* TODO: Investigate type mismatches */
+			(<any> braintreeDropIn).create({
 				applePay: {
 					displayName: 'Cyph',
 					paymentRequest: {
