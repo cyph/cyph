@@ -28,7 +28,8 @@ await sleep(5000);
 await page.type('#user-name', syncfusionCredentials.username);
 await page.type('#password', syncfusionCredentials.password);
 await page.click('#cookiesubs');
-await page.click('#sign-in');
+await page.click('#close-icon-animation');
+await Promise.all([page.waitForNavigation(), page.click('#sign-in')]);
 
 await page.waitForSelector('.link-options > .licensefile');
 await sleep(5000);
