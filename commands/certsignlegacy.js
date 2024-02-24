@@ -11,7 +11,7 @@ import {
 } from '@cyph/sdk';
 import fs from 'fs';
 import os from 'os';
-import read from 'read';
+import {read} from 'read';
 import {agsePublicSigningKeys as baseAgsePublicSigningKeys} from '../modules/agse-public-signing-keys.js';
 import {initDatabaseService} from '../modules/database-service.js';
 import {addInviteCode} from './addinvitecode.js';

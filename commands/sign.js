@@ -8,7 +8,7 @@ import crypto from 'crypto';
 import dgram from 'dgram';
 import fs from 'fs';
 import memoize from 'lodash-es/memoize.js';
-import read from 'read';
+import {read} from 'read';
 import superDilithium from 'superdilithium';
 import oldSuperSphincs from 'supersphincs-legacy/dist/old-api.js';
 import superSphincs from 'supersphincs';

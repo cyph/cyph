@@ -8,7 +8,7 @@ import {util} from '@cyph/sdk';
 import fs from 'fs';
 import jp from 'jsonpath';
 import path from 'path';
-import read from 'read';
+import {read} from 'read';
 import {initDatabaseService} from '../modules/database-service.js';
 
 const {normalize} = util;

@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-const read = require('read');
+const {read} = require('read');
 
 (async () => {
 	const askQuestion = async (prompt, silent) =>

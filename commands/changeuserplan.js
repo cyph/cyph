@@ -4,7 +4,7 @@ import {getMeta} from '../modules/base.js';
 const {isCLI} = getMeta(import.meta);
 
 import {configService as config, proto, util} from '@cyph/sdk';
-import read from 'read';
+import {read} from 'read';
 import {initDatabaseService} from '../modules/database-service.js';
 import {sendEmail} from './email.js';
 import {cancelSubscriptions} from './subscriptions.js';

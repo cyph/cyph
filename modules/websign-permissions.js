@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 import {proto, util} from '@cyph/sdk';
-import read from 'read';
+import {read} from 'read';
 import {openAGSEPKICertified} from './agse-pki-certified.js';
 import {webSignPermissionsTimestamp} from './websign-permissions-timestamp.js';
 

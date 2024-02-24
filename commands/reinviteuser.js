@@ -4,7 +4,7 @@ import {getMeta} from '../modules/base.js';
 const {isCLI} = getMeta(import.meta);
 
 import {util} from '@cyph/sdk';
-import read from 'read';
+import {read} from 'read';
 import {getUserMetadata} from './getusermetadata.js';
 import {inviteUser} from './inviteuser.js';
 
