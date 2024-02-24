@@ -15,24 +15,26 @@ fi
 
 # Temporary workarounds for https://github.com/angular/angular-cli/issues/10525
 
-minifyScript='/node_modules/@angular-devkit/build-angular/src/webpack/plugins/javascript-optimizer-worker.js'
+minifyScript='/node_modules/@angular-devkit/build-angular/src/tools/webpack/plugins/javascript-optimizer-worker.js'
 
 cp ${minifyScript} ${minifyScript}.bak
 
 patch "${minifyScript}" << EOM
-27d26
+27c27
 <     const esbuildResult = await optimizeWithEsbuild(asset.code, asset.name, options);
-29c28
-<     const terserResult = await optimizeWithTerser(asset.name, esbuildResult.code, options.sourcemap, 
 ---
->     const terserResult = await optimizeWithTerser(asset.name, asset.code, options.sourcemap, 
-116c115
+>     const esbuildResult = undefined;
+36c36
+<     const terserResult = await optimizeWithTerser(asset.name, esbuildResult.code, options.sourcemap, options.advanced);
+---
+>     const terserResult = await optimizeWithTerser(asset.name, asset.code, options.sourcemap, options.advanced);
+100c100
 <             passes: advanced ? 2 : 1,
 ---
 >             passes: 3,
-117a117
+101a102
 >             sequences: false,
-121c121,126
+107c108,113
 <         mangle: false,
 ---
 >         mangle: {
