@@ -10,7 +10,7 @@ import './polyfills';
 import '../environments';
 
 import {HttpClient, HttpClientModule} from '@angular/common/http';
-import {NgModule, NgZone} from '@angular/core';
+import {DoBootstrap, NgModule, NgZone} from '@angular/core';
 import {DomSanitizer} from '@angular/platform-browser';
 import {ServerModule} from '@angular/platform-server';
 import {RouterModule} from '@angular/router';
@@ -59,14 +59,11 @@ import {WorkerService} from '../cyph/services/worker.service';
 import {resolveStaticServices} from '../cyph/util/static-services';
 import {resolvable} from '../cyph/util/wait/resolvable';
 import * as util from '../cyph/util';
-import {AppComponent} from './app.component';
 
 /**
  * Angular module for Cyph SDK.
  */
 @NgModule({
-	bootstrap: [AppComponent],
-	declarations: [AppComponent],
 	imports: [HttpClientModule, RouterModule.forRoot([]), ServerModule],
 	providers: [
 		/* From sharedModuleProviders */
@@ -126,12 +123,17 @@ import {AppComponent} from './app.component';
 		}
 	]
 })
-export class AppModule {
+export class AppModule implements DoBootstrap {
 	/** SDK export. */
 	public static readonly sdk: {ready: IResolvable<void>} & Record<
 		string,
 		any
 	> = {ready: resolvable()};
+
+	/** @inheritDoc */
+	public ngDoBootstrap () : void {
+		AppModule.sdk.ready.resolve();
+	}
 
 	constructor (
 		domSanitizer: DomSanitizer,
@@ -162,10 +164,6 @@ export class AppModule {
 		webSignClientService: WebSignClientService,
 		webSignService: WebSignService
 	) {
-		(<any> self).Zone[
-			(<any> self).Zone.__symbol__('ignoreConsoleErrorUncaughtError')
-		] = true;
-
 		for (const [k, v] of Array.from(
 			Object.entries({
 				DOMPurifyHtmlSanitizer,
@@ -209,7 +207,5 @@ export class AppModule {
 			ngZone,
 			stringsService
 		});
-
-		AppModule.sdk.ready.resolve();
 	}
 }
