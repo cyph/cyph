@@ -10,7 +10,6 @@ import fs from 'fs';
 import os from 'os';
 import read from 'read';
 import {openAGSEPKICertified} from './agse-pki-certified.js';
-import {agsePublicSigningKeys} from './agse-public-signing-keys.js';
 import {initDatabaseService} from './database-service.js';
 import {webSignAlgorithm} from './websign-algorithm.js';
 
