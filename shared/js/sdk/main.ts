@@ -3,7 +3,11 @@
  */
 
 import {enableProdMode} from '@angular/core';
-import {platformServer} from '@angular/platform-server';
+import {
+	INITIAL_CONFIG as initialConfigToken,
+	PlatformConfig,
+	platformServer
+} from '@angular/platform-server';
 import {environment} from '../cyph/environment';
 import {AppModule} from './app.module';
 
@@ -12,7 +16,14 @@ if (environment.production) {
 }
 
 asyncImportsComplete.then(async () =>
-	platformServer().bootstrapModule(AppModule, {ngZone: 'noop'})
+	platformServer([
+		{
+			provide: initialConfigToken,
+			useValue: <PlatformConfig> {
+				url: 'https://localhost'
+			}
+		}
+	]).bootstrapModule(AppModule, {ngZone: 'noop'})
 );
 
 /* eslint-disable-next-line import/no-default-export */

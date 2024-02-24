@@ -20,6 +20,39 @@ else
 fi
 
 
+# Remove unwanted DOM implementation
+
+mv /node_modules/@angular/platform-server/fesm2022 /node_modules/@angular/platform-server/fesm2022.old
+cp -rf /node_modules/@angular/platform-server/esm2022 /node_modules/@angular/platform-server/fesm2022
+
+cat > /node_modules/@angular/platform-server/fesm2022/init.mjs << EOM
+export * from './init/index.mjs';
+EOM
+
+cat > /node_modules/@angular/platform-server/fesm2022/src/bundled-domino.mjs << EOM
+const location = {href: 'https://localhost'};
+const documentElement = {querySelector: () => {}};
+const document = {...documentElement, documentElement, location};
+const window = {document, location};
+
+export default {
+	createDocument: () => document,
+	createWindow: () => window,
+	impl: {}
+};
+EOM
+
+cp -f \
+	/node_modules/@angular/platform-server/fesm2022/src/bundled-domino.mjs \
+	/node_modules/@angular/platform-server/fesm2022/init/src/bundled-domino.mjs
+
+onexit () {
+	rm -rf /node_modules/@angular/platform-server/fesm2022
+	mv /node_modules/@angular/platform-server/fesm2022.old /node_modules/@angular/platform-server/fesm2022
+}
+trap onexit EXIT
+
+
 rm -rf sdk/node_modules 2> /dev/null
 ./commands/copyworkspace.sh ~/.build
 cd ~/.build
