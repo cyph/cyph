@@ -1,7 +1,5 @@
 service: cyph-com
-runtime: python27
-api_version: 1
-threadsafe: true
+runtime: nodejs20
 
 handlers:
 

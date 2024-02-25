@@ -1,7 +1,5 @@
 service: websign
-runtime: python27
-api_version: 1
-threadsafe: true
+runtime: nodejs20
 
 handlers:
 
@@ -32,5 +30,5 @@ handlers:
 # Else
 
 - url: /.*
-  script: redirect.app
+  script: auto
   secure: always

@@ -11,15 +11,14 @@ project="${domain//./-}"
 mkdir "${domain}"
 cp -a \
 	${webSignDir}/apple-app-site-association \
-	${webSignDir}/redirect.py \
+	${webSignDir}/package.json \
+	${webSignDir}/redirect.js \
 	${webSignDir}/well-known \
 "${domain}/"
 
 cat > "${domain}/${project}.yaml" << EOM
 service: ${project}
-runtime: python27
-api_version: 1
-threadsafe: true
+runtime: nodejs20
 
 handlers:
 
@@ -60,7 +59,7 @@ handlers:
   # default_headers
 
 - url: /.*
-  script: redirect.app
+  script: auto
   secure: always
 EOM
 

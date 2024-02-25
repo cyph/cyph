@@ -1,0 +1,9 @@
+{
+	"type": "module",
+	"dependencies": {
+		"koa": "*"
+	},
+	"scripts": {
+		"start": "node redirect.js"
+	}
+}
