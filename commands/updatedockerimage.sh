@@ -112,7 +112,7 @@ sed -i "s/NODE_JS = .*/NODE_JS = '\/usr\/bin\/node'/" ~/emsdk/.emscripten
 
 if [ ! -d ~/google-cloud-sdk ] ; then
 	wget \
-		"https://dl.google.com/dl/cloudsdk/channels/rapid/downloads/google-cloud-sdk-392.0.0-linux-$( \
+		"https://dl.google.com/dl/cloudsdk/channels/rapid/downloads/google-cloud-cli-465.0.0-linux-$( \
 			if [ "$(arch)" == aarch64 ] ; then echo arm ; else echo x86_64 ; fi \
 		).tar.gz" \
 		-O ~/gcloud-sdk.tar.gz
