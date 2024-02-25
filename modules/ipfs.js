@@ -43,18 +43,18 @@ const ipfsOptions = {
 	rawLeaves: false
 };
 
-const [ipfsInternal, ipfsHashOnly] = await Promise.all([
-	createHelia().then(helia => heliaUnixfs(helia)),
-	createHelia({
+export const ipfs = heliaUnixfs(
+	await createHelia({
 		blockstore: new BlackHoleBlockstore(),
 		start: false
-	}).then(helia => heliaUnixfs(helia))
-]);
-
-export const ipfs = ipfsInternal;
+	})
+);
 
 export const ipfsAdd = async (content, credentials = defaultCredentials) => {
-	content = typeof content === 'string' ? Buffer.from(content) : content;
+	content =
+		typeof content === 'string' ?
+			Buffer.from(content) :
+			cloneBuffer(content);
 
 	if (!(content instanceof Buffer)) {
 		throw new Error('Content to add to IPFS not defined.');
@@ -64,11 +64,7 @@ export const ipfsAdd = async (content, credentials = defaultCredentials) => {
 		throw new Error('Missing IPFS pinning credentials.');
 	}
 
-	const hash = await retryUntilSuccessful(async () =>
-		(await ipfs.addBytes(cloneBuffer(content), ipfsOptions))
-			.toV0()
-			.toString()
-	);
+	const hash = await ipfsCalculateHash(content);
 
 	if (content.length < 1) {
 		return hash;
@@ -78,7 +74,7 @@ export const ipfsAdd = async (content, credentials = defaultCredentials) => {
 		const formData = new FormData();
 		formData.append(
 			'file',
-			new Blob([cloneBuffer(content)], {type: 'application/octet-stream'})
+			new Blob([content], {type: 'application/octet-stream'})
 		);
 		formData.append('pinataOptions', JSON.stringify({cidVersion}));
 
@@ -109,13 +105,16 @@ export const ipfsAdd = async (content, credentials = defaultCredentials) => {
 };
 
 export const ipfsCalculateHash = async content => {
-	content = typeof content === 'string' ? Buffer.from(content) : content;
+	content =
+		typeof content === 'string' ?
+			Buffer.from(content) :
+			cloneBuffer(content);
 
 	if (content === undefined) {
 		throw new Error('Content to calculate to IPFS hash for not defined.');
 	}
 
 	return retryUntilSuccessful(async () =>
-		(await ipfsHashOnly.addBytes(content, ipfsOptions)).toV0().toString()
+		(await ipfs.addBytes(content, ipfsOptions)).toV0().toString()
 	);
 };
