@@ -47,13 +47,12 @@ sudo apt-get -y --allow-downgrades install \
 	maven \
 	nano \
 	nodejs \
-	openjdk-11-jdk \
+	openjdk-17-jdk \
 	perl \
 	pinentry-curses \
 	pkg-config \
 	procps \
 	protobuf-compiler \
-	python \
 	python3 \
 	python3-docutils \
 	python3-pip \
@@ -71,6 +70,10 @@ sudo apt-get -y --allow-downgrades update
 sudo apt-get -y --allow-downgrades upgrade
 sudo apt-get -y --allow-downgrades autoremove
 sudo apt-get -y --allow-downgrades clean
+
+if [ ! -f /usr/bin/python ] ; then
+	sudo ln -s /usr/bin/python3 /usr/bin/python
+fi
 
 git config --global --add safe.directory /cyph
 
