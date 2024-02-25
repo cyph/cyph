@@ -1,4 +1,4 @@
-FROM debian:bullseye
+FROM debian:bookworm
 
 RUN apt-get -y --allow-downgrades update
 RUN apt-get -y --allow-downgrades install \
@@ -11,7 +11,7 @@ RUN apt-get -y --allow-downgrades install \
 	software-properties-common \
 	sudo
 
-RUN echo 'deb https://deb.nodesource.com/node_20.x bullseye main' \
+RUN echo 'deb https://deb.nodesource.com/node_20.x bookworm main' \
 	> /etc/apt/sources.list.d/cyph.list
 RUN curl -s https://deb.nodesource.com/gpgkey/nodesource.gpg.key | apt-key add -
 RUN apt-get -y --allow-downgrades update

@@ -4,7 +4,7 @@
 source ~/.bashrc
 
 sudo tee -a /etc/apt/sources.list.d/cyph.list > /dev/null <<- EOM
-	deb https://deb.debian.org/debian bullseye-backports main
+	deb https://deb.debian.org/debian bookworm-backports main
 	deb https://dl.yarnpkg.com/debian stable main
 EOM
 
@@ -26,7 +26,7 @@ sudo apt-get -y --allow-downgrades install \
 	g++ \
 	gcc \
 	git \
-	golang-1.16/bullseye-backports \
+	golang-1.16/bookworm-backports \
 	htop \
 	imagemagick \
 	inotify-tools \
