@@ -1,17 +1,7 @@
 service: test
-runtime: nodejs
-env: flex
-threadsafe: true
-
-resources:
-  cpu: 0.1
-  memory_gb: 0.9
-  disk_size_gb: 10
-
-manual_scaling:
-  instances: 1
+runtime: nodejs20
 
 handlers:
 - url: /.*
-  script: test.js
+  script: auto
   secure: always

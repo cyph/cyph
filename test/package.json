@@ -1,14 +1,11 @@
 {
 	"name": "test",
-	"version": "1.0.0",
+	"version": "2.0.0",
 	"dependencies": {
 		"@cyph/sdk": "*",
 		"@google-cloud/datastore": "*",
 		"selenium-webdriver": "*",
 		"shuffle-array": "*"
-	},
-	"engines": {
-		"node": "^8"
 	},
 	"scripts": {
 		"start": "node test.js"
