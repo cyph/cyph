@@ -25,6 +25,15 @@ const locks = {
 };
 
 const cloneBuffer = buf => {
+	const stringInput = typeof buf === 'string';
+
+	if (!(buf instanceof Buffer)) {
+		buf = Buffer.from(buf);
+	}
+	if (stringInput) {
+		return buf;
+	}
+
 	const bufCopy = Buffer.alloc(buf.length);
 	buf.copy(bufCopy);
 	return bufCopy;
@@ -51,18 +60,14 @@ export const ipfs = heliaUnixfs(
 );
 
 export const ipfsAdd = async (content, credentials = defaultCredentials) => {
-	content =
-		typeof content === 'string' ?
-			Buffer.from(content) :
-			cloneBuffer(content);
-
-	if (!(content instanceof Buffer)) {
+	if (content === undefined) {
 		throw new Error('Content to add to IPFS not defined.');
 	}
-
 	if (credentials?.pinata === undefined) {
 		throw new Error('Missing IPFS pinning credentials.');
 	}
+
+	content = cloneBuffer(content);
 
 	const hash = await ipfsCalculateHash(content);
 
@@ -105,14 +110,11 @@ export const ipfsAdd = async (content, credentials = defaultCredentials) => {
 };
 
 export const ipfsCalculateHash = async content => {
-	content =
-		typeof content === 'string' ?
-			Buffer.from(content) :
-			cloneBuffer(content);
-
 	if (content === undefined) {
 		throw new Error('Content to calculate to IPFS hash for not defined.');
 	}
+
+	content = cloneBuffer(content);
 
 	return retryUntilSuccessful(async () =>
 		(await ipfs.addBytes(content, ipfsOptions)).toV0().toString()
