@@ -46,7 +46,8 @@ const ipfsOptions = {
 const [ipfsInternal, ipfsHashOnly] = await Promise.all([
 	createHelia().then(helia => heliaUnixfs(helia)),
 	createHelia({
-		blockstore: new BlackHoleBlockstore()
+		blockstore: new BlackHoleBlockstore(),
+		start: false
 	}).then(helia => heliaUnixfs(helia))
 ]);
 
