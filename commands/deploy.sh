@@ -762,7 +762,6 @@ EOM
 			export const cyphAdminKey = $(getBackendVar CYPH_FIREBASE_ADMIN_KEY);
 
 			export const ipfsCredentials = {
-				eternum: '$(cat ~/.cyph/eternum.key)',
 				pinata: '$(cat ~/.cyph/pinata.key)'
 			};
 

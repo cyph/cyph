@@ -14,10 +14,6 @@ import {fetch, FormData} from './fetch.js';
 const {lockFunction, retryUntilSuccessful} = util;
 
 const defaultCredentials = {
-	eternum: await fs
-		.readFile(path.join(os.homedir(), '.cyph', 'eternum.key'))
-		.then(buf => buf.toString().trim())
-		.catch(() => undefined),
 	pinata: await fs
 		.readFile(path.join(os.homedir(), '.cyph', 'pinata.key'))
 		.then(buf => buf.toString().trim())
@@ -25,7 +21,6 @@ const defaultCredentials = {
 };
 
 const locks = {
-	eternum: lockFunction(),
 	pinata: lockFunction()
 };
 
@@ -64,10 +59,7 @@ export const ipfsAdd = async (content, credentials = defaultCredentials) => {
 		throw new Error('Content to add to IPFS not defined.');
 	}
 
-	if (
-		credentials?.eternum === undefined ||
-		credentials?.pinata === undefined
-	) {
+	if (credentials?.pinata === undefined) {
 		throw new Error('Missing IPFS pinning credentials.');
 	}
 
@@ -111,19 +103,6 @@ export const ipfsAdd = async (content, credentials = defaultCredentials) => {
 			`Pinata hash mismatch. Expected: ${hash}. Actual: ${pinataHash}.`
 		);
 	});
-
-	await retryUntilSuccessful(async () =>
-		locks.eternum(async () =>
-			fetch('https://www.eternum.io/api/pin', {
-				body: JSON.stringify({hash}),
-				headers: {
-					'Authorization': `Token ${credentials.eternum}`,
-					'Content-Type': 'application/json'
-				},
-				method: 'POST'
-			})
-		)
-	);
 
 	return hash;
 };
