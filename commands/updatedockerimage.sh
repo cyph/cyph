@@ -26,7 +26,7 @@ sudo apt-get -y --allow-downgrades install \
 	g++ \
 	gcc \
 	git \
-	golang-1.16/bookworm-backports \
+	golang-1.21/bookworm-backports \
 	htop \
 	imagemagick \
 	inotify-tools \

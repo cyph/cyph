@@ -1,5 +1,5 @@
 service: nakedredirect
-runtime: go116
+runtime: go121
 
 handlers:
 - url: .*
