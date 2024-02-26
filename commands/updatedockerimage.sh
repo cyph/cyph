@@ -136,3 +136,21 @@ fi
 
 source ~/google-cloud-sdk/path.bash.inc
 gcloud components update --quiet
+
+# Temporary workaround for https://github.com/murat-dogan/node-datachannel/issues/178
+
+downloadAndVerifyHash \
+	'http://ftp.us.debian.org/debian/pool/main/o/openssl/libssl1.1_1.1.1w-0+deb11u1_ARCH.deb' \
+	'{
+		"arm64": [
+			"arm64", "ea9b1986adc5e52e9d5bcba40f0d8051bb971fc85ff56afc19d21c513175ece6419c23c1e91b326edf50562a0b3ed38cbedffa568ac4a277786d35a99a698970"
+		],
+		"x64": [
+			"amd64",
+			"709a72531e8f39dcb4ccd7322cc8a1929b912bf820ae18658290856da04397a4722d7a7c6f019c189eb615d79212120b8638e5efa4c6131703c9b6938b5cd2a4"
+		]
+	}' \
+	~/libssl.deb
+
+sudo dpkg -i ~/libssl.deb
+rm ~/libssl.deb
