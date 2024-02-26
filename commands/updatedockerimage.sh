@@ -111,13 +111,21 @@ sed -i "s/NODE_JS = .*/NODE_JS = '\/usr\/bin\/node'/" ~/emsdk/.emscripten
 
 
 if [ ! -d ~/google-cloud-sdk ] ; then
-	wget \
-		"https://dl.google.com/dl/cloudsdk/channels/rapid/downloads/google-cloud-cli-465.0.0-linux-$( \
-			if [ "$(arch)" == aarch64 ] ; then echo arm ; else echo x86_64 ; fi \
-		).tar.gz" \
-		-O ~/gcloud-sdk.tar.gz
-	ls ~/*.tar.gz | xargs -I% tar xvzf % -C ~
-	rm ~/*.tar.gz
+	downloadAndVerifyHash \
+		'https://dl.google.com/dl/cloudsdk/channels/rapid/downloads/google-cloud-cli-465.0.0-linux-ARCH.tar.gz' \
+		'{
+			"arm64": [
+				"arm", "d95e9895a01bc23ca23d16c174363756f59ddbecf5ed5e5b7aec38de82774ff8b4bb3eb7f65a71080dba000e7fae2e2f23906b0e3bb73eca35ffcf8c37bd4c8c"
+			],
+			"x64": [
+				"x86_64",
+				"d2a7e8f0f762ffff2914b1e4e8944b37c09f8bb8aabf371c92000910530ec59e71620b9133d32dfc3cfe415c15a32a8b94f9acb9b63940a755248f7a2f320a78"
+			]
+		}' \
+		~/gcloud-sdk.tar.gz
+
+	tar xvzf ~/gcloud-sdk.tar.gz -C ~
+	rm ~/gcloud-sdk.tar.gz
 fi
 
 ~/google-cloud-sdk/install.sh \

@@ -87,6 +87,58 @@ download () {
 	curl -s --compressed --retry 50 ${1} > ${2}
 }
 
+downloadAndVerifyHash () {
+	tmpDir="$(mktemp -d)"
+
+	echo "${1}" > "${tmpDir}/1"
+	echo "${2}" > "${tmpDir}/2"
+	echo "${3}" > "${tmpDir}/3"
+
+	node -e "(async () => {
+		const arch = os.arch();
+
+		let url = (await fs.promises.readFile('${tmpDir}/1')).toString().trim();
+		let expectedHash = (await fs.promises.readFile('${tmpDir}/2')).toString().trim();
+		const outputPath = (await fs.promises.readFile('${tmpDir}/3')).toString().trim();
+
+		if (!url) {
+			throw new Error(\`Missing download URL.\`);
+		}
+		if (!outputPath) {
+			throw new Error(\`Missing output path for URL \${url}.\`);
+		}
+
+		if (expectedHash.startsWith('{')) {
+			const [archString, archHash] = JSON.parse(expectedHash)[arch] ?? [];
+			url = url.replace(/ARCH/g, archString);
+			expectedHash = archHash;
+		}
+
+		if (!expectedHash) {
+			throw new Error(\`Missing hash for URL \${url}.\`);
+		}
+
+		console.log(\`Downloading: \${url}\\n\`);
+
+		const bytes = Buffer.from(await fetch(url).then(o => o.arrayBuffer()));
+		const hash = crypto.createHash('sha512').update(bytes).digest('hex');
+
+		if (hash !== expectedHash) {
+			throw new Error(\`Hash for \${url} \${hash} does not match \${expectedHash}.\`);
+		}
+
+		await fs.promises.writeFile(outputPath, bytes);
+
+		console.log(\`Success: \${url} matches \${expectedHash}, saved to \${outputPath}\\n\`);
+	})()"
+
+	exitCode=$?
+
+	rm -rf "${tmpDir}"
+
+	return ${exitCode}
+}
+
 fail () {
 	if [ "${*}" ] ; then
 		log "${*}\n\nFAIL"
@@ -153,6 +205,7 @@ export -f checkfail
 export -f checkfailretry
 export -f cyph-prettier
 export -f download
+export -f downloadAndVerifyHash
 export -f fail
 export -f getBoolArg
 export -f log
