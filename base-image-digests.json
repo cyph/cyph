@@ -1,4 +1,4 @@
 {
-	"linux/amd64": "sha256:8cba2fac6875a6957afb12cfde3ad1566f3fbb5cf1124a0562543fae8312a28e",
-	"linux/arm64": "sha256:d7f7e06dca1ea1a0502251ca1a3be057f10e880bccde14bc4f1e7ffc94497bd4"
+	"linux/amd64": "sha256:7a870ae01f15f6adf7942bd44cccad8bd51c50dbd15fb8a229ea814e76c492f4",
+	"linux/arm64": "sha256:a28028603304c29de1fc27bab4946d98f60ecc1f9df52ce7e9a0a3168d12b819"
 }
