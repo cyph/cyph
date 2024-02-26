@@ -307,7 +307,7 @@
 		"jsonpath": "^1.1.1",
 		"jspdf": "^2.5.1",
 		"jsqr": "^1.4.0",
-		"karma": "^6.4.2",
+		"karma": "^6.4.3",
 		"karma-chrome-launcher": "^3.2.0",
 		"karma-cli": "^2.0.0",
 		"karma-coverage-istanbul-reporter": "^3.0.3",
