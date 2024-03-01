@@ -19,7 +19,7 @@ minifyScript='/node_modules/@angular-devkit/build-angular/src/tools/webpack/plug
 
 cp ${minifyScript} ${minifyScript}.bak
 
-patch "${minifyScript}" << EOM
+patch "${minifyScript}" > /dev/null << EOM
 27c27
 <     const esbuildResult = await optimizeWithEsbuild(asset.code, asset.name, options);
 ---
