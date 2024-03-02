@@ -458,15 +458,11 @@ for d in ${compiledProjects} ; do
 
 	if [ "${simple}" ] && [ ! "${simpleProdBuild}" ] ; then
 		ng build --configuration "${environment}" --source-map false --vendor-chunk true || fail
-		terser dist/vendor.js -o dist/vendor.js
+		terser dist/vendor.js -cmo dist/vendor.js
 	elif [ "${debug}" ] && [ ! "${debugProdBuild}" ] ; then
 		ng build --source-map false --configuration "${environment}" || fail
 	else
 		../commands/prodbuild.sh --configuration "${environment}" || fail
-
-		if [ "${simple}" ] && [ ! "${simpleWebSignBuild}" ] ; then
-			ls dist/*.js | xargs -I% uglifyjs % -bo %
-		fi
 	fi
 
 	mv *.html *.yaml sitemap.xml dist/ 2> /dev/null
