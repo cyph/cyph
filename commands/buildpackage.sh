@@ -321,7 +321,7 @@ if [ "${cacheBustedProjects}" ] ; then
 
 			rm -rf wpstatic 2> /dev/null
 			mkdir wpstatic
-			cp cyph.com/cyph-com.yaml wpstatic/
+			cp cyph.com/*.go cyph.com/*.yaml cyph.com/go.mod wpstatic/
 			cd wpstatic
 			../commands/wpstatic.sh ${wpstaticFlags} '${homeURL}' >> ../.wpstatic.output 2>&1
 			cd ..
@@ -465,7 +465,7 @@ for d in ${compiledProjects} ; do
 		../commands/prodbuild.sh --configuration "${environment}" || fail
 	fi
 
-	mv *.html *.yaml sitemap.xml dist/ 2> /dev/null
+	mv *.html *.go *.yaml go.mod sitemap.xml dist/ 2> /dev/null
 	findmnt -t overlay -o TARGET -lun | grep "^${PWD}" | xargs sudo umount
 
 	cd ..
