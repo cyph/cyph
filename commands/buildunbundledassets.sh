@@ -424,6 +424,8 @@ checkfailretry
 
 
 cd ..
-find . -type f -name '*.js' -exec sed -i 's|use strict||g' {} \;
-if [ "${prodTest}" ] ; then find . -type f -name '*.js' -exec minify {} -bo {} \; ; fi
+for f in $(find . -type f -name '*.js') ; do
+	sed -i 's|use strict||g' "${f}"
+	if [ "${prodTest}" ] ; then minify "${f}" -bo "${f}" ; fi
+done
 echo "${hash}" > unbundled.hash
