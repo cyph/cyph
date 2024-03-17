@@ -36,7 +36,10 @@ cd "${tmpDir}/shared"
 if [ ! "${htmlOnly}" ] ; then
 	# WebSign hash whitelist check
 
-	grep $(../commands/websign/bootstraphash.sh) ../modules/websign-hash-whitelist.json > /dev/null
+	grep \
+		$(../commands/websign/bootstraphash.js --only-current) \
+		../modules/websign-hash-whitelist.json \
+	> /dev/null
 	checkfail 'WebSign hash whitelist check fail'
 
 	# Validate component template/stylesheet count consistency

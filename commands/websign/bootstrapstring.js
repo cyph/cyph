@@ -4,26 +4,47 @@ import {getMeta} from '../../modules/base.js';
 const {__dirname, isCLI} = getMeta(import.meta);
 
 import {pack} from '@cyph/sdk/cli/websign/pack.js';
+import childProcess from 'child_process';
 import fs from 'fs';
+import os from 'os';
+import {updateRepos} from '../../modules/update-repos.js';
 
-export const bootstrapString = async () => {
-	const path = `${__dirname}/../../websign`;
+const webSignRootPath = `${__dirname}/../../websign`;
 
+const readWebSignSubresource = (path, fromPublic = false) => {
+	let content;
+
+	if (fromPublic) {
+		updateRepos();
+		content = childProcess.spawnSync(
+			'git',
+			['show', `public:websign/${path}`],
+			{
+				cwd: `${os.homedir()}/.cyph/repos/internal`
+			}
+		).stdout;
+	}
+	else {
+		content = fs.readFileSync(`${webSignRootPath}/${path}`);
+	}
+
+	return content.toString().trim();
+};
+
+export const bootstrapString = async (withOldServiceWorker = false) => {
 	const index = await pack({
 		inputPath: 'index.html',
-		rootDirectoryPath: path
+		rootDirectoryPath: webSignRootPath
 	});
 
 	/* special case; add general solution when needed */
 	const serviceWorker =
-		fs.readFileSync(`${path}/lib/dexie.js`).toString().trim() +
+		readWebSignSubresource('lib/dexie.js', withOldServiceWorker) +
 		'\n' +
-		fs.readFileSync(`${path}/serviceworker.js`).toString().trim();
+		readWebSignSubresource('serviceworker.js', withOldServiceWorker);
 
 	const files = JSON.parse(
-		fs
-			.readFileSync(`${path}/js/config.js`)
-			.toString()
+		readWebSignSubresource('js/config.js')
 			.replace(/\s+/g, ' ')
 			.replace(/.*files:\s+(\[.*?\]),.*/, '$1')
 			.replace(/'/g, '"')
@@ -38,29 +59,23 @@ export const bootstrapString = async () => {
 					index :
 				file === '/serviceworker.js' ?
 					serviceWorker :
-					fs
-						.readFileSync(
-							`${path}/${
-								file === '/unsupportedbrowser' ?
-									'unsupportedbrowser.html' :
-									file
-							}`
-						)
-						.toString()
-						.trim())
+					readWebSignSubresource(
+						file === '/unsupportedbrowser' ?
+							'unsupportedbrowser.html' :
+							file
+					))
 			);
 		})
 		.join('\n\n\n\n\n\n');
 };
 
 if (isCLI) {
-	bootstrapString()
-		.then(content => {
-			console.log(content);
-			process.exit(0);
-		})
-		.catch(err => {
-			console.error(err);
-			process.exit(1);
-		});
+	try {
+		console.log(await bootstrapString());
+		process.exit(0);
+	}
+	catch (err) {
+		console.error(err);
+		process.exit(1);
+	}
 }
