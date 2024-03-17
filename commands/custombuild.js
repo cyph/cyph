@@ -11,8 +11,6 @@ import htmlencode from 'htmlencode';
 import os from 'os';
 import {updateRepos} from '../modules/update-repos.js';
 
-let hasUpdatedRepos = false;
-
 export const repoPath = `${os.homedir()}/.cyph/repos/custom-builds`;
 
 export const customBuildIds = fs
@@ -71,10 +69,7 @@ export const customBuild = (id, version) => {
 		throw new Error(`Invalid custom build ID: ${id}.`);
 	}
 
-	if (!hasUpdatedRepos) {
-		updateRepos();
-		hasUpdatedRepos = true;
-	}
+	updateRepos();
 
 	const root = `${repoPath}/${id}`;
 

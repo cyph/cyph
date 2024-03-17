@@ -5,6 +5,7 @@ const {__dirname} = getMeta(import.meta);
 
 import childProcess from 'child_process';
 import fs from 'fs';
+import memoize from 'lodash-es/memoize.js';
 import {mkdirp} from 'mkdirp';
 import os from 'os';
 
@@ -13,7 +14,7 @@ const getSubdirectories = dir =>
 		.readdirSync(dir)
 		.filter(d => d !== '.git' && fs.lstatSync(`${dir}/${d}`).isDirectory());
 
-export const updateRepos = async () => {
+export const updateReposInternal = () => {
 	const repoRoot = `${os.homedir()}/.cyph/repos`;
 
 	if (
@@ -53,7 +54,7 @@ export const updateRepos = async () => {
 			}
 		}
 		else {
-			await mkdirp(path);
+			mkdirp.sync(path);
 
 			childProcess.spawnSync(
 				'git',
@@ -120,3 +121,5 @@ export const updateRepos = async () => {
 		});
 	}
 };
+
+export const updateRepos = memoize(updateReposInternal);
