@@ -13,7 +13,7 @@ terser /node_modules/protobufjs/dist/minimal/protobuf.min.js -o protobuf.js
 terser /node_modules/supersphincs/dist/index.js -o supersphincs.js
 terser ../../shared/js/proto/websign/index.web.js -o websign-proto.js
 
-cat > brotli.webpack.js <<- EOM
+cat > brotli.webpack.cjs <<- EOM
 	const os = require('os');
 
 	module.exports = {
@@ -45,8 +45,8 @@ cat > brotli.webpack.js <<- EOM
 	};
 EOM
 rm ~/brotli/js/package.json # Workaround for formatting error
-webpack --config brotli.webpack.js
-rm brotli.webpack.js
+webpack --config brotli.webpack.cjs
+rm brotli.webpack.cjs
 
 cat >> brotli.js <<- EOM
 	var _brotliDecode = brotli.BrotliDecode;
