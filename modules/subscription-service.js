@@ -85,9 +85,8 @@ export const initSubscriptionService = (config = {}) => {
 	};
 
 	const stripeCloneSubscription = async subscriptionID => {
-		const subscription = await stripe.subscriptions.retrieve(
-			subscriptionID
-		);
+		const subscription =
+			await stripe.subscriptions.retrieve(subscriptionID);
 
 		return (
 			await stripe.subscriptions.create({
@@ -110,9 +109,8 @@ export const initSubscriptionService = (config = {}) => {
 		subscriptionItemID,
 		overrideProductID
 	) => {
-		const subscriptionItem = await stripe.subscriptionItems.retrieve(
-			subscriptionItemID
-		);
+		const subscriptionItem =
+			await stripe.subscriptionItems.retrieve(subscriptionItemID);
 
 		return (
 			await stripe.subscriptionItems.create({
@@ -183,9 +181,8 @@ export const initSubscriptionService = (config = {}) => {
 		subscriptionItemID,
 		metadata = {}
 	) => {
-		const subscriptionItem = await stripe.subscriptionItems.retrieve(
-			subscriptionItemID
-		);
+		const subscriptionItem =
+			await stripe.subscriptionItems.retrieve(subscriptionItemID);
 
 		const productID = await stripeCustomizeProduct(
 			subscriptionItem.price.product,
@@ -209,9 +206,8 @@ export const initSubscriptionService = (config = {}) => {
 	const stripeRefundSubscription = async subscriptionID => {
 		throw new Error('Not implemented.');
 
-		const subscription = await stripe.subscriptions.retrieve(
-			subscriptionID
-		);
+		const subscription =
+			await stripe.subscriptions.retrieve(subscriptionID);
 
 		if (subscription.status !== 'active') {
 			console.error(`Skipping subscription: ${subscriptionID}`);

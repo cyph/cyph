@@ -207,8 +207,8 @@ export class FirebaseDatabaseService extends DatabaseService {
 
 			const app = await this.app;
 			const messaging = app.messaging();
-			const serviceWorkerRegistration = await this.workerService
-				.serviceWorkerRegistration;
+			const serviceWorkerRegistration =
+				await this.workerService.serviceWorkerRegistration;
 
 			await this.workerService.registerServiceWorkerFunction(
 				'FCM',
@@ -504,9 +504,8 @@ export class FirebaseDatabaseService extends DatabaseService {
 			const subject = new ReplaySubject<boolean>(1);
 
 			(async () => {
-				const connectedRef = await this.getDatabaseRef(
-					'.info/connected'
-				);
+				const connectedRef =
+					await this.getDatabaseRef('.info/connected');
 
 				const onValue = (
 					/* eslint-disable-next-line no-null/no-null */

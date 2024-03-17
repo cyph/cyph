@@ -232,9 +232,8 @@ export class Box implements IBox {
 				byteArraysToClear.push(cyphertext);
 			}
 
-			const oneTimeAuthBytes = await this.oneTimeAuth.getBytes(
-				oneTimeAuthAlgorithm
-			);
+			const oneTimeAuthBytes =
+				await this.oneTimeAuth.getBytes(oneTimeAuthAlgorithm);
 
 			const [authenticatedAsymmetricCyphertext, symmetricCyphertext] =
 				potassiumUtil.splitBytes(cyphertext);
@@ -372,9 +371,8 @@ export class Box implements IBox {
 		const oneTimeAuthAlgorithm = PotassiumData.OneTimeAuthAlgorithms.V1;
 		const secretBoxAlgorithm = PotassiumData.SecretBoxAlgorithms.V1;
 
-		const oneTimeAuthKeyBytes = await this.oneTimeAuth.getKeyBytes(
-			oneTimeAuthAlgorithm
-		);
+		const oneTimeAuthKeyBytes =
+			await this.oneTimeAuth.getKeyBytes(oneTimeAuthAlgorithm);
 
 		return this.baseDecrypt({
 			algorithm,
@@ -413,9 +411,8 @@ export class Box implements IBox {
 		const oneTimeAuthAlgorithm = PotassiumData.OneTimeAuthAlgorithms.V1;
 		const secretBoxAlgorithm = PotassiumData.SecretBoxAlgorithms.V1;
 
-		const oneTimeAuthKeyBytes = await this.oneTimeAuth.getKeyBytes(
-			oneTimeAuthAlgorithm
-		);
+		const oneTimeAuthKeyBytes =
+			await this.oneTimeAuth.getKeyBytes(oneTimeAuthAlgorithm);
 
 		return this.baseEncrypt(async () => {
 			const {cyphertext: asymmetricCyphertext, secret: symmetricKey} =
@@ -473,9 +470,8 @@ export class Box implements IBox {
 				PotassiumData.SecretBoxAlgorithms.NativeV1 :
 				PotassiumData.SecretBoxAlgorithms.V1;
 
-		const oneTimeAuthKeyBytes = await this.oneTimeAuth.getKeyBytes(
-			oneTimeAuthAlgorithm
-		);
+		const oneTimeAuthKeyBytes =
+			await this.oneTimeAuth.getKeyBytes(oneTimeAuthAlgorithm);
 
 		return this.baseDecrypt({
 			algorithm,
@@ -529,12 +525,10 @@ export class Box implements IBox {
 				PotassiumData.SecretBoxAlgorithms.NativeV1 :
 				PotassiumData.SecretBoxAlgorithms.V1;
 
-		const oneTimeAuthKeyBytes = await this.oneTimeAuth.getKeyBytes(
-			oneTimeAuthAlgorithm
-		);
-		const secretBoxKeyBytes = await this.secretBox.getKeyBytes(
-			secretBoxAlgorithm
-		);
+		const oneTimeAuthKeyBytes =
+			await this.oneTimeAuth.getKeyBytes(oneTimeAuthAlgorithm);
+		const secretBoxKeyBytes =
+			await this.secretBox.getKeyBytes(secretBoxAlgorithm);
 
 		return this.baseEncrypt(async () => {
 			const asymmetricPlaintext = potassiumUtil.randomBytes(

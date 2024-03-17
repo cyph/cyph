@@ -47,9 +47,8 @@ export const requestPermissions = async (
 			return true;
 		}
 
-		const newPermissionsStatus = await requestPermissionsInternal(
-			newPermissions
-		);
+		const newPermissionsStatus =
+			await requestPermissionsInternal(newPermissions);
 
 		return newPermissionsStatus.hasPermission;
 	}

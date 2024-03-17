@@ -1456,12 +1456,12 @@ export class AccountDatabaseService extends BaseProvider {
 
 		let privateKeyring = currentPrivateKeyring;
 
-		const currentBoxAlgorithm = await this.potassiumService.box
-			.currentAlgorithm;
-		const currentSecretBoxAlgorithm = await this.potassiumService.secretBox
-			.currentAlgorithm;
-		const currentSignAlgorithm = await this.potassiumService.sign
-			.currentAlgorithm;
+		const currentBoxAlgorithm =
+			await this.potassiumService.box.currentAlgorithm;
+		const currentSecretBoxAlgorithm =
+			await this.potassiumService.secretBox.currentAlgorithm;
+		const currentSignAlgorithm =
+			await this.potassiumService.sign.currentAlgorithm;
 
 		/* Temporary fix for bad data caused by ThreadedPotassiumService keyPair issue */
 		if (
@@ -1729,9 +1729,8 @@ export class AccountDatabaseService extends BaseProvider {
 			cacheKey,
 			PublicKeyring,
 			async () => {
-				const certData = await this.getUserPublicKeyCertificate(
-					username
-				);
+				const certData =
+					await this.getUserPublicKeyCertificate(username);
 
 				const publicKeyringURL = `users/${username}/keyrings/public`;
 
@@ -1786,10 +1785,10 @@ export class AccountDatabaseService extends BaseProvider {
 
 		/* Clear cache and fetch latest if keyring algorithms are outdated */
 
-		const currentBoxAlgorithm = await this.potassiumService.box
-			.currentAlgorithm;
-		const currentSignAlgorithm = await this.potassiumService.sign
-			.currentAlgorithm;
+		const currentBoxAlgorithm =
+			await this.potassiumService.box.currentAlgorithm;
+		const currentSignAlgorithm =
+			await this.potassiumService.sign.currentAlgorithm;
 
 		if (
 			isCached &&
@@ -2160,9 +2159,8 @@ export class AccountDatabaseService extends BaseProvider {
 	}> {
 		const currentUser = await this.getCurrentUser();
 		url = await this.processLockURL(url);
-		const {reason, wasLocked} = await this.databaseService.waitForUnlock(
-			url
-		);
+		const {reason, wasLocked} =
+			await this.databaseService.waitForUnlock(url);
 
 		return {
 			reason: !reason ?

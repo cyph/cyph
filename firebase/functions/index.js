@@ -59,8 +59,8 @@ const baseOnRequest =
 const onRequest = baseOnRequest();
 const onRequestHighMemory = baseOnRequest(true);
 
-const importFunction = memoize(async functionName =>
-	import(`./js/functions/${functionName}.js`)
+const importFunction = memoize(
+	async functionName => import(`./js/functions/${functionName}.js`)
 );
 
 exports.acceptPseudoRelationship = onRequest(async (...args) =>

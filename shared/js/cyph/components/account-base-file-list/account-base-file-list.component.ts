@@ -175,9 +175,8 @@ export class AccountBaseFileListComponent
 				return;
 			}
 
-			const pgpKey = await this.accountFilesService.downloadPGPKey(
-				record
-			);
+			const pgpKey =
+				await this.accountFilesService.downloadPGPKey(record);
 
 			const pgpKeyFingerprint = !!pgpKey.pgpMetadata.fingerprint ?
 				normalize(pgpKey.pgpMetadata.fingerprint) :
@@ -357,8 +356,8 @@ export class AccountBaseFileListComponent
 		{record}: {record: IAccountFileRecord},
 		key: keyof IPassword
 	) : Promise<void> {
-		const password = await this.accountFilesService.downloadPassword(record)
-			.result;
+		const password =
+			await this.accountFilesService.downloadPassword(record).result;
 		const value = password[key];
 
 		if (typeof value !== 'string' || value.length < 1) {
@@ -387,8 +386,8 @@ export class AccountBaseFileListComponent
 		{record}: {record: IAccountFileRecord},
 		key: keyof IPassword
 	) : Promise<void> {
-		const password = await this.accountFilesService.downloadPassword(record)
-			.result;
+		const password =
+			await this.accountFilesService.downloadPassword(record).result;
 
 		let oldValue = password[key];
 		if (typeof oldValue !== 'string' || oldValue.length < 1) {

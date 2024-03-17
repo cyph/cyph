@@ -527,9 +527,9 @@ export class AccountChatComponent
 											true
 										)
 										.then(async () => {
-											const remoteUser = await this
-												.accountSessionService
-												.remoteUser;
+											const remoteUser =
+												await this.accountSessionService
+													.remoteUser;
 
 											if (
 												this.destroyed.value ||

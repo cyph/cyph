@@ -83,9 +83,10 @@ export class AccountEmailViewComponent extends BaseProvider implements OnInit {
 								)
 							);
 
-						const email = await this.accountFilesService.getEmail(
-							emailRecord
-						);
+						const email =
+							await this.accountFilesService.getEmail(
+								emailRecord
+							);
 
 						if (email.from.username !== emailRecord.owner) {
 							throw new Error(

@@ -183,9 +183,8 @@ export class AccountContactsSearchComponent extends BaseProvider {
 
 				if (this.chipInput && externalUser) {
 					externalUser = undefined;
-					const user = await this.accountUserLookupService?.getUser(
-						query
-					);
+					const user =
+						await this.accountUserLookupService?.getUser(query);
 
 					if (user) {
 						results.unshift({matchingText: undefined, user});

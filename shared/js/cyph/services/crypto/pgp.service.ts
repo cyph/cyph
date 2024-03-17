@@ -477,9 +477,8 @@ export class PGPService extends BaseProvider {
 											binary: message
 										});
 
-								const privateKeys = await readRawKeys(
-									privateKeysRaw
-								);
+								const privateKeys =
+									await readRawKeys(privateKeysRaw);
 
 								return transfer(
 									pgpMessage instanceof

@@ -46,9 +46,8 @@ export class EphemeralKeyExchange implements IEphemeralKeyExchange {
 			aliceSecret: async (bobPublicKey, alicePrivateKey) =>
 				kyber.decrypt(bobPublicKey, alicePrivateKey),
 			bobSecret: async alicePublicKey => {
-				const {cyphertext, secret} = await kyber.encrypt(
-					alicePublicKey
-				);
+				const {cyphertext, secret} =
+					await kyber.encrypt(alicePublicKey);
 				/* kyber.cyphertextBytes === kyber.publicKeyBytes */
 				return {publicKey: cyphertext, secret};
 			},

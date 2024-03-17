@@ -738,9 +738,8 @@ export class AccountPostsService extends BaseProvider {
 							await this.getLatestSharedCircleID(username);
 						}
 
-						postDataPart = await this.getUserPostDataFull(
-							username
-						).private();
+						postDataPart =
+							await this.getUserPostDataFull(username).private();
 					}
 				}
 				catch {}
@@ -1044,9 +1043,8 @@ export class AccountPostsService extends BaseProvider {
 		}
 
 		if (usernames === undefined) {
-			usernames = await this.accountDatabaseService.getListKeys(
-				'contacts'
-			);
+			usernames =
+				await this.accountDatabaseService.getListKeys('contacts');
 		}
 
 		const sorted = (
@@ -1137,9 +1135,8 @@ export class AccountPostsService extends BaseProvider {
 					await this.getLatestSharedCircleID(username);
 				}
 
-				postDataPart = await this.getUserPostDataFull(
-					username
-				).private();
+				postDataPart =
+					await this.getUserPostDataFull(username).private();
 			}
 		}
 		catch {}

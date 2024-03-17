@@ -84,9 +84,8 @@ export class AccountOrganizationsService extends BaseProvider {
 			return;
 		}
 
-		const organizationUser = await this.accountUserLookupService.getUser(
-			organization
-		);
+		const organizationUser =
+			await this.accountUserLookupService.getUser(organization);
 
 		if (
 			!organizationUser ||

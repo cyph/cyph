@@ -271,15 +271,15 @@ export class FileManagerComponent extends BaseProvider implements OnChanges {
 					) || [];
 
 				await Promise.all(
-					relatedFiles.map(
-						async file => this.handlers?.removeFile(file.record.id)
+					relatedFiles.map(async file =>
+						this.handlers?.removeFile(file.record.id)
 					)
 				);
 			},
 			downloadItems: async items =>
 				Promise.all(
-					items.map(
-						async item => this.handlers?.downloadAndSave(item)
+					items.map(async item =>
+						this.handlers?.downloadAndSave(item)
 					)
 				),
 			getItems: async (

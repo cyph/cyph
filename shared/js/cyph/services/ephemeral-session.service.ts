@@ -629,8 +629,8 @@ export class EphemeralSessionService extends SessionService {
 			let id = fullID;
 			const salt = await this.sessionInitService.salt;
 			const headless = await this.sessionInitService.headless;
-			const joinConfirmation = await this.sessionInitService
-				.joinConfirmation;
+			const joinConfirmation =
+				await this.sessionInitService.joinConfirmation;
 
 			if (id === '404') {
 				this.state.startingNewCyph.next(true);
@@ -759,8 +759,8 @@ export class EphemeralSessionService extends SessionService {
 				!this.sessionInitService.child;
 
 			if (isAliceRoot && this.sessionInitService.ephemeralGroupsAllowed) {
-				const groupMembers = await this.sessionInitService
-					.ephemeralGroupMembers;
+				const groupMembers =
+					await this.sessionInitService.ephemeralGroupMembers;
 
 				if (groupMembers.length > 0) {
 					await this.initGroup(groupMembers);

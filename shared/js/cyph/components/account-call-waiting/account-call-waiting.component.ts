@@ -78,9 +78,8 @@ export class AccountCallWaitingComponent
 
 			const users = await Promise.all(
 				this.appointment.participants.map(async username => {
-					const user = await this.accountUserLookupService.getUser(
-						username
-					);
+					const user =
+						await this.accountUserLookupService.getUser(username);
 					if (!user) {
 						return user;
 					}

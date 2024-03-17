@@ -608,8 +608,9 @@ export class P2PWebRTCService
 		this.lastDeviceIDs.camera = localStream
 			.getVideoTracks()[0]
 			?.getSettings().deviceId;
-		this.lastDeviceIDs.mic = localStream.getAudioTracks()[0]?.getSettings()
-			.deviceId;
+		this.lastDeviceIDs.mic = localStream
+			.getAudioTracks()[0]
+			?.getSettings().deviceId;
 
 		this.recorder.addStream(localStream);
 

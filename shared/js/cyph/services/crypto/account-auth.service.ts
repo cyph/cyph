@@ -917,12 +917,12 @@ export class AccountAuthService extends BaseProvider {
 		inviteCode?: string,
 		profileExtra: IAccountUserProfileExtra = {}
 	) : Promise<boolean> {
-		const currentBoxAlgorithm = await this.potassiumService.box
-			.currentAlgorithm;
-		const currentSecretBoxAlgorithm = await this.potassiumService.secretBox
-			.currentAlgorithm;
-		const currentSignAlgorithm = await this.potassiumService.sign
-			.currentAlgorithm;
+		const currentBoxAlgorithm =
+			await this.potassiumService.box.currentAlgorithm;
+		const currentSecretBoxAlgorithm =
+			await this.potassiumService.secretBox.currentAlgorithm;
+		const currentSignAlgorithm =
+			await this.potassiumService.sign.currentAlgorithm;
 
 		let pseudoAccount = false;
 		if (typeof realUsername !== 'string') {

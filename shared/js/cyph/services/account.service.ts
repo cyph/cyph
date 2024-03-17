@@ -308,9 +308,8 @@ export class AccountService extends BaseProvider {
 		}
 
 		if (groupID) {
-			const chatData = await this.accountContactsService.getChatData(
-				groupID
-			);
+			const chatData =
+				await this.accountContactsService.getChatData(groupID);
 
 			if (
 				!(
@@ -970,9 +969,8 @@ export class AccountService extends BaseProvider {
 					}
 
 					try {
-						const {route} = await this.getIncomingCallRoute(
-							callMetadata
-						);
+						const {route} =
+							await this.getIncomingCallRoute(callMetadata);
 
 						await this.router.navigate(route);
 					}
