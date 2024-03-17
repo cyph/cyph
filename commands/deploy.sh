@@ -187,10 +187,10 @@ fi
 
 if [ "${simple}" ] ; then
 	websign=''
-else
+fi
+if [ ! "${simple}" ] || [ "${simpleProdBuild}" ] || [ "${simpleWebSignBuild}" ] ; then
 	cacheBustedProjects="$(echo "${cacheBustedProjects}" | sed "s|${webSignedProject}||")"
 fi
-
 if [ "${simpleWebSignBuild}" ] ; then
 	simple=true
 	prodOnlyProjects="$(echo "${prodOnlyProjects}" | sed 's| websign||')"
