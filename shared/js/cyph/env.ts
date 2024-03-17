@@ -361,7 +361,7 @@ export class Env extends EnvDeploy {
 			Math.max(
 				Math.floor(
 					(navigatorData.hardwareConcurrency || 2) /
-						(this.isMobileOS ? 2 : 1)
+						(this.isMobileOS ? 4 : 2)
 				),
 				1
 			);
