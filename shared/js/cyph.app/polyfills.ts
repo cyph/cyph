@@ -42,3 +42,7 @@ for (const [k, v] of Object.entries(tslib)) {
 
 import '../standalone/capabilities';
 import '../standalone/unsupported-browsers';
+
+/* Workaround for Angular bug */
+
+(<any> self).ngDevMode = undefined;

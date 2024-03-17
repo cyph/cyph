@@ -48,3 +48,7 @@ import './sham';
 
 import '../standalone/capabilities';
 import '../standalone/unsupported-browsers';
+
+/* Workaround for Angular bug */
+
+(<any> self).ngDevMode = undefined;

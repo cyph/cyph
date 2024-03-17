@@ -28,3 +28,7 @@
 /***************************************************************************************************
  * APPLICATION IMPORTS
  */
+
+/* Workaround for Angular bug */
+
+(<any> self).ngDevMode = undefined;
