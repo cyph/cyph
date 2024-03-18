@@ -32,7 +32,10 @@ const compileSCSS = scss => {
 		[
 			`${__dirname}/../commands/sass.sh`,
 			'--input-data',
-			`@import './theme';\n${scss}`,
+			"@use '@angular/material' as mat;\n" +
+				"@use 'sass:map';\n" +
+				"@import './theme';\n" +
+				scss,
 			'--load-path',
 			cssRoot,
 			tmpfile
