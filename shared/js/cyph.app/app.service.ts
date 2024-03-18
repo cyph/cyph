@@ -2,7 +2,6 @@ import {Injectable, NgZone} from '@angular/core';
 import {Title} from '@angular/platform-browser';
 import {
 	ActivatedRouteSnapshot,
-	CanActivate,
 	Router,
 	RouterStateSnapshot
 } from '@angular/router';
@@ -30,7 +29,7 @@ import {ChatRootStates} from './enums';
  * Angular service for Cyph web UI.
  */
 @Injectable()
-export class AppService extends BaseProvider implements CanActivate {
+export class AppService extends BaseProvider {
 	/** @ignore */
 	private readonly _LOCKED_DOWN_ROUTE = resolvable<string>();
 

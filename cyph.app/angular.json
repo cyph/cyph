@@ -253,63 +253,63 @@
 				"serve": {
 					"builder": "@angular-devkit/build-angular:dev-server",
 					"options": {
-						"browserTarget": "cyph.app:build"
+						"buildTarget": "cyph.app:build"
 					},
 					"configurations": {
 						"backup": {
-							"browserTarget": "cyph.app:build:backup"
+							"buildTarget": "cyph.app:build:backup"
 						},
 						"beta": {
-							"browserTarget": "cyph.app:build:beta"
+							"buildTarget": "cyph.app:build:beta"
 						},
 						"dev": {
-							"browserTarget": "cyph.app:build:dev"
+							"buildTarget": "cyph.app:build:dev"
 						},
 						"e2e": {
-							"browserTarget": "cyph.app:build:e2e"
+							"buildTarget": "cyph.app:build:e2e"
 						},
 						"local": {
-							"browserTarget": "cyph.app:build:local"
+							"buildTarget": "cyph.app:build:local"
 						},
 						"localBackup": {
-							"browserTarget": "cyph.app:build:localBackup"
+							"buildTarget": "cyph.app:build:localBackup"
 						},
 						"localBeta": {
-							"browserTarget": "cyph.app:build:localBeta"
+							"buildTarget": "cyph.app:build:localBeta"
 						},
 						"localDev": {
-							"browserTarget": "cyph.app:build:localDev"
+							"buildTarget": "cyph.app:build:localDev"
 						},
 						"localMaster": {
-							"browserTarget": "cyph.app:build:localMaster"
+							"buildTarget": "cyph.app:build:localMaster"
 						},
 						"localProd": {
-							"browserTarget": "cyph.app:build:localProd"
+							"buildTarget": "cyph.app:build:localProd"
 						},
 						"localStaging": {
-							"browserTarget": "cyph.app:build:localStaging"
+							"buildTarget": "cyph.app:build:localStaging"
 						},
 						"master": {
-							"browserTarget": "cyph.app:build:master"
+							"buildTarget": "cyph.app:build:master"
 						},
 						"prod": {
-							"browserTarget": "cyph.app:build:prod"
+							"buildTarget": "cyph.app:build:prod"
 						},
 						"production": {
-							"browserTarget": "cyph.app:build:production"
+							"buildTarget": "cyph.app:build:production"
 						},
 						"staging": {
-							"browserTarget": "cyph.app:build:staging"
+							"buildTarget": "cyph.app:build:staging"
 						},
 						"tmp": {
-							"browserTarget": "cyph.app:build:tmp"
+							"buildTarget": "cyph.app:build:tmp"
 						}
 					}
 				},
 				"extract-i18n": {
 					"builder": "@angular-devkit/build-angular:extract-i18n",
 					"options": {
-						"browserTarget": "cyph.app:build"
+						"buildTarget": "cyph.app:build"
 					}
 				},
 				"test": {
@@ -372,7 +372,7 @@
 	"schematics": {
 		"@schematics/angular:component": {
 			"prefix": "cyph",
-			"styleext": "scss"
+			"style": "scss"
 		},
 		"@schematics/angular:directive": {
 			"prefix": "cyph"
