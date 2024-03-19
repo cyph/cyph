@@ -454,7 +454,7 @@ tslint-immutable
 tslint-microsoft-contrib
 tsutils
 typedoc
-typescript@~5.3
+typescript@~5.4
 uglify-js
 universal-analytics
 unsemantic
