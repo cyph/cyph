@@ -353,10 +353,16 @@ export const initDatabaseService = memoize((config, isCloudFunction) => {
 			);
 		},
 		async setItemInternal (url, value, hash, dataAlreadySet) {
-			const [bytes, bytesBase64] =
+			const bytes =
+				value instanceof Buffer ?
+					value :
 				typeof value === 'string' ?
-					[Buffer.from(value, 'base64'), value] :
-					[value, Buffer.from(value).toString('base64')];
+					Buffer.from(value, 'base64') :
+					Buffer.from(value);
+
+			const bytesBase64 =
+				typeof value === 'string' ? value : bytes.toString('base64');
+
 			const noBlobStorage = bytes.length <= nonBlobStorageLimit;
 
 			if (hash === undefined) {
