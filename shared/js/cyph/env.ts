@@ -356,15 +356,8 @@ export class Env extends EnvDeploy {
 			maxSizeMobile: filesConfigMaxSizeMobile
 		};
 
-		this.hardwareConcurrency = this.isTestRun ?
-			1 :
-			Math.max(
-				Math.floor(
-					(navigatorData.hardwareConcurrency || 2) /
-						(this.isMobileOS ? 4 : 2)
-				),
-				1
-			);
+		/* TODO: Investigate browser issues with concurrent Workers */
+		this.hardwareConcurrency = 1;
 
 		this.isCordovaDesktop = this.isCordova && !this.isMobileOS;
 		this.isCordovaMobile = this.isCordova && this.isMobileOS;
