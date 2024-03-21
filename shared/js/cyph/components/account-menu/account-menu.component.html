@@ -6,7 +6,6 @@
 		[class.menu]="!sidenav"
 		[class.menu-root]="!sidenav"
 		[class.mobile]="envService.isMobile | await"
-		[class.sidenav]="sidenav"
 	>
 		<div fxFlex fxLayout="column" fxLayoutAlign="center stretch">
 			<ng-container *ngTemplateOutlet="menuContent"></ng-container>
