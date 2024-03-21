@@ -35,13 +35,6 @@ import {PotassiumService} from './potassium.service';
  */
 @Injectable()
 export class WebSignClientService extends BaseProvider {
-	/** Copy of required WebSign config.js values. */
-	private readonly config = {
-		additionalDataPackagePrefix: 'cyph.ws:webSign/packages/',
-		additionalDataSignaturePrefix: 'cyph.ws:webSign/signatures/',
-		algorithm: PotassiumData.SignAlgorithms.V2Hardened
-	};
-
 	/** WebSign Brotli decoder instance. */
 	private readonly brotliDecode:
 		| ((compressed: Uint8Array) => Uint8Array)
@@ -49,6 +42,13 @@ export class WebSignClientService extends BaseProvider {
 
 	/** Timestamp of most recently cached package. */
 	private cachedPackageTimestamp: number | undefined;
+
+	/** Copy of required WebSign config.js values. */
+	private readonly config = {
+		additionalDataPackagePrefix: 'cyph.ws:webSign/packages/',
+		additionalDataSignaturePrefix: 'cyph.ws:webSign/signatures/',
+		algorithm: PotassiumData.SignAlgorithms.V2Hardened
+	};
 
 	/** Native ipfs-fetch instance (where available). */
 	private readonly nativeIPFSFetch:
