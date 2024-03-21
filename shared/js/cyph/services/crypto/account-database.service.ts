@@ -1879,7 +1879,8 @@ export class AccountDatabaseService extends BaseProvider {
 						await this.potassiumHelpers.secretBox.open(
 							this.potassiumService.fromBase64(o.reason),
 							currentUser.keyrings.private,
-							await url
+							/* eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion */
+							<string> url
 						)
 					);
 				}
@@ -1984,7 +1985,8 @@ export class AccountDatabaseService extends BaseProvider {
 				if (immutable) {
 					o.callback = async () =>
 						this.setItem(
-							`${await url}-head`,
+							/* eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion */
+							`${<string> url}-head`,
 							StringProto,
 							key,
 							securityModel,
@@ -1993,7 +1995,8 @@ export class AccountDatabaseService extends BaseProvider {
 				}
 
 				return this.seal(
-					`${await url}/${key}`,
+					/* eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion */
+					`${<string> url}/${key}`,
 					proto,
 					value,
 					securityModel,
