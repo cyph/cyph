@@ -10,7 +10,7 @@ import {
 	Output,
 	SimpleChanges
 } from '@angular/core';
-import {Sidenav} from '@materializecss/materialize';
+import {M, Sidenav} from '@materializecss/materialize';
 import {BaseProvider} from '../../base-provider';
 import {StringsService} from '../../services/strings.service';
 
@@ -48,10 +48,10 @@ export class SidenavComponent
 			return;
 		}
 
-		this.sidenav = Sidenav.init(
+		this.sidenav = M.Sidenav.init(
 			this.elementRef.nativeElement.firstElementChild,
 			{
-				onCloseEnd: () => {
+				onCloseStart: () => {
 					this.opened = false;
 					this.openChange.emit(false);
 				},

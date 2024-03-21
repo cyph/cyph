@@ -203,7 +203,6 @@
 @types/lodash-es
 @types/long
 @types/markdown-it
-@types/materializecss__materialize
 @types/node
 @types/pdfjs-dist
 @types/pdfkit
