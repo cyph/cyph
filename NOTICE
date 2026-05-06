@@ -1,0 +1,17 @@
+Cyph
+
+This repository includes third-party components licensed under the
+Apache License, Version 2.0. A copy of that license is available at
+LICENSES/Apache-2.0.txt.
+
+Comlink
+Source file: websign/lib/comlink.js
+Project: https://github.com/GoogleChromeLabs/comlink
+Copyright 2019 Google LLC
+License: Apache License, Version 2.0
+
+localForage
+Source file: websign/lib/localforage.js
+Project: https://github.com/localForage/localForage
+Copyright (c) 2013-2017 Mozilla
+License: Apache License, Version 2.0
